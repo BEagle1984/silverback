@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Sequences.Chunking
 {
     /// <summary>
     ///     The <see cref="Stream" /> implementation used to read the chunked messages. This stream is used by the
-    ///     <see cref="ChunksAggregatorConsumerBehavior" /> and it is asynchronously pushed with the chunks being
+    ///     <see cref="ChunkSequenceReader" /> and it is asynchronously pushed with the chunks being
     ///     consumed.
     /// </summary>
     public class ChunkStream : Stream

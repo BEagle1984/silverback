@@ -64,7 +64,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     publisher.PublishAsync(
                         new TestEventOne
                         {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
+                            Content = $"Long message {i}"
                         }));
 
             await DefaultTopic.WaitUntilAllMessagesAreConsumed();
@@ -81,7 +81,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 SpyBehavior.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).Content);
 
             receivedContents.Should()
-                .BeEquivalentTo(Enumerable.Range(1, 5).Select(i => i.ToString(CultureInfo.InvariantCulture)));
+                .BeEquivalentTo(Enumerable.Range(1, 5).Select(i => $"Long message {i}"));
         }
 
         [Fact]
@@ -151,8 +151,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await DefaultTopic.WaitUntilAllMessagesAreConsumed();
 
-            // Subscriber.OutboundEnvelopes.Count.Should().Be(2);
-            // Subscriber.InboundEnvelopes.Count.Should().Be(2);
+            Subscriber.OutboundEnvelopes.Count.Should().Be(2);
+            Subscriber.InboundEnvelopes.Count.Should().Be(2);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
@@ -225,7 +225,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             (BinaryFileMessage binaryFile) =>
                             {
                                 if (binaryFile.ContentType != "text/plain")
+                                {
+                                    // Read only first chunk
+                                    var buffer = new byte[10];
+                                    binaryFile.Content!.Read(buffer, 0, 10);
                                     return;
+                                }
 
                                 receivedFiles.Add(binaryFile.Content.ReadAll());
                             })
@@ -240,12 +245,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await DefaultTopic.WaitUntilAllMessagesAreConsumed();
 
-            // Subscriber.OutboundEnvelopes.Count.Should().Be(2);
-            // Subscriber.InboundEnvelopes.Count.Should().Be(2);
+            Subscriber.OutboundEnvelopes.Count.Should().Be(2);
+            Subscriber.InboundEnvelopes.Count.Should().Be(2);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
-                envelope => envelope.RawMessage.ReReadAll()!.Length.Should().BeLessOrEqualTo(10));
+                envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
             SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
 
             SpyBehavior.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
@@ -275,6 +280,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
         [Fact]
         public async Task Chunking_BinaryFile_BackpressureHandled()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public async Task Chunking_IncompleteJson_NextMessageConsumed()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public async Task Chunking_IncompleteBinaryFile_NextMessageConsumed()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public async Task Chunking_JsonMissingFirstChunk_NextMessageConsumed()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public async Task Chunking_BinaryFileMissingFirstChunk_NextMessageConsumed()
         {
             throw new NotImplementedException();
         }

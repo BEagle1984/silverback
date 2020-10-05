@@ -15,6 +15,8 @@ namespace Silverback.Messaging.Sequences
     /// <inheritdoc cref="ISequence" />
     public abstract class Sequence : ISequence
     {
+        private readonly ISequenceStore _store;
+
         private readonly List<IOffset> _offsets = new List<IOffset>();
 
         private readonly MessageStreamProvider<IRawInboundEnvelope> _streamProvider;
@@ -31,13 +33,17 @@ namespace Silverback.Messaging.Sequences
         ///     The current <see cref="ConsumerPipelineContext" />, assuming that it will be the one from which the
         ///     sequence gets published to the internal bus.
         /// </param>
-        protected Sequence(object sequenceId, ConsumerPipelineContext context)
+        /// <param name="store">
+        ///     The <see cref="ISequenceStore" /> that references this sequence.
+        /// </param>
+        protected Sequence(object sequenceId, ConsumerPipelineContext context, ISequenceStore store)
         {
             SequenceId = Check.NotNull(sequenceId, nameof(sequenceId));
+            Context = Check.NotNull(context, nameof(context));
+            _store = Check.NotNull(store, nameof(store));
 
             _streamProvider = new MessageStreamProvider<IRawInboundEnvelope>();
             Stream = _streamProvider.CreateStream<IRawInboundEnvelope>();
-            Context = Check.NotNull(context, nameof(context));
         }
 
         /// <inheritdoc cref="ISequence.SequenceId" />
@@ -61,11 +67,17 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.IsComplete" />
         public bool IsComplete { get; private set; }
 
+        /// <inheritdoc cref="ISequence.IsAborted" />
+        public bool IsAborted { get; private set; }
+
         /// <inheritdoc cref="ISequence.AbortProcessing" />
         public void AbortProcessing()
         {
-            if (IsComplete)
+            if (IsComplete || IsAborted)
                 return;
+
+            IsAborted = true;
+            _store.Remove(SequenceId);
 
             // TODO: Review this!!!
             _abortCancellationTokenSource.Cancel();
@@ -119,6 +131,7 @@ namespace Silverback.Messaging.Sequences
         {
             IsComplete = true;
             await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
+            _store.Remove(SequenceId);
         }
     }
 }

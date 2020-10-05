@@ -24,27 +24,16 @@ namespace Silverback.Messaging.Inbound
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
         {
-            try
-            {
-                Check.NotNull(context, nameof(context));
-                Check.NotNull(next, nameof(next));
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(next, nameof(next));
 
-                var publisher = context.ServiceProvider.GetRequiredService<IPublisher>();
+            var publisher = context.ServiceProvider.GetRequiredService<IPublisher>();
 
-                // TODO: Worth optimizing if not a sequence? (I don't think so)
-                // TODO: Task.Run is needed to avoid all locks? (think about sync subscribers)
-                context.ProcessingTask = Task.Run(() => publisher.PublishAsync(context.Envelope));
+            await publisher.PublishAsync(context.Envelope).ConfigureAwait(false);
 
-                // TODO: Publish stream(s) (not sequences) -> will need async thread
+            // TODO: Publish stream(s) (not sequences) -> will need async thread
 
-                await next(context).ConfigureAwait(false);
-            }
-            catch (Exception e)
-            {
-                // TODO: ???
-                Console.WriteLine(e);
-                throw;
-            }
+            await next(context).ConfigureAwait(false);
         }
     }
 }

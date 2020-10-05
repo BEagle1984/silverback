@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Inbound.Transaction
 
                 if (context.Sequence == null)
                     await AwaitProcessingAndCommit(context).ConfigureAwait(false);
-                else if (context.Sequence.IsComplete)
+                else if (context.Sequence.IsComplete || (context.ProcessingTask?.IsCompleted ?? false))
                     await AwaitProcessingAndCommit(context.Sequence.Context).ConfigureAwait(false);
             }
             catch (Exception exception)

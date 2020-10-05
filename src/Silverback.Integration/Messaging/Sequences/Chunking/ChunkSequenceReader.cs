@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Sequences.Chunking
 
             if (chunkIndex == 0)
             {
-                sequence = _sequenceStore.Add(CreateNewSequence(messageId, context));
+                sequence = _sequenceStore.Add(CreateNewSequence(messageId, context, _sequenceStore));
 
                 // Replace the envelope with the stream that will be pushed with all the chunks.
                 context.Envelope = context.Envelope.CloneReplacingStream(new ChunkStream(sequence.Stream));
@@ -66,14 +66,14 @@ namespace Silverback.Messaging.Sequences.Chunking
             return sequence;
         }
 
-        private static ChunkSequence CreateNewSequence(string messageId, ConsumerPipelineContext context)
+        private static ChunkSequence CreateNewSequence(string messageId, ConsumerPipelineContext context, ISequenceStore store)
         {
             var chunksCount = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
 
             if (chunksCount == null)
                 throw new InvalidOperationException("Chunks count header not found or invalid.");
 
-            return new ChunkSequence(messageId, chunksCount.Value, context);
+            return new ChunkSequence(messageId, chunksCount.Value, context, store);
         }
     }
 }

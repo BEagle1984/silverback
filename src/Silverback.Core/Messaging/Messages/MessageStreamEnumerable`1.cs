@@ -11,9 +11,13 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
+    // TODO: Customizable back pressure
+
+    // TODO: Implement abort
+
     /// <inheritdoc cref="IMessageStreamEnumerable{TMessage}" />
     /// <remarks>
-    /// This implementation is not thread-safe.
+    ///     This implementation is not thread-safe.
     /// </remarks>
     internal class MessageStreamEnumerable<TMessage>
         : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
@@ -103,9 +107,6 @@ namespace Silverback.Messaging.Messages
         public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
             EnumerateExclusively(() => GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken));
 
-        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
@@ -141,6 +142,9 @@ namespace Silverback.Messaging.Messages
                     semaphore.Release();
             }
         }
+
+        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         private IEnumerable<TMessage> GetEnumerable()
         {

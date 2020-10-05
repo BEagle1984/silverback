@@ -116,9 +116,14 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int Sequencer = 260;
 
             /// <summary>
+            ///     The <see cref="ProcessingTaskStarterConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int ProcessingTaskStarter = 300;
+
+            /// <summary>
             ///     The <see cref="ExactlyOnceGuardConsumerBehavior" /> sort index.
             /// </summary>
-            public const int ExactlyOnceGuard = 270;
+            public const int ExactlyOnceGuard = 350;
 
             /// <summary>
             ///     The <see cref="ChunksAggregatorConsumerBehavior" /> sort index.
@@ -148,7 +153,7 @@ namespace Silverback.Messaging.Broker.Behaviors
             /// <summary>
             ///     The <see cref="StreamPublisherConsumerBehavior" /> sort index.
             /// </summary>
-            public const int StreamPublisher = 2000;
+            //public const int StreamPublisher = 2000;
 
             /// <summary>
             ///     The <see cref="PublisherConsumerBehavior" /> sort index.

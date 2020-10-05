@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Sequences
     ///     The temporary store for the sequences being consumed.
     /// </summary>
     /// <typeparam name="TSequence">The type of the sequences being stored.</typeparam>
-    public interface ISequenceStore<TSequence>
+    public interface ISequenceStore<TSequence> : ISequenceStore
         where TSequence : class, ISequence
     {
         /// <summary>
@@ -33,13 +33,5 @@ namespace Silverback.Messaging.Sequences
         ///     The <see cref="ISequence" /> instance.
         /// </returns>
         TSequence Add(TSequence sequence);
-
-        /// <summary>
-        ///     Removes the sequence with the specified id.
-        /// </summary>
-        /// <param name="sequenceId">
-        ///     The sequence identifier.
-        /// </param>
-        void Remove(object sequenceId);
     }
 }

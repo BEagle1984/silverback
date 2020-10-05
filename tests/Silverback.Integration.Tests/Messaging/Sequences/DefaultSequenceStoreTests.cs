@@ -20,9 +20,9 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         {
             var store = new DefaultSequenceStore<ChunkSequence>();
 
-            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext));
-            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext));
-            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext));
+            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
+            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
+            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
 
             var result = store.Get("bbb");
 
@@ -35,9 +35,9 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         {
             var store = new DefaultSequenceStore<ChunkSequence>();
 
-            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext));
-            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext));
-            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext));
+            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
+            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
+            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
 
             var result = store.Get("123");
 
@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         {
             var store = new DefaultSequenceStore<ChunkSequence>();
 
-            var newSequence = new ChunkSequence("abc", 10, _consumerPipelineContext);
+            var newSequence = new ChunkSequence("abc", 10, _consumerPipelineContext, store);
             var result = store.Add(newSequence);
 
             result.Should().BeSameAs(newSequence);
@@ -61,9 +61,9 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         {
             var store = new DefaultSequenceStore<ChunkSequence>();
 
-            store.Add(new ChunkSequence("abc", 10, _consumerPipelineContext));
+            store.Add(new ChunkSequence("abc", 10, _consumerPipelineContext, store));
 
-            Action act = () => store.Add(new ChunkSequence("abc", 10, _consumerPipelineContext));
+            Action act = () => store.Add(new ChunkSequence("abc", 10, _consumerPipelineContext, store));
             act.Should().Throw<InvalidOperationException>();
         }
 
@@ -72,9 +72,9 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         {
             var store = new DefaultSequenceStore<ChunkSequence>();
 
-            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext));
-            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext));
-            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext));
+            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
+            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
+            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
 
             store.Remove("bbb");
 
@@ -88,9 +88,9 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         {
             var store = new DefaultSequenceStore<ChunkSequence>();
 
-            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext));
-            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext));
-            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext));
+            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
+            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
+            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
 
             store.Remove("123");
 

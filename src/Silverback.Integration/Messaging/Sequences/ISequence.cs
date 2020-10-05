@@ -35,6 +35,12 @@ namespace Silverback.Messaging.Sequences
         bool IsComplete { get; }
 
         /// <summary>
+        ///     Gets a value indicating whether the sequence processing has been aborted and no further message will
+        ///     be pushed.
+        /// </summary>
+        bool IsAborted { get; }
+
+        /// <summary>
         ///     Gets the offsets of the messages belonging to the sequence.
         /// </summary>
         IReadOnlyList<IOffset> Offsets { get; }

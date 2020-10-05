@@ -13,8 +13,8 @@ namespace Silverback.Messaging.Sequences.Chunking
     {
         private int? _lastIndex;
 
-        public ChunkSequence(object sequenceId, int totalLength, ConsumerPipelineContext context)
-            : base(sequenceId, context)
+        public ChunkSequence(object sequenceId, int totalLength, ConsumerPipelineContext context, ISequenceStore store)
+            : base(sequenceId, context, store)
         {
             TotalLength = totalLength;
         }
