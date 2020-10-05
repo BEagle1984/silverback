@@ -35,52 +35,6 @@ namespace Silverback.Tests.Integration.E2E.Broker
         };
 
         [Fact]
-        public async Task Chunking_ChunkedAndAggregatedCorrectly()
-        {
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-
-            var serviceProvider = Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka())
-                        .AddEndpoints(
-                            endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = 10
-                                        }
-                                    })
-                                .AddInbound(new KafkaConsumerEndpoint(DefaultTopicName)))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
-                .Run();
-
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
-            await publisher.PublishAsync(message);
-
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
-
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
-            SpyBehavior.OutboundEnvelopes.ForEach(
-                envelope =>
-                {
-                    envelope.RawMessage.Should().NotBeNull();
-                    envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
-                });
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-        }
-
-        [Fact]
         public async Task BatchConsuming_CorrectlyConsumedInBatch()
         {
             var message1 = new TestEventOne
@@ -292,59 +246,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
 
-        [Fact]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task Encryption_EncryptedAndDecrypted()
-        {
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
 
-            var serviceProvider = Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(
-                            options => options
-                                .AddMockedKafka()
-                                .AddInMemoryChunkStore())
-                        .AddEndpoints(
-                            endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Encryption = new SymmetricEncryptionSettings
-                                        {
-                                            Key = AesEncryptionKey
-                                        }
-                                    })
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Encryption = new SymmetricEncryptionSettings
-                                        {
-                                            Key = AesEncryptionKey
-                                        }
-                                    }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
-                .Run();
-
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
-            await publisher.PublishAsync(message);
-
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
-
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-        }
 
         [Fact]
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]

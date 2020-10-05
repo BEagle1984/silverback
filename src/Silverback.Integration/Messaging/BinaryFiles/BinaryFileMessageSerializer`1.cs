@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -23,6 +24,7 @@ namespace Silverback.Messaging.BinaryFiles
         private readonly Type _type = typeof(TModel);
 
         /// <inheritdoc cref="BinaryFileMessageSerializer.SerializeAsync" />
+        [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
         public ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,

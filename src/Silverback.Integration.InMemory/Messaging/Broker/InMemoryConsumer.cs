@@ -19,9 +19,9 @@ namespace Silverback.Messaging.Broker
     {
         private readonly ConcurrentQueue<QueuedMessage> _queue = new ConcurrentQueue<QueuedMessage>();
 
-        private CancellationTokenSource? _cancellationTokenSource;
-
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1);
+
+        private CancellationTokenSource? _cancellationTokenSource;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="InMemoryConsumer" /> class.
@@ -90,8 +90,6 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer.Rollback(IReadOnlyCollection{IOffset})" />
         public override Task Rollback(IReadOnlyCollection<IOffset> offsets)
         {
-            // Nothing to do. The messages will stay in the queue until explicitly
-
             RollbackCalled?.Invoke(this, new OffsetsEventArgs(offsets));
 
             return Task.CompletedTask;

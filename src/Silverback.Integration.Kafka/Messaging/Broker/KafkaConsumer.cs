@@ -20,6 +20,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Broker
 {
     /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
+    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint, KafkaOffset>
     {
         private static readonly TimeSpan RecoveryDelay = TimeSpan.FromSeconds(5); // TODO: Could be configurable

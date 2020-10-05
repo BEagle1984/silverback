@@ -27,13 +27,13 @@ namespace Silverback.Messaging.Broker
         int ConsumedMessagesCount { get; }
 
         /// <summary>
-        ///     Gets the timestamp at which the last message has been consumed.
+        ///     Gets the timestamp at which the latest message has been consumed.
         /// </summary>
-        DateTime? LastConsumedMessageTimestamp { get; }
+        DateTime? LatestConsumedMessageTimestamp { get; }
 
         /// <summary>
-        ///     Gets the offset of the last consumed message.
+        ///     Gets the offset of the latest consumed message.
         /// </summary>
-        IOffset? LastConsumedMessageOffset { get; }
+        IOffset? LatestConsumedMessageOffset { get; }
     }
 }

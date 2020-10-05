@@ -23,7 +23,7 @@ namespace Silverback.Messaging.BinaryFiles
         public static BinaryFileMessageSerializer Default { get; } = new BinaryFileMessageSerializer();
 
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
-        [SuppressMessage("ReSharper", "CA2000", Justification = "Cannot dispose returned stream")]
+        [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
         public ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,

@@ -7,11 +7,9 @@ using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.Inbound;
-using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Sequences;
-using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging.Broker.Behaviors

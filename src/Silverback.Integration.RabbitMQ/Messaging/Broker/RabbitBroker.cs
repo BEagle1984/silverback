@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -19,10 +18,6 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitBroker" /> class.
         /// </summary>
-        /// <param name="behaviors">
-        ///     The <see cref="IEnumerable{T}" /> containing the <see cref="IBrokerBehavior" /> to be passed to the
-        ///     producers and consumers.
-        /// </param>
         /// <param name="connectionFactory">
         ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
         ///     endpoints.

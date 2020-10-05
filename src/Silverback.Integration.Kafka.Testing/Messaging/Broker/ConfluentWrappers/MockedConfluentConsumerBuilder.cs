@@ -3,12 +3,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Confluent.Kafka;
 using Silverback.Messaging.Broker.Topics;
 
 namespace Silverback.Messaging.Broker.ConfluentWrappers
 {
+    /// <summary>
+    ///     The builder for the <see cref="MockedKafkaConsumer"/>.
+    /// </summary>
+    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
     {
         private readonly IInMemoryTopicCollection _topics;
@@ -27,17 +32,25 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
 
         private Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? _offsetsCommittedHandler;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MockedConfluentConsumerBuilder" /> class.
+        /// </summary>
+        /// <param name="topics">
+        ///     The <see cref="InMemoryTopicCollection" />.
+        /// </param>
         public MockedConfluentConsumerBuilder(IInMemoryTopicCollection topics)
         {
             _topics = topics;
         }
 
+        /// <inheritdoc cref="IConfluentConsumerBuilder.SetConfig" />
         public IConfluentConsumerBuilder SetConfig(ConsumerConfig config)
         {
             _config = config;
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentConsumerBuilder.SetStatisticsHandler" />
         public IConfluentConsumerBuilder SetStatisticsHandler(
             Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler)
         {
@@ -45,12 +58,14 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentConsumerBuilder.SetErrorHandler" />
         public IConfluentConsumerBuilder SetErrorHandler(Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler)
         {
             _errorHandler = errorHandler;
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsAssignedHandler(Func{IConsumer{byte[],byte[]},List{TopicPartition},IEnumerable{TopicPartitionOffset}})" />
         public IConfluentConsumerBuilder SetPartitionsAssignedHandler(
             Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>
                 partitionsAssignedHandler)
@@ -59,6 +74,7 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsAssignedHandler(Action{IConsumer{byte[],byte[]},List{TopicPartition}})" />
         public IConfluentConsumerBuilder SetPartitionsAssignedHandler(
             Action<IConsumer<byte[]?, byte[]?>, List<TopicPartition>> partitionsAssignedHandler)
         {
@@ -74,6 +90,7 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsRevokedHandler(Func{IConsumer{byte[],byte[]},List{TopicPartitionOffset},IEnumerable{TopicPartitionOffset}})" />
         public IConfluentConsumerBuilder SetPartitionsRevokedHandler(
             Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>
                 partitionsRevokedHandler)
@@ -82,6 +99,7 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentConsumerBuilder.SetPartitionsRevokedHandler(Action{IConsumer{byte[],byte[]},List{TopicPartitionOffset}})" />
         public IConfluentConsumerBuilder SetPartitionsRevokedHandler(
             Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>> partitionsRevokedHandler)
         {
@@ -95,6 +113,7 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentConsumerBuilder.SetOffsetsCommittedHandler" />
         public IConfluentConsumerBuilder SetOffsetsCommittedHandler(
             Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets> offsetsCommittedHandler)
         {
@@ -102,6 +121,7 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentConsumerBuilder.Build" />
         public IConsumer<byte[]?, byte[]?> Build()
         {
             if (_config == null)

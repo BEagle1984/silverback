@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,7 +14,12 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    public class MockedKafkaConsumer : IConsumer<byte[]?, byte[]?>
+    /// <summary>
+    ///     A mocked implementation of <see cref="IConsumer{TKey,TValue}" /> from Confluent.Kafka that consumes
+    ///     from an <see cref="InMemoryTopic" />.
+    /// </summary>
+    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+    public sealed class MockedKafkaConsumer : IConsumer<byte[]?, byte[]?>
     {
         private readonly ConsumerConfig _config;
 
@@ -25,6 +31,15 @@ namespace Silverback.Messaging.Broker
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _storedOffsets =
             new ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>();
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MockedKafkaConsumer" /> class.
+        /// </summary>
+        /// <param name="config">
+        ///     The consumer configuration.
+        /// </param>
+        /// <param name="topics">
+        ///     The collection of <see cref="InMemoryTopic" />.
+        /// </param>
         public MockedKafkaConsumer(ConsumerConfig config, IInMemoryTopicCollection topics)
         {
             _config = Check.NotNull(config, nameof(config));
@@ -41,32 +56,42 @@ namespace Silverback.Messaging.Broker
                 Task.Run(AutoCommit);
         }
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Handle" />
         public Handle Handle => throw new NotSupportedException();
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Name" />
         public string Name { get; }
 
+        /// <summary>
+        ///     Gets the consumer group id from the 'group.id' configuration parameter.
+        /// </summary>
         public string GroupId { get; }
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.MemberId" />
         public string MemberId { get; }
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Assignment" />
         public List<TopicPartition> Assignment { get; } = new List<TopicPartition>();
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Subscription" />
         public List<string> Subscription { get; } = new List<string>();
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.ConsumerGroupMetadata" />
         public IConsumerGroupMetadata ConsumerGroupMetadata => throw new NotSupportedException();
 
+        /// <summary>
+        ///     Gets a value indicating whether this instance was disposed.
+        /// </summary>
         public bool Disposed { get; private set; }
 
-        public int AddBrokers(string brokers)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.MemberId" />
+        public int AddBrokers(string brokers) => throw new NotSupportedException();
 
-        public ConsumeResult<byte[]?, byte[]?> Consume(int millisecondsTimeout)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Consume(int)" />
+        public ConsumeResult<byte[]?, byte[]?> Consume(int millisecondsTimeout) => throw new NotSupportedException();
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Consume(CancellationToken)" />
+        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public ConsumeResult<byte[]?, byte[]?> Consume(CancellationToken cancellationToken = default)
         {
             using var localCancellationTokenSource = new CancellationTokenSource();
@@ -83,7 +108,7 @@ namespace Silverback.Messaging.Broker
             foreach (var topicPair in topicPairs)
             {
                 var task = Task.Run(
-                    () => _topics.GetTopic(topicPair.Key).Pull(
+                    () => _topics[topicPair.Key].Pull(
                         GroupId,
                         topicPair.Value.Select(
                                 partitionPair => new TopicPartitionOffset(
@@ -101,7 +126,8 @@ namespace Silverback.Messaging.Broker
                     break;
             }
 
-            var completedTaskIndex = Task.WaitAny(tasks.ToArray());
+            // ReSharper disable once CoVariantArrayConversion
+            var completedTaskIndex = Task.WaitAny(tasks.ToArray(), cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             localCancellationTokenSource.Cancel();
 
@@ -112,11 +138,10 @@ namespace Silverback.Messaging.Broker
             return result;
         }
 
-        public ConsumeResult<byte[]?, byte[]?> Consume(TimeSpan timeout)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Consume(TimeSpan)" />
+        public ConsumeResult<byte[]?, byte[]?> Consume(TimeSpan timeout) => throw new NotSupportedException();
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Subscribe(IEnumerable{string})" />
         public void Subscribe(IEnumerable<string> topics)
         {
             var topicsList = Check.NotNull(topics, nameof(topics)).AsReadOnlyList();
@@ -128,52 +153,45 @@ namespace Silverback.Messaging.Broker
 
                 foreach (var topic in topicsList)
                 {
-                    _topics.GetTopic(topic).Subscribe(this);
+                    _topics[topic].Subscribe(this);
                     Subscription.Add(topic);
                 }
             }
         }
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Subscribe(string)" />
         public void Subscribe(string topic) => Subscribe(new[] { topic });
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Unsubscribe" />
         public void Unsubscribe()
         {
             lock (Subscription)
             {
                 foreach (var topic in Subscription)
                 {
-                    _topics.GetTopic(topic).Unsubscribe(this);
+                    _topics[topic].Unsubscribe(this);
                 }
 
                 Subscription.Clear();
             }
         }
 
-        public void Assign(TopicPartition partition)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Assign(TopicPartition)" />
+        public void Assign(TopicPartition partition) => throw new NotSupportedException();
 
-        public void Assign(TopicPartitionOffset partition)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Assign(TopicPartitionOffset)" />
+        public void Assign(TopicPartitionOffset partition) => throw new NotSupportedException();
 
-        public void Assign(IEnumerable<TopicPartitionOffset> partitions)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Assign(IEnumerable{TopicPartitionOffset})" />
+        public void Assign(IEnumerable<TopicPartitionOffset> partitions) => throw new NotSupportedException();
 
-        public void Assign(IEnumerable<TopicPartition> partitions)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Assign(IEnumerable{TopicPartition})" />
+        public void Assign(IEnumerable<TopicPartition> partitions) => throw new NotSupportedException();
 
-        public void Unassign()
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Unassign" />
+        public void Unassign() => throw new NotSupportedException();
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.StoreOffset(ConsumeResult{TKey,TValue})" />
         public void StoreOffset(ConsumeResult<byte[]?, byte[]?> result)
         {
             if (result == null)
@@ -182,6 +200,7 @@ namespace Silverback.Messaging.Broker
             StoreOffset(result.TopicPartitionOffset);
         }
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.StoreOffset(TopicPartitionOffset)" />
         public void StoreOffset(TopicPartitionOffset offset)
         {
             if (offset == null)
@@ -190,11 +209,12 @@ namespace Silverback.Messaging.Broker
             _storedOffsets[offset.Topic][offset.Partition] = offset.Offset;
         }
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Commit()" />
         public List<TopicPartitionOffset> Commit()
         {
             foreach (var topicPair in _storedOffsets)
             {
-                _topics.GetTopic(topicPair.Key).Commit(
+                _topics[topicPair.Key].Commit(
                     GroupId,
                     topicPair.Value.Select(
                         partitionPair => new TopicPartitionOffset(
@@ -206,16 +226,13 @@ namespace Silverback.Messaging.Broker
             return new List<TopicPartitionOffset>();
         }
 
-        public void Commit(IEnumerable<TopicPartitionOffset> offsets)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Commit(IEnumerable{TopicPartitionOffset})" />
+        public void Commit(IEnumerable<TopicPartitionOffset> offsets) => throw new NotSupportedException();
 
-        public void Commit(ConsumeResult<byte[]?, byte[]?> result)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Commit(ConsumeResult{TKey,TValue})" />
+        public void Commit(ConsumeResult<byte[]?, byte[]?> result) => throw new NotSupportedException();
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Seek(TopicPartitionOffset)" />
         public void Seek(TopicPartitionOffset tpo)
         {
             Check.NotNull(tpo, nameof(tpo));
@@ -223,56 +240,42 @@ namespace Silverback.Messaging.Broker
             _currentOffsets[tpo.Topic][tpo.Partition] = tpo.Offset;
         }
 
-        public void Pause(IEnumerable<TopicPartition> partitions)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Pause(IEnumerable{TopicPartition})" />
+        public void Pause(IEnumerable<TopicPartition> partitions) => throw new NotSupportedException();
 
-        public void Resume(IEnumerable<TopicPartition> partitions)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Resume(IEnumerable{TopicPartition})" />
+        public void Resume(IEnumerable<TopicPartition> partitions) => throw new NotSupportedException();
 
-        public List<TopicPartitionOffset> Committed(TimeSpan timeout)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Committed(TimeSpan)" />
+        public List<TopicPartitionOffset> Committed(TimeSpan timeout) => throw new NotSupportedException();
 
-        public List<TopicPartitionOffset> Committed(IEnumerable<TopicPartition> partitions, TimeSpan timeout)
-        {
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Committed(IEnumerable{TopicPartition}, TimeSpan)" />
+        public List<TopicPartitionOffset> Committed(IEnumerable<TopicPartition> partitions, TimeSpan timeout) =>
             throw new NotSupportedException();
-        }
 
-        public Offset Position(TopicPartition partition)
-        {
-            throw new NotSupportedException();
-        }
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Position" />
+        public Offset Position(TopicPartition partition) => throw new NotSupportedException();
 
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.OffsetsForTimes" />
         public List<TopicPartitionOffset> OffsetsForTimes(
             IEnumerable<TopicPartitionTimestamp> timestampsToSearch,
-            TimeSpan timeout)
-        {
+            TimeSpan timeout) =>
             throw new NotSupportedException();
-        }
 
-        public WatermarkOffsets GetWatermarkOffsets(TopicPartition topicPartition)
-        {
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.GetWatermarkOffsets" />
+        public WatermarkOffsets GetWatermarkOffsets(TopicPartition topicPartition) => throw new NotSupportedException();
+
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.QueryWatermarkOffsets" />
+        public WatermarkOffsets QueryWatermarkOffsets(TopicPartition topicPartition, TimeSpan timeout) =>
             throw new NotSupportedException();
-        }
 
-        public WatermarkOffsets QueryWatermarkOffsets(TopicPartition topicPartition, TimeSpan timeout)
-        {
-            throw new NotSupportedException();
-        }
-
+        /// <inheritdoc cref="IConsumer{TKey,TValue}.Close" />
         public void Close()
         {
         }
 
-        public void Dispose()
-        {
-            Disposed = true;
-        }
+        /// <inheritdoc cref="IDisposable.Dispose" />
+        public void Dispose() => Disposed = true;
 
         internal void OnPartitionsAssigned(string topicName, IReadOnlyCollection<Partition> partitions)
         {
@@ -293,13 +296,13 @@ namespace Silverback.Messaging.Broker
 
         private TopicPartitionOffset GetStartingOffset(string topicName, Partition partition)
         {
-            var topic = _topics.GetTopic(topicName);
+            var topic = _topics[topicName];
             var offset = topic.GetCommittedOffset(partition, GroupId);
 
             // TODO: Invoke assigned event handler
 
             if (offset == Offset.End)
-                offset = topic.GetLastOffset(partition) + 1;
+                offset = topic.GetLatestOffset(partition) + 1;
             else
                 offset = 0;
 
@@ -310,15 +313,8 @@ namespace Silverback.Messaging.Broker
         {
             while (!Disposed)
             {
-                try
-                {
-                    Commit();
-                    await Task.Delay(_config.AutoCommitIntervalMs ?? 5000).ConfigureAwait(false);
-                }
-                catch
-                {
-                    // Ignore
-                }
+                Commit();
+                await Task.Delay(_config.AutoCommitIntervalMs ?? 5000).ConfigureAwait(false);
             }
         }
     }

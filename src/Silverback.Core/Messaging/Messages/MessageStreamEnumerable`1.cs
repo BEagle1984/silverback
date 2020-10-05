@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,6 +63,7 @@ namespace Silverback.Messaging.Messages
         public Type MessageType => typeof(TMessage);
 
         /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(PushedMessage,System.Threading.CancellationToken)" />
+        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public async Task PushAsync(PushedMessage pushedMessage, CancellationToken cancellationToken = default)
         {
             Check.NotNull(pushedMessage, nameof(pushedMessage));
@@ -107,6 +109,9 @@ namespace Silverback.Messaging.Messages
         public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
             EnumerateExclusively(() => GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken));
 
+        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
@@ -142,9 +147,6 @@ namespace Silverback.Messaging.Messages
                     semaphore.Release();
             }
         }
-
-        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         private IEnumerable<TMessage> GetEnumerable()
         {
@@ -197,6 +199,7 @@ namespace Silverback.Messaging.Messages
             return action.Invoke();
         }
 
+        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         private async Task<bool> WaitForNext(CancellationToken cancellationToken)
         {
             if (!_isFirstMessage)

@@ -244,8 +244,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             await consumer.TestHandleMessage(new TestEventOne(), null, new TestOffset("test", "2"));
 
             consumer.StatusInfo.ConsumedMessagesCount.Should().Be(2);
-            consumer.StatusInfo.LastConsumedMessageOffset.Should().BeEquivalentTo(new TestOffset("test", "2"));
-            consumer.StatusInfo.LastConsumedMessageTimestamp.Should().NotBeNull();
+            consumer.StatusInfo.LatestConsumedMessageOffset.Should().BeEquivalentTo(new TestOffset("test", "2"));
+            consumer.StatusInfo.LatestConsumedMessageTimestamp.Should().NotBeNull();
         }
     }
 }

@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -20,8 +19,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
-        public KafkaBroker(
-            IServiceProvider serviceProvider)
+        public KafkaBroker(IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
         }

@@ -13,6 +13,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Topics
 {
+    /// <inheritdoc cref="IInMemoryTopic" />
     public class InMemoryTopic : IInMemoryTopic
     {
         private readonly List<InMemoryPartition> _partitions;
@@ -22,6 +23,13 @@ namespace Silverback.Messaging.Broker.Topics
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _offsets =
             new ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InMemoryTopic"/> class.
+        /// </summary>
+        /// <param name="name">
+        /// The name of the topic.</param>
+        /// <param name="partitions">
+        /// The number of partitions to create. The default is 5.</param>
         public InMemoryTopic(string name, int partitions = 5)
         {
             Name = Check.NotEmpty(name, nameof(name));
@@ -39,11 +47,16 @@ namespace Silverback.Messaging.Broker.Topics
                     .Select(i => new InMemoryPartition(i, this)));
         }
 
+        /// <inheritdoc cref="IInMemoryTopic.Name"/>
         public string Name { get; }
 
-        public Offset Push(int partition, Message<byte[], byte[]> message) =>
+        /// <inheritdoc cref="IInMemoryTopic.Push"/>
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public Offset Push(int partition, Message<byte[]?, byte[]?> message) =>
             _partitions[partition].Add(message);
 
+        /// <inheritdoc cref="IInMemoryTopic.Pull"/>
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public ConsumeResult<byte[]?, byte[]?> Pull(
             string groupId,
             IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
@@ -60,8 +73,11 @@ namespace Silverback.Messaging.Broker.Topics
             }
         }
 
+        /// <inheritdoc cref="IInMemoryTopic.Subscribe"/>
         public void Subscribe(MockedKafkaConsumer consumer)
         {
+            Check.NotNull(consumer, nameof(consumer));
+
             lock (_consumers)
             {
                 _consumers.Add(consumer);
@@ -78,6 +94,7 @@ namespace Silverback.Messaging.Broker.Topics
             RebalancePartitions(consumer.GroupId);
         }
 
+        /// <inheritdoc cref="IInMemoryTopic.Unsubscribe"/>
         public void Unsubscribe(MockedKafkaConsumer consumer)
         {
             Check.NotNull(consumer, nameof(consumer));
@@ -90,20 +107,25 @@ namespace Silverback.Messaging.Broker.Topics
             RebalancePartitions(consumer.GroupId);
         }
 
+        /// <inheritdoc cref="IInMemoryTopic.Commit"/>
         public void Commit(string groupId, IEnumerable<TopicPartitionOffset> partitionOffsets)
         {
+            Check.NotNull(partitionOffsets, nameof(partitionOffsets));
+
             foreach (var partitionOffset in partitionOffsets)
             {
                 _offsets[groupId][partitionOffset.Partition] = partitionOffset.Offset;
             }
         }
 
+        /// <inheritdoc cref="IInMemoryTopic.GetCommittedOffset"/>
         public Offset GetCommittedOffset(Partition partition, string groupId) =>
             _offsets.ContainsKey(groupId)
                 ? _offsets[groupId]
                     .FirstOrDefault(partitionPair => partitionPair.Key == partition).Value
                 : Offset.Unset;
 
+        /// <inheritdoc cref="IInMemoryTopic.GetCommittedOffsets"/>
         public IReadOnlyCollection<TopicPartitionOffset> GetCommittedOffsets(string groupId) =>
             _offsets.ContainsKey(groupId)
                 ? _offsets[groupId]
@@ -111,19 +133,15 @@ namespace Silverback.Messaging.Broker.Topics
                     .ToArray()
                 : Array.Empty<TopicPartitionOffset>();
 
+        /// <inheritdoc cref="IInMemoryTopic.GetCommittedOffsetsCount"/>
         public long GetCommittedOffsetsCount(string groupId) =>
-            GetCommittedOffsets("consumer1").Sum(topicPartitionOffset => Math.Max(0, topicPartitionOffset.Offset));
+            GetCommittedOffsets(groupId).Sum(topicPartitionOffset => Math.Max(0, topicPartitionOffset.Offset));
 
-        public Offset GetLastOffset(Partition partition)
-            => _partitions[partition].LastOffset;
+        /// <inheritdoc cref="IInMemoryTopic.GetLatestOffset"/>
+        public Offset GetLatestOffset(Partition partition)
+            => _partitions[partition].LatestOffset;
 
-        /// <summary>
-        ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
-        ///     processed.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="Task" /> that completes when all messages have been processed.
-        /// </returns>
+        /// <inheritdoc cref="IInMemoryTopic.WaitUntilAllMessagesAreConsumed"/>
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public async Task WaitUntilAllMessagesAreConsumed(TimeSpan? timeout = null)
         {
@@ -133,6 +151,7 @@ namespace Silverback.Messaging.Broker.Topics
             {
                 while (!cancellationTokenSource.IsCancellationRequested)
                 {
+                    // ReSharper disable once InconsistentlySynchronizedField
                     if (_consumers.All(HasFinishedConsuming))
                         return;
 
@@ -145,10 +164,11 @@ namespace Silverback.Messaging.Broker.Topics
             }
         }
 
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private bool TryPull(
             string groupId,
             IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
-            out ConsumeResult<byte[], byte[]>? result)
+            out ConsumeResult<byte[]?, byte[]?>? result)
         {
             if (!_offsets.ContainsKey(groupId))
             {
@@ -199,7 +219,7 @@ namespace Silverback.Messaging.Broker.Topics
             return consumer.Assignment.All(
                 topicPartition =>
                 {
-                    var lastOffset = _partitions[topicPartition.Partition].LastOffset;
+                    var lastOffset = _partitions[topicPartition.Partition].LatestOffset;
                     return lastOffset < 0 || partitionsOffsets[topicPartition.Partition] > lastOffset;
                 });
         }

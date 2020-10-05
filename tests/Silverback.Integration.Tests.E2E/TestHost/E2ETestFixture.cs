@@ -38,7 +38,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost
         }
 
         protected IInMemoryTopic GetTopic(string name) =>
-            Host.ServiceProvider.GetRequiredService<IInMemoryTopicCollection>().GetTopic(name);
+            Host.ServiceProvider.GetRequiredService<IInMemoryTopicCollection>()[name];
 
         protected virtual void Dispose(bool disposing)
         {

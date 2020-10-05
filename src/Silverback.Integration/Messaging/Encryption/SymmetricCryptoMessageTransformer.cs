@@ -73,6 +73,8 @@ namespace Silverback.Messaging.Encryption
             await cryptoStream.FlushAsync().ConfigureAwait(false);
             cryptoStream.Close();
 
+            memoryStream.Position = 0;
+
             return memoryStream;
         }
 

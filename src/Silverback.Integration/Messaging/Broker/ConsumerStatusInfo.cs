@@ -16,9 +16,9 @@ namespace Silverback.Messaging.Broker
 
         public int ConsumedMessagesCount { get; private set; }
 
-        public DateTime? LastConsumedMessageTimestamp { get; private set; }
+        public DateTime? LatestConsumedMessageTimestamp { get; private set; }
 
-        public IOffset? LastConsumedMessageOffset { get; private set; }
+        public IOffset? LatestConsumedMessageOffset { get; private set; }
 
         public void SetConnected() => ChangeStatus(ConsumerStatus.Connected);
 
@@ -30,8 +30,8 @@ namespace Silverback.Messaging.Broker
                 ChangeStatus(ConsumerStatus.Consuming);
 
             ConsumedMessagesCount++;
-            LastConsumedMessageTimestamp = DateTime.Now;
-            LastConsumedMessageOffset = offset;
+            LatestConsumedMessageTimestamp = DateTime.Now;
+            LatestConsumedMessageOffset = offset;
         }
 
         private void ChangeStatus(ConsumerStatus status)

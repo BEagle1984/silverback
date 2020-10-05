@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Broker;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
@@ -13,7 +12,8 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class BrokerOptionsBuilderExtensions
     {
         /// <summary>
-        ///     Registers Apache Kafka as message broker but replaces the Kafka connectivity based on Confluent.Kafka with a mocked in-memory message broker that <b>more or less</b> replicates the Kafka behavior.
+        ///     Registers Apache Kafka as message broker but replaces the Kafka connectivity based on Confluent.Kafka
+        ///     with a mocked in-memory message broker that <b>more or less</b> replicates the Kafka behavior.
         /// </summary>
         /// <param name="brokerOptionsBuilder">
         ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to

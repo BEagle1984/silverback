@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -44,11 +43,17 @@ namespace Silverback.Messaging.Broker
         public void ResetOffsets() => _topics.Values.ForEach(topic => topic.ResetOffset());
 
         /// <summary>
-        ///     Returns a <see cref="Task"/> that completes when all messages routed to the consumers have been processed.
+        ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
+        ///     processed.
         /// </summary>
+        /// <param name="timeout">
+        ///     The maximum waiting time after which the method will return even if the messages haven't been
+        ///     processed. The default if not specified is 5 seconds.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> that completes when all messages have been processed.
         /// </returns>
+        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public async Task WaitUntilAllMessagesAreConsumed(TimeSpan? timeout = null)
         {
             timeout ??= TimeSpan.FromSeconds(5);
@@ -64,7 +69,6 @@ namespace Silverback.Messaging.Broker
 
                     await Task.Delay(50, cancellationTokenSource.Token).ConfigureAwait(false);
                 }
-
             }
             catch (OperationCanceledException)
             {

@@ -114,14 +114,6 @@ namespace Silverback.Util
             return value;
         }
 
-        // TODO: Needed? Used?
-        // [Conditional("DEBUG")]
-        // public static void DebugAssert([DoesNotReturnIf(false)] bool condition, string message)
-        // {
-        //     if (!condition)
-        //         throw new InvalidOperationException($"Check.DebugAssert failed: {message}");
-        // }
-
         [AttributeUsage(AttributeTargets.Parameter)]
         private sealed class ValidatedNotNullAttribute : Attribute
         {

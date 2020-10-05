@@ -226,7 +226,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task RetryAndSkipPolicies_OffsetCommitted()
+        public async Task RetryAndSkipPolicies_StillFailingAfterRetries_OffsetCommitted()
         {
             var tryCount = 0;
 
