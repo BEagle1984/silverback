@@ -3,9 +3,6 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
-using NSubstitute;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
@@ -18,13 +15,6 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
     {
         private readonly ISequenceStore _defaultSequenceStore = new DefaultSequenceStore();
 
-        private readonly IConsumer _consumerSubstitute;
-
-        public ChunkSequenceReaderTests()
-        {
-            _consumerSubstitute = Substitute.For<IConsumer>();
-            _consumerSubstitute.SequenceStore.Returns(_defaultSequenceStore);
-        }
 
         [Fact]
         public async Task CanHandle_Chunk_TrueReturned()
@@ -41,7 +31,10 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 "test",
                 new TestOffset());
 
-            var context = ConsumerPipelineContextHelper.CreateSubstitute(envelope, consumer: _consumerSubstitute);
+            var context = ConsumerPipelineContextHelper.CreateSubstitute(
+                envelope,
+                sequenceStore: _defaultSequenceStore);
+
             var result = await new ChunkSequenceReader().CanHandleAsync(context);
 
             result.Should().BeTrue();
@@ -60,7 +53,10 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 "test",
                 new TestOffset());
 
-            var context = ConsumerPipelineContextHelper.CreateSubstitute(envelope, consumer: _consumerSubstitute);
+            var context = ConsumerPipelineContextHelper.CreateSubstitute(
+                envelope,
+                sequenceStore: _defaultSequenceStore);
+
             var result = await new ChunkSequenceReader().CanHandleAsync(context);
 
             result.Should().BeFalse();
@@ -81,7 +77,10 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 "test",
                 new TestOffset());
 
-            var context = ConsumerPipelineContextHelper.CreateSubstitute(envelope, consumer: _consumerSubstitute);
+            var context = ConsumerPipelineContextHelper.CreateSubstitute(
+                envelope,
+                sequenceStore: _defaultSequenceStore);
+
             var sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
 
             sequence.Should().NotBeNull();
@@ -117,7 +116,10 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var reader = new ChunkSequenceReader();
 
-            var context1 = ConsumerPipelineContextHelper.CreateSubstitute(envelope1, consumer: _consumerSubstitute);
+            var context1 = ConsumerPipelineContextHelper.CreateSubstitute(
+                envelope1,
+                sequenceStore: _defaultSequenceStore);
+
             var sequence1 = await reader.GetSequenceAsync(context1);
 
             sequence1.Should().NotBeNull();
@@ -125,7 +127,10 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
             sequence1!.TotalLength.Should().Be(4);
             sequence1.IsNew.Should().BeTrue();
 
-            var context2 = ConsumerPipelineContextHelper.CreateSubstitute(envelope2, consumer: _consumerSubstitute);
+            var context2 = ConsumerPipelineContextHelper.CreateSubstitute(
+                envelope2,
+                sequenceStore: _defaultSequenceStore);
+
             var sequence2 = await reader.GetSequenceAsync(context2);
 
             sequence2.Should().NotBeNull();
@@ -148,7 +153,10 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 "test",
                 new TestOffset());
 
-            var context = ConsumerPipelineContextHelper.CreateSubstitute(envelope, consumer: _consumerSubstitute);
+            var context = ConsumerPipelineContextHelper.CreateSubstitute(
+                envelope,
+                sequenceStore: _defaultSequenceStore);
+
             var sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
 
             sequence.Should().BeNull();

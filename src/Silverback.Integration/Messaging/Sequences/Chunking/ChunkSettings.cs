@@ -54,6 +54,6 @@ namespace Silverback.Messaging.Sequences.Chunking
 
         /// <inheritdoc cref="object.GetHashCode" />
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
-        public override int GetHashCode() => Size;
+        public override int GetHashCode() => HashCode.Combine(Size);
     }
 }

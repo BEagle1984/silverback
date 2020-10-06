@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
@@ -25,6 +26,7 @@ namespace Silverback.Messaging.Inbound.Transaction
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.TransactionHandler;
 
         /// <inheritdoc cref="IConsumerBehavior.Handle" />
+        [SuppressMessage("", "CA2000", Justification = "ServiceScope is disposed while disposing the Context")]
         public async Task Handle(
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
@@ -43,16 +45,25 @@ namespace Silverback.Messaging.Inbound.Transaction
                 await next(context).ConfigureAwait(false);
 
                 if (context.Sequence == null)
+                {
                     await AwaitProcessingAndCommit(context).ConfigureAwait(false);
-                else if (context.Sequence.IsComplete || (context.ProcessingTask?.IsCompleted ?? false))
-                    await AwaitProcessingAndCommit(context.Sequence.Context).ConfigureAwait(false);
-                else if (context != context.Sequence.Context)
                     context.Dispose();
+                }
+                else if (context.Sequence.IsComplete || (context.ProcessingTask?.IsCompleted ?? false))
+                {
+                    await AwaitProcessingAndCommit(context.Sequence.Context).ConfigureAwait(false);
+                    context.Sequence.Dispose();
+                    context.Dispose();
+                }
+                else if (context != context.Sequence.Context)
+                {
+                    context.Dispose();
+                }
             }
             catch (Exception exception)
             {
                 context.Dispose();
-                context.Sequence?.Context.Dispose();
+                context.Sequence?.Dispose();
 
                 if (!await HandleException(context, exception).ConfigureAwait(false))
                     throw;
@@ -66,7 +77,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                 if (context.ProcessingTask != null)
                     await context.ProcessingTask.ConfigureAwait(false);
 
-                if (!context.Consumer.SequenceStore.HasPendingSequences)
+                if (!context.SequenceStore.HasPendingSequences)
                     await context.TransactionManager.Commit().ConfigureAwait(false);
             }
             catch (Exception exception)

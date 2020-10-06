@@ -30,39 +30,22 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <param name="consumer">
         ///     The <see cref="IConsumer" /> that triggered this pipeline.
         /// </param>
+        /// <param name="sequenceStore">
+        ///     The <see cref="ISequenceStore" /> used to temporary store the pending sequences being consumed.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         public ConsumerPipelineContext(
             IRawInboundEnvelope envelope,
             IConsumer consumer,
+            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider)
         {
             Envelope = Check.NotNull(envelope, nameof(envelope));
             Consumer = Check.NotNull(consumer, nameof(consumer));
+            SequenceStore = Check.NotNull(sequenceStore, nameof(sequenceStore));
             ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ConsumerPipelineContext" /> class.
-        /// </summary>
-        /// <param name="envelope">
-        ///     The envelope containing the message being processed.
-        /// </param>
-        /// <param name="context">
-        ///     The <see cref="ConsumerPipelineContext" /> that was being used until this point in the pipeline. The
-        ///     <see cref="IConsumer" />, <see cref="IServiceProvider" /> and
-        ///     <see cref="IConsumerTransactionManager" /> will be reused.
-        /// </param>
-        public ConsumerPipelineContext(IRawInboundEnvelope envelope, ConsumerPipelineContext context)
-        {
-            Envelope = Check.NotNull(envelope, nameof(envelope));
-
-            Check.NotNull(context, nameof(context));
-
-            Consumer = context.Consumer;
-            ServiceProvider = context.ServiceProvider;
-            _transactionManager = context.TransactionManager;
         }
 
         /// <summary>
@@ -77,9 +60,14 @@ namespace Silverback.Messaging.Broker.Behaviors
         public IReadOnlyCollection<IOffset> Offsets => Sequence?.Offsets ?? new[] { Envelope.Offset };
 
         /// <summary>
+        ///     Gets the <see cref="ISequenceStore" /> used to temporary store the pending sequences being consumed.
+        /// </summary>
+        public ISequenceStore SequenceStore { get; }
+
+        /// <summary>
         ///     Gets a the <see cref="ISequence" /> the current message belongs to.
         /// </summary>
-        public ISequence? Sequence => Envelope?.Sequence;
+        public ISequence? Sequence => Envelope.Sequence;
 
         /// <summary>
         ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the required services.

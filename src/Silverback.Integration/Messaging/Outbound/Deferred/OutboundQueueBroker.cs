@@ -53,7 +53,6 @@ namespace Silverback.Messaging.Outbound.Deferred
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider) =>
             throw new InvalidOperationException(
                 "This IBroker implementation is used to write to outbound queue. " +

@@ -51,13 +51,11 @@ namespace Silverback.Messaging.Broker
         protected override IConsumer InstantiateConsumer(
             RabbitConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider) =>
             new RabbitConsumer(
                 this,
                 endpoint,
                 behaviorsProvider,
-                sequenceStore,
                 _connectionFactory,
                 serviceProvider,
                 serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<RabbitConsumer>>());

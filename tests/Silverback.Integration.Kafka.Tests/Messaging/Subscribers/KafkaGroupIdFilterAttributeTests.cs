@@ -11,6 +11,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
@@ -82,6 +83,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
             public string Name { get; } = string.Empty;
 
             public BatchSettings Batch { get; } = new BatchSettings();
+
+            public SequenceSettings Sequence { get; } = new SequenceSettings();
 
             public IErrorPolicy? ErrorPolicy { get; set; } = null!;
 

@@ -18,13 +18,11 @@ namespace Silverback.Tests.Integration.TestTypes
             TestOtherBroker broker,
             TestOtherConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider)
             : base(
                 broker,
                 endpoint,
                 behaviorsProvider,
-                sequenceStore,
                 serviceProvider,
                 serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<TestOtherConsumer>>())
         {

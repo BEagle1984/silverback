@@ -10,7 +10,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Sequences.Chunking
 {
     /// <summary>
-    ///     Represents a sequence of chunks that form a message.
+    ///     Represents a sequence of chunks that belong to the same message.
     /// </summary>
     public class ChunkSequence : Sequence
     {
@@ -32,8 +32,8 @@ namespace Silverback.Messaging.Sequences.Chunking
         /// <param name="store">
         ///     The <see cref="ISequenceStore" /> that references this sequence.
         /// </param>
-        public ChunkSequence(object sequenceId, int totalLength, ConsumerPipelineContext context, ISequenceStore store)
-            : base(sequenceId, context, store)
+        public ChunkSequence(object sequenceId, int totalLength, ConsumerPipelineContext context)
+            : base(sequenceId, context)
         {
             TotalLength = totalLength;
         }

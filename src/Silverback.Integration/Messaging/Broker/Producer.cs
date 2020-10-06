@@ -63,12 +63,11 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?,bool)" />
         public void Produce(
             object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null,
-            bool disableBehaviors = false) =>
-            Produce(new OutboundEnvelope(message, headers, Endpoint), disableBehaviors);
+            IReadOnlyCollection<MessageHeader>? headers = null) =>
+            Produce(new OutboundEnvelope(message, headers, Endpoint));
 
-        /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope,bool)" />
-        public void Produce(IOutboundEnvelope envelope, bool disableBehaviors = false) =>
+        /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
+        public void Produce(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(
                 () =>
                     ExecutePipeline(
@@ -81,15 +80,14 @@ namespace Silverback.Messaging.Broker
                             return Task.CompletedTask;
                         }));
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,bool)" />
+        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?)" />
         public Task ProduceAsync(
             object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null,
-            bool disableBehaviors = false) =>
-            ProduceAsync(new OutboundEnvelope(message, headers, Endpoint), disableBehaviors);
+            IReadOnlyCollection<MessageHeader>? headers = null) =>
+            ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,bool)" />
-        public async Task ProduceAsync(IOutboundEnvelope envelope, bool disableBehaviors = false) =>
+        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
+        public async Task ProduceAsync(IOutboundEnvelope envelope) =>
             await ExecutePipeline(
                 new ProducerPipelineContext(envelope, this, _serviceProvider),
                 async finalContext =>

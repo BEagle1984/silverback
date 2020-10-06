@@ -112,7 +112,7 @@ namespace Silverback.Messaging.Outbound.Deferred
             IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint)
         {
-            return _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers, true);
+            return _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers); // TODO: Reimplement disableBehaviors (similar effect)
         }
 
         private async Task ProcessQueue(IServiceProvider serviceProvider, CancellationToken stoppingToken)

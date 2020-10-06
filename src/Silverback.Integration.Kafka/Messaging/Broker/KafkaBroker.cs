@@ -41,13 +41,11 @@ namespace Silverback.Messaging.Broker
         protected override IConsumer InstantiateConsumer(
             KafkaConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider) =>
             new KafkaConsumer(
                 this,
                 endpoint,
                 behaviorsProvider,
-                sequenceStore,
                 serviceProvider,
                 serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<KafkaConsumer>>());
     }

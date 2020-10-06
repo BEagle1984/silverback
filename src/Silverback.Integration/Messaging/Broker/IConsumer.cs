@@ -23,11 +23,6 @@ namespace Silverback.Messaging.Broker
         IConsumerEndpoint Endpoint { get; }
 
         /// <summary>
-        ///     Gets the <see cref="ISequenceStore" /> used to temporary store the pending sequences being consumed.
-        /// </summary>
-        ISequenceStore SequenceStore { get; }
-
-        /// <summary>
         ///     Gets a value indicating whether this consumer is connected to the message broker and ready to consume
         ///     messages.
         /// </summary>
@@ -116,5 +111,17 @@ namespace Silverback.Messaging.Broker
         ///     Disconnects and stops consuming.
         /// </summary>
         void Disconnect();
+
+        /// <summary>
+        ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.
+        /// </summary>
+        /// <param name="offset">
+        ///     The offset may determine which store is being used. For example a dedicated sequence store is used per
+        ///     each Kafka partition, since they may be processed concurrently.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISequenceStore" />
+        /// </returns>
+        ISequenceStore GetSequenceStore(IOffset offset);
     }
 }

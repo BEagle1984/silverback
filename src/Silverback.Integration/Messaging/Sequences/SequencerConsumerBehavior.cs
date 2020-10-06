@@ -96,12 +96,15 @@ namespace Silverback.Messaging.Sequences
                     try
                     {
                         await context.ProcessingTask.ConfigureAwait(false);
-                    }
-                    finally
-                    {
+
                         // Abort the uncompleted sequence if the processing task completes, to avoid unreleased locks.
                         if (!context.Sequence.IsComplete)
-                            await context.Sequence.AbortAsync().ConfigureAwait(false);
+                        await context.Sequence.AbortAsync(false).ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (!context.Sequence.IsComplete)
+                            await context.Sequence.AbortAsync(true).ConfigureAwait(false);
                     }
                 });
         }

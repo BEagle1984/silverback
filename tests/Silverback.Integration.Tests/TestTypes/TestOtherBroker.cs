@@ -27,8 +27,7 @@ namespace Silverback.Tests.Integration.TestTypes
         protected override IConsumer InstantiateConsumer(
             TestOtherConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider) =>
-            new TestOtherConsumer(this, endpoint, behaviorsProvider, sequenceStore, serviceProvider);
+            new TestOtherConsumer(this, endpoint, behaviorsProvider, serviceProvider);
     }
 }

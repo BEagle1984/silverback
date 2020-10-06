@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Concurrent;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,11 +9,14 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
 {
-    internal class DefaultSequenceStore : ISequenceStore
+    internal sealed class DefaultSequenceStore : ISequenceStore
     {
         private readonly Dictionary<object, ISequence> _store = new Dictionary<object, ISequence>();
 
-        public bool HasPendingSequences => _store.Any(sequence => !sequence.Value.IsComplete);
+        public bool HasPendingSequences =>
+            _store.Any(sequencePair => sequencePair.Value.IsPending);
+
+        public int Count => _store.Count;
 
         public Task<TSequence?> GetAsync<TSequence>(object sequenceId)
             where TSequence : class, ISequence
@@ -32,7 +35,7 @@ namespace Silverback.Messaging.Sequences
             Check.NotNull(sequence, nameof(sequence));
 
             if (_store.TryGetValue(sequence.SequenceId, out var oldSequence))
-                await oldSequence.AbortAsync().ConfigureAwait(false);
+                await oldSequence.AbortAsync(false).ConfigureAwait(false);
 
             _store[sequence.SequenceId] = sequence;
 
@@ -43,6 +46,19 @@ namespace Silverback.Messaging.Sequences
         {
             _store.Remove(sequenceId);
             return Task.CompletedTask;
+        }
+
+        public IEnumerator<ISequence> GetEnumerator() => _store.Values.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public void Dispose()
+        {
+            foreach (var sequence in _store.Values)
+            {
+                if (sequence.IsPending)
+                    AsyncHelper.RunSynchronously(() => sequence.AbortAsync(false));
+            }
         }
     }
 }

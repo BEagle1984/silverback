@@ -9,6 +9,7 @@ using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Tests.Integration.TestTypes;
 using Xunit;
 
@@ -36,6 +37,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 new ConsumerPipelineContext(
                     envelope,
                     Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
                     Substitute.For<IServiceProvider>()),
                 context =>
                 {
@@ -64,6 +66,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 new ConsumerPipelineContext(
                     envelope,
                     Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
                     Substitute.For<IServiceProvider>()),
                 context =>
                 {
@@ -96,6 +99,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 new ConsumerPipelineContext(
                     envelope,
                     Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
                     Substitute.For<IServiceProvider>()),
                 context =>
                 {

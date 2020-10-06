@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Sequences
@@ -8,7 +10,7 @@ namespace Silverback.Messaging.Sequences
     /// <summary>
     ///     The temporary store for the sequences being consumed.
     /// </summary>
-    public interface ISequenceStore
+    public interface ISequenceStore : IReadOnlyCollection<ISequence>, IDisposable
     {
         /// <summary>
         ///     Gets a value indicating whether there currently are pending sequences in the store.

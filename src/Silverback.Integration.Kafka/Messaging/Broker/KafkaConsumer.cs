@@ -71,10 +71,9 @@ namespace Silverback.Messaging.Broker
             KafkaBroker broker,
             KafkaConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<KafkaConsumer> logger)
-            : base(broker, endpoint, behaviorsProvider, sequenceStore, serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             Check.NotNull(endpoint, nameof(endpoint));
             Check.NotNull(serviceProvider, nameof(serviceProvider));

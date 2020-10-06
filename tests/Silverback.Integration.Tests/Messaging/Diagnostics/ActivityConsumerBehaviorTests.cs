@@ -10,6 +10,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Tests.Integration.TestTypes;
 using Xunit;
 
@@ -40,6 +41,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new ConsumerPipelineContext(
                     rawEnvelope,
                     Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
                     Substitute.For<IServiceProvider>()),
                 _ =>
                 {
@@ -74,6 +76,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new ConsumerPipelineContext(
                     rawEnvelope,
                     Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
                     Substitute.For<IServiceProvider>()),
                 _ =>
                 {

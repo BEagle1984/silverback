@@ -31,13 +31,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
-        /// <param name="disableBehaviors">
-        ///     When set to <c>true</c> the behaviors are not triggered and the message is just produced as-is.
-        /// </param>
-        void Produce(
-            object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null,
-            bool disableBehaviors = false);
+        void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -45,10 +39,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="envelope">
         ///     The envelope containing the message to be delivered.
         /// </param>
-        /// <param name="disableBehaviors">
-        ///     When set to <c>true</c> the behaviors are not triggered and the message is just produced as-is.
-        /// </param>
-        void Produce(IOutboundEnvelope envelope, bool disableBehaviors = false);
+        void Produce(IOutboundEnvelope envelope);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -59,16 +50,10 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
-        /// <param name="disableBehaviors">
-        ///     When set to <c>true</c> the behaviors are not triggered and the message is just produced as-is.
-        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task ProduceAsync(
-            object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null,
-            bool disableBehaviors = false);
+        Task ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -76,12 +61,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="envelope">
         ///     The envelope containing the message to be delivered.
         /// </param>
-        /// <param name="disableBehaviors">
-        ///     When set to <c>true</c> the behaviors are not triggered and the message is just produced as-is.
-        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task ProduceAsync(IOutboundEnvelope envelope, bool disableBehaviors = false);
+        Task ProduceAsync(IOutboundEnvelope envelope);
     }
 }

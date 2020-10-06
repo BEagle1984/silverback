@@ -69,11 +69,10 @@ namespace Silverback.Messaging.Broker
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            ISequenceStore sequenceStore,
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<RabbitConsumer> logger)
-            : base(broker, endpoint, behaviorsProvider, sequenceStore, serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider,  serviceProvider, logger)
         {
             _connectionFactory = connectionFactory;
             _logger = logger;

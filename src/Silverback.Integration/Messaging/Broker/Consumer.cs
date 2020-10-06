@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -25,6 +26,8 @@ namespace Silverback.Messaging.Broker
 
         private readonly ConsumerStatusInfo _statusInfo = new ConsumerStatusInfo();
 
+        private ISequenceStore? _sequenceStore; // TODO: Should be per partition
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
         /// </summary>
@@ -37,9 +40,6 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviorsProvider">
         ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
-        /// <param name="sequenceStore">
-        ///     The <see cref="ISequenceStore"/> to be used to store the pending sequences.
-        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
@@ -50,13 +50,11 @@ namespace Silverback.Messaging.Broker
             IBroker broker,
             IConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Consumer> logger)
         {
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
-            SequenceStore = Check.NotNull(sequenceStore, nameof(sequenceStore));
 
             _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
@@ -70,9 +68,6 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IConsumer.Endpoint" />
         public IConsumerEndpoint Endpoint { get; }
-
-        /// <inheritdoc cref="IConsumer.SequenceStore" />
-        public ISequenceStore SequenceStore { get; }
 
         /// <inheritdoc cref="IConsumer.StatusInfo" />
         public IConsumerStatusInfo StatusInfo => _statusInfo;
@@ -98,6 +93,8 @@ namespace Silverback.Messaging.Broker
             if (IsConnected)
                 return;
 
+            _sequenceStore = _serviceProvider.GetRequiredService<ISequenceStore>();
+
             ConnectCore();
 
             IsConnected = true;
@@ -117,6 +114,12 @@ namespace Silverback.Messaging.Broker
 
             DisconnectCore();
 
+            if (_sequenceStore != null && _sequenceStore.HasPendingSequences)
+            {
+                _sequenceStore?.Dispose();
+                _sequenceStore = null;
+            }
+
             IsConnected = false;
             _statusInfo.SetDisconnected();
 
@@ -125,6 +128,10 @@ namespace Silverback.Messaging.Broker
                 "Disconnected consumer from endpoint {endpoint}.",
                 Endpoint.Name);
         }
+
+        /// <inheritdoc cref="IConsumer.Disconnect" />
+        public virtual ISequenceStore GetSequenceStore(IOffset offset) =>
+            _sequenceStore ?? throw new InvalidOperationException("The sequence store is not initialized.");
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
@@ -166,6 +173,7 @@ namespace Silverback.Messaging.Broker
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        [SuppressMessage("", "CA2000", Justification = "Context is disposed by the TransactionHandler")]
         protected virtual async Task HandleMessage(
             byte[]? message,
             IReadOnlyCollection<MessageHeader> headers,
@@ -183,7 +191,11 @@ namespace Silverback.Messaging.Broker
 
             _statusInfo.RecordConsumedMessage(offset);
 
-            var consumerPipelineContext = new ConsumerPipelineContext(envelope, this, _serviceProvider);
+            var consumerPipelineContext = new ConsumerPipelineContext(
+                envelope,
+                this,
+                GetSequenceStore(offset),
+                _serviceProvider);
 
             await ExecutePipeline(consumerPipelineContext).ConfigureAwait(false);
         }

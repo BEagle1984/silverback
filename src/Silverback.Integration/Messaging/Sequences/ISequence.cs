@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
@@ -10,9 +11,10 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Sequences
 {
     /// <summary>
-    ///     Represents a set of related messages.
+    ///     Represents a set of logically related messages, like the chunks belonging to the same message or the
+    ///     messages in a dataset.
     /// </summary>
-    public interface ISequence
+    public interface ISequence : IDisposable
     {
         /// <summary>
         ///     Gets the identifier that is used to match the consumed messages with their belonging sequence.
@@ -36,6 +38,11 @@ namespace Silverback.Messaging.Sequences
         int? TotalLength { get; }
 
         /// <summary>
+        ///     Gets a value indicating whether the sequence is incomplete and awaiting for new messages to be pushed.
+        /// </summary>
+        bool IsPending { get; }
+
+        /// <summary>
         ///     Gets a value indicating whether all messages belonging to the sequence have been pushed.
         /// </summary>
         bool IsComplete { get; }
@@ -45,6 +52,11 @@ namespace Silverback.Messaging.Sequences
         ///     be pushed.
         /// </summary>
         bool IsAborted { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether the sequence was aborted because the processing has failed.
+        /// </summary>
+        bool ProcessingHasFailed { get; }
 
         /// <summary>
         ///     Gets the offsets of the messages belonging to the sequence.
@@ -77,9 +89,13 @@ namespace Silverback.Messaging.Sequences
         ///     Aborts the sequence processing. Used for example to signal that an exception occurred or the
         ///     enumeration returned prematurely.
         /// </summary>
+        /// <param name="failed">
+        ///     A value indicating whether the sequence processing actually failed (with an exception) or was just
+        ///     aborted. This will determine if the offsets get committed.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task AbortAsync();
+        Task AbortAsync(bool failed);
     }
 }

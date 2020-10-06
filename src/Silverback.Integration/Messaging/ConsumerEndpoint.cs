@@ -3,6 +3,7 @@
 
 using Silverback.Messaging.Batch;
 using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging
 {
@@ -32,6 +33,12 @@ namespace Silverback.Messaging
         public BatchSettings? Batch { get; set; }
 
         /// <summary>
+        ///     Gets or sets the sequence settings. A sequence is a set of related messages, like the chunks belonging
+        ///     to the same message or the messages in a dataset.
+        /// </summary>
+        public SequenceSettings Sequence { get; set; } = new SequenceSettings();
+
+        /// <summary>
         ///     Gets or sets a value indicating whether an exception must be thrown if no subscriber is handling the
         ///     received message. The default is <c>false</c> and it means that the unhandled messages are silently
         ///     discarded.
@@ -45,6 +52,9 @@ namespace Silverback.Messaging
         public override void Validate()
         {
             base.Validate();
+
+            if (Sequence == null)
+                throw new EndpointConfigurationException("Sequence cannot be null.");
 
             if (ErrorPolicy == null)
                 throw new EndpointConfigurationException("ErrorPolicy cannot be null.");

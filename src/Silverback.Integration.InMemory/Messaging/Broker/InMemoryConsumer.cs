@@ -49,10 +49,9 @@ namespace Silverback.Messaging.Broker
             InMemoryBroker broker,
             IConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<InMemoryConsumer> logger)
-            : base(broker, endpoint, behaviorsProvider, sequenceStore, serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             // Block the semaphore to wait for processing until the first message is received
             _semaphoreSlim.Wait();

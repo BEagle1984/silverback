@@ -15,13 +15,13 @@ namespace Silverback.Messaging.Sequences
     /// <inheritdoc cref="ISequence" />
     public abstract class Sequence : ISequence
     {
-        private readonly ISequenceStore _store;
-
         private readonly List<IOffset> _offsets = new List<IOffset>();
 
         private readonly MessageStreamProvider<IRawInboundEnvelope> _streamProvider;
 
         private readonly CancellationTokenSource _abortCancellationTokenSource = new CancellationTokenSource();
+
+        private CancellationTokenSource? _timeoutCancellationTokenSource;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Sequence" /> class.
@@ -36,21 +36,19 @@ namespace Silverback.Messaging.Sequences
         /// <param name="store">
         ///     The <see cref="ISequenceStore" /> that references this sequence.
         /// </param>
-        protected Sequence(object sequenceId, ConsumerPipelineContext context, ISequenceStore store)
+        protected Sequence(object sequenceId, ConsumerPipelineContext context)
         {
             SequenceId = Check.NotNull(sequenceId, nameof(sequenceId));
             Context = Check.NotNull(context, nameof(context));
-            _store = Check.NotNull(store, nameof(store));
 
             _streamProvider = new MessageStreamProvider<IRawInboundEnvelope>();
             Stream = _streamProvider.CreateStream<IRawInboundEnvelope>();
+
+            ResetAbortTimeout();
         }
 
         /// <inheritdoc cref="ISequence.SequenceId" />
         public object SequenceId { get; }
-
-        /// <inheritdoc cref="ISequence.IsNew" />
-        public bool IsNew { get; internal set; } = true;
 
         /// <inheritdoc cref="ISequence.Offsets" />
         public IReadOnlyList<IOffset> Offsets => _offsets;
@@ -61,11 +59,17 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.Context" />
         public ConsumerPipelineContext Context { get; }
 
+        /// <inheritdoc cref="ISequence.IsNew" />
+        public bool IsNew { get; internal set; } = true;
+
         /// <inheritdoc cref="ISequence.Length" />
         public int Length { get; protected set; }
 
         /// <inheritdoc cref="ISequence.TotalLength" />
         public int? TotalLength { get; protected set; }
+
+        /// <inheritdoc cref="ISequence.IsPending" />
+        public bool IsPending => !IsComplete && !IsAborted;
 
         /// <inheritdoc cref="ISequence.IsComplete" />
         public bool IsComplete { get; private set; }
@@ -73,24 +77,15 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.IsAborted" />
         public bool IsAborted { get; private set; }
 
-        /// <inheritdoc cref="ISequence.AbortProcessing" />
-        public async Task AbortAsync()
-        {
-            if (IsComplete || IsAborted)
-                return;
-
-            IsAborted = true;
-            await _streamProvider.AbortAsync().ConfigureAwait(false);
-            await _store.RemoveAsync(SequenceId).ConfigureAwait(false);
-
-            // TODO: Review this!!!
-            _abortCancellationTokenSource.Cancel();
-        }
+        /// <inheritdoc cref="ISequence.ProcessingHasFailed" />
+        public bool ProcessingHasFailed { get; private set; }
 
         /// <inheritdoc cref="ISequence.AddAsync" />
         public virtual async Task AddAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
+
+            ResetAbortTimeout();
 
             if (envelope.Offset != null)
                 _offsets.Add(envelope.Offset);
@@ -122,6 +117,32 @@ namespace Silverback.Messaging.Sequences
             }
         }
 
+        /// <inheritdoc cref="ISequence.AbortAsync" />
+        public async Task AbortAsync(bool failed)
+        {
+            ProcessingHasFailed |= failed;
+
+            if (!IsPending)
+                return;
+
+            IsAborted = true;
+
+            _timeoutCancellationTokenSource?.Cancel();
+
+            await _streamProvider.AbortAsync().ConfigureAwait(false);
+            await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
+
+            // TODO: Review this!!!
+            _abortCancellationTokenSource.Cancel();
+        }
+
+        /// <inheritdoc cref="IDisposable.Dispose" />
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         ///     Marks the sequence as complete, meaning no more messages will be pushed.
         /// </summary>
@@ -133,9 +154,61 @@ namespace Silverback.Messaging.Sequences
         /// </returns>
         protected virtual async Task CompleteAsync(CancellationToken cancellationToken = default)
         {
+            if (!IsPending)
+                return;
+
             IsComplete = true;
+
+            _timeoutCancellationTokenSource?.Cancel();
+
             await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
-            await _store.RemoveAsync(SequenceId).ConfigureAwait(false);
+            await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
+        ///     resources.
+        /// </summary>
+        /// <param name="disposing">
+        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
+        ///     finalizer.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            // TODO: Ensure Dispose is actually called
+            if (disposing)
+            {
+                _streamProvider.Dispose();
+                _abortCancellationTokenSource.Dispose();
+                _timeoutCancellationTokenSource?.Cancel();
+                _timeoutCancellationTokenSource?.Dispose();
+                Context.Dispose();
+            }
+        }
+
+        private void ResetAbortTimeout()
+        {
+            _timeoutCancellationTokenSource?.Cancel();
+            _timeoutCancellationTokenSource = new CancellationTokenSource();
+
+            Task.Run(
+                async () =>
+                {
+                    try
+                    {
+                        var timeout = Context.Envelope.Endpoint.Sequence.Timeout;
+                        await Task.Delay(timeout, _timeoutCancellationTokenSource.Token).ConfigureAwait(false);
+                        await AbortAsync(false).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException ex)
+                    {
+                        // Ignore
+                    }
+                    catch (Exception ex)
+                    {
+                        // TODO: Log
+                    }
+                });
         }
     }
 }
