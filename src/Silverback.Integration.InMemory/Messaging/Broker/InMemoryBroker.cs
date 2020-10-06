@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -95,6 +96,7 @@ namespace Silverback.Messaging.Broker
         protected override IConsumer InstantiateConsumer(
             IConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider)
         {
             Check.NotNull(endpoint, nameof(endpoint));
@@ -104,6 +106,7 @@ namespace Silverback.Messaging.Broker
                 this,
                 endpoint,
                 behaviorsProvider,
+                sequenceStore,
                 serviceProvider,
                 serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<InMemoryConsumer>>());
 

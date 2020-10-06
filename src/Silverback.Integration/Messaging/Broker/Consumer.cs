@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -36,6 +37,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviorsProvider">
         ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
+        /// <param name="sequenceStore">
+        ///     The <see cref="ISequenceStore"/> to be used to store the pending sequences.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
@@ -46,11 +50,13 @@ namespace Silverback.Messaging.Broker
             IBroker broker,
             IConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Consumer> logger)
         {
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
+            SequenceStore = Check.NotNull(sequenceStore, nameof(sequenceStore));
 
             _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
@@ -64,6 +70,9 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IConsumer.Endpoint" />
         public IConsumerEndpoint Endpoint { get; }
+
+        /// <inheritdoc cref="IConsumer.SequenceStore" />
+        public ISequenceStore SequenceStore { get; }
 
         /// <inheritdoc cref="IConsumer.StatusInfo" />
         public IConsumerStatusInfo StatusInfo => _statusInfo;

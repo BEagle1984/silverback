@@ -14,6 +14,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.ConfluentWrappers;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -57,6 +58,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviorsProvider">
         ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
         /// </param>
+        /// <param name="sequenceStore">
+        ///     The <see cref="ISequenceStore"/> to be used to store the pending sequences.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
@@ -67,9 +71,10 @@ namespace Silverback.Messaging.Broker
             KafkaBroker broker,
             KafkaConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<KafkaConsumer> logger)
-            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider, sequenceStore, serviceProvider, logger)
         {
             Check.NotNull(endpoint, nameof(endpoint));
             Check.NotNull(serviceProvider, nameof(serviceProvider));
@@ -123,8 +128,7 @@ namespace Silverback.Messaging.Broker
                     offsetsGroup => offsetsGroup
                         .OrderByDescending(offset => offset.Offset)
                         .First()
-                        .AsTopicPartitionOffset())
-                .ToList();
+                        .AsTopicPartitionOffset());
 
             StoreOffset(
                 lastOffsets

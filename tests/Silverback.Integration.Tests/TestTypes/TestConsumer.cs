@@ -10,6 +10,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -21,11 +22,13 @@ namespace Silverback.Tests.Integration.TestTypes
             TestBroker broker,
             TestConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider)
             : base(
                 broker,
                 endpoint,
                 behaviorsProvider,
+                sequenceStore,
                 serviceProvider,
                 serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<TestConsumer>>())
         {

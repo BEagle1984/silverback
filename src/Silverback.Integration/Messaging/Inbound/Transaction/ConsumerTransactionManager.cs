@@ -69,7 +69,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                 .PublishAsync(new ConsumingCompletedEvent(_context))
                 .ConfigureAwait(false);
 
-            // TODO: At least once is ok?
+            // TODO: At least once is ok? (Consider that the DbContext might have been committed already.
             await _transactionalServices.ForEachAsync(service => service.Commit()).ConfigureAwait(false);
             await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
         }

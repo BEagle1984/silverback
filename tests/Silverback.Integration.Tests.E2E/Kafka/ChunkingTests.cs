@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -305,25 +307,163 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task Chunking_IncompleteJson_NextMessageConsumed()
+        public async Task Chunking_InterleavedJsonChunks_ConsumedAndCommittedOnlyWhenSequencesAreComplete()
+        {
+            var message1 = new TestEventOne { Content = "Message 1" };
+            byte[] rawMessage1 = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                     message1,
+                                     new MessageHeaderCollection(),
+                                     MessageSerializationContext.Empty)).ReadAll() ??
+                                 throw new InvalidOperationException("Serializer returned null");
+
+            var message2 = new TestEventOne { Content = "Message 2" };
+            var rawMessage2 = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                  message2,
+                                  new MessageHeaderCollection(),
+                                  MessageSerializationContext.Empty)).ReadAll() ??
+                              throw new InvalidOperationException("Serializer returned null");
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.ProduceAsync(
+                rawMessage1.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 0, 3));
+            await producer.ProduceAsync(
+                rawMessage1.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, 3));
+            await producer.ProduceAsync(
+                rawMessage2.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 0, 3));
+            await producer.ProduceAsync(
+                rawMessage2.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 1, 3));
+            await producer.ProduceAsync(
+                rawMessage2.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 2, 3));
+
+            await AsyncTestingUtil.WaitAsync(() => SpyBehavior.InboundEnvelopes.Count == 1);
+
+            Subscriber.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Message 2");
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+
+            await producer.ProduceAsync(
+                rawMessage1.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 2, 3));
+
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+
+            Subscriber.InboundEnvelopes.Count.Should().Be(2);
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
+            SpyBehavior.InboundEnvelopes[1].Message.As<TestEventOne>().Content.Should().Be("Message 1");
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
+        }
+
+        [Fact]
+        public async Task Chunking_IncompleteJsonResent_SecondMessageConsumedAndCommitted()
+        {
+            var message = new TestEventOne { Content = "Hello E2E!" };
+            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty)).ReadAll() ??
+                                throw new InvalidOperationException("Serializer returned null");
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.ProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 0, 3));
+            await producer.ProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, 3));
+
+            await AsyncTestingUtil.WaitAsync(() => DefaultTopic.GetCommittedOffsetsCount("consumer1") > 0, 200);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+
+            await producer.ProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 0, 3));
+            await producer.ProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, 3));
+            await producer.ProduceAsync(
+                rawMessage.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 2, 3));
+
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+
+            Subscriber.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
+        }
+
+        [Fact]
+        public async Task Chunking_IncompleteJson_DiscardedAfterTimoutAndCommitted()
         {
             throw new NotImplementedException();
         }
 
         [Fact]
-        public async Task Chunking_IncompleteBinaryFile_NextMessageConsumed()
+        public async Task Chunking_IncompleteBinaryFile_NextMessageConsumedAndCommitted()
         {
             throw new NotImplementedException();
         }
 
         [Fact]
-        public async Task Chunking_JsonMissingFirstChunk_NextMessageConsumed()
+        public async Task Chunking_JsonMissingFirstChunk_NextMessageConsumedAndCommitted()
         {
             throw new NotImplementedException();
         }
 
         [Fact]
-        public async Task Chunking_BinaryFileMissingFirstChunk_NextMessageConsumed()
+        public async Task Chunking_BinaryFileMissingFirstChunk_NextMessageConsumedAndCommitted()
         {
             throw new NotImplementedException();
         }

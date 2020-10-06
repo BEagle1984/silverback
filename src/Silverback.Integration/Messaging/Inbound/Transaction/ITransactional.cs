@@ -7,9 +7,9 @@ namespace Silverback.Messaging.Inbound.Transaction
 {
     /// <summary>
     ///     Declares the <c>Commit</c> and <c>Rollback</c> methods, allowing the service to be enlisted into the
-    ///     consumer transaction (see
-    ///     <see cref="ConsumerTransactionManager" />).
+    ///     consumer transaction (see <see cref="ConsumerTransactionManager" />).
     /// </summary>
+    // TODO: Is this still needed?
     public interface ITransactional
     {
         /// <summary>

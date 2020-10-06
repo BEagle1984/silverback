@@ -66,7 +66,8 @@ namespace Silverback.Messaging.Inbound.Transaction
                 if (context.ProcessingTask != null)
                     await context.ProcessingTask.ConfigureAwait(false);
 
-                await context.TransactionManager.Commit().ConfigureAwait(false);
+                if (!context.Consumer.SequenceStore.HasPendingSequences)
+                    await context.TransactionManager.Commit().ConfigureAwait(false);
             }
             catch (Exception exception)
             {

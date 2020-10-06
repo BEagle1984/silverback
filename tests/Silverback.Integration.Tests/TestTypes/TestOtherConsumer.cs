@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
@@ -17,11 +18,13 @@ namespace Silverback.Tests.Integration.TestTypes
             TestOtherBroker broker,
             TestOtherConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider)
             : base(
                 broker,
                 endpoint,
                 behaviorsProvider,
+                sequenceStore,
                 serviceProvider,
                 serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<TestOtherConsumer>>())
         {

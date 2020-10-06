@@ -13,6 +13,7 @@ using RabbitMQ.Client.Events;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
 {
@@ -51,6 +52,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviorsProvider">
         ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
         /// </param>
+        /// <param name="sequenceStore">
+        ///     The <see cref="ISequenceStore"/> to be used to store the pending sequences.
+        /// </param>
         /// <param name="connectionFactory">
         ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
         ///     endpoint.
@@ -65,10 +69,11 @@ namespace Silverback.Messaging.Broker
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            ISequenceStore sequenceStore,
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<RabbitConsumer> logger)
-            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider, sequenceStore, serviceProvider, logger)
         {
             _connectionFactory = connectionFactory;
             _logger = logger;

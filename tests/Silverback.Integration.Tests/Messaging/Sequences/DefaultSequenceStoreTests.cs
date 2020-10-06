@@ -2,8 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading.Tasks;
 using FluentAssertions;
-using NSubstitute;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
@@ -17,101 +17,106 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
             ConsumerPipelineContextHelper.CreateSubstitute();
 
         [Fact]
-        public void Get_ExistingSequence_SequenceReturned()
+        public async Task Get_ExistingSequence_SequenceReturned()
         {
-            var store = new DefaultSequenceStore<ChunkSequence>();
+            var store = new DefaultSequenceStore();
 
-            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
-            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
-            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
 
-            var result = store.Get("bbb");
+            var result = await store.GetAsync<ChunkSequence>("bbb");
 
             result.Should().NotBeNull();
             result!.SequenceId.Should().Be("bbb");
         }
 
         [Fact]
-        public void Get_NotExistingSequence_NullReturned()
+        public async Task Get_NotExistingSequence_NullReturned()
         {
-            var store = new DefaultSequenceStore<ChunkSequence>();
+            var store = new DefaultSequenceStore();
 
-            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
-            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
-            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
 
-            var result = store.Get("123");
+            var result = await store.GetAsync<ChunkSequence>("123");
 
             result.Should().BeNull();
         }
 
         [Fact]
-        public void Add_NewSequence_SequenceAddedAndReturned()
+        public async Task Add_NewSequence_SequenceAddedAndReturned()
         {
-            var store = new DefaultSequenceStore<ChunkSequence>();
+            var store = new DefaultSequenceStore();
 
             var newSequence = new ChunkSequence("abc", 10, _consumerPipelineContext, store);
-            var result = store.Add(newSequence);
+            var result = await store.AddAsync(newSequence);
 
             result.Should().BeSameAs(newSequence);
-            store.Get("abc").Should().BeSameAs(newSequence);
+            (await store.GetAsync<ChunkSequence>("abc")).Should().BeSameAs(newSequence);
         }
 
         [Fact]
-        public void Add_ExistingSequence_ExceptionThrown()
+        public async Task Add_ExistingSequence_SequenceAbortedAndReplaced()
         {
-            var store = new DefaultSequenceStore<ChunkSequence>();
+            var store = new DefaultSequenceStore();
 
-            store.Add(new ChunkSequence("abc", 10, _consumerPipelineContext, store));
+            var originalSequence = new ChunkSequence("abc", 10, _consumerPipelineContext, store);
+            await store.AddAsync(originalSequence);
 
-            Action act = () => store.Add(new ChunkSequence("abc", 10, _consumerPipelineContext, store));
-            act.Should().Throw<InvalidOperationException>();
+            var newSequence = new ChunkSequence("abc", 10, _consumerPipelineContext, store);
+            await store.AddAsync(newSequence);
+
+            originalSequence.IsAborted.Should().BeTrue();
+
+            (await store.GetAsync<ChunkSequence>("abc")).Should().BeSameAs(newSequence);
         }
 
         [Fact]
-        public void AddAndGet_Sequence_IsNewFlagAutomaticallyHandled()
+        public async Task AddAndGet_Sequence_IsNewFlagAutomaticallyHandled()
         {
-            var store = new DefaultSequenceStore<ChunkSequence>();
+            var store = new DefaultSequenceStore();
 
-            var sequence = store.Add(new ChunkSequence("abc", 10, _consumerPipelineContext, store));
+            var sequence = await store.AddAsync(new ChunkSequence("abc", 10, _consumerPipelineContext, store));
 
             sequence.IsNew.Should().BeTrue();
 
-            sequence = store.Get("abc");
+            sequence = await store.GetAsync<ChunkSequence>("abc");
 
             sequence!.IsNew.Should().BeFalse();
         }
 
         [Fact]
-        public void Remove_ExistingSequence_SequenceRemoved()
+        public async Task Remove_ExistingSequence_SequenceRemoved()
         {
-            var store = new DefaultSequenceStore<ChunkSequence>();
+            var store = new DefaultSequenceStore();
 
-            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
-            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
-            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
 
-            store.Remove("bbb");
+            await store.RemoveAsync("bbb");
 
-            store.Get("bbb").Should().BeNull();
-            store.Get("aaa").Should().NotBeNull();
-            store.Get("ccc").Should().NotBeNull();
+            (await store.GetAsync<ChunkSequence>("bbb")).Should().BeNull();
+            (await store.GetAsync<ChunkSequence>("aaa")).Should().NotBeNull();
+            (await store.GetAsync<ChunkSequence>("ccc")).Should().NotBeNull();
         }
 
         [Fact]
-        public void Remove_NotExistingSequence_NoExceptionThrown()
+        public async Task Remove_NotExistingSequence_NoExceptionThrown()
         {
-            var store = new DefaultSequenceStore<ChunkSequence>();
+            var store = new DefaultSequenceStore();
 
-            store.Add(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
-            store.Add(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
-            store.Add(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("aaa", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("bbb", 10, _consumerPipelineContext, store));
+            await store.AddAsync(new ChunkSequence("ccc", 10, _consumerPipelineContext, store));
 
-            store.Remove("123");
+            await store.RemoveAsync("123");
 
-            store.Get("aaa").Should().NotBeNull();
-            store.Get("bbb").Should().NotBeNull();
-            store.Get("ccc").Should().NotBeNull();
+            (await store.GetAsync<ChunkSequence>("aaa")).Should().NotBeNull();
+            (await store.GetAsync<ChunkSequence>("bbb")).Should().NotBeNull();
+            (await store.GetAsync<ChunkSequence>("ccc")).Should().NotBeNull();
         }
     }
 }

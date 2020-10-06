@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -13,30 +14,18 @@ namespace Silverback.Messaging.Sequences.Chunking
     /// </summary>
     public class ChunkSequenceReader : ISequenceReader
     {
-        // TODO: The store should be scoped to the topic (sequenceId may not be globally unique)
-        private readonly ISequenceStore<ChunkSequence> _sequenceStore;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ChunkSequenceReader"/> class.
-        /// </summary>
-        /// <param name="sequenceStore">
-        ///    The <see cref="ISequenceStore{ChunkSequence}"/> to store the temporary sequences.
-        /// </param>
-        public ChunkSequenceReader(ISequenceStore<ChunkSequence> sequenceStore)
-        {
-            _sequenceStore = sequenceStore;
-        }
-
-        /// <inheritdoc cref="ISequenceReader.CanHandle"/>
-        public bool CanHandle(ConsumerPipelineContext context)
+        /// <inheritdoc cref="ISequenceReader.CanHandleAsync"/>
+        public Task<bool> CanHandleAsync(ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 
-            return context.Envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex);
+            var canHandle = context.Envelope.Headers.Contains(DefaultMessageHeaders.ChunkIndex);
+
+            return Task.FromResult(canHandle);
         }
 
-        /// <inheritdoc cref="ISequenceReader.GetSequence"/>
-        public ISequence? GetSequence(ConsumerPipelineContext context)
+        /// <inheritdoc cref="ISequenceReader.GetSequenceAsync"/>
+        public async Task<ISequence?> GetSequenceAsync(ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 
@@ -54,14 +43,16 @@ namespace Silverback.Messaging.Sequences.Chunking
 
             if (chunkIndex == 0)
             {
-                sequence = _sequenceStore.Add(CreateNewSequence(messageId, context, _sequenceStore));
+                sequence = CreateNewSequence(messageId, context, context.Consumer.SequenceStore);
+                await context.Consumer.SequenceStore.AddAsync(sequence).ConfigureAwait(false);
 
                 // Replace the envelope with the stream that will be pushed with all the chunks.
                 context.Envelope = context.Envelope.CloneReplacingStream(new ChunkStream(sequence.Stream));
             }
             else
             {
-                sequence = _sequenceStore.Get(messageId);
+                sequence = await context.Consumer.SequenceStore
+                    .GetAsync<ChunkSequence>(messageId).ConfigureAwait(false);
             }
 
             // Skip the message if a sequence cannot be found. It probably means that the consumer started in the

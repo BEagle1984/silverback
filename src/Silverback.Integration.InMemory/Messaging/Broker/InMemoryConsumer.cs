@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
 {
@@ -35,6 +36,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviorsProvider">
         ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
+        /// <param name="sequenceStore">
+        ///     The <see cref="ISequenceStore"/> to be used to store the pending sequences.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
@@ -45,9 +49,10 @@ namespace Silverback.Messaging.Broker
             InMemoryBroker broker,
             IConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<InMemoryConsumer> logger)
-            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider, sequenceStore, serviceProvider, logger)
         {
             // Block the semaphore to wait for processing until the first message is received
             _semaphoreSlim.Wait();

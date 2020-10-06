@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -144,6 +145,7 @@ namespace Silverback.Messaging.Broker
             var consumer = InstantiateConsumer(
                 (TConsumerEndpoint)endpoint,
                 _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
+                _serviceProvider.GetRequiredService<ISequenceStore>(),
                 _serviceProvider);
 
             _consumers.Add(consumer);
@@ -237,6 +239,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviorsProvider">
         ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
+        /// <param name="sequenceStore">
+        ///     The <see cref="ISequenceStore"/> to be used to store the pending sequences.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
         ///     forwarded to the consumer.
@@ -247,6 +252,7 @@ namespace Silverback.Messaging.Broker
         protected abstract IConsumer InstantiateConsumer(
             TConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider);
 
         /// <summary>

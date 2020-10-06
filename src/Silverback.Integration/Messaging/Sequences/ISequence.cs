@@ -65,7 +65,9 @@ namespace Silverback.Messaging.Sequences
         /// <summary>
         ///     Adds the message to the sequence.
         /// </summary>
-        /// <param name="envelope">The envelope to be added to the sequence.</param>
+        /// <param name="envelope">
+        ///     The envelope to be added to the sequence.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -75,6 +77,9 @@ namespace Silverback.Messaging.Sequences
         ///     Aborts the sequence processing. Used for example to signal that an exception occurred or the
         ///     enumeration returned prematurely.
         /// </summary>
-        void AbortProcessing();
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task AbortAsync();
     }
 }

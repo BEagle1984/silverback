@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
 {
@@ -30,6 +31,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviorsProvider">
         ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
+        /// <param name="sequenceStore">
+        ///     The <see cref="ISequenceStore"/> to be used to store the pending sequences.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
@@ -40,9 +44,10 @@ namespace Silverback.Messaging.Broker
             TBroker broker,
             TEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
-            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider, sequenceStore, serviceProvider, logger)
         {
         }
 

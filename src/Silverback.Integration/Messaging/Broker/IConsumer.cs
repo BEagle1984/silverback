@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
 {
@@ -20,6 +21,11 @@ namespace Silverback.Messaging.Broker
         ///     Gets the <see cref="IConsumerEndpoint" /> representing the endpoint that is being consumed.
         /// </summary>
         IConsumerEndpoint Endpoint { get; }
+
+        /// <summary>
+        ///     Gets the <see cref="ISequenceStore" /> used to temporary store the pending sequences being consumed.
+        /// </summary>
+        ISequenceStore SequenceStore { get; }
 
         /// <summary>
         ///     Gets a value indicating whether this consumer is connected to the message broker and ready to consume

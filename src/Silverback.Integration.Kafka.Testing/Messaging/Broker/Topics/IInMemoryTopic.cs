@@ -135,7 +135,7 @@ namespace Silverback.Messaging.Broker.Topics
 
         /// <summary>
         ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
-        ///     processed.
+        ///     processed and committed.
         /// </summary>
         /// <param name="timeout">
         ///     The timeout after which the method will return even if the messages haven't been

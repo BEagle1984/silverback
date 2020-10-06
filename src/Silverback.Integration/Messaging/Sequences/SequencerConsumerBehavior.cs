@@ -46,7 +46,7 @@ namespace Silverback.Messaging.Sequences
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            var sequenceReader = _sequenceReaders.FirstOrDefault(reader => reader.CanHandle(context));
+            var sequenceReader = await GetSequenceReader(context).ConfigureAwait(false);
 
             if (sequenceReader == null)
             {
@@ -56,7 +56,7 @@ namespace Silverback.Messaging.Sequences
 
             // Store the original envelope in case it gets replaced in the GetSequence method
             var originalEnvelope = context.Envelope;
-            var sequence = sequenceReader.GetSequence(context);
+            var sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
 
             if (sequence != null)
             {
@@ -71,6 +71,18 @@ namespace Silverback.Messaging.Sequences
 
                 await sequence.AddAsync(originalEnvelope).ConfigureAwait(false);
             }
+        }
+
+        // TODO: Implement FirstOrDefaultAsync
+        private async Task<ISequenceReader?> GetSequenceReader(ConsumerPipelineContext context)
+        {
+            foreach (var reader in _sequenceReaders)
+            {
+                if (await reader.CanHandleAsync(context).ConfigureAwait(false))
+                    return reader;
+            }
+
+            return null;
         }
 
         private void CheckPrematureCompletion(ConsumerPipelineContext context)
@@ -89,7 +101,7 @@ namespace Silverback.Messaging.Sequences
                     {
                         // Abort the uncompleted sequence if the processing task completes, to avoid unreleased locks.
                         if (!context.Sequence.IsComplete)
-                            context.Sequence.AbortProcessing();
+                            await context.Sequence.AbortAsync().ConfigureAwait(false);
                     }
                 });
         }

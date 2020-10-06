@@ -5,6 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
 {
@@ -40,11 +41,13 @@ namespace Silverback.Messaging.Broker
         protected override IConsumer InstantiateConsumer(
             KafkaConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider) =>
             new KafkaConsumer(
                 this,
                 endpoint,
                 behaviorsProvider,
+                sequenceStore,
                 serviceProvider,
                 serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<KafkaConsumer>>());
     }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
@@ -26,7 +27,8 @@ namespace Silverback.Tests.Integration.TestTypes
         protected override IConsumer InstantiateConsumer(
             TestOtherConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            ISequenceStore sequenceStore,
             IServiceProvider serviceProvider) =>
-            new TestOtherConsumer(this, endpoint, behaviorsProvider, serviceProvider);
+            new TestOtherConsumer(this, endpoint, behaviorsProvider, sequenceStore, serviceProvider);
     }
 }

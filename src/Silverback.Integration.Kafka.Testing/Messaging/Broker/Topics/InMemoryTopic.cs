@@ -20,16 +20,18 @@ namespace Silverback.Messaging.Broker.Topics
 
         private readonly List<MockedKafkaConsumer> _consumers = new List<MockedKafkaConsumer>();
 
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _offsets =
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _committedOffsets =
             new ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InMemoryTopic"/> class.
+        ///     Initializes a new instance of the <see cref="InMemoryTopic" /> class.
         /// </summary>
         /// <param name="name">
-        /// The name of the topic.</param>
+        ///     The name of the topic.
+        /// </param>
         /// <param name="partitions">
-        /// The number of partitions to create. The default is 5.</param>
+        ///     The number of partitions to create. The default is 5.
+        /// </param>
         public InMemoryTopic(string name, int partitions = 5)
         {
             Name = Check.NotEmpty(name, nameof(name));
@@ -47,15 +49,15 @@ namespace Silverback.Messaging.Broker.Topics
                     .Select(i => new InMemoryPartition(i, this)));
         }
 
-        /// <inheritdoc cref="IInMemoryTopic.Name"/>
+        /// <inheritdoc cref="IInMemoryTopic.Name" />
         public string Name { get; }
 
-        /// <inheritdoc cref="IInMemoryTopic.Push"/>
+        /// <inheritdoc cref="IInMemoryTopic.Push" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Offset Push(int partition, Message<byte[]?, byte[]?> message) =>
             _partitions[partition].Add(message);
 
-        /// <inheritdoc cref="IInMemoryTopic.Pull"/>
+        /// <inheritdoc cref="IInMemoryTopic.Pull" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public ConsumeResult<byte[]?, byte[]?> Pull(
             string groupId,
@@ -73,7 +75,7 @@ namespace Silverback.Messaging.Broker.Topics
             }
         }
 
-        /// <inheritdoc cref="IInMemoryTopic.Subscribe"/>
+        /// <inheritdoc cref="IInMemoryTopic.Subscribe" />
         public void Subscribe(MockedKafkaConsumer consumer)
         {
             Check.NotNull(consumer, nameof(consumer));
@@ -82,9 +84,9 @@ namespace Silverback.Messaging.Broker.Topics
             {
                 _consumers.Add(consumer);
 
-                if (!_offsets.ContainsKey(consumer.GroupId))
+                if (!_committedOffsets.ContainsKey(consumer.GroupId))
                 {
-                    _offsets[consumer.GroupId] = new ConcurrentDictionary<Partition, Offset>(
+                    _committedOffsets[consumer.GroupId] = new ConcurrentDictionary<Partition, Offset>(
                         _partitions.Select(
                             partition =>
                                 new KeyValuePair<Partition, Offset>(partition.Partition.Value, Offset.Unset)));
@@ -94,7 +96,7 @@ namespace Silverback.Messaging.Broker.Topics
             RebalancePartitions(consumer.GroupId);
         }
 
-        /// <inheritdoc cref="IInMemoryTopic.Unsubscribe"/>
+        /// <inheritdoc cref="IInMemoryTopic.Unsubscribe" />
         public void Unsubscribe(MockedKafkaConsumer consumer)
         {
             Check.NotNull(consumer, nameof(consumer));
@@ -107,41 +109,41 @@ namespace Silverback.Messaging.Broker.Topics
             RebalancePartitions(consumer.GroupId);
         }
 
-        /// <inheritdoc cref="IInMemoryTopic.Commit"/>
+        /// <inheritdoc cref="IInMemoryTopic.Commit" />
         public void Commit(string groupId, IEnumerable<TopicPartitionOffset> partitionOffsets)
         {
             Check.NotNull(partitionOffsets, nameof(partitionOffsets));
 
             foreach (var partitionOffset in partitionOffsets)
             {
-                _offsets[groupId][partitionOffset.Partition] = partitionOffset.Offset;
+                _committedOffsets[groupId][partitionOffset.Partition] = partitionOffset.Offset;
             }
         }
 
-        /// <inheritdoc cref="IInMemoryTopic.GetCommittedOffset"/>
+        /// <inheritdoc cref="IInMemoryTopic.GetCommittedOffset" />
         public Offset GetCommittedOffset(Partition partition, string groupId) =>
-            _offsets.ContainsKey(groupId)
-                ? _offsets[groupId]
+            _committedOffsets.ContainsKey(groupId)
+                ? _committedOffsets[groupId]
                     .FirstOrDefault(partitionPair => partitionPair.Key == partition).Value
                 : Offset.Unset;
 
-        /// <inheritdoc cref="IInMemoryTopic.GetCommittedOffsets"/>
+        /// <inheritdoc cref="IInMemoryTopic.GetCommittedOffsets" />
         public IReadOnlyCollection<TopicPartitionOffset> GetCommittedOffsets(string groupId) =>
-            _offsets.ContainsKey(groupId)
-                ? _offsets[groupId]
+            _committedOffsets.ContainsKey(groupId)
+                ? _committedOffsets[groupId]
                     .Select(partitionPair => new TopicPartitionOffset(Name, partitionPair.Key, partitionPair.Value))
                     .ToArray()
                 : Array.Empty<TopicPartitionOffset>();
 
-        /// <inheritdoc cref="IInMemoryTopic.GetCommittedOffsetsCount"/>
+        /// <inheritdoc cref="IInMemoryTopic.GetCommittedOffsetsCount" />
         public long GetCommittedOffsetsCount(string groupId) =>
             GetCommittedOffsets(groupId).Sum(topicPartitionOffset => Math.Max(0, topicPartitionOffset.Offset));
 
-        /// <inheritdoc cref="IInMemoryTopic.GetLatestOffset"/>
+        /// <inheritdoc cref="IInMemoryTopic.GetLatestOffset" />
         public Offset GetLatestOffset(Partition partition)
             => _partitions[partition].LatestOffset;
 
-        /// <inheritdoc cref="IInMemoryTopic.WaitUntilAllMessagesAreConsumed"/>
+        /// <inheritdoc cref="IInMemoryTopic.WaitUntilAllMessagesAreConsumed" />
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public async Task WaitUntilAllMessagesAreConsumed(TimeSpan? timeout = null)
         {
@@ -170,7 +172,7 @@ namespace Silverback.Messaging.Broker.Topics
             IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
             out ConsumeResult<byte[]?, byte[]?>? result)
         {
-            if (!_offsets.ContainsKey(groupId))
+            if (!_committedOffsets.ContainsKey(groupId))
             {
                 result = null;
                 return false;
@@ -214,7 +216,7 @@ namespace Silverback.Messaging.Broker.Topics
             if (consumer.Disposed)
                 return true;
 
-            var partitionsOffsets = _offsets[consumer.GroupId];
+            var partitionsOffsets = _committedOffsets[consumer.GroupId];
 
             return consumer.Assignment.All(
                 topicPartition =>

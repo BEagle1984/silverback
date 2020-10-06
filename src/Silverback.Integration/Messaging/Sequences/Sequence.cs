@@ -74,13 +74,14 @@ namespace Silverback.Messaging.Sequences
         public bool IsAborted { get; private set; }
 
         /// <inheritdoc cref="ISequence.AbortProcessing" />
-        public void AbortProcessing()
+        public async Task AbortAsync()
         {
             if (IsComplete || IsAborted)
                 return;
 
             IsAborted = true;
-            _store.Remove(SequenceId);
+            await _streamProvider.AbortAsync().ConfigureAwait(false);
+            await _store.RemoveAsync(SequenceId).ConfigureAwait(false);
 
             // TODO: Review this!!!
             _abortCancellationTokenSource.Cancel();
@@ -134,7 +135,7 @@ namespace Silverback.Messaging.Sequences
         {
             IsComplete = true;
             await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
-            _store.Remove(SequenceId);
+            await _store.RemoveAsync(SequenceId).ConfigureAwait(false);
         }
     }
 }

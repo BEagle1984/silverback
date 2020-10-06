@@ -82,9 +82,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 // Pipeline - Sequences (Chunking, ...)
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<SequencerProducerBehavior>()
-                    .AddTransientBrokerBehavior<SequencerConsumerBehavior>()
+                    .AddSingletonBrokerBehavior<SequencerConsumerBehavior>()
                     .Services
-                    .AddTransient(typeof(ISequenceStore<>), typeof(DefaultSequenceStore<>))
+                    .AddTransient(typeof(ISequenceStore), typeof(DefaultSequenceStore))
                     .AddSingleton<ISequenceWriter, ChunkSequenceWriter>()
                     .AddSingleton<ISequenceReader, ChunkSequenceReader>();
                 // TODO: Create AddSingletonSequenceReader and AddSingletonSequenceWriter?
