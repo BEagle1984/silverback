@@ -18,8 +18,6 @@ namespace Silverback.Messaging.Outbound.Routing
     /// </summary>
     public class ProduceBehavior : IBehavior, ISorted
     {
-        private readonly IReadOnlyCollection<IOutboundConnector> _outboundConnectors;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProduceBehavior" /> class.
         /// </summary>
@@ -28,7 +26,6 @@ namespace Silverback.Messaging.Outbound.Routing
         /// </param>
         public ProduceBehavior(IServiceProvider serviceProvider)
         {
-            _outboundConnectors = serviceProvider.GetServices<IOutboundConnector>().ToList();
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />

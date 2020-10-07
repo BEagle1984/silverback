@@ -15,11 +15,12 @@ using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 
 namespace Silverback.Messaging.Outbound.Deferred
 {
-    /// <inheritdoc cref="IOutboundQueueWorker" />
-    public class OutboundQueueWorker : IOutboundQueueWorker
+    /// <inheritdoc cref="IOutboxWorker" />
+    public class OutboxWorker : IOutboxWorker
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -27,14 +28,14 @@ namespace Silverback.Messaging.Outbound.Deferred
 
         private readonly IOutboundRoutingConfiguration _routingConfiguration;
 
-        private readonly ISilverbackIntegrationLogger<OutboundQueueWorker> _logger;
+        private readonly ISilverbackIntegrationLogger<OutboxWorker> _logger;
 
         private readonly int _readPackageSize;
 
         private readonly bool _enforceMessageOrder;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="OutboundQueueWorker" /> class.
+        ///     Initializes a new instance of the <see cref="OutboxWorker" /> class.
         /// </summary>
         /// <param name="serviceScopeFactory">
         ///     The <see cref="IServiceScopeFactory" /> used to resolve the scoped types.
@@ -57,11 +58,11 @@ namespace Silverback.Messaging.Outbound.Deferred
         /// <param name="readPackageSize">
         ///     The number of messages to be loaded from the queue at once.
         /// </param>
-        public OutboundQueueWorker(
+        public OutboxWorker(
             IServiceScopeFactory serviceScopeFactory,
             IBrokerCollection brokerCollection,
             IOutboundRoutingConfiguration routingConfiguration,
-            ISilverbackIntegrationLogger<OutboundQueueWorker> logger,
+            ISilverbackIntegrationLogger<OutboxWorker> logger,
             bool enforceMessageOrder,
             int readPackageSize)
         {
@@ -73,14 +74,14 @@ namespace Silverback.Messaging.Outbound.Deferred
             _routingConfiguration = routingConfiguration;
         }
 
-        /// <inheritdoc cref="IOutboundQueueWorker.ProcessQueue" />
+        /// <inheritdoc cref="IOutboxWorker.ProcessQueueAsync" />
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        public async Task ProcessQueue(CancellationToken stoppingToken)
+        public async Task ProcessQueueAsync(CancellationToken stoppingToken)
         {
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                await ProcessQueue(scope.ServiceProvider, stoppingToken).ConfigureAwait(false);
+                await ProcessQueueAsync(scope.ServiceProvider, stoppingToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -107,18 +108,16 @@ namespace Silverback.Messaging.Outbound.Deferred
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        protected virtual Task ProduceMessage(
+        protected virtual Task ProduceMessageAsync(
             byte[]? content,
             IReadOnlyCollection<MessageHeader>? headers,
-            IProducerEndpoint endpoint)
-        {
-            return _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers); // TODO: Reimplement disableBehaviors (similar effect)
-        }
+            IProducerEndpoint endpoint) =>
+            _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers);
 
-        private async Task ProcessQueue(IServiceProvider serviceProvider, CancellationToken stoppingToken)
+        private async Task ProcessQueueAsync(IServiceProvider serviceProvider, CancellationToken stoppingToken)
         {
             _logger.LogTrace(
-                IntegrationEventIds.ReadingEnqueuedOutboundMessages,
+                IntegrationEventIds.ReadingMessagesFromOutbox,
                 "Reading outbound messages from queue (limit: {readPackageSize}).",
                 _readPackageSize);
 
@@ -126,7 +125,7 @@ namespace Silverback.Messaging.Outbound.Deferred
             var messages = (await queue.Dequeue(_readPackageSize).ConfigureAwait(false)).ToList();
 
             if (messages.Count == 0)
-                _logger.LogTrace(IntegrationEventIds.OutboundQueueEmpty, "The outbound queue is empty.");
+                _logger.LogTrace(IntegrationEventIds.OutboxEmpty, "The outbound queue is empty.");
 
             for (var i = 0; i < messages.Count; i++)
             {
@@ -135,14 +134,14 @@ namespace Silverback.Messaging.Outbound.Deferred
                     "Processing message {currentMessageIndex} of {totalMessages}.",
                     i + 1,
                     messages.Count);
-                await ProcessMessage(messages[i], queue, serviceProvider).ConfigureAwait(false);
+                await ProcessMessageAsync(messages[i], queue, serviceProvider).ConfigureAwait(false);
 
                 if (stoppingToken.IsCancellationRequested)
                     break;
             }
         }
 
-        private async Task ProcessMessage(
+        private async Task ProcessMessageAsync(
             QueuedMessage message,
             IOutboundQueueReader queue,
             IServiceProvider serviceProvider)
@@ -150,7 +149,7 @@ namespace Silverback.Messaging.Outbound.Deferred
             try
             {
                 var endpoint = GetTargetEndpoint(message.MessageType, message.EndpointName, serviceProvider);
-                await ProduceMessage(message.Content, message.Headers, endpoint).ConfigureAwait(false);
+                await ProduceMessageAsync(message.Content, message.Headers, endpoint).ConfigureAwait(false);
 
                 await queue.Acknowledge(message).ConfigureAwait(false);
             }
@@ -159,7 +158,7 @@ namespace Silverback.Messaging.Outbound.Deferred
                 _logger.LogErrorWithMessageInfo(
                     IntegrationEventIds.ErrorProducingEnqueuedMessage,
                     ex,
-                    "Failed to produce the enqueued message.",
+                    "Failed to produce the message in the outbox.",
                     new OutboundEnvelope(message.Content, message.Headers, new LoggingEndpoint(message.EndpointName)));
 
                 await queue.Retry(message).ConfigureAwait(false);

@@ -6,11 +6,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Outbound.Deferred;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
     /// <summary>
-    ///     Exposes the methods to read from the outbound queue. Used by the <see cref="IOutboundQueueWorker" />
+    ///     Exposes the methods to read from the outbound queue. Used by the <see cref="IOutboxWorker" />
     ///     .
     /// </summary>
     public interface IOutboundQueueReader

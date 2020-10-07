@@ -11,10 +11,12 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     public interface IErrorPolicy
     {
         /// <summary>
-        ///     Returns the actual implementation of the error policy, built using the provided
+        ///     Returns the actual error policy implementation, built using the provided
         ///     <see cref="IServiceProvider" />.
         /// </summary>
-        /// <param name="serviceProvider">The <see cref="IServiceProvider" /> to be used to build the error policy.</param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to build the error policy.
+        /// </param>
         /// <returns>
         ///     An instance of <see cref="IErrorPolicyImplementation" /> that can be used to handle the processing
         ///     error.

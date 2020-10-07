@@ -1,8 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Threading.Tasks;
-using Silverback.Messaging.Messages;
+using System;
 
 namespace Silverback.Messaging.Outbound
 {
@@ -12,14 +11,14 @@ namespace Silverback.Messaging.Outbound
     public interface IProduceStrategy
     {
         /// <summary>
-        ///     Produces the message in the specified envelope.
+        ///     Returns the actual strategy implementation, built using the provided  <see cref="IServiceProvider" />.
         /// </summary>
-        /// <param name="envelope">
-        ///     The <see cref="IOutboundEnvelope" /> containing the message to be produced.
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to build the strategy.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
+        ///     An instance of <see cref="IProduceStrategyImplementation" /> that can be used to produce the messages.
         /// </returns>
-        Task ProduceAsync(IOutboundEnvelope envelope);
+        IProduceStrategyImplementation Build(IServiceProvider serviceProvider);
     }
 }

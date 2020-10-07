@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Silverback.Background;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 
 namespace Silverback.Messaging.Outbound.Deferred
 {
@@ -15,7 +16,7 @@ namespace Silverback.Messaging.Outbound.Deferred
     /// </summary>
     public class OutboundQueueWorkerService : RecurringDistributedBackgroundService
     {
-        private readonly IOutboundQueueWorker _outboundQueueWorker;
+        private readonly IOutboxWorker _outboundQueueWorker;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="OutboundQueueWorkerService" /> class.
@@ -24,7 +25,7 @@ namespace Silverback.Messaging.Outbound.Deferred
         ///     The interval between each execution.
         /// </param>
         /// <param name="outboundQueueWorker">
-        ///     The <see cref="IOutboundQueueWorker" /> implementation.
+        ///     The <see cref="IOutboxWorker" /> implementation.
         /// </param>
         /// <param name="distributedLockSettings">
         ///     Customizes the lock mechanism settings.
@@ -37,7 +38,7 @@ namespace Silverback.Messaging.Outbound.Deferred
         /// </param>
         public OutboundQueueWorkerService(
             TimeSpan interval,
-            IOutboundQueueWorker outboundQueueWorker,
+            IOutboxWorker outboundQueueWorker,
             DistributedLockSettings distributedLockSettings,
             IDistributedLockManager distributedLockManager,
             ISilverbackLogger<OutboundQueueWorkerService> logger)
@@ -47,7 +48,7 @@ namespace Silverback.Messaging.Outbound.Deferred
         }
 
         /// <summary>
-        ///     Calls the <see cref="IOutboundQueueWorker" /> to process the queue at regular intervals.
+        ///     Calls the <see cref="IOutboxWorker" /> to process the queue at regular intervals.
         /// </summary>
         /// <inheritdoc cref="RecurringDistributedBackgroundService.ExecuteRecurringAsync" />
         protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) =>

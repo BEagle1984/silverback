@@ -4,6 +4,7 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Outbound.Deferred;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 
 namespace Silverback.Diagnostics
 {
@@ -287,34 +288,34 @@ namespace Silverback.Diagnostics
             new EventId(Offset + 72, Prefix + nameof(MessageAlreadyProcessed));
 
         /// <summary>
-        ///     Gets the <see cref="EventId" /> of the log that is written when the message is being enqueued to be
-        ///     asynchronously produced by the <see cref="IOutboundQueueWorker" />.
+        ///     Gets the <see cref="EventId" /> of the log that is written when the message is being written to the
+        ///     outbox.
         /// </summary>
         /// <remarks>
         ///     Default log level: Debug.
         /// </remarks>
-        public static EventId OutboundMessageEnqueued { get; } =
-            new EventId(Offset + 73, Prefix + nameof(OutboundMessageEnqueued));
+        public static EventId OutboundMessageWrittenToOutbox { get; } =
+            new EventId(Offset + 73, Prefix + nameof(OutboundMessageWrittenToOutbox));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
-        ///     <see cref="IOutboundQueueWorker" /> loads a batch of enqueued messages.
+        ///     <see cref="IOutboxWorker" /> loads a batch of enqueued messages.
         /// </summary>
         /// <remarks>
         ///     Default log level: Trace.
         /// </remarks>
-        public static EventId ReadingEnqueuedOutboundMessages { get; } =
-            new EventId(Offset + 74, Prefix + nameof(ReadingEnqueuedOutboundMessages));
+        public static EventId ReadingMessagesFromOutbox { get; } =
+            new EventId(Offset + 74, Prefix + nameof(ReadingMessagesFromOutbox));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
-        ///     <see cref="IOutboundQueueWorker" /> doesn't find any enqueued message to be produced.
+        ///     <see cref="IOutboxWorker" /> doesn't find any message in the outbox.
         /// </summary>
         /// <remarks>
         ///     Default log level: Trace.
         /// </remarks>
-        public static EventId OutboundQueueEmpty { get; } =
-            new EventId(Offset + 75, Prefix + nameof(OutboundQueueEmpty));
+        public static EventId OutboxEmpty { get; } =
+            new EventId(Offset + 75, Prefix + nameof(OutboxEmpty));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the enqueued outbound message is being
@@ -338,7 +339,7 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while the
-        ///     <see cref="IOutboundQueueWorker" /> processes the outbound queue.
+        ///     <see cref="IOutboxWorker" /> processes the outbound queue.
         /// </summary>
         /// <remarks>
         ///     Default log level: Error.

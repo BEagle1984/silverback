@@ -58,8 +58,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds an health check that monitors the transactional outbox table, verifying that the messages are
-        ///     being processed.
+        ///     Adds an health check that monitors the outbox, verifying that the messages are being processed.
         /// </summary>
         /// <param name="builder">
         ///     The <see cref="IHealthChecksBuilder" />.
@@ -77,7 +76,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static IHealthChecksBuilder AddOutboundQueueCheck(
+        public static IHealthChecksBuilder AddOutboxCheck(
             this IHealthChecksBuilder builder,
             string name = "OutboundQueue",
             HealthStatus? failureStatus = default,
@@ -88,7 +87,7 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddScoped<IOutboundQueueHealthCheckService, OutboundQueueHealthCheckService>();
 
             static IHealthCheck ServiceFactory(IServiceProvider serviceProvider) =>
-                new OutboundQueueHealthCheck(serviceProvider.GetRequiredService<IOutboundQueueHealthCheckService>());
+                new OutboxQueueHealthCheck(serviceProvider.GetRequiredService<IOutboundQueueHealthCheckService>());
 
             return builder.Add(
                 new HealthCheckRegistration(

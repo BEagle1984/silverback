@@ -12,6 +12,7 @@ using Silverback.Infrastructure;
 using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Deferred;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Connectors.Repositories
@@ -19,7 +20,7 @@ namespace Silverback.Messaging.Connectors.Repositories
     /// <summary>
     ///     <para>
     ///         Exposes the methods to read from the outbound queue. Used by the
-    ///         <see cref="IOutboundQueueWorker" />.
+    ///         <see cref="IOutboxWorker" />.
     ///     </para>
     ///     <para>
     ///         An <see cref="IDbContext" /> is used to read from a queue stored in a database table.

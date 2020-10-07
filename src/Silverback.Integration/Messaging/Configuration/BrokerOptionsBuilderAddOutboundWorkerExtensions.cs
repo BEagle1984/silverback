@@ -9,6 +9,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Outbound.Deferred;
 using Silverback.Messaging.Outbound.Routing;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
@@ -57,7 +58,7 @@ namespace Microsoft.Extensions.DependencyInjection
             distributedLockSettings.EnsureResourceNameIsSet("OutboundQueueWorker");
 
             brokerOptionsBuilder.SilverbackBuilder.Services
-                .AddSingleton<IOutboundQueueWorker>(
+                .AddSingleton<IOutboxWorker>(
                     serviceProvider => new OutboundQueueWorker(
                         serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                         serviceProvider.GetRequiredService<IBrokerCollection>(),
@@ -68,7 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddSingleton<IHostedService>(
                     serviceProvider => new OutboundQueueWorkerService(
                         interval ?? TimeSpan.FromMilliseconds(500),
-                        serviceProvider.GetRequiredService<IOutboundQueueWorker>(),
+                        serviceProvider.GetRequiredService<IOutboxWorker>(),
                         distributedLockSettings,
                         serviceProvider.GetService<IDistributedLockManager>() ?? new NullLockManager(),
                         serviceProvider.GetRequiredService<ISilverbackLogger<OutboundQueueWorkerService>>()));

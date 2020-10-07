@@ -11,20 +11,20 @@ using Silverback.Util;
 namespace Silverback.Messaging.HealthChecks
 {
     /// <summary>
-    ///     Monitors the transactional outbox table, verifying that the messages are being processed.
+    ///     Monitors the outbox, verifying that the messages are being processed.
     /// </summary>
-    public class OutboundQueueHealthCheck : IHealthCheck
+    public class OutboxQueueHealthCheck : IHealthCheck
     {
         private readonly IOutboundQueueHealthCheckService _service;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="OutboundQueueHealthCheck" /> class.
+        ///     Initializes a new instance of the <see cref="OutboxQueueHealthCheck" /> class.
         /// </summary>
         /// <param name="service">
         ///     The <see cref="IOutboundQueueHealthCheckService" /> implementation to be used to monitor the
         ///     outbound queue.
         /// </param>
-        public OutboundQueueHealthCheck(IOutboundQueueHealthCheckService service)
+        public OutboxQueueHealthCheck(IOutboundQueueHealthCheckService service)
         {
             _service = service;
         }
