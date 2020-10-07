@@ -114,8 +114,8 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="RawBrokerEnvelope" /> containing body, headers, endpoint, etc.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the message
-        ///     offset.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     message offset.
         /// </returns>
         protected abstract Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope);
 

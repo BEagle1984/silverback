@@ -6,6 +6,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
@@ -35,16 +36,30 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
+            // Outbound Routing
+            silverbackBuilder
+                .AddScopedBehavior<OutboundRouterBehavior>()
+                .AddScopedBehavior<ProduceBehavior>()
+                .Services
+                .AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
+
+            // Broker Collection
             silverbackBuilder.Services
-                .AddSingleton<IBrokerCollection, BrokerCollection>()
-                .AddTransient(typeof(IBrokerBehaviorsProvider<>), typeof(BrokerBehaviorsProvider<>))
+                .AddSingleton<IBrokerCollection, BrokerCollection>();
+
+            // Logging
+            silverbackBuilder.Services
                 .AddSingleton<ILogTemplates>(new LogTemplates())
                 .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(SilverbackIntegrationLogger<>))
                 .AddSingleton<ISilverbackIntegrationLogger, SilverbackIntegrationLogger>();
 
+            // Transactional Lists
+            silverbackBuilder.Services
+                .AddSingleton(typeof(TransactionalListSharedItems<>))
+                .AddSingleton(typeof(TransactionalDictionarySharedItems<,>));
+
             var options = new BrokerOptionsBuilder(silverbackBuilder);
             optionsAction?.Invoke(options);
-            options.CompleteWithDefaults();
 
             return silverbackBuilder;
         }

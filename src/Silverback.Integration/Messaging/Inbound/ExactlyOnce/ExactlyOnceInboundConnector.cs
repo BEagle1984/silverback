@@ -64,7 +64,7 @@
 //         ///     The <see cref="IServiceProvider" />.
 //         /// </param>
 //         /// <returns>
-//         ///     A <see cref="Task{TResult}" /> representing the result of the asynchronous operation. The task
+//         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task
 //         ///     result contains a value indicating whether the message must be processed.
 //         /// </returns>
 //         protected abstract Task<bool> MustProcess(IRawInboundEnvelope envelope, IServiceProvider serviceProvider);

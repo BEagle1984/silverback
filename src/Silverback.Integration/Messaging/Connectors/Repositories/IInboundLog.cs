@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Add(IRawInboundEnvelope envelope);
+        Task AddAsync(IRawInboundEnvelope envelope);
 
         /// <summary>
         ///     Returns a boolean value indicating whether this very same message has already been logged for the
@@ -32,10 +32,10 @@ namespace Silverback.Messaging.Connectors.Repositories
         ///     The envelope containing the message to be checked.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task{TResult}" /> representing the result of the asynchronous operation. The task
-        ///     result contains a value indicating whether the message was found in the log.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
+        ///     value indicating whether the message was found in the log.
         /// </returns>
-        Task<bool> Exists(IRawInboundEnvelope envelope);
+        Task<bool> ExistsAsync(IRawInboundEnvelope envelope);
 
         /// <summary>
         ///     Returns the total number of messages in the log.
@@ -44,6 +44,6 @@ namespace Silverback.Messaging.Connectors.Repositories
         ///     A <see cref="Task{TResult}" /> representing the result of the asynchronous operation. The task
         ///     result contains the log length.
         /// </returns>
-        Task<int> GetLength();
+        Task<int> GetLengthAsync();
     }
 }

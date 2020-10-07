@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
@@ -18,14 +17,18 @@ namespace Silverback.Messaging.Outbound.Routing
     /// </summary>
     public class ProduceBehavior : IBehavior, ISorted
     {
+        private readonly IServiceProvider _serviceProvider;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProduceBehavior" /> class.
         /// </summary>
         /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" />.
+        ///     The <see cref="IServiceProvider" /> to be used to build the
+        ///     <see cref="IProduceStrategyImplementation" />.
         /// </param>
         public ProduceBehavior(IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
@@ -38,11 +41,10 @@ namespace Silverback.Messaging.Outbound.Routing
         {
             Check.NotNull(next, nameof(next));
 
-            await messages.OfType<IOutboundEnvelopeInternal>()
+            await messages.OfType<IOutboundEnvelope>()
                 .ForEachAsync(
-                    outboundMessage =>
-                        GetConnectorInstance(_outboundConnectors, outboundMessage.OutboundConnectorType)
-                            .RelayMessage(outboundMessage))
+                    envelope =>
+                        envelope.Endpoint.Strategy.Build(_serviceProvider).ProduceAsync(envelope))
                 .ConfigureAwait(false);
 
             return await next(messages).ConfigureAwait(false);

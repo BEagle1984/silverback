@@ -17,8 +17,8 @@ namespace Silverback.Util
         ///     The <see cref="Task" /> to be awaited.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains either the
-        ///     result of the awaited task or <c>null</c>.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
+        ///     either the result of the awaited task or <c>null</c>.
         /// </returns>
         public static async Task<object?> GetReturnValue(this Task task)
         {

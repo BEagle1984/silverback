@@ -15,9 +15,8 @@ using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
 
-namespace Silverback.Messaging.Outbound.Deferred
+namespace Silverback.Messaging.Outbound.TransactionalOutbox
 {
     /// <inheritdoc cref="IOutboxWorker" />
     public class OutboxWorker : IOutboxWorker
@@ -30,7 +29,7 @@ namespace Silverback.Messaging.Outbound.Deferred
 
         private readonly ISilverbackIntegrationLogger<OutboxWorker> _logger;
 
-        private readonly int _readPackageSize;
+        private readonly int _readBatchSize;
 
         private readonly bool _enforceMessageOrder;
 
@@ -55,7 +54,7 @@ namespace Silverback.Messaging.Outbound.Deferred
         ///     successfully
         ///     produced.
         /// </param>
-        /// <param name="readPackageSize">
+        /// <param name="readBatchSize">
         ///     The number of messages to be loaded from the queue at once.
         /// </param>
         public OutboxWorker(
@@ -64,13 +63,13 @@ namespace Silverback.Messaging.Outbound.Deferred
             IOutboundRoutingConfiguration routingConfiguration,
             ISilverbackIntegrationLogger<OutboxWorker> logger,
             bool enforceMessageOrder,
-            int readPackageSize)
+            int readBatchSize)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _brokerCollection = brokerCollection;
             _logger = logger;
             _enforceMessageOrder = enforceMessageOrder;
-            _readPackageSize = readPackageSize;
+            _readBatchSize = readBatchSize;
             _routingConfiguration = routingConfiguration;
         }
 
@@ -118,11 +117,11 @@ namespace Silverback.Messaging.Outbound.Deferred
         {
             _logger.LogTrace(
                 IntegrationEventIds.ReadingMessagesFromOutbox,
-                "Reading outbound messages from queue (limit: {readPackageSize}).",
-                _readPackageSize);
+                "Reading outbound messages from queue (limit: {readBatchSize}).",
+                _readBatchSize);
 
-            var queue = serviceProvider.GetRequiredService<IOutboundQueueReader>();
-            var messages = (await queue.Dequeue(_readPackageSize).ConfigureAwait(false)).ToList();
+            var queue = serviceProvider.GetRequiredService<IOutboxReader>();
+            var messages = (await queue.ReadAsync(_readBatchSize).ConfigureAwait(false)).ToList();
 
             if (messages.Count == 0)
                 _logger.LogTrace(IntegrationEventIds.OutboxEmpty, "The outbound queue is empty.");
@@ -142,8 +141,8 @@ namespace Silverback.Messaging.Outbound.Deferred
         }
 
         private async Task ProcessMessageAsync(
-            QueuedMessage message,
-            IOutboundQueueReader queue,
+            OutboxStoredMessage message,
+            IOutboxReader queue,
             IServiceProvider serviceProvider)
         {
             try
@@ -151,7 +150,7 @@ namespace Silverback.Messaging.Outbound.Deferred
                 var endpoint = GetTargetEndpoint(message.MessageType, message.EndpointName, serviceProvider);
                 await ProduceMessageAsync(message.Content, message.Headers, endpoint).ConfigureAwait(false);
 
-                await queue.Acknowledge(message).ConfigureAwait(false);
+                await queue.AcknowledgeAsync(message).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -161,7 +160,7 @@ namespace Silverback.Messaging.Outbound.Deferred
                     "Failed to produce the message in the outbox.",
                     new OutboundEnvelope(message.Content, message.Headers, new LoggingEndpoint(message.EndpointName)));
 
-                await queue.Retry(message).ConfigureAwait(false);
+                await queue.RetryAsync(message).ConfigureAwait(false);
 
                 // Rethrow if message order has to be preserved, otherwise go ahead with next message in the queue
                 if (_enforceMessageOrder)

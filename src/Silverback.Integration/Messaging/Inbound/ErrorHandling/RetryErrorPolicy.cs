@@ -104,7 +104,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
 
-                await context.TransactionManager.Rollback(exception).ConfigureAwait(false);
+                await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
 
                 await ApplyDelay(context.Envelope).ConfigureAwait(false);
 

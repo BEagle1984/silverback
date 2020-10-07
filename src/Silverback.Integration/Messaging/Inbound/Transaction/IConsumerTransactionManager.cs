@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Inbound.Transaction
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Commit();
+        Task CommitAsync();
 
         /// <summary>
         ///     Aborts the transaction and causes the uncommitted changes to be rolled back.
@@ -41,6 +41,6 @@ namespace Silverback.Messaging.Inbound.Transaction
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Rollback(Exception exception, bool commitOffsets = false);
+        Task RollbackAsync(Exception exception, bool commitOffsets = false);
     }
 }

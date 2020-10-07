@@ -19,8 +19,8 @@ namespace Silverback.Messaging.Sequences
         ///     The current <see cref="ConsumerPipelineContext" />.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains a value
-        ///     indicating whether this reader can and must handle the message.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
+        ///     value indicating whether this reader can and must handle the message.
         /// </returns>
         Task<bool> CanHandleAsync(ConsumerPipelineContext context);
 
@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Sequences
         ///     The current <see cref="ConsumerPipelineContext" />.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="ISequence" /> or <c>null</c> if the message is to be ignored.
         /// </returns>
         Task<ISequence?> GetSequenceAsync(ConsumerPipelineContext context);

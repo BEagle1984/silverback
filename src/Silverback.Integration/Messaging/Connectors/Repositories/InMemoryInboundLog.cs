@@ -32,9 +32,9 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        /// <inheritdoc cref="IInboundLog.Add" />
+        /// <inheritdoc cref="IInboundLog.AddAsync" />
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public Task Add(IRawInboundEnvelope envelope)
+        public Task AddAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -48,12 +48,12 @@ namespace Silverback.Messaging.Connectors.Repositories
                 ConsumerGroupName = consumerGroupName
             };
 
-            return Add(logEntry);
+            return AddAsync(logEntry);
         }
 
-        /// <inheritdoc cref="IInboundLog.Exists" />
+        /// <inheritdoc cref="IInboundLog.ExistsAsync" />
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public Task<bool> Exists(IRawInboundEnvelope envelope)
+        public Task<bool> ExistsAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -68,10 +68,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                         item.Item.ConsumerGroupName == consumerGroupName));
         }
 
-        /// <inheritdoc cref="IInboundLog.GetLength" />
-        public Task<int> GetLength()
-        {
-            return Task.FromResult(CommittedItemsCount);
-        }
+        /// <inheritdoc cref="IInboundLog.GetLengthAsync" />
+        public Task<int> GetLengthAsync() => Task.FromResult(CommittedItemsCount);
     }
 }

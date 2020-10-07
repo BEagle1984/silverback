@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
         private readonly TestDbContext _dbContext;
 
-        private readonly DbOutboundQueueWriter _queueWriter;
+        private readonly DbOutboxWriter _queueWriter;
 
         public DbOutboundQueueWriterTests()
         {
@@ -58,52 +58,52 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             _dbContext = _scope.ServiceProvider.GetRequiredService<TestDbContext>();
             _dbContext.Database.EnsureCreated();
 
-            _queueWriter = new DbOutboundQueueWriter(_scope.ServiceProvider.GetRequiredService<IDbContext>());
+            _queueWriter = new DbOutboxWriter(_scope.ServiceProvider.GetRequiredService<IDbContext>());
         }
 
         [Fact]
         public void Enqueue_SomeMessages_TableStillEmpty()
         {
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
 
-            _dbContext.OutboundMessages.Count().Should().Be(0);
+            _dbContext.Outbox.Count().Should().Be(0);
         }
 
         [Fact]
         public void EnqueueCommitAndSaveChanges_SomeMessages_MessagesAddedToQueue()
         {
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
-            _queueWriter.Commit();
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            _queueWriter.CommitAsync();
             _dbContext.SaveChanges();
 
-            _dbContext.OutboundMessages.Count().Should().Be(3);
+            _dbContext.Outbox.Count().Should().Be(3);
         }
 
         [Fact]
         public void EnqueueAndRollback_SomeMessages_TableStillEmpty()
         {
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
-            _queueWriter.Rollback();
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            _queueWriter.RollbackAsync();
 
-            _dbContext.OutboundMessages.Count().Should().Be(0);
+            _dbContext.Outbox.Count().Should().Be(0);
         }
 
         [Fact]
         public void EnqueueCommitAndSaveChanges_Message_MessageCorrectlyAddedToQueue()
         {
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
-            _queueWriter.Enqueue(SampleOutboundEnvelope);
-            _queueWriter.Commit();
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            _queueWriter.CommitAsync();
             _dbContext.SaveChanges();
 
-            var outboundMessage = _dbContext.OutboundMessages.First();
+            var outboundMessage = _dbContext.Outbox.First();
             outboundMessage.EndpointName.Should().Be("test");
             outboundMessage.MessageType.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
             outboundMessage.Content.Should().NotBeNullOrEmpty();

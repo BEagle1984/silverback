@@ -22,7 +22,7 @@ namespace Silverback.Messaging
         ///     The headers collections (can be modified by the transformer).
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="Stream" /> with transformed message.
         /// </returns>
         Task<Stream?> TransformAsync(Stream? message, MessageHeaderCollection headers);

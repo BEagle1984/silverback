@@ -78,12 +78,15 @@ namespace Silverback.Messaging.Inbound.Transaction
                     await context.ProcessingTask.ConfigureAwait(false);
 
                 if (!context.SequenceStore.HasPendingSequences)
-                    await context.TransactionManager.Commit().ConfigureAwait(false);
+                    await context.TransactionManager.CommitAsync().ConfigureAwait(false);
             }
             catch (Exception exception)
             {
                 if (!await HandleException(context, exception).ConfigureAwait(false))
+                {
+                    await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
                     throw;
+                }
             }
             finally
             {

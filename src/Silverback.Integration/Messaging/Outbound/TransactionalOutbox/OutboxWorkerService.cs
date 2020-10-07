@@ -7,24 +7,23 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Silverback.Background;
 using Silverback.Diagnostics;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
 
-namespace Silverback.Messaging.Outbound.Deferred
+namespace Silverback.Messaging.Outbound.TransactionalOutbox
 {
     /// <summary>
     ///     The <see cref="IHostedService" /> that triggers the outbound queue worker at regular intervals.
     /// </summary>
-    public class OutboundQueueWorkerService : RecurringDistributedBackgroundService
+    public class OutboxWorkerService : RecurringDistributedBackgroundService
     {
-        private readonly IOutboxWorker _outboundQueueWorker;
+        private readonly IOutboxWorker _outboxWorker;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="OutboundQueueWorkerService" /> class.
+        ///     Initializes a new instance of the <see cref="OutboxWorkerService" /> class.
         /// </summary>
         /// <param name="interval">
         ///     The interval between each execution.
         /// </param>
-        /// <param name="outboundQueueWorker">
+        /// <param name="outboxWorker">
         ///     The <see cref="IOutboxWorker" /> implementation.
         /// </param>
         /// <param name="distributedLockSettings">
@@ -36,15 +35,15 @@ namespace Silverback.Messaging.Outbound.Deferred
         /// <param name="logger">
         ///     The <see cref="ISilverbackLogger" />.
         /// </param>
-        public OutboundQueueWorkerService(
+        public OutboxWorkerService(
             TimeSpan interval,
-            IOutboxWorker outboundQueueWorker,
+            IOutboxWorker outboxWorker,
             DistributedLockSettings distributedLockSettings,
             IDistributedLockManager distributedLockManager,
-            ISilverbackLogger<OutboundQueueWorkerService> logger)
+            ISilverbackLogger<OutboxWorkerService> logger)
             : base(interval, distributedLockSettings, distributedLockManager, logger)
         {
-            _outboundQueueWorker = outboundQueueWorker;
+            _outboxWorker = outboxWorker;
         }
 
         /// <summary>
@@ -52,6 +51,6 @@ namespace Silverback.Messaging.Outbound.Deferred
         /// </summary>
         /// <inheritdoc cref="RecurringDistributedBackgroundService.ExecuteRecurringAsync" />
         protected override Task ExecuteRecurringAsync(CancellationToken stoppingToken) =>
-            _outboundQueueWorker.ProcessQueue(stoppingToken);
+            _outboxWorker.ProcessQueueAsync(stoppingToken);
     }
 }

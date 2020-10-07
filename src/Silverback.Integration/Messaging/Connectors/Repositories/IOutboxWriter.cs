@@ -3,7 +3,6 @@
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.Deferred;
 
 namespace Silverback.Messaging.Connectors.Repositories
 {
@@ -11,7 +10,7 @@ namespace Silverback.Messaging.Connectors.Repositories
     ///     Exposes the methods to write to the outbound queue. Used by the
     ///     <see cref="DeferredOutboundConnector" />.
     /// </summary>
-    public interface IOutboundQueueWriter
+    public interface IOutboxWriter
     {
         /// <summary>
         ///     Adds the message contained in the specified envelope to the outbound queue.
@@ -22,7 +21,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Enqueue(IOutboundEnvelope envelope);
+        Task WriteAsync(IOutboundEnvelope envelope);
 
         /// <summary>
         ///     Called to commit the transaction, storing the pending messages to the queue.
@@ -30,7 +29,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Commit();
+        Task CommitAsync();
 
         /// <summary>
         ///     Called to rollback the transaction, preventing the pending messages to be stored in the queue.
@@ -38,6 +37,6 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Rollback();
+        Task RollbackAsync();
     }
 }

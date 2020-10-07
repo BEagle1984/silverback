@@ -11,6 +11,11 @@ namespace Silverback.Messaging.Configuration
     public class BrokerConnectionOptions
     {
         /// <summary>
+        ///     Gets the default options.
+        /// </summary>
+        public static BrokerConnectionOptions Default { get; } = new BrokerConnectionOptions();
+
+        /// <summary>
         ///     Gets or sets the <see cref="BrokerConnectionMode" /> (default is
         ///     <see cref="BrokerConnectionMode.Startup" />).
         /// </summary>

@@ -22,11 +22,13 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 {
     public class OutboundRouterBehaviorTests
     {
+        // TODO: Still needed? Replace with E2E?
+
         private readonly OutboundRouterBehavior _behavior;
 
         private readonly IOutboundRoutingConfiguration _routingConfiguration;
 
-        private readonly InMemoryOutboundQueue _outboundQueue;
+        private readonly InMemoryOutbox _outbox;
 
         private readonly TestBroker _broker;
 
@@ -47,8 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                     options => options
                         .AddBroker<TestBroker>()
                         .AddBroker<TestOtherBroker>()
-                        .AddDeferredOutboundConnector<InMemoryOutboundQueue>()
-                        .AddOutboundConnector())
+                        .AddOutbox<InMemoryOutbox>())
                 .AddSingletonSubscriber(_testSubscriber);
 
             services.AddNullLogger();
@@ -61,7 +62,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 (OutboundRoutingConfiguration)_serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
             _broker = _serviceProvider.GetRequiredService<TestBroker>();
             _otherBroker = _serviceProvider.GetRequiredService<TestOtherBroker>();
-            _outboundQueue = (InMemoryOutboundQueue)_serviceProvider.GetRequiredService<IOutboundQueueWriter>();
+            _outbox = (InMemoryOutbox)_serviceProvider.GetRequiredService<IOutboxWriter>();
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
@@ -88,9 +89,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventTwo")));
 
             await _behavior.Handle(new[] { message }, Task.FromResult!);
-            await _outboundQueue.Commit();
+            await _outbox.CommitAsync();
 
-            var queued = await _outboundQueue.Dequeue(100);
+            var queued = await _outbox.ReadAsync(100);
 
             foreach (var expectedEndpointName in expectedEndpointNames)
             {
@@ -114,9 +115,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
-            await _outboundQueue.Commit();
+            await _outbox.CommitAsync();
 
-            var queued = await _outboundQueue.Dequeue(1);
+            var queued = await _outbox.ReadAsync(1);
             queued.Count.Should().Be(1);
             _broker.ProducedMessages.Count.Should().Be(0);
         }
@@ -129,9 +130,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 typeof(OutboundConnector));
 
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
-            await _outboundQueue.Commit();
+            await _outbox.CommitAsync();
 
-            var queued = await _outboundQueue.Dequeue(1);
+            var queued = await _outbox.ReadAsync(1);
             queued.Count.Should().Be(0);
             _broker.ProducedMessages.Count.Should().Be(1);
         }
@@ -240,9 +241,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
             await _behavior.Handle(new[] { new TestEventThree(), }, Task.FromResult!);
             await _behavior.Handle(new[] { new TestEventTwo() }, Task.FromResult!);
-            await _outboundQueue.Commit();
+            await _outbox.CommitAsync();
 
-            var queued = (await _outboundQueue.Dequeue(10)).ToArray();
+            var queued = (await _outbox.ReadAsync(10)).ToArray();
             queued.Length.Should().Be(3);
             queued[0].EndpointName.Should().Be("eventOne");
             queued[1].EndpointName.Should().Be("eventThree");

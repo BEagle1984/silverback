@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Sequences
         ///     The sequence identifier.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="ISequence" /> instance.
         /// </returns>
         Task<TSequence?> GetAsync<TSequence>(object sequenceId)
@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Sequences
         ///     The sequence to be added.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="ISequence" /> instance.
         /// </returns>
         Task<TSequence> AddAsync<TSequence>(TSequence sequence)

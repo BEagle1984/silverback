@@ -30,10 +30,18 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Initializes a new instance of the <see cref="BrokerConnectorService" /> class.
         /// </summary>
-        /// <param name="serviceScopeFactory">The <see cref="IServiceScopeFactory" />.</param>
-        /// <param name="applicationLifetime">The <see cref="IApplicationLifetime" />.</param>
-        /// <param name="brokersCollection">The <see cref="IBrokerCollection" />.</param>
-        /// <param name="logger">The <see cref="ISilverbackLogger" />.</param>
+        /// <param name="serviceScopeFactory">
+        ///     The <see cref="IServiceScopeFactory" />.
+        /// </param>
+        /// <param name="applicationLifetime">
+        ///     The <see cref="IApplicationLifetime" />.
+        /// </param>
+        /// <param name="brokersCollection">
+        ///     The <see cref="IBrokerCollection" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ISilverbackLogger" />.
+        /// </param>
         public BrokerConnectorService(
             IServiceScopeFactory serviceScopeFactory,
             IApplicationLifetime applicationLifetime,
@@ -51,17 +59,18 @@ namespace Silverback.Messaging.Broker
         {
             using var scope = _serviceScopeFactory.CreateScope();
 
-            var options = scope.ServiceProvider.GetRequiredService<BrokerConnectionOptions>();
+            var options = scope.ServiceProvider.GetService<BrokerConnectionOptions>() ??
+                          BrokerConnectionOptions.Default;
 
             _applicationLifetime.ApplicationStopping.Register(() => _brokerCollection.Disconnect());
 
             switch (options.Mode)
             {
                 case BrokerConnectionMode.Startup:
-                    return Connect(options, stoppingToken);
+                    return ConnectAsync(options, stoppingToken);
                 case BrokerConnectionMode.AfterStartup:
 #pragma warning disable 4014
-                    _applicationLifetime.ApplicationStarted.Register(() => Connect(options, stoppingToken));
+                    _applicationLifetime.ApplicationStarted.Register(() => ConnectAsync(options, stoppingToken));
 #pragma warning restore 4014
                     return Task.CompletedTask;
             }
@@ -70,7 +79,7 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task Connect(BrokerConnectionOptions options, CancellationToken stoppingToken)
+        private async Task ConnectAsync(BrokerConnectionOptions options, CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {

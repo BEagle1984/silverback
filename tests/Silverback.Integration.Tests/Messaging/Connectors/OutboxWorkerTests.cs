@@ -11,8 +11,8 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.Deferred;
 using Silverback.Messaging.Outbound.Routing;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -21,25 +21,25 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Connectors
 {
-    public class OutboundQueueWorkerTests
+    public class OutboxWorkerTests
     {
-        private readonly InMemoryOutboundQueue _queue;
+        private readonly InMemoryOutbox _queue;
 
         private readonly TestBroker _broker;
 
-        private readonly OutboundQueueWorker _worker;
+        private readonly OutboxWorker _worker;
 
         private readonly OutboundEnvelope _sampleOutboundEnvelope;
 
-        public OutboundQueueWorkerTests()
+        public OutboxWorkerTests()
         {
-            _queue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
+            _queue = new InMemoryOutbox(new TransactionalListSharedItems<OutboxStoredMessage>());
 
             var services = new ServiceCollection();
 
             services
-                .AddSingleton<IOutboundQueueWriter>(_queue)
-                .AddSingleton<IOutboundQueueReader>(_queue);
+                .AddSingleton<IOutboxWriter>(_queue)
+                .AddSingleton<IOutboxReader>(_queue);
 
             services
                 .AddNullLogger()
@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddBroker<TestBroker>()
-                        .AddDeferredOutboundConnector());
+                        .AddOutbox<InMemoryOutbox>());
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 
@@ -62,11 +62,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             _broker = (TestBroker)serviceProvider.GetRequiredService<IBroker>();
             _broker.Connect();
 
-            _worker = new OutboundQueueWorker(
+            _worker = new OutboxWorker(
                 serviceProvider.GetRequiredService<IServiceScopeFactory>(),
                 new BrokerCollection(new[] { _broker }),
                 routingConfiguration,
-                Substitute.For<ISilverbackIntegrationLogger<OutboundQueueWorker>>(),
+                Substitute.For<ISilverbackIntegrationLogger<OutboxWorker>>(),
                 true,
                 100); // TODO: Test order not enforced
 
@@ -85,19 +85,19 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task ProcessQueue_SomeMessages_Produced()
         {
-            await _queue.Enqueue(
+            await _queue.WriteAsync(
                 new OutboundEnvelope<TestEventOne>(
                     new TestEventOne { Content = "Test" },
                     null,
                     new TestProducerEndpoint("topic1")));
-            await _queue.Enqueue(
+            await _queue.WriteAsync(
                 new OutboundEnvelope<TestEventTwo>(
                     new TestEventTwo { Content = "Test" },
                     null,
                     new TestProducerEndpoint("topic2")));
-            await _queue.Commit();
+            await _queue.CommitAsync();
 
-            await _worker.ProcessQueue(CancellationToken.None);
+            await _worker.ProcessQueueAsync(CancellationToken.None);
 
             _broker.ProducedMessages.Count.Should().Be(2);
             _broker.ProducedMessages[0].Endpoint.Name.Should().Be("topic1");
@@ -107,19 +107,19 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task ProcessQueue_SomeMessagesWithMultipleEndpoints_CorrectlyProduced()
         {
-            await _queue.Enqueue(
+            await _queue.WriteAsync(
                 new OutboundEnvelope<TestEventThree>(
                     new TestEventThree { Content = "Test" },
                     null,
                     new TestProducerEndpoint("topic3a")));
-            await _queue.Enqueue(
+            await _queue.WriteAsync(
                 new OutboundEnvelope<TestEventThree>(
                     new TestEventThree { Content = "Test" },
                     null,
                     new TestProducerEndpoint("topic3b")));
-            await _queue.Commit();
+            await _queue.CommitAsync();
 
-            await _worker.ProcessQueue(CancellationToken.None);
+            await _worker.ProcessQueueAsync(CancellationToken.None);
 
             _broker.ProducedMessages.Count.Should().Be(2);
             _broker.ProducedMessages[0].Endpoint.Name.Should().Be("topic3a");
@@ -129,12 +129,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task ProcessQueue_RunTwice_ProducedOnce()
         {
-            await _queue.Enqueue(_sampleOutboundEnvelope);
-            await _queue.Enqueue(_sampleOutboundEnvelope);
-            await _queue.Commit();
+            await _queue.WriteAsync(_sampleOutboundEnvelope);
+            await _queue.WriteAsync(_sampleOutboundEnvelope);
+            await _queue.CommitAsync();
 
-            await _worker.ProcessQueue(CancellationToken.None);
-            await _worker.ProcessQueue(CancellationToken.None);
+            await _worker.ProcessQueueAsync(CancellationToken.None);
+            await _worker.ProcessQueueAsync(CancellationToken.None);
 
             _broker.ProducedMessages.Count.Should().Be(2);
         }
@@ -142,16 +142,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task ProcessQueue_RunTwice_ProducedNewMessages()
         {
-            await _queue.Enqueue(_sampleOutboundEnvelope);
-            await _queue.Enqueue(_sampleOutboundEnvelope);
-            await _queue.Commit();
+            await _queue.WriteAsync(_sampleOutboundEnvelope);
+            await _queue.WriteAsync(_sampleOutboundEnvelope);
+            await _queue.CommitAsync();
 
-            await _worker.ProcessQueue(CancellationToken.None);
+            await _worker.ProcessQueueAsync(CancellationToken.None);
 
-            await _queue.Enqueue(_sampleOutboundEnvelope);
-            await _queue.Commit();
+            await _queue.WriteAsync(_sampleOutboundEnvelope);
+            await _queue.CommitAsync();
 
-            await _worker.ProcessQueue(CancellationToken.None);
+            await _worker.ProcessQueueAsync(CancellationToken.None);
 
             _broker.ProducedMessages.Count.Should().Be(3);
         }

@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes.Database;
 using Xunit;
@@ -40,7 +41,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
         private readonly TestDbContext _dbContext;
 
-        private readonly DbOutboundQueueReader _queueReader;
+        private readonly DbOutboxReader _queueReader;
 
         public DbOutboundQueueReaderTests()
         {
@@ -67,33 +68,33 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             _dbContext = _scope.ServiceProvider.GetRequiredService<TestDbContext>();
             _dbContext.Database.EnsureCreated();
 
-            _queueReader = new DbOutboundQueueReader(_scope.ServiceProvider.GetRequiredService<IDbContext>());
+            _queueReader = new DbOutboxReader(_scope.ServiceProvider.GetRequiredService<IDbContext>());
         }
 
         [Fact]
         public async Task GetMaxAge_SomeMessagesInQueue_MaxAgeReturned()
         {
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
                     EndpointName = "test-topic"
                 });
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-20),
                     EndpointName = "test-topic"
                 });
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-60),
                     EndpointName = "test-topic"
                 });
             await _dbContext.SaveChangesAsync();
 
-            var maxAge = await _queueReader.GetMaxAge();
+            var maxAge = await _queueReader.GetMaxAgeAsync();
 
             maxAge.Should().BeGreaterOrEqualTo(TimeSpan.FromSeconds(60));
         }
@@ -101,7 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task GetMaxAge_EmptyQueue_ZeroReturned()
         {
-            var maxAge = await _queueReader.GetMaxAge();
+            var maxAge = await _queueReader.GetMaxAgeAsync();
 
             maxAge.Should().Be(TimeSpan.Zero);
         }
@@ -109,24 +110,24 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task Dequeue_SomeMessages_MessagesReturned()
         {
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
                     Content = SampleContent,
                     SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-20),
                     Content = SampleContent,
                     SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-60),
                     Content = SampleContent,
@@ -135,7 +136,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 });
             await _dbContext.SaveChangesAsync();
 
-            var messages = await _queueReader.Dequeue(5);
+            var messages = await _queueReader.ReadAsync(5);
 
             messages.Should().NotBeNull();
             messages.Count.Should().Be(3);
@@ -144,8 +145,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task Dequeue_Message_HeadersDeserialized()
         {
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
                     Content = SampleContent,
@@ -154,7 +155,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 });
             await _dbContext.SaveChangesAsync();
 
-            var message = (await _queueReader.Dequeue(1)).FirstOrDefault();
+            var message = (await _queueReader.ReadAsync(1)).FirstOrDefault();
 
             message.Headers.Should().BeEquivalentTo(
                 new MessageHeader("one", "1"),
@@ -164,8 +165,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task Dequeue_MessageWithLegacyHeadersSerialization_HeadersDeserialized()
         {
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
                     Content = SampleContent,
@@ -176,7 +177,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 });
             await _dbContext.SaveChangesAsync();
 
-            var message = (await _queueReader.Dequeue(1)).FirstOrDefault();
+            var message = (await _queueReader.ReadAsync(1)).FirstOrDefault();
 
             message.Headers.Should().BeEquivalentTo(
                 new MessageHeader("one", "1"),
@@ -186,24 +187,24 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task Retry_DequeuedSomeMessages_MessagesStillInQueue()
         {
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
                     Content = SampleContent,
                     SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-20),
                     Content = SampleContent,
                     SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-60),
                     Content = SampleContent,
@@ -212,37 +213,37 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 });
             await _dbContext.SaveChangesAsync();
 
-            var messages = await _queueReader.Dequeue(2);
+            var messages = await _queueReader.ReadAsync(2);
 
             foreach (var message in messages)
             {
-                await _queueReader.Retry(message);
+                await _queueReader.RetryAsync(message);
             }
 
-            _dbContext.OutboundMessages.Count().Should().Be(3);
+            _dbContext.Outbox.Count().Should().Be(3);
         }
 
         [Fact]
         public async Task Acknowledge_DequeuedSomeMessages_MessagesRemoved()
         {
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
                     Content = SampleContent,
                     SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-20),
                     Content = SampleContent,
                     SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-60),
                     Content = SampleContent,
@@ -251,37 +252,37 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 });
             await _dbContext.SaveChangesAsync();
 
-            var messages = await _queueReader.Dequeue(2);
+            var messages = await _queueReader.ReadAsync(2);
 
             foreach (var message in messages)
             {
-                await _queueReader.Acknowledge(message);
+                await _queueReader.AcknowledgeAsync(message);
             }
 
-            _dbContext.OutboundMessages.Count().Should().Be(1);
+            _dbContext.Outbox.Count().Should().Be(1);
         }
 
         [Fact]
         public async Task GetLength_SomeMessagesInQueue_CountReturned()
         {
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
                     Content = SampleContent,
                     SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-20),
                     Content = SampleContent,
                     SerializedHeaders = SampleHeaders,
                     EndpointName = "test-topic"
                 });
-            _dbContext.OutboundMessages.Add(
-                new OutboundMessage
+            _dbContext.Outbox.Add(
+                new OutboxMessage
                 {
                     Created = DateTime.UtcNow.AddSeconds(-60),
                     Content = SampleContent,
@@ -290,7 +291,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
                 });
             await _dbContext.SaveChangesAsync();
 
-            int length = await _queueReader.GetLength();
+            int length = await _queueReader.GetLengthAsync();
 
             length.Should().Be(3);
         }

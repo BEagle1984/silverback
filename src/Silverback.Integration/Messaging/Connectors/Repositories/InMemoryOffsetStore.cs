@@ -30,19 +30,17 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        /// <inheritdoc cref="IOffsetStore.Store" />
-        public Task Store(IComparableOffset offset, IConsumerEndpoint endpoint)
+        /// <inheritdoc cref="IOffsetStore.StoreAsync" />
+        public Task StoreAsync(IComparableOffset offset, IConsumerEndpoint endpoint)
         {
             Check.NotNull(offset, nameof(offset));
             Check.NotNull(endpoint, nameof(endpoint));
 
-            AddOrReplace(GetKey(offset.Key, endpoint), offset);
-
-            return Task.CompletedTask;
+            return AddOrReplaceAsync(GetKey(offset.Key, endpoint), offset);
         }
 
-        /// <inheritdoc cref="IOffsetStore.GetLatestValue" />
-        public Task<IComparableOffset?> GetLatestValue(string offsetKey, IConsumerEndpoint endpoint) =>
+        /// <inheritdoc cref="IOffsetStore.GetLatestValueAsync" />
+        public Task<IComparableOffset?> GetLatestValueAsync(string offsetKey, IConsumerEndpoint endpoint) =>
             Task.FromResult(
                 (IComparableOffset?)Items.Union(UncommittedItems)
                     .Where(pair => pair.Key == GetKey(offsetKey, endpoint))

@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Connectors.Repositories
 
         /// <inheritdoc cref="IInboundLog.Add" />
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public Task Add(IRawInboundEnvelope envelope)
+        public Task AddAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -56,23 +56,23 @@ namespace Silverback.Messaging.Connectors.Repositories
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="ITransactional.Commit" />
-        public async Task Commit()
+        /// <inheritdoc cref="ITransactional.CommitAsync" />
+        public async Task CommitAsync()
         {
             // Call SaveChanges, in case it isn't called by a subscriber
             await DbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="ITransactional.Rollback" />
-        public Task Rollback()
+        /// <inheritdoc cref="ITransactional.RollbackAsync" />
+        public Task RollbackAsync()
         {
             // Nothing to do, just not saving the changes made to the DbContext
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="IInboundLog.Exists" />
+        /// <inheritdoc cref="IInboundLog.ExistsAsync" />
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public Task<bool> Exists(IRawInboundEnvelope envelope)
+        public Task<bool> ExistsAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -86,7 +86,7 @@ namespace Silverback.Messaging.Connectors.Repositories
                     logEntry.ConsumerGroupName == consumerGroupName);
         }
 
-        /// <inheritdoc cref="IInboundLog.GetLength" />
-        public Task<int> GetLength() => DbSet.AsQueryable().CountAsync();
+        /// <inheritdoc cref="IInboundLog.GetLengthAsync" />
+        public Task<int> GetLengthAsync() => DbSet.AsQueryable().CountAsync();
     }
 }

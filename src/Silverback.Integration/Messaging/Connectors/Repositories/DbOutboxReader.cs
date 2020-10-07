@@ -11,7 +11,6 @@ using Silverback.Database.Model;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.Deferred;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Util;
 
@@ -27,21 +26,21 @@ namespace Silverback.Messaging.Connectors.Repositories
     ///     </para>
     /// </summary>
     // TODO: Test
-    public class DbOutboundQueueReader : RepositoryBase<OutboundMessage>, IOutboundQueueReader
+    public class DbOutboxReader : RepositoryBase<OutboxMessage>, IOutboxReader
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="DbOutboundQueueReader" /> class.
+        ///     Initializes a new instance of the <see cref="DbOutboxReader" /> class.
         /// </summary>
         /// <param name="dbContext">
         ///     The <see cref="IDbContext" /> to use as storage.
         /// </param>
-        public DbOutboundQueueReader(IDbContext dbContext)
+        public DbOutboxReader(IDbContext dbContext)
             : base(dbContext)
         {
         }
 
-        /// <inheritdoc cref="IOutboundQueueReader.GetMaxAge" />
-        public async Task<TimeSpan> GetMaxAge()
+        /// <inheritdoc cref="IOutboxReader.GetMaxAgeAsync" />
+        public async Task<TimeSpan> GetMaxAgeAsync()
         {
             var oldestCreated = await DbSet.AsQueryable()
                 .OrderBy(m => m.Created)
@@ -55,15 +54,15 @@ namespace Silverback.Messaging.Connectors.Repositories
             return DateTime.UtcNow - oldestCreated;
         }
 
-        /// <inheritdoc cref="IOutboundQueueReader.Dequeue" />
-        public async Task<IReadOnlyCollection<QueuedMessage>> Dequeue(int count) =>
+        /// <inheritdoc cref="IOutboxReader.ReadAsync" />
+        public async Task<IReadOnlyCollection<OutboxStoredMessage>> ReadAsync(int count) =>
             (await DbSet.AsQueryable()
                 .OrderBy(m => m.Id)
                 .Take(count)
                 .ToListAsync()
                 .ConfigureAwait(false))
             .Select(
-                message => new DbQueuedMessage(
+                message => new DbOutboxStoredMessage(
                     message.Id,
                     GetMessageType(message),
                     message.Content,
@@ -71,20 +70,20 @@ namespace Silverback.Messaging.Connectors.Repositories
                     message.EndpointName))
             .ToList();
 
-        /// <inheritdoc cref="IOutboundQueueReader.Retry" />
-        public Task Retry(QueuedMessage queuedMessage)
+        /// <inheritdoc cref="IOutboxReader.RetryAsync" />
+        public Task RetryAsync(OutboxStoredMessage outboxMessage)
         {
             // Nothing to do, the message is retried if not acknowledged
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="IOutboundQueueReader.Acknowledge" />
-        public async Task Acknowledge(QueuedMessage queuedMessage)
+        /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
+        public async Task AcknowledgeAsync(OutboxStoredMessage outboxMessage)
         {
-            if (!(queuedMessage is DbQueuedMessage dbQueuedMessage))
-                throw new InvalidOperationException("A DbQueuedMessage is expected.");
+            if (!(outboxMessage is DbOutboxStoredMessage dbOutboxMessage))
+                throw new InvalidOperationException("A DbOutboxStoredMessage is expected.");
 
-            var entity = await DbSet.FindAsync(dbQueuedMessage.Id).ConfigureAwait(false);
+            var entity = await DbSet.FindAsync(dbOutboxMessage.Id).ConfigureAwait(false);
 
             if (entity == null)
                 return;
@@ -94,28 +93,28 @@ namespace Silverback.Messaging.Connectors.Repositories
             await DbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="IOutboundQueueReader.GetLength" />
-        public Task<int> GetLength() => DbSet.AsQueryable().CountAsync();
+        /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
+        public Task<int> GetLengthAsync() => DbSet.AsQueryable().CountAsync();
 
-        private static Type? GetMessageType(OutboundMessage message)
+        private static Type? GetMessageType(OutboxMessage outboxMessage)
         {
-            if (message.MessageType == null)
+            if (outboxMessage.MessageType == null)
                 return null;
 
-            return TypesCache.GetType(message.MessageType);
+            return TypesCache.GetType(outboxMessage.MessageType);
         }
 
-        private static IEnumerable<MessageHeader> DeserializeHeaders(OutboundMessage message)
+        private static IEnumerable<MessageHeader> DeserializeHeaders(OutboxMessage outboxMessage)
         {
-            if (message.SerializedHeaders != null)
+            if (outboxMessage.SerializedHeaders != null)
             {
-                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(message.SerializedHeaders);
+                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(outboxMessage.SerializedHeaders);
             }
 
 #pragma warning disable 618
-            if (message.Headers != null)
+            if (outboxMessage.Headers != null)
             {
-                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(message.Headers);
+                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(outboxMessage.Headers);
             }
 #pragma warning restore 618
 

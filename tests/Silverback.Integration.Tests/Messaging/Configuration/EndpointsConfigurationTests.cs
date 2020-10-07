@@ -20,10 +20,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddSilverback()
-                    .WithConnectionToMessageBroker(
-                        options => options
-                            .AddBroker<TestBroker>()
-                            .AddOutboundConnector())
+                    .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
                     .AddEndpoints(
                         endpoints =>
                             endpoints
@@ -61,8 +58,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                     .WithConnectionToMessageBroker(
                         options => options
                             .AddBroker<TestBroker>()
-                            .AddBroker<TestOtherBroker>()
-                            .AddOutboundConnector())
+                            .AddBroker<TestOtherBroker>())
                     .AddEndpoints(
                         endpoints =>
                             endpoints
@@ -96,8 +92,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
-                            .AddBroker<TestBroker>()
-                            .AddOutboundConnector())
+                            .AddBroker<TestBroker>())
                     .AddEndpoints(
                         endpoints =>
                             endpoints
@@ -119,8 +114,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                     .WithConnectionToMessageBroker(
                         options => options
                             .AddBroker<TestBroker>()
-                            .AddBroker<TestOtherBroker>()
-                            .AddOutboundConnector())
+                            .AddBroker<TestOtherBroker>())
                     .AddEndpoints(
                         endpoints =>
                             endpoints

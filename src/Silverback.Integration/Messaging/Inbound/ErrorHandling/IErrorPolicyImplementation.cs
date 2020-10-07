@@ -39,9 +39,9 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         ///     The exception that was thrown during the processing.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains a boolean flag
-        ///     indicating whether the error was handled. If <c>false</c> is returned the exception will be rethrown
-        ///     and the consumer will stop.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
+        ///     boolean flag indicating whether the error was handled. If <c>false</c> is returned the exception will
+        ///     be rethrown and the consumer will stop.
         /// </returns>
         Task<bool> HandleError(ConsumerPipelineContext context, Exception exception);
     }

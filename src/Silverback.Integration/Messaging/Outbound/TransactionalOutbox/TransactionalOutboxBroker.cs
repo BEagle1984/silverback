@@ -8,28 +8,27 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Outbound.Routing;
-using Silverback.Messaging.Sequences;
 
-namespace Silverback.Messaging.Outbound.Deferred
+namespace Silverback.Messaging.Outbound.TransactionalOutbox
 {
     /// <summary>
     ///     An <see cref="IBroker" /> implementation that is used by the  <see cref="DeferredOutboundConnector"/> to write into the outbound queue.
     /// </summary>
     public class TransactionalOutboxBroker : Broker<IProducerEndpoint, IConsumerEndpoint>
     {
-        private readonly IOutboundQueueWriter _queueWriter;
+        private readonly IOutboxWriter _queueWriter;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TransactionalOutboxBroker" /> class.
         /// </summary>
         /// <param name="queueWriter">
-        ///     The <see cref="IOutboundQueueWriter"/> to be used to write to the queue.
+        ///     The <see cref="IOutboxWriter"/> to be used to write to the queue.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         public TransactionalOutboxBroker(
-            IOutboundQueueWriter queueWriter,
+            IOutboxWriter queueWriter,
             IServiceProvider serviceProvider)
             : base(serviceProvider)
         {

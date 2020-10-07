@@ -18,16 +18,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         {
             var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
 
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint2") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint3") { GroupId = "group1" });
-            await store.Commit();
+            await store.CommitAsync();
 
             store.CommittedItemsCount.Should().Be(3);
         }
@@ -37,16 +37,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         {
             var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
 
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group2" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group3" });
-            await store.Commit();
+            await store.CommitAsync();
 
             store.CommittedItemsCount.Should().Be(3);
         }
@@ -56,16 +56,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         {
             var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
 
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key2", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key3", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Commit();
+            await store.CommitAsync();
 
             store.CommittedItemsCount.Should().Be(3);
         }
@@ -75,16 +75,16 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         {
             var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
 
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "2"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "3"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Commit();
+            await store.CommitAsync();
 
             store.CommittedItemsCount.Should().Be(1);
         }
@@ -94,27 +94,27 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         {
             var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
 
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "2"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "3"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key2", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint2") { GroupId = "group1" });
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group2" });
-            await store.Commit();
+            await store.CommitAsync();
 
-            var result = await store.GetLatestValue(
+            var result = await store.GetLatestValueAsync(
                 "key1",
                 new TestConsumerEndpoint("endpoint1")
                 {
@@ -130,12 +130,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         {
             var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
 
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Commit();
+            await store.CommitAsync();
 
-            var result = await store.GetLatestValue(
+            var result = await store.GetLatestValueAsync(
                 "key2",
                 new TestConsumerEndpoint("endpoint1")
                 {
@@ -151,20 +151,20 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             var sharedList = new TransactionalDictionarySharedItems<string, IComparableOffset>();
 
             var store = new InMemoryOffsetStore(sharedList);
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Commit();
+            await store.CommitAsync();
 
             store = new InMemoryOffsetStore(sharedList);
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "2"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Commit();
+            await store.CommitAsync();
 
             store = new InMemoryOffsetStore(sharedList);
 
-            var result = await store.GetLatestValue(
+            var result = await store.GetLatestValueAsync(
                 "key1",
                 new TestConsumerEndpoint("endpoint1")
                 {
@@ -180,21 +180,21 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         {
             var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
 
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "1"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Commit();
+            await store.CommitAsync();
 
             store.CommittedItemsCount.Should().Be(1);
 
-            await store.Store(
+            await store.StoreAsync(
                 new TestOffset("key1", "2"),
                 new TestConsumerEndpoint("endpoint1") { GroupId = "group1" });
-            await store.Rollback();
+            await store.RollbackAsync();
 
             store.CommittedItemsCount.Should().Be(1);
 
-            var result = await store.GetLatestValue(
+            var result = await store.GetLatestValueAsync(
                 "key1",
                 new TestConsumerEndpoint("endpoint1")
                 {

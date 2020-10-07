@@ -26,47 +26,47 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task Add_SomeEnvelopesNoCommit_LogStillEmpty()
         {
-            await _log.Add(GetEnvelope());
-            await _log.Add(GetEnvelope());
-            await _log.Add(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
 
-            (await _log.GetLength()).Should().Be(0);
+            (await _log.GetLengthAsync()).Should().Be(0);
         }
 
         [Fact]
         public async Task Add_SomeEnvelopesAndCommit_Logged()
         {
-            await _log.Add(GetEnvelope());
-            await _log.Add(GetEnvelope());
-            await _log.Add(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
 
-            await _log.Commit();
+            await _log.CommitAsync();
 
-            (await _log.GetLength()).Should().Be(3);
+            (await _log.GetLengthAsync()).Should().Be(3);
         }
 
         [Fact]
         public async Task Add_SomeEnvelopesAndRollback_LogStillEmpty()
         {
-            await _log.Add(GetEnvelope());
-            await _log.Add(GetEnvelope());
-            await _log.Add(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
 
-            await _log.Rollback();
+            await _log.RollbackAsync();
 
-            (await _log.GetLength()).Should().Be(0);
+            (await _log.GetLengthAsync()).Should().Be(0);
         }
 
         [Fact]
         public async Task Exists_LoggedEnvelope_TrueIsReturned()
         {
             var messageId = Guid.NewGuid();
-            await _log.Add(GetEnvelope());
-            await _log.Add(GetEnvelope(messageId));
-            await _log.Add(GetEnvelope());
-            await _log.Commit();
+            await _log.AddAsync(GetEnvelope());
+            await _log.AddAsync(GetEnvelope(messageId));
+            await _log.AddAsync(GetEnvelope());
+            await _log.CommitAsync();
 
-            var result = await _log.Exists(GetEnvelope(messageId));
+            var result = await _log.ExistsAsync(GetEnvelope(messageId));
 
             result.Should().BeTrue();
         }
@@ -86,10 +86,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             var envelope1 = GetEnvelope(messageId, endpoint1);
             var envelope2 = GetEnvelope(messageId, endpoint2);
 
-            await _log.Add(envelope1);
-            await _log.Commit();
+            await _log.AddAsync(envelope1);
+            await _log.CommitAsync();
 
-            var result = await _log.Exists(envelope2);
+            var result = await _log.ExistsAsync(envelope2);
 
             result.Should().BeFalse();
         }
@@ -109,10 +109,10 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
             var envelope1 = GetEnvelope(messageId, endpoint1);
             var envelope2 = GetEnvelope(messageId, endpoint2);
 
-            await _log.Add(envelope1);
-            await _log.Commit();
+            await _log.AddAsync(envelope1);
+            await _log.CommitAsync();
 
-            var result = await _log.Exists(envelope2);
+            var result = await _log.ExistsAsync(envelope2);
 
             result.Should().BeFalse();
         }
@@ -120,11 +120,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         [Fact]
         public async Task Exists_NotLoggedEnvelope_FalseIsReturned()
         {
-            await _log.Add(GetEnvelope());
-            await _log.Add(GetEnvelope());
-            await _log.Add(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
+            await _log.AddAsync(GetEnvelope());
 
-            var result = await _log.Exists(GetEnvelope());
+            var result = await _log.ExistsAsync(GetEnvelope());
 
             result.Should().BeFalse();
         }

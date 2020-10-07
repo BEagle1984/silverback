@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Outbound
     public interface IProduceStrategy
     {
         /// <summary>
-        ///     Returns the actual strategy implementation, built using the provided  <see cref="IServiceProvider" />.
+        ///     Returns the actual strategy implementation, built using the provided <see cref="IServiceProvider" />.
         /// </summary>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to build the strategy.

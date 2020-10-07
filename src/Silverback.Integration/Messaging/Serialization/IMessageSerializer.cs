@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Serialization
         ///     The context information.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="Stream" /> with the serialized message.
         /// </returns>
         ValueTask<Stream?> SerializeAsync(
@@ -48,7 +48,7 @@ namespace Silverback.Messaging.Serialization
         ///     The context information.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     deserialized message (or <c>null</c> when the input is null or empty) and the type of the message.
         /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]

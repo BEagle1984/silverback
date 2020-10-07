@@ -22,8 +22,8 @@ namespace Silverback.Messaging.HealthChecks
         ///     The maximum amount of messages in the queue (default is null, meaning unrestricted).
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains a boolean
-        ///     value indicating whether the check is successful.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
+        ///     boolean value indicating whether the check is successful.
         /// </returns>
         Task<bool> CheckIsHealthy(TimeSpan? maxAge = null, int? maxQueueLength = null);
     }

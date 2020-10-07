@@ -10,7 +10,6 @@ using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.Deferred;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -19,29 +18,29 @@ namespace Silverback.Messaging.Connectors.Repositories
     /// <summary>
     ///     Stores the outbound messages into the database. Used by the <see cref="DeferredOutboundConnector" />.
     /// </summary>
-    public class DbOutboundQueueWriter : RepositoryBase<OutboundMessage>, IOutboundQueueWriter
+    public class DbOutboxWriter : RepositoryBase<OutboxMessage>, IOutboxWriter
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="DbOutboundQueueWriter" /> class.
+        ///     Initializes a new instance of the <see cref="DbOutboxWriter" /> class.
         /// </summary>
         /// <param name="dbContext">
         ///     The <see cref="IDbContext" /> to use as storage.
         /// </param>
-        public DbOutboundQueueWriter(IDbContext dbContext)
+        public DbOutboxWriter(IDbContext dbContext)
             : base(dbContext)
         {
         }
 
-        /// <inheritdoc cref="IOutboundQueueWriter.Enqueue" />
-        public async Task Enqueue(IOutboundEnvelope envelope)
+        /// <inheritdoc cref="IOutboxWriter.WriteAsync" />
+        public async Task WriteAsync(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
             DbSet.Add(
-                new OutboundMessage
+                new OutboxMessage
                 {
                     MessageType = envelope.Message?.GetType().AssemblyQualifiedName,
-                    Content = await GetContent(envelope).ConfigureAwait(false),
+                    Content = await GetContentAsync(envelope).ConfigureAwait(false),
                     SerializedHeaders =
                         JsonSerializer.SerializeToUtf8Bytes((IEnumerable<MessageHeader>)envelope.Headers),
                     EndpointName = envelope.Endpoint.Name,
@@ -49,22 +48,22 @@ namespace Silverback.Messaging.Connectors.Repositories
                 });
         }
 
-        /// <inheritdoc cref="IOutboundQueueWriter.Commit" />
-        public Task Commit()
+        /// <inheritdoc cref="IOutboxWriter.CommitAsync" />
+        public Task CommitAsync()
         {
             // Nothing to do, the transaction is implicitly committed calling `SaveChanges` on the DbContext.
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="IOutboundQueueWriter.Rollback" />
-        public Task Rollback()
+        /// <inheritdoc cref="IOutboxWriter.RollbackAsync" />
+        public Task RollbackAsync()
         {
             // Nothing to do, the transaction is aborted by the DbContext
             return Task.CompletedTask;
         }
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private static async ValueTask<byte[]?> GetContent(IOutboundEnvelope envelope)
+        private static async ValueTask<byte[]?> GetContentAsync(IOutboundEnvelope envelope)
         {
             var stream =
                 envelope.RawMessage ??

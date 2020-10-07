@@ -476,6 +476,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 new NotImplementedException(); // Is this even a case? Must be handled via policy? (Consider interleaved as well)
         }
 
+        // TODO: Test rollback always called with all kind of policies
+
         //
         // [Fact]
         // [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]

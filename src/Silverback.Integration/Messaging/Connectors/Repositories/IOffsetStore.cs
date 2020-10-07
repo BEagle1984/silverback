@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Connectors.Repositories
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Store(IComparableOffset offset, IConsumerEndpoint endpoint);
+        Task StoreAsync(IComparableOffset offset, IConsumerEndpoint endpoint);
 
         /// <summary>
         ///     Returns the latest recorded offset value for the specified offset key and endpoint.
@@ -38,9 +38,9 @@ namespace Silverback.Messaging.Connectors.Repositories
         ///     The endpoint for which the recorded offset has to be be returned.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task{TResult}" /> representing the result of the asynchronous operation. The task
-        ///     result contains the latest offset.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     latest offset.
         /// </returns>
-        Task<IComparableOffset?> GetLatestValue(string offsetKey, IConsumerEndpoint endpoint);
+        Task<IComparableOffset?> GetLatestValueAsync(string offsetKey, IConsumerEndpoint endpoint);
     }
 }

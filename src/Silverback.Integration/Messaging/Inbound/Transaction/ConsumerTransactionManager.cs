@@ -60,7 +60,7 @@ namespace Silverback.Messaging.Inbound.Transaction
         }
 
         /// <inheritdoc cref="IConsumerTransactionManager.Commit" />
-        public async Task Commit()
+        public async Task CommitAsync()
         {
             EnsureNotCompleted();
             IsCompleted = true;
@@ -70,12 +70,12 @@ namespace Silverback.Messaging.Inbound.Transaction
                 .ConfigureAwait(false);
 
             // TODO: At least once is ok? (Consider that the DbContext might have been committed already.
-            await _transactionalServices.ForEachAsync(service => service.Commit()).ConfigureAwait(false);
+            await _transactionalServices.ForEachAsync(service => service.CommitAsync()).ConfigureAwait(false);
             await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IConsumerTransactionManager.Rollback" />
-        public async Task Rollback(Exception exception, bool commitOffsets = false)
+        public async Task RollbackAsync(Exception exception, bool commitOffsets = false)
         {
             EnsureNotCompleted();
             IsCompleted = true;
@@ -86,7 +86,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                     .PublishAsync(new ConsumingAbortedEvent(_context, exception))
                     .ConfigureAwait(false);
 
-                await _transactionalServices.ForEachAsync(service => service.Rollback())
+                await _transactionalServices.ForEachAsync(service => service.RollbackAsync())
                     .ConfigureAwait(false);
             }
             finally

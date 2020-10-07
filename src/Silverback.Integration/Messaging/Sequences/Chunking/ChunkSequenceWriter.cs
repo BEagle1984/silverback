@@ -85,7 +85,6 @@ namespace Silverback.Messaging.Sequences.Chunking
                 originalEnvelope.Message,
                 originalEnvelope.Headers,
                 originalEnvelope.Endpoint,
-                (originalEnvelope as IOutboundEnvelopeInternal)?.OutboundConnectorType,
                 originalEnvelope.AutoUnwrap)
             {
                 RawMessage = new MemoryStream(rawContent)

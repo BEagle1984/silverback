@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.Deferred;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox
@@ -17,23 +16,25 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
     ///     transaction used to update the data. The <see cref="IOutboxWorker" /> takes care of asynchronously
     ///     sending the messages to the message broker.
     /// </summary>
-    public class TransactionalOutboxProduceStrategy : IProduceStrategy
+    public class OutboxProduceStrategy : IProduceStrategy
     {
+        private TransactionalOutboxProduceStrategyImplementation? _implementation;
+
         /// <inheritdoc cref="IProduceStrategy.Build" />
         public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>
-            new TransactionalOutboxProduceStrategyImplementation(
+            _implementation ??= new TransactionalOutboxProduceStrategyImplementation(
                 serviceProvider.GetRequiredService<TransactionalOutboxBroker>(),
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<TransactionalOutboxProduceStrategy>>());
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<OutboxProduceStrategy>>());
 
         private class TransactionalOutboxProduceStrategyImplementation : IProduceStrategyImplementation
         {
             private readonly TransactionalOutboxBroker _outboundQueueBroker;
 
-            private readonly ISilverbackIntegrationLogger<TransactionalOutboxProduceStrategy> _logger;
+            private readonly ISilverbackIntegrationLogger<OutboxProduceStrategy> _logger;
 
             public TransactionalOutboxProduceStrategyImplementation(
                 TransactionalOutboxBroker outboundQueueBroker,
-                ISilverbackIntegrationLogger<TransactionalOutboxProduceStrategy> logger)
+                ISilverbackIntegrationLogger<OutboxProduceStrategy> logger)
             {
                 _outboundQueueBroker = outboundQueueBroker;
                 _logger = logger;

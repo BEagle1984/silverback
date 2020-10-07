@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.Deferred;
 
 namespace Silverback.Messaging.Outbound.Routing
 {

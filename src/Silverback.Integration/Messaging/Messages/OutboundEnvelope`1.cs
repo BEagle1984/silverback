@@ -13,9 +13,8 @@ namespace Silverback.Messaging.Messages
             TMessage message,
             IEnumerable<MessageHeader>? headers,
             IProducerEndpoint endpoint,
-            Type? outboundConnectorType = null,
             bool autoUnwrap = false)
-            : base(message, headers, endpoint, outboundConnectorType, autoUnwrap)
+            : base(message, headers, endpoint, autoUnwrap)
         {
         }
 

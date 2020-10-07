@@ -3,7 +3,6 @@
 
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Outbound.Deferred;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 
 namespace Silverback.Diagnostics

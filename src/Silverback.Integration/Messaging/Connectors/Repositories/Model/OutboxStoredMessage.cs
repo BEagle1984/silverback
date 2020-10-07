@@ -10,12 +10,12 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Connectors.Repositories.Model
 {
     /// <summary>
-    ///     Encapsulates the information related to a message stored in the outbound queue.
+    ///     Encapsulates the information related to a message stored in the outbox.
     /// </summary>
-    public class QueuedMessage
+    public class OutboxStoredMessage
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="QueuedMessage" /> class.
+        ///     Initializes a new instance of the <see cref="OutboxStoredMessage" /> class.
         /// </summary>
         /// <param name="messageType">
         ///     The type of the message.
@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         ///     The name of the target endpoint.
         /// </param>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public QueuedMessage(
+        public OutboxStoredMessage(
             Type? messageType,
             byte[]? content,
             IEnumerable<MessageHeader>? headers,

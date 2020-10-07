@@ -37,8 +37,8 @@ namespace Silverback.Messaging.Connectors.Repositories
         {
         }
 
-        /// <inheritdoc cref="IOffsetStore.Store" />
-        public async Task Store(IComparableOffset offset, IConsumerEndpoint endpoint)
+        /// <inheritdoc cref="IOffsetStore.StoreAsync" />
+        public async Task StoreAsync(IComparableOffset offset, IConsumerEndpoint endpoint)
         {
             Check.NotNull(offset, nameof(offset));
             Check.NotNull(endpoint, nameof(endpoint));
@@ -58,22 +58,22 @@ namespace Silverback.Messaging.Connectors.Repositories
 #pragma warning restore 618
         }
 
-        /// <inheritdoc cref="ITransactional.Commit" />
-        public async Task Commit()
+        /// <inheritdoc cref="ITransactional.CommitAsync" />
+        public async Task CommitAsync()
         {
             // Call SaveChanges, in case it isn't called by a subscriber
             await DbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="ITransactional.Rollback" />
-        public Task Rollback()
+        /// <inheritdoc cref="ITransactional.RollbackAsync" />
+        public Task RollbackAsync()
         {
             // Nothing to do, just not saving the changes made to the DbContext
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="IOffsetStore.GetLatestValue" />
-        public async Task<IComparableOffset?> GetLatestValue(string offsetKey, IConsumerEndpoint endpoint)
+        /// <inheritdoc cref="IOffsetStore.GetLatestValueAsync" />
+        public async Task<IComparableOffset?> GetLatestValueAsync(string offsetKey, IConsumerEndpoint endpoint)
         {
             Check.NotNull(offsetKey, nameof(offsetKey));
             Check.NotNull(endpoint, nameof(endpoint));

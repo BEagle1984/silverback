@@ -9,13 +9,13 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Connectors.Repositories.Model
 {
     /// <summary>
-    ///     Extends the <see cref="QueuedMessage" /> adding the specific information related to a message stored
+    ///     Extends the <see cref="OutboxStoredMessage" /> adding the specific information related to a message stored
     ///     in the transactional outbox table.
     /// </summary>
-    public class DbQueuedMessage : QueuedMessage
+    public class DbOutboxStoredMessage : OutboxStoredMessage
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="DbQueuedMessage" /> class.
+        ///     Initializes a new instance of the <see cref="DbOutboxStoredMessage" /> class.
         /// </summary>
         /// <param name="id">
         ///     The primary key of the database record.
@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
         ///     The name of the target endpoint.
         /// </param>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public DbQueuedMessage(
+        public DbOutboxStoredMessage(
             int id,
             Type? messageType,
             byte[]? content,

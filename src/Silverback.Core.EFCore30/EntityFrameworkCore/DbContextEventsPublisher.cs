@@ -96,7 +96,7 @@ namespace Silverback.EntityFrameworkCore
         ///     The delegate to the original <c>SaveChangesAsync</c> method.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the number
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the number
         ///     of entities saved to the database.
         /// </returns>
         public Task<int> ExecuteSaveTransactionAsync(Func<Task<int>> saveChangesAsync)

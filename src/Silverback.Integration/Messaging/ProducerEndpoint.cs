@@ -26,7 +26,7 @@ namespace Silverback.Messaging
         ///     Gets or sets the strategy to be used to produce the messages. If no strategy is specified, the
         ///     messages will be sent to the message broker directly.
         /// </summary>
-        public IProduceStrategy? Strategy { get; }
+        public IProduceStrategy? Strategy { get; set; }
 
         /// <summary>
         ///     Gets or sets the message chunking settings. This option can be used to split large messages into

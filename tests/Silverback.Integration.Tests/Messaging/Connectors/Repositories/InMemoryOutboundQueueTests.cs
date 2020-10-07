@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 {
     public class InMemoryOutboundQueueTests
     {
-        private readonly InMemoryOutboundQueue _queue;
+        private readonly InMemoryOutbox _queue;
 
         private readonly IOutboundEnvelope _sampleOutboundEnvelope = new OutboundEnvelope(
             new TestEventOne { Content = "Test" },
@@ -25,48 +25,48 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
         public InMemoryOutboundQueueTests()
         {
-            _queue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
+            _queue = new InMemoryOutbox(new TransactionalListSharedItems<OutboxStoredMessage>());
         }
 
         [Fact]
         public async Task Enqueue_MultipleTimesInParallelNoCommit_QueueLooksEmpty()
         {
-            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundEnvelope); });
+            Parallel.For(0, 3, _ => { _queue.WriteAsync(_sampleOutboundEnvelope); });
 
-            (await _queue.GetLength()).Should().Be(0);
+            (await _queue.GetLengthAsync()).Should().Be(0);
         }
 
         [Fact]
         public async Task Enqueue_MultipleTimesInParallelAndCommit_QueueFilled()
         {
-            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundEnvelope); });
+            Parallel.For(0, 3, _ => { _queue.WriteAsync(_sampleOutboundEnvelope); });
 
-            await _queue.Commit();
+            await _queue.CommitAsync();
 
-            (await _queue.GetLength()).Should().Be(3);
+            (await _queue.GetLengthAsync()).Should().Be(3);
         }
 
         [Fact]
         public async Task Enqueue_MultipleTimesInParallelAndRollback_QueueIsEmpty()
         {
-            Parallel.For(0, 3, _ => { _queue.Enqueue(_sampleOutboundEnvelope); });
+            Parallel.For(0, 3, _ => { _queue.WriteAsync(_sampleOutboundEnvelope); });
 
-            await _queue.Rollback();
+            await _queue.RollbackAsync();
 
-            (await _queue.GetLength()).Should().Be(0);
+            (await _queue.GetLengthAsync()).Should().Be(0);
         }
 
         [Fact]
         public async Task Enqueue_SomeEnvelopes_OnlyCommittedEnvelopesAreEnqueued()
         {
-            await _queue.Enqueue(_sampleOutboundEnvelope);
-            await _queue.Commit();
-            await _queue.Enqueue(_sampleOutboundEnvelope);
-            await _queue.Rollback();
-            await _queue.Enqueue(_sampleOutboundEnvelope);
-            await _queue.Commit();
+            await _queue.WriteAsync(_sampleOutboundEnvelope);
+            await _queue.CommitAsync();
+            await _queue.WriteAsync(_sampleOutboundEnvelope);
+            await _queue.RollbackAsync();
+            await _queue.WriteAsync(_sampleOutboundEnvelope);
+            await _queue.CommitAsync();
 
-            (await _queue.GetLength()).Should().Be(2);
+            (await _queue.GetLengthAsync()).Should().Be(2);
         }
 
         [Theory]
@@ -77,12 +77,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         {
             for (var i = 0; i < 5; i++)
             {
-                await _queue.Enqueue(_sampleOutboundEnvelope);
+                await _queue.WriteAsync(_sampleOutboundEnvelope);
             }
 
-            await _queue.Commit();
+            await _queue.CommitAsync();
 
-            var result = await _queue.Dequeue(count);
+            var result = await _queue.ReadAsync(count);
 
             result.Count.Should().Be(expected);
         }
@@ -92,20 +92,20 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
         {
             for (var i = 0; i < 5; i++)
             {
-                await _queue.Enqueue(_sampleOutboundEnvelope);
+                await _queue.WriteAsync(_sampleOutboundEnvelope);
             }
 
-            await _queue.Commit();
+            await _queue.CommitAsync();
 
-            var result = (await _queue.Dequeue(5)).ToArray();
+            var result = (await _queue.ReadAsync(5)).ToArray();
 
-            await _queue.Acknowledge(result[0]);
-            await _queue.Retry(result[1]);
-            await _queue.Acknowledge(result[2]);
-            await _queue.Retry(result[3]);
-            await _queue.Acknowledge(result[4]);
+            await _queue.AcknowledgeAsync(result[0]);
+            await _queue.RetryAsync(result[1]);
+            await _queue.AcknowledgeAsync(result[2]);
+            await _queue.RetryAsync(result[3]);
+            await _queue.AcknowledgeAsync(result[4]);
 
-            (await _queue.GetLength()).Should().Be(2);
+            (await _queue.GetLengthAsync()).Should().Be(2);
         }
     }
 }

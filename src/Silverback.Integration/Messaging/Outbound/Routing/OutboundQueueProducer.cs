@@ -8,7 +8,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.Deferred;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Outbound.Routing
@@ -16,13 +16,13 @@ namespace Silverback.Messaging.Outbound.Routing
     /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
     public class OutboundQueueProducer : Producer<TransactionalOutboxBroker, IProducerEndpoint>
     {
-        private readonly IOutboundQueueWriter _queueWriter;
+        private readonly IOutboxWriter _queueWriter;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="OutboundQueueProducer" /> class.
         /// </summary>
         /// <param name="queueWriter">
-        ///     The <see cref="IOutboundQueueWriter"/> to be used to write to the queue.
+        ///     The <see cref="IOutboxWriter"/> to be used to write to the queue.
         /// </param>
         /// <param name="broker">
         ///     The <see cref="IBroker" /> that instantiated this producer.
@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Outbound.Routing
         ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         public OutboundQueueProducer(
-            IOutboundQueueWriter queueWriter,
+            IOutboxWriter queueWriter,
             TransactionalOutboxBroker broker,
             IProducerEndpoint endpoint,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
@@ -62,7 +62,7 @@ namespace Silverback.Messaging.Outbound.Routing
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            await _queueWriter.Enqueue(envelope).ConfigureAwait(false);
+            await _queueWriter.WriteAsync(envelope).ConfigureAwait(false);
 
             return null;
         }

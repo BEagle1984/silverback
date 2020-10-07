@@ -52,6 +52,10 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingleton<IHostedService, BrokerConnectorService>()
                     .AddSingleton<EndpointsConfiguratorsInvoker>();
 
+                // Pipeline
+                brokerOptionsBuilder.SilverbackBuilder.Services
+                    .AddTransient(typeof(IBrokerBehaviorsProvider<>), typeof(BrokerBehaviorsProvider<>));
+
                 // Pipeline - Activity
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<ActivityProducerBehavior>()
@@ -113,11 +117,6 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingletonBrokerBehavior<ProcessingTaskStarterConsumerBehavior>()
                     .AddSingletonBrokerBehavior<ExactlyOnceGuardConsumerBehavior>()
                     .AddSingletonBrokerBehavior<PublisherConsumerBehavior>();
-
-                // Support - Transactional Lists
-                brokerOptionsBuilder.SilverbackBuilder.Services
-                    .AddSingleton(typeof(TransactionalListSharedItems<>))
-                    .AddSingleton(typeof(TransactionalDictionarySharedItems<,>));
             }
 
             // Register the broker as IBroker and the type itself, both resolving to the same instance

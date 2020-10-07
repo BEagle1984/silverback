@@ -9,9 +9,9 @@ using System.Diagnostics.CodeAnalysis;
 namespace Silverback.Database.Model
 {
     /// <summary>
-    ///     The entity stored in the outbound queue table.
+    ///     The entity stored in the outbox table.
     /// </summary>
-    public class OutboundMessage
+    public class OutboxMessage
     {
         /// <summary>
         ///     Gets or sets the primary key (identity).

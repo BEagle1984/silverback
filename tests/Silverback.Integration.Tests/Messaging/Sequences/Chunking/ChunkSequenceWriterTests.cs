@@ -89,7 +89,6 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                         Size = 3
                     }
                 },
-                typeof(string),
                 true);
 
             var writer = new ChunkSequenceWriter();

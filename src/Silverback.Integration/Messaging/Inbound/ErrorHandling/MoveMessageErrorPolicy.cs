@@ -130,6 +130,8 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
                 await PublishToNewEndpoint(context.Envelope, exception).ConfigureAwait(false);
 
+                await context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
+
                 return true;
             }
 

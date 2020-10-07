@@ -169,8 +169,8 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         ///     The exception that was thrown during the processing.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the action
-        ///     that the consumer should perform (e.g. skip the message or stop consuming).
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     action that the consumer should perform (e.g. skip the message or stop consuming).
         /// </returns>
         protected abstract Task<bool> ApplyPolicy(ConsumerPipelineContext context, Exception exception);
     }
