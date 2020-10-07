@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
+using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -164,8 +165,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     }))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => { receivedFiles.Add(binaryFile.Content.ReadAll()); })
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
@@ -174,9 +174,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message2);
 
             await DefaultTopic.WaitUntilAllMessagesAreConsumed();
-
-            Subscriber.OutboundEnvelopes.Count.Should().Be(2);
-            Subscriber.InboundEnvelopes.Count.Should().Be(2);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
@@ -258,8 +255,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
                                 receivedFiles.Add(binaryFile.Content.ReadAll());
                             })
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
@@ -268,9 +264,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message2);
 
             await DefaultTopic.WaitUntilAllMessagesAreConsumed();
-
-            Subscriber.OutboundEnvelopes.Count.Should().Be(2);
-            Subscriber.InboundEnvelopes.Count.Should().Be(2);
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
             SpyBehavior.OutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
@@ -533,7 +526,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task Chunking_IncompleteJson_DiscardedAfterTimeoutAndCommittedWithNextMessage()
+        public async Task Chunking_IncompleteJson_AbortedAfterTimeoutAndCommittedWithNextMessage()
         {
             var message = new TestEventOne { Content = "Hello E2E!" };
             byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
@@ -613,6 +606,108 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Subscriber.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
+
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Chunking_IncompleteBinaryFile_AbortedAfterTimeoutAndCommittedWithNextMessage()
+        {
+            var rawMessage = new byte[]
+            {
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10,
+                0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x20,
+                0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x30
+            };
+
+            bool enumerationAborted = false;
+            var receivedFiles = new List<byte[]?>();
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            Timeout = TimeSpan.FromMilliseconds(500)
+                                        },
+                                        Serializer = BinaryFileMessageSerializer.Default
+                                    }))
+                        .AddDelegateSubscriber(
+                            (BinaryFileMessage binaryFile) =>
+                            {
+                                try
+                                {
+                                    receivedFiles.Add(binaryFile.Content.ReadAll());
+                                }
+                                catch (OperationCanceledException)
+                                {
+                                    enumerationAborted = true;
+                                    throw;
+                                }
+                            })
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+
+            await producer.ProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("1", 0, 3));
+
+            await AsyncTestingUtil.WaitAsync(() => sequenceStore.HasPendingSequences);
+
+            await Task.Delay(200);
+
+            var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
+            sequence.Should().NotBeNull();
+            sequence!.IsAborted.Should().BeFalse();
+
+            await producer.ProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("1", 1, 3));
+
+            await Task.Delay(300);
+            sequence.IsAborted.Should().BeFalse();
+
+            await AsyncTestingUtil.WaitAsync(() => !sequence.IsPending && enumerationAborted, 1000);
+            sequence.IsAborted.Should().BeTrue();
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+            enumerationAborted.Should().BeTrue();
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+
+            await producer.ProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("2", 0, 3));
+            await producer.ProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("2", 1, 3));
+            await producer.ProduceAsync(
+                rawMessage.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("2", 2, 3));
+
+            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
+            receivedFiles.Should().HaveCount(1);
+            receivedFiles[0].Should().BeEquivalentTo(rawMessage);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
 
             sequenceStore.HasPendingSequences.Should().BeFalse();
