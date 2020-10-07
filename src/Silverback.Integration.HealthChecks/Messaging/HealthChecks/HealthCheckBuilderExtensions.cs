@@ -58,8 +58,8 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds an health check that monitors the outbound queue (outbox table), verifying that the messages
-        ///     are being processed.
+        ///     Adds an health check that monitors the transactional outbox table, verifying that the messages are
+        ///     being processed.
         /// </summary>
         /// <param name="builder">
         ///     The <see cref="IHealthChecksBuilder" />.

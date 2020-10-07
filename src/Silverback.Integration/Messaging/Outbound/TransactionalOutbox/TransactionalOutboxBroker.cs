@@ -15,12 +15,12 @@ namespace Silverback.Messaging.Outbound.Deferred
     /// <summary>
     ///     An <see cref="IBroker" /> implementation that is used by the  <see cref="DeferredOutboundConnector"/> to write into the outbound queue.
     /// </summary>
-    public class OutboundQueueBroker : Broker<IProducerEndpoint, IConsumerEndpoint>
+    public class TransactionalOutboxBroker : Broker<IProducerEndpoint, IConsumerEndpoint>
     {
         private readonly IOutboundQueueWriter _queueWriter;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="OutboundQueueBroker" /> class.
+        ///     Initializes a new instance of the <see cref="TransactionalOutboxBroker" /> class.
         /// </summary>
         /// <param name="queueWriter">
         ///     The <see cref="IOutboundQueueWriter"/> to be used to write to the queue.
@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Outbound.Deferred
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
-        public OutboundQueueBroker(
+        public TransactionalOutboxBroker(
             IOutboundQueueWriter queueWriter,
             IServiceProvider serviceProvider)
             : base(serviceProvider)

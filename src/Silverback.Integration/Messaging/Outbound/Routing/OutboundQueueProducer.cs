@@ -14,7 +14,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Outbound.Routing
 {
     /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
-    public class OutboundQueueProducer : Producer<OutboundQueueBroker, IProducerEndpoint>
+    public class OutboundQueueProducer : Producer<TransactionalOutboxBroker, IProducerEndpoint>
     {
         private readonly IOutboundQueueWriter _queueWriter;
 
@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Outbound.Routing
         /// </param>
         public OutboundQueueProducer(
             IOutboundQueueWriter queueWriter,
-            OutboundQueueBroker broker,
+            TransactionalOutboxBroker broker,
             IProducerEndpoint endpoint,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,

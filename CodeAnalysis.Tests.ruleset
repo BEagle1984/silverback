@@ -778,4 +778,15 @@
         <Rule Id="SA1623" Action="None" /> <!-- SA1623PropertySummaryDocumentationMustMatchAccessors -->
         <Rule Id="SA1633" Action="Warning" /> <!-- FileMustHaveHeader -->
     </Rules>
+    <Rules AnalyzerId="Roslyn.Analyzers" RuleNamespace="Analyzers">
+        <Rule Id="ASYNC0001" Action="None"/> <!-- Asynchronous method names should end with Async -->
+        <Rule Id="ASYNC0002" Action="Warning"/> <!-- Non asynchronous method names should end with Async -->
+        <Rule Id="ASYNC0003" Action="Warning"/> <!-- Avoid void returning asynchronous method	 -->
+        <Rule Id="ASYNC0004" Action="None"/> <!-- Use ConfigureAwait(false) on await expression	 -->
+        <Rule Id="CLASS0001" Action="None"/> <!-- Seal class -->
+        <Rule Id="ENUM0001" Action="Warning"/> <!-- Default switch label -->
+        <Rule Id="ENUM0002" Action="Warning"/> <!-- Merge switch sections -->
+        <Rule Id="ENUM0003" Action="Warning"/> <!-- Populate switch -->
+        <Rule Id="RETURN0001" Action="None"/> <!-- Do not return null -->
+    </Rules>
 </RuleSet>

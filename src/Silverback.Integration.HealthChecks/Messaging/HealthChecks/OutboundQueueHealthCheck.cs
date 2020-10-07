@@ -11,7 +11,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.HealthChecks
 {
     /// <summary>
-    ///     Monitors the outbound queue (outbox table), verifying that the messages are being processed.
+    ///     Monitors the transactional outbox table, verifying that the messages are being processed.
     /// </summary>
     public class OutboundQueueHealthCheck : IHealthCheck
     {

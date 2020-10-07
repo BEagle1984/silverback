@@ -40,7 +40,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddScopedBehavior<OutboundRouterBehavior>()
-                    .AddScopedBehavior<OutboundProducerBehavior>();
+                    .AddScopedBehavior<ProduceBehavior>();
             }
 
             brokerOptionsBuilder.SilverbackBuilder.Services.AddScoped<IOutboundConnector, TConnector>();
@@ -109,7 +109,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             brokerOptionsBuilder.AddDeferredOutboundConnector();
             brokerOptionsBuilder.SilverbackBuilder.Services.AddScoped<IOutboundQueueWriter, TQueueWriter>();
-            brokerOptionsBuilder.SilverbackBuilder.Services.AddScoped<OutboundQueueBroker>();
+            brokerOptionsBuilder.SilverbackBuilder.Services.AddScoped<TransactionalOutboxBroker>();
 
             return brokerOptionsBuilder;
         }

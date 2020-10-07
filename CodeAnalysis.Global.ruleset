@@ -775,8 +775,8 @@
         <Rule Id="SA1600" Action="Warning" /> <!-- ElementsMustBeDocumented -->
         <Rule Id="SA1602" Action="Warning" /> <!-- SA1602EnumerationItemsMustBeDocumented -->
         <Rule Id="SA1611" Action="Warning" /> <!-- ElementParametersMustBeDocumented -->
-        <Rule Id="SA1612" Action="Warning" /> 
-        <Rule Id="SA1613" Action="Warning" /> 
+        <Rule Id="SA1612" Action="Warning" />
+        <Rule Id="SA1613" Action="Warning" />
         <Rule Id="SA1614" Action="Warning" />
         <Rule Id="SA1615" Action="Warning" /> <!-- ElementReturnValueMustBeDocumented -->
         <Rule Id="SA1616" Action="Warning" />
@@ -816,5 +816,16 @@
         <Rule Id="SA1650" Action="Warning" />
         <Rule Id="SA1651" Action="Warning" />
         <Rule Id="SA1652" Action="Warning" />
+    </Rules>
+    <Rules AnalyzerId="Roslyn.Analyzers" RuleNamespace="Analyzers">
+        <Rule Id="ASYNC0001" Action="Warning"/> <!-- Asynchronous method names should end with Async -->
+        <Rule Id="ASYNC0002" Action="Warning"/> <!-- Non asynchronous method names should end with Async -->
+        <Rule Id="ASYNC0003" Action="Warning"/> <!-- Avoid void returning asynchronous method	 -->
+        <Rule Id="ASYNC0004" Action="Warning"/> <!-- Use ConfigureAwait(false) on await expression	 -->
+        <Rule Id="CLASS0001" Action="None"/> <!-- Seal class -->
+        <Rule Id="ENUM0001" Action="Warning"/> <!-- Default switch label -->
+        <Rule Id="ENUM0002" Action="Warning"/> <!-- Merge switch sections -->
+        <Rule Id="ENUM0003" Action="Warning"/> <!-- Populate switch -->
+        <Rule Id="RETURN0001" Action="None"/> <!-- Do not return null -->
     </Rules>
 </RuleSet>

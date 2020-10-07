@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Sequences.Chunking;
 
 namespace Silverback.Messaging
@@ -16,5 +17,11 @@ namespace Silverback.Messaging
         ///     chunks.
         /// </summary>
         ChunkSettings? Chunk { get; }
+
+        /// <summary>
+        ///     Gets the strategy to be used to produce the messages. If no strategy is specified, the
+        ///     messages will be sent to the message broker directly.
+        /// </summary>
+        IProduceStrategy? Strategy { get; }
     }
 }

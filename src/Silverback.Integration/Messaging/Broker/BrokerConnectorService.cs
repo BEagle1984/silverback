@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly IApplicationLifetime _applicationLifetime;
 
-        private readonly IBrokerCollection _brokers;
+        private readonly IBrokerCollection _brokerCollection;
 
         private readonly ISilverbackLogger<BrokerConnectorService> _logger;
 
@@ -32,17 +32,17 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="serviceScopeFactory">The <see cref="IServiceScopeFactory" />.</param>
         /// <param name="applicationLifetime">The <see cref="IApplicationLifetime" />.</param>
-        /// <param name="brokers">The <see cref="IBrokerCollection" />.</param>
+        /// <param name="brokersCollection">The <see cref="IBrokerCollection" />.</param>
         /// <param name="logger">The <see cref="ISilverbackLogger" />.</param>
         public BrokerConnectorService(
             IServiceScopeFactory serviceScopeFactory,
             IApplicationLifetime applicationLifetime,
-            IBrokerCollection brokers,
+            IBrokerCollection brokersCollection,
             ISilverbackLogger<BrokerConnectorService> logger)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _applicationLifetime = applicationLifetime;
-            _brokers = brokers;
+            _brokerCollection = brokersCollection;
             _logger = logger;
         }
 
@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Broker
 
             var options = scope.ServiceProvider.GetRequiredService<BrokerConnectionOptions>();
 
-            _applicationLifetime.ApplicationStopping.Register(() => _brokers.Disconnect());
+            _applicationLifetime.ApplicationStopping.Register(() => _brokerCollection.Disconnect());
 
             switch (options.Mode)
             {
@@ -76,7 +76,7 @@ namespace Silverback.Messaging.Broker
             {
                 try
                 {
-                    _brokers.Connect();
+                    _brokerCollection.Connect();
                     break;
                 }
                 catch (Exception ex)

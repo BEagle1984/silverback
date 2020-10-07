@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Outbound
     public static class IntegrationBehaviorsSortIndexes
     {
         /// <summary>
-        ///     The <see cref="OutboundProducerBehavior" /> sort index.
+        ///     The <see cref="ProduceBehavior" /> sort index.
         /// </summary>
         public const int OutboundProducer = 200;
 

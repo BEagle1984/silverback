@@ -11,14 +11,14 @@ using Silverback.Util;
 namespace Silverback.Messaging.Outbound.Deferred
 {
     // TODO: Transform into strategy
-    
+
     /// <summary>
     ///     Stores the outbound messages into a queue to be forwarded to the message broker by the
     ///     <see cref="IOutboundQueueWorker" />.
     /// </summary>
     public class DeferredOutboundConnector : IOutboundConnector
     {
-        private readonly OutboundQueueBroker _outboundQueueBroker;
+        private readonly TransactionalOutboxBroker _outboundQueueBroker;
 
         private readonly ISilverbackIntegrationLogger _logger;
 
@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Outbound.Deferred
         ///     The <see cref="ISilverbackIntegrationLogger" />.
         /// </param>
         public DeferredOutboundConnector(
-            OutboundQueueBroker outboundQueueBroker,
+            TransactionalOutboxBroker outboundQueueBroker,
             ISilverbackIntegrationLogger<DeferredOutboundConnector> logger)
         {
             _outboundQueueBroker = Check.NotNull(outboundQueueBroker, nameof(outboundQueueBroker));

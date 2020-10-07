@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
                     .Services.BuildServiceProvider();
 
             _queue = new InMemoryOutboundQueue(new TransactionalListSharedItems<QueuedMessage>());
-            var broker = new OutboundQueueBroker(_queue, serviceProvider);
+            var broker = new TransactionalOutboxBroker(_queue, serviceProvider);
             _connector = new DeferredOutboundConnector(
                 broker,
                 Substitute.For<ISilverbackIntegrationLogger<DeferredOutboundConnector>>());

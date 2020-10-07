@@ -16,17 +16,17 @@ namespace Silverback.Messaging.Outbound.Routing
     ///     Produces the <see cref="IOutboundEnvelope{TMessage}" /> through the correct
     ///     <see cref="IOutboundConnector" />.
     /// </summary>
-    public class OutboundProducerBehavior : IBehavior, ISorted
+    public class ProduceBehavior : IBehavior, ISorted
     {
         private readonly IReadOnlyCollection<IOutboundConnector> _outboundConnectors;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="OutboundProducerBehavior" /> class.
+        ///     Initializes a new instance of the <see cref="ProduceBehavior" /> class.
         /// </summary>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" />.
         /// </param>
-        public OutboundProducerBehavior(IServiceProvider serviceProvider)
+        public ProduceBehavior(IServiceProvider serviceProvider)
         {
             _outboundConnectors = serviceProvider.GetServices<IOutboundConnector>().ToList();
         }

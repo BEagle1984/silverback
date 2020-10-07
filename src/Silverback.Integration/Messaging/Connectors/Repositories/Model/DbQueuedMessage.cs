@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Connectors.Repositories.Model
 {
     /// <summary>
     ///     Extends the <see cref="QueuedMessage" /> adding the specific information related to a message stored
-    ///     in the outbox table.
+    ///     in the transactional outbox table.
     /// </summary>
     public class DbQueuedMessage : QueuedMessage
     {

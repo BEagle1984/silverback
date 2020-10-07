@@ -54,7 +54,7 @@ namespace Silverback.Messaging.Outbound.Routing
             // The routed messages are discarded because they have been republished
             // as OutboundEnvelope and they will be normally subscribable
             // (if PublishOutboundMessagesToInternalBus is true).
-            messages = messages.Where(m => !routedMessages.Contains(m)).ToList();
+            messages = messages.Where(message => !routedMessages.Contains(message)).ToList();
 
             return await next(messages).ConfigureAwait(false);
         }

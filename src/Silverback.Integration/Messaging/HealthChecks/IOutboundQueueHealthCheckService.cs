@@ -12,8 +12,7 @@ namespace Silverback.Messaging.HealthChecks
     public interface IOutboundQueueHealthCheckService
     {
         /// <summary>
-        ///     Checks the age of the messages stored in the outbound queue (outbox table) and optionally the queue
-        ///     size.
+        ///     Checks the age of the messages stored in the transactional outbox and optionally the queue length.
         /// </summary>
         /// <param name="maxAge">
         ///     The maximum message age, the check will fail when a message exceeds this age (default is 30

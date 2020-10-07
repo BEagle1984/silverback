@@ -21,7 +21,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 {
     public class OutboundProducerBehaviorTests
     {
-        private readonly OutboundProducerBehavior _behavior;
+        private readonly ProduceBehavior _behavior;
 
         private readonly InMemoryOutboundQueue _outboundQueue;
 
@@ -42,8 +42,8 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             var serviceProvider = services.BuildServiceProvider();
 
-            _behavior = (OutboundProducerBehavior)serviceProvider.GetServices<IBehavior>()
-                .First(behavior => behavior is OutboundProducerBehavior);
+            _behavior = (ProduceBehavior)serviceProvider.GetServices<IBehavior>()
+                .First(behavior => behavior is ProduceBehavior);
             _broker = serviceProvider.GetRequiredService<TestBroker>();
             _outboundQueue = (InMemoryOutboundQueue)serviceProvider.GetRequiredService<IOutboundQueueWriter>();
         }

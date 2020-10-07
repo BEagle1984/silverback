@@ -17,8 +17,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Connectors.Repositories
 {
     /// <summary>
-    ///     Stores the outbound messages into the database. Used by the <see cref="DeferredOutboundConnector" />
-    ///     .
+    ///     Stores the outbound messages into the database. Used by the <see cref="DeferredOutboundConnector" />.
     /// </summary>
     public class DbOutboundQueueWriter : RepositoryBase<OutboundMessage>, IOutboundQueueWriter
     {
