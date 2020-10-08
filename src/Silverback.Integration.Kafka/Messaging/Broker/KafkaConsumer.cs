@@ -317,6 +317,8 @@ namespace Silverback.Messaging.Broker
                 logData["kafkaKey"] = deserializedKafkaKey;
             }
 
+            headers.AddOrReplace(KafkaMessageHeaders.TimestampKey, message.Timestamp.UtcDateTime.ToString("O"));
+
             await HandleMessage(
                     message.Value,
                     headers,
