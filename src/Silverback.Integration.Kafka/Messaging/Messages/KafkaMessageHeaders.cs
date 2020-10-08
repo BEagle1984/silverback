@@ -13,5 +13,10 @@ namespace Silverback.Messaging.Messages
         ///     defined via <see cref="KafkaKeyMemberAttribute" /> for the message being produced).
         /// </summary>
         public const string KafkaMessageKey = "x-kafka-message-key";
+
+        /// <summary>
+        ///     The header that will be filled with the Kafka message timestamp.
+        /// </summary>
+        public const string TimestampKey = "x-kafka-message-timestamp";
     }
 }
