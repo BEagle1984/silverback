@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Inbound
 
             var publisher = context.ServiceProvider.GetRequiredService<IPublisher>();
 
-            await publisher.PublishAsync(context.Envelope).ConfigureAwait(false);
+            await publisher.PublishAsync(context.Envelope, context.Envelope.Endpoint.ThrowIfUnhandled).ConfigureAwait(false);
 
             // TODO: Publish stream(s) (not sequences) -> will need async thread
 

@@ -452,5 +452,53 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
+
+        [Fact]
+        public async Task Inbound_ThrowIfUnhandled_ExceptionThrownIfMessageIsNotHandled()
+        {
+            var received = 0;
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        },
+                                        ThrowIfUnhandled = true
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber((TestEventOne _) => received++))
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "Handled message"
+                });
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            received.Should().Be(1);
+
+            await publisher.PublishAsync(
+                new TestEventTwo
+                {
+                    Content = "Unhandled message"
+                });
+
+            await AsyncTestingUtil.WaitAsync(() => Broker.Consumers[0].IsConnected == false);
+            Broker.Consumers[0].IsConnected.Should().BeFalse();
+        }
     }
 }
