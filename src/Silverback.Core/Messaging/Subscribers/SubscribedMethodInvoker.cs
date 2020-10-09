@@ -163,7 +163,7 @@ namespace Silverback.Messaging.Subscribers
                         // type of message (object? Message) and will automatically be unwrapped, filtered and properly
                         // routed by the MessageStreamEnumerable.
                         if (typeof(IEnvelope).IsAssignableFrom(stream.MessageType) &&
-                            !typeof(IMessageStreamEnumerable<IEnvelope>).IsAssignableFrom(subscribedMethod.MessageType))
+                            !typeof(IEnvelope).IsAssignableFrom(subscribedMethod.MessageType))
                             return true;
 
                         if (stream.MessageType.IsAssignableFrom(subscribedMethod.MessageType))

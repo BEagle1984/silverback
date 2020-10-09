@@ -54,7 +54,7 @@ namespace Silverback.Messaging.Sequences
                 return;
             }
 
-            // Store the original envelope in case it gets replaced in the GetSequence method
+            // Store the original envelope in case it gets replaced in the GetSequence method (see ChunkSequenceReader)
             var originalEnvelope = context.Envelope;
             var sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
 

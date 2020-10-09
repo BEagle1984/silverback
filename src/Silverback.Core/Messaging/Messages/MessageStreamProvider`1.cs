@@ -29,6 +29,8 @@ namespace Silverback.Messaging.Messages
 
         private MethodInfo? _genericCreateLinkedStreamMethodInfo;
 
+        // TODO: Checks if callbacks are used/needed
+
         /// <summary>
         ///     Gets or sets the callback function to be invoked when a message is pulled and successfully processed.
         /// </summary>
@@ -59,7 +61,8 @@ namespace Silverback.Messaging.Messages
         public Type MessageType => typeof(TMessage);
 
         /// <summary>
-        ///     Adds the specified message to the stream.
+        ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the
+        ///     message has actually been pulled and processed.
         /// </summary>
         /// <param name="message">
         ///     The message to be added.
@@ -68,7 +71,8 @@ namespace Silverback.Messaging.Messages
         ///     A <see cref="CancellationToken" /> used to cancel the operation.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
+        ///     A <see cref="Task" /> representing the asynchronous operation. The  <see cref="Task" /> will complete
+        ///     only when the message has actually been pulled and processed.
         /// </returns>
         public virtual async Task PushAsync(TMessage message, CancellationToken cancellationToken = default)
         {
@@ -239,6 +243,7 @@ namespace Silverback.Messaging.Messages
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
+            // TODO: Prevent complete being called after abort (or being called twice)
             if (disposing)
                 AsyncHelper.RunSynchronously(() => CompleteAsync());
         }
