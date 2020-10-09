@@ -87,6 +87,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<SequencerProducerBehavior>()
                     .AddSingletonBrokerBehavior<SequencerConsumerBehavior>()
+                    .AddSingletonBrokerBehavior<RawSequencerConsumerBehavior>()
                     .Services
                     .AddTransient(typeof(ISequenceStore), typeof(DefaultSequenceStore))
                     .AddSingleton<ISequenceWriter, ChunkSequenceWriter>()
@@ -114,7 +115,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>()
                     .AddSingletonBrokerBehavior<TransactionHandlerConsumerBehavior>()
-                    .AddSingletonBrokerBehavior<ProcessingTaskStarterConsumerBehavior>()
+                    //.AddSingletonBrokerBehavior<ProcessingTaskStarterConsumerBehavior>()
                     .AddSingletonBrokerBehavior<ExactlyOnceGuardConsumerBehavior>()
                     .AddTransientBrokerBehavior<PublisherConsumerBehavior>();
             }

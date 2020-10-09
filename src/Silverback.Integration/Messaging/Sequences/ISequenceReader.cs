@@ -13,6 +13,12 @@ namespace Silverback.Messaging.Sequences
     public interface ISequenceReader
     {
         /// <summary>
+        ///     Gets a value indicating whether this reader handles the raw messages, before they are being
+        ///     deserialized, decrypted, etc.
+        /// </summary>
+        bool HandlesRawMessages { get; }
+
+        /// <summary>
         ///     Checks whether this reader can and must handle the message being processed in the specified context.
         /// </summary>
         /// <param name="context">

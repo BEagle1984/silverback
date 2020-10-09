@@ -102,9 +102,9 @@ namespace Silverback.Messaging.Broker.Behaviors
         public IRawInboundEnvelope Envelope { get; set; }
 
         /// <summary>
-        ///     Gets the <see cref="Task" /> representing the message processing. The actual processing is
-        ///     performed in another thread that publishes the messages and the streams to the internal bus and this
-        ///     <see cref="Task" /> will complete when each subscriber has returned.
+        ///     Gets the <see cref="Task" /> representing the message processing when it is not directly awaited (e.g.
+        ///     when starting the processing of a <see cref="Sequence" />. This <see cref="Task" /> will complete when
+        ///     all subscribers return.
         /// </summary>
         public Task? ProcessingTask { get; internal set; }
 

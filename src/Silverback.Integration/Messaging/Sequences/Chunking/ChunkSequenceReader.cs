@@ -15,6 +15,8 @@ namespace Silverback.Messaging.Sequences.Chunking
     /// </summary>
     public class ChunkSequenceReader : ISequenceReader
     {
+        public bool HandlesRawMessages => true;
+
         /// <inheritdoc cref="ISequenceReader.CanHandleAsync"/>
         public Task<bool> CanHandleAsync(ConsumerPipelineContext context)
         {

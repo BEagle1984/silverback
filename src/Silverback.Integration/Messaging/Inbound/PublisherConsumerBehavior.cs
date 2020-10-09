@@ -37,13 +37,14 @@ namespace Silverback.Messaging.Inbound
             var publisher = context.ServiceProvider.GetRequiredService<IPublisher>();
 
             // TODO: Handle ThrowIfUnhandled across single message and stream (and test it)
-            // await publisher.PublishAsync(context.Envelope, context.Envelope.Endpoint.ThrowIfUnhandled)
-            //     .ConfigureAwait(false);
+            await publisher.PublishAsync(context.Envelope, context.Envelope.Endpoint.ThrowIfUnhandled)
+                .ConfigureAwait(false);
 
             if (context.Sequence != null)
             {
                 // TODO: Handle sequences streams
             }
+
             if (context.Envelope is IInboundEnvelope envelope)
             {
                 await EnsureStreamIsPublishedAsync(context).ConfigureAwait(false);

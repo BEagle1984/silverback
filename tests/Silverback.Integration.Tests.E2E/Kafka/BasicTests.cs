@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -358,7 +359,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task InboundAndOutbound_MessageWithCustomHeaders_HeadersTransferred()
+        public async Task OutboundAndInbound_MessageWithCustomHeaders_HeadersTransferred()
         {
             var message = new TestEventWithHeaders
             {
@@ -402,9 +403,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task OutboundAndInbound_Encryption_EncryptedAndDecrypted()
         {
+            throw new NotImplementedException();
+
             var message = new TestEventOne
             {
                 Content = "Hello E2E!"

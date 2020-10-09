@@ -43,34 +43,53 @@ namespace Silverback.Messaging.Inbound.Transaction
                 context.TransactionManager = new ConsumerTransactionManager(context);
 
                 await next(context).ConfigureAwait(false);
-
-                if (context.Sequence == null)
-                {
-                    await AwaitProcessingAndCommit(context).ConfigureAwait(false);
-                    context.Dispose();
-                }
-                else if (context.Sequence.IsComplete || (context.ProcessingTask?.IsCompleted ?? false))
-                {
-                    await AwaitProcessingAndCommit(context.Sequence.Context).ConfigureAwait(false);
-                    context.Sequence.Dispose();
-                    context.Dispose();
-                }
-                else if (context != context.Sequence.Context)
-                {
-                    context.Dispose();
-                }
             }
             catch (Exception exception)
             {
-                context.Dispose();
-                context.Sequence?.Dispose();
+                bool handled = await HandleExceptionAsync(context, exception).ConfigureAwait(false);
 
-                if (!await HandleException(context, exception).ConfigureAwait(false))
+                // TODO: Carefully test: exception handled once and always rolled back
+
+                if (!handled)
+                {
+                    if (context.Sequence != null && (context.Sequence.Context.ProcessingTask?.IsCompleted ?? true))
+                    {
+                        await context.Sequence.Context.TransactionManager.RollbackAsync(exception)
+                            .ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+                    }
+                }
+
+                context.Sequence?.Dispose();
+                context.Dispose();
+
+                if (!handled)
                     throw;
+
+                return;
+            }
+
+            if (context.Sequence == null)
+            {
+                await AwaitProcessingAndCommitAsync(context).ConfigureAwait(false);
+                context.Dispose();
+            }
+            else if (context.Sequence.IsComplete || (context.Sequence.Context.ProcessingTask?.IsCompleted ?? true))
+            {
+                await AwaitProcessingAndCommitAsync(context.Sequence.Context).ConfigureAwait(false);
+                context.Sequence.Dispose();
+                context.Dispose();
+            }
+            else if (context != context.Sequence.Context)
+            {
+                context.Dispose();
             }
         }
 
-        private async Task AwaitProcessingAndCommit(ConsumerPipelineContext context)
+        private async Task AwaitProcessingAndCommitAsync(ConsumerPipelineContext context)
         {
             try
             {
@@ -82,7 +101,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
             catch (Exception exception)
             {
-                if (!await HandleException(context, exception).ConfigureAwait(false))
+                if (!await HandleExceptionAsync(context, exception).ConfigureAwait(false))
                 {
                     await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
                     throw;
@@ -94,7 +113,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        private async Task<bool> HandleException(ConsumerPipelineContext context, Exception exception)
+        private async Task<bool> HandleExceptionAsync(ConsumerPipelineContext context, Exception exception)
         {
             SetFailedAttempts(context.Envelope);
 

@@ -109,9 +109,9 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int TransactionHandler = 250;
 
             /// <summary>
-            ///     The <see cref="SequencerConsumerBehavior" /> sort index.
+            ///     The <see cref="RawSequencerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int Sequencer = 260;
+            public const int RawSequencer = 260;
 
             /// <summary>
             ///     The <see cref="ProcessingTaskStarterConsumerBehavior" /> sort index.
@@ -147,6 +147,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             ///     The <see cref="HeadersReaderConsumerBehavior" /> sort index.
             /// </summary>
             public const int HeadersReader = 800;
+
+            /// <summary>
+            ///     The <see cref="SequencerConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int Sequencer = 900;
 
             /// <summary>
             ///     The <see cref="StreamPublisherConsumerBehavior" /> sort index.
