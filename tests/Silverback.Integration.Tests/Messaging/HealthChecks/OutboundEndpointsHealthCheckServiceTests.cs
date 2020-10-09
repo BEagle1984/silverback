@@ -41,16 +41,13 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 {
                     new OutboundRoute(
                         typeof(TestEventOne),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1"))),
                     new OutboundRoute(
                         typeof(TestEventTwo),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2"))),
                     new OutboundRoute(
                         typeof(TestEventThree),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
-                        typeof(OutboundConnector))
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")))
                 });
 
             var service = new OutboundEndpointsHealthCheckService(
@@ -84,16 +81,13 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 {
                     new OutboundRoute(
                         typeof(TestEventOne),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1"))),
                     new OutboundRoute(
                         typeof(TestEventTwo),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2"))),
                     new OutboundRoute(
                         typeof(TestEventThree),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
-                        typeof(OutboundConnector))
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")))
                 });
 
             var service = new OutboundEndpointsHealthCheckService(
@@ -126,16 +120,13 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 {
                     new OutboundRoute(
                         typeof(TestEventOne),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1"))),
                     new OutboundRoute(
                         typeof(TestEventTwo),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2"))),
                     new OutboundRoute(
                         typeof(TestEventThree),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
-                        typeof(OutboundConnector))
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")))
                 });
 
             var service = new OutboundEndpointsHealthCheckService(

@@ -4,10 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Silverback.Messaging.Connectors.Repositories.Model;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model;
 
-namespace Silverback.Messaging.Connectors.Repositories
+namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
 {
     /// <summary>
     ///     Exposes the methods to read from the outbox. Used by the <see cref="IOutboxWorker" />.

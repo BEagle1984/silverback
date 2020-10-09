@@ -61,6 +61,8 @@ namespace Microsoft.Extensions.DependencyInjection
             var options = new BrokerOptionsBuilder(silverbackBuilder);
             optionsAction?.Invoke(options);
 
+            options.CompleteWithDefaults();
+
             return silverbackBuilder;
         }
     }

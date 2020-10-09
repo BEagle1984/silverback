@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -99,7 +100,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Count.Should().Be(15);
             Subscriber.InboundEnvelopes.Count.Should().Be(15);
@@ -160,8 +161,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         }));
 
             await Task.WhenAll(
-                GetTopic("topic1").WaitUntilAllMessagesAreConsumed(),
-                GetTopic("topic2").WaitUntilAllMessagesAreConsumed());
+                GetTopic("topic1").WaitUntilAllMessagesAreConsumedAsync(),
+                GetTopic("topic2").WaitUntilAllMessagesAreConsumedAsync());
 
             Subscriber.OutboundEnvelopes.Count.Should().Be(10);
             Subscriber.InboundEnvelopes.Count.Should().Be(10);
@@ -222,8 +223,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         }));
 
             await Task.WhenAll(
-                GetTopic("topic1").WaitUntilAllMessagesAreConsumed(),
-                GetTopic("topic2").WaitUntilAllMessagesAreConsumed());
+                GetTopic("topic1").WaitUntilAllMessagesAreConsumedAsync(),
+                GetTopic("topic2").WaitUntilAllMessagesAreConsumedAsync());
 
             Subscriber.OutboundEnvelopes.Count.Should().Be(10);
             Subscriber.InboundEnvelopes.Count.Should().Be(10);
@@ -291,7 +292,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Count.Should().Be(10);
             Subscriber.InboundEnvelopes.Count.Should().Be(10);
@@ -350,7 +351,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "three"
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             await AsyncTestingUtil.WaitAsync(() => DefaultTopic.GetCommittedOffsetsCount("consumer1") == 3);
 
@@ -391,7 +392,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
@@ -409,7 +410,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             {
                 Content = "Hello E2E!"
             };
-            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+            var rawMessageStream = await Endpoint.DefaultSerializer.SerializeAsync(
                 message,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
@@ -444,10 +445,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage);
+            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessageStream);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }

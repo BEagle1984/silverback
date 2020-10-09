@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Topics;
+using Silverback.Testing;
 using Silverback.Tests.Integration.E2E.TestTypes;
+using Silverback.Tests.Integration.E2E.TestTypes.Database;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
 {
@@ -31,6 +33,8 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         protected IInMemoryTopic DefaultTopic => GetTopic(DefaultTopicName);
 
+        protected ITestingHelper TestingHelper => Host.ServiceProvider.GetRequiredService<ITestingHelper>();
+
         public void Dispose()
         {
             Dispose(true);
@@ -42,10 +46,10 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                Host.Dispose();
-            }
+            if (!disposing)
+                return;
+
+            Host.Dispose();
         }
     }
 }

@@ -4,8 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Silverback.Messaging.Inbound.ErrorHandling;
 
-namespace Silverback.Messaging.Inbound.ErrorHandling
+namespace Silverback.Messaging.Configuration
 {
     /// <summary>
     ///     Contains some helper methods used to build the error policies.

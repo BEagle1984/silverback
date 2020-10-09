@@ -20,24 +20,16 @@ namespace Silverback.Messaging.Outbound.Routing
         ///     The factory to be used to resolve the <see cref="IOutboundRouter" /> to be used to determine the
         ///     destination endpoint.
         /// </param>
-        /// <param name="outboundConnectorType">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used when publishing these messages.
-        /// </param>
         public OutboundRoute(
             Type messageType,
-            Func<IServiceProvider, IOutboundRouter> outboundRouterFactory,
-            Type? outboundConnectorType)
+            Func<IServiceProvider, IOutboundRouter> outboundRouterFactory)
         {
             MessageType = messageType;
             _outboundRouterFactory = outboundRouterFactory;
-            OutboundConnectorType = outboundConnectorType;
         }
 
         /// <inheritdoc cref="IOutboundRoute.MessageType" />
         public Type MessageType { get; }
-
-        /// <inheritdoc cref="IOutboundRoute.OutboundConnectorType" />
-        public Type? OutboundConnectorType { get; }
 
         /// <inheritdoc cref="IOutboundRoute.GetOutboundRouter" />
         public IOutboundRouter GetOutboundRouter(IServiceProvider serviceProvider) =>

@@ -4,6 +4,8 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
@@ -22,5 +24,15 @@ namespace Silverback.Messaging.Configuration
             throw new InvalidOperationException(
                 "ILogTemplates not found, " +
                 "WithConnectionToMessageBroker has not been called.");
+
+        internal void CompleteWithDefaults()
+        {
+            if (!SilverbackBuilder.Services.ContainsAny<IOutboxReader>())
+                SilverbackBuilder.Services.AddScoped<IOutboxReader, NullOutbox>();
+
+            if (!SilverbackBuilder.Services.ContainsAny<BrokerConnectionOptions>())
+                this.WithConnectionOptions(new BrokerConnectionOptions());
+        }
+
     }
 }

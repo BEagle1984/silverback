@@ -4,6 +4,7 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Silverback.Messaging.Broker.ConfluentWrappers;
 using Silverback.Messaging.Broker.Topics;
+using Silverback.Testing;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
@@ -31,7 +32,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 .RemoveAll<IConfluentProducerBuilder>()
                 .AddTransient<IConfluentProducerBuilder, MockedConfluentProducerBuilder>()
                 .AddTransient<IConfluentConsumerBuilder, MockedConfluentConsumerBuilder>()
-                .AddSingleton<IInMemoryTopicCollection, InMemoryTopicCollection>();
+                .AddSingleton<IInMemoryTopicCollection, InMemoryTopicCollection>()
+                .AddSingleton<ITestingHelper, KafkaTestingHelper>();
 
             return services;
         }

@@ -37,7 +37,7 @@ namespace Silverback.Tests.Integration.TestTypes
             return null;
         }
 
-        protected override Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope)
+        protected override Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             Produce(envelope.RawMessage, envelope.Headers);
             return Task.FromResult<IOffset?>(null);

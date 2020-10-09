@@ -76,7 +76,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = $"Long message {i}"
                         }));
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Count.Should().Be(5);
             Subscriber.InboundEnvelopes.Count.Should().Be(5);
@@ -173,7 +173,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
@@ -263,7 +263,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
             SpyBehavior.OutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
@@ -445,7 +445,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage1.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("1", 2, 3));
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Count.Should().Be(2);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
@@ -514,7 +514,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("1", 2, 3));
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
@@ -601,7 +601,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("2", 2, 3));
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
@@ -703,7 +703,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders<BinaryFileMessage>("2", 2, 3));
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
             receivedFiles.Should().HaveCount(1);

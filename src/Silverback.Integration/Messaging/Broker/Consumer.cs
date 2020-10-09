@@ -197,7 +197,7 @@ namespace Silverback.Messaging.Broker
                 GetSequenceStore(offset),
                 _serviceProvider);
 
-            await ExecutePipeline(consumerPipelineContext).ConfigureAwait(false);
+            await ExecutePipelineAsync(consumerPipelineContext).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -228,31 +228,15 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private async Task ExecutePipeline(
-            ConsumerPipelineContext context,
-            int stepIndex = 0)
+        private async Task ExecutePipelineAsync(ConsumerPipelineContext context, int stepIndex = 0)
         {
             if (_behaviors.Count == 0 || stepIndex >= _behaviors.Count)
                 return;
 
             await _behaviors[stepIndex].Handle(
                     context,
-                    nextContext => ExecutePipeline(nextContext, stepIndex + 1))
+                    nextContext => ExecutePipelineAsync(nextContext, stepIndex + 1))
                 .ConfigureAwait(false);
         }
-
-        // private async Task ProcessMessageStream()
-        // {
-        //     await foreach (var envelope in _messageStream.ConfigureAwait(false))
-        //     {
-        //         await ExecutePipeline(
-        //                 _behaviorsProvider.CreateStack(),
-        //                 new ConsumerPipelineContext(
-        //                     envelope,
-        //                     this,
-        //                     _serviceProvider))
-        //             .ConfigureAwait(false);
-        //     }
-        // }
     }
 }

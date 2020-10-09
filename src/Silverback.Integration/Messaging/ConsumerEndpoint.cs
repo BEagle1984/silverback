@@ -25,7 +25,7 @@ namespace Silverback.Messaging
         ///     Gets or sets the error policy to be applied when an exception occurs during the processing of the
         ///     consumed messages.
         /// </summary>
-        public IErrorPolicy ErrorPolicy { get; set; } = new StopConsumerErrorPolicy();
+        public IErrorPolicy ErrorPolicy { get; set; } = Configuration.ErrorPolicy.Stop();
 
         /// <summary>
         ///     Gets or sets the batch settings. Can be used to enable and setup batch processing.

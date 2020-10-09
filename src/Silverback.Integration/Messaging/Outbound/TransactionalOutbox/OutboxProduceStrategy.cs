@@ -18,21 +18,21 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
     /// </summary>
     public class OutboxProduceStrategy : IProduceStrategy
     {
-        private TransactionalOutboxProduceStrategyImplementation? _implementation;
+        private OutboxProduceStrategyImplementation? _implementation;
 
         /// <inheritdoc cref="IProduceStrategy.Build" />
         public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>
-            _implementation ??= new TransactionalOutboxProduceStrategyImplementation(
+            _implementation ??= new OutboxProduceStrategyImplementation(
                 serviceProvider.GetRequiredService<TransactionalOutboxBroker>(),
                 serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<OutboxProduceStrategy>>());
 
-        private class TransactionalOutboxProduceStrategyImplementation : IProduceStrategyImplementation
+        private class OutboxProduceStrategyImplementation : IProduceStrategyImplementation
         {
             private readonly TransactionalOutboxBroker _outboundQueueBroker;
 
             private readonly ISilverbackIntegrationLogger<OutboxProduceStrategy> _logger;
 
-            public TransactionalOutboxProduceStrategyImplementation(
+            public OutboxProduceStrategyImplementation(
                 TransactionalOutboxBroker outboundQueueBroker,
                 ISilverbackIntegrationLogger<OutboxProduceStrategy> logger)
             {

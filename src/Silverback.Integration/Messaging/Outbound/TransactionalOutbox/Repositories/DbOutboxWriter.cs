@@ -13,7 +13,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors.Repositories
+namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
 {
     /// <summary>
     ///     Stores the outbound messages into the database. Used by the <see cref="DeferredOutboundConnector" />.

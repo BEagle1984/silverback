@@ -5,16 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors.Repositories
+namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
 {
     /// <summary>
     ///     An outbound queue persisted in memory. Note that writing in the queue is thread-safe but reading is
     ///     not. Implements both <see cref="IOutboxWriter" /> and <see cref="IOutboxReader" />.
     /// </summary>
+    // TODO: Deprecate? Move to tests?
     public class InMemoryOutbox : TransactionalList<OutboxStoredMessage>, IOutboxWriter, IOutboxReader
     {
         /// <summary>

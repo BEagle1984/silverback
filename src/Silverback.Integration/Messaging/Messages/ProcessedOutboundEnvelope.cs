@@ -7,15 +7,17 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
 {
+    /// <summary>
+    ///     Represent an envelope that has been already processed by the behaviors. It is used to avoid processing
+    ///     again the messages that have been stored in the outbox.
+    /// </summary>
     internal class ProcessedOutboundEnvelope : OutboundEnvelope
     {
         public ProcessedOutboundEnvelope(
-            object? message,
+            byte[]? message,
             IEnumerable<MessageHeader>? headers,
-            IProducerEndpoint endpoint,
-            bool autoUnwrap = false,
-            IOffset? offset = null)
-            : base(message, headers, endpoint, autoUnwrap, offset)
+            IProducerEndpoint endpoint)
+            : base(message, headers, endpoint)
         {
         }
     }

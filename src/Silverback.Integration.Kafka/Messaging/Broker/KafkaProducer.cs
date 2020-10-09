@@ -80,11 +80,11 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="Producer.ProduceCore" />
         protected override IOffset? ProduceCore(IOutboundEnvelope envelope) =>
-            AsyncHelper.RunSynchronously(() => ProduceAsyncCore(envelope));
+            AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
 
-        /// <inheritdoc cref="Producer.ProduceAsyncCore" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        protected override async Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope)
+        protected override async Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 

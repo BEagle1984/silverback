@@ -26,7 +26,7 @@ namespace Silverback.Messaging
         ///     Gets or sets the strategy to be used to produce the messages. If no strategy is specified, the
         ///     messages will be sent to the message broker directly.
         /// </summary>
-        public IProduceStrategy? Strategy { get; set; }
+        public IProduceStrategy Strategy { get; set; } = Configuration.ProduceStrategy.Default();
 
         /// <summary>
         ///     Gets or sets the message chunking settings. This option can be used to split large messages into
@@ -38,6 +38,9 @@ namespace Silverback.Messaging
         public override void Validate()
         {
             base.Validate();
+
+            if (Strategy == null)
+                throw new EndpointConfigurationException("Strategy cannot be null.");
 
             Chunk?.Validate();
         }

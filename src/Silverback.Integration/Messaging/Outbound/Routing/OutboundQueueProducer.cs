@@ -9,6 +9,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Outbound.Routing
@@ -57,8 +58,8 @@ namespace Silverback.Messaging.Outbound.Routing
             throw new InvalidOperationException("Only asynchronous operations are supported.");
         }
 
-        /// <inheritdoc cref="Producer.ProduceAsyncCore" />
-        protected override async Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope)
+        /// <inheritdoc cref="Producer.ProduceCoreAsync" />
+        protected override async Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 

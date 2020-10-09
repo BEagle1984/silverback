@@ -4,6 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 
 namespace Silverback.Messaging.HealthChecks
 {

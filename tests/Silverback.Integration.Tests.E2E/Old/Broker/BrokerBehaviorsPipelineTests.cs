@@ -66,14 +66,14 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(0);
 
             await publisher.PublishAsync(message2);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(2);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
@@ -121,14 +121,14 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(0);
 
             await publisher.PublishAsync(message2);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
@@ -173,7 +173,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
@@ -216,7 +216,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
@@ -280,7 +280,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(5);
             SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Read(10));

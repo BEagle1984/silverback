@@ -6,7 +6,10 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Tests.Integration.E2E.TestTypes.Database;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
 {
@@ -15,13 +18,28 @@ namespace Silverback.Tests.Integration.E2E.TestHost
         private readonly List<Action<IServiceCollection>>
             _configurationActions = new List<Action<IServiceCollection>>();
 
+        private bool _addDbContext;
+
+        private SqliteConnection? _sqliteConnection;
+
         private WebApplicationFactory<BlankStartup>? _applicationFactory;
 
-        public IServiceProvider ServiceProvider => _applicationFactory?.Services ?? throw new InvalidOperationException();
+        public IServiceProvider ServiceProvider =>
+            _applicationFactory?.Services ?? throw new InvalidOperationException();
 
         public TestApplicationHost ConfigureServices(Action<IServiceCollection> configurationAction)
         {
             _configurationActions.Add(configurationAction);
+
+            return this;
+        }
+
+        public TestApplicationHost WithTestDbContext()
+        {
+            _addDbContext = true;
+
+            _sqliteConnection = new SqliteConnection("DataSource=:memory:");
+            _sqliteConnection.Open();
 
             return this;
         }
@@ -34,10 +52,23 @@ namespace Silverback.Tests.Integration.E2E.TestHost
                 .WithWebHostBuilder(
                     builder => builder
                         .ConfigureServices(
-                            services => _configurationActions.ForEach(configAction => configAction(services)))
+                            services =>
+                            {
+                                _configurationActions.ForEach(configAction => configAction(services));
+
+                                if (_addDbContext)
+                                {
+                                    services.AddDbContext<TestDbContext>(
+                                        options => options
+                                            .UseSqlite(_sqliteConnection!));
+                                }
+                            })
                         .UseSolutionRelativeContentRoot(appRoot));
 
             _applicationFactory.CreateClient();
+
+            if (_addDbContext)
+                InitDatabase();
 
             _configurationActions.Clear();
 
@@ -50,7 +81,16 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         public void Dispose()
         {
+            _sqliteConnection?.Dispose();
             _applicationFactory?.Dispose();
+        }
+
+        private void InitDatabase()
+        {
+            using (var scope = ServiceProvider.CreateScope())
+            {
+                scope.ServiceProvider.GetService<TestDbContext>()?.Database.EnsureCreated();
+            }
         }
     }
 }

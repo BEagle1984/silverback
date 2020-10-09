@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
@@ -25,6 +26,8 @@ namespace Silverback.Messaging.Broker
 
         private readonly IBrokerCollection _brokerCollection;
 
+        private readonly BrokerConnectionOptions _connectionOptions;
+
         private readonly ISilverbackLogger<BrokerConnectorService> _logger;
 
         /// <summary>
@@ -39,6 +42,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="brokersCollection">
         ///     The <see cref="IBrokerCollection" />.
         /// </param>
+        /// <param name="connectionOptions">
+        ///     The <see cref="BrokerConnectionOptions" />.
+        /// </param>
         /// <param name="logger">
         ///     The <see cref="ISilverbackLogger" />.
         /// </param>
@@ -46,12 +52,14 @@ namespace Silverback.Messaging.Broker
             IServiceScopeFactory serviceScopeFactory,
             IApplicationLifetime applicationLifetime,
             IBrokerCollection brokersCollection,
+            BrokerConnectionOptions connectionOptions,
             ISilverbackLogger<BrokerConnectorService> logger)
         {
-            _serviceScopeFactory = serviceScopeFactory;
-            _applicationLifetime = applicationLifetime;
-            _brokerCollection = brokersCollection;
-            _logger = logger;
+            _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
+            _applicationLifetime = Check.NotNull(applicationLifetime, nameof(applicationLifetime));
+            _brokerCollection = Check.NotNull(brokersCollection, nameof(brokersCollection));
+            _connectionOptions = Check.NotNull(connectionOptions, nameof(connectionOptions));
+            _logger = Check.NotNull(logger, nameof(logger));
         }
 
         /// <inheritdoc cref="BackgroundService.ExecuteAsync" />
@@ -59,19 +67,15 @@ namespace Silverback.Messaging.Broker
         {
             using var scope = _serviceScopeFactory.CreateScope();
 
-            var options = scope.ServiceProvider.GetService<BrokerConnectionOptions>() ??
-                          BrokerConnectionOptions.Default;
-
             _applicationLifetime.ApplicationStopping.Register(() => _brokerCollection.Disconnect());
 
-            switch (options.Mode)
+            switch (_connectionOptions.Mode)
             {
                 case BrokerConnectionMode.Startup:
-                    return ConnectAsync(options, stoppingToken);
+                    return ConnectAsync(stoppingToken);
                 case BrokerConnectionMode.AfterStartup:
-#pragma warning disable 4014
-                    _applicationLifetime.ApplicationStarted.Register(() => ConnectAsync(options, stoppingToken));
-#pragma warning restore 4014
+                    _applicationLifetime.ApplicationStarted.Register(
+                        async () => await ConnectAsync(stoppingToken).ConfigureAwait(false));
                     return Task.CompletedTask;
             }
 
@@ -79,7 +83,7 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task ConnectAsync(BrokerConnectionOptions options, CancellationToken stoppingToken)
+        private async Task ConnectAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -91,18 +95,18 @@ namespace Silverback.Messaging.Broker
                 catch (Exception ex)
                 {
                     _logger.Log(
-                        options.RetryOnFailure ? LogLevel.Error : LogLevel.Critical,
+                        _connectionOptions.RetryOnFailure ? LogLevel.Error : LogLevel.Critical,
                         IntegrationEventIds.BrokerConnectionError,
                         ex,
                         "Error occurred connecting to the message broker(s).");
 
-                    if (!options.RetryOnFailure)
+                    if (!_connectionOptions.RetryOnFailure)
                         break;
 
-                    if (options.Mode == BrokerConnectionMode.Startup)
-                        Thread.Sleep(options.RetryInterval);
+                    if (_connectionOptions.Mode == BrokerConnectionMode.Startup)
+                        Thread.Sleep(_connectionOptions.RetryInterval);
                     else
-                        await Task.Delay(options.RetryInterval, stoppingToken).ConfigureAwait(false);
+                        await Task.Delay(_connectionOptions.RetryInterval, stoppingToken).ConfigureAwait(false);
                 }
             }
         }

@@ -8,6 +8,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Outbound.Routing;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox
 {

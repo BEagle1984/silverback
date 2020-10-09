@@ -70,7 +70,7 @@ namespace Silverback.Messaging.Broker
         public void Produce(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(
                 () =>
-                    ExecutePipeline(
+                    ExecutePipelineIfNeededAsync(
                         new ProducerPipelineContext(envelope, this, _serviceProvider),
                         finalContext =>
                         {
@@ -88,12 +88,12 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
         public async Task ProduceAsync(IOutboundEnvelope envelope) =>
-            await ExecutePipeline(
+            await ExecutePipelineIfNeededAsync(
                 new ProducerPipelineContext(envelope, this, _serviceProvider),
                 async finalContext =>
                 {
                     ((RawOutboundEnvelope)finalContext.Envelope).Offset =
-                        await ProduceAsyncCore(finalContext.Envelope).ConfigureAwait(false);
+                        await ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
                 }).ConfigureAwait(false);
 
         /// <summary>
@@ -117,18 +117,25 @@ namespace Silverback.Messaging.Broker
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     message offset.
         /// </returns>
-        protected abstract Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope);
+        protected abstract Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope);
 
-        private async Task ExecutePipeline(
+        private Task ExecutePipelineIfNeededAsync(
             ProducerPipelineContext context,
-            ProducerBehaviorHandler finalAction,
-            int stepIndex = 0)
+            ProducerBehaviorHandler finalAction)
+        {
+            if (context.Envelope is ProcessedOutboundEnvelope)
+                return finalAction(context);
+
+            return ExecutePipelineAsync(context, finalAction);
+        }
+
+        private async Task ExecutePipelineAsync(ProducerPipelineContext context, ProducerBehaviorHandler finalAction, int stepIndex = 0)
         {
             if (_behaviors.Count > 0 && stepIndex < _behaviors.Count)
             {
                 await _behaviors[stepIndex].Handle(
                         context,
-                        nextContext => ExecutePipeline(nextContext, finalAction, stepIndex + 1))
+                        nextContext => ExecutePipelineAsync(nextContext, finalAction, stepIndex + 1))
                     .ConfigureAwait(false);
             }
             else

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Connectors.Repositories.Model
+namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model
 {
     /// <summary>
     ///     Extends the <see cref="OutboxStoredMessage" /> adding the specific information related to a message stored

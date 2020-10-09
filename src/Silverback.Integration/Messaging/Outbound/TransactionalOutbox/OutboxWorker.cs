@@ -12,9 +12,10 @@ using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Connectors.Repositories;
-using Silverback.Messaging.Connectors.Repositories.Model;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox
 {
@@ -111,7 +112,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             byte[]? content,
             IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint) =>
-            _brokerCollection.GetProducer(endpoint).ProduceAsync(content, headers);
+            _brokerCollection.GetProducer(endpoint).ProduceAsync(new ProcessedOutboundEnvelope(content, headers, endpoint));
 
         private async Task ProcessQueueAsync(IServiceProvider serviceProvider, CancellationToken stoppingToken)
         {
@@ -120,20 +121,20 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 "Reading outbound messages from queue (limit: {readBatchSize}).",
                 _readBatchSize);
 
-            var queue = serviceProvider.GetRequiredService<IOutboxReader>();
-            var messages = (await queue.ReadAsync(_readBatchSize).ConfigureAwait(false)).ToList();
+            var outboxReader = serviceProvider.GetRequiredService<IOutboxReader>();
+            var outboxMessages = (await outboxReader.ReadAsync(_readBatchSize).ConfigureAwait(false)).ToList();
 
-            if (messages.Count == 0)
-                _logger.LogTrace(IntegrationEventIds.OutboxEmpty, "The outbound queue is empty.");
+            if (outboxMessages.Count == 0)
+                _logger.LogTrace(IntegrationEventIds.OutboxEmpty, "The outbox is empty.");
 
-            for (var i = 0; i < messages.Count; i++)
+            for (var i = 0; i < outboxMessages.Count; i++)
             {
                 _logger.LogDebug(
-                    IntegrationEventIds.ProcessingEnqueuedOutboundMessage,
+                    IntegrationEventIds.ProcessingOutboxStoredMessage,
                     "Processing message {currentMessageIndex} of {totalMessages}.",
                     i + 1,
-                    messages.Count);
-                await ProcessMessageAsync(messages[i], queue, serviceProvider).ConfigureAwait(false);
+                    outboxMessages.Count);
+                await ProcessMessageAsync(outboxMessages[i], outboxReader, serviceProvider).ConfigureAwait(false);
 
                 if (stoppingToken.IsCancellationRequested)
                     break;
@@ -142,7 +143,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
 
         private async Task ProcessMessageAsync(
             OutboxStoredMessage message,
-            IOutboxReader queue,
+            IOutboxReader outboxReader,
             IServiceProvider serviceProvider)
         {
             try
@@ -150,17 +151,17 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 var endpoint = GetTargetEndpoint(message.MessageType, message.EndpointName, serviceProvider);
                 await ProduceMessageAsync(message.Content, message.Headers, endpoint).ConfigureAwait(false);
 
-                await queue.AcknowledgeAsync(message).ConfigureAwait(false);
+                await outboxReader.AcknowledgeAsync(message).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 _logger.LogErrorWithMessageInfo(
-                    IntegrationEventIds.ErrorProducingEnqueuedMessage,
+                    IntegrationEventIds.ErrorProducingOutboxStoredMessage,
                     ex,
                     "Failed to produce the message in the outbox.",
                     new OutboundEnvelope(message.Content, message.Headers, new LoggingEndpoint(message.EndpointName)));
 
-                await queue.RetryAsync(message).ConfigureAwait(false);
+                await outboxReader.RetryAsync(message).ConfigureAwait(false);
 
                 // Rethrow if message order has to be preserved, otherwise go ahead with next message in the queue
                 if (_enforceMessageOrder)

@@ -73,7 +73,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
             tryCount.Should().Be(3);
@@ -123,7 +123,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Hello E2E!"
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             tryCount.Should().Be(3);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
@@ -170,7 +170,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Hello E2E!"
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             tryCount.Should().Be(11);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
@@ -217,7 +217,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Hello E2E!"
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             tryCount.Should().Be(11); // TODO: Is this the expected behavior? Or should it stop at 10?
             serviceProvider.GetRequiredService<IBroker>().Consumers[0].IsConnected.Should().BeFalse();
@@ -266,7 +266,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Hello E2E!"
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             tryCount.Should().Be(11);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
@@ -327,7 +327,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Long message two"
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
@@ -431,7 +431,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             tryCount.Should().Be(2);
 
@@ -534,7 +534,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         //     var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
         //     await publisher.PublishAsync(message);
         //
-        //     await DefaultTopic.WaitUntilAllMessagesAreConsumed();
+        //     await TestingHelper.WaitUntilAllMessagesAreConsumed();
         //
         //     SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
         //     SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage);

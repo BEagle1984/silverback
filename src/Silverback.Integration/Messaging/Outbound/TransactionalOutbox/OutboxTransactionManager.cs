@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox

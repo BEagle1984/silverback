@@ -4,7 +4,7 @@
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Connectors.Repositories
+namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
 {
     /// <summary>
     ///     Exposes the methods to write to the outbound queue. Used by the

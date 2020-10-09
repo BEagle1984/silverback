@@ -13,6 +13,7 @@ using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.Routing;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -126,8 +127,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         public async Task Handle_Message_CorrectlyRoutedToConnector()
         {
             _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")),
-                typeof(OutboundConnector));
+                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
             await _outbox.CommitAsync();
@@ -141,8 +141,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         public async Task Handle_Messages_RoutedMessageIsFiltered()
         {
             _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")),
-                typeof(OutboundConnector));
+                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             var messages =
                 await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
@@ -155,8 +154,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         public async Task Handle_Messages_RoutedMessageIsRepublishedWithoutAutoUnwrap()
         {
             _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")),
-                typeof(OutboundConnector));
+                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
 
@@ -168,8 +166,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
             _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")),
-                typeof(OutboundConnector));
+                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             var messages =
                 await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
@@ -183,8 +180,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
             _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")),
-                typeof(OutboundConnector));
+                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
 
@@ -197,8 +193,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
             _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")),
-                typeof(OutboundConnector));
+                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             var messages =
                 await _behavior.Handle(
@@ -222,8 +217,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             var message = new SomeUnhandledMessage { Content = "abc" };
             _routingConfiguration.Add<SomeUnhandledMessage>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")),
-                typeof(OutboundConnector));
+                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             await _behavior.Handle(new[] { message }, Task.FromResult!);
 
@@ -255,14 +249,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         {
             _routingConfiguration
                 .Add<TestEventOne>(
-                    _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")),
-                    typeof(OutboundConnector))
+                    _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")))
                 .Add<TestEventTwo>(
-                    _ => new StaticOutboundRouter(new TestOtherProducerEndpoint("eventTwo")),
-                    typeof(OutboundConnector))
+                    _ => new StaticOutboundRouter(new TestOtherProducerEndpoint("eventTwo")))
                 .Add<TestEventThree>(
-                    _ => new StaticOutboundRouter(new TestProducerEndpoint("eventThree")),
-                    typeof(OutboundConnector));
+                    _ => new StaticOutboundRouter(new TestProducerEndpoint("eventThree")));
 
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
             await _behavior.Handle(new[] { new TestEventThree(), }, Task.FromResult!);

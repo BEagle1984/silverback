@@ -97,7 +97,6 @@ namespace Silverback.Messaging.Outbound.Routing
                     message,
                     headers,
                     endpoint,
-                    route.OutboundConnectorType,
                     _routing.PublishOutboundMessagesToInternalBus);
             }
         }

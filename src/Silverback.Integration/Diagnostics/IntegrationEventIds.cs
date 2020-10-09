@@ -317,24 +317,24 @@ namespace Silverback.Diagnostics
             new EventId(Offset + 75, Prefix + nameof(OutboxEmpty));
 
         /// <summary>
-        ///     Gets the <see cref="EventId" /> of the log that is written when the enqueued outbound message is being
-        ///     processed.
+        ///     Gets the <see cref="EventId" /> of the log that is written when the message stored in the outbox is
+        ///     being processed.
         /// </summary>
         /// <remarks>
         ///     Default log level: Debug.
         /// </remarks>
-        public static EventId ProcessingEnqueuedOutboundMessage { get; } =
-            new EventId(Offset + 76, Prefix + nameof(ProcessingEnqueuedOutboundMessage));
+        public static EventId ProcessingOutboxStoredMessage { get; } =
+            new EventId(Offset + 76, Prefix + nameof(ProcessingOutboxStoredMessage));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while producing the
-        ///     enqueued outbound message.
+        ///     message stored in the outbox.
         /// </summary>
         /// <remarks>
         ///     Default log level: Error.
         /// </remarks>
-        public static EventId ErrorProducingEnqueuedMessage { get; } =
-            new EventId(Offset + 77, Prefix + nameof(ErrorProducingEnqueuedMessage));
+        public static EventId ErrorProducingOutboxStoredMessage { get; } =
+            new EventId(Offset + 77, Prefix + nameof(ErrorProducingOutboxStoredMessage));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while the

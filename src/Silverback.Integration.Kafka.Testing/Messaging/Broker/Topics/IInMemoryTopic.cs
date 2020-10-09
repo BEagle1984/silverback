@@ -137,13 +137,12 @@ namespace Silverback.Messaging.Broker.Topics
         ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
         ///     processed and committed.
         /// </summary>
-        /// <param name="timeout">
-        ///     The timeout after which the method will return even if the messages haven't been
-        ///     processed. The default is 1 minute.
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> that completes when all messages have been processed.
         /// </returns>
-        Task WaitUntilAllMessagesAreConsumed(TimeSpan? timeout = null);
+        Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default);
     }
 }

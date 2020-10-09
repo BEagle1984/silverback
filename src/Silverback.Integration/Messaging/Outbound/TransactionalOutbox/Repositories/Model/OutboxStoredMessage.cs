@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Connectors.Repositories.Model
+namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model
 {
     /// <summary>
     ///     Encapsulates the information related to a message stored in the outbox.

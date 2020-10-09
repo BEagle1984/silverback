@@ -32,16 +32,10 @@ namespace Silverback.Messaging.Outbound.Routing
         ///     The factory method to be used to get the instance of <see cref="IOutboundRouter" /> to be used to
         ///     determine the destination endpoint.
         /// </param>
-        /// <param name="outboundConnectorType">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used. If <c>null</c>, the default
-        ///     <see cref="IOutboundConnector" /> will be used.
-        /// </param>
         /// <returns>
         ///     The <see cref="IOutboundRoutingConfiguration" /> so that additional calls can be chained.
         /// </returns>
-        IOutboundRoutingConfiguration Add<TMessage>(
-            Func<IServiceProvider, IOutboundRouter> outboundRouterFactory,
-            Type? outboundConnectorType = null);
+        IOutboundRoutingConfiguration Add<TMessage>(Func<IServiceProvider, IOutboundRouter> outboundRouterFactory);
 
         /// <summary>
         ///     Add an outbound routing rule.
@@ -62,8 +56,7 @@ namespace Silverback.Messaging.Outbound.Routing
         /// </returns>
         IOutboundRoutingConfiguration Add(
             Type messageType,
-            Func<IServiceProvider, IOutboundRouter> outboundRouterFactory,
-            Type? outboundConnectorType = null);
+            Func<IServiceProvider, IOutboundRouter> outboundRouterFactory);
 
         /// <summary>
         ///     Returns the outbound routes that apply to the specified message.

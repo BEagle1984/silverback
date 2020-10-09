@@ -17,12 +17,6 @@ namespace Silverback.Messaging.Outbound.Routing
         Type MessageType { get; }
 
         /// <summary>
-        ///     Gets the type of the <see cref="IOutboundConnector" /> to be used when publishing these messages. If
-        ///     not specified, the default one will be used.
-        /// </summary>
-        Type? OutboundConnectorType { get; }
-
-        /// <summary>
         ///     Returns the instance of <see cref="IOutboundRouter" /> to be used to determine the destination
         ///     endpoint.
         /// </summary>

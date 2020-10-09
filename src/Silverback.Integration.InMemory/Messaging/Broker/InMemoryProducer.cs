@@ -51,8 +51,8 @@ namespace Silverback.Messaging.Broker
             return topic.Publish(messageBuffer, envelope.Headers.Clone());
         }
 
-        /// <inheritdoc cref="Producer.ProduceAsyncCore" />
-        protected override async Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope)
+        /// <inheritdoc cref="Producer.ProduceCoreAsync" />
+        protected override async Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 

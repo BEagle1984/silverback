@@ -143,26 +143,17 @@ namespace Silverback.Messaging.Broker.Topics
         public Offset GetLatestOffset(Partition partition)
             => _partitions[partition].LatestOffset;
 
-        /// <inheritdoc cref="IInMemoryTopic.WaitUntilAllMessagesAreConsumed" />
+        /// <inheritdoc cref="IInMemoryTopic.WaitUntilAllMessagesAreConsumedAsync" />
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
-        public async Task WaitUntilAllMessagesAreConsumed(TimeSpan? timeout = null)
+        public async Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken)
         {
-            using var cancellationTokenSource = new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(60));
-
-            try
+            while (!cancellationToken.IsCancellationRequested)
             {
-                while (!cancellationTokenSource.IsCancellationRequested)
-                {
-                    // ReSharper disable once InconsistentlySynchronizedField
-                    if (_consumers.All(HasFinishedConsuming))
-                        return;
+                // ReSharper disable once InconsistentlySynchronizedField
+                if (_consumers.All(HasFinishedConsuming))
+                    return;
 
-                    await Task.Delay(100, cancellationTokenSource.Token).ConfigureAwait(false);
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                // Ignore
+                await Task.Delay(100, cancellationToken).ConfigureAwait(false);
             }
         }
 

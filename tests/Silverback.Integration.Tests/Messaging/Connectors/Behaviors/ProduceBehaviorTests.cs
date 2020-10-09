@@ -6,12 +6,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Connectors;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -57,7 +59,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 Array.Empty<MessageHeader>(),
                 new TestProducerEndpoint("test")
                 {
-                    Strategy = new OutboxProduceStrategy()
+                    Strategy = ProduceStrategy.Outbox()
                 });
 
             await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult!);
@@ -76,7 +78,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 Array.Empty<MessageHeader>(),
                 new TestProducerEndpoint("test")
                 {
-                    Strategy = new OutboxProduceStrategy()
+                    Strategy = ProduceStrategy.Outbox()
                 });
 
             await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult!);
