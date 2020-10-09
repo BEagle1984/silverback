@@ -20,7 +20,6 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    [Trait("Category", "E2E")]
     public class OutboxTests : E2ETestFixture
     {
         [Fact]

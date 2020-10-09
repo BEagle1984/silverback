@@ -9,10 +9,11 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Topics;
 using Silverback.Testing;
 using Silverback.Tests.Integration.E2E.TestTypes;
-using Silverback.Tests.Integration.E2E.TestTypes.Database;
+using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
 {
+    [Trait("Category", "E2E")]
     public class E2ETestFixture : IDisposable
     {
         protected const string DefaultTopicName = "default-e2e-topic";

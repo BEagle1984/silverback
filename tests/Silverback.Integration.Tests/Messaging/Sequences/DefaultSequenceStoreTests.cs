@@ -162,7 +162,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
                     CompleteAsync().Wait();
 
                 if (isAborted)
-                    AbortAsync(false).Wait();
+                    AbortAsync().Wait();
             }
         }
     }

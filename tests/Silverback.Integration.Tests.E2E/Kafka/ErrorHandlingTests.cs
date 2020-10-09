@@ -23,7 +23,6 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    [Trait("Category", "E2E")]
     public class ErrorHandlingTests : E2ETestFixture
     {
         private static readonly byte[] AesEncryptionKey =
@@ -177,104 +176,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task RetryPolicy_StillFailingAfterRetries_ConsumerStopped()
-        {
-            var tryCount = 0;
-
-            var serviceProvider = Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
-                            endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration = new KafkaConsumerConfig
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
-                                    }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddDelegateSubscriber(
-                            (IIntegrationEvent _) =>
-                            {
-                                tryCount++;
-                                throw new InvalidOperationException("Retry!");
-                            }))
-                .Run();
-
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
-            await publisher.PublishAsync(
-                new TestEventOne
-                {
-                    Content = "Hello E2E!"
-                });
-
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
-
-            tryCount.Should().Be(11); // TODO: Is this the expected behavior? Or should it stop at 10?
-            serviceProvider.GetRequiredService<IBroker>().Consumers[0].IsConnected.Should().BeFalse();
-        }
-
-        [Fact]
-        public async Task RetryAndSkipPolicies_StillFailingAfterRetries_OffsetCommitted()
-        {
-            var tryCount = 0;
-
-            var serviceProvider = Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
-                            endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration = new KafkaConsumerConfig
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        ErrorPolicy = ErrorPolicy.Chain(
-                                            ErrorPolicy.Retry().MaxFailedAttempts(10),
-                                            ErrorPolicy.Skip())
-                                    }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddDelegateSubscriber(
-                            (IIntegrationEvent _) =>
-                            {
-                                tryCount++;
-                                throw new InvalidOperationException("Retry!");
-                            }))
-                .Run();
-
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
-            await publisher.PublishAsync(
-                new TestEventOne
-                {
-                    Content = "Hello E2E!"
-                });
-
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
-
-            tryCount.Should().Be(11);
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
-        }
-
-        [Fact]
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task RetryPolicy_JsonChunkSequencesProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
+        public async Task RetryPolicy_JsonChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
         {
             var tryCount = 0;
 
@@ -349,7 +252,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
         [Fact]
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task RetryPolicy_BinaryFileChunkSequencesProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
+        public async Task RetryPolicy_BinaryFileChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
         {
             var message1 = new BinaryFileMessage
             {
@@ -451,31 +354,167 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task SkipPolicy_IncompleteJsonChunkSequence_SequenceSkipped()
+        public async Task RetryPolicy_StillFailingAfterRetries_ConsumerStopped()
         {
-            throw
-                new NotImplementedException(); // Is this even a case? Must be handled via policy? (Consider interleaved as well)
+            var tryCount = 0;
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber(
+                            (IIntegrationEvent _) =>
+                            {
+                                tryCount++;
+                                throw new InvalidOperationException("Retry!");
+                            }))
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "Hello E2E!"
+                });
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            tryCount.Should().Be(11); // TODO: Is this the expected behavior? Or should it stop at 10?
+            serviceProvider.GetRequiredService<IBroker>().Consumers[0].IsConnected.Should().BeFalse();
         }
 
         [Fact]
-        public async Task SkipPolicy_IncompleteBinaryFileChunkSequence_SequenceSkipped()
+        public async Task RetryAndSkipPolicies_StillFailingAfterRetries_OffsetCommitted()
         {
-            throw
-                new NotImplementedException(); // Is this even a case? Must be handled via policy? (Consider interleaved as well)
+            var tryCount = 0;
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        ErrorPolicy = ErrorPolicy.Chain(
+                                            ErrorPolicy.Retry().MaxFailedAttempts(10),
+                                            ErrorPolicy.Skip())
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber(
+                            (IIntegrationEvent _) =>
+                            {
+                                tryCount++;
+                                throw new InvalidOperationException("Retry!");
+                            }))
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "Hello E2E!"
+                });
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            tryCount.Should().Be(11);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
+        }
+
+        [Fact]
+        public async Task RetryAndSkipPolicies_JsonChunkSequenceStillFailingAfterRetries_OffsetCommitted()
+        {
+            var tryCount = 0;
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(
+                                    new KafkaProducerEndpoint(DefaultTopicName)
+                                    {
+                                        Chunk = new ChunkSettings
+                                        {
+                                            Size = 10
+                                        }
+                                    })
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        ErrorPolicy = ErrorPolicy.Chain(
+                                            ErrorPolicy.Retry().MaxFailedAttempts(10),
+                                            ErrorPolicy.Skip())
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber(
+                            (IIntegrationEvent _) =>
+                            {
+                                tryCount++;
+                                throw new InvalidOperationException("Retry!");
+                            }))
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "Hello E2E!"
+                });
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            tryCount.Should().Be(11);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
         }
 
         [Fact]
         public async Task SkipPolicy_JsonDeserializationError_SequenceSkipped()
         {
-            throw
-                new NotImplementedException(); // Is this even a case? Must be handled via policy? (Consider interleaved as well)
+            throw new NotImplementedException();
         }
 
         [Fact]
         public async Task SkipPolicy_ChunkedJsonDeserializationError_SequenceSkipped()
         {
-            throw
-                new NotImplementedException(); // Is this even a case? Must be handled via policy? (Consider interleaved as well)
+            throw new NotImplementedException();
         }
 
         // TODO: Test rollback always called with all kind of policies

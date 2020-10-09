@@ -77,9 +77,6 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.IsAborted" />
         public bool IsAborted { get; private set; }
 
-        /// <inheritdoc cref="ISequence.ProcessingHasFailed" />
-        public bool ProcessingHasFailed { get; private set; }
-
         /// <inheritdoc cref="ISequence.AddAsync" />
         public virtual async Task AddAsync(IRawInboundEnvelope envelope)
         {
@@ -118,10 +115,8 @@ namespace Silverback.Messaging.Sequences
         }
 
         /// <inheritdoc cref="ISequence.AbortAsync" />
-        public async Task AbortAsync(bool failed)
+        public async Task AbortAsync()
         {
-            ProcessingHasFailed |= failed;
-
             if (!IsPending)
                 return;
 
@@ -198,7 +193,7 @@ namespace Silverback.Messaging.Sequences
                     {
                         var timeout = Context.Envelope.Endpoint.Sequence.Timeout;
                         await Task.Delay(timeout, _timeoutCancellationTokenSource.Token).ConfigureAwait(false);
-                        await AbortAsync(false).ConfigureAwait(false);
+                        await AbortAsync().ConfigureAwait(false);
                     }
                     catch (OperationCanceledException ex)
                     {

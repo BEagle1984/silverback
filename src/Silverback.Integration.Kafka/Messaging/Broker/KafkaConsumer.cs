@@ -256,7 +256,9 @@ namespace Silverback.Messaging.Broker
             }
 
             _isConsuming = false;
-            Disconnect();
+
+            if (!_cancellationTokenSource.IsCancellationRequested)
+                Disconnect();
         }
 
         private async Task ReceiveMessage()

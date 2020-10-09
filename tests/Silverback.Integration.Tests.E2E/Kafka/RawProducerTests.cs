@@ -2,9 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +18,6 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    [Trait("Category", "E2E")]
     public class RawProducerTests : E2ETestFixture
     {
         [Fact]

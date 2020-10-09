@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Sequences
             Check.NotNull(sequence, nameof(sequence));
 
             if (_store.TryGetValue(sequence.SequenceId, out var oldSequence))
-                await oldSequence.AbortAsync(false).ConfigureAwait(false);
+                await oldSequence.AbortAsync().ConfigureAwait(false);
 
             _store[sequence.SequenceId] = sequence;
 
@@ -57,7 +57,7 @@ namespace Silverback.Messaging.Sequences
             foreach (var sequence in _store.Values)
             {
                 if (sequence.IsPending)
-                    AsyncHelper.RunSynchronously(() => sequence.AbortAsync(false));
+                    AsyncHelper.RunSynchronously(() => sequence.AbortAsync());
             }
         }
     }

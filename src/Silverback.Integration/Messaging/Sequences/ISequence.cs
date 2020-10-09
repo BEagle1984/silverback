@@ -54,11 +54,6 @@ namespace Silverback.Messaging.Sequences
         bool IsAborted { get; }
 
         /// <summary>
-        ///     Gets a value indicating whether the sequence was aborted because the processing has failed.
-        /// </summary>
-        bool ProcessingHasFailed { get; }
-
-        /// <summary>
         ///     Gets the offsets of the messages belonging to the sequence.
         /// </summary>
         IReadOnlyList<IOffset> Offsets { get; }
@@ -89,13 +84,9 @@ namespace Silverback.Messaging.Sequences
         ///     Aborts the sequence processing. Used for example to signal that an exception occurred or the
         ///     enumeration returned prematurely.
         /// </summary>
-        /// <param name="failed">
-        ///     A value indicating whether the sequence processing actually failed (with an exception) or was just
-        ///     aborted. This will determine if the offsets get committed.
-        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task AbortAsync(bool failed);
+        Task AbortAsync();
     }
 }

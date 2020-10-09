@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -111,6 +112,14 @@ namespace Silverback.Messaging.Broker
         {
             if (!IsConnected)
                 return;
+
+            if (_sequenceStore != null)
+            {
+                // ReSharper disable once AccessToDisposedClosure
+                AsyncHelper.RunSynchronously(
+                    () => _sequenceStore.Where(sequence => sequence.IsPending)
+                        .ForEachAsync(sequence => sequence.AbortAsync()));
+            }
 
             DisconnectCore();
 

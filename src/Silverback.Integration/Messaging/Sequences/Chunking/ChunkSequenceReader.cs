@@ -42,14 +42,14 @@ namespace Silverback.Messaging.Sequences.Chunking
                 throw new InvalidOperationException("Message id header not found or invalid.");
 
             return chunkIndex == 0
-                ? await CreateNewSequence(context, messageId).ConfigureAwait(false)
-                : await GetExistingSequence(context, messageId).ConfigureAwait(false);
+                ? await CreateNewSequenceAsync(context, messageId).ConfigureAwait(false)
+                : await GetExistingSequenceAsync(context, messageId).ConfigureAwait(false);
         }
 
-        private static async Task<ChunkSequence> CreateNewSequence(ConsumerPipelineContext context, string messageId)
+        private static async Task<ChunkSequence> CreateNewSequenceAsync(ConsumerPipelineContext context, string messageId)
         {
             if (context.SequenceStore.HasPendingSequences && context.Envelope.Endpoint.Sequence.ConsecutiveMessages)
-                await AbortPreviousSequences(context).ConfigureAwait(false);
+                await AbortPreviousSequencesAsync(context).ConfigureAwait(false);
 
             var chunksCount = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
 
@@ -64,15 +64,15 @@ namespace Silverback.Messaging.Sequences.Chunking
             return sequence;
         }
 
-        private static async Task AbortPreviousSequences(ConsumerPipelineContext context)
+        private static async Task AbortPreviousSequencesAsync(ConsumerPipelineContext context)
         {
             // TODO: Log
 
-            await context.SequenceStore.ForEachAsync(previousSequence => previousSequence.AbortAsync(false))
+            await context.SequenceStore.ForEachAsync(previousSequence => previousSequence.AbortAsync())
                 .ConfigureAwait(false);
         }
 
-        private static async Task<ChunkSequence> GetExistingSequence(ConsumerPipelineContext context, string messageId)
+        private static async Task<ChunkSequence?> GetExistingSequenceAsync(ConsumerPipelineContext context, string messageId)
         {
             var sequence = await context.SequenceStore.GetAsync<ChunkSequence>(messageId).ConfigureAwait(false);
 
