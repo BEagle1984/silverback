@@ -108,7 +108,7 @@ namespace Silverback.Messaging.Sequences.Chunking
             return FillBuffer(buffer, offset, count);
         }
 
-        // TODO: Properly implement ReadAsync worth it(?)
+        /// <inheritdoc cref="Stream.ReadAsync(byte[], int, int, CancellationToken)" />
         public override async Task<int> ReadAsync(
             byte[] buffer,
             int offset,

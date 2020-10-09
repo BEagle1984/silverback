@@ -66,7 +66,7 @@ namespace Silverback.Messaging.Sequences
                 {
                     await next(context).ConfigureAwait(false);
 
-                    CheckPrematureCompletion(context);
+                    CheckPrematureCompletionAsync(context);
                 }
 
                 await sequence.AddAsync(originalEnvelope).ConfigureAwait(false);
@@ -85,7 +85,7 @@ namespace Silverback.Messaging.Sequences
             return null;
         }
 
-        private void CheckPrematureCompletion(ConsumerPipelineContext context)
+        private void CheckPrematureCompletionAsync(ConsumerPipelineContext context)
         {
             if (context.ProcessingTask == null || context.Sequence == null)
                 return;
@@ -99,7 +99,7 @@ namespace Silverback.Messaging.Sequences
 
                         // Abort the uncompleted sequence if the processing task completes, to avoid unreleased locks.
                         if (!context.Sequence.IsComplete)
-                        await context.Sequence.AbortAsync(false).ConfigureAwait(false);
+                            await context.Sequence.AbortAsync(false).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {

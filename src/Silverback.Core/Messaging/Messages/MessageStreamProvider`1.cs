@@ -134,7 +134,7 @@ namespace Silverback.Messaging.Messages
                 .ConfigureAwait(false);
 
             if (PushCompletedCallback != null)
-                await PushCompletedCallback.Invoke().ConfigureAwait(false);
+                await PushCompletedCallback.Invoke().ConfigureAwait(false); // TODO: Should forward cancellation token?
         }
 
         /// <inheritdoc cref="IMessageStreamProvider.CreateStream" />

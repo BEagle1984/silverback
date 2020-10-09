@@ -12,9 +12,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
-    // TODO: Customizable back pressure
-
-    // TODO: Implement abort
+    // TODO: Customizable back pressure?
 
     /// <inheritdoc cref="IMessageStreamEnumerable{TMessage}" />
     /// <remarks>
@@ -85,6 +83,9 @@ namespace Silverback.Messaging.Messages
         /// <inheritdoc cref="IMessageStreamEnumerable.Abort" />
         public void Abort()
         {
+            if (_isComplete)
+                return;
+
             _isComplete = true;
             _abortCancellationTokenSource.Cancel();
         }
@@ -92,6 +93,9 @@ namespace Silverback.Messaging.Messages
         /// <inheritdoc cref="IMessageStreamEnumerable.CompleteAsync" />
         public async Task CompleteAsync(CancellationToken cancellationToken = default)
         {
+            if (_isComplete)
+                return;
+
             _isComplete = true;
 
             await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);

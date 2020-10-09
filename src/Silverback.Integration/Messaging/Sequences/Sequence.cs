@@ -129,8 +129,8 @@ namespace Silverback.Messaging.Sequences
 
             _timeoutCancellationTokenSource?.Cancel();
 
-            await _streamProvider.AbortAsync().ConfigureAwait(false);
             await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
+            await _streamProvider.AbortAsync().ConfigureAwait(false);
 
             // TODO: Review this!!!
             _abortCancellationTokenSource.Cancel();

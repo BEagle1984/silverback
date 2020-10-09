@@ -13,7 +13,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
     public class DefaultSequenceStoreTests
     {
         [Fact]
-        public async Task Get_ExistingSequence_SequenceReturned()
+        public async Task GetAsync_ExistingSequence_SequenceReturned()
         {
             var store = new DefaultSequenceStore();
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         }
 
         [Fact]
-        public async Task Get_NotExistingSequence_NullReturned()
+        public async Task GetAsync_NotExistingSequence_NullReturned()
         {
             var store = new DefaultSequenceStore();
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
@@ -44,7 +44,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         }
 
         [Fact]
-        public async Task Add_NewSequence_SequenceAddedAndReturned()
+        public async Task AddAsync_NewSequence_SequenceAddedAndReturned()
         {
             var store = new DefaultSequenceStore();
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         }
 
         [Fact]
-        public async Task Add_ExistingSequence_SequenceAbortedAndReplaced()
+        public async Task AddAsync_ExistingSequence_SequenceAbortedAndReplaced()
         {
             var store = new DefaultSequenceStore();
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
@@ -74,7 +74,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         }
 
         [Fact]
-        public async Task AddAndGet_Sequence_IsNewFlagAutomaticallyHandled()
+        public async Task AddAsyncAndGetAsync_Sequence_IsNewFlagAutomaticallyHandled()
         {
             var store = new DefaultSequenceStore();
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
@@ -89,7 +89,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         }
 
         [Fact]
-        public async Task Remove_ExistingSequence_SequenceRemoved()
+        public async Task RemoveAsync_ExistingSequence_SequenceRemoved()
         {
             var store = new DefaultSequenceStore();
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
@@ -106,7 +106,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         }
 
         [Fact]
-        public async Task Remove_NotExistingSequence_NoExceptionThrown()
+        public async Task RemoveAsync_NotExistingSequence_NoExceptionThrown()
         {
             var store = new DefaultSequenceStore();
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);

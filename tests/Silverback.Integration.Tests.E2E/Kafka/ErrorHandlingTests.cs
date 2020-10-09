@@ -310,7 +310,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             (IIntegrationEvent _) =>
                             {
                                 tryCount++;
-                                if (tryCount != 2)
+                                if (tryCount % 2 != 0)
                                     throw new InvalidOperationException("Retry!");
                             }))
                 .Run();
@@ -344,7 +344,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             SpyBehavior.InboundEnvelopes[2].Message.As<TestEventOne>().Content.Should().Be("Long message two");
             SpyBehavior.InboundEnvelopes[3].Message.As<TestEventOne>().Content.Should().Be("Long message two");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
         }
 
         [Fact]
@@ -446,6 +446,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedFiles.Should().HaveCount(2);
             receivedFiles[0].Should().BeEquivalentTo(message1.Content.ReReadAll());
             receivedFiles[1].Should().BeEquivalentTo(message2.Content.ReReadAll());
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
         }
 
         [Fact]

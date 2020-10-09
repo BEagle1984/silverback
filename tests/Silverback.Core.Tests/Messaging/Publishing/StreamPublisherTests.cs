@@ -53,7 +53,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             streamPublisher.Publish(streamProvider1);
             await streamPublisher.PublishAsync(streamProvider2);
 
-            await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 4); // TODO: GET RID OF THIS!!
+            await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 4);
             receivedStreams.Should().Be(4);
 
             await streamProvider1.PushAsync(new TestEventOne());
@@ -94,6 +94,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             publisher.Publish(new TestEventOne());
             await publisher.PublishAsync(new IEvent[] { new TestEventOne(), new TestEventTwo() });
+
+            await Task.Delay(200);
 
             receivedStreams.Should().Be(0);
         }
