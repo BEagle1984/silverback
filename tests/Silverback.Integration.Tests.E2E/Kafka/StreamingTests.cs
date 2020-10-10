@@ -99,14 +99,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         }
                                     }))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
                             {
-                                await foreach (var message in eventsStream)
+                                try
                                 {
-                                    receivedMessages.Add(message);
+                                    foreach (var message in eventsStream)
+                                    {
+                                        receivedMessages.Add(message);
+                                    }
                                 }
-
-                                aborted = true;
+                                catch (OperationCanceledException)
+                                {
+                                    aborted = true;
+                                }
                             }))
                 .Run();
 
@@ -114,22 +119,29 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(
                 new TestEventOne
                 {
-                    Content = "Hello E2E!"
+                    Content = "Message 1"
+                });
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "Message 2"
                 });
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            receivedMessages.Should().HaveCount(1);
+            receivedMessages.Should().HaveCount(2);
 
             Broker.Disconnect();
-            aborted.Should().BeTrue();
 
+            aborted.Should().BeTrue();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
         }
 
         [Fact]
         public async Task MessageStreamEnumerable_ProcessingFailed_ConsumerStopped()
         {
+            throw new NotImplementedException();
+
             var receivedMessages = new List<TestEventOne>();
 
             var serviceProvider = Host.ConfigureServices(

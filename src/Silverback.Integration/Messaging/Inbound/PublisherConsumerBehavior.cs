@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Unbounded;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound
@@ -19,9 +21,11 @@ namespace Silverback.Messaging.Inbound
     /// </summary>
     public sealed class PublisherConsumerBehavior : IConsumerBehavior, IDisposable
     {
-        private MessageStreamProvider<IInboundEnvelope>? _streamProvider;
+        //private MessageStreamProvider<IInboundEnvelope>? _streamProvider;
 
         //private readonly SemaphoreSlim _streamedMessageProcessedSemaphore = new SemaphoreSlim(0, 1);
+
+        private UnboundedSequence? _unboundedSequence;
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Publisher;
@@ -44,11 +48,10 @@ namespace Silverback.Messaging.Inbound
             {
                 // TODO: Handle sequences streams
             }
-
-            if (context.Envelope is IInboundEnvelope envelope)
+            else if (context.Envelope is IInboundEnvelope envelope)
             {
                 await EnsureStreamIsPublishedAsync(context).ConfigureAwait(false);
-                await _streamProvider!.PushAsync(envelope).ConfigureAwait(false);
+                await _unboundedSequence!.AddAsync(envelope).ConfigureAwait(false);
             }
 
             //await _streamedMessageProcessedSemaphore.WaitAsync().ConfigureAwait(false); // TODO: Embed in StreamProducer?
@@ -58,16 +61,18 @@ namespace Silverback.Messaging.Inbound
 
         public void Dispose()
         {
-            _streamProvider?.Dispose();
+            _unboundedSequence?.Dispose();
             //_streamedMessageProcessedSemaphore.Dispose();
         }
 
         private async Task EnsureStreamIsPublishedAsync(ConsumerPipelineContext context)
         {
-            if (_streamProvider != null)
+            if (_unboundedSequence != null)
                 return;
 
-            _streamProvider = new MessageStreamProvider<IInboundEnvelope>();
+            _unboundedSequence = new UnboundedSequence("unbounded", context);
+            await context.SequenceStore.AddAsync(_unboundedSequence).ConfigureAwait(false);
+
             // _streamProvider.ProcessedCallback = _ =>
             // {
             //     // TODO: Could recognize if the message was forwarded to an enumerable to throw if unhandled?
@@ -77,9 +82,10 @@ namespace Silverback.Messaging.Inbound
             // };
 
             var publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
-            var streamProcessingTasks = await publisher.PublishAsync(_streamProvider).ConfigureAwait(false);
 
-            CheckStreamProcessing(streamProcessingTasks);
+            CheckStreamProcessing(
+                await publisher.PublishAsync(_unboundedSequence.StreamProvider)
+                    .ConfigureAwait(false));
         }
 
         private void CheckStreamProcessing(IReadOnlyCollection<Task> streamProcessingTasks)
@@ -96,7 +102,7 @@ namespace Silverback.Messaging.Inbound
 
                         // TODO: Test whether an exception really cancels all tasks
                         await Task.WhenAny(
-                                Task.WhenAll(streamProcessingTasks),
+                                Task.WhenAll(tasks),
                                 WhenCanceled(cancellationTokenSource.Token))
                             .ConfigureAwait(false);
                     }
@@ -104,9 +110,9 @@ namespace Silverback.Messaging.Inbound
                     {
                         // TODO: Log
 
-                        _streamProvider?.AbortAsync();
-                        _streamProvider?.Dispose();
-                        _streamProvider = null;
+                        _unboundedSequence?.AbortAsync(SequenceAbortReason.Error);
+                        _unboundedSequence?.Dispose();
+                        _unboundedSequence = null;
                     }
                 });
         }
@@ -114,7 +120,7 @@ namespace Silverback.Messaging.Inbound
         private static Task WhenCanceled(CancellationToken cancellationToken)
         {
             var tcs = new TaskCompletionSource<bool>();
-            cancellationToken.Register(s => ((TaskCompletionSource<bool>)s).SetResult(true), tcs);
+            cancellationToken.Register(s => { ((TaskCompletionSource<bool>)s).SetResult(true); }, tcs);
             return tcs.Task;
         }
     }

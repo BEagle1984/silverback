@@ -15,9 +15,10 @@ namespace Silverback.Messaging.Sequences.Chunking
     /// </summary>
     public class ChunkSequenceReader : ISequenceReader
     {
+        /// <inheritdoc cref="ISequenceReader.HandlesRawMessages" />
         public bool HandlesRawMessages => true;
 
-        /// <inheritdoc cref="ISequenceReader.CanHandleAsync"/>
+        /// <inheritdoc cref="ISequenceReader.CanHandleAsync" />
         public Task<bool> CanHandleAsync(ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
@@ -27,7 +28,7 @@ namespace Silverback.Messaging.Sequences.Chunking
             return Task.FromResult(canHandle);
         }
 
-        /// <inheritdoc cref="ISequenceReader.GetSequenceAsync"/>
+        /// <inheritdoc cref="ISequenceReader.GetSequenceAsync" />
         [SuppressMessage("", "CA2000", Justification = "The sequence is returned")]
         public async Task<ISequence?> GetSequenceAsync(ConsumerPipelineContext context)
         {
@@ -48,9 +49,11 @@ namespace Silverback.Messaging.Sequences.Chunking
                 : await GetExistingSequenceAsync(context, messageId).ConfigureAwait(false);
         }
 
-        private static async Task<ChunkSequence> CreateNewSequenceAsync(ConsumerPipelineContext context, string messageId)
+        private static async Task<ChunkSequence> CreateNewSequenceAsync(
+            ConsumerPipelineContext context,
+            string messageId)
         {
-            if (context.SequenceStore.HasPendingSequences && context.Envelope.Endpoint.Sequence.ConsecutiveMessages)
+            if (context.SequenceStore.HasPendingSequences)
                 await AbortPreviousSequencesAsync(context).ConfigureAwait(false);
 
             var chunksCount = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
@@ -62,7 +65,8 @@ namespace Silverback.Messaging.Sequences.Chunking
             await context.SequenceStore.AddAsync(sequence).ConfigureAwait(false);
 
             // Replace the envelope with the stream that will be pushed with all the chunks.
-            context.Envelope = context.Envelope.CloneReplacingStream(new ChunkStream(sequence.Stream));
+            var chunkStream = new ChunkStream(sequence.CreateStream<IRawInboundEnvelope>());
+            context.Envelope = context.Envelope.CloneReplacingStream(chunkStream);
             return sequence;
         }
 
@@ -70,11 +74,14 @@ namespace Silverback.Messaging.Sequences.Chunking
         {
             // TODO: Log
 
-            await context.SequenceStore.ForEachAsync(previousSequence => previousSequence.AbortAsync())
+            await context.SequenceStore.ForEachAsync(
+                    previousSequence => previousSequence.AbortAsync(SequenceAbortReason.IncompleteSequence))
                 .ConfigureAwait(false);
         }
 
-        private static async Task<ChunkSequence?> GetExistingSequenceAsync(ConsumerPipelineContext context, string messageId)
+        private static async Task<ChunkSequence?> GetExistingSequenceAsync(
+            ConsumerPipelineContext context,
+            string messageId)
         {
             var sequence = await context.SequenceStore.GetAsync<ChunkSequence>(messageId).ConfigureAwait(false);
 

@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
@@ -23,8 +24,8 @@ namespace Silverback.Messaging.Sequences
         {
             _store.TryGetValue(sequenceId, out var sequence);
 
-            if (sequence is Sequence sequenceImpl)
-                sequenceImpl.IsNew = false;
+            if (sequence is ISequenceImplementation sequenceImpl)
+                sequenceImpl.SetIsNew(false);
 
             return Task.FromResult((TSequence?)sequence);
         }
@@ -35,7 +36,7 @@ namespace Silverback.Messaging.Sequences
             Check.NotNull(sequence, nameof(sequence));
 
             if (_store.TryGetValue(sequence.SequenceId, out var oldSequence))
-                await oldSequence.AbortAsync().ConfigureAwait(false);
+                await oldSequence.AbortAsync(SequenceAbortReason.IncompleteSequence).ConfigureAwait(false);
 
             _store[sequence.SequenceId] = sequence;
 
@@ -57,7 +58,7 @@ namespace Silverback.Messaging.Sequences
             foreach (var sequence in _store.Values)
             {
                 if (sequence.IsPending)
-                    AsyncHelper.RunSynchronously(() => sequence.AbortAsync());
+                    AsyncHelper.RunSynchronously(() => sequence.AbortAsync(SequenceAbortReason.Error));
             }
         }
     }

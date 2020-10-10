@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Messages
     /// <typeparam name="TMessage">
     ///     The type of the messages being streamed.
     /// </typeparam>
-    internal class MessageStreamProvider<TMessage> : IMessageStreamProvider, IDisposable
+    internal class MessageStreamProvider<TMessage> : IMessageStreamProviderInternal, IDisposable
     {
         private readonly List<IMessageStreamEnumerable> _linkedStreams =
             new List<IMessageStreamEnumerable>();
@@ -169,7 +169,7 @@ namespace Silverback.Messaging.Messages
             return stream;
         }
 
-        public Task NotifyLinkedStreamProcessed(PushedMessage pushedMessage)
+        public Task NotifyLinkedStreamProcessedAsync(PushedMessage pushedMessage)
         {
             if (ProcessedCallback == null)
                 return Task.CompletedTask;
@@ -198,7 +198,7 @@ namespace Silverback.Messaging.Messages
             return ProcessedCallback.Invoke((TMessage)pushedMessage.OriginalMessage);
         }
 
-        public async Task NotifyLinkedStreamEnumerationCompleted(IMessageStreamEnumerable linkedStream)
+        public async Task NotifyLinkedStreamEnumerationCompletedAsync(IMessageStreamEnumerable linkedStream)
         {
             int linkedStreamsCount;
 

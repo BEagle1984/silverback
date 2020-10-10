@@ -13,18 +13,23 @@ using Silverback.Util;
 namespace Silverback.Messaging.Sequences
 {
     /// <inheritdoc cref="ISequence" />
-    public abstract class Sequence : ISequence
+    public abstract class Sequence<TEnvelope> : ISequenceImplementation
+        where TEnvelope : IRawInboundEnvelope
     {
+        private readonly MessageStreamProvider<TEnvelope> _streamProvider;
+
         private readonly List<IOffset> _offsets = new List<IOffset>();
 
-        private readonly MessageStreamProvider<IRawInboundEnvelope> _streamProvider;
+        private readonly bool _enforceTimeout;
 
         private readonly CancellationTokenSource _abortCancellationTokenSource = new CancellationTokenSource();
+
+        private readonly object _abortLockObject = new object();
 
         private CancellationTokenSource? _timeoutCancellationTokenSource;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Sequence" /> class.
+        ///     Initializes a new instance of the <see cref="Sequence{TEnvelope}" /> class.
         /// </summary>
         /// <param name="sequenceId">
         ///     The identifier that is used to match the consumed messages with their belonging sequence.
@@ -33,40 +38,31 @@ namespace Silverback.Messaging.Sequences
         ///     The current <see cref="ConsumerPipelineContext" />, assuming that it will be the one from which the
         ///     sequence gets published to the internal bus.
         /// </param>
-        /// <param name="store">
-        ///     The <see cref="ISequenceStore" /> that references this sequence.
+        /// <param name="enforceTimeout">
+        ///     A value indicating whether the timeout has to be enforced.
         /// </param>
-        protected Sequence(object sequenceId, ConsumerPipelineContext context)
+        protected Sequence(object sequenceId, ConsumerPipelineContext context, bool enforceTimeout = true)
         {
             SequenceId = Check.NotNull(sequenceId, nameof(sequenceId));
             Context = Check.NotNull(context, nameof(context));
 
-            _streamProvider = new MessageStreamProvider<IRawInboundEnvelope>();
-            Stream = _streamProvider.CreateStream<IRawInboundEnvelope>();
+            _streamProvider = new MessageStreamProvider<TEnvelope>();
 
+            _enforceTimeout = enforceTimeout;
             ResetAbortTimeout();
         }
 
         /// <inheritdoc cref="ISequence.SequenceId" />
         public object SequenceId { get; }
 
-        /// <inheritdoc cref="ISequence.Offsets" />
-        public IReadOnlyList<IOffset> Offsets => _offsets;
-
-        /// <inheritdoc cref="ISequence.Stream" />
-        public IMessageStreamEnumerable<IRawInboundEnvelope> Stream { get; }
-
-        /// <inheritdoc cref="ISequence.Context" />
-        public ConsumerPipelineContext Context { get; }
-
-        /// <inheritdoc cref="ISequence.IsNew" />
-        public bool IsNew { get; internal set; } = true;
-
         /// <inheritdoc cref="ISequence.Length" />
         public int Length { get; protected set; }
 
         /// <inheritdoc cref="ISequence.TotalLength" />
         public int? TotalLength { get; protected set; }
+
+        /// <inheritdoc cref="ISequence.IsNew" />
+        public bool IsNew { get; private set; } = true;
 
         /// <inheritdoc cref="ISequence.IsPending" />
         public bool IsPending => !IsComplete && !IsAborted;
@@ -75,17 +71,74 @@ namespace Silverback.Messaging.Sequences
         public bool IsComplete { get; private set; }
 
         /// <inheritdoc cref="ISequence.IsAborted" />
-        public bool IsAborted { get; private set; }
+        public bool IsAborted => AbortReason != SequenceAbortReason.None;
+
+        /// <inheritdoc cref="ISequence.AbortReason" />
+        public SequenceAbortReason AbortReason { get; private set; }
+
+        /// <inheritdoc cref="ISequence.Offsets" />
+        public IReadOnlyList<IOffset> Offsets => _offsets;
+
+        /// <inheritdoc cref="ISequence.Context" />
+        public ConsumerPipelineContext Context { get; }
+
+        /// <inheritdoc cref="ISequence.ProcessedTaskCompletionSource" />
+        public TaskCompletionSource<bool> ProcessedTaskCompletionSource { get; } = new TaskCompletionSource<bool>();
+
+        /// <inheritdoc cref="ISequence.StreamProvider" />
+        public IMessageStreamProvider StreamProvider => _streamProvider;
+
+        /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />
+        public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>() => StreamProvider.CreateStream<TMessage>();
 
         /// <inheritdoc cref="ISequence.AddAsync" />
-        public virtual async Task AddAsync(IRawInboundEnvelope envelope)
+        public Task AddAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
+            if (!(envelope is TEnvelope typedEnvelope))
+                throw new ArgumentException($"Expected an envelope of type {typeof(TEnvelope).Name}.");
+
+            return AddCoreAsync(typedEnvelope);
+        }
+
+        /// <inheritdoc cref="ISequence.AbortAsync" />
+        public async Task AbortAsync(SequenceAbortReason reason)
+        {
+            if (reason == SequenceAbortReason.None)
+                throw new ArgumentOutOfRangeException(nameof(reason), reason, "Reason not specified.");
+
+            lock (_abortLockObject)
+            {
+                if (!IsPending)
+                    return;
+
+                if (reason > AbortReason)
+                    AbortReason = reason;
+            }
+
+            _timeoutCancellationTokenSource?.Cancel();
+
+            await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
+            await _streamProvider.AbortAsync().ConfigureAwait(false);
+
+            // TODO: Review this!!!
+            _abortCancellationTokenSource.Cancel();
+        }
+
+        /// <inheritdoc cref="IDisposable.Dispose" />
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <inheritdoc cref="ISequence.AddAsync" />
+        protected virtual async Task AddCoreAsync(TEnvelope envelope)
+        {
             ResetAbortTimeout();
 
-            if (envelope.Offset != null)
-                _offsets.Add(envelope.Offset);
+            _offsets.Add(envelope.Offset);
 
             try
             {
@@ -112,30 +165,6 @@ namespace Silverback.Messaging.Sequences
 
                 // TODO: Is it correct to ignore?
             }
-        }
-
-        /// <inheritdoc cref="ISequence.AbortAsync" />
-        public async Task AbortAsync()
-        {
-            if (!IsPending)
-                return;
-
-            IsAborted = true;
-
-            _timeoutCancellationTokenSource?.Cancel();
-
-            await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
-            await _streamProvider.AbortAsync().ConfigureAwait(false);
-
-            // TODO: Review this!!!
-            _abortCancellationTokenSource.Cancel();
-        }
-
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -181,8 +210,14 @@ namespace Silverback.Messaging.Sequences
             }
         }
 
+        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
+        void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
+
         private void ResetAbortTimeout()
         {
+            if (!_enforceTimeout)
+                return;
+
             _timeoutCancellationTokenSource?.Cancel();
             _timeoutCancellationTokenSource = new CancellationTokenSource();
 
@@ -193,7 +228,7 @@ namespace Silverback.Messaging.Sequences
                     {
                         var timeout = Context.Envelope.Endpoint.Sequence.Timeout;
                         await Task.Delay(timeout, _timeoutCancellationTokenSource.Token).ConfigureAwait(false);
-                        await AbortAsync().ConfigureAwait(false);
+                        await AbortAsync(SequenceAbortReason.IncompleteSequence).ConfigureAwait(false);
                     }
                     catch (OperationCanceledException ex)
                     {

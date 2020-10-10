@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Messages
     internal class MessageStreamEnumerable<TMessage>
         : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
     {
-        private readonly IMessageStreamProvider? _ownerStreamProvider;
+        private readonly IMessageStreamProviderInternal? _ownerStreamProvider;
 
         private readonly SemaphoreSlim _writeSemaphore = new SemaphoreSlim(1, 1);
 
@@ -45,7 +45,7 @@ namespace Silverback.Messaging.Messages
         /// <param name="ownerStreamProvider">
         ///     The owner of the linked stream.
         /// </param>
-        public MessageStreamEnumerable(IMessageStreamProvider ownerStreamProvider)
+        public MessageStreamEnumerable(IMessageStreamProviderInternal ownerStreamProvider)
         {
             _ownerStreamProvider = ownerStreamProvider;
         }
@@ -113,9 +113,6 @@ namespace Silverback.Messaging.Messages
         public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
             EnumerateExclusively(() => GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken));
 
-        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
@@ -152,6 +149,9 @@ namespace Silverback.Messaging.Messages
             }
         }
 
+        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
         private IEnumerable<TMessage> GetEnumerable()
         {
             // TODO: Check this pattern!
@@ -164,11 +164,14 @@ namespace Silverback.Messaging.Messages
                 yield return currentMessage;
 
                 if (_ownerStreamProvider != null)
-                    AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyLinkedStreamProcessed(_current));
+                    AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyLinkedStreamProcessedAsync(_current));
             }
 
             if (_ownerStreamProvider != null)
-                AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyLinkedStreamEnumerationCompleted(this));
+            {
+                AsyncHelper.RunSynchronously(
+                    () => _ownerStreamProvider.NotifyLinkedStreamEnumerationCompletedAsync(this));
+            }
         }
 
         private async IAsyncEnumerable<TMessage> GetAsyncEnumerable(
@@ -183,11 +186,11 @@ namespace Silverback.Messaging.Messages
                 yield return currentMessage;
 
                 if (_ownerStreamProvider != null)
-                    await _ownerStreamProvider.NotifyLinkedStreamProcessed(_current).ConfigureAwait(false);
+                    await _ownerStreamProvider.NotifyLinkedStreamProcessedAsync(_current).ConfigureAwait(false);
             }
 
             if (_ownerStreamProvider != null)
-                await _ownerStreamProvider.NotifyLinkedStreamEnumerationCompleted(this).ConfigureAwait(false);
+                await _ownerStreamProvider.NotifyLinkedStreamEnumerationCompletedAsync(this).ConfigureAwait(false);
         }
 
         private TReturn EnumerateExclusively<TReturn>(Func<TReturn> action)

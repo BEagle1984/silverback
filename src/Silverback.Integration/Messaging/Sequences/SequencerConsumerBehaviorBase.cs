@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Sequences
         /// </param>
         public SequencerConsumerBehaviorBase(IEnumerable<ISequenceReader> sequenceReaders)
         {
-            _sequenceReaders = sequenceReaders.ToList();
+            _sequenceReaders = sequenceReaders.SortBySortIndex().ToList();
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
@@ -99,14 +99,14 @@ namespace Silverback.Messaging.Sequences
 
                         // Abort the uncompleted sequence if the processing task completes, to avoid unreleased locks.
                         if (!context.Sequence.IsComplete)
-                            await context.Sequence.AbortAsync().ConfigureAwait(false);
+                            await context.Sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
-                        // TODO: Log
+                        // TODO: Log?
 
-                        if (!context.Sequence.IsComplete)
-                            await context.Sequence.AbortAsync().ConfigureAwait(false);
+                        if (context.Sequence.IsPending)
+                            await context.Sequence.AbortAsync(SequenceAbortReason.Error).ConfigureAwait(false);
                     }
                 });
         }

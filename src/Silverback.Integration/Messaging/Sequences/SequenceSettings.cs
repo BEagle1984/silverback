@@ -34,7 +34,8 @@ namespace Silverback.Messaging.Sequences
         ///         topics or partitions.
         ///     </para>
         /// </remarks>
-        public bool ConsecutiveMessages { get; set; } = true;
+        // TODO: Implement in version 2
+        //public bool ConsecutiveMessages { get; set; } = true;
 
         /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public void Validate()

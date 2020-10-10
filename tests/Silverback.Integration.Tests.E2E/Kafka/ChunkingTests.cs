@@ -363,7 +363,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task Chunking_EnforcingConsecutiveJsonChunks_IncompleteSequenceIsDiscarded()
+        public async Task Chunking_EnforcingConsecutiveJsonChunks_IncompleteSequenceDiscardedWhenOtherSequenceStarts()
         {
             var message1 = new TestEventOne { Content = "Message 1" };
             byte[] rawMessage1 = (await Endpoint.DefaultSerializer.SerializeAsync(
@@ -398,7 +398,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         },
                                         Sequence = new SequenceSettings
                                         {
-                                            ConsecutiveMessages = true
+                                            // ConsecutiveMessages = true
                                         }
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
@@ -436,8 +436,24 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task Chunking_NonEnforcingConsecutiveJsonChunks_ConsumedAndCommittedOnlyWhenSequencesAreComplete()
+        public async Task Chunking_EnforcingConsecutiveJsonChunks_IncompleteSequenceDiscardedOnNoSequenceMessage()
         {
+            // TODO: Ensure that the rollback always happens before the next commit (and doesn't actually rollback the offset)
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public async Task Chunking_EnforcingConsecutiveJsonChunks_ErrorPolicyIgnoredWhenIncompleteSequenceDiscarded()
+        {
+            // TODO: Ensure that the abort doesn't trigger the error policies! (for both sequence and no-sequence message)
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public async Task Chunking_NotEnforcingConsecutiveJsonChunks_ConsumedAndCommittedOnlyWhenSequencesAreComplete()
+        {
+            return; // Consecutive sequence always enforced right not.
+
             var message1 = new TestEventOne { Content = "Message 1" };
             byte[] rawMessage1 = (await Endpoint.DefaultSerializer.SerializeAsync(
                                      message1,
@@ -471,7 +487,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         },
                                         Sequence = new SequenceSettings
                                         {
-                                            ConsecutiveMessages = false
+                                            // ConsecutiveMessages = false
                                         }
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
@@ -513,6 +529,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
             SpyBehavior.InboundEnvelopes[1].Message.As<TestEventOne>().Content.Should().Be("Message 1");
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
+        }
+
+        [Fact]
+        public async Task Chunking_NotEnforcingConsecutiveJsonChunks_ProcessingErrorAbortsAllSequences()
+        {
+            return; // Consecutive sequence always enforced right not.
+            throw new NotImplementedException();
         }
 
         [Fact]
@@ -588,7 +611,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task Chunking_IncompleteJson_AbortedAfterTimeoutAndCommittedWithNextMessage()
+        public async Task Chunking_IncompleteJson_AbortedAfterTimeoutAndCommitted()
         {
             var message = new TestEventOne { Content = "Hello E2E!" };
             byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
@@ -651,7 +674,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             sequenceStore.HasPendingSequences.Should().BeFalse();
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
 
             await producer.ProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -674,7 +697,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task Chunking_IncompleteBinaryFile_AbortedAfterTimeoutAndCommittedWithNextMessage()
+        public async Task Chunking_IncompleteBinaryFile_AbortedAfterTimeoutAndCommitted()
         {
             var rawMessage = new byte[]
             {
@@ -748,12 +771,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await Task.Delay(300);
             sequence.IsAborted.Should().BeFalse();
 
-            await AsyncTestingUtil.WaitAsync(() => !sequence.IsPending && enumerationAborted, 1000);
+            await AsyncTestingUtil.WaitAsync(() => enumerationAborted);
             sequence.IsAborted.Should().BeTrue();
             sequenceStore.HasPendingSequences.Should().BeFalse();
             enumerationAborted.Should().BeTrue();
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+            await AsyncTestingUtil.WaitAsync(() => DefaultTopic.GetCommittedOffsetsCount("consumer1") >= 2);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
 
             await producer.ProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -850,7 +874,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task Chunking_IncompleteBinaryFile_AbortedAndNotCommitted()
+        public async Task Chunking_DisconnectWithIncompleteBinaryFile_AbortedAndNotCommitted()
         {
             var rawMessage = new byte[]
             {
@@ -885,11 +909,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) =>
+                            async (BinaryFileMessage binaryFile) =>
                             {
                                 try
                                 {
-                                    binaryFile.Content.ReadAll();
+                                    await binaryFile.Content.ReadAllAsync();
                                 }
                                 catch (OperationCanceledException)
                                 {

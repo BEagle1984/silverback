@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound.Transaction
@@ -27,9 +28,7 @@ namespace Silverback.Messaging.Inbound.Transaction
 
         /// <inheritdoc cref="IConsumerBehavior.Handle" />
         [SuppressMessage("", "CA2000", Justification = "ServiceScope is disposed while disposing the Context")]
-        public async Task Handle(
-            ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
+        public async Task Handle(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -43,10 +42,87 @@ namespace Silverback.Messaging.Inbound.Transaction
                 context.TransactionManager = new ConsumerTransactionManager(context);
 
                 await next(context).ConfigureAwait(false);
+
+                if (context.Sequence == null)
+                {
+                    await context.TransactionManager.CommitAsync().ConfigureAwait(false);
+                    context.Dispose();
+                }
+                else
+                {
+                    await HandleSequenceAsync(context, context.Sequence).ConfigureAwait(false);
+                }
             }
             catch (Exception exception)
             {
-                bool handled = await HandleExceptionAsync(context, exception).ConfigureAwait(false);
+                // Sequence errors are handled in the parallel thread
+                if (context.Sequence != null)
+                {
+                    if (context.Sequence.Length > 0)
+                        await context.Sequence.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
+
+                    throw;
+                }
+
+                if (!await HandleExceptionAsync(context, exception).ConfigureAwait(false))
+                    throw;
+            }
+        }
+
+        private async Task HandleSequenceAsync(ConsumerPipelineContext context, ISequence sequence)
+        {
+            // This is the first message in the sequence, start another thread to await the sequence completion
+            // and perform the commit or rollback
+            if (context == sequence.Context)
+            {
+#pragma warning disable 4014
+                // ReSharper disable AccessToDisposedClosure
+                Task.Run(() => AwaitProcessingTaskAndCommitAsync(context, sequence));
+
+                // ReSharper restore AccessToDisposedClosure
+#pragma warning restore 4014
+            }
+
+            // If the sequence completed (or the associated processing task completed) wait for the the
+            // asynchronous thread to perform the commit or rollback before continuing.
+            if (sequence.IsComplete || (sequence.Context.ProcessingTask?.IsCompleted ?? false))
+            {
+                await sequence.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
+                sequence.Dispose();
+                context.Dispose();
+            }
+
+            if (context != sequence.Context)
+                context.Dispose();
+        }
+
+        private async Task AwaitProcessingTaskAndCommitAsync(ConsumerPipelineContext context, ISequence sequence)
+        {
+            try
+            {
+                if (context.ProcessingTask != null)
+                    await context.ProcessingTask.ConfigureAwait(false);
+
+                if (!context.SequenceStore.HasPendingSequences)
+                    await context.TransactionManager.CommitAsync().ConfigureAwait(false);
+
+                sequence.ProcessedTaskCompletionSource.SetResult(true);
+            }
+            catch (Exception exception)
+            {
+                await HandleSequenceExceptionAsync(context, sequence, exception).ConfigureAwait(false);
+            }
+            finally
+            {
+                context.Dispose();
+            }
+        }
+
+        private async Task<bool> HandleExceptionAsync(ConsumerPipelineContext context, Exception exception)
+        {
+            try
+            {
+                bool handled = await ApplyErrorPoliciesAsync(context, exception).ConfigureAwait(false);
 
                 // TODO: Carefully test: exception handled once and always rolled back
 
@@ -63,49 +139,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                     }
                 }
 
-                context.Sequence?.Dispose();
-                context.Dispose();
-
-                if (!handled)
-                    throw;
-
-                return;
-            }
-
-            if (context.Sequence == null)
-            {
-                await AwaitProcessingAndCommitAsync(context).ConfigureAwait(false);
-                context.Dispose();
-            }
-            else if (context.Sequence.IsComplete || (context.Sequence.Context.ProcessingTask?.IsCompleted ?? true))
-            {
-                await AwaitProcessingAndCommitAsync(context.Sequence.Context).ConfigureAwait(false);
-                context.Sequence.Dispose();
-                context.Dispose();
-            }
-            else if (context != context.Sequence.Context)
-            {
-                context.Dispose();
-            }
-        }
-
-        private async Task AwaitProcessingAndCommitAsync(ConsumerPipelineContext context)
-        {
-            try
-            {
-                if (context.ProcessingTask != null)
-                    await context.ProcessingTask.ConfigureAwait(false);
-
-                if (!context.SequenceStore.HasPendingSequences)
-                    await context.TransactionManager.CommitAsync().ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                if (!await HandleExceptionAsync(context, exception).ConfigureAwait(false))
-                {
-                    await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
-                    throw;
-                }
+                return handled;
             }
             finally
             {
@@ -113,7 +147,51 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        private async Task<bool> HandleExceptionAsync(ConsumerPipelineContext context, Exception exception)
+        private async Task HandleSequenceExceptionAsync(
+            ConsumerPipelineContext context,
+            ISequence sequence,
+            Exception exception)
+        {
+            try
+            {
+                // TODO: Must log?
+
+                switch (sequence.AbortReason)
+                {
+                    case SequenceAbortReason.None:
+                    case SequenceAbortReason.Error:
+                        if (!await ApplyErrorPoliciesAsync(context, exception).ConfigureAwait(false))
+                        {
+                            await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+
+                            sequence.ProcessedTaskCompletionSource.SetException(exception);
+                            return;
+                        }
+
+                        break;
+                    case SequenceAbortReason.EnumerationAborted:
+                        await context.TransactionManager.CommitAsync().ConfigureAwait(false);
+                        break;
+                    case SequenceAbortReason.IncompleteSequence:
+                        await context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
+                        break;
+                    case SequenceAbortReason.ConsumerAborted:
+                    case SequenceAbortReason.Disposing:
+                    default:
+                        await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+                        break;
+                }
+
+                sequence.ProcessedTaskCompletionSource.SetResult(false);
+                return;
+            }
+            catch (Exception ex)
+            {
+                sequence.ProcessedTaskCompletionSource.SetException(ex);
+            }
+        }
+
+        private async Task<bool> ApplyErrorPoliciesAsync(ConsumerPipelineContext context, Exception exception)
         {
             SetFailedAttempts(context.Envelope);
 

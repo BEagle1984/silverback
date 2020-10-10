@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Sequences.Chunking
     /// <summary>
     ///     Represents a sequence of chunks that belong to the same message.
     /// </summary>
-    public class ChunkSequence : Sequence
+    public class ChunkSequence : Sequence<IRawInboundEnvelope>
     {
         private int? _lastIndex;
 
@@ -38,8 +38,8 @@ namespace Silverback.Messaging.Sequences.Chunking
             TotalLength = totalLength;
         }
 
-        /// <inheritdoc cref="ISequence.AddAsync" />
-        public override Task AddAsync(IRawInboundEnvelope envelope)
+        /// <inheritdoc cref="Sequence{TEnvelope}.AddCoreAsync" />
+        protected override Task AddCoreAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -48,7 +48,7 @@ namespace Silverback.Messaging.Sequences.Chunking
 
             EnsureOrdering(chunkIndex);
 
-            return base.AddAsync(envelope);
+            return base.AddCoreAsync(envelope);
         }
 
         private void EnsureOrdering(int index)
