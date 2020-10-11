@@ -157,14 +157,14 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
 
         private class FakeSequence : Sequence<IInboundEnvelope>
         {
-            public FakeSequence(object sequenceId, bool isComplete, bool isAborted, ISequenceStore store)
+            public FakeSequence(string sequenceId, bool isComplete, bool isAborted, ISequenceStore store)
                 : base(sequenceId, ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store))
             {
                 if (isComplete)
                     CompleteAsync().Wait();
 
                 if (isAborted)
-                    AbortAsync(SequenceAbortReason.Error).Wait();
+                    AbortAsync(SequenceAbortReason.EnumerationAborted).Wait();
             }
         }
     }

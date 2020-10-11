@@ -20,9 +20,9 @@ namespace Silverback.Messaging.Batch
 
         /// <summary>
         ///     Gets or sets the maximum amount of time to wait for the batch to be filled. After this time the
-        ///     batch will be processed even if the specified <c>Size</c> is not reached.
+        ///     batch will be completed even if the specified <c>Size</c> is not reached.
         /// </summary>
-        public TimeSpan MaxWaitTime { get; set; } = TimeSpan.MaxValue;
+        public TimeSpan? MaxWaitTime { get; set; }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(BatchSettings? other)
@@ -61,8 +61,14 @@ namespace Silverback.Messaging.Batch
             if (Size < 1)
                 throw new EndpointConfigurationException("Batch.Size must be greater or equal to 1.");
 
-            if (MaxWaitTime <= TimeSpan.Zero)
+            if (MaxWaitTime != null && MaxWaitTime <= TimeSpan.Zero)
                 throw new EndpointConfigurationException("Batch.MaxWaitTime must be greater than 0.");
+
+            if (MaxWaitTime != null && MaxWaitTime.Value.TotalMilliseconds > int.MaxValue)
+            {
+                throw new EndpointConfigurationException(
+                    "Sequence.Timeout.TotalMilliseconds must be lower or equal to Int32.MaxValue.");
+            }
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Sequences
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="ISequence" /> instance.
         /// </returns>
-        Task<TSequence?> GetAsync<TSequence>(object sequenceId)
+        Task<TSequence?> GetAsync<TSequence>(string sequenceId)
             where TSequence : class, ISequence;
 
         /// <summary>
@@ -58,6 +58,6 @@ namespace Silverback.Messaging.Sequences
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task RemoveAsync(object sequenceId);
+        Task RemoveAsync(string sequenceId);
     }
 }

@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Sequences
         /// <summary>
         ///     Gets the identifier that is used to match the consumed messages with their belonging sequence.
         /// </summary>
-        object SequenceId { get; }
+        string SequenceId { get; }
 
         /// <summary>
         ///     Gets the length of the sequence so far.
@@ -57,6 +57,15 @@ namespace Silverback.Messaging.Sequences
         ///     Gets the reason of the abort.
         /// </summary>
         SequenceAbortReason AbortReason { get; }
+
+        /// <summary>
+        ///     Gets the exception that caused the abort, if any.
+        /// </summary>
+        /// <remarks>
+        ///     This property is filled only when <see cref="AbortReason" /> is
+        ///     <see cref="SequenceAbortReason.Error" />.
+        /// </remarks>
+        Exception? AbortException { get; }
 
         /// <summary>
         ///     Gets the offsets of the messages belonging to the sequence.
@@ -111,9 +120,12 @@ namespace Silverback.Messaging.Sequences
         /// <param name="reason">
         ///     The reason of the abort.
         /// </param>
+        /// <param name="exception">
+        ///     The exception that caused the abort.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task AbortAsync(SequenceAbortReason reason);
+        Task AbortAsync(SequenceAbortReason reason, Exception?exception = null);
     }
 }

@@ -14,7 +14,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Sequences
 {
     /// <inheritdoc cref="SequencerConsumerBehaviorBase" />
-     public class SequencerConsumerBehavior : SequencerConsumerBehaviorBase
+    public class SequencerConsumerBehavior : SequencerConsumerBehaviorBase
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="SequencerConsumerBehavior" /> class.
@@ -29,5 +29,15 @@ namespace Silverback.Messaging.Sequences
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public override int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Sequencer;
+
+        /// <inheritdoc cref="SequencerConsumerBehaviorBase.PublishSequenceAsync" />
+        protected override Task PublishSequenceAsync(
+            ConsumerPipelineContext context,
+            ConsumerBehaviorHandler next)
+        {
+            Check.NotNull(next, nameof(next));
+
+            return next(context);
+        }
     }
 }

@@ -21,10 +21,6 @@ namespace Silverback.Messaging.Inbound
     /// </summary>
     public sealed class PublisherConsumerBehavior : IConsumerBehavior, IDisposable
     {
-        //private MessageStreamProvider<IInboundEnvelope>? _streamProvider;
-
-        //private readonly SemaphoreSlim _streamedMessageProcessedSemaphore = new SemaphoreSlim(0, 1);
-
         private UnboundedSequence? _unboundedSequence;
 
         /// <inheritdoc cref="ISorted.SortIndex" />
@@ -38,23 +34,22 @@ namespace Silverback.Messaging.Inbound
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            var publisher = context.ServiceProvider.GetRequiredService<IPublisher>();
-
-            // TODO: Handle ThrowIfUnhandled across single message and stream (and test it)
-            await publisher.PublishAsync(context.Envelope, context.Envelope.Endpoint.ThrowIfUnhandled)
-                .ConfigureAwait(false);
+            await PublishEnvelopeAsync(context).ConfigureAwait(false);
 
             if (context.Sequence != null)
             {
-                // TODO: Handle sequences streams
+                await PublishSequenceAsync(context.Sequence, context).ConfigureAwait(false);
             }
             else if (context.Envelope is IInboundEnvelope envelope)
             {
-                await EnsureStreamIsPublishedAsync(context).ConfigureAwait(false);
-                await _unboundedSequence!.AddAsync(envelope).ConfigureAwait(false);
-            }
+                // TODO: Create only if necessary?
 
-            //await _streamedMessageProcessedSemaphore.WaitAsync().ConfigureAwait(false); // TODO: Embed in StreamProducer?
+                await EnsureUnboundedStreamIsPublishedAsync(context).ConfigureAwait(false);
+                await _unboundedSequence!.AddAsync(envelope).ConfigureAwait(false);
+
+                if (_unboundedSequence.IsAborted && _unboundedSequence.AbortException != null)
+                    throw _unboundedSequence.AbortException; // TODO: Check (Wrap into another exception?)
+            }
 
             await next(context).ConfigureAwait(false);
         }
@@ -62,42 +57,53 @@ namespace Silverback.Messaging.Inbound
         public void Dispose()
         {
             _unboundedSequence?.Dispose();
-            //_streamedMessageProcessedSemaphore.Dispose();
         }
 
-        private async Task EnsureStreamIsPublishedAsync(ConsumerPipelineContext context)
+        private static async Task PublishEnvelopeAsync(ConsumerPipelineContext context)
         {
-            if (_unboundedSequence != null)
+            var publisher = context.ServiceProvider.GetRequiredService<IPublisher>();
+
+            // TODO: Handle ThrowIfUnhandled across single message and stream (and test it)
+            await publisher.PublishAsync(context.Envelope, context.Envelope.Endpoint.ThrowIfUnhandled)
+                .ConfigureAwait(false);
+        }
+
+        private static async Task PublishSequenceAsync(ISequence sequence, ConsumerPipelineContext context)
+        {
+            context.ProcessingTask = await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);
+
+            // CheckStreamProcessing(
+            //     await publisher.PublishAsync(sequence.StreamProvider)
+            //         .ConfigureAwait(false),
+            //     sequence);
+
+            // TODO: Publish materialized stream
+        }
+
+        private async Task EnsureUnboundedStreamIsPublishedAsync(ConsumerPipelineContext context)
+        {
+            if (_unboundedSequence != null && _unboundedSequence.IsPending)
                 return;
 
             _unboundedSequence = new UnboundedSequence("unbounded", context);
             await context.SequenceStore.AddAsync(_unboundedSequence).ConfigureAwait(false);
 
-            // _streamProvider.ProcessedCallback = _ =>
-            // {
-            //     // TODO: Could recognize if the message was forwarded to an enumerable to throw if unhandled?
-            //
-            //     _streamedMessageProcessedSemaphore.Release();
-            //     return Task.CompletedTask;
-            // };
-
-            var publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
-
-            CheckStreamProcessing(
-                await publisher.PublishAsync(_unboundedSequence.StreamProvider)
-                    .ConfigureAwait(false));
+            PublishStreamProviderAsync(_unboundedSequence, context);
         }
 
-        private void CheckStreamProcessing(IReadOnlyCollection<Task> streamProcessingTasks)
+        private static async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context)
         {
-            Task.Run(
+            var publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
+
+            var processingTasks = await publisher.PublishAsync(sequence.StreamProvider).ConfigureAwait(false);
+
+            return Task.Run(
                 async () =>
                 {
                     try
                     {
                         using var cancellationTokenSource = new CancellationTokenSource();
-                        var tasks = streamProcessingTasks.Select(
-                                task => task.CancelOnException(cancellationTokenSource))
+                        var tasks = processingTasks.Select(task => task.CancelOnException(cancellationTokenSource))
                             .ToList();
 
                         // TODO: Test whether an exception really cancels all tasks
@@ -105,14 +111,25 @@ namespace Silverback.Messaging.Inbound
                                 Task.WhenAll(tasks),
                                 WhenCanceled(cancellationTokenSource.Token))
                             .ConfigureAwait(false);
+
+                        var exception = tasks.Where(task => task.IsFaulted).Select(task => task.Exception)
+                            .FirstOrDefault();
+                        if (exception != null)
+                        {
+                            await sequence.AbortAsync(SequenceAbortReason.Error).ConfigureAwait(false);
+                            sequence.Dispose();
+                        }
+
+                        // TODO: abort at first exception (and the await again the rest)
+
+                        await Task.WhenAll(processingTasks).ConfigureAwait(false);
                     }
-                    catch (Exception ex)
+                    catch (Exception exception)
                     {
                         // TODO: Log
 
-                        _unboundedSequence?.AbortAsync(SequenceAbortReason.Error);
-                        _unboundedSequence?.Dispose();
-                        _unboundedSequence = null;
+                        await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
+                        sequence.Dispose();
                     }
                 });
         }

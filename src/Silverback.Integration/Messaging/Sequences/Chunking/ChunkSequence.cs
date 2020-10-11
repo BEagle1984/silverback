@@ -29,10 +29,7 @@ namespace Silverback.Messaging.Sequences.Chunking
         ///     The current <see cref="ConsumerPipelineContext" />, assuming that it will be the one from which the
         ///     sequence gets published to the internal bus.
         /// </param>
-        /// <param name="store">
-        ///     The <see cref="ISequenceStore" /> that references this sequence.
-        /// </param>
-        public ChunkSequence(object sequenceId, int totalLength, ConsumerPipelineContext context)
+        public ChunkSequence(string sequenceId, int totalLength, ConsumerPipelineContext context)
             : base(sequenceId, context)
         {
             TotalLength = totalLength;

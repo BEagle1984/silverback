@@ -22,6 +22,8 @@ namespace Silverback.Messaging.Sequences
 
         private readonly bool _enforceTimeout;
 
+        private readonly TimeSpan _timeout;
+
         private readonly CancellationTokenSource _abortCancellationTokenSource = new CancellationTokenSource();
 
         private readonly object _abortLockObject = new object();
@@ -41,7 +43,15 @@ namespace Silverback.Messaging.Sequences
         /// <param name="enforceTimeout">
         ///     A value indicating whether the timeout has to be enforced.
         /// </param>
-        protected Sequence(object sequenceId, ConsumerPipelineContext context, bool enforceTimeout = true)
+        /// <param name="timeout">
+        ///     The timeout to be applied. If not specified the value of <c>Endpoint.Sequence.Timeout</c> will be
+        ///     used.
+        /// </param>
+        protected Sequence(
+            string sequenceId,
+            ConsumerPipelineContext context,
+            bool enforceTimeout = true,
+            TimeSpan? timeout = null)
         {
             SequenceId = Check.NotNull(sequenceId, nameof(sequenceId));
             Context = Check.NotNull(context, nameof(context));
@@ -49,32 +59,18 @@ namespace Silverback.Messaging.Sequences
             _streamProvider = new MessageStreamProvider<TEnvelope>();
 
             _enforceTimeout = enforceTimeout;
-            ResetAbortTimeout();
+            _timeout = timeout ?? Context.Envelope.Endpoint.Sequence.Timeout;
+            ResetTimeout();
         }
 
         /// <inheritdoc cref="ISequence.SequenceId" />
-        public object SequenceId { get; }
-
-        /// <inheritdoc cref="ISequence.Length" />
-        public int Length { get; protected set; }
-
-        /// <inheritdoc cref="ISequence.TotalLength" />
-        public int? TotalLength { get; protected set; }
-
-        /// <inheritdoc cref="ISequence.IsNew" />
-        public bool IsNew { get; private set; } = true;
+        public string SequenceId { get; }
 
         /// <inheritdoc cref="ISequence.IsPending" />
         public bool IsPending => !IsComplete && !IsAborted;
 
-        /// <inheritdoc cref="ISequence.IsComplete" />
-        public bool IsComplete { get; private set; }
-
         /// <inheritdoc cref="ISequence.IsAborted" />
         public bool IsAborted => AbortReason != SequenceAbortReason.None;
-
-        /// <inheritdoc cref="ISequence.AbortReason" />
-        public SequenceAbortReason AbortReason { get; private set; }
 
         /// <inheritdoc cref="ISequence.Offsets" />
         public IReadOnlyList<IOffset> Offsets => _offsets;
@@ -87,6 +83,24 @@ namespace Silverback.Messaging.Sequences
 
         /// <inheritdoc cref="ISequence.StreamProvider" />
         public IMessageStreamProvider StreamProvider => _streamProvider;
+
+        /// <inheritdoc cref="ISequence.AbortException" />
+        public Exception? AbortException { get; private set; }
+
+        /// <inheritdoc cref="ISequence.Length" />
+        public int Length { get; protected set; }
+
+        /// <inheritdoc cref="ISequence.TotalLength" />
+        public int? TotalLength { get; protected set; }
+
+        /// <inheritdoc cref="ISequence.IsNew" />
+        public bool IsNew { get; private set; } = true;
+
+        /// <inheritdoc cref="ISequence.IsComplete" />
+        public bool IsComplete { get; private set; }
+
+        /// <inheritdoc cref="ISequence.AbortReason" />
+        public SequenceAbortReason AbortReason { get; private set; }
 
         /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />
         public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>() => StreamProvider.CreateStream<TMessage>();
@@ -103,10 +117,17 @@ namespace Silverback.Messaging.Sequences
         }
 
         /// <inheritdoc cref="ISequence.AbortAsync" />
-        public async Task AbortAsync(SequenceAbortReason reason)
+        public async Task AbortAsync(SequenceAbortReason reason, Exception? exception = null)
         {
             if (reason == SequenceAbortReason.None)
                 throw new ArgumentOutOfRangeException(nameof(reason), reason, "Reason not specified.");
+
+            if (reason == SequenceAbortReason.Error && exception == null)
+            {
+                throw new ArgumentNullException(
+                    nameof(exception),
+                    "The exception must be specified if the reason is Error.");
+            }
 
             lock (_abortLockObject)
             {
@@ -114,7 +135,10 @@ namespace Silverback.Messaging.Sequences
                     return;
 
                 if (reason > AbortReason)
+                {
                     AbortReason = reason;
+                    AbortException = exception;
+                }
             }
 
             _timeoutCancellationTokenSource?.Cancel();
@@ -136,7 +160,7 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.AddAsync" />
         protected virtual async Task AddCoreAsync(TEnvelope envelope)
         {
-            ResetAbortTimeout();
+            ResetTimeout();
 
             _offsets.Add(envelope.Offset);
 
@@ -210,10 +234,19 @@ namespace Silverback.Messaging.Sequences
             }
         }
 
+        /// <summary>
+        ///     Called when the timout is elapsed. If not overridden in a derived class, the default implementation
+        ///     aborts the sequence.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected virtual Task OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
+
         /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
         void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
 
-        private void ResetAbortTimeout()
+        private void ResetTimeout()
         {
             if (!_enforceTimeout)
                 return;
@@ -226,9 +259,8 @@ namespace Silverback.Messaging.Sequences
                 {
                     try
                     {
-                        var timeout = Context.Envelope.Endpoint.Sequence.Timeout;
-                        await Task.Delay(timeout, _timeoutCancellationTokenSource.Token).ConfigureAwait(false);
-                        await AbortAsync(SequenceAbortReason.IncompleteSequence).ConfigureAwait(false);
+                        await Task.Delay(_timeout, _timeoutCancellationTokenSource.Token).ConfigureAwait(false);
+                        await OnTimeoutElapsedAsync().ConfigureAwait(false);
                     }
                     catch (OperationCanceledException ex)
                     {

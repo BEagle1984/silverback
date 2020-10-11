@@ -15,6 +15,7 @@ using Silverback.Messaging.Inbound;
 using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Batching;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -83,7 +84,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .Services
                     .AddSingleton<ICustomHeadersMappings>(new CustomHeadersMappings());
 
-                // Pipeline - Sequences (Chunking, ...)
+                // Pipeline - Sequences (Chunking, Batch, ...)
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<SequencerProducerBehavior>()
                     .AddSingletonBrokerBehavior<SequencerConsumerBehavior>()
@@ -91,7 +92,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .Services
                     .AddTransient(typeof(ISequenceStore), typeof(DefaultSequenceStore))
                     .AddSingleton<ISequenceWriter, ChunkSequenceWriter>()
-                    .AddSingleton<ISequenceReader, ChunkSequenceReader>();
+                    .AddSingleton<ISequenceReader, ChunkSequenceReader>()
+                    .AddTransient<ISequenceReader, BatchSequenceReader>();
                 // TODO: Create AddSingletonSequenceReader and AddSingletonSequenceWriter?
 
                 // Pipeline - Chunking

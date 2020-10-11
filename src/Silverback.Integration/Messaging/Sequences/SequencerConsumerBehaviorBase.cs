@@ -62,16 +62,23 @@ namespace Silverback.Messaging.Sequences
 
                 if (sequence.IsNew)
                 {
-                    // Start a separate Task to process the sequence. It will be awaited when the last message is
-                    // consumed.
-                    context.ProcessingTask = Task.Run(async () => await next(context).ConfigureAwait(false));
+                    await PublishSequenceAsync(context, next).ConfigureAwait(false);
 
-                    CheckPrematureCompletion(context);
+                    if (context.ProcessingTask != null)
+                        MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);
                 }
 
                 await sequence.AddAsync(originalEnvelope).ConfigureAwait(false);
             }
         }
+
+        /// <summary>
+        /// Forwards the new sequence to the next behavior in the pipeline.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="next"></param>
+        /// <returns></returns>
+        protected abstract Task PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next);
 
         // TODO: Implement FirstOrDefaultAsync
         private async Task<ISequenceReader?> GetSequenceReaderAsync(ConsumerPipelineContext context)
@@ -85,28 +92,30 @@ namespace Silverback.Messaging.Sequences
             return null;
         }
 
-        private static void CheckPrematureCompletion(ConsumerPipelineContext context)
+        private static void MonitorProcessingTaskPrematureCompletion(Task processingTask, ISequence sequence)
         {
-            if (context.ProcessingTask == null || context.Sequence == null)
-                return;
-
             Task.Run(
                 async () =>
                 {
                     try
                     {
-                        await context.ProcessingTask.ConfigureAwait(false);
+                        await processingTask.ConfigureAwait(false);
+
+                        if (!sequence.IsPending)
+                            return;
 
                         // Abort the uncompleted sequence if the processing task completes, to avoid unreleased locks.
-                        if (!context.Sequence.IsComplete)
-                            await context.Sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
+                        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
                     }
-                    catch (Exception ex)
+                    catch (Exception exception)
                     {
                         // TODO: Log?
 
-                        if (context.Sequence.IsPending)
-                            await context.Sequence.AbortAsync(SequenceAbortReason.Error).ConfigureAwait(false);
+                        if (!sequence.IsPending)
+                            return;
+
+                        await sequence.AbortAsync(SequenceAbortReason.Error, exception)
+                            .ConfigureAwait(false);
                     }
                 });
         }

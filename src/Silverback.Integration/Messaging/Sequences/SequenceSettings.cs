@@ -42,6 +42,9 @@ namespace Silverback.Messaging.Sequences
         {
             if (Timeout <= TimeSpan.Zero)
                 throw new EndpointConfigurationException("Sequence.Timeout must be greater than 0.");
+
+            if (Timeout.TotalMilliseconds > int.MaxValue)
+                throw new EndpointConfigurationException("Sequence.Timeout.TotalMilliseconds must be lower or equal to Int32.MaxValue.");
         }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

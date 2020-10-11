@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Sequences.Unbounded
     /// </summary>
     internal class UnboundedSequence : Sequence<IInboundEnvelope>
     {
-        public UnboundedSequence(object sequenceId, ConsumerPipelineContext context)
+        public UnboundedSequence(string sequenceId, ConsumerPipelineContext context)
             : base(sequenceId, context, false)
         {
         }

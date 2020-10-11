@@ -331,6 +331,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         }),
                     ContentType = "application/pdf"
                 });
+
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);

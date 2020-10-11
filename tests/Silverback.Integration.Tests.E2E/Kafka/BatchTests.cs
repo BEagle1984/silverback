@@ -9,23 +9,31 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
+using Silverback.Messaging.Batch;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
+using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
-using Silverback.Util;
 using Xunit;
+using Silverback.Util;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class StreamingTests : E2ETestFixture
+    public class BatchTests : E2ETestFixture
     {
         [Fact]
-        public async Task MessageStreamEnumerable_DefaultSettings_MessagesReceivedAndCommitted()
+        public async Task Batch_DefaultSettings_MessagesReceivedAndCommittedInBatch()
         {
-            var receivedMessages = new List<TestEventOne>();
+            throw new NotImplementedException();
+        }
 
+        [Fact]
+        public async Task Batch_DefaultSettings_StreamedMessagesReceivedAndCommittedInBatch()
+        {
+            var receivedBatches = new List<List<TestEventOne>>();
+            var completedBatches = 0;
             var serviceProvider = Host.ConfigureServices(
                     services => services
                         .AddLogging()
@@ -41,16 +49,33 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration = new KafkaConsumerConfig
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Batch = new BatchSettings
+                                        {
+                                            Size = 10
                                         }
                                     }))
                         .AddDelegateSubscriber(
                             async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
                             {
-                                await foreach (var message in eventsStream)
+                                var list = new List<TestEventOne>();
+                                receivedBatches.Add(list);
+
+                                try
                                 {
-                                    receivedMessages.Add(message);
+                                    await foreach (var message in eventsStream)
+                                    {
+                                        list.Add(message);
+                                    }
                                 }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine(ex);
+                                    throw;
+                                }
+                                completedBatches++;
                             }))
                 .Run();
 
@@ -63,19 +88,40 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         {
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
+            await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
+            receivedBatches.Should().HaveCount(2);
+            receivedBatches[0].Count.Should().Be(10);
+            receivedBatches[1].Count.Should().Be(5);
+            completedBatches.Should().Be(1);
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
+
+            await Enumerable.Range(16, 5).ForEachAsync(
+                i =>
+                    publisher.PublishAsync(
+                        new TestEventOne
+                        {
+                            Content = i.ToString(CultureInfo.InvariantCulture)
+                        }));
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            receivedMessages.Should().HaveCount(15);
-            var receivedContents = receivedMessages.Select(message => message.Content);
-            receivedContents.Should().BeEquivalentTo(
-                Enumerable.Range(1, 15).Select(i => i.ToString(CultureInfo.InvariantCulture)));
+            receivedBatches.Should().HaveCount(2);
+            receivedBatches[0].Count.Should().Be(10);
+            receivedBatches[1].Count.Should().Be(10);
+            completedBatches.Should().Be(2);
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(15);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(20);
         }
 
         [Fact]
-        public async Task MessageStreamEnumerable_DisconnectWhileEnumerating_EnumerationAborted()
+        public async Task Batch_WithTimeout_IncompleteBatchCompletedAfterTimeout()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact]
+        public async Task Batch_DisconnectWhileEnumerating_EnumerationAborted()
         {
             bool aborted = false;
             var receivedMessages = new List<TestEventOne>();
@@ -138,7 +184,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task MessageStreamEnumerable_ProcessingFailed_ConsumerStopped()
+        public async Task Batch_ProcessingFailed_ConsumerStopped()
         {
             var receivedMessages = new List<TestEventOne>();
 
@@ -157,8 +203,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration = new KafkaConsumerConfig
                                         {
                                             GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
+                                            AutoCommitIntervalMs = 100
                                         }
                                     }))
                         .AddDelegateSubscriber(
