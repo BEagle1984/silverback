@@ -400,7 +400,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 new MessageHeader("x-custom-header2", "False"));
         }
 
-        [Fact]
+        [Fact(Skip = "Encryption to be migrated")]
         public async Task OutboundAndInbound_Encryption_EncryptedAndDecrypted()
         {
             throw new NotImplementedException();

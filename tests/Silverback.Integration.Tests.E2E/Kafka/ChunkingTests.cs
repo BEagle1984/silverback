@@ -424,7 +424,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage2.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("2", 2, 3));
 
-            await AsyncTestingUtil.WaitAsync(() => SpyBehavior.InboundEnvelopes.Count == 1);
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
@@ -450,11 +450,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             throw new NotImplementedException();
         }
 
-        [Fact]
+        [Fact(Skip = "Consecutive sequence always enforced at the moment")]
         public async Task Chunking_NotEnforcingConsecutiveJsonChunks_ConsumedAndCommittedOnlyWhenSequencesAreComplete()
         {
-            return; // Consecutive sequence always enforced right not.
-
             var message1 = new TestEventOne { Content = "Message 1" };
             byte[] rawMessage1 = (await Endpoint.DefaultSerializer.SerializeAsync(
                                      message1,
@@ -513,7 +511,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage2.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders<TestEventOne>("2", 2, 3));
 
-            await AsyncTestingUtil.WaitAsync(() => SpyBehavior.InboundEnvelopes.Count == 1);
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Count.Should().Be(1);
             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
@@ -532,10 +530,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
         }
 
-        [Fact]
+        [Fact(Skip = "Always enforcing consecutive sequences at the moment.")]
         public async Task Chunking_NotEnforcingConsecutiveJsonChunks_ProcessingErrorAbortsAllSequences()
         {
-            return; // Consecutive sequence always enforced right not.
             throw new NotImplementedException();
         }
 
@@ -803,10 +800,77 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task Chunking_JsonMissingFirstChunk_NextMessageConsumedAndCommitted()
         {
-            throw new NotImplementedException();
+            var message1 = new TestEventOne { Content = "Message 1" };
+            byte[] rawMessage1 = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                     message1,
+                                     new MessageHeaderCollection(),
+                                     MessageSerializationContext.Empty)).ReadAll() ??
+                                 throw new InvalidOperationException("Serializer returned null");
+
+            var message2 = new TestEventOne { Content = "Message 2" };
+            var rawMessage2 = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                  message2,
+                                  new MessageHeaderCollection(),
+                                  MessageSerializationContext.Empty)).ReadAll() ??
+                              throw new InvalidOperationException("Serializer returned null");
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            // ConsecutiveMessages = true
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.ProduceAsync(
+                rawMessage1.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, 3));
+            await producer.ProduceAsync(
+                rawMessage1.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 2, 3));
+            await producer.ProduceAsync(
+                rawMessage2.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 0, 3));
+            await producer.ProduceAsync(
+                rawMessage2.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 1, 3));
+            await producer.ProduceAsync(
+                rawMessage2.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 2, 3));
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Message 2");
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
+
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            sequenceStore.HasPendingSequences.Should().BeFalse();
         }
 
-        [Fact]
+        [Fact(Skip = "Hard to implement. Worth it?")]
         public async Task Chunking_BinaryFileMissingFirstChunk_NextMessageConsumedAndCommitted()
         {
             throw new NotImplementedException();
@@ -958,12 +1022,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         public async Task Chunking_MultipleSequencesFromMultiplePartitions_ConcurrentlyConsumed()
         {
             throw new NotImplementedException();
-        }
-
-        [Fact]
-        public async Task Chunking_IncompleteBinaryFile_NextMessageConsumedAndCommitted()
-        {
-            throw new NotImplementedException(); // ???
         }
 
         // TODO: Test with concurrent consumers

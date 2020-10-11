@@ -48,7 +48,7 @@ namespace Silverback.Messaging.Inbound
                 await _unboundedSequence!.AddAsync(envelope).ConfigureAwait(false);
 
                 if (_unboundedSequence.IsAborted && _unboundedSequence.AbortException != null)
-                    throw _unboundedSequence.AbortException; // TODO: Check (Wrap into another exception?)
+                    throw _unboundedSequence.AbortException; // TODO: Wrap into another exception?
             }
 
             await next(context).ConfigureAwait(false);
@@ -120,7 +120,7 @@ namespace Silverback.Messaging.Inbound
                             sequence.Dispose();
                         }
 
-                        // TODO: abort at first exception (and the await again the rest)
+                        // TODO: Test abort at first exception
 
                         await Task.WhenAll(processingTasks).ConfigureAwait(false);
                     }
