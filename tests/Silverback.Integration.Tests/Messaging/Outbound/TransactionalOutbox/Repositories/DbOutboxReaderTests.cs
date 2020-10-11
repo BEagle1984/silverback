@@ -10,15 +10,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Database;
 using Silverback.Database.Model;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Tests.Integration.TestTypes.Database;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
+namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Repositories
 {
-    public class DbOutboundQueueReaderTests : IAsyncDisposable
+    public class DbOutboxReaderTests : IAsyncDisposable
     {
         // TestEventOne { Content = "Test" }
         private static readonly byte[] SampleContent =
@@ -43,7 +42,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
         private readonly DbOutboxReader _queueReader;
 
-        public DbOutboundQueueReaderTests()
+        public DbOutboxReaderTests()
         {
             _connection = new SqliteConnection("DataSource=:memory:");
             _connection.Open();

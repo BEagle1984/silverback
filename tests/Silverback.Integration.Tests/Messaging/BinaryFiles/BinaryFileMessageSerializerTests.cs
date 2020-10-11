@@ -10,6 +10,7 @@ using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.BinaryFiles
@@ -120,7 +121,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            serialized.Should().BeSameAs(messageBytes);
+            serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
         }
 
         [Fact]
@@ -135,7 +136,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            serialized.Should().BeSameAs(messageBytes);
+            serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
         }
 
         [Fact]
@@ -285,11 +286,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                     MessageSerializationContext.Empty);
 
             deserializedObject.Should().BeOfType<BinaryFileMessage>();
-            deserializedObject.Should().BeEquivalentTo(
-                new BinaryFileMessage
-                {
-                    Content = new MemoryStream()
-                });
+            deserializedObject.As<BinaryFileMessage>().Content.ReadAll()!.Length.Should().Be(0);
             type.Should().Be(typeof(BinaryFileMessage));
         }
 
@@ -343,11 +340,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 .DeserializeAsync(new MemoryStream(), headers, MessageSerializationContext.Empty);
 
             deserializedObject.Should().BeOfType<InheritedBinaryFileMessage>();
-            deserializedObject.Should().BeEquivalentTo(
-                new InheritedBinaryFileMessage
-                {
-                    Content = new MemoryStream()
-                });
+            deserializedObject.As<BinaryFileMessage>().Content.ReadAll()!.Length.Should().Be(0);
             type.Should().Be(typeof(InheritedBinaryFileMessage));
         }
 

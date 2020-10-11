@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.Newtonsoft.TestTypes.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
@@ -34,7 +35,7 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
 
             var serialized = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
-            serialized.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
+            serialized.ReadAll().Should().BeEquivalentTo(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
         }
 
         [Fact]
@@ -82,7 +83,22 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            serialized.Should().BeSameAs(messageBytes);
+            serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
+        }
+
+        [Fact]
+        public async Task SerializeAsync_Stream_ReturnedUnmodified()
+        {
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes("test"));
+
+            var serializer = new NewtonsoftJsonMessageSerializer();
+
+            var serialized = await serializer.SerializeAsync(
+                stream,
+                new MessageHeaderCollection(),
+                MessageSerializationContext.Empty);
+
+            serialized.Should().BeSameAs(stream);
         }
 
         [Fact]

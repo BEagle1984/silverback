@@ -13,12 +13,11 @@ using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 
-namespace Silverback.Tests.Integration.E2E.Broker
+namespace Silverback.Tests.Integration.E2E.Old.Broker
 {
-    [Trait("Category", "E2E")]
     public class OutboundRoutingTests : E2ETestFixture
     {
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task StaticSingleEndpoint_RoutedCorrectly()
         {
             var serviceProvider = Host.ConfigureServices(
@@ -48,7 +47,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             SpyBehavior.OutboundEnvelopes[2].Endpoint.Name.Should().Be("test-e2e-three");
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task StaticBroadcast_RoutedCorrectly()
         {
             var serviceProvider = Host.ConfigureServices(
@@ -77,7 +76,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             SpyBehavior.OutboundEnvelopes[2].Endpoint.Name.Should().Be("test-e2e-three");
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task DynamicCustomRouting_RoutedCorrectly()
         {
             var serviceProvider = Host.ConfigureServices(

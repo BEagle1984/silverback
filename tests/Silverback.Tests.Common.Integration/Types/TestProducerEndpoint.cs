@@ -7,7 +7,7 @@ using Silverback.Messaging;
 
 #pragma warning disable 659
 
-namespace Silverback.Tests.Integration.TestTypes
+namespace Silverback.Tests.Types
 {
     public sealed class TestProducerEndpoint : ProducerEndpoint, IEquatable<TestProducerEndpoint>
     {

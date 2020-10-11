@@ -66,8 +66,7 @@ namespace Silverback.Messaging.Serialization
             var buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
             var jsonString = GetSystemEncoding().GetString(buffer!);
 
-            var deserializedObject = JsonConvert.DeserializeObject(jsonString, type, Settings) ??
-                                     throw new MessageSerializerException("The deserialization returned null.");
+            var deserializedObject = JsonConvert.DeserializeObject(jsonString, type, Settings);
 
             return (deserializedObject, type);
         }

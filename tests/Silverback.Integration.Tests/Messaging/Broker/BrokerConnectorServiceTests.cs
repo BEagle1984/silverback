@@ -11,12 +11,11 @@ using Microsoft.Extensions.Hosting;
 using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Connectors;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Connectors
+namespace Silverback.Tests.Integration.Messaging.Broker
 {
     public class BrokerConnectorServiceTests
     {
@@ -41,7 +40,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
             await service.StartAsync(CancellationToken.None);
 
             var brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
-            brokers.ForEach(broker => broker.IsConnected.Should().BeTrue());
+            brokers.ForEach(broker => AssertionExtensions.Should((bool)broker.IsConnected).BeTrue());
         }
 
         [Fact]

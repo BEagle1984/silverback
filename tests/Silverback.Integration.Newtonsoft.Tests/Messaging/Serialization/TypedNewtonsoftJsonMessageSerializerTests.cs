@@ -51,7 +51,22 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            serialized.Should().BeSameAs(messageBytes);
+            serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
+        }
+
+        [Fact]
+        public async Task SerializeAsync_Stream_ReturnedUnmodified()
+        {
+            var stream = new MemoryStream( Encoding.UTF8.GetBytes("test"));
+
+            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
+
+            var serialized = await serializer.SerializeAsync(
+                stream,
+                new MessageHeaderCollection(),
+                MessageSerializationContext.Empty);
+
+            serialized.Should().BeSameAs(stream);
         }
 
         [Fact]

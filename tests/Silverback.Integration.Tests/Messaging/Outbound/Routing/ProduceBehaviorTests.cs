@@ -7,24 +7,21 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Connectors;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.Routing;
-using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Types;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
+namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 {
-    // TODO: Still needed? Replace with E2E?
-
     public class ProduceBehaviorTests
     {
+        // TODO: Still needed? Replace with E2E?
+
         private readonly ProduceBehavior _behavior;
 
         private readonly InMemoryOutbox _outbox;
@@ -52,15 +49,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         }
 
         [Fact]
-        public async Task Handle_OutboundMessage_CorrectlyRelayed()
+        public async Task Handle_OutboundMessage_RelayedToEndpoint()
         {
             var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 Array.Empty<MessageHeader>(),
-                new TestProducerEndpoint("test")
-                {
-                    Strategy = ProduceStrategy.Outbox()
-                });
+                new TestProducerEndpoint("test"));
 
             await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult!);
             await _outbox.CommitAsync();
@@ -71,7 +65,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         }
 
         [Fact]
-        public async Task Handle_OutboundMessage_RelayedViaTheRightConnector()
+        public async Task Handle_OutboundMessageWithOutboxStrategy_RelayedToOutbox()
         {
             var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),

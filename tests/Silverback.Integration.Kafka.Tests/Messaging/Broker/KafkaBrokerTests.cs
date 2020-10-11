@@ -21,12 +21,12 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 
         public KafkaBrokerTests()
         {
-            var services = new ServiceCollection()
-                .AddSingleton<KafkaEventsHandler>()
-                .AddSingleton<EndpointsConfiguratorsInvoker>()
-                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddKafka()));
 
-            _broker = new KafkaBroker(services.BuildServiceProvider());
+            _broker = serviceProvider.GetRequiredService<KafkaBroker>();
         }
 
         [Fact]

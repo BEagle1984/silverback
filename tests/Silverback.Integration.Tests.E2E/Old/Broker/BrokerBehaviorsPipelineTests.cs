@@ -20,9 +20,8 @@ using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.E2E.Broker
+namespace Silverback.Tests.Integration.E2E.Old.Broker
 {
-    [Trait("Category", "E2E")]
     public class BrokerBehaviorsPipelineTests : E2ETestFixture
     {
         private static readonly byte[] AesEncryptionKey =
@@ -31,7 +30,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c
         };
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task BatchConsuming_CorrectlyConsumedInBatch()
         {
             var message1 = new TestEventOne
@@ -79,7 +78,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task ChunkingWithBatchConsuming_CorrectlyConsumedInBatchAndAggregated()
         {
             var message1 = new TestEventOne
@@ -140,7 +139,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task ChunkingWithCustomHeaders_HeadersTransferred()
         {
             var message = new TestEventWithHeaders
@@ -183,7 +182,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 new MessageHeader("x-custom-header2", "False"));
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task ChunkingWithRemappedHeaderNames_HeadersRemappedAndMessageReceived()
         {
             var message = new TestEventOne
@@ -232,7 +231,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
         }
 
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task EncryptionAndChunking_EncryptedAndChunkedThenAggregatedAndDecrypted()
         {

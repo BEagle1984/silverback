@@ -339,25 +339,25 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Broker.Consumers[0].IsConnected.Should().BeFalse();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task Chunking_Json_AtomicallyCommitted()
         {
             throw new NotImplementedException();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task Chunking_BinaryFile_AtomicallyCommitted()
         {
             throw new NotImplementedException();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task Chunking_Json_BackpressureHandled()
         {
             throw new NotImplementedException();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task Chunking_BinaryFile_BackpressureHandled()
         {
             throw new NotImplementedException();
@@ -436,14 +436,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequenceStore.HasPendingSequences.Should().BeFalse();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task Chunking_EnforcingConsecutiveJsonChunks_IncompleteSequenceDiscardedOnNoSequenceMessage()
         {
             // TODO: Ensure that the rollback always happens before the next commit (and doesn't actually rollback the offset)
             throw new NotImplementedException();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task Chunking_EnforcingConsecutiveJsonChunks_ErrorPolicyIgnoredWhenIncompleteSequenceDiscarded()
         {
             // TODO: Ensure that the abort doesn't trigger the error policies! (for both sequence and no-sequence message)
@@ -1018,7 +1018,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task Chunking_MultipleSequencesFromMultiplePartitions_ConcurrentlyConsumed()
         {
             throw new NotImplementedException();

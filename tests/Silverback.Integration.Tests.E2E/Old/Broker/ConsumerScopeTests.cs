@@ -7,7 +7,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -15,12 +14,11 @@ using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 
-namespace Silverback.Tests.Integration.E2E.Broker
+namespace Silverback.Tests.Integration.E2E.Old.Broker
 {
-    [Trait("Category", "E2E")]
     public class ConsumerScopeTests : E2ETestFixture
     {
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task MultipleMessages_NewScopeCreatedForEachMessage()
         {
             var lastScopeId = Guid.Empty;
@@ -59,7 +57,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             scopes.Should().Be(3);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task WithFailuresAndRetryPolicy_NewScopeCreatedForEachRetry()
         {
             var lastScopeId = Guid.Empty;

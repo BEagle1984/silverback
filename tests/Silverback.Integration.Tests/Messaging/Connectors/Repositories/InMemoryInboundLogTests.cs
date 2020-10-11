@@ -9,6 +9,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
 

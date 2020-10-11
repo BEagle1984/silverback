@@ -12,6 +12,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling

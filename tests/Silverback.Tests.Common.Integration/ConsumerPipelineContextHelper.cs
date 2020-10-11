@@ -2,12 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
 using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
+using Silverback.Tests.Types;
 
 namespace Silverback.Tests
 {
@@ -20,7 +22,12 @@ namespace Silverback.Tests
             IConsumer? consumer = null,
             ISequenceStore? sequenceStore = null) =>
             new ConsumerPipelineContext(
-                envelope ?? Substitute.For<IRawInboundEnvelope>(),
+                envelope ?? new RawInboundEnvelope(
+                    Stream.Null,
+                    Array.Empty<MessageHeader>(),
+                    new TestConsumerEndpoint("test"),
+                    "test",
+                    new TestOffset()),
                 consumer ?? Substitute.For<IConsumer>(),
                 sequenceStore ?? Substitute.For<ISequenceStore>(),
                 serviceProvider ?? Substitute.For<IServiceProvider>())

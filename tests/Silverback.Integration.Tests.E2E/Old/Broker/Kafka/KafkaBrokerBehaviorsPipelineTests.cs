@@ -15,12 +15,11 @@ using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.E2E.Broker.Kafka
+namespace Silverback.Tests.Integration.E2E.Old.Broker.Kafka
 {
-    [Trait("Category", "E2E")]
     public class KafkaBrokerBehaviorsPipelineTests : E2ETestFixture
     {
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task DefaultSettings_KafkaKeyAlwaysSet()
         {
             var message = new TestEventOne
@@ -49,7 +48,7 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
                 .Should().NotBeNullOrEmpty();
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task DefaultSettings_MessageIdUsedAsKafkaKey()
         {
             var message = new TestEventOne
@@ -79,7 +78,7 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
             inboundKafkaKey.Should().Be(inboundMessageId);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task DefaultSettings_ExplicitlySetKafkaKeyTransferred()
         {
             var message = new KafkaEventOne
@@ -108,7 +107,7 @@ namespace Silverback.Tests.Integration.E2E.Broker.Kafka
             SpyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey].Should().Be("my-key");
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task Chunks_SameKafkaKeySetToAllChunks()
         {
             var message = new KafkaEventOne

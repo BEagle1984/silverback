@@ -12,6 +12,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling
@@ -66,19 +67,19 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             canHandle.Should().Be(expectedResult);
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task HandleError_Whatever_TrueReturned()
         {
             throw new NotImplementedException();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task HandleError_Whatever_OffsetRolledBack()
         {
             throw new NotImplementedException();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task HandleError_Whatever_TransactionAborted()
         {
             throw new NotImplementedException();

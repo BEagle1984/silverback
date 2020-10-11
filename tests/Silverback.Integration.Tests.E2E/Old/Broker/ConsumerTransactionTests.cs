@@ -11,7 +11,6 @@ using Silverback.Messaging;
 using Silverback.Messaging.Batch;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Sequences.Chunking;
@@ -19,12 +18,11 @@ using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 
-namespace Silverback.Tests.Integration.E2E.Broker
+namespace Silverback.Tests.Integration.E2E.Old.Broker
 {
-    [Trait("Category", "E2E")]
     public class ConsumerTransactionTests : E2ETestFixture
     {
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task MultipleMessages_EachOffsetCommitted()
         {
             var committedOffsets = new List<IOffset>();
@@ -60,7 +58,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .Should().Be(3);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task BatchConsuming_BatchCommittedAtOnce()
         {
             var committedOffsets = new List<IOffset>();
@@ -103,7 +101,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .Should().Be(3);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task WithFailuresAndRetryPolicy_OffsetCommitted()
         {
             var committedOffsets = new List<IOffset>();
@@ -144,7 +142,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .Should().Be(1);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task WithFailuresAndRetryPolicy_CompletedOrFailedEventFiredForEachTry()
         {
             var silverbackEvents = new List<ISilverbackEvent>();
@@ -187,7 +185,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             silverbackEvents.OfType<ConsumingCompletedEvent>().Count().Should().Be(1);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task ChunkingWithFailuresAndRetryPolicy_OffsetCommitted()
         {
             var committedOffsets = new List<IOffset>();
@@ -232,7 +230,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .Should().Be(3);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task ChunkingWithFailuresAndRetryPolicy_CompletedOrFailedEventFiredForEachTry()
         {
             var silverbackEvents = new List<ISilverbackEvent>();
@@ -279,7 +277,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
             silverbackEvents.OfType<ConsumingCompletedEvent>().Count().Should().Be(3);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task FailedProcessing_OffsetRolledBack()
         {
             var rolledBackOffsets = new List<IOffset>();
@@ -327,7 +325,7 @@ namespace Silverback.Tests.Integration.E2E.Broker
                 .Should().Be(0);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task FailedChunkProcessing_OffsetRolledBack()
         {
             var message = new TestEventOne { Content = "Hello E2E!" };

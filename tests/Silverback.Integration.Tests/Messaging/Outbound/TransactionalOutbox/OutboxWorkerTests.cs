@@ -5,71 +5,51 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
-using Silverback.Diagnostics;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
-using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Connectors
+namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
 {
     public class OutboxWorkerTests
     {
-        private readonly InMemoryOutbox _queue;
+        private readonly IOutboxWriter _outboxWriter;
 
         private readonly TestBroker _broker;
 
-        private readonly OutboxWorker _worker;
+        private readonly IOutboxWorker _worker;
 
         private readonly OutboundEnvelope _sampleOutboundEnvelope;
 
         public OutboxWorkerTests()
         {
-            _queue = new InMemoryOutbox(new TransactionalListSharedItems<OutboxStoredMessage>());
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddBroker<TestBroker>()
+                            .AddOutbox<InMemoryOutbox>()
+                            .AddOutboxWorker())
+                    .AddEndpoints(
+                        endpoints => endpoints
+                            .AddOutbound<TestEventOne>(new TestProducerEndpoint("topic1"))
+                            .AddOutbound<TestEventTwo>(new TestProducerEndpoint("topic2"))
+                            .AddOutbound<TestEventThree>(new TestProducerEndpoint("topic3a"))
+                            .AddOutbound<TestEventThree>(new TestProducerEndpoint("topic3b"))));
 
-            var services = new ServiceCollection();
-
-            services
-                .AddSingleton<IOutboxWriter>(_queue)
-                .AddSingleton<IOutboxReader>(_queue);
-
-            services
-                .AddNullLogger()
-                .AddSilverback()
-                .WithConnectionToMessageBroker(
-                    options => options
-                        .AddBroker<TestBroker>()
-                        .AddOutbox<InMemoryOutbox>());
-
-            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-
-            var routingConfiguration = serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
-            routingConfiguration.Add<TestEventOne>(_ => new StaticOutboundRouter(new TestProducerEndpoint("topic1")));
-            routingConfiguration.Add<TestEventTwo>(_ => new StaticOutboundRouter(new TestProducerEndpoint("topic2")));
-            routingConfiguration.Add<TestEventThree>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("topic3a")));
-            routingConfiguration.Add<TestEventThree>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("topic3b")));
-
-            _broker = (TestBroker)serviceProvider.GetRequiredService<IBroker>();
+            _broker = serviceProvider.GetRequiredService<TestBroker>();
             _broker.Connect();
 
-            _worker = new OutboxWorker(
-                serviceProvider.GetRequiredService<IServiceScopeFactory>(),
-                new BrokerCollection(new[] { _broker }),
-                routingConfiguration,
-                Substitute.For<ISilverbackIntegrationLogger<OutboxWorker>>(),
-                true,
-                100); // TODO: Test order not enforced
+            _worker = serviceProvider.GetRequiredService<IOutboxWorker>();
+            _outboxWriter = serviceProvider.GetRequiredService<IOutboxWriter>();
 
             _sampleOutboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne { Content = "Test" },
@@ -86,17 +66,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task ProcessQueue_SomeMessages_Produced()
         {
-            await _queue.WriteAsync(
+            await _outboxWriter.WriteAsync(
                 new OutboundEnvelope<TestEventOne>(
                     new TestEventOne { Content = "Test" },
                     null,
                     new TestProducerEndpoint("topic1")));
-            await _queue.WriteAsync(
+            await _outboxWriter.WriteAsync(
                 new OutboundEnvelope<TestEventTwo>(
                     new TestEventTwo { Content = "Test" },
                     null,
                     new TestProducerEndpoint("topic2")));
-            await _queue.CommitAsync();
+            await _outboxWriter.CommitAsync();
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
 
@@ -108,17 +88,17 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task ProcessQueue_SomeMessagesWithMultipleEndpoints_CorrectlyProduced()
         {
-            await _queue.WriteAsync(
+            await _outboxWriter.WriteAsync(
                 new OutboundEnvelope<TestEventThree>(
                     new TestEventThree { Content = "Test" },
                     null,
                     new TestProducerEndpoint("topic3a")));
-            await _queue.WriteAsync(
+            await _outboxWriter.WriteAsync(
                 new OutboundEnvelope<TestEventThree>(
                     new TestEventThree { Content = "Test" },
                     null,
                     new TestProducerEndpoint("topic3b")));
-            await _queue.CommitAsync();
+            await _outboxWriter.CommitAsync();
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
 
@@ -130,9 +110,9 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task ProcessQueue_RunTwice_ProducedOnce()
         {
-            await _queue.WriteAsync(_sampleOutboundEnvelope);
-            await _queue.WriteAsync(_sampleOutboundEnvelope);
-            await _queue.CommitAsync();
+            await _outboxWriter.WriteAsync(_sampleOutboundEnvelope);
+            await _outboxWriter.WriteAsync(_sampleOutboundEnvelope);
+            await _outboxWriter.CommitAsync();
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
             await _worker.ProcessQueueAsync(CancellationToken.None);
@@ -143,14 +123,14 @@ namespace Silverback.Tests.Integration.Messaging.Connectors
         [Fact]
         public async Task ProcessQueue_RunTwice_ProducedNewMessages()
         {
-            await _queue.WriteAsync(_sampleOutboundEnvelope);
-            await _queue.WriteAsync(_sampleOutboundEnvelope);
-            await _queue.CommitAsync();
+            await _outboxWriter.WriteAsync(_sampleOutboundEnvelope);
+            await _outboxWriter.WriteAsync(_sampleOutboundEnvelope);
+            await _outboxWriter.CommitAsync();
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
 
-            await _queue.WriteAsync(_sampleOutboundEnvelope);
-            await _queue.CommitAsync();
+            await _outboxWriter.WriteAsync(_sampleOutboundEnvelope);
+            await _outboxWriter.CommitAsync();
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
 

@@ -13,6 +13,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics

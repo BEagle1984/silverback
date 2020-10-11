@@ -12,6 +12,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
+using Silverback.Tests.Types;
 using Silverback.Util;
 
 namespace Silverback.Tests.Integration.TestTypes

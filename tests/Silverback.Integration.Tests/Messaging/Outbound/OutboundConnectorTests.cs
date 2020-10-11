@@ -11,9 +11,10 @@ using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Types;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Connectors
+namespace Silverback.Tests.Integration.Messaging.Outbound
 {
     public class OutboundConnectorTests
     {

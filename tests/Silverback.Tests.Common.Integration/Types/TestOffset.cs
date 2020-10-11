@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Silverback.Messaging.Broker;
 
-namespace Silverback.Tests.Integration.TestTypes
+namespace Silverback.Tests.Types
 {
     public class TestOffset : IComparableOffset
     {

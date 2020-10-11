@@ -33,19 +33,19 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             _serviceProvider = services.BuildServiceProvider();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task HandleError_Whatever_FalseReturned()
         {
             throw new NotImplementedException();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task HandleError_Whatever_OffsetCommitted()
         {
             throw new NotImplementedException();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task HandleError_Whatever_TransactionAborted()
         {
             throw new NotImplementedException();

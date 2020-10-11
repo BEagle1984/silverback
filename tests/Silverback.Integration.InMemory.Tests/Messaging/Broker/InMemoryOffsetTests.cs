@@ -9,7 +9,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
 {
     public class InMemoryOffsetTests
     {
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void Constructor_WithKeyValueString_ProperlyConstructed()
         {
             var offset = new InMemoryOffset("key", "42");
@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             offset.Offset.Should().Be(42);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void Constructor_WithIntegerOffset_ProperlyConstructed()
         {
             var offset = new InMemoryOffset("key", 42);
@@ -148,7 +148,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             result.Should().Be(expectedResult);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void EqualsOffset_SameInstance_TrueReturned()
         {
             var offset = new InMemoryOffset("key", 42);
@@ -158,7 +158,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             result.Should().BeTrue();
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void EqualsObject_SameInstance_TrueReturned()
         {
             var offset = new InMemoryOffset("key", 42);
@@ -208,7 +208,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             result.Should().Be(expected);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void EqualsOffset_Null_FalseReturned()
         {
             var offset1 = new InMemoryOffset("key", 42);
@@ -218,7 +218,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             result.Should().BeFalse();
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void EqualsObject_Null_FalseReturned()
         {
             var offset1 = new InMemoryOffset("key", 42);
@@ -228,7 +228,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             result.Should().BeFalse();
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void EqualsOffset_DifferentOffsetType_FalseReturned()
         {
             var offset1 = new InMemoryOffset("key", 42);
@@ -239,7 +239,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             result.Should().BeFalse();
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void EqualsObject_DifferentOffsetType_FalseReturned()
         {
             var offset1 = new InMemoryOffset("key", 42);

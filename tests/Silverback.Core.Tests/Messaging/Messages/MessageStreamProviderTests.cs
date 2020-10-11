@@ -22,8 +22,11 @@ namespace Silverback.Tests.Core.Messaging.Messages
             List<IEvent>? eventsList = null;
             List<TestEventOne>? testEventOnesList = null;
 
-            var task1 = Task.Run(() => eventsList = provider.CreateStream<IEvent>().ToList());
-            var task2 = Task.Run(() => testEventOnesList = provider.CreateStream<TestEventOne>().ToList());
+            var eventsStream = provider.CreateStream<IEvent>();
+            var testEventOneStream = provider.CreateStream<TestEventOne>();
+
+            var task1 = Task.Run(() => eventsList = eventsStream.ToList());
+            var task2 = Task.Run(() => testEventOnesList = testEventOneStream.ToList());
 
             await provider.PushAsync(new TestEventOne());
             await provider.PushAsync(new TestEventTwo());

@@ -505,13 +505,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task SkipPolicy_JsonDeserializationError_SequenceSkipped()
         {
             throw new NotImplementedException();
         }
 
-        [Fact]
+        [Fact(Skip = "Not yet implemented")]
         public async Task SkipPolicy_ChunkedJsonDeserializationError_SequenceSkipped()
         {
             throw new NotImplementedException();

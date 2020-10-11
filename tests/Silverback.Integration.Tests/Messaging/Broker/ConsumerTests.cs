@@ -11,6 +11,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Broker

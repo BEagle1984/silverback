@@ -23,14 +23,12 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
         public RabbitBrokerTests()
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection
-                .AddSingleton<EndpointsConfiguratorsInvoker>()
-                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddRabbit()));
 
-            _broker = new RabbitBroker(
-                Substitute.For<IRabbitConnectionFactory>(),
-                serviceCollection.BuildServiceProvider());
+            _broker = serviceProvider.GetRequiredService<RabbitBroker>();
         }
 
         [Fact]

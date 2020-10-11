@@ -8,18 +8,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Connectors;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.Routing;
-using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Types;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
+namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 {
     public class OutboundRouterBehaviorTests
     {
@@ -28,8 +25,6 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         private readonly OutboundRouterBehavior _behavior;
 
         private readonly IOutboundRoutingConfiguration _routingConfiguration;
-
-        private readonly InMemoryOutbox _outbox;
 
         private readonly TestBroker _broker;
 
@@ -49,8 +44,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 .WithConnectionToMessageBroker(
                     options => options
                         .AddBroker<TestBroker>()
-                        .AddBroker<TestOtherBroker>()
-                        .AddOutbox<InMemoryOutbox>())
+                        .AddBroker<TestOtherBroker>())
                 .AddSingletonSubscriber(_testSubscriber);
 
             services.AddNullLogger();
@@ -63,7 +57,6 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 (OutboundRoutingConfiguration)_serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
             _broker = _serviceProvider.GetRequiredService<TestBroker>();
             _otherBroker = _serviceProvider.GetRequiredService<TestOtherBroker>();
-            _outbox = (InMemoryOutbox)_serviceProvider.GetRequiredService<IOutboxWriter>();
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
@@ -90,13 +83,11 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventTwo")));
 
             await _behavior.Handle(new[] { message }, Task.FromResult!);
-            await _outbox.CommitAsync();
-
-            var queued = await _outbox.ReadAsync(100);
 
             foreach (var expectedEndpointName in expectedEndpointNames)
             {
-                queued.Count(queuedMessage => queuedMessage.EndpointName == expectedEndpointName).Should().Be(1);
+                _broker.ProducedMessages.Count(envelope => envelope.Endpoint.Name == expectedEndpointName).Should()
+                    .Be(1);
             }
 
             var notExpectedEndpointNames = _routingConfiguration
@@ -105,35 +96,19 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
 
             foreach (var notExpectedEndpointName in notExpectedEndpointNames)
             {
-                queued.Count(queuedMessage => queuedMessage.EndpointName == notExpectedEndpointName).Should().Be(0);
+                _broker.ProducedMessages.Count(envelope => envelope.Endpoint.Name == notExpectedEndpointName).Should()
+                    .Be(0);
             }
         }
 
         [Fact]
-        public async Task Handle_Message_CorrectlyRoutedToDefaultConnector()
+        public async Task Handle_Message_CorrectlyRouted()
         {
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
-            await _outbox.CommitAsync();
 
-            var queued = await _outbox.ReadAsync(1);
-            queued.Count.Should().Be(1);
-            _broker.ProducedMessages.Count.Should().Be(0);
-        }
-
-        [Fact]
-        public async Task Handle_Message_CorrectlyRoutedToConnector()
-        {
-            _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
-
-            await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
-            await _outbox.CommitAsync();
-
-            var queued = await _outbox.ReadAsync(1);
-            queued.Count.Should().Be(0);
             _broker.ProducedMessages.Count.Should().Be(1);
         }
 
@@ -225,35 +200,12 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Behaviors
         }
 
         [Fact]
-        public async Task Handle_MultipleRoutesToMultipleBrokers_CorrectlyQueued()
+        public async Task Handle_MultipleRoutesToMultipleBrokers_CorrectlyRelayed()
         {
             _routingConfiguration
                 .Add<TestEventOne>(_ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")))
                 .Add<TestEventTwo>(_ => new StaticOutboundRouter(new TestOtherProducerEndpoint("eventTwo")))
                 .Add<TestEventThree>(_ => new StaticOutboundRouter(new TestProducerEndpoint("eventThree")));
-
-            await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
-            await _behavior.Handle(new[] { new TestEventThree(), }, Task.FromResult!);
-            await _behavior.Handle(new[] { new TestEventTwo() }, Task.FromResult!);
-            await _outbox.CommitAsync();
-
-            var queued = (await _outbox.ReadAsync(10)).ToArray();
-            queued.Length.Should().Be(3);
-            queued[0].EndpointName.Should().Be("eventOne");
-            queued[1].EndpointName.Should().Be("eventThree");
-            queued[2].EndpointName.Should().Be("eventTwo");
-        }
-
-        [Fact]
-        public async Task Handle_MultipleRoutesToMultipleBrokers_CorrectlyRelayed()
-        {
-            _routingConfiguration
-                .Add<TestEventOne>(
-                    _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")))
-                .Add<TestEventTwo>(
-                    _ => new StaticOutboundRouter(new TestOtherProducerEndpoint("eventTwo")))
-                .Add<TestEventThree>(
-                    _ => new StaticOutboundRouter(new TestProducerEndpoint("eventThree")));
 
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
             await _behavior.Handle(new[] { new TestEventThree(), }, Task.FromResult!);

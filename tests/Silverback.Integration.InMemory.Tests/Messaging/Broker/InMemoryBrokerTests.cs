@@ -20,7 +20,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
 {
     public class InMemoryBrokerTests
     {
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void GetProducer_ReturnsNewInMemoryProducer()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             producer.Should().BeOfType<InMemoryProducer>();
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void AddConsumer_ReturnsNewInMemoryConsumer()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
@@ -48,7 +48,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             consumer.Should().BeOfType<InMemoryConsumer>();
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public async Task InMemoryBroker_ProduceMessages_MessagesReceived()
         {
             var endpointName = "test";
@@ -60,8 +60,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
                 services => services
                     .AddSilverback()
                     .WithConnectionToMessageBroker(options => options.AddInMemoryBroker())
-                    .AddDelegateSubscriber(
-                        (IInboundEnvelope envelope) => receivedMessages.Add(envelope.Message)));
+                    .AddDelegateSubscriber((IInboundEnvelope envelope) => receivedMessages.Add(envelope.Message)));
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(endpointName));
@@ -75,7 +74,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             receivedMessages[1].Should().BeEquivalentTo(testMessage2);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void InMemoryBroker_ProduceMessage_MessageHeadersReceived()
         {
             var endpointName = "test";
@@ -100,7 +99,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             receivedHeaders.First().Should().ContainEquivalentOf(new MessageHeader("c", "d"));
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void InMemoryBroker_PublishMessageThroughConnector_MessageConsumed()
         {
             var endpointName = "test";
@@ -128,7 +127,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             receivedEnvelopes.OfType<IInboundEnvelope>().Select(x => x.Message).Should().AllBeOfType<TestMessage>();
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void InMemoryBroker_ConnectAndDispose_NoExceptionIsThrown()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
