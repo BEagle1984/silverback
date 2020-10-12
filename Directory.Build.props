@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup Label="Package information">
-    <BaseVersionSuffix>-beta.6</BaseVersionSuffix>
+    <BaseVersionSuffix>-beta.7</BaseVersionSuffix>
     <BaseVersion>3.0.0$(BaseVersionSuffix)</BaseVersion>
     <DatabasePackagesRevision>1</DatabasePackagesRevision>
     <DatabasePackagesVersionSuffix>-ignored</DatabasePackagesVersionSuffix>
