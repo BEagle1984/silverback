@@ -22,13 +22,16 @@ namespace Silverback.Samples.BinaryFileStreaming.Producer.Controllers
         }
 
         [HttpPost("binary-file")]
-        public async Task<IActionResult> ProduceBinaryFile(string filePath, string contentType)
+        public async Task<IActionResult> ProduceBinaryFile(string filePath, string? contentType)
         {
             // Open specified file stream
             using var fileStream = System.IO.File.OpenRead(filePath);
 
             // Create a BinaryFileMessage that wraps the file stream
-            var binaryFileMessage = new BinaryFileMessage(fileStream, contentType);
+            var binaryFileMessage = new BinaryFileMessage(fileStream);
+
+            if (!string.IsNullOrEmpty(contentType))
+                binaryFileMessage.ContentType = contentType;
 
             // Publish the BinaryFileMessage that will be routed to the outbound endpoint. The FileStream will
             // be read and produced chunk by chunk, without the entire file being loaaded into memory.
@@ -38,7 +41,7 @@ namespace Silverback.Samples.BinaryFileStreaming.Producer.Controllers
         }
 
         [HttpPost("custom-binary-file")]
-        public async Task<IActionResult> ProduceBinaryFileWithCustomHeaders(string filePath, string contentType)
+        public async Task<IActionResult> ProduceBinaryFileWithCustomHeaders(string filePath, string? contentType)
         {
             // Open specified file stream
             using var fileStream = System.IO.File.OpenRead(filePath);
@@ -48,9 +51,11 @@ namespace Silverback.Samples.BinaryFileStreaming.Producer.Controllers
             var binaryFileMessage = new CustomBinaryFileMessage
             {
                 Content = fileStream,
-                ContentType = contentType,
                 Filename = Path.GetFileName(filePath)
             };
+
+            if (!string.IsNullOrEmpty(contentType))
+                binaryFileMessage.ContentType = contentType;
 
             // Publish the BinaryFileMessage that will be routed to the outbound endpoint. The FileStream will
             // be read and produced chunk by chunk, without the entire file being loaded into memory.

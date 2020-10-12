@@ -85,7 +85,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var testPolicy = new TestErrorPolicy();
 
             var chain = ErrorPolicy.Chain(
-                    ErrorPolicy.Retry().MaxFailedAttempts(3),
+                    ErrorPolicy.Retry(3),
                     testPolicy)
                 .Build(_serviceProvider);
 

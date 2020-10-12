@@ -38,14 +38,20 @@ namespace Silverback.Messaging.Configuration
         /// <returns>
         ///     The error policy instance.
         /// </returns>
+        /// <param name="retriesCount">
+        ///    The maximum number of retries to be performed.
+        /// </param>
         /// <param name="initialDelay">
         ///     The optional delay to be applied to the first retry.
         /// </param>
         /// <param name="delayIncrement">
         ///     The optional increment to the delay to be applied at each retry.
         /// </param>
-        public static RetryErrorPolicy Retry(TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null) =>
-            new RetryErrorPolicy(initialDelay, delayIncrement);
+        public static RetryErrorPolicy Retry(
+            int? retriesCount = null,
+            TimeSpan? initialDelay = null,
+            TimeSpan? delayIncrement = null) =>
+            (RetryErrorPolicy)new RetryErrorPolicy(initialDelay, delayIncrement).MaxFailedAttempts(retriesCount);
 
         /// <summary>
         ///     Builds an instance of the <see cref="MoveMessageErrorPolicy" /> that moves the messages that fail to
