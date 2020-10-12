@@ -164,13 +164,13 @@ namespace Silverback.Messaging.Messages
                 yield return currentMessage;
 
                 if (_ownerStreamProvider != null)
-                    AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyLinkedStreamProcessedAsync(_current));
+                    AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyStreamProcessedAsync(_current));
             }
 
             if (_ownerStreamProvider != null)
             {
                 AsyncHelper.RunSynchronously(
-                    () => _ownerStreamProvider.NotifyLinkedStreamEnumerationCompletedAsync(this));
+                    () => _ownerStreamProvider.NotifyStreamEnumerationCompletedAsync(this));
             }
         }
 
@@ -186,11 +186,11 @@ namespace Silverback.Messaging.Messages
                 yield return currentMessage;
 
                 if (_ownerStreamProvider != null)
-                    await _ownerStreamProvider.NotifyLinkedStreamProcessedAsync(_current).ConfigureAwait(false);
+                    await _ownerStreamProvider.NotifyStreamProcessedAsync(_current).ConfigureAwait(false);
             }
 
             if (_ownerStreamProvider != null)
-                await _ownerStreamProvider.NotifyLinkedStreamEnumerationCompletedAsync(this).ConfigureAwait(false);
+                await _ownerStreamProvider.NotifyStreamEnumerationCompletedAsync(this).ConfigureAwait(false);
         }
 
         private TReturn EnumerateExclusively<TReturn>(Func<TReturn> action)

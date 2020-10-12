@@ -15,21 +15,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
     ///     <see cref="IPublisher.PublishAsync{TResult}(object)" />. This is done to avoid blocking the original
     ///     thread waiting for the stream to complete.
     /// </summary>
-    public interface IStreamEnumerableMessageArgumentResolver : IMessageArgumentResolver
+    public interface IStreamEnumerableMessageArgumentResolver : IMessageArgumentResolverFromStreamProvider
     {
-        /// <summary>
-        ///     Returns the messages stream in a shape that is compatible with the subscribed method.
-        /// </summary>
-        /// <param name="message">
-        ///     The message being published.
-        /// </param>
-        /// <param name="targetMessageType">
-        ///     The actual message type being declared by the subscribed method (e.g. <c>TMessage</c> for an
-        ///     <c>IMessageStreamEnumerable&lt;TMessage&gt;</c>).
-        /// </param>
-        /// <returns>
-        ///     The actual value to be forwarded to the subscribed method.
-        /// </returns>
-        object GetValue(object message, Type targetMessageType);
     }
 }

@@ -20,14 +20,13 @@ namespace Silverback.Messaging.Messages
     /// </typeparam>
     internal class MessageStreamProvider<TMessage> : IMessageStreamProviderInternal, IDisposable
     {
-        private readonly List<IMessageStreamEnumerable> _linkedStreams =
-            new List<IMessageStreamEnumerable>();
+        private readonly List<IMessageStreamEnumerable> _streams = new List<IMessageStreamEnumerable>();
 
-        private readonly ConcurrentDictionary<int, int> _linkedStreamsByMessage = new ConcurrentDictionary<int, int>();
+        private readonly ConcurrentDictionary<int, int> _streamsByMessage = new ConcurrentDictionary<int, int>();
 
         private int _messagesCount;
 
-        private MethodInfo? _genericCreateLinkedStreamMethodInfo;
+        private MethodInfo? _genericCreateStreamMethodInfo;
 
         // TODO: Checks if callbacks are used/needed
 
@@ -60,6 +59,9 @@ namespace Silverback.Messaging.Messages
         /// <inheritdoc cref="IMessageStreamProvider.MessageType" />
         public Type MessageType => typeof(TMessage);
 
+        /// <inheritdoc cref="IMessageStreamProvider.StreamsCount" />
+        public int StreamsCount => _streams.Count;
+
         /// <summary>
         ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the
         ///     message has actually been pulled and processed.
@@ -81,8 +83,8 @@ namespace Silverback.Messaging.Messages
             var messageId = Interlocked.Increment(ref _messagesCount);
 
             // ReSharper disable once InconsistentlySynchronizedField
-            var pushTasks = _linkedStreams.Select(
-                linkedStream => PushIfCompatibleType(linkedStream, messageId, message, cancellationToken));
+            var pushTasks = _streams.Select(
+                stream => PushIfCompatibleTypeAsync(stream, messageId, message, cancellationToken));
 
             pushTasks = pushTasks.Where(task => task != null).ToArray();
             var pushedCount = ((Task?[])pushTasks).Length;
@@ -95,7 +97,7 @@ namespace Silverback.Messaging.Messages
             {
                 if (pushedCount > 1)
                 {
-                    if (!_linkedStreamsByMessage.TryAdd(messageId, pushedCount))
+                    if (!_streamsByMessage.TryAdd(messageId, pushedCount))
                     {
                         throw new InvalidOperationException("The same message was already pushed to this stream.");
                     }
@@ -116,7 +118,7 @@ namespace Silverback.Messaging.Messages
         public async Task AbortAsync()
         {
             // ReSharper disable once InconsistentlySynchronizedField
-            _linkedStreams.ParallelForEach(stream => stream.Abort());
+            _streams.ParallelForEach(stream => stream.Abort());
 
             if (PushAbortedCallback != null)
                 await PushAbortedCallback.Invoke().ConfigureAwait(false);
@@ -134,7 +136,7 @@ namespace Silverback.Messaging.Messages
         public async Task CompleteAsync(CancellationToken cancellationToken = default)
         {
             // ReSharper disable once InconsistentlySynchronizedField
-            await _linkedStreams.ParallelForEach(stream => stream.CompleteAsync(cancellationToken))
+            await _streams.ParallelForEach(stream => stream.CompleteAsync(cancellationToken))
                 .ConfigureAwait(false);
 
             if (PushCompletedCallback != null)
@@ -144,16 +146,16 @@ namespace Silverback.Messaging.Messages
         /// <inheritdoc cref="IMessageStreamProvider.CreateStream" />
         public IMessageStreamEnumerable<object> CreateStream(Type messageType)
         {
-            _genericCreateLinkedStreamMethodInfo ??= GetType().GetMethod(
+            _genericCreateStreamMethodInfo ??= GetType().GetMethod(
                 "CreateStream",
                 1,
                 Array.Empty<Type>());
 
-            object linkedStream = _genericCreateLinkedStreamMethodInfo
+            object stream = _genericCreateStreamMethodInfo
                 .MakeGenericMethod(messageType)
                 .Invoke(this, Array.Empty<object>());
 
-            return (IMessageStreamEnumerable<object>)linkedStream;
+            return (IMessageStreamEnumerable<object>)stream;
         }
 
         /// <inheritdoc cref="IMessageStreamProvider.CreateStream{TMessageLinked}" />
@@ -161,31 +163,31 @@ namespace Silverback.Messaging.Messages
         {
             var stream = CreateStreamCore<TMessageLinked>();
 
-            lock (_linkedStreams)
+            lock (_streams)
             {
-                _linkedStreams.Add((IMessageStreamEnumerable)stream);
+                _streams.Add((IMessageStreamEnumerable)stream);
             }
 
             return stream;
         }
 
-        public Task NotifyLinkedStreamProcessedAsync(PushedMessage pushedMessage)
+        public Task NotifyStreamProcessedAsync(PushedMessage pushedMessage)
         {
             if (ProcessedCallback == null)
                 return Task.CompletedTask;
 
             var messageId = pushedMessage.Id;
 
-            if (_linkedStreamsByMessage.ContainsKey(messageId))
+            if (_streamsByMessage.ContainsKey(messageId))
             {
-                lock (_linkedStreamsByMessage)
+                lock (_streamsByMessage)
                 {
-                    if (!_linkedStreamsByMessage.TryGetValue(messageId, out var count))
+                    if (!_streamsByMessage.TryGetValue(messageId, out var count))
                         return Task.CompletedTask;
 
                     var isSuccess = count == 1
-                        ? _linkedStreamsByMessage.TryRemove(messageId, out var _)
-                        : _linkedStreamsByMessage.TryUpdate(messageId, count - 1, count);
+                        ? _streamsByMessage.TryRemove(messageId, out var _)
+                        : _streamsByMessage.TryUpdate(messageId, count - 1, count);
 
                     if (!isSuccess)
                         throw new InvalidOperationException("The dictionary was modified.");
@@ -198,18 +200,18 @@ namespace Silverback.Messaging.Messages
             return ProcessedCallback.Invoke((TMessage)pushedMessage.OriginalMessage);
         }
 
-        public async Task NotifyLinkedStreamEnumerationCompletedAsync(IMessageStreamEnumerable linkedStream)
+        public async Task NotifyStreamEnumerationCompletedAsync(IMessageStreamEnumerable stream)
         {
-            int linkedStreamsCount;
+            int streamsCount;
 
-            lock (_linkedStreams)
+            lock (_streams)
             {
-                _linkedStreams.Remove(linkedStream);
+                _streams.Remove(stream);
 
-                linkedStreamsCount = _linkedStreams.Count;
+                streamsCount = _streams.Count;
             }
 
-            if (linkedStreamsCount == 0 && EnumerationCompletedCallback != null)
+            if (streamsCount == 0 && EnumerationCompletedCallback != null)
                 await EnumerationCompletedCallback.Invoke().ConfigureAwait(false);
         }
 
@@ -221,8 +223,8 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <summary>
-        ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> of a different message type that is
-        ///     linked with this instance and will be pushed with the same messages.
+        ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> of that will be linked with this
+        ///     provider and will be pushed with the messages matching the type <typeparamref name="TMessageLinked" />.
         /// </summary>
         /// <typeparam name="TMessageLinked">
         ///     The type of the messages being streamed to the linked stream.
@@ -248,7 +250,7 @@ namespace Silverback.Messaging.Messages
                 AsyncHelper.RunSynchronously(() => CompleteAsync());
         }
 
-        private static Task? PushIfCompatibleType(
+        private static Task? PushIfCompatibleTypeAsync(
             IMessageStreamEnumerable stream,
             int messageId,
             TMessage message,
@@ -264,7 +266,8 @@ namespace Silverback.Messaging.Messages
             }
 
             var envelope = message as IEnvelope;
-            if (envelope?.Message != null && stream.MessageType.IsInstanceOfType(envelope.Message))
+            if (envelope?.Message != null && envelope.AutoUnwrap &&
+                stream.MessageType.IsInstanceOfType(envelope.Message))
             {
                 var pushedMessage = new PushedMessage(messageId, envelope.Message, message);
                 return stream.PushAsync(pushedMessage, cancellationToken);

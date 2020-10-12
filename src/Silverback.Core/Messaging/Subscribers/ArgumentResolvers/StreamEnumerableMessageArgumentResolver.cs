@@ -32,11 +32,11 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         }
 
         /// <inheritdoc cref="IStreamEnumerableMessageArgumentResolver.GetValue" />
-        public object GetValue(object message, Type targetMessageType)
+        public object GetValue(IMessageStreamProvider streamProvider, Type targetMessageType)
         {
-            Check.NotNull(message, nameof(message));
+            Check.NotNull(streamProvider, nameof(streamProvider));
 
-            return ((IMessageStreamProvider)message).CreateStream(targetMessageType);
+            return streamProvider.CreateStream(targetMessageType);
         }
     }
 }

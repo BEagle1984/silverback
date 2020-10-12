@@ -28,11 +28,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             throw new NotImplementedException();
         }
 
-        [Fact(Skip = "Not yet implemented")]
+        [Fact]
         public async Task Batch_SubscribingToEnumerable_MessagesReceivedAndCommittedInBatch()
         {
             var receivedBatches = new List<List<TestEventOne>>();
             var completedBatches = 0;
+
             var serviceProvider = Host.ConfigureServices(
                     services => services
                         .AddLogging()
@@ -57,12 +58,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         }
                                     }))
                         .AddDelegateSubscriber(
-                            async (IEnumerable<TestEventOne> eventsEnumerable) =>
+                            (IEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
                                 receivedBatches.Add(list);
 
-                                foreach (var message in eventsEnumerable)
+                                foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
@@ -80,7 +81,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         {
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
-            await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
+            await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) >= 15);
 
             receivedBatches.Should().HaveCount(2);
             receivedBatches[0].Should().HaveCount(10);
@@ -111,6 +112,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
             var receivedBatches = new List<List<TestEventOne>>();
             var completedBatches = 0;
+
             var serviceProvider = Host.ConfigureServices(
                     services => services
                         .AddLogging()

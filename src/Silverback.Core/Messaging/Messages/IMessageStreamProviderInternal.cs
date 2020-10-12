@@ -19,17 +19,17 @@ namespace Silverback.Messaging.Messages
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task NotifyLinkedStreamProcessedAsync(PushedMessage pushedMessage);
+        Task NotifyStreamProcessedAsync(PushedMessage pushedMessage);
 
         /// <summary>
         ///     Used by the linked stream to notify the main stream that the enumeration completed.
         /// </summary>
-        /// <param name="linkedStream">
+        /// <param name="stream">
         ///     The linked stream.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task NotifyLinkedStreamEnumerationCompletedAsync(IMessageStreamEnumerable linkedStream);
+        Task NotifyStreamEnumerationCompletedAsync(IMessageStreamEnumerable stream);
     }
 }

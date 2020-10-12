@@ -54,6 +54,13 @@ namespace Silverback.Messaging.Sequences
         bool IsAborted { get; }
 
         /// <summary>
+        ///     Gets a value indicating whether the sequence is being consumed. This value is set to <c>true</c> as
+        ///     soon as <see cref="CreateStream{TMessage}" /> is called and the output
+        ///     <see cref="IMessageStreamEnumerable{TMessage}" /> is created.
+        /// </summary>
+        bool IsBeingConsumed { get; }
+
+        /// <summary>
         ///     Gets the reason of the abort.
         /// </summary>
         SequenceAbortReason AbortReason { get; }
@@ -126,6 +133,6 @@ namespace Silverback.Messaging.Sequences
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task AbortAsync(SequenceAbortReason reason, Exception?exception = null);
+        Task AbortAsync(SequenceAbortReason reason, Exception? exception = null);
     }
 }

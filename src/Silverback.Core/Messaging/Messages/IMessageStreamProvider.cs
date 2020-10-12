@@ -6,7 +6,7 @@ using System;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Relays the streamed messages to all the linked <see cref="MessageStreamEnumerable{TMessage}"/>.
+    ///     Relays the streamed messages to all the linked <see cref="MessageStreamEnumerable{TMessage}" />.
     /// </summary>
     public interface IMessageStreamProvider
     {
@@ -16,8 +16,14 @@ namespace Silverback.Messaging.Messages
         Type MessageType { get; }
 
         /// <summary>
+        ///     Gets the number of <see cref="IMessageStreamEnumerable{TMessage}"/> that have been created via
+        ///     <see cref="CreateStream" /> or <see cref="CreateStream{TMessage}" />.
+        /// </summary>
+        int StreamsCount { get; }
+
+        /// <summary>
         ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> of that will be linked with this
-        ///     provider and will be pushed with the messages matching the type <paramref name="messageType"/>.
+        ///     provider and will be pushed with the messages matching the type <paramref name="messageType" />.
         /// </summary>
         /// <param name="messageType">
         ///     The type of the messages to be streamed to the linked stream.
@@ -29,7 +35,7 @@ namespace Silverback.Messaging.Messages
 
         /// <summary>
         ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> of that will be linked with this
-        ///     provider and will be pushed with the messages matching the type <typeparamref name="TMessage"/>.
+        ///     provider and will be pushed with the messages matching the type <typeparamref name="TMessage" />.
         /// </summary>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be streamed to the linked stream.

@@ -217,7 +217,7 @@ namespace Silverback.Messaging.Publishing
                 .Where(method => method.IsExclusive)
                 .SelectAsync(
                     method =>
-                        GetMethodInvoker().Invoke(method, messages, executeAsync))
+                        GetMethodInvoker().InvokeAsync(method, messages, executeAsync))
                 .ConfigureAwait(false))
             .ToList();
 
@@ -229,7 +229,7 @@ namespace Silverback.Messaging.Publishing
                 .Where(method => !method.IsExclusive)
                 .ParallelSelectAsync(
                     method =>
-                        GetMethodInvoker().Invoke(method, messages, executeAsync))
+                        GetMethodInvoker().InvokeAsync(method, messages, executeAsync))
                 .ConfigureAwait(false))
             .ToList();
 

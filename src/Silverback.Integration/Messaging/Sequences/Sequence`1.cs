@@ -72,6 +72,9 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.IsAborted" />
         public bool IsAborted => AbortReason != SequenceAbortReason.None;
 
+        /// <inheritdoc cref="ISequence.IsBeingConsumed" />
+        public bool IsBeingConsumed => _streamProvider.StreamsCount > 0;
+
         /// <inheritdoc cref="ISequence.Offsets" />
         public IReadOnlyList<IOffset> Offsets => _offsets;
 

@@ -49,21 +49,30 @@ namespace Silverback.Messaging.Inbound
 
             _logger.LogProcessing(context.Envelope);
 
-            await PublishEnvelopeAsync(context).ConfigureAwait(false);
-
             if (context.Sequence != null)
             {
-                await PublishSequenceAsync(context.Sequence, context).ConfigureAwait(false);
+                // If the sequence is being consumed already it means it is being used by the Serializer, the
+                // BinaryFileMessage or another Behavior. In this case we still publish the envelope, ignoring the
+                // sequence.
+                if (context.Sequence.IsBeingConsumed || context.Sequence.IsComplete)
+                    await PublishEnvelopeAsync(context).ConfigureAwait(false);
+                else
+                    await PublishSequenceAsync(context.Sequence, context).ConfigureAwait(false);
             }
-            else if (context.Envelope is IInboundEnvelope envelope)
+            else
             {
-                // TODO: Create only if necessary?
+                await PublishEnvelopeAsync(context).ConfigureAwait(false);
 
-                await EnsureUnboundedStreamIsPublishedAsync(context).ConfigureAwait(false);
-                await _unboundedSequence!.AddAsync(envelope).ConfigureAwait(false);
+                if (context.Envelope is IInboundEnvelope envelope)
+                {
+                    // TODO: Create only if necessary?
 
-                if (_unboundedSequence.IsAborted && _unboundedSequence.AbortException != null)
-                    throw _unboundedSequence.AbortException; // TODO: Wrap into another exception?
+                    await EnsureUnboundedStreamIsPublishedAsync(context).ConfigureAwait(false);
+                    await _unboundedSequence!.AddAsync(envelope).ConfigureAwait(false);
+
+                    if (_unboundedSequence.IsAborted && _unboundedSequence.AbortException != null)
+                        throw _unboundedSequence.AbortException; // TODO: Wrap into another exception?
+                }
             }
 
             await next(context).ConfigureAwait(false);
@@ -85,6 +94,8 @@ namespace Silverback.Messaging.Inbound
 
         private static async Task PublishSequenceAsync(ISequence sequence, ConsumerPipelineContext context)
         {
+            // TODO: Force throwIfUnhandled
+
             context.ProcessingTask = await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);
 
             // CheckStreamProcessing(
