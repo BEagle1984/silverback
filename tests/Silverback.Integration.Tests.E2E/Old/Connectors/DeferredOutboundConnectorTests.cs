@@ -79,12 +79,12 @@
 //             await publisher.PublishAsync(message);
 //             await serviceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
 //
-//             Subscriber.OutboundEnvelopes.Count.Should().Be(3);
+//             Subscriber.OutboundEnvelopes.Should().HaveCount(3);
 //             Subscriber.InboundEnvelopes.Should().BeEmpty();
 //
 //             await AsyncTestingUtil.WaitAsync(() => Subscriber.InboundEnvelopes.Count >= 3);
 //
-//             Subscriber.InboundEnvelopes.Count.Should().Be(3);
+//             Subscriber.InboundEnvelopes.Should().HaveCount(3);
 //         }
 //
 //         [Fact]
@@ -135,7 +135,7 @@
 //
 //             await AsyncTestingUtil.WaitAsync(() => Subscriber.InboundEnvelopes.Count > 0);
 //
-//             Subscriber.InboundEnvelopes.Count.Should().Be(1);
+//             Subscriber.InboundEnvelopes.Should().HaveCount(1);
 //             var inboundEnvelope = Subscriber.InboundEnvelopes[0];
 //             inboundEnvelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header", "hi!"));
 //             inboundEnvelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header2", true));
@@ -196,7 +196,7 @@
 //             await publisher.PublishAsync(message);
 //             await serviceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
 //
-//             SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
+//             SpyBehavior.OutboundEnvelopes.Should().HaveCount(3);
 //             SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
 //                 .BeEquivalentTo(rawMessage);
 //             SpyBehavior.OutboundEnvelopes.ForEach(
@@ -210,7 +210,7 @@
 //             Host.ResumeBackgroundServices();
 //             await AsyncTestingUtil.WaitAsync(() => SpyBehavior.InboundEnvelopes.Count > 0, 10000);
 //
-//             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+//             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
 //             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
 //         }
 //
@@ -276,14 +276,14 @@
 //             await publisher.PublishAsync(message);
 //             await serviceProvider.GetRequiredService<TestDbContext>().SaveChangesAsync();
 //
-//             SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
+//             SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
 //             SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage);
 //             SpyBehavior.InboundEnvelopes.Should().BeEmpty();
 //
 //             Host.ResumeBackgroundServices();
 //             await AsyncTestingUtil.WaitAsync(() => SpyBehavior.InboundEnvelopes.Count > 0);
 //
-//             SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+//             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
 //             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
 //         }
 //     }

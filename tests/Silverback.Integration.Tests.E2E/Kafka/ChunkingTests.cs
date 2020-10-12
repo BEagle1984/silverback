@@ -77,13 +77,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Count.Should().Be(5);
-            Subscriber.InboundEnvelopes.Count.Should().Be(5);
+            Subscriber.OutboundEnvelopes.Should().HaveCount(5);
+            Subscriber.InboundEnvelopes.Should().HaveCount(5);
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(15);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(15);
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope => envelope.RawMessage.ReReadAll()!.Length.Should().BeLessOrEqualTo(10));
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(5);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(5);
 
             for (int i = 0; i < SpyBehavior.OutboundEnvelopes.Count; i++)
             {
@@ -163,7 +163,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         }
                                     }))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) => { receivedFiles.Add(binaryFile.Content.ReadAll()); })
+                            (BinaryFileMessage binaryFile) =>
+                            {
+                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                            })
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
@@ -174,10 +177,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope => envelope.RawMessage.ReReadAll()!.Length.Should().BeLessOrEqualTo(10));
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
 
             SpyBehavior.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
             SpyBehavior.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should().Be("text/plain");
@@ -262,13 +265,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message1);
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
 
             await publisher.PublishAsync(message2);
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
 
             SpyBehavior.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
             SpyBehavior.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should().Be("text/plain");
@@ -334,7 +337,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
             Broker.Consumers[0].IsConnected.Should().BeFalse();
         }
@@ -426,8 +429,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Message 2");
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
@@ -513,8 +516,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Message 2");
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
 
@@ -524,8 +527,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Count.Should().Be(2);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
+            Subscriber.InboundEnvelopes.Should().HaveCount(2);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes[1].Message.As<TestEventOne>().Content.Should().Be("Message 1");
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
         }
@@ -599,8 +602,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
 
@@ -686,8 +689,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
 
@@ -789,7 +792,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
             receivedFiles.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(rawMessage);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
@@ -860,8 +863,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Message 2");
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);

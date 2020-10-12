@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await publisher.PublishAsync(new TestEventThree());
             await publisher.PublishAsync(new TestEventFour());
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(3);
             SpyBehavior.OutboundEnvelopes[0].Endpoint.Name.Should().Be("test-e2e-one");
             SpyBehavior.OutboundEnvelopes[1].Endpoint.Name.Should().Be("test-e2e-two");
             SpyBehavior.OutboundEnvelopes[2].Endpoint.Name.Should().Be("test-e2e-three");
@@ -70,7 +70,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(3);
             SpyBehavior.OutboundEnvelopes[0].Endpoint.Name.Should().Be("test-e2e-one");
             SpyBehavior.OutboundEnvelopes[1].Endpoint.Name.Should().Be("test-e2e-two");
             SpyBehavior.OutboundEnvelopes[2].Endpoint.Name.Should().Be("test-e2e-three");
@@ -97,7 +97,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await publisher.ExecuteAsync(new TestPrioritizedCommand { Priority = Priority.Low });
             await publisher.ExecuteAsync(new TestPrioritizedCommand { Priority = Priority.High });
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
             SpyBehavior.OutboundEnvelopes.Count(envelope => envelope.Endpoint.Name == "test-e2e-all")
                 .Should().Be(3);
             SpyBehavior.OutboundEnvelopes.Count(envelope => envelope.Endpoint.Name == "test-e2e-low")

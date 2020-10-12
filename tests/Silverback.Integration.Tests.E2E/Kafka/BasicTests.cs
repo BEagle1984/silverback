@@ -57,9 +57,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            Subscriber.OutboundEnvelopes.Count.Should().Be(1);
+            Subscriber.OutboundEnvelopes.Should().HaveCount(1);
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
         }
 
@@ -100,11 +100,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Count.Should().Be(15);
-            Subscriber.InboundEnvelopes.Count.Should().Be(15);
+            Subscriber.OutboundEnvelopes.Should().HaveCount(15);
+            Subscriber.InboundEnvelopes.Should().HaveCount(15);
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(15);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(15);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(15);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(15);
 
             var receivedContents =
                 SpyBehavior.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).Content);
@@ -162,11 +162,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 GetTopic("topic1").WaitUntilAllMessagesAreConsumedAsync(),
                 GetTopic("topic2").WaitUntilAllMessagesAreConsumedAsync());
 
-            Subscriber.OutboundEnvelopes.Count.Should().Be(10);
-            Subscriber.InboundEnvelopes.Count.Should().Be(10);
+            Subscriber.OutboundEnvelopes.Should().HaveCount(10);
+            Subscriber.InboundEnvelopes.Should().HaveCount(10);
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(10);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(10);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(10);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(10);
 
             var receivedContentsTopic1 =
                 SpyBehavior.InboundEnvelopes
@@ -224,11 +224,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 GetTopic("topic1").WaitUntilAllMessagesAreConsumedAsync(),
                 GetTopic("topic2").WaitUntilAllMessagesAreConsumedAsync());
 
-            Subscriber.OutboundEnvelopes.Count.Should().Be(10);
-            Subscriber.InboundEnvelopes.Count.Should().Be(10);
+            Subscriber.OutboundEnvelopes.Should().HaveCount(10);
+            Subscriber.InboundEnvelopes.Should().HaveCount(10);
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(10);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(10);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(10);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(10);
 
             var receivedContentsTopic1 =
                 SpyBehavior.InboundEnvelopes
@@ -292,11 +292,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Count.Should().Be(10);
-            Subscriber.InboundEnvelopes.Count.Should().Be(10);
+            Subscriber.OutboundEnvelopes.Should().HaveCount(10);
+            Subscriber.InboundEnvelopes.Should().HaveCount(10);
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(10);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(10);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(10);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(10);
 
             var receivedContents =
                 SpyBehavior.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).Content);
@@ -392,7 +392,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
             SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-custom-header", "Hello header!"));
@@ -446,9 +446,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessageStream);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
 

@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -33,8 +34,13 @@ namespace Silverback.Messaging.BinaryFiles
 
         private static async Task<IRawInboundEnvelope> Handle(IRawInboundEnvelope envelope)
         {
-            if (envelope.Endpoint.Serializer is BinaryFileMessageSerializer)
+            if (envelope.Endpoint.Serializer is BinaryFileMessageSerializer ||
+                (envelope.Endpoint.Serializer.GetType().IsGenericType &&
+                envelope.Endpoint.Serializer.GetType().GetGenericTypeDefinition() ==
+                typeof(BinaryFileMessageSerializer<>)))
+            {
                 return envelope;
+            }
 
             var messageType = SerializationHelper.GetTypeFromHeaders<object>(envelope.Headers);
             if (messageType == null || !typeof(IBinaryFileMessage).IsAssignableFrom(messageType))

@@ -71,11 +71,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Count.Should().Be(15);
-            Subscriber.InboundEnvelopes.Count.Should().Be(15);
+            Subscriber.OutboundEnvelopes.Should().HaveCount(15);
+            Subscriber.InboundEnvelopes.Should().HaveCount(15);
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(15);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(15);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(15);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(15);
 
             var receivedContents =
                 SpyBehavior.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).Content);

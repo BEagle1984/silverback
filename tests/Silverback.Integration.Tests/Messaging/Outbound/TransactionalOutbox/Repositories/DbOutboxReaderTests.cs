@@ -138,7 +138,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
             var messages = await _queueReader.ReadAsync(5);
 
             messages.Should().NotBeNull();
-            messages.Count.Should().Be(3);
+            messages.Should().HaveCount(3);
         }
 
         [Fact]

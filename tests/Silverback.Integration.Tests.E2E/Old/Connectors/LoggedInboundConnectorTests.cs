@@ -73,8 +73,8 @@
 //             await publisher.PublishAsync(message1);
 //             await publisher.PublishAsync(message2);
 //
-//             Subscriber.OutboundEnvelopes.Count.Should().Be(4);
-//             Subscriber.InboundEnvelopes.Count.Should().Be(2);
+//             Subscriber.OutboundEnvelopes.Should().HaveCount(4);
+//             Subscriber.InboundEnvelopes.Should().HaveCount(2);
 //             Subscriber.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
 //             Subscriber.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
 //         }

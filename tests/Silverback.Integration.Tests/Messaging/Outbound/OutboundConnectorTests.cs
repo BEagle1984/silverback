@@ -49,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound
 
             await _connector.RelayMessage(envelope);
 
-            _broker.ProducedMessages.Count.Should().Be(1);
+            _broker.ProducedMessages.Should().HaveCount(1);
             _broker.ProducedMessages.First().Endpoint.Should().Be(envelope.Endpoint);
 
             var producedMessage = (await envelope.Endpoint.Serializer.DeserializeAsync(
@@ -75,7 +75,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound
 
             await _connector.RelayMessage(envelope);
 
-            _broker.ProducedMessages.Count.Should().Be(1);
+            _broker.ProducedMessages.Should().HaveCount(1);
             _broker.ProducedMessages.First().Endpoint.Should().Be(envelope.Endpoint);
 
             var producedMessage = _broker.ProducedMessages.First();

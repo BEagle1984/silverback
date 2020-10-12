@@ -80,7 +80,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
 
-            _broker.ProducedMessages.Count.Should().Be(2);
+            _broker.ProducedMessages.Should().HaveCount(2);
             _broker.ProducedMessages[0].Endpoint.Name.Should().Be("topic1");
             _broker.ProducedMessages[1].Endpoint.Name.Should().Be("topic2");
         }
@@ -102,7 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
 
-            _broker.ProducedMessages.Count.Should().Be(2);
+            _broker.ProducedMessages.Should().HaveCount(2);
             _broker.ProducedMessages[0].Endpoint.Name.Should().Be("topic3a");
             _broker.ProducedMessages[1].Endpoint.Name.Should().Be("topic3b");
         }
@@ -117,7 +117,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
             await _worker.ProcessQueueAsync(CancellationToken.None);
             await _worker.ProcessQueueAsync(CancellationToken.None);
 
-            _broker.ProducedMessages.Count.Should().Be(2);
+            _broker.ProducedMessages.Should().HaveCount(2);
         }
 
         [Fact]
@@ -134,7 +134,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
 
-            _broker.ProducedMessages.Count.Should().Be(3);
+            _broker.ProducedMessages.Should().HaveCount(3);
         }
 
         // TODO: Test retry and error handling?

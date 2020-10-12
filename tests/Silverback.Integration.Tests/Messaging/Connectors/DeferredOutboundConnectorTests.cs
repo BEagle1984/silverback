@@ -76,7 +76,7 @@
 //             var queued = (await _queue.Dequeue(1)).First();
 //             queued.EndpointName.Should().Be(envelope.Endpoint.Name);
 //             queued.Headers.Should().NotBeNull();
-//             queued.Headers!.Count.Should().Be(3);
+//             queued.Headers!.Should().HaveCount(3);
 //             queued.Content.Should()
 //                 .BeEquivalentTo(
 //                     await new JsonMessageSerializer().SerializeAsync(

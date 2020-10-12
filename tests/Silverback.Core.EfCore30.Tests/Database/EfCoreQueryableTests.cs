@@ -177,7 +177,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
             result.Should().NotBeNull();
             result.Should().BeOfType<List<Person>>();
-            result.Count.Should().Be(3);
+            result.Should().HaveCount(3);
         }
 
         [Fact]
@@ -194,7 +194,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
             result.Should().NotBeNull();
             result.Should().BeOfType<List<Person>>();
-            result.Count.Should().Be(2);
+            result.Should().HaveCount(2);
         }
 
         [Fact]
@@ -212,7 +212,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
             result.Should().NotBeNull();
             result.Should().BeOfType<Dictionary<int, int>>();
-            result.Count.Should().Be(3);
+            result.Should().HaveCount(3);
             result.First().Key.Should().Be(1);
             result.First().Value.Should().Be(15);
         }
@@ -233,7 +233,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
 
             result.Should().NotBeNull();
             result.Should().BeOfType<Dictionary<int, int>>();
-            result.Count.Should().Be(2);
+            result.Should().HaveCount(2);
             result.First().Key.Should().Be(1);
             result.First().Value.Should().Be(15);
         }

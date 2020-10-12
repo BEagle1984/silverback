@@ -61,8 +61,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
 
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
             SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().BeEquivalentTo("Hello E2E!");
@@ -109,8 +109,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
 
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
             SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().BeEquivalentTo("Hello E2E!");

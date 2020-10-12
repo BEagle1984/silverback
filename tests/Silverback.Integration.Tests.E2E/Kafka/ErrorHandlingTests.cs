@@ -74,9 +74,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
             tryCount.Should().Be(3);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(3);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
             SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
@@ -232,7 +232,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
                 {
@@ -241,7 +241,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 });
 
             tryCount.Should().Be(4);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(4);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(4);
             SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Long message one");
             SpyBehavior.InboundEnvelopes[1].Message.As<TestEventOne>().Content.Should().Be("Long message one");
             SpyBehavior.InboundEnvelopes[2].Message.As<TestEventOne>().Content.Should().Be("Long message two");
@@ -338,9 +338,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             tryCount.Should().Be(2);
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
             SpyBehavior.OutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(3);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
 
             SpyBehavior.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
             SpyBehavior.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
@@ -577,9 +577,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         //
         //     await TestingHelper.WaitUntilAllMessagesAreConsumed();
         //
-        //     SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
+        //     SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
         //     SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage);
-        //     SpyBehavior.InboundEnvelopes.Count.Should().Be(3);
+        //     SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
         //     SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         // }
         //
@@ -641,7 +641,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         //     var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
         //     await publisher.PublishAsync(message);
         //
-        //     SpyBehavior.OutboundEnvelopes.Count.Should().Be(5);
+        //     SpyBehavior.OutboundEnvelopes.Should().HaveCount(5);
         //     SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Read(10));
         //     SpyBehavior.OutboundEnvelopes.ForEach(
         //         envelope =>
@@ -649,7 +649,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         //             envelope.RawMessage.Should().NotBeNull();
         //             envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
         //         });
-        //     SpyBehavior.InboundEnvelopes.Count.Should().Be(3);
+        //     SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
         //     SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         // }
     }

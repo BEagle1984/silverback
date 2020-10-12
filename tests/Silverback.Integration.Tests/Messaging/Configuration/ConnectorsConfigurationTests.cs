@@ -47,7 +47,7 @@
 //             publisher.Publish(new TestEventTwo());
 //             publisher.Publish(new TestEventTwo());
 //
-//             broker.ProducedMessages.Count.Should().Be(5);
+//             broker.ProducedMessages.Should().HaveCount(5);
 //         }
 //
 //         [Fact]

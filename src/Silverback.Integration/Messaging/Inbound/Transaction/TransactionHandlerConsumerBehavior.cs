@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -19,9 +20,23 @@ namespace Silverback.Messaging.Inbound.Transaction
     /// </summary>
     public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     {
+        private readonly ISilverbackIntegrationLogger<TransactionHandlerConsumerBehavior> _logger;
+
         // TODO: Ensure instance per consumer
         private readonly ConcurrentDictionary<IOffset, int> _failedAttemptsCounters =
             new ConcurrentDictionary<IOffset, int>();
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TransactionHandlerConsumerBehavior" /> class.
+        /// </summary>
+        /// <param name="logger">
+        ///     The <see cref="ISilverbackIntegrationLogger{TCategoryName}" />.
+        /// </param>
+        public TransactionHandlerConsumerBehavior(
+            ISilverbackIntegrationLogger<TransactionHandlerConsumerBehavior> logger)
+        {
+            _logger = logger;
+        }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.TransactionHandler;
@@ -120,6 +135,8 @@ namespace Silverback.Messaging.Inbound.Transaction
 
         private async Task<bool> HandleExceptionAsync(ConsumerPipelineContext context, Exception exception)
         {
+            _logger.LogProcessingError(context.Envelope, exception);
+
             try
             {
                 bool handled = await ApplyErrorPoliciesAsync(context, exception).ConfigureAwait(false);
@@ -152,6 +169,8 @@ namespace Silverback.Messaging.Inbound.Transaction
             ISequence sequence,
             Exception exception)
         {
+            _logger.LogProcessingError(context.Envelope, exception);
+
             try
             {
                 // TODO: Must log?
@@ -183,7 +202,6 @@ namespace Silverback.Messaging.Inbound.Transaction
                 }
 
                 sequence.ProcessedTaskCompletionSource.SetResult(false);
-                return;
             }
             catch (Exception ex)
             {

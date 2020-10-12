@@ -51,7 +51,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         //     await consumer.TestHandleMessage(new TestEventTwo());
         //     await consumer.TestHandleMessage(new TestEventTwo());
         //
-        //     envelopes.Count.Should().Be(5);
+        //     envelopes.Should().HaveCount(5);
         // }
         //
         // [Fact]
@@ -133,11 +133,11 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         //         new[] { new MessageHeader("name", "value2") });
         //
         //     var firstMessage = envelopes.First();
-        //     firstMessage.Headers.Count.Should().Be(2);
+        //     firstMessage.Headers.Should().HaveCount(2);
         //     firstMessage.Headers.Select(h => h.Name).Should().BeEquivalentTo("name", "x-message-type");
         //     firstMessage.Headers.GetValue("name").Should().Be("value1");
         //     var secondMessage = envelopes.Skip(1).First();
-        //     secondMessage.Headers.Count.Should().Be(2);
+        //     secondMessage.Headers.Should().HaveCount(2);
         //     secondMessage.Headers.Select(h => h.Name).Should().BeEquivalentTo("name", "x-message-type");
         //     secondMessage.Headers.GetValue("name").Should().Be("value2");
         // }
@@ -183,7 +183,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var consumer = (TestConsumer)_broker.AddConsumer(TestConsumerEndpoint.GetDefault());
             _broker.Connect();
 
-            consumer.StatusInfo.History.Count.Should().Be(1);
+            consumer.StatusInfo.History.Should().HaveCount(1);
             consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Connected);
             consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
         }
@@ -205,7 +205,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             _broker.Connect();
             _broker.Disconnect();
 
-            consumer.StatusInfo.History.Count.Should().Be(2);
+            consumer.StatusInfo.History.Should().HaveCount(2);
             consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Disconnected);
             consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
         }
@@ -230,7 +230,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             await consumer.TestHandleMessage(new TestEventOne());
             await consumer.TestHandleMessage(new TestEventOne());
 
-            consumer.StatusInfo.History.Count.Should().Be(2);
+            consumer.StatusInfo.History.Should().HaveCount(2);
             consumer.StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Consuming);
             consumer.StatusInfo.History.Last().Timestamp.Should().NotBeNull();
         }

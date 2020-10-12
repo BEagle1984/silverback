@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey]
                 .Should().NotBeNullOrEmpty();
         }
@@ -72,7 +72,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             var inboundMessageId = SpyBehavior.InboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageId];
             var inboundKafkaKey = SpyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey];
             inboundKafkaKey.Should().Be(inboundMessageId);
@@ -103,7 +103,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey].Should().Be("my-key");
         }
 
@@ -141,7 +141,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.ForEach(
                 envelope =>
                     envelope.Headers[KafkaMessageHeaders.KafkaMessageKey].Should().Be("my-key"));

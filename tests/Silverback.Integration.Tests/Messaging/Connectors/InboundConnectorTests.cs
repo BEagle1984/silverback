@@ -99,7 +99,7 @@
 //             await consumer.TestHandleMessage(new SomeUnhandledMessage { Content = "def" });
 //             await consumer.TestHandleMessage(new SomeUnhandledMessage { Content = "ghi" });
 //
-//             _someUnhandledMessageSubscriber.ReceivedMessages.Count.Should().Be(3);
+//             _someUnhandledMessageSubscriber.ReceivedMessages.Should().HaveCount(3);
 //         }
 //
 //         [Fact]
@@ -135,11 +135,11 @@
 //
 //             var envelopes = _inboundSubscriber.ReceivedEnvelopes.OfType<IInboundEnvelope>().ToList();
 //             var firstMessage = envelopes.First();
-//             firstMessage.Headers.Count.Should().Be(2);
+//             firstMessage.Headers.Should().HaveCount(2);
 //             firstMessage.Headers.Select(h => h.Name).Should().BeEquivalentTo("name", "x-message-type");
 //             firstMessage.Headers.GetValue("name").Should().Be("value1");
 //             var secondMessage = envelopes.Skip(1).First();
-//             secondMessage.Headers.Count.Should().Be(2);
+//             secondMessage.Headers.Should().HaveCount(2);
 //             secondMessage.Headers.Select(h => h.Name).Should().BeEquivalentTo("name", "x-message-type");
 //             secondMessage.Headers.GetValue("name").Should().Be("value2");
 //         }
@@ -657,7 +657,7 @@
 //             _testSubscriber.FailCount.Should().Be(2);
 //             _testSubscriber.ReceivedMessages.Count(message => message is IIntegrationEvent)
 //                 .Should().Be(2);
-//             producer.ProducedMessages.Count.Should().Be(1);
+//             producer.ProducedMessages.Should().HaveCount(1);
 //         }
 //
 //         [Fact]

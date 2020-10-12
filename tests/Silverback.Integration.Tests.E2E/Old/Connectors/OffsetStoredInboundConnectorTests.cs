@@ -97,7 +97,7 @@
 //             await consumer.Receive(rawMessage1, headers1, new InMemoryOffset("test-e2e", 1));
 //             await consumer.Receive(rawMessage2, headers2, new InMemoryOffset("test-e2e", 2));
 //
-//             Subscriber.InboundEnvelopes.Count.Should().Be(2);
+//             Subscriber.InboundEnvelopes.Should().HaveCount(2);
 //             Subscriber.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
 //             Subscriber.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
 //         }
@@ -152,7 +152,7 @@
 //             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 //             await publisher.PublishAsync(message);
 //
-//             Subscriber.InboundEnvelopes.Count.Should().Be(3);
+//             Subscriber.InboundEnvelopes.Should().HaveCount(3);
 //         }
 //
 //         [Fact]
@@ -224,7 +224,7 @@
 //             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 //             await publisher.PublishAsync(message);
 //
-//             Subscriber.InboundEnvelopes.Count.Should().Be(3);
+//             Subscriber.InboundEnvelopes.Should().HaveCount(3);
 //         }
 //     }
 // }

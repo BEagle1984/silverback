@@ -86,7 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
 
             var result = await _queue.ReadAsync(count);
 
-            result.Count.Should().Be(expected);
+            result.Should().HaveCount(expected);
         }
 
         [Fact]

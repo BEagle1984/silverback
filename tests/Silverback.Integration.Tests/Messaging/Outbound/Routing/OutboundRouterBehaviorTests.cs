@@ -109,7 +109,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
 
-            _broker.ProducedMessages.Count.Should().Be(1);
+            _broker.ProducedMessages.Should().HaveCount(1);
         }
 
         [Fact]
@@ -121,7 +121,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             var messages =
                 await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
 
-            messages.Count.Should().Be(1);
+            messages.Should().HaveCount(1);
             messages.First().Should().NotBeOfType<TestEventOne>();
         }
 
@@ -133,7 +133,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
 
-            _testSubscriber.ReceivedMessages.Count.Should().Be(0); // Because TestSubscriber discards the envelopes
+            _testSubscriber.ReceivedMessages.Should().HaveCount(0); // Because TestSubscriber discards the envelopes
         }
 
         [Fact]
@@ -146,7 +146,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             var messages =
                 await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
 
-            messages.Count.Should().Be(1);
+            messages.Should().HaveCount(1);
             messages.First().Should().NotBeOfType<TestEventOne>();
         }
 
@@ -159,7 +159,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
 
-            _testSubscriber.ReceivedMessages.Count.Should().Be(1);
+            _testSubscriber.ReceivedMessages.Should().HaveCount(1);
             _testSubscriber.ReceivedMessages.First().Should().BeOfType<TestEventOne>();
         }
 
@@ -181,7 +181,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                     },
                     Task.FromResult!);
 
-            messages.Count.Should().Be(1);
+            messages.Should().HaveCount(1);
         }
 
         [Fact]
@@ -196,7 +196,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.Handle(new[] { message }, Task.FromResult!);
 
-            _broker.ProducedMessages.Count.Should().Be(1);
+            _broker.ProducedMessages.Should().HaveCount(1);
         }
 
         [Fact]
@@ -211,8 +211,8 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             await _behavior.Handle(new[] { new TestEventThree(), }, Task.FromResult!);
             await _behavior.Handle(new[] { new TestEventTwo() }, Task.FromResult!);
 
-            _broker.ProducedMessages.Count.Should().Be(2);
-            _otherBroker.ProducedMessages.Count.Should().Be(1);
+            _broker.ProducedMessages.Should().HaveCount(2);
+            _otherBroker.ProducedMessages.Should().HaveCount(1);
         }
     }
 }

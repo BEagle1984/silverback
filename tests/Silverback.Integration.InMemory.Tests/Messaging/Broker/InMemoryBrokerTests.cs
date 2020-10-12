@@ -69,7 +69,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             producer.Produce(testMessage1);
             await producer.ProduceAsync(testMessage2);
 
-            receivedMessages.Count.Should().Be(2);
+            receivedMessages.Should().HaveCount(2);
             receivedMessages[0].Should().BeEquivalentTo(testMessage1);
             receivedMessages[1].Should().BeEquivalentTo(testMessage2);
         }
@@ -123,7 +123,7 @@ namespace Silverback.Tests.Integration.InMemory.Messaging.Broker
             publisher.Publish(new TestMessage { Content = "hello!" });
             publisher.Publish(new TestMessage { Content = "hello 2!" });
 
-            receivedEnvelopes.Count.Should().Be(2);
+            receivedEnvelopes.Should().HaveCount(2);
             receivedEnvelopes.OfType<IInboundEnvelope>().Select(x => x.Message).Should().AllBeOfType<TestMessage>();
         }
 

@@ -45,7 +45,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             // -> to nowhere
             publisher.Publish(new TestInternalEventOne());
 
-            broker.ProducedMessages.Count.Should().Be(7);
+            broker.ProducedMessages.Should().HaveCount(7);
             broker.ProducedMessages.Count(x => x.Endpoint.Name == "test1").Should().Be(2);
             broker.ProducedMessages.Count(x => x.Endpoint.Name == "test2").Should().Be(5);
         }
@@ -81,8 +81,8 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             publisher.Publish(new TestEventTwo());
             publisher.Publish(new TestEventTwo());
 
-            broker.ProducedMessages.Count.Should().Be(2);
-            otherBroker.ProducedMessages.Count.Should().Be(3);
+            broker.ProducedMessages.Should().HaveCount(2);
+            otherBroker.ProducedMessages.Should().HaveCount(3);
         }
 
         [Fact]
@@ -103,7 +103,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             var broker = serviceProvider.GetRequiredService<TestBroker>();
             broker.Connect();
 
-            broker.Consumers.Count.Should().Be(2);
+            broker.Consumers.Should().HaveCount(2);
         }
 
         [Fact]
@@ -128,8 +128,8 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             var otherBroker = serviceProvider.GetRequiredService<TestOtherBroker>();
             otherBroker.Connect();
 
-            broker.Consumers.Count.Should().Be(1);
-            otherBroker.Consumers.Count.Should().Be(1);
+            broker.Consumers.Should().HaveCount(1);
+            otherBroker.Consumers.Should().HaveCount(1);
         }
     }
 }

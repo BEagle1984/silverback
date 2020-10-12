@@ -72,7 +72,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new InvalidOperationException("test"));
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
 
-            producer.ProducedMessages.Count.Should().Be(1);
+            producer.ProducedMessages.Should().HaveCount(1);
         }
 
         [Fact]
@@ -228,7 +228,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
             var newHeaders = producer.ProducedMessages[0].Headers;
-            newHeaders.Count.Should().Be(6); // message-id, message-type, key, traceid, error, source-endpoint
+            newHeaders.Should().HaveCount(6); // message-id, message-type, key, traceid, error, source-endpoint
         }
 
         [Fact]

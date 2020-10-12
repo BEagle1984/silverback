@@ -132,7 +132,7 @@ namespace Silverback.Tests.Integration.Diagnostics
         [Fact]
         public void LogProcessing_SingleInboundEnvelope_InformationLogged()
         {
-            _integrationLogger.LogProcessing(new[] { InboundEnvelope });
+            _integrationLogger.LogProcessing(InboundEnvelope);
 
             const string expectedMessage =
                 "Processing inbound message. | " +
@@ -145,25 +145,25 @@ namespace Silverback.Tests.Integration.Diagnostics
             _logger.Received(LogLevel.Information, null, expectedMessage);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void LogProcessing_MultipleInboundEnvelopes_InformationLogged()
         {
-            _integrationLogger.LogProcessing(InboundBatch);
-
-            const string expectedMessage =
-                "Processing the batch of 2 inbound messages. | " +
-                "endpointName: TestActual, " +
-                "failedAttempts: 1, " +
-                "batchId: 3, " +
-                "batchSize: 10";
-
-            _logger.Received(LogLevel.Information, null, expectedMessage);
+            // _integrationLogger.LogProcessing(InboundBatch);
+            //
+            // const string expectedMessage =
+            //     "Processing the batch of 2 inbound messages. | " +
+            //     "endpointName: TestActual, " +
+            //     "failedAttempts: 1, " +
+            //     "batchId: 3, " +
+            //     "batchSize: 10";
+            //
+            // _logger.Received(LogLevel.Information, null, expectedMessage);
         }
 
         [Fact]
         public void LogProcessingError_SingleInboundEnvelope_WarningLogged()
         {
-            _integrationLogger.LogProcessingError(new[] { InboundEnvelope }, new InvalidOperationException());
+            _integrationLogger.LogProcessingError(InboundEnvelope, new InvalidOperationException());
 
             const string expectedMessage =
                 "Error occurred processing the inbound message. | " +
@@ -176,19 +176,19 @@ namespace Silverback.Tests.Integration.Diagnostics
             _logger.Received(LogLevel.Warning, typeof(InvalidOperationException), expectedMessage);
         }
 
-        [Fact]
+        [Fact(Skip = "Deprecated")]
         public void LogProcessingError_MultipleInboundEnvelopes_WarningLogged()
         {
-            _integrationLogger.LogProcessingError(InboundBatch, new InvalidOperationException());
-
-            const string expectedMessage =
-                "Error occurred processing the batch of 2 inbound messages. | " +
-                "endpointName: TestActual, " +
-                "failedAttempts: 1, " +
-                "batchId: 3, " +
-                "batchSize: 10";
-
-            _logger.Received(LogLevel.Warning, typeof(InvalidOperationException), expectedMessage);
+            // _integrationLogger.LogProcessingError(InboundBatch, new InvalidOperationException());
+            //
+            // const string expectedMessage =
+            //     "Error occurred processing the batch of 2 inbound messages. | " +
+            //     "endpointName: TestActual, " +
+            //     "failedAttempts: 1, " +
+            //     "batchId: 3, " +
+            //     "batchSize: 10";
+            //
+            // _logger.Received(LogLevel.Warning, typeof(InvalidOperationException), expectedMessage);
         }
 
         [Fact]

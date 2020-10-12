@@ -67,15 +67,15 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(1);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(0);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(0);
 
             await publisher.PublishAsync(message2);
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(2);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
         }
 
         [Fact(Skip = "Deprecated")]
@@ -122,21 +122,21 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(3);
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(0);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(3);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(0);
 
             await publisher.PublishAsync(message2);
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(6);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
                 {
                     envelope.RawMessage.Should().NotBeNull();
                     envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
                 });
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(2);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
         }
 
         [Fact(Skip = "Deprecated")]
@@ -174,7 +174,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
             SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-custom-header", "Hello header!"));
@@ -226,7 +226,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                     envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).Should().BeNull();
                 });
 
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
 
@@ -281,7 +281,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Count.Should().Be(5);
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(5);
             SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Read(10));
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
@@ -289,7 +289,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                     envelope.RawMessage.Should().NotBeNull();
                     envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
                 });
-            SpyBehavior.InboundEnvelopes.Count.Should().Be(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
     }

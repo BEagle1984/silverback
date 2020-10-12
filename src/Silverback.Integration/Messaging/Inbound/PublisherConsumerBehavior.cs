@@ -2,11 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -21,7 +21,20 @@ namespace Silverback.Messaging.Inbound
     /// </summary>
     public sealed class PublisherConsumerBehavior : IConsumerBehavior, IDisposable
     {
+        private readonly ISilverbackIntegrationLogger<PublisherConsumerBehavior> _logger;
+
         private UnboundedSequence? _unboundedSequence;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="PublisherConsumerBehavior" /> class.
+        /// </summary>
+        /// <param name="logger">
+        ///     The <see cref="ISilverbackIntegrationLogger{TCategoryName}" />.
+        /// </param>
+        public PublisherConsumerBehavior(ISilverbackIntegrationLogger<PublisherConsumerBehavior> logger)
+        {
+            _logger = logger;
+        }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Publisher;
@@ -33,6 +46,8 @@ namespace Silverback.Messaging.Inbound
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
+
+            _logger.LogProcessing(context.Envelope);
 
             await PublishEnvelopeAsync(context).ConfigureAwait(false);
 
@@ -78,17 +93,6 @@ namespace Silverback.Messaging.Inbound
             //     sequence);
 
             // TODO: Publish materialized stream
-        }
-
-        private async Task EnsureUnboundedStreamIsPublishedAsync(ConsumerPipelineContext context)
-        {
-            if (_unboundedSequence != null && _unboundedSequence.IsPending)
-                return;
-
-            _unboundedSequence = new UnboundedSequence("unbounded", context);
-            await context.SequenceStore.AddAsync(_unboundedSequence).ConfigureAwait(false);
-
-            PublishStreamProviderAsync(_unboundedSequence, context);
         }
 
         private static async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context)
@@ -139,6 +143,17 @@ namespace Silverback.Messaging.Inbound
             var tcs = new TaskCompletionSource<bool>();
             cancellationToken.Register(s => { ((TaskCompletionSource<bool>)s).SetResult(true); }, tcs);
             return tcs.Task;
+        }
+
+        private async Task EnsureUnboundedStreamIsPublishedAsync(ConsumerPipelineContext context)
+        {
+            if (_unboundedSequence != null && _unboundedSequence.IsPending)
+                return;
+
+            _unboundedSequence = new UnboundedSequence("unbounded", context);
+            await context.SequenceStore.AddAsync(_unboundedSequence).ConfigureAwait(false);
+
+            PublishStreamProviderAsync(_unboundedSequence, context);
         }
     }
 }

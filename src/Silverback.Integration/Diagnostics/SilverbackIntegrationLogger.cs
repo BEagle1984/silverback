@@ -42,34 +42,39 @@ namespace Silverback.Diagnostics
 
         // TODO: Invoke
         // TODO: Change from envelopes to Producer-/ConsumerPipelineContext ;-)
-        public void LogProcessing(IReadOnlyCollection<IRawBrokerEnvelope> envelopes)
+        public void LogProcessing(IRawBrokerEnvelope envelope)
         {
-            Check.NotEmpty(envelopes, nameof(envelopes));
+            Check.NotNull(envelope, nameof(envelope));
 
-            var message = envelopes.Count > 1
-                ? $"Processing the batch of {envelopes.Count} inbound messages."
-                : "Processing inbound message.";
+            // var message = envelopes.Count > 1
+            //     ? $"Processing the batch of {envelopes.Count} inbound messages."
+            //     : "Processing inbound message.";
 
-            LogInformationWithMessageInfo(IntegrationEventIds.ProcessingInboundMessage, message, envelopes);
+            // TODO: Log sequence
+
+            LogInformationWithMessageInfo(
+                IntegrationEventIds.ProcessingInboundMessage,
+                "Processing inbound message.",
+                envelope);
         }
 
         // TODO: Invoke
         // TODO: Change from envelopes to Producer-/ConsumerPipelineContext ;-)
-        public void LogProcessingError(
-            IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
-            Exception exception)
+        public void LogProcessingError(IRawBrokerEnvelope envelope, Exception exception)
         {
-            Check.NotEmpty(envelopes, nameof(envelopes));
+            Check.NotNull(envelope, nameof(envelope));
 
-            var message = envelopes.Count > 1
-                ? $"Error occurred processing the batch of {envelopes.Count} inbound messages."
-                : "Error occurred processing the inbound message.";
+            // TODO: Log sequence
+
+            // var message = envelopes.Count > 1
+            //     ? $"Error occurred processing the batch of {envelopes.Count} inbound messages."
+            //     : "Error occurred processing the inbound message.";
 
             LogWarningWithMessageInfo(
                 IntegrationEventIds.ErrorProcessingInboundMessage,
                 exception,
-                message,
-                envelopes);
+                "Error occurred processing the inbound message.",
+                envelope);
         }
 
         public void LogTraceWithMessageInfo(

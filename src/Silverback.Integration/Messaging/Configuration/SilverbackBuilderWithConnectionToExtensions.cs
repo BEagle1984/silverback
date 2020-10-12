@@ -50,8 +50,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // Logging
             silverbackBuilder.Services
                 .AddSingleton<ILogTemplates>(new LogTemplates())
-                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(SilverbackIntegrationLogger<>))
-                .AddSingleton<ISilverbackIntegrationLogger, SilverbackIntegrationLogger>();
+                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(SilverbackIntegrationLogger<>));
 
             // Transactional Lists
             silverbackBuilder.Services

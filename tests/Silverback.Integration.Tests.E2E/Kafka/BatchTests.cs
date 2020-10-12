@@ -83,8 +83,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
             receivedBatches.Should().HaveCount(2);
-            receivedBatches[0].Count.Should().Be(10);
-            receivedBatches[1].Count.Should().Be(5);
+            receivedBatches[0].Should().HaveCount(10);
+            receivedBatches[1].Should().HaveCount(5);
             completedBatches.Should().Be(1);
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
@@ -99,8 +99,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
-            receivedBatches[0].Count.Should().Be(10);
-            receivedBatches[1].Count.Should().Be(10);
+            receivedBatches[0].Should().HaveCount(10);
+            receivedBatches[1].Should().HaveCount(10);
             completedBatches.Should().Be(2);
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(20);
@@ -161,8 +161,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
             receivedBatches.Should().HaveCount(2);
-            receivedBatches[0].Count.Should().Be(10);
-            receivedBatches[1].Count.Should().Be(5);
+            receivedBatches[0].Should().HaveCount(10);
+            receivedBatches[1].Should().HaveCount(5);
             completedBatches.Should().Be(1);
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
@@ -177,8 +177,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
-            receivedBatches[0].Count.Should().Be(10);
-            receivedBatches[1].Count.Should().Be(10);
+            receivedBatches[0].Should().HaveCount(10);
+            receivedBatches[1].Should().HaveCount(10);
             completedBatches.Should().Be(2);
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(20);

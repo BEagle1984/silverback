@@ -18,24 +18,22 @@ namespace Silverback.Diagnostics
         ///     Writes the standard <i>"Processing inbound message"</i> or
         ///     <i>"Processing the batch of # inbound messages"</i> log message.
         /// </summary>
-        /// <param name="envelopes">
-        ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the messages being processed.
+        /// <param name="envelope">
+        ///     The <see cref="IRawBrokerEnvelope" /> containing the message being processed.
         /// </param>
-        void LogProcessing(IReadOnlyCollection<IRawBrokerEnvelope> envelopes);
+        void LogProcessing(IRawBrokerEnvelope envelope);
 
         /// <summary>
         ///     Writes the standard <i>"Error occurred processing the inbound message"</i> or
         ///     <i>"Error occurred processing the batch of # inbound messages"</i> log message.
         /// </summary>
-        /// <param name="envelopes">
-        ///     The collection of <see cref="IRawBrokerEnvelope" /> containing the messages being processed.
+        /// <param name="envelope">
+        ///     The <see cref="IRawBrokerEnvelope" /> containing the message being processed.
         /// </param>
         /// <param name="exception">
         ///     The exception to log.
         /// </param>
-        void LogProcessingError(
-            IReadOnlyCollection<IRawBrokerEnvelope> envelopes,
-            Exception exception);
+        void LogProcessingError(IRawBrokerEnvelope envelope, Exception exception);
 
         /// <summary>
         ///     Writes a trace log message, enriching it with the information related to the provided message.

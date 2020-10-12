@@ -84,7 +84,7 @@
 //             await producer.ProduceAsync(
 //                 rawMessage.Skip(20).ToArray(),
 //                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 2, 3));
-//             committedOffsets.Count.Should().Be(3);
+//             committedOffsets.Should().HaveCount(3);
 //         }
 //
 //         [Fact]
@@ -150,20 +150,20 @@
 //                 rawMessage1.Skip(20).ToArray(),
 //                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 2, 3));
 //             committedOffsets.Should().BeEmpty();
-//             Subscriber.InboundEnvelopes.Count.Should().Be(1);
+//             Subscriber.InboundEnvelopes.Should().HaveCount(1);
 //             Subscriber.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
 //
 //             await producer.ProduceAsync(
 //                 rawMessage2.Skip(10).Take(10).ToArray(),
 //                 HeadersHelper.GetChunkHeaders<TestEventOne>("456", 1, 3));
 //             committedOffsets.Should().BeEmpty();
-//             Subscriber.InboundEnvelopes.Count.Should().Be(1);
+//             Subscriber.InboundEnvelopes.Should().HaveCount(1);
 //
 //             await producer.ProduceAsync(
 //                 rawMessage2.Skip(20).ToArray(),
 //                 HeadersHelper.GetChunkHeaders<TestEventOne>("456", 2, 3));
-//             committedOffsets.Count.Should().Be(6);
-//             Subscriber.InboundEnvelopes.Count.Should().Be(2);
+//             committedOffsets.Should().HaveCount(6);
+//             Subscriber.InboundEnvelopes.Should().HaveCount(2);
 //             Subscriber.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
 //         }
 //
@@ -230,7 +230,7 @@
 //                 rawMessage1.Skip(20).ToArray(),
 //                 HeadersHelper.GetChunkHeaders<TestEventOne>("123", 2, 3));
 //
-//             Subscriber.InboundEnvelopes.Count.Should().Be(1);
+//             Subscriber.InboundEnvelopes.Should().HaveCount(1);
 //             Subscriber.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
 //
 //             broker.Disconnect();
@@ -257,7 +257,7 @@
 //                 rawMessage2.Skip(20).ToArray(),
 //                 HeadersHelper.GetChunkHeaders<TestEventOne>("456", 2, 3));
 //
-//             Subscriber.InboundEnvelopes.Count.Should().Be(2);
+//             Subscriber.InboundEnvelopes.Should().HaveCount(2);
 //             Subscriber.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
 //             Subscriber.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
 //         }
