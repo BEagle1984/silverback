@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -30,9 +31,14 @@ namespace Silverback.Tests
                     new TestOffset()),
                 consumer ?? Substitute.For<IConsumer>(),
                 sequenceStore ?? Substitute.For<ISequenceStore>(),
-                serviceProvider ?? Substitute.For<IServiceProvider>())
+                serviceProvider ?? GetServiceProvider())
             {
                 TransactionManager = transactionManager ?? Substitute.For<IConsumerTransactionManager>()
             };
+
+        private static IServiceProvider GetServiceProvider() =>
+            ServiceProviderHelper.GetServiceProvider(
+                services =>
+                    services.AddSilverback().WithConnectionToMessageBroker());
     }
 }

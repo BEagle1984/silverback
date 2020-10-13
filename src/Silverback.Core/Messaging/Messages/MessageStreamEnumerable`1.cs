@@ -21,8 +21,6 @@ namespace Silverback.Messaging.Messages
     internal class MessageStreamEnumerable<TMessage>
         : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
     {
-        private readonly IMessageStreamProviderInternal? _ownerStreamProvider;
-
         private readonly SemaphoreSlim _writeSemaphore = new SemaphoreSlim(1, 1);
 
         private readonly SemaphoreSlim _readSemaphore = new SemaphoreSlim(0, 1);
@@ -38,24 +36,6 @@ namespace Silverback.Messaging.Messages
         private bool _isFirstMessage = true;
 
         private bool _isComplete;
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="MessageStreamEnumerable{TMessage}" /> class.
-        /// </summary>
-        /// <param name="ownerStreamProvider">
-        ///     The owner of the linked stream.
-        /// </param>
-        public MessageStreamEnumerable(IMessageStreamProviderInternal ownerStreamProvider)
-        {
-            _ownerStreamProvider = ownerStreamProvider;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="MessageStreamEnumerable{TMessage}" /> class.
-        /// </summary>
-        public MessageStreamEnumerable()
-        {
-        }
 
         /// <inheritdoc cref="IMessageStreamEnumerable.MessageType" />
         public Type MessageType => typeof(TMessage);
@@ -113,6 +93,9 @@ namespace Silverback.Messaging.Messages
         public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
             EnumerateExclusively(() => GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken));
 
+        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
@@ -149,48 +132,31 @@ namespace Silverback.Messaging.Messages
             }
         }
 
-        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
         private IEnumerable<TMessage> GetEnumerable()
         {
             // TODO: Check this pattern!
-            while (AsyncHelper.RunSynchronously(() => WaitForNext(CancellationToken.None)))
+            while (AsyncHelper.RunSynchronously(() => WaitForNextAsync(CancellationToken.None)))
             {
                 if (_current == null)
                     continue;
 
                 var currentMessage = (TMessage)_current.Message;
                 yield return currentMessage;
-
-                if (_ownerStreamProvider != null)
-                    AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyStreamProcessedAsync(_current));
-            }
-
-            if (_ownerStreamProvider != null)
-            {
-                AsyncHelper.RunSynchronously(
-                    () => _ownerStreamProvider.NotifyStreamEnumerationCompletedAsync(this));
             }
         }
 
+        [SuppressMessage("ReSharper", "ASYNC0001", Justification = "Matches with GetAsyncEnumerator")]
         private async IAsyncEnumerable<TMessage> GetAsyncEnumerable(
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            while (await WaitForNext(cancellationToken).ConfigureAwait(false))
+            while (await WaitForNextAsync(cancellationToken).ConfigureAwait(false))
             {
                 if (_current == null)
                     continue;
 
                 var currentMessage = (TMessage)_current.Message;
                 yield return currentMessage;
-
-                if (_ownerStreamProvider != null)
-                    await _ownerStreamProvider.NotifyStreamProcessedAsync(_current).ConfigureAwait(false);
             }
-
-            if (_ownerStreamProvider != null)
-                await _ownerStreamProvider.NotifyStreamEnumerationCompletedAsync(this).ConfigureAwait(false);
         }
 
         private TReturn EnumerateExclusively<TReturn>(Func<TReturn> action)
@@ -207,7 +173,7 @@ namespace Silverback.Messaging.Messages
         }
 
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
-        private async Task<bool> WaitForNext(CancellationToken cancellationToken)
+        private async Task<bool> WaitForNextAsync(CancellationToken cancellationToken)
         {
             if (!_isFirstMessage)
             {

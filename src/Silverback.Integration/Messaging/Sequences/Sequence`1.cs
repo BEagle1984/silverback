@@ -175,7 +175,7 @@ namespace Silverback.Messaging.Sequences
             await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
 
             await HandleExceptionAsync(exception).ConfigureAwait(false);
-            await _streamProvider.AbortAsync().ConfigureAwait(false);
+            _streamProvider.Abort();
 
             // TODO: Review this!!!
             _abortCancellationTokenSource.Cancel();

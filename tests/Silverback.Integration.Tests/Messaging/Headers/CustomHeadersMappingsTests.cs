@@ -48,7 +48,7 @@ namespace Silverback.Tests.Integration.Messaging.Headers
 
             headers.Should().BeEquivalentTo(
                 new MessageHeader("x-chunk-id", "1"),
-                new MessageHeader("x-chunks-count", "2"),
+                new MessageHeader("x-chunk-count", "2"),
                 new MessageHeader("traceparent", "abc"));
         }
     }

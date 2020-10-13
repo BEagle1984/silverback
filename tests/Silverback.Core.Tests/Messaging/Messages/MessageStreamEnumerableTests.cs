@@ -15,7 +15,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         [Fact]
         public async Task PushAsyncGetEnumeratorAndCompleteAsync_SomeMessages_MessagesPushedAndReceived()
         {
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
             var success = false;
 
             var enumerationTask = Task.Run(
@@ -46,7 +46,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         [Fact]
         public async Task PushAsynGetAsyncEnumeratorAndCompleteAsync_SomeMessages_MessagesPushedAndReceived()
         {
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
             var success = false;
 
             var enumerationTask = Task.Run(
@@ -77,7 +77,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         [Fact]
         public async Task PushAsync_WhileEnumerating_BackpressureIsHandled()
         {
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
             using var enumerator = stream.GetEnumerator();
 
             var pushTask1 = stream.PushAsync(new PushedMessage(1, 1));
@@ -108,7 +108,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         [Fact]
         public async Task PushAsync_WhileAsyncEnumerating_BackpressureIsHandled()
         {
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
             var enumerator = stream.GetAsyncEnumerator();
 
             var pushTask1 = stream.PushAsync(new PushedMessage(1, 1));
@@ -139,7 +139,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         [Fact]
         public void GetEnumerator_CalledMultipleTimes_OnlyOneConcurrentEnumeratorAllowed()
         {
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
 
             using var enumerator = stream.GetEnumerator();
 
@@ -156,7 +156,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         [Fact]
         public void GetAsyncEnumerator_CalledMultipleTimes_OnlyOneConcurrentEnumeratorAllowed()
         {
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
 
             // ReSharper disable once UnusedVariable, needed to avoid CS4014
             var enumerator = stream.GetAsyncEnumerator();
@@ -175,7 +175,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         public async Task CompleteAsync_WhileEnumerating_EnumerationCompleted()
         {
             var completed = false;
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
             using var enumerator = stream.GetEnumerator();
 
             // The next MoveNext reaches the end of the enumerable
@@ -201,7 +201,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         public async Task CompleteAsync_WhileAsyncEnumerating_EnumerationCompleted()
         {
             var completed = false;
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
             var enumerator = stream.GetAsyncEnumerator();
 
             // The next MoveNext reaches the end of the enumerable
@@ -226,7 +226,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         public async Task Abort_WhileEnumerating_EnumerationAborted()
         {
             var completed = false;
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
             using var enumerator = stream.GetEnumerator();
 
             // ReSharper disable once AccessToDisposedClosure
@@ -253,7 +253,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         public async Task Abort_WhileAsyncEnumerating_EnumerationAborted()
         {
             var completed = false;
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
             var enumerator = stream.GetAsyncEnumerator();
 
             var enumerationTask = Task.Run(
@@ -278,7 +278,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         public async Task Abort_WhilePushing_PushAborted()
         {
             var pushed = false;
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
 
             var pushTask = Task.Run(
                 async () =>
@@ -301,7 +301,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         [Fact]
         public async Task CompleteAsync_TryPushingAfterComplete_ExceptionThrown()
         {
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
 
             await stream.CompleteAsync();
 
@@ -312,7 +312,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         [Fact]
         public void Dispose_TryPushingAfterDispose_ExceptionThrown()
         {
-            var stream = new MessageStreamEnumerable<int>(new MessageStreamProvider<object>());
+            var stream = new MessageStreamEnumerable<int>();
             stream.Dispose();
 
             Func<Task> act = async () => await stream.PushAsync(new PushedMessage(1, 1));

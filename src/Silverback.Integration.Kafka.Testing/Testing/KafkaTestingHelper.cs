@@ -47,7 +47,7 @@ namespace Silverback.Testing
         [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The tasks are awaited")]
         private async Task WaitUntilAllMessagesAreConsumedAsync(string[]? topicNames, TimeSpan? timeout = null)
         {
-            using var cancellationTokenSource = new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(60));
+            using var cancellationTokenSource = new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(10));
 
             var topics = topicNames == null
                 ? _topics.ToList()

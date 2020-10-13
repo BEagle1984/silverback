@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -18,43 +17,13 @@ namespace Silverback.Messaging.Messages
     /// <typeparam name="TMessage">
     ///     The type of the messages being streamed.
     /// </typeparam>
-    internal class MessageStreamProvider<TMessage> : IMessageStreamProviderInternal, IDisposable
+    internal class MessageStreamProvider<TMessage> : IMessageStreamProvider, IDisposable
     {
         private readonly List<IMessageStreamEnumerable> _streams = new List<IMessageStreamEnumerable>();
-
-        private readonly ConcurrentDictionary<int, int> _streamsByMessage = new ConcurrentDictionary<int, int>();
 
         private int _messagesCount;
 
         private MethodInfo? _genericCreateStreamMethodInfo;
-
-        // TODO: Checks if callbacks are used/needed
-
-        /// <summary>
-        ///     Gets or sets the callback function to be invoked when a message is pulled and successfully processed.
-        /// </summary>
-        /// <remarks>
-        ///     This callback is actually invoked when the next message is pulled.
-        /// </remarks>
-        public Func<TMessage, Task>? ProcessedCallback { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the callback function to be invoked when the enumerable has been completed, meaning no
-        ///     more messages will be pushed.
-        /// </summary>
-        public Func<Task>? PushCompletedCallback { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the callback function to be invoked when the stream is aborted, meaning no more messages
-        ///     will be pushed but the stream is incomplete.
-        /// </summary>
-        public Func<Task>? PushAbortedCallback { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the callback function to be invoked when the enumerable has been completed and all
-        ///     messages have been pulled.
-        /// </summary>
-        public Func<Task>? EnumerationCompletedCallback { get; set; }
 
         /// <inheritdoc cref="IMessageStreamProvider.MessageType" />
         public Type MessageType => typeof(TMessage);
@@ -83,28 +52,13 @@ namespace Silverback.Messaging.Messages
             var messageId = Interlocked.Increment(ref _messagesCount);
 
             // ReSharper disable once InconsistentlySynchronizedField
-            var pushTasks = _streams.Select(
-                stream => PushIfCompatibleTypeAsync(stream, messageId, message, cancellationToken));
+            var pushTasks = _streams
+                .Select(stream => PushIfCompatibleTypeAsync(stream, messageId, message, cancellationToken))
+                .Where(task => task != null)
+                .ToArray();
 
-            pushTasks = pushTasks.Where(task => task != null).ToArray();
-            var pushedCount = ((Task?[])pushTasks).Length;
-
-            if (pushedCount == 0 && ProcessedCallback != null)
-            {
-                await ProcessedCallback.Invoke(message).ConfigureAwait(false);
-            }
-            else
-            {
-                if (pushedCount > 1)
-                {
-                    if (!_streamsByMessage.TryAdd(messageId, pushedCount))
-                    {
-                        throw new InvalidOperationException("The same message was already pushed to this stream.");
-                    }
-                }
-
+            if (pushTasks.Length > 0)
                 await Task.WhenAll(pushTasks).ConfigureAwait(false);
-            }
         }
 
         /// <summary>
@@ -112,16 +66,10 @@ namespace Silverback.Messaging.Messages
         ///     stream as complete. Calling this method will cause an <see cref="OperationCanceledException" /> to be
         ///     thrown by the enumerators and the <see cref="PushAsync" /> method.
         /// </summary>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        public async Task AbortAsync()
+        public void Abort()
         {
             // ReSharper disable once InconsistentlySynchronizedField
             _streams.ParallelForEach(stream => stream.Abort());
-
-            if (PushAbortedCallback != null)
-                await PushAbortedCallback.Invoke().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -138,9 +86,6 @@ namespace Silverback.Messaging.Messages
             // ReSharper disable once InconsistentlySynchronizedField
             await _streams.ParallelForEach(stream => stream.CompleteAsync(cancellationToken))
                 .ConfigureAwait(false);
-
-            if (PushCompletedCallback != null)
-                await PushCompletedCallback.Invoke().ConfigureAwait(false); // TODO: Should forward cancellation token?
         }
 
         /// <inheritdoc cref="IMessageStreamProvider.CreateStream" />
@@ -171,50 +116,6 @@ namespace Silverback.Messaging.Messages
             return stream;
         }
 
-        public Task NotifyStreamProcessedAsync(PushedMessage pushedMessage)
-        {
-            if (ProcessedCallback == null)
-                return Task.CompletedTask;
-
-            var messageId = pushedMessage.Id;
-
-            if (_streamsByMessage.ContainsKey(messageId))
-            {
-                lock (_streamsByMessage)
-                {
-                    if (!_streamsByMessage.TryGetValue(messageId, out var count))
-                        return Task.CompletedTask;
-
-                    var isSuccess = count == 1
-                        ? _streamsByMessage.TryRemove(messageId, out var _)
-                        : _streamsByMessage.TryUpdate(messageId, count - 1, count);
-
-                    if (!isSuccess)
-                        throw new InvalidOperationException("The dictionary was modified.");
-
-                    if (count > 1)
-                        return Task.CompletedTask;
-                }
-            }
-
-            return ProcessedCallback.Invoke((TMessage)pushedMessage.OriginalMessage);
-        }
-
-        public async Task NotifyStreamEnumerationCompletedAsync(IMessageStreamEnumerable stream)
-        {
-            int streamsCount;
-
-            lock (_streams)
-            {
-                _streams.Remove(stream);
-
-                streamsCount = _streams.Count;
-            }
-
-            if (streamsCount == 0 && EnumerationCompletedCallback != null)
-                await EnumerationCompletedCallback.Invoke().ConfigureAwait(false);
-        }
-
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
@@ -232,8 +133,8 @@ namespace Silverback.Messaging.Messages
         /// <returns>
         ///     The new stream.
         /// </returns>
-        protected virtual IMessageStreamEnumerable<TMessageLinked> CreateStreamCore<TMessageLinked>() =>
-            new MessageStreamEnumerable<TMessageLinked>(this);
+        private static IMessageStreamEnumerable<TMessageLinked> CreateStreamCore<TMessageLinked>() =>
+            new MessageStreamEnumerable<TMessageLinked>();
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
@@ -243,7 +144,7 @@ namespace Silverback.Messaging.Messages
         ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
         ///     finalizer.
         /// </param>
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             // TODO: Prevent complete being called after abort (or being called twice)
             if (disposing)

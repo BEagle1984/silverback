@@ -16,7 +16,6 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
     {
         private readonly ISequenceStore _defaultSequenceStore = new DefaultSequenceStore();
 
-
         [Fact]
         public async Task CanHandle_Chunk_TrueReturned()
         {

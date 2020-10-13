@@ -346,7 +346,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             whenAnyTask.Status.Should().Be(TaskStatus.Faulted);
 
-            await streamProvider.AbortAsync();
+            streamProvider.Abort();
 
             await AsyncTestingUtil.WaitAsync(() => tasks.All(task => task.IsCompleted));
             tasks.All(task => task.IsCompleted).Should().BeTrue();
