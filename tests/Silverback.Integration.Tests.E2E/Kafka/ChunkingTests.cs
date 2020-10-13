@@ -278,6 +278,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             receivedFiles.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(message2.Content.ReReadAll());
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
         }
 
         [Fact]
@@ -670,7 +672,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await Task.Delay(300);
             sequence.IsAborted.Should().BeFalse();
 
-            await AsyncTestingUtil.WaitAsync(() => !sequence.IsPending, 1000);
+            await AsyncTestingUtil.WaitAsync(
+                () => !sequence.IsPending && DefaultTopic.GetCommittedOffsetsCount("consumer1") >= 2,
+                1000);
             sequence.IsAborted.Should().BeTrue();
 
             sequenceStore.HasPendingSequences.Should().BeFalse();

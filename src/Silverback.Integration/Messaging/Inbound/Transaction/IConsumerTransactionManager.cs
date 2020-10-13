@@ -41,6 +41,6 @@ namespace Silverback.Messaging.Inbound.Transaction
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task RollbackAsync(Exception exception, bool commitOffsets = false);
+        Task RollbackAsync(Exception? exception, bool commitOffsets = false);
     }
 }

@@ -2,14 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
@@ -21,10 +19,6 @@ namespace Silverback.Messaging.Inbound.Transaction
     public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     {
         private readonly ISilverbackIntegrationLogger<TransactionHandlerConsumerBehavior> _logger;
-
-        // TODO: Ensure instance per consumer
-        private readonly ConcurrentDictionary<IOffset, int> _failedAttemptsCounters =
-            new ConcurrentDictionary<IOffset, int>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TransactionHandlerConsumerBehavior" /> class.
@@ -125,7 +119,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
             catch (Exception exception)
             {
-                await HandleSequenceExceptionAsync(context, sequence, exception).ConfigureAwait(false);
+                await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
             }
             finally
             {
@@ -139,7 +133,8 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             try
             {
-                bool handled = await ApplyErrorPoliciesAsync(context, exception).ConfigureAwait(false);
+                bool handled = await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception)
+                    .ConfigureAwait(false);
 
                 // TODO: Carefully test: exception handled once and always rolled back
 
@@ -163,72 +158,5 @@ namespace Silverback.Messaging.Inbound.Transaction
                 context.Dispose();
             }
         }
-
-        private async Task HandleSequenceExceptionAsync(
-            ConsumerPipelineContext context,
-            ISequence sequence,
-            Exception exception)
-        {
-            _logger.LogProcessingError(context.Envelope, exception);
-
-            try
-            {
-                // TODO: Must log?
-
-                switch (sequence.AbortReason)
-                {
-                    case SequenceAbortReason.None:
-                    case SequenceAbortReason.Error:
-                        if (!await ApplyErrorPoliciesAsync(context, exception).ConfigureAwait(false))
-                        {
-                            await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
-
-                            sequence.ProcessedTaskCompletionSource.SetException(exception);
-                            return;
-                        }
-
-                        break;
-                    case SequenceAbortReason.EnumerationAborted:
-                        await context.TransactionManager.CommitAsync().ConfigureAwait(false);
-                        break;
-                    case SequenceAbortReason.IncompleteSequence:
-                        await context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
-                        break;
-                    case SequenceAbortReason.ConsumerAborted:
-                    case SequenceAbortReason.Disposing:
-                    default:
-                        await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
-                        break;
-                }
-
-                sequence.ProcessedTaskCompletionSource.SetResult(false);
-            }
-            catch (Exception ex)
-            {
-                sequence.ProcessedTaskCompletionSource.SetException(ex);
-            }
-        }
-
-        private async Task<bool> ApplyErrorPoliciesAsync(ConsumerPipelineContext context, Exception exception)
-        {
-            SetFailedAttempts(context.Envelope);
-
-            var errorPolicyImplementation = context.Envelope.Endpoint.ErrorPolicy.Build(context.ServiceProvider);
-
-            if (!errorPolicyImplementation.CanHandle(context, exception))
-                return false;
-
-            return await errorPolicyImplementation
-                .HandleError(context, exception)
-                .ConfigureAwait(false);
-        }
-
-        private void SetFailedAttempts(IRawInboundEnvelope envelope) =>
-            envelope.Headers.AddOrReplace(
-                DefaultMessageHeaders.FailedAttempts,
-                _failedAttemptsCounters.AddOrUpdate(
-                    envelope.Offset,
-                    _ => envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) + 1,
-                    (_, count) => count + 1));
     }
 }

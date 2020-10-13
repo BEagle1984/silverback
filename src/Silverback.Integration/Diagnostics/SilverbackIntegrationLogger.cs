@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
 namespace Silverback.Diagnostics
@@ -75,6 +77,31 @@ namespace Silverback.Diagnostics
                 exception,
                 "Error occurred processing the inbound message.",
                 envelope);
+        }
+
+        public void LogSequenceAborted(
+            ConsumerPipelineContext context,
+            SequenceAbortReason abortReason,
+            Exception? abortException)
+        {
+            if (abortReason == SequenceAbortReason.Error && abortException != null)
+            {
+                // TODO: Log sequence details
+                LogWarningWithMessageInfo(
+                    IntegrationEventIds.ErrorProcessingInboundMessage,
+                    abortException,
+                    "Error occurred processing the inbound sequence of messages.",
+                    context.Envelope);
+            }
+            else
+            {
+                context.Envelope.AdditionalLogData["abortReason"] = abortReason.ToString();
+
+                LogWarningWithMessageInfo(
+                    IntegrationEventIds.SequenceProcessingAborted,
+                    "Sequence processing has been aborted.",
+                    context.Envelope);
+            }
         }
 
         public void LogTraceWithMessageInfo(

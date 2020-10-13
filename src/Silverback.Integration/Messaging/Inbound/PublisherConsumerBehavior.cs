@@ -102,8 +102,6 @@ namespace Silverback.Messaging.Inbound
             //     await publisher.PublishAsync(sequence.StreamProvider)
             //         .ConfigureAwait(false),
             //     sequence);
-
-            // TODO: Publish materialized stream
         }
 
         private static async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context)

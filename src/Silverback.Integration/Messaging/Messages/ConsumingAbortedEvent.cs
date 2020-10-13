@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Messages
         /// <param name="exception">
         ///     The <see cref="Exception" /> that was thrown while trying to process the messages.
         /// </param>
-        public ConsumingAbortedEvent(ConsumerPipelineContext context, Exception exception)
+        public ConsumingAbortedEvent(ConsumerPipelineContext context, Exception? exception)
             : base(context)
         {
             Exception = exception;
@@ -29,6 +29,7 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets the <see cref="Exception" /> that was thrown while trying to process the messages.
         /// </summary>
-        public Exception Exception { get; }
+        // TODO: Is it ok that it is now nullable?
+        public Exception? Exception { get; }
     }
 }

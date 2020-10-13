@@ -5,8 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -27,6 +30,12 @@ namespace Silverback.Messaging.Sequences
         private readonly CancellationTokenSource _abortCancellationTokenSource = new CancellationTokenSource();
 
         private readonly object _abortLockObject = new object();
+
+        // TODO: Log add, complete, abort, etc.?
+
+        private readonly ISilverbackIntegrationLogger<Sequence<TEnvelope>> _logger;
+
+        private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
         private CancellationTokenSource? _timeoutCancellationTokenSource;
 
@@ -57,6 +66,8 @@ namespace Silverback.Messaging.Sequences
             Context = Check.NotNull(context, nameof(context));
 
             _streamProvider = new MessageStreamProvider<TEnvelope>();
+
+            _logger = context.ServiceProvider.GetRequiredService<ISilverbackIntegrationLogger<Sequence<TEnvelope>>>();
 
             _enforceTimeout = enforceTimeout;
             _timeout = timeout ?? Context.Envelope.Endpoint.Sequence.Timeout;
@@ -132,21 +143,38 @@ namespace Silverback.Messaging.Sequences
                     "The exception must be specified if the reason is Error.");
             }
 
+            bool alreadyAborted;
+
             lock (_abortLockObject)
             {
-                if (!IsPending)
-                    return;
+                alreadyAborted = IsAborted;
 
-                if (reason > AbortReason)
+                if (!alreadyAborted)
                 {
-                    AbortReason = reason;
-                    AbortException = exception;
+                    _abortingTaskCompletionSource = new TaskCompletionSource<bool>();
+
+                    if (reason > AbortReason)
+                    {
+                        AbortReason = reason;
+                        AbortException = exception;
+                    }
                 }
+            }
+
+            if (alreadyAborted)
+            {
+                // Multiple calls to AbortAsync should await until the sequence is aborted for real,
+                // otherwise the TransactionHandlerConsumerBehavior could continue before the abort
+                // is done, preventing the error policies to be correctly and successfully applied.
+                await _abortingTaskCompletionSource!.Task.ConfigureAwait(false);
+                return;
             }
 
             _timeoutCancellationTokenSource?.Cancel();
 
             await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
+
+            await HandleExceptionAsync(exception).ConfigureAwait(false);
             await _streamProvider.AbortAsync().ConfigureAwait(false);
 
             // TODO: Review this!!!
@@ -274,6 +302,48 @@ namespace Silverback.Messaging.Sequences
                         // TODO: Log
                     }
                 });
+        }
+
+        private async Task HandleExceptionAsync(Exception? exception)
+        {
+            _logger.LogSequenceAborted(Context, AbortReason, AbortException);
+
+            try
+            {
+                switch (AbortReason)
+                {
+                    case SequenceAbortReason.Error:
+                        if (!await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(Context, exception!)
+                            .ConfigureAwait(false))
+                        {
+                            await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+
+                            ProcessedTaskCompletionSource.SetException(exception!);
+                            return;
+                        }
+
+                        break;
+                    case SequenceAbortReason.EnumerationAborted:
+                        await Context.TransactionManager.CommitAsync().ConfigureAwait(false);
+                        break;
+                    case SequenceAbortReason.IncompleteSequence:
+                        await Context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
+                        break;
+                    case SequenceAbortReason.None:
+                        throw new InvalidOperationException("Reason shouldn't be None.");
+                    case SequenceAbortReason.ConsumerAborted:
+                    case SequenceAbortReason.Disposing:
+                    default:
+                        await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+                        break;
+                }
+
+                ProcessedTaskCompletionSource.SetResult(false);
+            }
+            catch (Exception ex)
+            {
+                ProcessedTaskCompletionSource.SetException(ex);
+            }
         }
     }
 }

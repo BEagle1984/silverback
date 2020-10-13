@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        /// <inheritdoc cref="IConsumerTransactionManager.Commit" />
+        /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
         public async Task CommitAsync()
         {
             EnsureNotCompleted();
@@ -74,8 +74,8 @@ namespace Silverback.Messaging.Inbound.Transaction
             await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="IConsumerTransactionManager.Rollback" />
-        public async Task RollbackAsync(Exception exception, bool commitOffsets = false)
+        /// <inheritdoc cref="IConsumerTransactionManager.RollbackAsync" />
+        public async Task RollbackAsync(Exception? exception, bool commitOffsets = false)
         {
             EnsureNotCompleted();
             IsCompleted = true;

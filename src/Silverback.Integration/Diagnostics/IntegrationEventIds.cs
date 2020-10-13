@@ -32,7 +32,7 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while processing an
-        ///     inbound message (or a batch of messages).
+        ///     inbound message.
         /// </summary>
         /// <remarks>
         ///     Default log level: Warning.
@@ -49,6 +49,18 @@ namespace Silverback.Diagnostics
         /// </remarks>
         public static EventId MessageAddedToBatch { get; } =
             new EventId(Offset + 3, Prefix + nameof(MessageAddedToBatch));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when the processing of a sequence of
+        ///     messages is aborted (e.g. because of consumer disconnect, timeout, incomplete sequence, ...).
+        ///     In case of an exception during the processing the <see cref="ErrorProcessingInboundMessage" /> is
+        ///     logged instead.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Warning.
+        /// </remarks>
+        public static EventId SequenceProcessingAborted { get; } =
+            new EventId(Offset + 4, Prefix + nameof(SequenceProcessingAborted));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when connecting to the message broker.

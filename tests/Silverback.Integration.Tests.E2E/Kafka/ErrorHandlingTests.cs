@@ -64,8 +64,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             (IIntegrationEvent _) =>
                             {
                                 tryCount++;
-                                if (tryCount != 3)
-                                    throw new InvalidOperationException("Retry!");
+                                throw new InvalidOperationException("Retry!");
                             }))
                 .Run();
 
@@ -75,8 +74,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            tryCount.Should().Be(3);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
+            tryCount.Should().Be(11);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(11);
             SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 

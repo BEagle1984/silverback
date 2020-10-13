@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -26,6 +27,9 @@ namespace Silverback.Messaging.Broker
         private readonly ISilverbackIntegrationLogger<Consumer> _logger;
 
         private readonly ConsumerStatusInfo _statusInfo = new ConsumerStatusInfo();
+
+        private readonly ConcurrentDictionary<IOffset, int> _failedAttemptsDictionary =
+            new ConcurrentDictionary<IOffset, int>();
 
         private ISequenceStore? _sequenceStore; // TODO: Should be per partition
 
@@ -141,6 +145,26 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.Disconnect" />
         public virtual ISequenceStore GetSequenceStore(IOffset offset) =>
             _sequenceStore ?? throw new InvalidOperationException("The sequence store is not initialized.");
+
+        /// <inheritdoc cref="IConsumer.IncrementFailedAttempts" />
+        public int IncrementFailedAttempts(IRawInboundEnvelope envelope)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+
+            return _failedAttemptsDictionary.AddOrUpdate(
+                envelope.Offset,
+                _ => envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) + 1,
+                (_, count) => count + 1);
+        }
+
+        /// <inheritdoc cref="IConsumer.ClearFailedAttempts" />
+        // TODO: Call it!
+        public void ClearFailedAttempts(IRawInboundEnvelope envelope)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+
+            _failedAttemptsDictionary.Remove(envelope.Offset, out _);
+        }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()

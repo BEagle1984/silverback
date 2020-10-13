@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
@@ -123,5 +124,24 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="ISequenceStore" />
         /// </returns>
         ISequenceStore GetSequenceStore(IOffset offset);
+
+        /// <summary>
+        ///     Increments the stored failed attempts count for the specified envelope.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The envelope.
+        /// </param>
+        /// <returns>
+        ///     The current failed attempts count after the increment.
+        /// </returns>
+        int IncrementFailedAttempts(IRawInboundEnvelope envelope);
+
+        /// <summary>
+        ///     Removes the stored failed attempts counter for the specified envelope.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The offset.
+        /// </param>
+        void ClearFailedAttempts(IRawInboundEnvelope envelope);
     }
 }

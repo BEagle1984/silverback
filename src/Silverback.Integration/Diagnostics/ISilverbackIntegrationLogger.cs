@@ -4,7 +4,9 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Diagnostics
 {
@@ -34,6 +36,8 @@ namespace Silverback.Diagnostics
         ///     The exception to log.
         /// </param>
         void LogProcessingError(IRawBrokerEnvelope envelope, Exception exception);
+
+        void LogSequenceAborted(ConsumerPipelineContext context, SequenceAbortReason abortReason, Exception? abortException);
 
         /// <summary>
         ///     Writes a trace log message, enriching it with the information related to the provided message.
