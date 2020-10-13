@@ -123,27 +123,9 @@ namespace Silverback.Messaging.Messages
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> of that will be linked with this
-        ///     provider and will be pushed with the messages matching the type <typeparamref name="TMessageLinked" />.
-        /// </summary>
-        /// <typeparam name="TMessageLinked">
-        ///     The type of the messages being streamed to the linked stream.
-        /// </typeparam>
-        /// <returns>
-        ///     The new stream.
-        /// </returns>
         private static IMessageStreamEnumerable<TMessageLinked> CreateStreamCore<TMessageLinked>() =>
             new MessageStreamEnumerable<TMessageLinked>();
 
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
-        ///     resources.
-        /// </summary>
-        /// <param name="disposing">
-        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
-        ///     finalizer.
-        /// </param>
         private void Dispose(bool disposing)
         {
             // TODO: Prevent complete being called after abort (or being called twice)

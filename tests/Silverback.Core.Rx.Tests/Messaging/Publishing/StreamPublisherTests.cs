@@ -11,12 +11,12 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Tests.Core.TestTypes.Messages;
-using Silverback.Tests.Core.TestTypes.Messages.Base;
+using Silverback.Tests.Core.Rx.TestTypes.Messages;
+using Silverback.Tests.Core.Rx.TestTypes.Messages.Base;
 using Silverback.Tests.Types;
 using Xunit;
 
-namespace Silverback.Tests.Core.Messaging.Publishing
+namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 {
     public class StreamPublisherTests
     {
@@ -31,22 +31,16 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 PublisherTestsHelper.GetPublisher(
                     builder => builder
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<IEvent> enumerable) =>
+                            (IMessageStreamObservable<IEvent> observable) =>
                             {
                                 Interlocked.Increment(ref receivedStreams);
-                                foreach (var dummy in enumerable)
-                                {
-                                    Interlocked.Increment(ref receivedEvents);
-                                }
+                                observable.Subscribe(_ => Interlocked.Increment(ref receivedEvents));
                             })
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
+                            (IMessageStreamObservable<TestEventOne> observable) =>
                             {
                                 Interlocked.Increment(ref receivedStreams);
-                                await foreach (var dummy in enumerable)
-                                {
-                                    Interlocked.Increment(ref receivedTestEventOnes);
-                                }
+                                observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEventOnes));
                             })));
 
             var streamProvider1 = new MessageStreamProvider<IEvent>();
@@ -79,15 +73,12 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 PublisherTestsHelper.GetPublisher(
                     builder => builder
                         .AddDelegateSubscriber(
-                            (IReadOnlyCollection<IEvent> enumerable) =>
+                            (IReadOnlyCollection<IEvent> observable) =>
                             {
                                 Interlocked.Increment(ref receivedEnumeratedStreams);
                             })
                         .AddDelegateSubscriber(
-                            async (List<TestEventOne> list) =>
-                            {
-                                Interlocked.Increment(ref receivedEnumeratedStreams);
-                            })));
+                            (List<TestEventOne> list) => { Interlocked.Increment(ref receivedEnumeratedStreams); })));
 
             var streamProvider = new MessageStreamProvider<IEvent>();
 
@@ -103,27 +94,23 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public async Task Publish_SimpleMessageAndEnumerableOfMessages_StreamSubscribersNotInvoked()
+        public async Task Publish_SimpleMessageAndobservableOfMessages_StreamSubscribersNotInvoked()
         {
             var receivedStreams = 0;
 
             var publisher = PublisherTestsHelper.GetPublisher(
                 builder => builder
                     .AddDelegateSubscriber(
-                        (IMessageStreamEnumerable<IEvent> enumerable) =>
+                        (IMessageStreamObservable<IEvent> observable) =>
                         {
                             Interlocked.Increment(ref receivedStreams);
-                            foreach (var dummy in enumerable)
-                            {
-                            }
+                            observable.Subscribe(_ => { });
                         })
                     .AddDelegateSubscriber(
-                        async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
+                        (IMessageStreamObservable<TestEventOne> observable) =>
                         {
                             Interlocked.Increment(ref receivedStreams);
-                            await foreach (var dummy in enumerable)
-                            {
-                            }
+                            observable.Subscribe(_ => { });
                         }));
 
             publisher.Publish(new TestEventOne());
@@ -143,17 +130,17 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 PublisherTestsHelper.GetPublisher(
                     builder => builder
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<IEvent> enumerable) =>
+                            (IMessageStreamObservable<IEvent> observable) =>
                             {
                                 Interlocked.Increment(ref receivedStreams);
                             })
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventOne> enumerable) =>
+                            (IMessageStreamObservable<TestEventOne> observable) =>
                             {
                                 Interlocked.Increment(ref receivedStreams);
                             })
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestCommandOne> enumerable) =>
+                            (IMessageStreamObservable<TestCommandOne> observable) =>
                             {
                                 Interlocked.Increment(ref receivedStreams);
                             })));
@@ -178,23 +165,21 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 PublisherTestsHelper.GetPublisher(
                     builder => builder
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<IEvent> enumerable) =>
+                            (IMessageStreamObservable<IEvent> observable) =>
                             {
                                 Interlocked.Increment(ref receivedStreams);
-                                foreach (var dummy in enumerable)
-                                {
-                                    if (Interlocked.Increment(ref received) >= 3)
-                                        throw new TestException();
-                                }
+                                observable.Subscribe(
+                                    _ =>
+                                    {
+                                        if (Interlocked.Increment(ref received) >= 3)
+                                            throw new TestException();
+                                    });
                             })
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
+                            (IMessageStreamObservable<TestEventOne> observable) =>
                             {
                                 Interlocked.Increment(ref receivedStreams);
-                                await foreach (var dummy in enumerable)
-                                {
-                                    Interlocked.Increment(ref received);
-                                }
+                                observable.Subscribe(_ => Interlocked.Increment(ref received));
                             })));
 
             var streamProvider = new MessageStreamProvider<IEvent>();
@@ -224,20 +209,19 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 PublisherTestsHelper.GetPublisher(
                     builder => builder
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<IEvent> enumerable) =>
+                            (IMessageStreamObservable<IEvent> observable) =>
                             {
-                                foreach (var dummy in enumerable)
-                                {
-                                    if (Interlocked.Increment(ref received) >= 3)
-                                        throw new TestException();
-                                }
+                                observable.Subscribe(
+                                    _ =>
+                                    {
+                                        if (Interlocked.Increment(ref received) >= 3)
+                                            throw new TestException();
+                                    });
                             })
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
+                            (IMessageStreamObservable<TestEventOne> observable) =>
                             {
-                                await foreach (var dummy in enumerable)
-                                {
-                                }
+                                observable.Subscribe(_ => { });
                             })));
 
             var streamProvider = new MessageStreamProvider<IEvent>();
@@ -265,20 +249,19 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 PublisherTestsHelper.GetPublisher(
                     builder => builder
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<IEvent> enumerable) =>
+                            (IMessageStreamObservable<IEvent> observable) =>
                             {
-                                foreach (var dummy in enumerable)
-                                {
-                                    if (Interlocked.Increment(ref received) >= 3)
-                                        throw new TestException();
-                                }
+                                observable.Subscribe(
+                                    _ =>
+                                    {
+                                        if (Interlocked.Increment(ref received) >= 3)
+                                            throw new TestException();
+                                    });
                             })
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
+                            (IMessageStreamObservable<TestEventOne> observable) =>
                             {
-                                await foreach (var dummy in enumerable)
-                                {
-                                }
+                                observable.Subscribe(_ => { });
                             })));
 
             var streamProvider = new MessageStreamProvider<IEvent>();
@@ -313,22 +296,16 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 PublisherTestsHelper.GetPublisher(
                     builder => builder
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<IEnvelope> enumerable) =>
+                            (IMessageStreamObservable<IEnvelope> observable) =>
                             {
                                 Interlocked.Increment(ref receivedStreams);
-                                foreach (var dummy in enumerable)
-                                {
-                                    Interlocked.Increment(ref receivedEnvelopes);
-                                }
+                                observable.Subscribe(_ => Interlocked.Increment(ref receivedEnvelopes));
                             })
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEnvelope> enumerable) =>
+                            (IMessageStreamObservable<TestEnvelope> observable) =>
                             {
                                 Interlocked.Increment(ref receivedStreams);
-                                await foreach (var dummy in enumerable)
-                                {
-                                    Interlocked.Increment(ref receivedTestEnvelopes);
-                                }
+                                observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEnvelopes));
                             })));
 
             var streamProvider = new MessageStreamProvider<IEnvelope>();
@@ -357,22 +334,16 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 PublisherTestsHelper.GetPublisher(
                     builder => builder
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventOne> enumerable) =>
+                            (IMessageStreamObservable<TestEventOne> observable) =>
                             {
                                 Interlocked.Increment(ref receivedStreams);
-                                foreach (var dummy in enumerable)
-                                {
-                                    Interlocked.Increment(ref receivedTestEventOnes);
-                                }
+                                observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEventOnes));
                             })
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEnvelope> enumerable) =>
+                            (IMessageStreamObservable<TestEnvelope> observable) =>
                             {
                                 Interlocked.Increment(ref receivedStreams);
-                                await foreach (var dummy in enumerable)
-                                {
-                                    Interlocked.Increment(ref receivedTestEnvelopes);
-                                }
+                                observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEnvelopes));
                             })));
 
             var stream = new MessageStreamProvider<IEnvelope>();
@@ -401,12 +372,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 PublisherTestsHelper.GetPublisher(
                     builder => builder
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<IEvent> enumerable) =>
+                            (IMessageStreamObservable<IEvent> observable) =>
                             {
-                                foreach (var envelope in enumerable)
-                                {
-                                    receivedEvents.Add(envelope);
-                                }
+                                observable.Subscribe(message => receivedEvents.Add(message));
                             })));
 
             var streamProvider = new MessageStreamProvider<IEnvelope>();

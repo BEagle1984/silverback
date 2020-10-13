@@ -18,7 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         /// <summary>
         ///     Allows the subscribers to receive an <see cref="IObservable{T}" /> as parameter. It also registers
-        ///     the <see cref="IMessageObservable{TMessage}" /> that can be used to process the entire messages
+        ///     the <see cref="IMessageStreamObservable{TMessage}" /> that can be used to process the entire messages
         ///     stream using Rx.NET.
         /// </summary>
         /// <param name="silverbackBuilder">
@@ -34,12 +34,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
             silverbackBuilder.Services
                 .AddSingleton<IArgumentResolver, ObservableMessageArgumentResolver>()
-                .AddScoped<IReturnValueHandler, ObservableMessagesReturnValueHandler>()
-                .AddSingleton<MessageObservable, MessageObservable>()
-                .AddSingleton(typeof(IMessageObservable<>), typeof(MessageObservable<>));
-
-            silverbackBuilder
-                .AddSingletonSubscriber<MessageObservable>();
+                .AddSingleton<IArgumentResolver, ObservableStreamMessageArgumentResolver>()
+                .AddScoped<IReturnValueHandler, ObservableMessagesReturnValueHandler>();
 
             return silverbackBuilder;
         }

@@ -12,8 +12,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
     ///     Resolves the parameters declared as <see cref="IEnumerable{T}" /> where <c>T</c> is compatible with
     ///     the type of the message being published.
     /// </summary>
-    public class EnumerableMessageArgumentResolver
-        : IEnumerableMessageArgumentResolver, IMessageArgumentResolverFromStreamProvider
+    public class EnumerableMessageArgumentResolver : IEnumerableMessageArgumentResolver
     {
         /// <inheritdoc cref="IArgumentResolver.CanResolve" />
         public bool CanResolve(Type parameterType)
@@ -38,14 +37,6 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             Check.NotNull(messages, nameof(messages));
 
             return messages.OfType(targetMessageType).ToList(targetMessageType);
-        }
-
-        /// <inheritdoc cref="IMessageArgumentResolverFromStreamProvider.GetValue" />
-        public object GetValue(IMessageStreamProvider streamProvider, Type targetMessageType)
-        {
-            Check.NotNull(streamProvider, nameof(streamProvider));
-
-            return streamProvider.CreateStream(targetMessageType);
         }
     }
 }

@@ -61,8 +61,6 @@ namespace Silverback.Messaging.Inbound
             }
             else
             {
-                await PublishEnvelopeAsync(context).ConfigureAwait(false);
-
                 if (context.Envelope is IInboundEnvelope envelope)
                 {
                     // TODO: Create only if necessary?
@@ -73,6 +71,8 @@ namespace Silverback.Messaging.Inbound
                     if (_unboundedSequence.IsAborted && _unboundedSequence.AbortException != null)
                         throw _unboundedSequence.AbortException; // TODO: Wrap into another exception?
                 }
+
+                await PublishEnvelopeAsync(context).ConfigureAwait(false);
             }
 
             await next(context).ConfigureAwait(false);

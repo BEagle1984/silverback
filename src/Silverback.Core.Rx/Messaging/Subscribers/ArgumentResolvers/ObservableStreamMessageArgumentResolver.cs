@@ -2,24 +2,27 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Reflection;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
     /// <summary>
-    ///     Resolves the parameters declared as <see cref="IMessageStreamEnumerable{TMessage}" /> where
+    ///     Resolves the parameters declared as <see cref="Messages.IMessageStreamObservable{TMessage}" /> where
     ///     <c>TMessage</c> is compatible with the type of the message being published.
     /// </summary>
-    public class StreamEnumerableMessageArgumentResolver : IStreamEnumerableMessageArgumentResolver
+    public class ObservableStreamMessageArgumentResolver : IStreamEnumerableMessageArgumentResolver
     {
+        private MethodInfo? _createObservableMethodInfo;
+
         /// <inheritdoc cref="IArgumentResolver.CanResolve" />
         public bool CanResolve(Type parameterType)
         {
             Check.NotNull(parameterType, nameof(parameterType));
 
             return parameterType.IsGenericType &&
-                   parameterType.GetGenericTypeDefinition() == typeof(IMessageStreamEnumerable<>);
+                   parameterType.GetGenericTypeDefinition() == typeof(Messages.IMessageStreamObservable<>);
         }
 
         /// <inheritdoc cref="IMessageArgumentResolver.GetMessageType" />
@@ -35,7 +38,17 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         {
             Check.NotNull(streamProvider, nameof(streamProvider));
 
-            return streamProvider.CreateStream(targetMessageType);
+            _createObservableMethodInfo ??= GetType().GetMethod(
+                "CreateObservable",
+                BindingFlags.Static | BindingFlags.NonPublic);
+
+            return _createObservableMethodInfo!
+                .MakeGenericMethod(targetMessageType)
+                .Invoke(this, new object[] { streamProvider.CreateStream(targetMessageType) });
         }
+
+        private static IMessageStreamObservable<TMessage> CreateObservable<TMessage>(
+            IMessageStreamEnumerable<TMessage> enumerable) =>
+            new MessageStreamObservable<TMessage>(enumerable);
     }
 }
