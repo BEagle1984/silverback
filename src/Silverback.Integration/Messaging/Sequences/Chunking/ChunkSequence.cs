@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Sequences.Chunking
         ///     The current <see cref="ConsumerPipelineContext" />, assuming that it will be the one from which the
         ///     sequence gets published to the internal bus.
         /// </param>
-        public ChunkSequence(string sequenceId, int totalLength, ConsumerPipelineContext context)
+        public ChunkSequence(string sequenceId, int? totalLength, ConsumerPipelineContext context)
             : base(sequenceId, context)
         {
             TotalLength = totalLength;
@@ -46,6 +46,14 @@ namespace Silverback.Messaging.Sequences.Chunking
             EnsureOrdering(chunkIndex);
 
             return base.AddCoreAsync(envelope);
+        }
+
+        /// <inheritdoc cref="Sequence{TEnvelope}.IsLastMessage" />
+        protected override bool IsLastMessage(IRawInboundEnvelope envelope)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+
+            return envelope.Headers.GetValue<bool>(DefaultMessageHeaders.IsLastChunk) == true;
         }
 
         private void EnsureOrdering(int index)

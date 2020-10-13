@@ -88,7 +88,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             for (int i = 0; i < SpyBehavior.OutboundEnvelopes.Count; i++)
             {
                 var firstEnvelope = SpyBehavior.OutboundEnvelopes[(i / 3) * 3];
+                var lastEnvelope = SpyBehavior.OutboundEnvelopes[((i / 3) * 3) + 2];
                 var envelope = SpyBehavior.OutboundEnvelopes[i];
+
+                envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).Should().Be("3");
 
                 if (envelope == firstEnvelope)
                 {
@@ -99,6 +102,15 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     envelope.Headers.GetValue(DefaultMessageHeaders.FirstChunkOffset).Should()
                         .Be(firstEnvelope.Offset!.Value);
                 }
+
+                if (envelope == lastEnvelope)
+                {
+                    envelope.Headers.GetValue(DefaultMessageHeaders.IsLastChunk).Should().Be(true.ToString());
+                }
+                else
+                {
+                    envelope.Headers.GetValue(DefaultMessageHeaders.IsLastChunk).Should().BeNull();
+                }
             }
 
             var receivedContents =
@@ -106,6 +118,66 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             receivedContents.Should()
                 .BeEquivalentTo(Enumerable.Range(1, 5).Select(i => $"Long message {i}"));
+        }
+
+        [Fact]
+        public async Task Chunking_JsonWithoutCountHeader_ProducedAndConsumed()
+        {
+            var message = new TestEventOne { Content = "Hello E2E!" };
+            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty)).ReadAll() ??
+                                throw new InvalidOperationException("Serializer returned null");
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            // ConsecutiveMessages = true
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.ProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 0, null, false));
+            await producer.ProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, null, null));
+            await producer.ProduceAsync(
+                rawMessage.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 2, null, true));
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            sequenceStore.HasPendingSequences.Should().BeFalse();
         }
 
         [Fact]
@@ -163,10 +235,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         }
                                     }))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) =>
-                            {
-                                receivedFiles.Add(binaryFile.Content.ReadAll());
-                            })
+                            (BinaryFileMessage binaryFile) => { receivedFiles.Add(binaryFile.Content.ReadAll()); })
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 

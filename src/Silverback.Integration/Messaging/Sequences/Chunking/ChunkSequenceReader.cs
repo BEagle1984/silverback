@@ -49,8 +49,7 @@ namespace Silverback.Messaging.Sequences.Chunking
         {
             Check.NotNull(context, nameof(context));
 
-            int chunksCount = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount) ??
-                              throw new InvalidOperationException("Chunks count header not found or invalid.");
+            int? chunksCount = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunksCount);
 
             var sequence = new ChunkSequence(sequenceId, chunksCount, context);
 

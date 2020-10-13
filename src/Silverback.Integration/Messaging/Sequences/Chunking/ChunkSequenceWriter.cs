@@ -93,6 +93,9 @@ namespace Silverback.Messaging.Sequences.Chunking
             messageChunk.Headers.AddOrReplace(DefaultMessageHeaders.ChunkIndex, chunkIndex);
             messageChunk.Headers.AddOrReplace(DefaultMessageHeaders.ChunksCount, chunksCount);
 
+            if (chunkIndex == chunksCount - 1)
+                messageChunk.Headers.AddOrReplace(DefaultMessageHeaders.IsLastChunk, true.ToString());
+
             return messageChunk;
         }
     }

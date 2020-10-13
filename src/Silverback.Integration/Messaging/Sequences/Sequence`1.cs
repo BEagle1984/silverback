@@ -211,8 +211,11 @@ namespace Silverback.Messaging.Sequences
                         .ConfigureAwait(false);
                 }
 
-                if (TotalLength != null && Length == TotalLength)
+                if (TotalLength != null && Length == TotalLength || IsLastMessage(envelope))
+                {
+                    TotalLength = Length;
                     await CompleteAsync().ConfigureAwait(false);
+                }
             }
             catch (OperationCanceledException)
             {
@@ -221,6 +224,17 @@ namespace Silverback.Messaging.Sequences
                 // TODO: Is it correct to ignore?
             }
         }
+
+        /// <summary>
+        ///     Implements the logic to recognize the last message in the sequence without relying on the TotalCount property.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The envelope to be added to the sequence.
+        /// </param>
+        /// <returns>
+        ///    <c>true</c> if it is the last message, otherwise <c>false</c>.
+        /// </returns>
+        protected virtual bool IsLastMessage(TEnvelope envelope) => false;
 
         /// <summary>
         ///     Marks the sequence as complete, meaning no more messages will be pushed.
