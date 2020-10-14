@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
@@ -14,10 +15,18 @@ namespace Silverback.Messaging.Messages
     internal class ProcessedOutboundEnvelope : OutboundEnvelope
     {
         public ProcessedOutboundEnvelope(
-            byte[]? message,
+            byte[]? messageContent,
             IEnumerable<MessageHeader>? headers,
             IProducerEndpoint endpoint)
-            : base(message, headers, endpoint)
+            : base(messageContent, headers, endpoint)
+        {
+        }
+
+        public ProcessedOutboundEnvelope(
+            Stream? messageStream,
+            IEnumerable<MessageHeader>? headers,
+            IProducerEndpoint endpoint)
+            : base(messageStream, headers, endpoint)
         {
         }
     }

@@ -43,7 +43,8 @@ namespace Silverback.Messaging.Sequences.Chunking
             var chunkIndex = envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) ??
                              throw new InvalidOperationException("Chunk index header not found.");
 
-            EnsureOrdering(chunkIndex);
+            if (!EnsureOrdering(chunkIndex))
+                return Task.CompletedTask;
 
             return base.AddCoreAsync(envelope);
         }
@@ -56,13 +57,16 @@ namespace Silverback.Messaging.Sequences.Chunking
             return envelope.Headers.GetValue<bool>(DefaultMessageHeaders.IsLastChunk) == true;
         }
 
-        private void EnsureOrdering(int index)
+        private bool EnsureOrdering(int index)
         {
             if (_lastIndex == null && index != 0)
             {
                 throw new InvalidOperationException(
                     $"Sequence error. Received chunk with index {index} as first chunk for the sequence {SequenceId}, expected index 0. "); // TODO: Use custom exception type?
             }
+
+            if (_lastIndex != null && index == _lastIndex)
+                return false;
 
             if (_lastIndex != null && index != _lastIndex + 1)
             {
@@ -71,6 +75,8 @@ namespace Silverback.Messaging.Sequences.Chunking
             }
 
             _lastIndex = index;
+
+            return true;
         }
     }
 }

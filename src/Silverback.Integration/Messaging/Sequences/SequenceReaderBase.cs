@@ -62,7 +62,10 @@ namespace Silverback.Messaging.Sequences
         {
             Check.NotNull(context, nameof(context));
 
-            return context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
+            // if (context.Envelope.Endpoint.Sequence.ConsecutiveMessages)
+            //    return "***default***";
+
+            return context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId) ?? "***default***";
         }
 
         /// <summary>

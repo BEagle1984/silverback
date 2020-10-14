@@ -296,7 +296,15 @@ namespace Silverback.Messaging.Sequences
             if (!_enforceTimeout)
                 return;
 
-            _timeoutCancellationTokenSource?.Cancel();
+            try
+            {
+                _timeoutCancellationTokenSource?.Cancel();
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore
+            }
+
             _timeoutCancellationTokenSource = new CancellationTokenSource();
 
             Task.Run(
@@ -307,7 +315,7 @@ namespace Silverback.Messaging.Sequences
                         await Task.Delay(_timeout, _timeoutCancellationTokenSource.Token).ConfigureAwait(false);
                         await OnTimeoutElapsedAsync().ConfigureAwait(false);
                     }
-                    catch (OperationCanceledException ex)
+                    catch (OperationCanceledException)
                     {
                         // Ignore
                     }

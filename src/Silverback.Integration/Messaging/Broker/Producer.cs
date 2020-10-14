@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -60,10 +61,8 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer.Endpoint" />
         public IProducerEndpoint Endpoint { get; }
 
-        /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?,bool)" />
-        public void Produce(
-            object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null) =>
+        /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?)" />
+        public void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
             Produce(new OutboundEnvelope(message, headers, Endpoint));
 
         /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
@@ -80,10 +79,16 @@ namespace Silverback.Messaging.Broker
                             return Task.CompletedTask;
                         }));
 
+        /// <inheritdoc cref="IProducer.RawProduce(byte[]?,IReadOnlyCollection{MessageHeader}?)" />
+        public void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
+            => Produce(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint));
+
+        /// <inheritdoc cref="IProducer.RawProduce(Stream?,IReadOnlyCollection{MessageHeader}?)" />
+        public void RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null)
+            => Produce(new ProcessedOutboundEnvelope(messageStream, headers, Endpoint));
+
         /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?)" />
-        public Task ProduceAsync(
-            object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null) =>
+        public Task ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
             ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
 
         /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
@@ -95,6 +100,14 @@ namespace Silverback.Messaging.Broker
                     ((RawOutboundEnvelope)finalContext.Envelope).Offset =
                         await ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
                 }).ConfigureAwait(false);
+
+        /// <inheritdoc cref="IProducer.RawProduceAsync(byte[]?,IReadOnlyCollection{MessageHeader}?)" />
+        public Task RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
+            => ProduceAsync(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint));
+
+        /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?)" />
+        public Task RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null)
+            => ProduceAsync(new ProcessedOutboundEnvelope(messageStream, headers, Endpoint));
 
         /// <summary>
         ///     Publishes the specified message and returns its offset.
@@ -129,7 +142,10 @@ namespace Silverback.Messaging.Broker
             return ExecutePipelineAsync(context, finalAction);
         }
 
-        private async Task ExecutePipelineAsync(ProducerPipelineContext context, ProducerBehaviorHandler finalAction, int stepIndex = 0)
+        private async Task ExecutePipelineAsync(
+            ProducerPipelineContext context,
+            ProducerBehaviorHandler finalAction,
+            int stepIndex = 0)
         {
             if (_behaviors.Count > 0 && stepIndex < _behaviors.Count)
             {

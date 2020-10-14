@@ -34,7 +34,7 @@ namespace Silverback.Samples.BinaryFileStreaming.Consumer
                     //
                     // In this example the BinaryFileMessageSerializer is also set to return a CustomBinaryFileMessage
                     // instead of the normal BinaryFileMessage. This is only needed because we want to read the custom
-                    // 'x-message-filename' header, otherwise 'Serializer = new BinaryFileMessageSerializer()' would
+                    // 'x-message-filename' header, otherwise 'Serializer = BinaryFileMessageSerializer.Default' would
                     // work perfectly fine (returning a basic BinaryFileMessage, without the extra properties).
                     Serializer = new BinaryFileMessageSerializer<CustomBinaryFileMessage>(),
 

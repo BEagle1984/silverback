@@ -86,7 +86,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             {
 #pragma warning disable 4014
                 // ReSharper disable AccessToDisposedClosure
-                Task.Run(() => AwaitProcessingTaskAndCommitAsync(context, sequence));
+                Task.Run(() => AwaitSequenceProcessingAsync(context, sequence));
 
                 // ReSharper restore AccessToDisposedClosure
 #pragma warning restore 4014
@@ -105,17 +105,19 @@ namespace Silverback.Messaging.Inbound.Transaction
                 context.Dispose();
         }
 
-        private async Task AwaitProcessingTaskAndCommitAsync(ConsumerPipelineContext context, ISequence sequence)
+        private static async Task AwaitSequenceProcessingAsync(ConsumerPipelineContext context, ISequence sequence)
         {
             try
             {
                 if (context.ProcessingTask != null)
                     await context.ProcessingTask.ConfigureAwait(false);
 
-                if (!context.SequenceStore.HasPendingSequences)
+                if (!sequence.IsAborted && !context.SequenceStore.HasPendingSequences)
+                {
                     await context.TransactionManager.CommitAsync().ConfigureAwait(false);
 
-                sequence.ProcessedTaskCompletionSource.SetResult(true);
+                    sequence.ProcessedTaskCompletionSource.SetResult(true);
+                }
             }
             catch (Exception exception)
             {

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,11 +28,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 {
     public class ChunkingTests : E2ETestFixture
     {
-        private static readonly byte[] AesEncryptionKey =
-        {
-            0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e,
-            0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c
-        };
+        // private static readonly byte[] AesEncryptionKey =
+        // {
+        //     0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e,
+        //     0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c
+        // };
 
         [Fact]
         public async Task Chunking_Json_ProducedAndConsumed()
@@ -121,66 +122,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task Chunking_JsonWithoutCountHeader_ProducedAndConsumed()
-        {
-            var message = new TestEventOne { Content = "Hello E2E!" };
-            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                                    message,
-                                    new MessageHeaderCollection(),
-                                    MessageSerializationContext.Empty)).ReadAll() ??
-                                throw new InvalidOperationException("Serializer returned null");
-
-            var serviceProvider = Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
-                            endpoints => endpoints
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration = new KafkaConsumerConfig
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        }
-                                    }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
-                .Run();
-
-            var broker = serviceProvider.GetRequiredService<IBroker>();
-            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
-            await producer.ProduceAsync(
-                rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 0, null, false));
-            await producer.ProduceAsync(
-                rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, null, null));
-            await producer.ProduceAsync(
-                rawMessage.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 2, null, true));
-
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Subscriber.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
-
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
-
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
-        }
-
-        [Fact]
         public async Task Chunking_BinaryFile_ProducedAndConsumed()
         {
             var message1 = new BinaryFileMessage
@@ -257,6 +198,586 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedFiles.Should().HaveCount(2);
             receivedFiles[0].Should().BeEquivalentTo(message1.Content.ReReadAll());
             receivedFiles[1].Should().BeEquivalentTo(message2.Content.ReReadAll());
+        }
+
+        [Fact]
+        public async Task Chunking_JsonWithIsLastChunkHeader_Consumed()
+        {
+            var message = new TestEventOne { Content = "Hello E2E!" };
+            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty)).ReadAll() ??
+                                throw new InvalidOperationException("Serializer returned null");
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            // ConsecutiveMessages = true
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.RawProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 0, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1, false, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Chunking_JsonWithChunksCountHeader_Consumed()
+        {
+            var message = new TestEventOne { Content = "Hello E2E!" };
+            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty)).ReadAll() ??
+                                throw new InvalidOperationException("Serializer returned null");
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            // ConsecutiveMessages = true
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.RawProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Chunking_JsonWithMessageIdHeader_Consumed()
+        {
+            var message = new TestEventOne { Content = "Hello E2E!" };
+            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty)).ReadAll() ??
+                                throw new InvalidOperationException("Serializer returned null");
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            // ConsecutiveMessages = true
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.RawProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("1", 1, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("1", 2, 3, typeof(TestEventOne)));
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Chunking_BinaryFileWithIsLastChunkHeader_Consumed()
+        {
+            var rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
+            var receivedFiles = new List<byte[]?>();
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            // ConsecutiveMessages = true
+                                        },
+                                        Serializer = BinaryFileMessageSerializer.Default
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber(
+                            (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll())))
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.RawProduceAsync(
+                rawMessage.Take(3).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 0, false));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(3).Take(3).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(6).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 2, true));
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+            receivedFiles[0].Should().BeEquivalentTo(rawMessage);
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Chunking_BinaryFileWithChunksCountHeader_Consumed()
+        {
+            var rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
+            var receivedFiles = new List<byte[]?>();
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            // ConsecutiveMessages = true
+                                        },
+                                        Serializer = BinaryFileMessageSerializer.Default
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber(
+                            (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll())))
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.RawProduceAsync(
+                rawMessage.Take(3).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 0, 3));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(3).Take(3).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1, 3));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(6).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 2, 3));
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+            receivedFiles[0].Should().BeEquivalentTo(rawMessage);
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Chunking_BinaryFileWithMessageIdHeader_Consumed()
+        {
+            var rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
+            var receivedFiles = new List<byte[]?>();
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            // ConsecutiveMessages = true
+                                        },
+                                        Serializer = BinaryFileMessageSerializer.Default
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber(
+                            (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll())))
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.RawProduceAsync(
+                rawMessage.Take(3).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(3).Take(3).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("1", 1, 3));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(6).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("1", 2, 3));
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+            receivedFiles[0].Should().BeEquivalentTo(rawMessage);
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Chunking_BinaryFileWithMessageTypeHeader_Consumed()
+        {
+            var rawMessage = Encoding.UTF8.GetBytes("Hello E2E!");
+            var receivedFiles = new List<byte[]?>();
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            // ConsecutiveMessages = true
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber(
+                            (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll())))
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.RawProduceAsync(
+                rawMessage.Take(3).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3, typeof(BinaryFileMessage)));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(3).Take(3).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("1", 1, 3, typeof(BinaryFileMessage)));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(6).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("1", 2, 3, typeof(BinaryFileMessage)));
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+            receivedFiles[0].Should().BeEquivalentTo(rawMessage);
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Chunking_JsonWithDuplicatedChunks_DuplicatesIgnored()
+        {
+            var message1 = new TestEventOne { Content = "Message 1" };
+            byte[] rawMessage1 = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                     message1,
+                                     new MessageHeaderCollection(),
+                                     MessageSerializationContext.Empty)).ReadAll() ??
+                                 throw new InvalidOperationException("Serializer returned null");
+            var message2 = new TestEventOne { Content = "Message 2" };
+            byte[] rawMessage2 = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                     message2,
+                                     new MessageHeaderCollection(),
+                                     MessageSerializationContext.Empty)).ReadAll() ??
+                                 throw new InvalidOperationException("Serializer returned null");
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            // ConsecutiveMessages = true
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+
+            await producer.RawProduceAsync(
+                rawMessage1.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("2", 0, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage1.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("2", 0, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage1.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("2", 0, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage1.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("2", 1, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage1.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("2", 2, true, typeof(TestEventOne)));
+
+            await producer.RawProduceAsync(
+                rawMessage2.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage2.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage2.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage2.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage2.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Should().HaveCount(2);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
+            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Message 1");
+            SpyBehavior.InboundEnvelopes[1].Message.As<TestEventOne>().Content.Should().Be("Message 2");
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
+
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Chunking_BinaryFileWithDuplicatedChunks_DuplicatesIgnored()
+        {
+            byte[] rawMessage1 = Encoding.UTF8.GetBytes("Message 1");
+            byte[] rawMessage2 = Encoding.UTF8.GetBytes("Message 2");
+            var receivedFiles = new List<byte[]?>();
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            // ConsecutiveMessages = true
+                                        },
+                                        Serializer = BinaryFileMessageSerializer.Default
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber(
+                            (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll())))
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+
+            await producer.RawProduceAsync(
+                rawMessage1.Take(3).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("2", 0));
+            await producer.RawProduceAsync(
+                rawMessage1.Take(3).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("2", 0));
+            await producer.RawProduceAsync(
+                rawMessage1.Take(3).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("2", 0));
+            await producer.RawProduceAsync(
+                rawMessage1.Skip(3).Take(3).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("2", 1));
+            await producer.RawProduceAsync(
+                rawMessage1.Skip(6).ToArray(),
+                HeadersHelper.GetChunkHeadersWithMessageId("2", 2, true));
+
+            await producer.RawProduceAsync(
+                rawMessage2.Take(3).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 0, 3));
+            await producer.RawProduceAsync(
+                rawMessage2.Skip(3).Take(3).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1, 3));
+            await producer.RawProduceAsync(
+                rawMessage2.Skip(3).Take(3).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1, 3));
+            await producer.RawProduceAsync(
+                rawMessage2.Skip(6).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 2, 3));
+            await producer.RawProduceAsync(
+                rawMessage2.Skip(6).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 2, 3));
+
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(4);
+            receivedFiles.Should().HaveCount(2);
+            receivedFiles[0].Should().BeEquivalentTo(rawMessage1);
+            receivedFiles[1].Should().BeEquivalentTo(rawMessage2);
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
+
+            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            sequenceStore.HasPendingSequences.Should().BeFalse();
         }
 
         [Fact]
@@ -482,21 +1003,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage1.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 0, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage1.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage2.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 0, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage2.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 1, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("2", 1, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage2.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 2, 3));
+                HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -569,21 +1090,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage1.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 0, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage1.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage2.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 0, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("2", 0, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage2.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 1, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("2", 1, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage2.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 2, 3));
+                HeadersHelper.GetChunkHeaders("2", 2, 3, typeof(TestEventOne)));
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -592,9 +1113,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Message 2");
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
 
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage1.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 2, 3));
+                HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -646,12 +1167,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
 
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 0, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, 3));
+                HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
 
             await AsyncTestingUtil.WaitAsync(() => DefaultTopic.GetCommittedOffsetsCount("consumer1") > 0, 200);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
@@ -661,15 +1182,15 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             originalSequence!.IsComplete.Should().BeFalse();
             originalSequence!.IsAborted.Should().BeFalse();
 
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 0, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 2, 3));
+                HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -722,9 +1243,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
 
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 0, 3));
+                HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
 
             await AsyncTestingUtil.WaitAsync(() => sequenceStore.HasPendingSequences);
 
@@ -734,9 +1255,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequence.Should().NotBeNull();
             sequence!.IsAborted.Should().BeFalse();
 
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, 3));
+                HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
 
             await Task.Delay(300);
             sequence.IsAborted.Should().BeFalse();
@@ -750,15 +1271,15 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
 
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 0, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("2", 0, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 1, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("2", 1, 3, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 2, 3));
+                HeadersHelper.GetChunkHeaders("2", 2, 3, typeof(TestEventOne)));
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -826,9 +1347,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
 
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("1", 0, 3));
+                HeadersHelper.GetChunkHeaders("1", 0));
 
             await AsyncTestingUtil.WaitAsync(() => sequenceStore.HasPendingSequences);
 
@@ -838,9 +1359,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequence.Should().NotBeNull();
             sequence!.IsAborted.Should().BeFalse();
 
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("1", 1, 3));
+                HeadersHelper.GetChunkHeaders("1", 1));
 
             await Task.Delay(300);
             sequence.IsAborted.Should().BeFalse();
@@ -853,15 +1374,15 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await AsyncTestingUtil.WaitAsync(() => DefaultTopic.GetCommittedOffsetsCount("consumer1") >= 2);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
 
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("2", 0, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("2", 0));
+            await producer.RawProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("2", 1, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("2", 1));
+            await producer.RawProduceAsync(
                 rawMessage.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("2", 2, 3));
+                HeadersHelper.GetChunkHeaders("2", 2, true));
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -918,21 +1439,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage1.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("1", 1, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage1.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 2, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage2.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 0, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage2.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 1, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("2", 1, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage2.Skip(20).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("2", 2, 3));
+                HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
 
             await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -991,12 +1512,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
 
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 0, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("1", 0, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<TestEventOne>("1", 1, 3));
+                HeadersHelper.GetChunkHeaders("1", 1, typeof(TestEventOne)));
 
             await AsyncTestingUtil.WaitAsync(
                 async () => sequenceStore.Count == 1 &&
@@ -1069,12 +1590,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
 
-            await producer.ProduceAsync(
+            await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("1", 0, 3));
-            await producer.ProduceAsync(
+                HeadersHelper.GetChunkHeaders("1", 0, 3));
+            await producer.RawProduceAsync(
                 rawMessage.Skip(10).Take(10).ToArray(),
-                HeadersHelper.GetChunkHeaders<BinaryFileMessage>("1", 1, 3));
+                HeadersHelper.GetChunkHeaders("1", 1, 3));
 
             await AsyncTestingUtil.WaitAsync(
                 async () => sequenceStore.Count == 1 &&

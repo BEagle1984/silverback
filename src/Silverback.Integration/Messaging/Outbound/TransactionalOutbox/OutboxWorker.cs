@@ -112,7 +112,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             byte[]? content,
             IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint) =>
-            _brokerCollection.GetProducer(endpoint).ProduceAsync(new ProcessedOutboundEnvelope(content, headers, endpoint));
+            _brokerCollection.GetProducer(endpoint).RawProduceAsync(content, headers);
 
         private async Task ProcessQueueAsync(IServiceProvider serviceProvider, CancellationToken stoppingToken)
         {

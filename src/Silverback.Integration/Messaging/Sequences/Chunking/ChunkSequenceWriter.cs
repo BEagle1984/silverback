@@ -37,51 +37,54 @@ namespace Silverback.Messaging.Sequences.Chunking
                 throw new InvalidOperationException("RawMessage is null");
 
             var settings = envelope.Endpoint.Chunk;
-
             var chunkSize = settings?.Size ?? int.MaxValue;
-
-            var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
-            if (string.IsNullOrEmpty(messageId))
-            {
-                throw new InvalidOperationException(
-                    "Dividing into chunks is pointless if no unique MessageId can be retrieved. " +
-                    $"Please set the {DefaultMessageHeaders.MessageId} header.");
-            }
-
             var bufferArray = ArrayPool<byte>.Shared.Rent(chunkSize);
             var bufferMemory = bufferArray.AsMemory(0, chunkSize);
 
-            var chunksCount = (int)Math.Ceiling(envelope.RawMessage.Length / (double)chunkSize);
+            var chunksCount = envelope.RawMessage.CanSeek
+                ? (int?)Math.Ceiling(envelope.RawMessage.Length / (double)chunkSize)
+                : null;
 
             IOffset? firstChunkOffset = null;
 
-            for (var i = 0; i < chunksCount; i++)
-            {
-                var length = await envelope.RawMessage.ReadAsync(bufferMemory).ConfigureAwait(false);
+            int chunkIndex = 0;
 
+            var readBytesCount = await envelope.RawMessage.ReadAsync(bufferMemory).ConfigureAwait(false);
+
+            while (readBytesCount > 0)
+            {
                 var chunkEnvelope = CreateChunkEnvelope(
-                    i,
+                    chunkIndex,
                     chunksCount,
-                    bufferMemory.Slice(0, length).ToArray(),
+                    bufferMemory.Slice(0, readBytesCount).ToArray(),
                     envelope);
 
-                if (i > 0)
+                if (chunkIndex > 0)
                     chunkEnvelope.Headers.AddOrReplace(DefaultMessageHeaders.FirstChunkOffset, firstChunkOffset?.Value);
+
+                // Read the next chunk and check if we were at the end of the stream (to not rely on Length property)
+                readBytesCount = await envelope.RawMessage.ReadAsync(bufferMemory).ConfigureAwait(false);
+
+                if (readBytesCount == 0)
+                    chunkEnvelope.Headers.AddOrReplace(DefaultMessageHeaders.IsLastChunk, true.ToString());
 
                 yield return chunkEnvelope;
 
-                if (i == 0)
+                // Read and store the offset of the first chunk, after it has been produced (after yield return)
+                if (chunkIndex == 0)
                     firstChunkOffset = chunkEnvelope.Offset;
+
+                chunkIndex++;
             }
         }
 
         private static IOutboundEnvelope CreateChunkEnvelope(
             in int chunkIndex,
-            in int chunksCount,
+            in int? chunksCount,
             byte[] rawContent,
             IOutboundEnvelope originalEnvelope)
         {
-            var messageChunk = new OutboundEnvelope(
+            var envelope = new OutboundEnvelope(
                 originalEnvelope.Message,
                 originalEnvelope.Headers,
                 originalEnvelope.Endpoint,
@@ -90,13 +93,12 @@ namespace Silverback.Messaging.Sequences.Chunking
                 RawMessage = new MemoryStream(rawContent)
             };
 
-            messageChunk.Headers.AddOrReplace(DefaultMessageHeaders.ChunkIndex, chunkIndex);
-            messageChunk.Headers.AddOrReplace(DefaultMessageHeaders.ChunksCount, chunksCount);
+            envelope.Headers.AddOrReplace(DefaultMessageHeaders.ChunkIndex, chunkIndex);
 
-            if (chunkIndex == chunksCount - 1)
-                messageChunk.Headers.AddOrReplace(DefaultMessageHeaders.IsLastChunk, true.ToString());
+            if (chunksCount != null)
+                envelope.Headers.AddOrReplace(DefaultMessageHeaders.ChunksCount, chunksCount);
 
-            return messageChunk;
+            return envelope;
         }
     }
 }
