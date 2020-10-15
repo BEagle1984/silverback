@@ -1,12 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.IO;
-using System.Text;
-using FluentAssertions;
-using Silverback.Messaging.Sequences.Chunking;
-using Xunit;
-
 namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 {
     public class ChunkStreamTests

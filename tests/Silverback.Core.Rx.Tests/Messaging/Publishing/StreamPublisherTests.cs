@@ -225,12 +225,9 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 
             var tasks = await streamPublisher.PublishAsync(streamProvider);
 
-            var pushTasks = new[]
-            {
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne())
-            };
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
 
             Func<Task> act = async () => await await Task.WhenAny(tasks);
 
@@ -265,12 +262,9 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 
             var tasks = await streamPublisher.PublishAsync(streamProvider);
 
-            var pushTasks = new[]
-            {
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne())
-            };
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
 
             var whenAnyTask = await Task.WhenAny(tasks);
 

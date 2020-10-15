@@ -2,16 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using RabbitMQ.Client;
-using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Xunit;
 

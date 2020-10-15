@@ -12,7 +12,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Sequences.Batching;
+using Silverback.Messaging.Sequences.Batch;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;

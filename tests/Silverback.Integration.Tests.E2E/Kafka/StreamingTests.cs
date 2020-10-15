@@ -78,7 +78,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(15);
         }
 
-
         [Fact]
         public async Task Streaming_UnboundedObservable_MessagesReceived()
         {
@@ -109,13 +108,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 observable.Subscribe(
                                     message =>
                                     {
-                                        // AsyncTestingUtil.Wait(
-                                        //     () => DefaultTopic.GetCommittedOffsetsCount("consumer1") >=
-                                        //           receivedMessages.Count,
-                                        //     1000);
-                                        //
-                                        // DefaultTopic.GetCommittedOffsetsCount("consumer1")
-                                        //     .Should().Be(receivedMessages.Count);
+                                        DefaultTopic.GetCommittedOffsetsCount("consumer1")
+                                            .Should().Be(receivedMessages.Count);
 
                                         receivedMessages.Add(message);
                                     })))

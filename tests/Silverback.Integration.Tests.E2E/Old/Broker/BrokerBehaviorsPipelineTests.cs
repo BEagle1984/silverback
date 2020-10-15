@@ -11,7 +11,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Sequences.Batching;
+using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -229,7 +229,6 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
-
 
         [Fact(Skip = "Deprecated")]
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]

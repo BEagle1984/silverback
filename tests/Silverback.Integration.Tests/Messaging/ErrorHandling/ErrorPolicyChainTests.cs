@@ -4,12 +4,9 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
@@ -60,7 +57,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     new InboundEnvelope(
                         rawMessage,
                         headers,
-                        null,
+                        new TestOffset(),
                         TestConsumerEndpoint.GetDefault(),
                         TestConsumerEndpoint.GetDefault().Name)),
                 new InvalidOperationException("test"));
@@ -94,7 +91,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     new InboundEnvelope(
                         rawMessage,
                         headers,
-                        null,
+                        new TestOffset(),
                         TestConsumerEndpoint.GetDefault(),
                         TestConsumerEndpoint.GetDefault().Name)),
                 new InvalidOperationException("test"));
@@ -135,7 +132,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     new InboundEnvelope(
                         rawMessage,
                         headers,
-                        null,
+                        new TestOffset(),
                         TestConsumerEndpoint.GetDefault(),
                         TestConsumerEndpoint.GetDefault().Name)),
                 new InvalidOperationException("test"));

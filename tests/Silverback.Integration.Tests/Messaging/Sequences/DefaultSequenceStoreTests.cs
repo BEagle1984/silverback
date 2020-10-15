@@ -3,8 +3,6 @@
 
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
@@ -155,7 +153,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
             store.HasPendingSequences.Should().BeFalse();
         }
 
-        private class FakeSequence : Sequence<IInboundEnvelope>
+        private sealed class FakeSequence : Sequence<IInboundEnvelope>
         {
             public FakeSequence(string sequenceId, bool isComplete, bool isAborted, ISequenceStore store)
                 : base(sequenceId, ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store))

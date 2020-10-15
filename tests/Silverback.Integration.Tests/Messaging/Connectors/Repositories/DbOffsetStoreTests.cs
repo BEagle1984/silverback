@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Messaging.Connectors.Repositories;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Database;
 using Silverback.Tests.Types;
 using Xunit;

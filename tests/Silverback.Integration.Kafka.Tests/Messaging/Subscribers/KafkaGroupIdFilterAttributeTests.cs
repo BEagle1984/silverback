@@ -2,19 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using FluentAssertions;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Encryption;
-using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Sequences;
-using Silverback.Messaging.Sequences.Batching;
-using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
@@ -32,7 +27,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
             var inboundEnvelope = new InboundEnvelope(
                 new MemoryStream(),
                 new List<MessageHeader>(),
-                null,
+                new TestOffset(),
                 new KafkaConsumerEndpoint("my-topic")
                 {
                     Configuration = new KafkaConsumerConfig
@@ -61,8 +56,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
             var inboundEnvelope = new InboundEnvelope(
                 new MemoryStream(),
                 new List<MessageHeader>(),
-                null,
-                new SomeConsumerEndpoint(),
+                new TestOffset(),
+                new SomeConsumerEndpoint("test"),
                 string.Empty);
 
             var result = new KafkaGroupIdFilterAttribute().MustProcess(inboundEnvelope);
@@ -70,31 +65,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
             result.Should().BeFalse();
         }
 
-        private class SomeConsumerEndpoint : IConsumerEndpoint
+        private class SomeConsumerEndpoint : ConsumerEndpoint
         {
-            public IMessageSerializer Serializer { get; } = new JsonMessageSerializer();
-
-            [SuppressMessage(
-                "ReSharper",
-                "UnassignedGetOnlyAutoProperty",
-                Justification = "Unused in this implementation, but declared in interface.")]
-            public EncryptionSettings? Encryption { get; }
-
-            public string Name { get; } = string.Empty;
-
-            public BatchSettings Batch { get; } = new BatchSettings();
-
-            public SequenceSettings Sequence { get; } = new SequenceSettings();
-
-            public IErrorPolicy? ErrorPolicy { get; set; } = null!;
-
-            public bool ThrowIfUnhandled { get; set; }
-
-            public void Validate()
+            public SomeConsumerEndpoint(string name)
+                : base(name)
             {
             }
 
-            public string GetUniqueConsumerGroupName() => Name;
+            public override string GetUniqueConsumerGroupName() => Name;
         }
     }
 }

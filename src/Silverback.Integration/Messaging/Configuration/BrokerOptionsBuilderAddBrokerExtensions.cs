@@ -15,7 +15,7 @@ using Silverback.Messaging.Inbound;
 using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Sequences;
-using Silverback.Messaging.Sequences.Batching;
+using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -89,13 +89,11 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingletonBrokerBehavior<SequencerProducerBehavior>()
                     .AddSingletonBrokerBehavior<SequencerConsumerBehavior>()
                     .AddSingletonBrokerBehavior<RawSequencerConsumerBehavior>()
+                    .AddSingletonSequenceWriter<ChunkSequenceWriter>()
+                    .AddSingletonSequenceReader<ChunkSequenceReader>()
+                    .AddTransientSequenceReader<BatchSequenceReader>()
                     .Services
-                    .AddTransient(typeof(ISequenceStore), typeof(DefaultSequenceStore))
-                    .AddSingleton<ISequenceWriter, ChunkSequenceWriter>()
-                    .AddSingleton<ISequenceReader, ChunkSequenceReader>()
-                    .AddTransient<ISequenceReader, BatchSequenceReader>();
-
-                // TODO: Create AddSingletonSequenceReader and AddSingletonSequenceWriter?
+                    .AddTransient(typeof(ISequenceStore), typeof(DefaultSequenceStore));
 
                 // Pipeline - Binary File
                 brokerOptionsBuilder.SilverbackBuilder

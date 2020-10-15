@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Sequences.Batching
+namespace Silverback.Messaging.Sequences.Batch
 {
     /// <summary>
     ///     Enables the batch processing creating a <see cref="BatchSequence" /> containing the configured number

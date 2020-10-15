@@ -10,7 +10,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
@@ -60,7 +59,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var envelope = new InboundEnvelope(
                 new MemoryStream(),
                 null,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name)
             {
@@ -87,7 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var envelope = new InboundEnvelope(
                 rawContent,
                 headers,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name)
             {
@@ -122,7 +121,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var envelope = new InboundEnvelope(
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name)
             {
@@ -152,7 +151,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var envelope = new InboundEnvelope(
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name)
             {
@@ -177,7 +176,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var policy = ErrorPolicy
                 .Move(TestProducerEndpoint.GetDefault())
-                .Transform((envelope, ex) => { envelope.Message = new TestEventTwo(); })
+                .Transform((originalEnvelope, ex) => { originalEnvelope.Message = new TestEventTwo(); })
                 .Build(_serviceProvider);
 
             var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("hey oh!"));
@@ -190,7 +189,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var envelope = new InboundEnvelope(
                 rawMessage,
                 headers,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
 
@@ -217,7 +216,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var envelope = new InboundEnvelope(
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
             envelope.Headers.Add("key", "value");
@@ -239,7 +238,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var envelope = new InboundEnvelope(
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
-                null,
+                new TestOffset(),
                 new TestConsumerEndpoint("source-endpoint"),
                 "source-endpoint")
             {

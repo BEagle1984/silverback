@@ -2,14 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
@@ -56,7 +54,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var inboundEnvelope = new InboundEnvelope(
                 rawMessage,
                 headers,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
 

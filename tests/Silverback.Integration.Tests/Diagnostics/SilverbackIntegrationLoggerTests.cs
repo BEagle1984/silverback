@@ -7,7 +7,6 @@ using System.IO;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -25,7 +24,7 @@ namespace Silverback.Tests.Integration.Diagnostics
             },
             new TestConsumerEndpoint("Test"),
             "TestActual",
-            null,
+            new TestOffset(),
             new Dictionary<string, string>
             {
                 ["offset-in"] = "9"
@@ -45,7 +44,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                 },
                 new TestConsumerEndpoint("Test"),
                 "TestActual",
-                null,
+                new TestOffset(),
                 new Dictionary<string, string>
                 {
                     ["offset-in"] = "9"
@@ -62,7 +61,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                 },
                 new TestConsumerEndpoint("Test"),
                 "TestActual",
-                null,
+                new TestOffset(),
                 new Dictionary<string, string>
                 {
                     ["offset-in"] = "10"

@@ -1,18 +1,18 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 {
-    public class ChunkSequenceReaderTests
+    public sealed class ChunkSequenceReaderTests : IDisposable
     {
         private readonly ISequenceStore _defaultSequenceStore = new DefaultSequenceStore();
 
@@ -160,6 +160,11 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
             var sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
 
             sequence.Should().BeNull();
+        }
+
+        public void Dispose()
+        {
+            _defaultSequenceStore.Dispose();
         }
     }
 }

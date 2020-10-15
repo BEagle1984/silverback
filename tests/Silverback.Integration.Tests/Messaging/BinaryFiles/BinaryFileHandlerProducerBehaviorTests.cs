@@ -10,7 +10,6 @@ using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Silverback.Tests.Types;
 using Xunit;

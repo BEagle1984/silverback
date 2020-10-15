@@ -7,7 +7,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Sequences.Batching
+namespace Silverback.Messaging.Sequences.Batch
 {
     /// <summary>
     ///     Represent an arbitrary sequence of messages created to consume unrelated messages in batch (see

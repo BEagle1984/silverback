@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -277,6 +278,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         }
 
         [Fact]
+        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task DeserializeAsync_EmptyMessage_BinaryFileWithEmptyContentReturned()
         {
             var (deserializedObject, type) = await new BinaryFileMessageSerializer()
@@ -330,6 +332,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         }
 
         [Fact]
+        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task DeserializeAsync_EmptyMessageWithHardcodedType_CustomBinaryFileReturned()
         {
             var headers = new MessageHeaderCollection();

@@ -134,7 +134,6 @@ namespace Silverback.Messaging.Messages
 
         private IEnumerable<TMessage> GetEnumerable()
         {
-            // TODO: Check this pattern!
             while (AsyncHelper.RunSynchronously(() => WaitForNextAsync(CancellationToken.None)))
             {
                 if (_current == null)

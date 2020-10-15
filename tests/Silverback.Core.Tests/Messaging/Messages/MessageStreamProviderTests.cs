@@ -161,7 +161,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             var pushTask1 = provider.PushAsync(1);
             var pushTask2 = provider.PushAsync(2);
-            var pushTask3 = provider.PushAsync(3);
+            provider.PushAsync(3).RunWithoutBlocking();
 
             enumerator1.MoveNext();
             enumerator2.MoveNext();
@@ -204,7 +204,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             var pushTask1 = provider.PushAsync(1);
             var pushTask2 = provider.PushAsync(2);
-            var pushTask3 = provider.PushAsync(3);
+            provider.PushAsync(3).RunWithoutBlocking();
 
             await enumerator1.MoveNextAsync();
             await enumerator2.MoveNextAsync();

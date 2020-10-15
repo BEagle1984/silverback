@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,7 +65,6 @@ namespace Silverback.Tests.Core.Util
 
             total.Should().Be(15);
         }
-
 
         [Fact]
         public async Task ParallelForEach_AsyncFunc_Enumerated()

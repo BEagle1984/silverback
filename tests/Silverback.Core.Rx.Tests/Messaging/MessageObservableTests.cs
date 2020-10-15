@@ -66,7 +66,7 @@ namespace Silverback.Tests.Core.Rx.Messaging
             await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted, 100);
             pushTask.IsCompleted.Should().BeFalse();
 
-            var subscribeTask = Task.Run(() => _observable.Subscribe(_ => count++));
+            Task.Run(() => _observable.Subscribe(_ => count++)).RunWithoutBlocking();
 
             await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
             pushTask.IsCompleted.Should().BeTrue();

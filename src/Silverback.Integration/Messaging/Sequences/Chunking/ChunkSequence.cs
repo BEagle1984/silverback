@@ -61,8 +61,8 @@ namespace Silverback.Messaging.Sequences.Chunking
         {
             if (_lastIndex == null && index != 0)
             {
-                throw new InvalidOperationException(
-                    $"Sequence error. Received chunk with index {index} as first chunk for the sequence {SequenceId}, expected index 0. "); // TODO: Use custom exception type?
+                throw new SequenceException($"Sequence error. Received chunk with index {index} as first " +
+                                            $"chunk for the sequence {SequenceId}, expected index 0. ");
             }
 
             if (_lastIndex != null && index == _lastIndex)
@@ -70,8 +70,8 @@ namespace Silverback.Messaging.Sequences.Chunking
 
             if (_lastIndex != null && index != _lastIndex + 1)
             {
-                throw new InvalidOperationException(
-                    $"Sequence error. Received chunk with index {index} after index {_lastIndex}."); // TODO: Use custom exception type?
+                throw new SequenceException($"Sequence error. Received chunk with index {index} after index " +
+                                            $"{_lastIndex}.");
             }
 
             _lastIndex = index;

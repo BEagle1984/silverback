@@ -6,14 +6,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox
 {
     /// <summary>
-    ///     An <see cref="IBroker" /> implementation that is used by the  <see cref="DeferredOutboundConnector"/> to write into the outbound queue.
+    ///     An <see cref="IBroker" /> implementation that is used by the <see cref="OutboxProduceStrategy" /> to
+    ///     write into the outbox.
     /// </summary>
     public class TransactionalOutboxBroker : Broker<IProducerEndpoint, IConsumerEndpoint>
     {
@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         ///     Initializes a new instance of the <see cref="TransactionalOutboxBroker" /> class.
         /// </summary>
         /// <param name="queueWriter">
-        ///     The <see cref="IOutboxWriter"/> to be used to write to the queue.
+        ///     The <see cref="IOutboxWriter" /> to be used to write to the queue.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.

@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Sequences;
 using Silverback.Tests.Types;
 
 namespace Silverback.Tests.Integration.TestTypes

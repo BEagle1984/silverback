@@ -4,11 +4,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Silverback.Tests.Types;
 using Silverback.Util;

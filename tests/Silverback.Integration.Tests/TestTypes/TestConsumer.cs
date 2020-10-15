@@ -10,7 +10,6 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
 using Silverback.Util;
@@ -75,7 +74,12 @@ namespace Silverback.Tests.Integration.TestTypes
             if (!IsConnected)
                 throw new InvalidOperationException("The consumer is not ready.");
 
-            await HandleMessageAsync(rawMessage, headers, "test-topic", offset, null);
+            await HandleMessageAsync(
+                rawMessage,
+                headers,
+                "test-topic",
+                offset ?? new TestOffset(),
+                null);
         }
 
         protected override void ConnectCore()

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Sequences;
 
 namespace Silverback.Tests.Integration.TestTypes
 {

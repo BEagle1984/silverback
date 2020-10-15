@@ -68,7 +68,6 @@ namespace Silverback.Messaging.Messages
         /// </summary>
         public void Abort()
         {
-            // ReSharper disable once InconsistentlySynchronizedField
             _streams.ParallelForEach(stream => stream.Abort());
         }
 
@@ -83,7 +82,6 @@ namespace Silverback.Messaging.Messages
         /// </returns>
         public async Task CompleteAsync(CancellationToken cancellationToken = default)
         {
-            // ReSharper disable once InconsistentlySynchronizedField
             await _streams.ParallelForEachAsync(stream => stream.CompleteAsync(cancellationToken))
                 .ConfigureAwait(false);
         }

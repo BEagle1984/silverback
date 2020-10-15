@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 
 namespace Silverback.Messaging.Outbound.Routing
 {
@@ -14,7 +15,7 @@ namespace Silverback.Messaging.Outbound.Routing
         /// <summary>
         ///     Gets the endpoints that are potentially targeted by this router. This collection could be built over
         ///     time in case of a dynamic <see cref="IOutboundRouter" /> but that will prevent the
-        ///     <see cref="OutboundQueueWorker" /> to work properly and it's not optimal as it used for example by the
+        ///     <see cref="IOutboxWorker" /> to work properly and it's not optimal as it used for example by the
         ///     health checks to ping all possible endpoints.
         /// </summary>
         IEnumerable<IProducerEndpoint> Endpoints { get; }

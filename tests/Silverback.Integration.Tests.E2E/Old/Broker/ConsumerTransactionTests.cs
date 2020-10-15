@@ -12,7 +12,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Sequences.Batching;
+using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
@@ -25,8 +25,6 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
         [Fact(Skip = "Deprecated")]
         public async Task MultipleMessages_EachOffsetCommitted()
         {
-            var committedOffsets = new List<IOffset>();
-
             var message = new TestEventOne { Content = "Hello E2E!" };
 
             var serviceProvider = Host.ConfigureServices(
@@ -61,8 +59,6 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
         [Fact(Skip = "Deprecated")]
         public async Task BatchConsuming_BatchCommittedAtOnce()
         {
-            var committedOffsets = new List<IOffset>();
-
             var message = new TestEventOne { Content = "Hello E2E!" };
 
             var serviceProvider = Host.ConfigureServices(
@@ -104,9 +100,6 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
         [Fact(Skip = "Deprecated")]
         public async Task WithFailuresAndRetryPolicy_OffsetCommitted()
         {
-            var committedOffsets = new List<IOffset>();
-            var rolledBackOffsets = new List<IOffset>();
-
             var message = new TestEventOne { Content = "Hello E2E!" };
             var tryCount = 0;
 

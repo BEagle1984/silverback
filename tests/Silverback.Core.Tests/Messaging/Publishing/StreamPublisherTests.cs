@@ -84,10 +84,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                                 Interlocked.Increment(ref receivedEnumeratedStreams);
                             })
                         .AddDelegateSubscriber(
-                            async (List<TestEventOne> list) =>
-                            {
-                                Interlocked.Increment(ref receivedEnumeratedStreams);
-                            })));
+                            (List<TestEventOne> list) => { Interlocked.Increment(ref receivedEnumeratedStreams); })));
 
             var streamProvider = new MessageStreamProvider<IEvent>();
 
@@ -201,12 +198,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var tasks = streamPublisher.Publish(streamProvider);
 
-            var pushTasks = new[]
-            {
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne())
-            };
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
 
             await AsyncTestingUtil.WaitAsync(() => received >= 5);
 
@@ -244,12 +238,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var tasks = await streamPublisher.PublishAsync(streamProvider);
 
-            var pushTasks = new[]
-            {
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne())
-            };
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
 
             Func<Task> act = async () => await await Task.WhenAny(tasks);
 
@@ -285,12 +276,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var tasks = await streamPublisher.PublishAsync(streamProvider);
 
-            var pushTasks = new[]
-            {
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne())
-            };
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
 
             var whenAnyTask = await Task.WhenAny(tasks);
 

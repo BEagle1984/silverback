@@ -3,7 +3,7 @@
 
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Sequences;
-using Silverback.Messaging.Sequences.Batching;
+using Silverback.Messaging.Sequences.Batch;
 
 namespace Silverback.Messaging
 {

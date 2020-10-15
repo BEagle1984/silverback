@@ -5,7 +5,6 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.HealthChecks;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Xunit;

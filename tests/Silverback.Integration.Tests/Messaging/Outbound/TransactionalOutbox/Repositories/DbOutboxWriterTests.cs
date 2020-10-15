@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Database;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
-using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Database;
 using Silverback.Tests.Integration.TestTypes.Domain;
 using Silverback.Tests.Types;

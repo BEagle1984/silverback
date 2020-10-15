@@ -24,6 +24,7 @@ namespace Silverback.Messaging.Serialization
 
         /// <inheritdoc cref="JsonMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
+        [SuppressMessage("", "CA2000", Justification = "MemoryStream is returend")]
         public override ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,

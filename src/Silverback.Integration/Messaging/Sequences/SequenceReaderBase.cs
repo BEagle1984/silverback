@@ -38,7 +38,7 @@ namespace Silverback.Messaging.Sequences
         {
             Check.NotNull(context, nameof(context));
 
-            string? sequenceId = GetSequenceId(context);
+            string sequenceId = GetSequenceId(context);
             bool isNewSequence = IsNewSequence(context);
 
             if (string.IsNullOrEmpty(sequenceId))
