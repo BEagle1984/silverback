@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
 {
@@ -57,13 +56,13 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         protected new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
 
-        /// <inheritdoc cref="Consumer.Commit(IReadOnlyCollection{IOffset})" />
-        public override Task Commit(IReadOnlyCollection<IOffset> offsets) =>
-            CommitCore(offsets.Cast<TOffset>().ToList());
+        /// <inheritdoc cref="Consumer.CommitAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IOffset})" />
+        public override Task CommitAsync(IReadOnlyCollection<IOffset> offsets) =>
+            CommitCoreAsync(offsets.Cast<TOffset>().ToList());
 
-        /// <inheritdoc cref="Consumer.Rollback(IReadOnlyCollection{IOffset})" />
-        public override Task Rollback(IReadOnlyCollection<IOffset> offsets) =>
-            RollbackCore(offsets.Cast<TOffset>().ToList());
+        /// <inheritdoc cref="Consumer.RollbackAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IOffset})" />
+        public override Task RollbackAsync(IReadOnlyCollection<IOffset> offsets) =>
+            RollbackCoreAsync(offsets.Cast<TOffset>().ToList());
 
         /// <summary>
         ///     <param>
@@ -80,7 +79,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected abstract Task CommitCore(IReadOnlyCollection<TOffset> offsets);
+        protected abstract Task CommitCoreAsync(IReadOnlyCollection<TOffset> offsets);
 
         /// <summary>
         ///     <param>
@@ -97,6 +96,6 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected abstract Task RollbackCore(IReadOnlyCollection<TOffset> offsets);
+        protected abstract Task RollbackCoreAsync(IReadOnlyCollection<TOffset> offsets);
     }
 }

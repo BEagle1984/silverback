@@ -39,13 +39,13 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        protected override Task CommitCore(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> offsets)
         {
             AcknowledgeCount += offsets.Count;
             return Task.CompletedTask;
         }
 
-        protected override Task RollbackCore(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> offsets)
         {
             // Nothing to do
             return Task.CompletedTask;

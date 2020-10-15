@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
 
         public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Consumer.Publisher - 1;
 
-        public Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             lock (_outboundEnvelopes)
             {
@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
             return next(context);
         }
 
-        public Task Handle(
+        public Task HandleAsync(
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
         {

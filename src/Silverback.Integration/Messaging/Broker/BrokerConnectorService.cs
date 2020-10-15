@@ -77,9 +77,10 @@ namespace Silverback.Messaging.Broker
                     _applicationLifetime.ApplicationStarted.Register(
                         async () => await ConnectAsync(stoppingToken).ConfigureAwait(false));
                     return Task.CompletedTask;
+                case BrokerConnectionMode.Manual:
+                default:
+                    return Task.CompletedTask;
             }
-
-            return Task.CompletedTask;
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]

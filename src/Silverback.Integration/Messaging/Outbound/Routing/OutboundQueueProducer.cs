@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
@@ -23,7 +22,7 @@ namespace Silverback.Messaging.Outbound.Routing
         ///     Initializes a new instance of the <see cref="OutboundQueueProducer" /> class.
         /// </summary>
         /// <param name="queueWriter">
-        ///     The <see cref="IOutboxWriter"/> to be used to write to the queue.
+        ///     The <see cref="IOutboxWriter" /> to be used to write to the queue.
         /// </param>
         /// <param name="broker">
         ///     The <see cref="IBroker" /> that instantiated this producer.

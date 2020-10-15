@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker
         public async Task<IOffset?> PublishAsync(byte[]? message, IEnumerable<MessageHeader> headers)
         {
             var offset = new InMemoryOffset(Name, NextOffset);
-            await _consumers.ForEachAsync(consumer => consumer.Receive(message, headers, offset))
+            await _consumers.ForEachAsync(consumer => consumer.ReceiveAsync(message, headers, offset))
                 .ConfigureAwait(false);
 
             NextOffset++;

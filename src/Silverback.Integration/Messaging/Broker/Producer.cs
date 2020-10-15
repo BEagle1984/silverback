@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
@@ -79,7 +80,8 @@ namespace Silverback.Messaging.Broker
                             return Task.CompletedTask;
                         }));
 
-        /// <inheritdoc cref="IProducer.RawProduce(byte[]?,IReadOnlyCollection{MessageHeader}?)" />
+        /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?)" />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
             => Produce(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint));
 
@@ -101,7 +103,8 @@ namespace Silverback.Messaging.Broker
                         await ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
                 }).ConfigureAwait(false);
 
-        /// <inheritdoc cref="IProducer.RawProduceAsync(byte[]?,IReadOnlyCollection{MessageHeader}?)" />
+        /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
             => ProduceAsync(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint));
 
@@ -149,7 +152,7 @@ namespace Silverback.Messaging.Broker
         {
             if (_behaviors.Count > 0 && stepIndex < _behaviors.Count)
             {
-                await _behaviors[stepIndex].Handle(
+                await _behaviors[stepIndex].HandleAsync(
                         context,
                         nextContext => ExecutePipelineAsync(nextContext, finalAction, stepIndex + 1))
                     .ConfigureAwait(false);

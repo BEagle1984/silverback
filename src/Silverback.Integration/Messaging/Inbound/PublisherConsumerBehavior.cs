@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,8 +40,8 @@ namespace Silverback.Messaging.Inbound
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Publisher;
 
-        /// <inheritdoc cref="IConsumerBehavior.Handle" />
-        public async Task Handle(
+        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+        public async Task HandleAsync(
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
         {
@@ -78,6 +79,7 @@ namespace Silverback.Messaging.Inbound
             await next(context).ConfigureAwait(false);
         }
 
+        /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
             _unboundedSequence?.Dispose();
@@ -97,13 +99,9 @@ namespace Silverback.Messaging.Inbound
             // TODO: Force throwIfUnhandled
 
             context.ProcessingTask = await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);
-
-            // CheckStreamProcessing(
-            //     await publisher.PublishAsync(sequence.StreamProvider)
-            //         .ConfigureAwait(false),
-            //     sequence);
         }
 
+        [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
         private static async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context)
         {
             var publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
@@ -116,7 +114,7 @@ namespace Silverback.Messaging.Inbound
                     try
                     {
                         using var cancellationTokenSource = new CancellationTokenSource();
-                        var tasks = processingTasks.Select(task => task.CancelOnException(cancellationTokenSource))
+                        var tasks = processingTasks.Select(task => task.CancelOnExceptionAsync(cancellationTokenSource))
                             .ToList();
 
                         // TODO: Test whether an exception really cancels all tasks

@@ -20,7 +20,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
     public class BinaryFileHandlerConsumerBehaviorTests
     {
         [Fact]
-        public async Task Handle_BinaryFileMessage_BinaryFileMessageReturned()
+        public async Task HandleAsync_BinaryFileMessage_BinaryFileMessageReturned()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new[]
@@ -35,7 +35,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 new TestOffset());
 
             IRawInboundEnvelope? result = null;
-            await new BinaryFileHandlerConsumerBehavior().Handle(
+            await new BinaryFileHandlerConsumerBehavior().HandleAsync(
                 new ConsumerPipelineContext(
                     envelope,
                     Substitute.For<IConsumer>(),
@@ -53,7 +53,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         }
 
         [Fact]
-        public async Task Handle_NoBinaryFileHeaders_EnvelopeUntouched()
+        public async Task HandleAsync_NoBinaryFileHeaders_EnvelopeUntouched()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var envelope = new RawInboundEnvelope(
@@ -64,7 +64,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 new TestOffset());
 
             IRawInboundEnvelope? result = null;
-            await new BinaryFileHandlerConsumerBehavior().Handle(
+            await new BinaryFileHandlerConsumerBehavior().HandleAsync(
                 new ConsumerPipelineContext(
                     envelope,
                     Substitute.For<IConsumer>(),
@@ -80,7 +80,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         }
 
         [Fact]
-        public async Task Handle_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
+        public async Task HandleAsync_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new[]
@@ -97,7 +97,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 new TestOffset());
 
             IRawInboundEnvelope? result = null;
-            await new BinaryFileHandlerConsumerBehavior().Handle(
+            await new BinaryFileHandlerConsumerBehavior().HandleAsync(
                 new ConsumerPipelineContext(
                     envelope,
                     Substitute.For<IConsumer>(),

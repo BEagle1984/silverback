@@ -25,6 +25,6 @@ namespace Silverback.Messaging.HealthChecks
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
         ///     boolean value indicating whether the check is successful.
         /// </returns>
-        Task<bool> CheckIsHealthy(TimeSpan? maxAge = null, int? maxQueueLength = null);
+        Task<bool> CheckIsHealthyAsync(TimeSpan? maxAge = null, int? maxQueueLength = null);
     }
 }

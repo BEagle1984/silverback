@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers

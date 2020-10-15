@@ -225,7 +225,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
 
-            await policy.HandleError(
+            await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),
                 new ArgumentNullException());
 

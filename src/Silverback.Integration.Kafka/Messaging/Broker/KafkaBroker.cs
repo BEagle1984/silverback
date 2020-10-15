@@ -5,7 +5,6 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
 {

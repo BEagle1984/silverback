@@ -4,6 +4,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -29,6 +30,7 @@ namespace Silverback.Messaging.Sequences.Chunking
         }
 
         /// <inheritdoc cref="ISequenceWriter.ProcessMessage" />
+        [SuppressMessage("ReSharper", "ASYNC0001", Justification = "False positive")]
         public async IAsyncEnumerable<IOutboundEnvelope> ProcessMessage(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));

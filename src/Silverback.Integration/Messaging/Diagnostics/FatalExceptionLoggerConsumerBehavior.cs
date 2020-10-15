@@ -29,8 +29,8 @@ namespace Silverback.Messaging.Diagnostics
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.FatalExceptionLogger;
 
-        /// <inheritdoc cref="IConsumerBehavior.Handle" />
-        public async Task Handle(
+        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+        public async Task HandleAsync(
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
         {

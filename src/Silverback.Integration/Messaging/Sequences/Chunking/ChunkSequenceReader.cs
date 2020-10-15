@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -11,7 +10,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Sequences.Chunking
 {
     /// <summary>
-    ///     Handles the chunked messages.
+    ///     Creates a <see cref="ChunkSequence" /> containing all the chunks of the original message.
     /// </summary>
     public class ChunkSequenceReader : SequenceReaderBase
     {

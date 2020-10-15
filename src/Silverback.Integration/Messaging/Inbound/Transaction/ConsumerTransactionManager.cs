@@ -71,7 +71,7 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             // TODO: At least once is ok? (Consider that the DbContext might have been committed already.
             await _transactionalServices.ForEachAsync(service => service.CommitAsync()).ConfigureAwait(false);
-            await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
+            await _context.Consumer.CommitAsync(_context.Offsets).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IConsumerTransactionManager.RollbackAsync" />
@@ -92,9 +92,9 @@ namespace Silverback.Messaging.Inbound.Transaction
             finally
             {
                 if (commitOffsets)
-                    await _context.Consumer.Commit(_context.Offsets).ConfigureAwait(false);
+                    await _context.Consumer.CommitAsync(_context.Offsets).ConfigureAwait(false);
                 else
-                    await _context.Consumer.Rollback(_context.Offsets).ConfigureAwait(false);
+                    await _context.Consumer.RollbackAsync(_context.Offsets).ConfigureAwait(false);
             }
         }
 

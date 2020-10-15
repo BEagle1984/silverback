@@ -12,8 +12,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.Outbound.Routing
 {
     /// <summary>
-    ///     Produces the <see cref="IOutboundEnvelope{TMessage}" /> through the correct
-    ///     <see cref="IOutboundConnector" />.
+    ///     Produces the <see cref="IOutboundEnvelope{TMessage}" /> using the <see cref="IProduceStrategy" />
+    ///     configured in the endpoint.
     /// </summary>
     public class ProduceBehavior : IBehavior, ISorted
     {
@@ -34,8 +34,8 @@ namespace Silverback.Messaging.Outbound.Routing
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => IntegrationBehaviorsSortIndexes.OutboundProducer;
 
-        /// <inheritdoc cref="IBehavior.Handle" />
-        public async Task<IReadOnlyCollection<object>> Handle(
+        /// <inheritdoc cref="IBehavior.HandleAsync" />
+        public async Task<IReadOnlyCollection<object>> HandleAsync(
             IReadOnlyCollection<object> messages,
             MessagesHandler next)
         {
@@ -48,24 +48,6 @@ namespace Silverback.Messaging.Outbound.Routing
                 .ConfigureAwait(false);
 
             return await next(messages).ConfigureAwait(false);
-        }
-
-        private static TConnector GetConnectorInstance<TConnector>(
-            IReadOnlyCollection<TConnector> connectors,
-            Type? connectorType)
-            where TConnector : class
-        {
-            Check.NotEmpty(connectors, nameof(connectors));
-
-            if (connectorType == null)
-            {
-                return connectors.First();
-            }
-
-            return connectors.FirstOrDefault(connector => connector.GetType() == connectorType) ??
-                   connectors.FirstOrDefault(connector => connectorType.IsInstanceOfType(connector)) ??
-                   throw new InvalidOperationException(
-                       $"No instance of {connectorType.Name} could be found in the collection of available connectors.");
         }
     }
 }

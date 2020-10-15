@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers

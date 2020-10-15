@@ -3,4 +3,10 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Silverback.Tests.Core.Rx")]
+[assembly: InternalsVisibleTo("Silverback.Integration.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Integration.Configuration.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Integration.Kafka.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Integration.RabbitMQ.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Integration.Newtonsoft")]
+[assembly: InternalsVisibleTo("Silverback.Tests.Performance")]
+[assembly: InternalsVisibleTo("Silverback.Tests.Common.Integration")]

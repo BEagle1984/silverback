@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Sequences
         /// <param name="sequenceReaders">
         ///     The <see cref="ISequenceReader" /> implementations to be used.
         /// </param>
-        public SequencerConsumerBehaviorBase(IEnumerable<ISequenceReader> sequenceReaders)
+        protected SequencerConsumerBehaviorBase(IEnumerable<ISequenceReader> sequenceReaders)
         {
             _sequenceReaders = sequenceReaders.SortBySortIndex().ToList();
         }
@@ -38,8 +38,8 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISorted.SortIndex" />
         public abstract int SortIndex { get; }
 
-        /// <inheritdoc cref="IConsumerBehavior.Handle" />
-        public async Task Handle(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+        public async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -73,24 +73,18 @@ namespace Silverback.Messaging.Sequences
         }
 
         /// <summary>
-        /// Forwards the new sequence to the next behavior in the pipeline.
+        ///     Forwards the new sequence to the next behavior in the pipeline.
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="next"></param>
-        /// <returns></returns>
+        /// <param name="context">
+        ///     The context that is passed along the behaviors pipeline.
+        /// </param>
+        /// <param name="next">
+        ///     The next behavior in the pipeline.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
         protected abstract Task PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next);
-
-        // TODO: Implement FirstOrDefaultAsync
-        private async Task<ISequenceReader?> GetSequenceReaderAsync(ConsumerPipelineContext context)
-        {
-            foreach (var reader in _sequenceReaders)
-            {
-                if (await reader.CanHandleAsync(context).ConfigureAwait(false))
-                    return reader;
-            }
-
-            return null;
-        }
 
         private static void MonitorProcessingTaskPrematureCompletion(Task processingTask, ISequence sequence)
         {
@@ -118,6 +112,18 @@ namespace Silverback.Messaging.Sequences
                             .ConfigureAwait(false);
                     }
                 });
+        }
+
+        // TODO: Implement FirstOrDefaultAsync
+        private async Task<ISequenceReader?> GetSequenceReaderAsync(ConsumerPipelineContext context)
+        {
+            foreach (var reader in _sequenceReaders)
+            {
+                if (await reader.CanHandleAsync(context).ConfigureAwait(false))
+                    return reader;
+            }
+
+            return null;
         }
     }
 }

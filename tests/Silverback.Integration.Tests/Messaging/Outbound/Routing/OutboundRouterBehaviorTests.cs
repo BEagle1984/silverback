@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
-        public static IEnumerable<object[]> Handle_MultipleMessages_CorrectlyRoutedToEndpoints_TestData =>
+        public static IEnumerable<object[]> HandleAsync_MultipleMessages_CorrectlyRoutedToEndpoints_TestData =>
             new[]
             {
                 new object[] { new TestEventOne(), new[] { "allMessages", "allEvents", "eventOne" } },
@@ -68,8 +68,8 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             };
 
         [Theory]
-        [MemberData(nameof(Handle_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]
-        public async Task Handle_MultipleMessages_CorrectlyRoutedToStaticEndpoint(
+        [MemberData(nameof(HandleAsync_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]
+        public async Task HandleAsync_MultipleMessages_CorrectlyRoutedToStaticEndpoint(
             IIntegrationMessage message,
             string[] expectedEndpointNames)
         {
@@ -82,7 +82,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             _routingConfiguration.Add<TestEventTwo>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventTwo")));
 
-            await _behavior.Handle(new[] { message }, Task.FromResult!);
+            await _behavior.HandleAsync(new[] { message }, Task.FromResult!);
 
             foreach (var expectedEndpointName in expectedEndpointNames)
             {
@@ -102,76 +102,76 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
         }
 
         [Fact]
-        public async Task Handle_Message_CorrectlyRouted()
+        public async Task HandleAsync_Message_CorrectlyRouted()
         {
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
-            await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
+            await _behavior.HandleAsync(new[] { new TestEventOne() }, Task.FromResult!);
 
             _broker.ProducedMessages.Should().HaveCount(1);
         }
 
         [Fact]
-        public async Task Handle_Messages_RoutedMessageIsFiltered()
+        public async Task HandleAsync_Messages_RoutedMessageIsFiltered()
         {
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             var messages =
-                await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
+                await _behavior.HandleAsync(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
 
             messages.Should().HaveCount(1);
             messages.First().Should().NotBeOfType<TestEventOne>();
         }
 
         [Fact]
-        public async Task Handle_Messages_RoutedMessageIsRepublishedWithoutAutoUnwrap()
+        public async Task HandleAsync_Messages_RoutedMessageIsRepublishedWithoutAutoUnwrap()
         {
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
-            await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
+            await _behavior.HandleAsync(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
 
             _testSubscriber.ReceivedMessages.Should().HaveCount(0); // Because TestSubscriber discards the envelopes
         }
 
         [Fact]
-        public async Task Handle_MessagesWithPublishToInternBusOption_RoutedMessageIsFiltered()
+        public async Task HandleAsync_MessagesWithPublishToInternBusOption_RoutedMessageIsFiltered()
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             var messages =
-                await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
+                await _behavior.HandleAsync(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
 
             messages.Should().HaveCount(1);
             messages.First().Should().NotBeOfType<TestEventOne>();
         }
 
         [Fact]
-        public async Task Handle_MessagesWithPublishToInternBusOption_RoutedMessageIsRepublishedWithAutoUnwrap()
+        public async Task HandleAsync_MessagesWithPublishToInternBusOption_RoutedMessageIsRepublishedWithAutoUnwrap()
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
-            await _behavior.Handle(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
+            await _behavior.HandleAsync(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
 
             _testSubscriber.ReceivedMessages.Should().HaveCount(1);
             _testSubscriber.ReceivedMessages.First().Should().BeOfType<TestEventOne>();
         }
 
         [Fact]
-        public async Task Handle_OutboundEnvelopeWithPublishToInternBusOption_OutboundEnvelopeIsNotFiltered()
+        public async Task HandleAsync_OutboundEnvelopeWithPublishToInternBusOption_OutboundEnvelopeIsNotFiltered()
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
             var messages =
-                await _behavior.Handle(
+                await _behavior.HandleAsync(
                     new object[]
                     {
                         new OutboundEnvelope<TestEventOne>(
@@ -185,7 +185,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
         }
 
         [Fact]
-        public async Task Handle_UnhandledMessageType_CorrectlyRelayed()
+        public async Task HandleAsync_UnhandledMessageType_CorrectlyRelayed()
         {
             /* Test for possible issue similar to #33: messages don't have to be registered with HandleMessagesOfType
              * to be relayed */
@@ -194,22 +194,22 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             _routingConfiguration.Add<SomeUnhandledMessage>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
-            await _behavior.Handle(new[] { message }, Task.FromResult!);
+            await _behavior.HandleAsync(new[] { message }, Task.FromResult!);
 
             _broker.ProducedMessages.Should().HaveCount(1);
         }
 
         [Fact]
-        public async Task Handle_MultipleRoutesToMultipleBrokers_CorrectlyRelayed()
+        public async Task HandleAsync_MultipleRoutesToMultipleBrokers_CorrectlyRelayed()
         {
             _routingConfiguration
                 .Add<TestEventOne>(_ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")))
                 .Add<TestEventTwo>(_ => new StaticOutboundRouter(new TestOtherProducerEndpoint("eventTwo")))
                 .Add<TestEventThree>(_ => new StaticOutboundRouter(new TestProducerEndpoint("eventThree")));
 
-            await _behavior.Handle(new[] { new TestEventOne() }, Task.FromResult!);
-            await _behavior.Handle(new[] { new TestEventThree(), }, Task.FromResult!);
-            await _behavior.Handle(new[] { new TestEventTwo() }, Task.FromResult!);
+            await _behavior.HandleAsync(new[] { new TestEventOne() }, Task.FromResult!);
+            await _behavior.HandleAsync(new[] { new TestEventThree(), }, Task.FromResult!);
+            await _behavior.HandleAsync(new[] { new TestEventTwo() }, Task.FromResult!);
 
             _broker.ProducedMessages.Should().HaveCount(2);
             _otherBroker.ProducedMessages.Should().HaveCount(1);

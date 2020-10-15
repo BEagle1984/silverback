@@ -25,7 +25,7 @@ namespace Silverback.Background
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     acquired <see cref="DistributedLock" /> (or <c>null</c> if no lock was actually acquired).
         /// </returns>
-        Task<DistributedLock?> Acquire(DistributedLockSettings settings, CancellationToken cancellationToken = default);
+        Task<DistributedLock?> AcquireAsync(DistributedLockSettings settings, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Returns a boolean value indicating whether the specified lock is taken already.
@@ -37,7 +37,7 @@ namespace Silverback.Background
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
         ///     boolean value indicating whether the lock is taken.
         /// </returns>
-        Task<bool> CheckIsStillLocked(DistributedLockSettings settings);
+        Task<bool> CheckIsStillLockedAsync(DistributedLockSettings settings);
 
         /// <summary>
         ///     Called periodically after the lock has been acquired to send an heartbeat that keeps the lock.
@@ -49,7 +49,7 @@ namespace Silverback.Background
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
         ///     boolean value indicating whether the lock could be refreshed.
         /// </returns>
-        Task<bool> SendHeartbeat(DistributedLockSettings settings);
+        Task<bool> SendHeartbeatAsync(DistributedLockSettings settings);
 
         /// <summary>
         ///     Releases the lock.
@@ -60,6 +60,6 @@ namespace Silverback.Background
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Release(DistributedLockSettings settings);
+        Task ReleaseAsync(DistributedLockSettings settings);
     }
 }

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Util;
@@ -65,7 +64,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     </para>
         /// </summary>
         /// <typeparam name="TOutbox">
-        ///     The type implementing both the <see cref="IOutboxWriter" /> and the <see cref="IOutboxReader" /> interfaces.
+        ///     The type implementing both the <see cref="IOutboxWriter" /> and the <see cref="IOutboxReader" />
+        ///     interfaces.
         /// </typeparam>
         /// <param name="brokerOptionsBuilder">
         ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -22,7 +23,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             Check.NotNull(parameterType, nameof(parameterType));
 
             return parameterType.IsGenericType &&
-                   parameterType.GetGenericTypeDefinition() == typeof(Messages.IMessageStreamObservable<>);
+                   parameterType.GetGenericTypeDefinition() == typeof(IMessageStreamObservable<>);
         }
 
         /// <inheritdoc cref="IMessageArgumentResolver.GetMessageType" />
@@ -47,6 +48,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
                 .Invoke(this, new object[] { streamProvider.CreateStream(targetMessageType) });
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via Reflection")]
         private static IMessageStreamObservable<TMessage> CreateObservable<TMessage>(
             IMessageStreamEnumerable<TMessage> enumerable) =>
             new MessageStreamObservable<TMessage>(enumerable);

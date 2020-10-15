@@ -4,7 +4,6 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Util;
 
@@ -33,6 +32,5 @@ namespace Silverback.Messaging.Configuration
             if (!SilverbackBuilder.Services.ContainsAny<BrokerConnectionOptions>())
                 this.WithConnectionOptions(new BrokerConnectionOptions());
         }
-
     }
 }

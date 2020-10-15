@@ -125,10 +125,10 @@ namespace Silverback.Messaging.Sequences
         ///     enumeration returned prematurely.
         /// </summary>
         /// <param name="reason">
-        ///     The reason of the abort.
+        ///     The abort reason.
         /// </param>
         /// <param name="exception">
-        ///     The exception that caused the abort.
+        ///     The exception that caused the abort, if an exception was thrown.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.

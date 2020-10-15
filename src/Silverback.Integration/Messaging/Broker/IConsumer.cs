@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Commit(IOffset offset);
+        Task CommitAsync(IOffset offset);
 
         /// <summary>
         ///     <param>
@@ -67,7 +67,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Commit(IReadOnlyCollection<IOffset> offsets);
+        Task CommitAsync(IReadOnlyCollection<IOffset> offsets);
 
         /// <summary>
         ///     <param>
@@ -84,7 +84,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Rollback(IOffset offset);
+        Task RollbackAsync(IOffset offset);
 
         /// <summary>
         ///     <param>
@@ -101,7 +101,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Rollback(IReadOnlyCollection<IOffset> offsets);
+        Task RollbackAsync(IReadOnlyCollection<IOffset> offsets);
 
         /// <summary>
         ///     Connects and starts consuming.
@@ -121,7 +121,7 @@ namespace Silverback.Messaging.Broker
         ///     each Kafka partition, since they may be processed concurrently.
         /// </param>
         /// <returns>
-        ///     The <see cref="ISequenceStore" />
+        ///     The <see cref="ISequenceStore" />.
         /// </returns>
         ISequenceStore GetSequenceStore(IOffset offset);
 

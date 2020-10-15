@@ -23,12 +23,12 @@ namespace Silverback.Messaging.Encryption
         {
         }
 
-        /// <inheritdoc cref="SymmetricCryptoMessageTransformer.Transform" />
-        protected override async Task<Stream> Transform(Stream message, SymmetricAlgorithm algorithm)
+        /// <inheritdoc cref="SymmetricCryptoMessageTransformer.TransformAsync(System.IO.Stream,System.Security.Cryptography.SymmetricAlgorithm)" />
+        protected override async Task<Stream> TransformAsync(Stream message, SymmetricAlgorithm algorithm)
         {
             // TODO: Support streaming (don't read the entire stream)
 
-            var encryptedMessage = await base.Transform(message, algorithm).ConfigureAwait(false);
+            var encryptedMessage = await base.TransformAsync(message, algorithm).ConfigureAwait(false);
 
             if (Settings.InitializationVector != null)
                 return encryptedMessage;

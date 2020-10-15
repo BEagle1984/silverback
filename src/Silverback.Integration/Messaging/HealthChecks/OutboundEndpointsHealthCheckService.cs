@@ -46,9 +46,9 @@ namespace Silverback.Messaging.HealthChecks
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         }
 
-        /// <inheritdoc cref="IOutboundEndpointsHealthCheckService.PingAllEndpoints" />
+        /// <inheritdoc cref="IOutboundEndpointsHealthCheckService.PingAllEndpointsAsync" />
         [SuppressMessage("", "CA1031", Justification = "Exception is returned")]
-        public async Task<IReadOnlyCollection<EndpointCheckResult>> PingAllEndpoints()
+        public async Task<IReadOnlyCollection<EndpointCheckResult>> PingAllEndpointsAsync()
         {
             if (!_brokerCollection.All(broker => broker.IsConnected))
                 return Array.Empty<EndpointCheckResult>();
@@ -56,13 +56,13 @@ namespace Silverback.Messaging.HealthChecks
             var tasks =
                 _outboundRoutingConfiguration.Routes.SelectMany(
                     route =>
-                        route.GetOutboundRouter(_serviceProvider).Endpoints.Select(PingEndpoint));
+                        route.GetOutboundRouter(_serviceProvider).Endpoints.Select(PingEndpointAsync));
 
             return await Task.WhenAll(tasks).ConfigureAwait(false);
         }
 
         [SuppressMessage("", "CA1031", Justification = "Exception reported in the result.")]
-        private async Task<EndpointCheckResult> PingEndpoint(IProducerEndpoint endpoint)
+        private async Task<EndpointCheckResult> PingEndpointAsync(IProducerEndpoint endpoint)
         {
             try
             {

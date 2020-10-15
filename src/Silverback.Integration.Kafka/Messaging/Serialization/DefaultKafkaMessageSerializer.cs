@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,6 +30,7 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
         public ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -36,6 +38,7 @@ namespace Silverback.Messaging.Serialization
             _serializer.SerializeAsync(message, messageHeaders, context);
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
         public ValueTask<(object?, Type)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,

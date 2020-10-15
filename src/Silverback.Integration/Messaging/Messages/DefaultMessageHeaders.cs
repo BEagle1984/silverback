@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     The message chunk index, used when chunking is enabled.
         /// </summary>
-        public const string ChunkIndex = "x-chunk-id";
+        public const string ChunkIndex = "x-chunk-index";
 
         /// <summary>
         ///     The total number of chunks the message was split into, used when chunking is enabled.

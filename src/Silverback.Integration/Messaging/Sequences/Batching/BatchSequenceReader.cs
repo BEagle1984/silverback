@@ -1,13 +1,18 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences.Batching
 {
-    public class BatchSequenceReader : SequenceReaderBase, ISorted
+    /// <summary>
+    ///     Enables the batch processing creating a <see cref="BatchSequence" /> containing the configured number
+    ///     of messages.
+    /// </summary>
+    public sealed class BatchSequenceReader : SequenceReaderBase, ISorted, IDisposable
     {
         private BatchSequence? _currentSequence;
 
@@ -22,6 +27,12 @@ namespace Silverback.Messaging.Sequences.Batching
             bool isBatchEnabled = context.Envelope.Endpoint.Batch != null && context.Envelope.Endpoint.Batch.Size > 1;
 
             return Task.FromResult(isBatchEnabled);
+        }
+
+        /// <inheritdoc cref="IDisposable.Dispose" />
+        public void Dispose()
+        {
+            _currentSequence?.Dispose();
         }
 
         /// <inheritdoc cref="SequenceReaderBase.GetSequenceId" />

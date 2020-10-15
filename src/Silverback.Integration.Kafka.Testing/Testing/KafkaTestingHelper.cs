@@ -66,7 +66,6 @@ namespace Silverback.Testing
                         .ConfigureAwait(false);
                 }
                 while (await _outboxReader.GetLengthAsync().ConfigureAwait(false) > 0); // Loop until the outbox is empty since the consumers may produce new messages
-
             }
             catch (OperationCanceledException)
             {

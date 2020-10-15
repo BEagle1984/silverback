@@ -29,20 +29,20 @@ namespace Silverback.Messaging.Encryption
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Decryptor;
 
-        /// <inheritdoc cref="IConsumerBehavior.Handle" />
-        public async Task Handle(
+        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+        public async Task HandleAsync(
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            context.Envelope = await Decrypt(context.Envelope).ConfigureAwait(false);
+            context.Envelope = await DecryptAsync(context.Envelope).ConfigureAwait(false);
 
             await next(context).ConfigureAwait(false);
         }
 
-        private async Task<IRawInboundEnvelope> Decrypt(IRawInboundEnvelope envelope)
+        private async Task<IRawInboundEnvelope> DecryptAsync(IRawInboundEnvelope envelope)
         {
             if (envelope.Endpoint.Encryption != null &&
                 !envelope.Headers.Contains(DefaultMessageHeaders.Decrypted))

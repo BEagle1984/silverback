@@ -4,7 +4,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -17,21 +16,15 @@ namespace Silverback.Messaging.Outbound.Routing
 
         public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>
             _implementation ??= new DefaultProduceStrategyImplementation(
-                serviceProvider.GetRequiredService<IBrokerCollection>(),
-                serviceProvider.GetRequiredService<ILogger<DefaultProduceStrategy>>());
+                serviceProvider.GetRequiredService<IBrokerCollection>());
 
         private class DefaultProduceStrategyImplementation : IProduceStrategyImplementation
         {
             private readonly IBrokerCollection _brokerCollection;
 
-            private readonly ILogger<DefaultProduceStrategy> _logger;
-
-            public DefaultProduceStrategyImplementation(
-                IBrokerCollection brokerCollection,
-                ILogger<DefaultProduceStrategy> logger)
+            public DefaultProduceStrategyImplementation(IBrokerCollection brokerCollection)
             {
                 _brokerCollection = brokerCollection;
-                _logger = logger;
             }
 
             public Task ProduceAsync(IOutboundEnvelope envelope)

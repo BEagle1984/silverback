@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 Message = "hey oh!"
             };
 
-            await policy.HandleError(
+            await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
                 new InvalidOperationException("test"));
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
@@ -99,7 +99,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 }
             };
 
-            await policy.HandleError(
+            await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
                 new InvalidOperationException("test"));
 
@@ -134,7 +134,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 }
             };
 
-            await policy.HandleError(
+            await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
                 new InvalidOperationException("test"));
 
@@ -163,7 +163,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     { "key2", "value2" }
                 }
             };
-            await policy.HandleError(
+            await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
                 new InvalidOperationException("test"));
 
@@ -194,7 +194,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
 
-            await policy.HandleError(
+            await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
                 new InvalidOperationException("test"));
 
@@ -222,7 +222,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 TestConsumerEndpoint.GetDefault().Name);
             envelope.Headers.Add("key", "value");
 
-            await policy.HandleError(
+            await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
                 new InvalidOperationException("test"));
 
@@ -251,7 +251,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 }
             };
 
-            await policy.HandleError(
+            await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
                 new InvalidOperationException("test"));
 

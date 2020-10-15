@@ -80,17 +80,17 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.IsConnected" />
         public bool IsConnected { get; private set; }
 
-        /// <inheritdoc cref="IConsumer.Commit(IOffset)" />
-        public Task Commit(IOffset offset) => Commit(new[] { offset });
+        /// <inheritdoc cref="IConsumer.CommitAsync(IOffset)" />
+        public Task CommitAsync(IOffset offset) => CommitAsync(new[] { offset });
 
-        /// <inheritdoc cref="IConsumer.Commit(IReadOnlyCollection{IOffset})" />
-        public abstract Task Commit(IReadOnlyCollection<IOffset> offsets);
+        /// <inheritdoc cref="IConsumer.CommitAsync(IReadOnlyCollection{IOffset})" />
+        public abstract Task CommitAsync(IReadOnlyCollection<IOffset> offsets);
 
-        /// <inheritdoc cref="IConsumer.Rollback(IOffset)" />
-        public Task Rollback(IOffset offset) => Rollback(new[] { offset });
+        /// <inheritdoc cref="IConsumer.RollbackAsync(IOffset)" />
+        public Task RollbackAsync(IOffset offset) => RollbackAsync(new[] { offset });
 
-        /// <inheritdoc cref="IConsumer.Rollback(IReadOnlyCollection{IOffset})" />
-        public abstract Task Rollback(IReadOnlyCollection<IOffset> offsets);
+        /// <inheritdoc cref="IConsumer.RollbackAsync(IReadOnlyCollection{IOffset})" />
+        public abstract Task RollbackAsync(IReadOnlyCollection<IOffset> offsets);
 
         /// <inheritdoc cref="IConsumer.Connect" />
         public void Connect()
@@ -207,7 +207,7 @@ namespace Silverback.Messaging.Broker
         /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         [SuppressMessage("", "CA2000", Justification = "Context is disposed by the TransactionHandler")]
-        protected virtual async Task HandleMessage(
+        protected virtual async Task HandleMessageAsync(
             byte[]? message,
             IReadOnlyCollection<MessageHeader> headers,
             string sourceEndpointName,
@@ -266,7 +266,7 @@ namespace Silverback.Messaging.Broker
             if (_behaviors.Count == 0 || stepIndex >= _behaviors.Count)
                 return;
 
-            await _behaviors[stepIndex].Handle(
+            await _behaviors[stepIndex].HandleAsync(
                     context,
                     nextContext => ExecutePipelineAsync(nextContext, stepIndex + 1))
                 .ConfigureAwait(false);

@@ -25,6 +25,7 @@ namespace Silverback.Messaging.BinaryFiles
 
         /// <inheritdoc cref="BinaryFileMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
         public ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
@@ -53,6 +54,7 @@ namespace Silverback.Messaging.BinaryFiles
         }
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
         public ValueTask<(object?, Type)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,

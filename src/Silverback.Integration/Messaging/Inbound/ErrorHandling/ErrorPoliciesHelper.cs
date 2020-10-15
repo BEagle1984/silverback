@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 return false;
 
             return await errorPolicyImplementation
-                .HandleError(context, exception)
+                .HandleErrorAsync(context, exception)
                 .ConfigureAwait(false);
         }
     }

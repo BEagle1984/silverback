@@ -22,6 +22,6 @@ namespace Silverback.Messaging
         ///     Gets the strategy to be used to produce the messages. If no strategy is specified, the
         ///     messages will be sent to the message broker directly.
         /// </summary>
-        IProduceStrategy? Strategy { get; }
+        IProduceStrategy Strategy { get; }
     }
 }

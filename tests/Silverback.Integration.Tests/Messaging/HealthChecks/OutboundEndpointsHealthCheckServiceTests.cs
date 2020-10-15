@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 new BrokerCollection(new[] { broker }),
                 Substitute.For<IServiceProvider>());
 
-            await service.PingAllEndpoints();
+            await service.PingAllEndpointsAsync();
 
             await producer1.ReceivedWithAnyArgs(1).ProduceAsync((PingMessage?)null);
             await producer2.ReceivedWithAnyArgs(1).ProduceAsync((PingMessage?)null);
@@ -96,7 +96,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 new BrokerCollection(new[] { broker }),
                 Substitute.For<IServiceProvider>());
 
-            var results = await service.PingAllEndpoints();
+            var results = await service.PingAllEndpointsAsync();
 
             results.ForEach(r => r.IsSuccessful.Should().BeTrue());
         }
@@ -135,7 +135,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 new BrokerCollection(new[] { broker }),
                 Substitute.For<IServiceProvider>());
 
-            var results = (await service.PingAllEndpoints()).ToList();
+            var results = (await service.PingAllEndpointsAsync()).ToList();
 
             results[0].EndpointName.Should().Be("endpoint1");
             results[0].IsSuccessful.Should().BeTrue();

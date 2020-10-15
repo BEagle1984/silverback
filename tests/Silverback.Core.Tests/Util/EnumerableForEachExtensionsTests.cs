@@ -74,7 +74,7 @@ namespace Silverback.Tests.Core.Util
             var enumerable = Enumerable.Range(1, 5);
 
             var total = 0;
-            await enumerable.ParallelForEach(
+            await enumerable.ParallelForEachAsync(
                 async i =>
                 {
                     await Task.Delay(1);

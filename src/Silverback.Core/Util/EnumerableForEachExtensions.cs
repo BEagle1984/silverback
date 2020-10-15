@@ -52,7 +52,7 @@ namespace Silverback.Util
                 action);
 
         // http://blog.briandrupieski.com/throttling-asynchronous-methods-in-csharp
-        public static Task ParallelForEach<T>(
+        public static Task ParallelForEachAsync<T>(
             this IEnumerable<T> source,
             Func<T, Task> action,
             int? maxDegreeOfParallelism = null) =>

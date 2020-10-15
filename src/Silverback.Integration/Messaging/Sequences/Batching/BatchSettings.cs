@@ -4,7 +4,7 @@
 using System;
 using Silverback.Messaging.Configuration;
 
-namespace Silverback.Messaging.Batch
+namespace Silverback.Messaging.Sequences.Batching
 {
     /// <summary>
     ///     The batch consuming settings. To enable batch consuming just set the <c>Size</c> property to a value

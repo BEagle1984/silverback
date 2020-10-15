@@ -21,7 +21,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             queue.GetLengthAsync().Returns(100);
             var service = new OutboundQueueHealthCheckService(queue);
 
-            var result = await service.CheckIsHealthy();
+            var result = await service.CheckIsHealthyAsync();
 
             result.Should().BeTrue();
         }
@@ -35,7 +35,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             queue.GetLengthAsync().Returns(currentLength);
             var service = new OutboundQueueHealthCheckService(queue);
 
-            var result = await service.CheckIsHealthy(maxQueueLength: 100);
+            var result = await service.CheckIsHealthyAsync(maxQueueLength: 100);
 
             result.Should().Be(expected);
         }
@@ -50,7 +50,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             queue.GetMaxAgeAsync().Returns(TimeSpan.FromSeconds(currentMaxAgeInSeconds));
             var service = new OutboundQueueHealthCheckService(queue);
 
-            var result = await service.CheckIsHealthy();
+            var result = await service.CheckIsHealthyAsync();
 
             result.Should().Be(expected);
         }
@@ -65,7 +65,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             queue.GetMaxAgeAsync().Returns(TimeSpan.FromSeconds(currentMaxAgeInSeconds));
             var service = new OutboundQueueHealthCheckService(queue);
 
-            var result = await service.CheckIsHealthy(TimeSpan.FromMinutes(2));
+            var result = await service.CheckIsHealthyAsync(TimeSpan.FromMinutes(2));
 
             result.Should().Be(expected);
         }

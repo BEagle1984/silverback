@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Messages
         public InboundEnvelope(
             Stream? rawMessage,
             IEnumerable<MessageHeader>? headers,
-            IOffset? offset,
+            IOffset offset,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
             IDictionary<string, string>? additionalLogData = null,

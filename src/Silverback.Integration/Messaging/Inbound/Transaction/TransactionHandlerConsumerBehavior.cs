@@ -35,9 +35,9 @@ namespace Silverback.Messaging.Inbound.Transaction
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.TransactionHandler;
 
-        /// <inheritdoc cref="IConsumerBehavior.Handle" />
+        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
         [SuppressMessage("", "CA2000", Justification = "ServiceScope is disposed while disposing the Context")]
-        public async Task Handle(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        public async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -78,7 +78,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        private async Task HandleSequenceAsync(ConsumerPipelineContext context, ISequence sequence)
+        private static async Task HandleSequenceAsync(ConsumerPipelineContext context, ISequence sequence)
         {
             // This is the first message in the sequence, start another thread to await the sequence completion
             // and perform the commit or rollback
@@ -105,6 +105,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                 context.Dispose();
         }
 
+        [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
         private static async Task AwaitSequenceProcessingAsync(ConsumerPipelineContext context, ISequence sequence)
         {
             try

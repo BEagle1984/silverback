@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -19,25 +18,25 @@ namespace Silverback.Messaging.BinaryFiles
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.BinaryFileHandler;
 
-        /// <inheritdoc cref="IConsumerBehavior.Handle" />
-        public async Task Handle(
+        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+        public async Task HandleAsync(
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            context.Envelope = await Handle(context.Envelope).ConfigureAwait(false);
+            context.Envelope = await HandleAsync(context.Envelope).ConfigureAwait(false);
 
             await next(context).ConfigureAwait(false);
         }
 
-        private static async Task<IRawInboundEnvelope> Handle(IRawInboundEnvelope envelope)
+        private static async Task<IRawInboundEnvelope> HandleAsync(IRawInboundEnvelope envelope)
         {
             if (envelope.Endpoint.Serializer is BinaryFileMessageSerializer ||
-                (envelope.Endpoint.Serializer.GetType().IsGenericType &&
+                envelope.Endpoint.Serializer.GetType().IsGenericType &&
                 envelope.Endpoint.Serializer.GetType().GetGenericTypeDefinition() ==
-                typeof(BinaryFileMessageSerializer<>)))
+                typeof(BinaryFileMessageSerializer<>))
             {
                 return envelope;
             }

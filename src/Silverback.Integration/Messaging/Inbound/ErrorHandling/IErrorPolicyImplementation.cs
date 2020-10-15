@@ -43,6 +43,6 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         ///     boolean flag indicating whether the error was handled. If <c>false</c> is returned the exception will
         ///     be rethrown and the consumer will stop.
         /// </returns>
-        Task<bool> HandleError(ConsumerPipelineContext context, Exception exception);
+        Task<bool> HandleErrorAsync(ConsumerPipelineContext context, Exception exception);
     }
 }

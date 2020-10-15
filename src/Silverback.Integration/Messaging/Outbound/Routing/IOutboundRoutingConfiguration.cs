@@ -47,10 +47,6 @@ namespace Silverback.Messaging.Outbound.Routing
         ///     The factory method to be used to get the instance of <see cref="IOutboundRouter" /> to be used to
         ///     determine the destination endpoint.
         /// </param>
-        /// <param name="outboundConnectorType">
-        ///     The type of the <see cref="IOutboundConnector" /> to be used. If <c>null</c>, the default
-        ///     <see cref="IOutboundConnector" /> will be used.
-        /// </param>
         /// <returns>
         ///     The <see cref="IOutboundRoutingConfiguration" /> so that additional calls can be chained.
         /// </returns>

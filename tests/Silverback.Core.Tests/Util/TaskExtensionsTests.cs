@@ -21,7 +21,7 @@ namespace Silverback.Tests.Core.Util
             using var cts = new CancellationTokenSource();
 
             var task1 = SuccessTask(cts.Token);
-            var task2 = FailingTask(cts.Token).CancelOnException(cts);
+            var task2 = FailingTask(cts.Token).CancelOnExceptionAsync(cts);
 
             Func<Task> act = () => Task.WhenAll(task1, task2);
 
@@ -49,7 +49,7 @@ namespace Silverback.Tests.Core.Util
             using var cts = new CancellationTokenSource();
 
             var task1 = SuccessTask(cts.Token);
-            var task2 = FailingTask(cts.Token).CancelOnException(cts);
+            var task2 = FailingTask(cts.Token).CancelOnExceptionAsync(cts);
 
             Func<Task> act = () => Task.WhenAll(task1, task2);
 

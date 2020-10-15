@@ -99,14 +99,14 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 _logger = logger;
             }
 
-            protected override async Task<bool> ApplyPolicy(ConsumerPipelineContext context, Exception exception)
+            protected override async Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
             {
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
 
                 await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
 
-                await ApplyDelay(context.Envelope).ConfigureAwait(false);
+                await ApplyDelayAsync(context.Envelope).ConfigureAwait(false);
 
                 _logger.LogInformationWithMessageInfo(
                     IntegrationEventIds.RetryMessageProcessing,
@@ -116,7 +116,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 return true;
             }
 
-            private async Task ApplyDelay(IRawInboundEnvelope envelope)
+            private async Task ApplyDelayAsync(IRawInboundEnvelope envelope)
             {
                 var delay = (int)_initialDelay.TotalMilliseconds +
                             (envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) *

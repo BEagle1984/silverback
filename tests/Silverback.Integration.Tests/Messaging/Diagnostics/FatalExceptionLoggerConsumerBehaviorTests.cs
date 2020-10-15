@@ -21,7 +21,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
     public class FatalExceptionLoggerConsumerBehaviorTests
     {
         [Fact]
-        public async Task Handle_ExceptionThrown_ExceptionLogged()
+        public async Task HandleAsync_ExceptionThrown_ExceptionLogged()
         {
             var logger = new LoggerSubstitute<FatalExceptionLoggerConsumerBehavior>();
             var integrationLogger = new SilverbackIntegrationLogger<FatalExceptionLoggerConsumerBehavior>(
@@ -37,7 +37,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 
             try
             {
-                await new FatalExceptionLoggerConsumerBehavior(integrationLogger).Handle(
+                await new FatalExceptionLoggerConsumerBehavior(integrationLogger).HandleAsync(
                     new ConsumerPipelineContext(
                         rawEnvelope,
                         Substitute.For<IConsumer>(),
@@ -54,7 +54,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         }
 
         [Fact]
-        public void Handle_ExceptionThrown_ExceptionRethrown()
+        public void HandleAsync_ExceptionThrown_ExceptionRethrown()
         {
             var logger = new SilverbackIntegrationLogger<FatalExceptionLoggerConsumerBehavior>(
                 new LoggerSubstitute<FatalExceptionLoggerConsumerBehavior>(),
@@ -66,7 +66,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 TestConsumerEndpoint.GetDefault().Name,
                 new TestOffset());
 
-            Func<Task> act = () => new FatalExceptionLoggerConsumerBehavior(logger).Handle(
+            Func<Task> act = () => new FatalExceptionLoggerConsumerBehavior(logger).HandleAsync(
                 new ConsumerPipelineContext(
                     rawEnvelope,
                     Substitute.For<IConsumer>(),

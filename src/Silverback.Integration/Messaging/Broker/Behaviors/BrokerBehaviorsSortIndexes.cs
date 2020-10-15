@@ -21,6 +21,8 @@ namespace Silverback.Messaging.Broker.Behaviors
     [SuppressMessage("", "CA1034", Justification = Justifications.AllowedForConstants)]
     public static class BrokerBehaviorsSortIndexes
     {
+        // TODO: Review comments and indexes
+
         /// <summary>
         ///     Contains the sort index constants of the producer behaviors added by Silverback.Integration.
         /// </summary>
@@ -94,16 +96,6 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int CustomHeadersMapper = 120;
 
             /// <summary>
-            ///     The <see cref="ServiceScopeFactoryConsumerBehavior" /> sort index.
-            /// </summary>
-            //public const int ServiceScopeFactory = 200;
-
-            // /// <summary>
-            // ///     The <see cref="ErrorHandlerConsumerBehavior" /> sort index.
-            // /// </summary>
-            // public const int ErrorHandler = 220;
-
-            /// <summary>
             ///     The <see cref="TransactionHandlerConsumerBehavior" /> sort index.
             /// </summary>
             public const int TransactionHandler = 250;
@@ -114,19 +106,9 @@ namespace Silverback.Messaging.Broker.Behaviors
             public const int RawSequencer = 260;
 
             /// <summary>
-            ///     The <see cref="ProcessingTaskStarterConsumerBehavior" /> sort index.
-            /// </summary>
-            public const int ProcessingTaskStarter = 300;
-
-            /// <summary>
             ///     The <see cref="ExactlyOnceGuardConsumerBehavior" /> sort index.
             /// </summary>
             public const int ExactlyOnceGuard = 350;
-
-            /// <summary>
-            ///     The <see cref="ChunksAggregatorConsumerBehavior" /> sort index.
-            /// </summary>
-            //public const int ChunksAggregator = 510;
 
             /// <summary>
             ///     The <see cref="DecryptorConsumerBehavior" /> sort index.
@@ -152,11 +134,6 @@ namespace Silverback.Messaging.Broker.Behaviors
             ///     The <see cref="SequencerConsumerBehavior" /> sort index.
             /// </summary>
             public const int Sequencer = 900;
-
-            /// <summary>
-            ///     The <see cref="StreamPublisherConsumerBehavior" /> sort index.
-            /// </summary>
-            //public const int StreamPublisher = 2000;
 
             /// <summary>
             ///     The <see cref="PublisherConsumerBehavior" /> sort index.

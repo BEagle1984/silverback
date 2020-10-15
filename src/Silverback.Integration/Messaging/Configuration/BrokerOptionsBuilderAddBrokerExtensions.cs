@@ -94,15 +94,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingleton<ISequenceWriter, ChunkSequenceWriter>()
                     .AddSingleton<ISequenceReader, ChunkSequenceReader>()
                     .AddTransient<ISequenceReader, BatchSequenceReader>();
-                // TODO: Create AddSingletonSequenceReader and AddSingletonSequenceWriter?
 
-                // Pipeline - Chunking
-                // brokerOptionsBuilder.SilverbackBuilder
-                //     .AddSingletonBrokerBehavior<ChunkSplitterProducerBehavior>()
-                //     .AddSingletonBrokerBehavior<ChunksAggregatorConsumerBehavior>()
-                //     .AddSingletonSubscriber<ChunksAggregatorConsumerBehavior>()
-                //     .Services
-                //     .AddScoped<ChunkAggregator>();
+                // TODO: Create AddSingletonSequenceReader and AddSingletonSequenceWriter?
 
                 // Pipeline - Binary File
                 brokerOptionsBuilder.SilverbackBuilder
@@ -117,7 +110,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>()
                     .AddSingletonBrokerBehavior<TransactionHandlerConsumerBehavior>()
-                    //.AddSingletonBrokerBehavior<ProcessingTaskStarterConsumerBehavior>()
                     .AddSingletonBrokerBehavior<ExactlyOnceGuardConsumerBehavior>()
                     .AddTransientBrokerBehavior<PublisherConsumerBehavior>();
             }

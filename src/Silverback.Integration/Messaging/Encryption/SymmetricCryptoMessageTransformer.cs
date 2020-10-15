@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Encryption
                 return message;
 
             using var algorithm = CreateSymmetricAlgorithm();
-            return await Transform(message, algorithm).ConfigureAwait(false);
+            return await TransformAsync(message, algorithm).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Encryption
         /// <returns>
         ///     The cipher message.
         /// </returns>
-        protected virtual async Task<Stream> Transform(Stream message, SymmetricAlgorithm algorithm)
+        protected virtual async Task<Stream> TransformAsync(Stream message, SymmetricAlgorithm algorithm)
         {
             // TODO: Properly support streaming (don't read all) and test it
 

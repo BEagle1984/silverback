@@ -89,7 +89,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     testPolicy)
                 .Build(_serviceProvider);
 
-            chain.HandleError(
+            chain.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(
                     new InboundEnvelope(
                         rawMessage,
@@ -130,7 +130,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var chain = ErrorPolicy.Chain(policies)
                 .Build(_serviceProvider);
 
-            chain.HandleError(
+            chain.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(
                     new InboundEnvelope(
                         rawMessage,

@@ -78,7 +78,7 @@ namespace Silverback.Messaging.Subscribers
                 return new MethodInvocationResult(messages);
 
             var unhandledReturnValues =
-                await _returnValueHandler.HandleReturnValues(returnValues, executeAsync)
+                await _returnValueHandler.HandleReturnValuesAsync(returnValues, executeAsync)
                     .ConfigureAwait(false);
 
             return new MethodInvocationResult(messages, unhandledReturnValues);
@@ -243,13 +243,13 @@ namespace Silverback.Messaging.Subscribers
                     () =>
                     {
                         var result = (Task)methodInfo.Invoke(target, parameters);
-                        return result.GetReturnValue();
+                        return result.GetReturnValueAsync();
                     })
                 : methodInfo.Invoke(target, parameters);
 
         private static Task<object?> InvokeAsync(object target, MethodInfo methodInfo, object?[] parameters) =>
             methodInfo.ReturnsTask()
-                ? ((Task)methodInfo.Invoke(target, parameters)).GetReturnValue()
+                ? ((Task)methodInfo.Invoke(target, parameters)).GetReturnValueAsync()
                 : Task.FromResult((object?)methodInfo.Invoke(target, parameters));
 
         private static Task InvokeWithoutBlockingAsync(

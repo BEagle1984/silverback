@@ -11,7 +11,7 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
     {
         public int SortIndex => int.MaxValue;
 
-        public Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             context.Envelope.Headers.Remove(DefaultMessageHeaders.MessageType);
 

@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 _logger = logger;
             }
 
-            protected override async Task<bool> ApplyPolicy(ConsumerPipelineContext context, Exception exception)
+            protected override async Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
             {
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));

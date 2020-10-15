@@ -58,7 +58,7 @@ namespace Silverback.Messaging.Sequences
         /// <returns>
         ///     The recognized sequence identifier, or <c>null</c>.
         /// </returns>
-        protected virtual string? GetSequenceId(ConsumerPipelineContext context)
+        protected virtual string GetSequenceId(ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 

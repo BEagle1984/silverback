@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Messages
 {
@@ -15,8 +14,5 @@ namespace Silverback.Messaging.Messages
     /// </typeparam>
     public interface IMessageStreamObservable<out TMessage> : IObservable<TMessage>
     {
-        void Subscribe(IObserver<TMessage> observer);
-
-        Task SubscribeAsync(IObserver<TMessage> observer);
     }
 }

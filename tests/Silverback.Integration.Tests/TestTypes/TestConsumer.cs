@@ -75,7 +75,7 @@ namespace Silverback.Tests.Integration.TestTypes
             if (!IsConnected)
                 throw new InvalidOperationException("The consumer is not ready.");
 
-            await HandleMessage(rawMessage, headers, "test-topic", offset, null);
+            await HandleMessageAsync(rawMessage, headers, "test-topic", offset, null);
         }
 
         protected override void ConnectCore()
@@ -86,13 +86,13 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        protected override Task CommitCore(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> offsets)
         {
             AcknowledgeCount += offsets.Count;
             return Task.CompletedTask;
         }
 
-        protected override Task RollbackCore(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> offsets)
         {
             // Nothing to do
             return Task.CompletedTask;

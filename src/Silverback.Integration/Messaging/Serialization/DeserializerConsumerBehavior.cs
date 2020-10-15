@@ -1,8 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -18,20 +16,20 @@ namespace Silverback.Messaging.Serialization
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Deserializer;
 
-        /// <inheritdoc cref="IConsumerBehavior.Handle" />
-        public async Task Handle(
+        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+        public async Task HandleAsync(
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            context.Envelope = await Deserialize(context.Envelope).ConfigureAwait(false);
+            context.Envelope = await DeserializeAsync(context.Envelope).ConfigureAwait(false);
 
             await next(context).ConfigureAwait(false);
         }
 
-        private static async Task<IRawInboundEnvelope> Deserialize(IRawInboundEnvelope envelope)
+        private static async Task<IRawInboundEnvelope> DeserializeAsync(IRawInboundEnvelope envelope)
         {
             if (envelope is IInboundEnvelope inboundEnvelope && inboundEnvelope.Message != null)
                 return envelope;

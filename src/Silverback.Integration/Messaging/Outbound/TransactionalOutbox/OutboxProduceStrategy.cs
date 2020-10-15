@@ -12,9 +12,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
 {
     /// <summary>
     ///     The messages are stored in a the transactional outbox table. The operation is therefore included in
-    ///     database
-    ///     transaction used to update the data. The <see cref="IOutboxWorker" /> takes care of asynchronously
-    ///     sending the messages to the message broker.
+    ///     database transaction used to update the data. The <see cref="IOutboxWorker" /> takes care of
+    ///     asynchronously sending the messages to the message broker.
     /// </summary>
     public class OutboxProduceStrategy : IProduceStrategy
     {

@@ -19,8 +19,8 @@ namespace Silverback.Messaging.Behaviors
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;
 
-        /// <inheritdoc cref="IProducerBehavior.Handle" />
-        public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
+        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Behaviors
             await next(context).ConfigureAwait(false);
         }
 
-        private string GetKafkaKey(ProducerPipelineContext context)
+        private static string GetKafkaKey(ProducerPipelineContext context)
         {
             string? kafkaKeyHeaderValue = context.Envelope.Headers.GetValue(KafkaMessageHeaders.KafkaMessageKey);
             if (kafkaKeyHeaderValue != null)

@@ -4,7 +4,6 @@
 using System;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;

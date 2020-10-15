@@ -20,7 +20,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
     public class BinaryFileHandlerProducerBehaviorTests
     {
         [Fact]
-        public async Task Handle_BinaryFileMessage_RawContentProduced()
+        public async Task HandleAsync_BinaryFileMessage_RawContentProduced()
         {
             var message = new BinaryFileMessage
             {
@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var envelope = new OutboundEnvelope(message, null, TestProducerEndpoint.GetDefault());
 
             IOutboundEnvelope? result = null;
-            await new BinaryFileHandlerProducerBehavior().Handle(
+            await new BinaryFileHandlerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(
                     envelope,
                     Substitute.For<IProducer>(),
@@ -45,7 +45,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         }
 
         [Fact]
-        public async Task Handle_InheritedBinaryFileMessage_RawContentProduced()
+        public async Task HandleAsync_InheritedBinaryFileMessage_RawContentProduced()
         {
             var message = new InheritedBinaryFileMessage
             {
@@ -54,7 +54,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var envelope = new OutboundEnvelope(message, null, TestProducerEndpoint.GetDefault());
 
             IOutboundEnvelope? result = null;
-            await new BinaryFileHandlerProducerBehavior().Handle(
+            await new BinaryFileHandlerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(
                     envelope,
                     Substitute.For<IProducer>(),
@@ -70,7 +70,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         }
 
         [Fact]
-        public async Task Handle_NonBinaryFileMessage_EnvelopeUntouched()
+        public async Task HandleAsync_NonBinaryFileMessage_EnvelopeUntouched()
         {
             var message = new BinaryFileMessage
             {
@@ -81,7 +81,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var envelope = new OutboundEnvelope(message, null, endpoint);
 
             IOutboundEnvelope? result = null;
-            await new BinaryFileHandlerProducerBehavior().Handle(
+            await new BinaryFileHandlerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(
                     envelope,
                     Substitute.For<IProducer>(),
@@ -97,7 +97,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         }
 
         [Fact]
-        public async Task Handle_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
+        public async Task HandleAsync_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
         {
             var message = new TestEventOne
             {
@@ -106,7 +106,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var envelope = new OutboundEnvelope(message, null, TestProducerEndpoint.GetDefault());
 
             IOutboundEnvelope? result = null;
-            await new BinaryFileHandlerProducerBehavior().Handle(
+            await new BinaryFileHandlerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(
                     envelope,
                     Substitute.For<IProducer>(),

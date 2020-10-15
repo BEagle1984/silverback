@@ -81,10 +81,10 @@ namespace Silverback.Diagnostics
 
         public void LogSequenceAborted(
             ConsumerPipelineContext context,
-            SequenceAbortReason abortReason,
+            SequenceAbortReason reason,
             Exception? abortException)
         {
-            if (abortReason == SequenceAbortReason.Error && abortException != null)
+            if (reason == SequenceAbortReason.Error && abortException != null)
             {
                 // TODO: Log sequence details
                 LogWarningWithMessageInfo(
@@ -95,7 +95,7 @@ namespace Silverback.Diagnostics
             }
             else
             {
-                context.Envelope.AdditionalLogData["abortReason"] = abortReason.ToString();
+                context.Envelope.AdditionalLogData["abortReason"] = reason.ToString();
 
                 LogWarningWithMessageInfo(
                     IntegrationEventIds.SequenceProcessingAborted,

@@ -6,10 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Silverback.Background;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
-using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace

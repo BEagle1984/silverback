@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,19 +10,6 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers
 {
-    public static class MessageStreamEnumerableObserveExtensions
-    {
-        // TODO: Implement and test
-        // public static void Observe<TMessage>(this IMessageStreamEnumerable<TMessage> streamEnumerable, Action<IObservable<TMessage>> observerFunction)
-        // {}
-
-        public static void ObserveAsync<TMessage>(
-            this IMessageStreamEnumerable<TMessage> streamEnumerable,
-            Action<IObservable<TMessage>> observerFunction)
-        {
-        }
-    }
-
     internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservable<TMessage>, IDisposable
     {
         private readonly ISubject<TMessage> _subject = new Subject<TMessage>();
@@ -36,6 +24,7 @@ namespace Silverback.Messaging.Subscribers
 
         private bool _disposed;
 
+        [SuppressMessage("", "CA1031", Justification = "Exception rethrown by the Subscribe method")]
         public MessageStreamObservable(IMessageStreamEnumerable<TMessage> messageStreamEnumerable)
         {
             Task.Run(
@@ -56,10 +45,6 @@ namespace Silverback.Messaging.Subscribers
                     catch (Exception exception)
                     {
                         _exception = exception;
-
-                        // TODO: Check this!
-                        //_subject.OnError(exception);
-                        //throw;
                     }
                     finally
                     {
@@ -72,16 +57,6 @@ namespace Silverback.Messaging.Subscribers
                 });
         }
 
-        public void Subscribe(IObserver<TMessage> observer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SubscribeAsync(IObserver<TMessage> observer)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Dispose()
         {
             _disposed = true;
@@ -91,8 +66,6 @@ namespace Silverback.Messaging.Subscribers
 
         IDisposable IObservable<TMessage>.Subscribe(IObserver<TMessage> observer)
         {
-            // TODO: Check this fantasy implementation...
-
             if (_subscription != null)
                 throw new InvalidOperationException("This observable can be subscribed only once.");
 

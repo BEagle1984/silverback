@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -55,7 +54,7 @@ namespace Silverback.Messaging.Broker
         ///     A <see cref="Task" /> that completes when all messages have been processed.
         /// </returns>
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
-        public async Task WaitUntilAllMessagesAreConsumed(TimeSpan? timeout = null)
+        public async Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null)
         {
             timeout ??= TimeSpan.FromSeconds(5);
 

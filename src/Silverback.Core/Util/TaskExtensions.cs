@@ -20,7 +20,7 @@ namespace Silverback.Util
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
         ///     either the result of the awaited task or <c>null</c>.
         /// </returns>
-        public static async Task<object?> GetReturnValue(this Task task)
+        public static async Task<object?> GetReturnValueAsync(this Task task)
         {
             await task.ConfigureAwait(false);
 
@@ -41,7 +41,7 @@ namespace Silverback.Util
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        public static async Task CancelOnException(
+        public static async Task CancelOnExceptionAsync(
             this Task task,
             CancellationTokenSource cancellationTokenSource)
         {
@@ -76,7 +76,7 @@ namespace Silverback.Util
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        public static async Task<T> CancelOnException<T>(
+        public static async Task<T> CancelOnExceptionAsync<T>(
             this Task<T> task,
             CancellationTokenSource cancellationTokenSource)
         {

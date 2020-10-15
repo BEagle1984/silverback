@@ -73,7 +73,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             public bool CanHandle(ConsumerPipelineContext context, Exception exception) => true;
 
-            public Task<bool> HandleError(ConsumerPipelineContext context, Exception exception)
+            public Task<bool> HandleErrorAsync(ConsumerPipelineContext context, Exception exception)
             {
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
@@ -81,7 +81,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 foreach (var policy in _policies)
                 {
                     if (policy.CanHandle(context, exception))
-                        return policy.HandleError(context, exception);
+                        return policy.HandleErrorAsync(context, exception);
                 }
 
                 _logger.LogDebugWithMessageInfo(

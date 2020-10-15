@@ -186,6 +186,10 @@ namespace Silverback.Messaging.Broker
                         "or failed with an error indicating it was not written " +
                         "to the log.'");
                 }
+
+                case PersistenceStatus.Persisted:
+                default:
+                    break;
             }
         }
 

@@ -42,14 +42,14 @@ namespace Silverback.Messaging.Outbound.Routing
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex { get; } = IntegrationBehaviorsSortIndexes.OutboundRouter;
 
-        /// <inheritdoc cref="IBehavior.Handle" />
-        public async Task<IReadOnlyCollection<object>> Handle(
+        /// <inheritdoc cref="IBehavior.HandleAsync" />
+        public async Task<IReadOnlyCollection<object>> HandleAsync(
             IReadOnlyCollection<object> messages,
             MessagesHandler next)
         {
             Check.NotNull(next, nameof(next));
 
-            var routedMessages = await WrapAndRepublishRoutedMessages(messages).ConfigureAwait(false);
+            var routedMessages = await WrapAndRepublishRoutedMessagesAsync(messages).ConfigureAwait(false);
 
             // The routed messages are discarded because they have been republished
             // as OutboundEnvelope and they will be normally subscribable
@@ -60,7 +60,7 @@ namespace Silverback.Messaging.Outbound.Routing
         }
 
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private async Task<IReadOnlyCollection<object>> WrapAndRepublishRoutedMessages(IEnumerable<object> messages)
+        private async Task<IReadOnlyCollection<object>> WrapAndRepublishRoutedMessagesAsync(IEnumerable<object> messages)
         {
             var envelopesToRepublish = messages
                 .Where(message => !(message is IOutboundEnvelope))

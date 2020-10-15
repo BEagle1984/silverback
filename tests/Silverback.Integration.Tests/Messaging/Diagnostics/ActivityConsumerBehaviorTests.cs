@@ -25,7 +25,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         }
 
         [Fact]
-        public async Task Handle_WithTraceIdHeader_NewActivityStartedAndParentIdIsSet()
+        public async Task HandleAsync_WithTraceIdHeader_NewActivityStartedAndParentIdIsSet()
         {
             var rawEnvelope = new RawInboundEnvelope(
                 new byte[5],
@@ -38,7 +38,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new TestOffset());
 
             var entered = false;
-            await new ActivityConsumerBehavior().Handle(
+            await new ActivityConsumerBehavior().HandleAsync(
                 new ConsumerPipelineContext(
                     rawEnvelope,
                     Substitute.For<IConsumer>(),
@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         }
 
         [Fact]
-        public void Handle_WithoutActivityHeaders_NewActivityIsStarted()
+        public void HandleAsync_WithoutActivityHeaders_NewActivityIsStarted()
         {
             var rawEnvelope = new RawInboundEnvelope(
                 new byte[5],
@@ -73,7 +73,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new TestOffset());
 
             var entered = false;
-            new ActivityConsumerBehavior().Handle(
+            new ActivityConsumerBehavior().HandleAsync(
                 new ConsumerPipelineContext(
                     rawEnvelope,
                     Substitute.For<IConsumer>(),

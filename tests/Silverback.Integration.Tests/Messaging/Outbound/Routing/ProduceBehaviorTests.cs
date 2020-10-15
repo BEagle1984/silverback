@@ -49,14 +49,14 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
         }
 
         [Fact]
-        public async Task Handle_OutboundMessage_RelayedToEndpoint()
+        public async Task HandleAsync_OutboundMessage_RelayedToEndpoint()
         {
             var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 Array.Empty<MessageHeader>(),
                 new TestProducerEndpoint("test"));
 
-            await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult!);
+            await _behavior.HandleAsync(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult!);
             await _outbox.CommitAsync();
 
             var queued = await _outbox.ReadAsync(10);
@@ -65,7 +65,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
         }
 
         [Fact]
-        public async Task Handle_OutboundMessageWithOutboxStrategy_RelayedToOutbox()
+        public async Task HandleAsync_OutboundMessageWithOutboxStrategy_RelayedToOutbox()
         {
             var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
@@ -75,7 +75,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                     Strategy = ProduceStrategy.Outbox()
                 });
 
-            await _behavior.Handle(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult!);
+            await _behavior.HandleAsync(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult!);
             await _outbox.CommitAsync();
 
             var queued = await _outbox.ReadAsync(10);

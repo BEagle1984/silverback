@@ -55,7 +55,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
             public bool Applied { get; private set; }
 
-            protected override Task<bool> ApplyPolicy(ConsumerPipelineContext context, Exception exception)
+            protected override Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
             {
                 Applied = true;
                 return Task.FromResult(false);

@@ -118,7 +118,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 return base.CanHandle(context, exception);
             }
 
-            protected override async Task<bool> ApplyPolicy(ConsumerPipelineContext context, Exception exception)
+            protected override async Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
             {
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
@@ -128,14 +128,14 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                     $"The message will be moved to endpoint '{_endpoint.Name}'.",
                     context.Envelope);
 
-                await PublishToNewEndpoint(context.Envelope, exception).ConfigureAwait(false);
+                await PublishToNewEndpointAsync(context.Envelope, exception).ConfigureAwait(false);
 
                 await context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
 
                 return true;
             }
 
-            private async Task PublishToNewEndpoint(IRawInboundEnvelope envelope, Exception exception)
+            private async Task PublishToNewEndpointAsync(IRawInboundEnvelope envelope, Exception exception)
             {
                 envelope.Headers.AddOrReplace(
                     DefaultMessageHeaders.SourceEndpoint,

@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Batch;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Batching;
 
 namespace Silverback.Messaging
 {
@@ -13,12 +13,6 @@ namespace Silverback.Messaging
     /// </summary>
     public interface IConsumerEndpoint : IEndpoint
     {
-        /// <summary>
-        ///     Gets or sets the error policy to be applied when an exception occurs during the processing of the
-        ///     consumed messages.
-        /// </summary>
-        IErrorPolicy ErrorPolicy { get; set; }
-
         /// <summary>
         ///     Gets the batch settings. Can be used to enable and setup batch processing.
         /// </summary>
@@ -36,6 +30,12 @@ namespace Silverback.Messaging
         ///     discarded.
         /// </summary>
         bool ThrowIfUnhandled { get; } // TODO: Reimplement!
+
+        /// <summary>
+        ///     Gets or sets the error policy to be applied when an exception occurs during the processing of the
+        ///     consumed messages.
+        /// </summary>
+        IErrorPolicy ErrorPolicy { get; set; }
 
         /// <summary>
         ///     Gets a unique name for the consumer group (e.g. Kafka's consumer group id). This value (joint with

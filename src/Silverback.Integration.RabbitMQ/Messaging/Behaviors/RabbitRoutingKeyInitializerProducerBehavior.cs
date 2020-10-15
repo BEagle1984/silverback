@@ -18,8 +18,8 @@ namespace Silverback.Messaging.Behaviors
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;
 
-        /// <inheritdoc cref="IProducerBehavior.Handle" />
-        public async Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
+        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));

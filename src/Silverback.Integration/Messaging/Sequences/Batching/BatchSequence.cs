@@ -3,7 +3,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Silverback.Messaging.Batch;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;

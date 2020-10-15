@@ -3,7 +3,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Silverback.Messaging.Connectors.Repositories;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 
 namespace Silverback.Messaging.HealthChecks
@@ -26,8 +25,8 @@ namespace Silverback.Messaging.HealthChecks
             _queueReader = queueReader;
         }
 
-        /// <inheritdoc cref="IOutboundQueueHealthCheckService.CheckIsHealthy" />
-        public async Task<bool> CheckIsHealthy(TimeSpan? maxAge = null, int? maxQueueLength = null)
+        /// <inheritdoc cref="IOutboundQueueHealthCheckService.CheckIsHealthyAsync" />
+        public async Task<bool> CheckIsHealthyAsync(TimeSpan? maxAge = null, int? maxQueueLength = null)
         {
             if (maxQueueLength != null &&
                 await _queueReader.GetLengthAsync().ConfigureAwait(false) > maxQueueLength)

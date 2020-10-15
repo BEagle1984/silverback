@@ -19,8 +19,6 @@ namespace Silverback.Messaging.Broker
     [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public sealed class MockedKafkaProducer : IProducer<byte[]?, byte[]?>
     {
-        private readonly ProducerConfig _config;
-
         private readonly IInMemoryTopicCollection _topics;
 
         /// <summary>
@@ -34,7 +32,7 @@ namespace Silverback.Messaging.Broker
         /// </param>
         public MockedKafkaProducer(ProducerConfig config, IInMemoryTopicCollection topics)
         {
-            _config = Check.NotNull(config, nameof(config));
+            Check.NotNull(config, nameof(config));
             _topics = Check.NotNull(topics, nameof(topics));
 
             Name = $"{config.ClientId ?? "mocked"}.{Guid.NewGuid():N}";

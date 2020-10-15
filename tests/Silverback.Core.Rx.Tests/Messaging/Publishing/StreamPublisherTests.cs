@@ -186,12 +186,9 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 
             var tasks = streamPublisher.Publish(streamProvider);
 
-            var pushTasks = new[]
-            {
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne()),
-                streamProvider.PushAsync(new TestEventOne())
-            };
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
 
             await AsyncTestingUtil.WaitAsync(() => received >= 5);
 

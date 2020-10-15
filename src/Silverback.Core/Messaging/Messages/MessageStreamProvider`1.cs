@@ -84,7 +84,7 @@ namespace Silverback.Messaging.Messages
         public async Task CompleteAsync(CancellationToken cancellationToken = default)
         {
             // ReSharper disable once InconsistentlySynchronizedField
-            await _streams.ParallelForEach(stream => stream.CompleteAsync(cancellationToken))
+            await _streams.ParallelForEachAsync(stream => stream.CompleteAsync(cancellationToken))
                 .ConfigureAwait(false);
         }
 

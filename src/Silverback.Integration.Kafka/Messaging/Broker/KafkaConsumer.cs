@@ -14,7 +14,6 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.ConfluentWrappers;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -56,10 +55,7 @@ namespace Silverback.Messaging.Broker
         ///     The endpoint to be consumed.
         /// </param>
         /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
-        /// </param>
-        /// <param name="sequenceStore">
-        ///     The <see cref="ISequenceStore"/> to be used to store the pending sequences.
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
@@ -98,7 +94,7 @@ namespace Silverback.Messaging.Broker
             InitInnerConsumer();
 
             Task.Factory.StartNew(
-                Consume,
+                ConsumeAsync,
                 CancellationToken.None,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
@@ -107,7 +103,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer.DisconnectCore" />
         protected override void DisconnectCore()
         {
-            StopConsuming().Wait();
+            StopConsumingAsync().Wait();
 
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 CommitOffsets();
@@ -115,8 +111,8 @@ namespace Silverback.Messaging.Broker
             DisposeInnerConsumer();
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.CommitCore" />
-        protected override Task CommitCore(IReadOnlyCollection<KafkaOffset> offsets)
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.CommitCoreAsync" />
+        protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> offsets)
         {
             if (_innerConsumer == null)
                 throw new InvalidOperationException("The consumer is not connected.");
@@ -142,8 +138,8 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.RollbackCore" />
-        protected override Task RollbackCore(IReadOnlyCollection<KafkaOffset> offsets)
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.RollbackCoreAsync" />
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> offsets)
         {
             if (_innerConsumer == null)
                 throw new InvalidOperationException("The consumer is not connected.");
@@ -222,7 +218,7 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task Consume()
+        private async Task ConsumeAsync()
         {
             _isConsuming = true;
 
@@ -236,7 +232,7 @@ namespace Silverback.Messaging.Broker
             {
                 try
                 {
-                    await ReceiveMessage().ConfigureAwait(false);
+                    await ReceiveMessageAsync().ConfigureAwait(false);
                 }
                 catch (OperationCanceledException)
                 {
@@ -244,7 +240,7 @@ namespace Silverback.Messaging.Broker
                 }
                 catch (KafkaException ex)
                 {
-                    if (!await AutoRecoveryIfEnabled(ex).ConfigureAwait(false))
+                    if (!await AutoRecoveryIfEnabledAsync(ex).ConfigureAwait(false))
                         break;
                 }
                 catch
@@ -261,7 +257,7 @@ namespace Silverback.Messaging.Broker
                 Disconnect();
         }
 
-        private async Task ReceiveMessage()
+        private async Task ReceiveMessageAsync()
         {
             if (_innerConsumer == null)
                 throw new InvalidOperationException("The underlying consumer is not initialized.");
@@ -297,10 +293,10 @@ namespace Silverback.Messaging.Broker
                 result.Partition,
                 result.Offset);
 
-            await OnMessageReceived(result.Message, result.TopicPartitionOffset).ConfigureAwait(false);
+            await OnMessageReceivedAsync(result.Message, result.TopicPartitionOffset).ConfigureAwait(false);
         }
 
-        private async Task OnMessageReceived(
+        private async Task OnMessageReceivedAsync(
             Message<byte[]?, byte[]?> message,
             TopicPartitionOffset topicPartitionOffset)
         {
@@ -311,11 +307,11 @@ namespace Silverback.Messaging.Broker
                     topicPartitionOffset.Topic.Equals(endpointName, StringComparison.OrdinalIgnoreCase)))
                 return;
 
-            await TryHandleMessage(message, topicPartitionOffset).ConfigureAwait(false);
+            await TryHandleMessageAsync(message, topicPartitionOffset).ConfigureAwait(false);
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task TryHandleMessage(Message<byte[]?, byte[]?> message, TopicPartitionOffset tpo)
+        private async Task TryHandleMessageAsync(Message<byte[]?, byte[]?> message, TopicPartitionOffset tpo)
         {
             if (_serializer == null)
                 throw new InvalidOperationException("The consumer is not connected.");
@@ -346,7 +342,7 @@ namespace Silverback.Messaging.Broker
 
             headers.AddOrReplace(KafkaMessageHeaders.TimestampKey, message.Timestamp.UtcDateTime.ToString("O"));
 
-            await HandleMessage(
+            await HandleMessageAsync(
                     message.Value,
                     headers,
                     tpo.Topic,
@@ -355,7 +351,7 @@ namespace Silverback.Messaging.Broker
                 .ConfigureAwait(false);
         }
 
-        private async Task<bool> AutoRecoveryIfEnabled(KafkaException ex)
+        private async Task<bool> AutoRecoveryIfEnabledAsync(KafkaException ex)
         {
             if (Endpoint.Configuration.EnableAutoRecovery)
             {
@@ -365,7 +361,7 @@ namespace Silverback.Messaging.Broker
                     "KafkaException occurred. The consumer will try to recover. (topic(s): {topics})",
                     (object)Endpoint.Names);
 
-                await ResetInnerConsumer().ConfigureAwait(false);
+                await ResetInnerConsumerAsync().ConfigureAwait(false);
             }
             else
             {
@@ -384,7 +380,7 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task ResetInnerConsumer()
+        private async Task ResetInnerConsumerAsync()
         {
             while (true)
             {
@@ -463,7 +459,7 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private async Task StopConsuming()
+        private async Task StopConsumingAsync()
         {
             if (_innerConsumer == null)
                 return;

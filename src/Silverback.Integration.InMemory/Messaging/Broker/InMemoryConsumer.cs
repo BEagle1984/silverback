@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
 {
@@ -35,9 +34,6 @@ namespace Silverback.Messaging.Broker
         /// </param>
         /// <param name="behaviorsProvider">
         ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
-        /// </param>
-        /// <param name="sequenceStore">
-        ///     The <see cref="ISequenceStore"/> to be used to store the pending sequences.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
@@ -74,8 +70,8 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public bool IsQueueEmpty => _queue.IsEmpty;
 
-        /// <inheritdoc cref="Consumer.Commit(IReadOnlyCollection{IOffset})" />
-        public override Task Commit(IReadOnlyCollection<IOffset> offsets)
+        /// <inheritdoc cref="Consumer.CommitAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IOffset})" />
+        public override Task CommitAsync(IReadOnlyCollection<IOffset> offsets)
         {
             var maxOffset = offsets.Max();
 
@@ -91,8 +87,8 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer.Rollback(IReadOnlyCollection{IOffset})" />
-        public override Task Rollback(IReadOnlyCollection<IOffset> offsets)
+        /// <inheritdoc cref="Consumer.RollbackAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IOffset})" />
+        public override Task RollbackAsync(IReadOnlyCollection<IOffset> offsets)
         {
             RollbackCalled?.Invoke(this, new OffsetsEventArgs(offsets));
 
@@ -116,7 +112,7 @@ namespace Silverback.Messaging.Broker
         /// </returns>
         // TODO: Should pass the actual endpoint name via header (Endpoint.Name may contain a list of topics)
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public Task Receive(byte[]? message, IEnumerable<MessageHeader> headers, IOffset offset)
+        public Task ReceiveAsync(byte[]? message, IEnumerable<MessageHeader> headers, IOffset offset)
         {
             _queue.Enqueue(new QueuedMessage(message, headers.ToArray(), Endpoint.Name, offset));
 
@@ -130,7 +126,7 @@ namespace Silverback.Messaging.Broker
         protected override void ConnectCore()
         {
             _cancellationTokenSource = new CancellationTokenSource();
-            Task.Run(() => ProcessQueue(_cancellationTokenSource.Token));
+            Task.Run(() => ProcessQueueAsync(_cancellationTokenSource.Token));
         }
 
         /// <inheritdoc cref="Consumer.DisconnectCore" />
@@ -139,7 +135,7 @@ namespace Silverback.Messaging.Broker
             _cancellationTokenSource?.Cancel();
         }
 
-        private async Task ProcessQueue(CancellationToken cancellationToken)
+        private async Task ProcessQueueAsync(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {

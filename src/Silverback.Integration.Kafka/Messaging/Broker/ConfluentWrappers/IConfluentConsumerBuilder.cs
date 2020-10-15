@@ -71,6 +71,7 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
         /// <returns>
         ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
         /// </returns>
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         IConfluentConsumerBuilder SetPartitionsAssignedHandler(
             Action<IConsumer<byte[]?, byte[]?>, List<TopicPartition>> partitionsAssignedHandler);
 

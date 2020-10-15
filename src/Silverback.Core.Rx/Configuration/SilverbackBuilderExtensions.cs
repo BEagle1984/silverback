@@ -3,7 +3,7 @@
 
 using System;
 using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Subscribers;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 using Silverback.Util;
@@ -17,9 +17,8 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class SilverbackBuilderExtensions
     {
         /// <summary>
-        ///     Allows the subscribers to receive an <see cref="IObservable{T}" /> as parameter. It also registers
-        ///     the <see cref="IMessageStreamObservable{TMessage}" /> that can be used to process the entire messages
-        ///     stream using Rx.NET.
+        ///     Allows the subscribers to receive an <see cref="IObservable{T}" /> or an
+        ///     <see cref="IMessageStreamObservable{TMessage}" /> as parameter.
         /// </summary>
         /// <param name="silverbackBuilder">
         ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add

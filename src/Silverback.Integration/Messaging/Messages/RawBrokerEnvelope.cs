@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Silverback.Messaging.Broker;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages

@@ -85,7 +85,7 @@ namespace Silverback.Background
             while (!stoppingToken.IsCancellationRequested)
             {
                 if (Lock != null)
-                    await Lock.Renew(stoppingToken).ConfigureAwait(false);
+                    await Lock.RenewAsync(stoppingToken).ConfigureAwait(false);
 
                 if (_enabled)
                 {
@@ -108,9 +108,9 @@ namespace Silverback.Background
                     break;
 
                 if (_enabled)
-                    await Sleep(_interval, stoppingToken).ConfigureAwait(false);
+                    await SleepAsync(_interval, stoppingToken).ConfigureAwait(false);
                 else
-                    await Sleep(TimeSpan.FromMilliseconds(100), stoppingToken).ConfigureAwait(false);
+                    await SleepAsync(TimeSpan.FromMilliseconds(100), stoppingToken).ConfigureAwait(false);
             }
 
             _logger.LogInformation(
@@ -132,7 +132,7 @@ namespace Silverback.Background
         /// </returns>
         protected abstract Task ExecuteRecurringAsync(CancellationToken stoppingToken);
 
-        private async Task Sleep(TimeSpan delay, CancellationToken stoppingToken)
+        private async Task SleepAsync(TimeSpan delay, CancellationToken stoppingToken)
         {
             if (delay <= TimeSpan.Zero)
                 return;

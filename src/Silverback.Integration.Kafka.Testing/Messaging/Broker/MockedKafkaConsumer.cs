@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Broker
             MemberId = Guid.NewGuid().ToString("N");
 
             if (_config.EnableAutoCommit ?? true)
-                Task.Run(AutoCommit);
+                Task.Run(AutoCommitAsync);
         }
 
         /// <inheritdoc cref="IConsumer{TKey,TValue}.Handle" />
@@ -309,7 +309,7 @@ namespace Silverback.Messaging.Broker
             return new TopicPartitionOffset(topicName, partition, offset);
         }
 
-        private async Task AutoCommit()
+        private async Task AutoCommitAsync()
         {
             while (!Disposed)
             {

@@ -138,13 +138,13 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             return true;
         }
 
-        /// <inheritdoc cref="IErrorPolicyImplementation.HandleError" />
-        public async Task<bool> HandleError(ConsumerPipelineContext context, Exception exception)
+        /// <inheritdoc cref="IErrorPolicyImplementation.HandleErrorAsync" />
+        public async Task<bool> HandleErrorAsync(ConsumerPipelineContext context, Exception exception)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(exception, nameof(exception));
 
-            var result = await ApplyPolicy(context, exception).ConfigureAwait(false);
+            var result = await ApplyPolicyAsync(context, exception).ConfigureAwait(false);
 
             if (_messageToPublishFactory != null)
             {
@@ -172,6 +172,6 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     action that the consumer should perform (e.g. skip the message or stop consuming).
         /// </returns>
-        protected abstract Task<bool> ApplyPolicy(ConsumerPipelineContext context, Exception exception);
+        protected abstract Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception);
     }
 }
