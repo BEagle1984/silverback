@@ -9,15 +9,32 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers
 {
+    public static class MessageStreamEnumerableObserveExtensions
+    {
+        // TODO: Implement and test
+        // public static void Observe<TMessage>(this IMessageStreamEnumerable<TMessage> streamEnumerable, Action<IObservable<TMessage>> observerFunction)
+        // {}
+
+        public static void ObserveAsync<TMessage>(
+            this IMessageStreamEnumerable<TMessage> streamEnumerable,
+            Action<IObservable<TMessage>> observerFunction)
+        {
+        }
+    }
+
     internal sealed class MessageStreamObservable<TMessage> : IMessageStreamObservable<TMessage>, IDisposable
     {
         private readonly ISubject<TMessage> _subject = new Subject<TMessage>();
+
+        private readonly SemaphoreSlim _subscribeSemaphoreSlim = new SemaphoreSlim(0, 1);
 
         private readonly SemaphoreSlim _completeSemaphoreSlim = new SemaphoreSlim(0, 1);
 
         private IDisposable? _subscription;
 
         private Exception? _exception;
+
+        private bool _disposed;
 
         public MessageStreamObservable(IMessageStreamEnumerable<TMessage> messageStreamEnumerable)
         {
@@ -26,6 +43,11 @@ namespace Silverback.Messaging.Subscribers
                 {
                     try
                     {
+                        await _subscribeSemaphoreSlim.WaitAsync().ConfigureAwait(false); // TODO: Cancellation?
+
+                        if (_disposed)
+                            return;
+
                         await foreach (var message in messageStreamEnumerable)
                         {
                             _subject.OnNext(message);
@@ -62,7 +84,9 @@ namespace Silverback.Messaging.Subscribers
 
         public void Dispose()
         {
+            _disposed = true;
             _completeSemaphoreSlim.Dispose();
+            _subscribeSemaphoreSlim.Dispose();
         }
 
         IDisposable IObservable<TMessage>.Subscribe(IObserver<TMessage> observer)
@@ -74,6 +98,7 @@ namespace Silverback.Messaging.Subscribers
 
             _subscription = _subject.Subscribe(observer);
 
+            _subscribeSemaphoreSlim.Release();
             _completeSemaphoreSlim.Wait(); // TODO: Needs cancellation token?
 
             if (_exception != null)

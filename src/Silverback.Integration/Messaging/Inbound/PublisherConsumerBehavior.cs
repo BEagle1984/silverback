@@ -162,7 +162,7 @@ namespace Silverback.Messaging.Inbound
             _unboundedSequence = new UnboundedSequence("unbounded", context);
             await context.SequenceStore.AddAsync(_unboundedSequence).ConfigureAwait(false);
 
-            PublishStreamProviderAsync(_unboundedSequence, context);
+            await PublishStreamProviderAsync(_unboundedSequence, context).ConfigureAwait(false);
         }
     }
 }
