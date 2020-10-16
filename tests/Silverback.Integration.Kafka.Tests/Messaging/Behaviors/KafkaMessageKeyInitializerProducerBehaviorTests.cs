@@ -18,7 +18,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
     public class KafkaMessageKeyInitializerProducerBehaviorTests
     {
         [Fact]
-        public void HandleAsync_NoKeyMemberAttribute_KeyHeaderIsNotSet()
+        public void HandleAsync_NoKeyMemberAttributeAndNoMessageId_RandomKafkaKeyIsGenerated()
         {
             var envelope = new OutboundEnvelope<NoKeyMembersMessage>(
                 new NoKeyMembersMessage
@@ -35,7 +35,33 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
-            envelope.Headers.Should().NotContain(h => h.Name == "x-kafka-message-key");
+            var keyValue = envelope.Headers.GetValue("x-kafka-message-key");
+            keyValue.Should().NotBeNullOrEmpty();
+            new Guid(keyValue!).Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public void HandleAsync_NoKeyMemberAttribute_MessageIdUsedAsKey()
+        {
+            var envelope = new OutboundEnvelope<NoKeyMembersMessage>(
+                new NoKeyMembersMessage
+                {
+                    Id = Guid.NewGuid(),
+                    One = "1",
+                    Two = "2",
+                    Three = "3"
+                },
+                new MessageHeaderCollection
+                {
+                    { "x-message-id", "Heidi!" }
+                },
+                new KafkaProducerEndpoint("test-endpoint"));
+
+            new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
+                _ => Task.CompletedTask);
+
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-kafka-message-key", "Heidi!"));
         }
 
         [Fact]

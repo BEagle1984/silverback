@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Messages
 
             if (!headers.Contains(DefaultMessageHeaders.MessageId))
             {
-                headers.Add(DefaultMessageHeaders.MessageId, Guid.NewGuid().ToString().ToUpperInvariant());
+                headers.Add(DefaultMessageHeaders.MessageId, Guid.NewGuid().ToString());
             }
         }
     }

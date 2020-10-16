@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Behaviors
             if (messageIdHeaderValue != null)
                 return messageIdHeaderValue;
 
-            return Guid.NewGuid().ToString("D");
+            return Guid.NewGuid().ToString();
         }
     }
 }
