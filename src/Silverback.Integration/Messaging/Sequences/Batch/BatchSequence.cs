@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Sequences.Batch
                 timeout: Check.NotNull(context, nameof(context)).Envelope.Endpoint.Batch?.MaxWaitTime)
         {
             if (context.Envelope.Endpoint.Batch == null)
-                throw new InvalidOperationException("BatchSettings not found.");
+                throw new InvalidOperationException("Endpoint.Batch is null.");
 
             TotalLength = context.Envelope.Endpoint.Batch.Size;
         }
