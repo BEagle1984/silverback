@@ -55,7 +55,7 @@ namespace Silverback.Messaging.Sequences
             foreach (var sequence in _store.Values)
             {
                 if (sequence.IsPending)
-                    AsyncHelper.RunSynchronously(() => sequence.AbortAsync(SequenceAbortReason.Error));
+                    AsyncHelper.RunSynchronously(() => sequence.AbortAsync(SequenceAbortReason.Disposing));
             }
         }
 
