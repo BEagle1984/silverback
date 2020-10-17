@@ -158,9 +158,12 @@ namespace Silverback.Messaging.Sequences
             await sequenceStore.ForEachAsync(
                     previousSequence =>
                     {
-                        // Prevent the other sequences to be aborted when a new ChunkSequence is started
-                        if (currentSequence is RawSequence && previousSequence is Sequence)
+                        // Prevent Sequence and RawSequence to mess with each other
+                        if (currentSequence is RawSequence && previousSequence is Sequence ||
+                            currentSequence is Sequence && previousSequence is RawSequence)
                             return Task.CompletedTask;
+
+                        // Prevent the other sequences to be aborted when a new ChunkSequence is started
 
                         return previousSequence.AbortAsync(SequenceAbortReason.IncompleteSequence);
                     })

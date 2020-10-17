@@ -162,7 +162,11 @@ namespace Silverback.Messaging.Broker.Behaviors
         {
             _serviceScope?.Dispose();
             _serviceScope = null;
-            ProcessingTask?.Dispose();
+
+            if (ProcessingTask == null || !ProcessingTask.IsCompleted)
+                return;
+
+            ProcessingTask.Dispose();
             ProcessingTask = null;
         }
     }

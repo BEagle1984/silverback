@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +35,12 @@ namespace Silverback.Messaging.Sequences
         // TODO: Log add, complete, abort, etc.?
 
         private readonly ISilverbackIntegrationLogger<SequenceBase<TEnvelope>> _logger;
+
+        private readonly TaskCompletionSource<bool> _sequencerBehaviorsTaskCompletionSource =
+            new TaskCompletionSource<bool>();
+
+        private readonly TaskCompletionSource<bool> _processingCompleteTaskCompletionSource =
+            new TaskCompletionSource<bool>();
 
         private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
@@ -69,7 +76,8 @@ namespace Silverback.Messaging.Sequences
 
             _streamProvider = new MessageStreamProvider<TEnvelope>();
 
-            _logger = context.ServiceProvider.GetRequiredService<ISilverbackIntegrationLogger<SequenceBase<TEnvelope>>>();
+            _logger =
+                context.ServiceProvider.GetRequiredService<ISilverbackIntegrationLogger<SequenceBase<TEnvelope>>>();
 
             _enforceTimeout = enforceTimeout;
             _timeout = timeout ?? Context.Envelope.Endpoint.Sequence.Timeout;
@@ -89,7 +97,10 @@ namespace Silverback.Messaging.Sequences
         public bool IsBeingConsumed => _streamProvider.StreamsCount > 0;
 
         /// <inheritdoc cref="ISequence.Offsets" />
-        public IReadOnlyList<IOffset> Offsets => _offsets;
+        public IReadOnlyList<IOffset> Offsets =>
+            _sequences != null
+                ? _offsets.Union(_sequences.SelectMany(sequence => sequence.Offsets)).ToList()
+                : _offsets;
 
         /// <inheritdoc cref="ISequence.Sequences" />
         public IReadOnlyCollection<ISequence> Sequences =>
@@ -98,12 +109,11 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.Context" />
         public ConsumerPipelineContext Context { get; }
 
-        /// <inheritdoc cref="ISequenceImplementation.SequencerBehaviorsTaskCompletionSource" />
-        public TaskCompletionSource<bool> SequencerBehaviorsTaskCompletionSource { get; } =
-            new TaskCompletionSource<bool>();
+        /// <inheritdoc cref="ISequenceImplementation.SequencerBehaviorsTask" />
+        public Task SequencerBehaviorsTask => _sequencerBehaviorsTaskCompletionSource.Task;
 
-        /// <inheritdoc cref="ISequenceImplementation.ProcessedTaskCompletionSource" />
-        public TaskCompletionSource<bool> ProcessedTaskCompletionSource { get; } = new TaskCompletionSource<bool>();
+        /// <inheritdoc cref="ISequenceImplementation.ProcessingCompletedTask" />
+        public Task ProcessingCompletedTask => _processingCompleteTaskCompletionSource.Task;
 
         /// <inheritdoc cref="ISequence.StreamProvider" />
         public IMessageStreamProvider StreamProvider => _streamProvider;
@@ -119,6 +129,9 @@ namespace Silverback.Messaging.Sequences
 
         /// <inheritdoc cref="ISequence.IsNew" />
         public bool IsNew { get; private set; } = true;
+
+        /// <inheritdoc cref="ISequence.IsCompleting" />
+        public bool IsCompleting { get; private set; }
 
         /// <inheritdoc cref="ISequence.IsComplete" />
         public bool IsComplete { get; private set; }
@@ -236,17 +249,20 @@ namespace Silverback.Messaging.Sequences
 
                 Length++;
 
+                if (TotalLength != null && Length == TotalLength || IsLastMessage(envelope))
+                {
+                    TotalLength = Length;
+                    IsCompleting = true;
+                }
+
                 if (!_abortCancellationTokenSource.IsCancellationRequested)
                 {
                     await _streamProvider.PushAsync(envelope, _abortCancellationTokenSource.Token)
                         .ConfigureAwait(false);
                 }
 
-                if (TotalLength != null && Length == TotalLength || IsLastMessage(envelope))
-                {
-                    TotalLength = Length;
+                if (IsCompleting)
                     await CompleteAsync().ConfigureAwait(false);
-                }
             }
             catch (OperationCanceledException)
             {
@@ -283,11 +299,12 @@ namespace Silverback.Messaging.Sequences
                 return;
 
             IsComplete = true;
+            IsCompleting = false;
 
             _timeoutCancellationTokenSource?.Cancel();
 
-            await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
             await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
+            await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -326,6 +343,26 @@ namespace Silverback.Messaging.Sequences
 
         /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
         void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
+
+        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
+        void ISequenceImplementation.CompleteSequencerBehaviorsTask() =>
+            _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
+
+        /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingCompleted" />
+        void ISequenceImplementation.NotifyProcessingCompleted()
+        {
+            _processingCompleteTaskCompletionSource.TrySetResult(true);
+            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
+        }
+
+        /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
+        void ISequenceImplementation.NotifyProcessingFailed(Exception exception)
+        {
+            _processingCompleteTaskCompletionSource.TrySetException(exception);
+
+            // Don't forward the error, it's enough to handle it once
+            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
+        }
 
         private void ResetTimeout()
         {
@@ -376,7 +413,7 @@ namespace Silverback.Messaging.Sequences
                         {
                             await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
 
-                            ProcessedTaskCompletionSource.SetException(exception!);
+                            ((ISequenceImplementation)this).NotifyProcessingFailed(exception!);
                             return;
                         }
 
@@ -396,11 +433,11 @@ namespace Silverback.Messaging.Sequences
                         break;
                 }
 
-                ProcessedTaskCompletionSource.SetResult(false);
+                ((ISequenceImplementation)this).NotifyProcessingCompleted();
             }
-            catch (Exception ex)
+            catch (Exception newException)
             {
-                ProcessedTaskCompletionSource.SetException(ex);
+                ((ISequenceImplementation)this).NotifyProcessingFailed(newException!);
             }
         }
     }

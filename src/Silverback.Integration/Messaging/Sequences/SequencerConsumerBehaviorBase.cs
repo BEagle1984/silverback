@@ -78,8 +78,11 @@ namespace Silverback.Messaging.Sequences
                     await AwaitOtherBehaviorIfNeededAsync(sequence).ConfigureAwait(false);
 
                     // Mark the envelope as the end of the sequence only if the sequence wasn't swapped (e.g. chunk -> batch)
-                    if (sequence == sequence.Context.Sequence)
+                    if (sequence.Context.Sequence == null || sequence == sequence.Context.Sequence ||
+                        sequence.Context.Sequence.IsCompleting || sequence.Context.Sequence.IsComplete)
+                    {
                         context.SetIsSequenceEnd();
+                    }
                 }
             }
         }

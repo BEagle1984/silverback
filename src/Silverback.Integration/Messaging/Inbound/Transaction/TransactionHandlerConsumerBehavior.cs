@@ -57,17 +57,12 @@ namespace Silverback.Messaging.Inbound.Transaction
                     await context.TransactionManager.CommitAsync().ConfigureAwait(false);
                     context.Dispose();
                 }
-                else if (context.IsSequenceStart)
-                {
-                    StartSequenceProcessingAwaiter(context);
-
-                    await AwaitProcessedIfNecessaryAsync(context).ConfigureAwait(false);
-                }
                 else
                 {
-                    await AwaitProcessedIfNecessaryAsync(context).ConfigureAwait(false);
+                    if (context.IsSequenceStart)
+                        StartSequenceProcessingAwaiter(context);
 
-                    context.Dispose();
+                    await AwaitProcessedIfNecessaryAsync(context).ConfigureAwait(false);
                 }
             }
             catch (Exception exception)
@@ -76,7 +71,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                 if (context.Sequence != null)
                 {
                     if (context.Sequence.Length > 0 && context.Sequence is ISequenceImplementation sequenceImpl)
-                        await sequenceImpl.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
+                        await sequenceImpl.ProcessingCompletedTask.ConfigureAwait(false);
 
                     throw;
                 }
@@ -103,10 +98,12 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             // At the end of the sequence (or when the processing task exits prematurely), ensure that the
             // commit was performed or the error policies were applied before continuing
-            if (context.IsSequenceEnd || (context.Sequence.Context.ProcessingTask?.IsCompleted ?? false))
+            if (context.IsSequenceEnd || context.Sequence.IsAborted)
             {
                 if (context.Sequence is ISequenceImplementation sequenceImpl)
-                    await sequenceImpl.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
+                    await sequenceImpl.ProcessingCompletedTask.ConfigureAwait(false);
+
+                context.Dispose();
             }
         }
 
@@ -132,7 +129,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                     await context.TransactionManager.CommitAsync().ConfigureAwait(false);
 
                     if (context.Sequence is ISequenceImplementation sequenceImpl)
-                        sequenceImpl.ProcessedTaskCompletionSource.SetResult(true);
+                        sequenceImpl.NotifyProcessingCompleted();
                 }
             }
             catch (Exception exception)

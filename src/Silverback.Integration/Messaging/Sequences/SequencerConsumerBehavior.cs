@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Sequences
             }
             finally
             {
-                rawSequence?.SequencerBehaviorsTaskCompletionSource.SetResult(true);
+                rawSequence?.CompleteSequencerBehaviorsTask();
             }
         }
 

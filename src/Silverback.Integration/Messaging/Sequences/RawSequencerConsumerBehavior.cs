@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Sequences
         protected override async Task AwaitOtherBehaviorIfNeededAsync(ISequence sequence)
         {
             if (sequence is ISequenceImplementation sequenceImpl)
-                await sequenceImpl.SequencerBehaviorsTaskCompletionSource.Task.ConfigureAwait(false);
+                await sequenceImpl.SequencerBehaviorsTask.ConfigureAwait(false);
         }
     }
 }

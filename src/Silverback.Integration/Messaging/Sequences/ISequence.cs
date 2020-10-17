@@ -45,7 +45,13 @@ namespace Silverback.Messaging.Sequences
         bool IsPending { get; }
 
         /// <summary>
-        ///     Gets a value indicating whether all messages belonging to the sequence have been pushed.
+        ///     Gets a value indicating whether all messages belonging to the sequence have been pushed and the last
+        ///     message is currently being processed.
+        /// </summary>
+        bool IsCompleting { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether all messages belonging to the sequence have been pushed and processed.
         /// </summary>
         bool IsComplete { get; }
 
