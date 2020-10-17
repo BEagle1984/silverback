@@ -60,15 +60,12 @@ namespace Silverback.Messaging.Inbound.Transaction
                 else if (context.IsSequenceStart)
                 {
                     StartSequenceProcessingAwaiter(context);
+
+                    await AwaitProcessedIfNecessaryAsync(context).ConfigureAwait(false);
                 }
                 else
                 {
-                    if (context.IsSequenceEnd)
-                    {
-                        // Ensure that the commit or rollback was performed before continuing
-                        if (context.Sequence is ISequenceImplementation sequenceImpl)
-                            await sequenceImpl.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
-                    }
+                    await AwaitProcessedIfNecessaryAsync(context).ConfigureAwait(false);
 
                     context.Dispose();
                 }
@@ -97,19 +94,20 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             // ReSharper restore AccessToDisposedClosure
 #pragma warning restore 4014
+        }
 
-            // TODO: Cleanup
+        private static async Task AwaitProcessedIfNecessaryAsync(ConsumerPipelineContext context)
+        {
+            if (context.Sequence == null)
+                throw new InvalidOperationException("Sequence is null");
 
-            // If the sequence completed (or the associated processing task completed)
-            // if (sequence.IsComplete || (sequence.Context.ProcessingTask?.IsCompleted ?? false))
-            // {
-            //     await sequence.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
-            //     sequence.Dispose();
-            //     context.Dispose();
-            // }
-            //
-            // if (context != sequence.Context)
-            //     context.Dispose();
+            // At the end of the sequence (or when the processing task exits prematurely), ensure that the
+            // commit was performed or the error policies were applied before continuing
+            if (context.IsSequenceEnd || (context.Sequence.Context.ProcessingTask?.IsCompleted ?? false))
+            {
+                if (context.Sequence is ISequenceImplementation sequenceImpl)
+                    await sequenceImpl.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
+            }
         }
 
         [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
@@ -139,11 +137,11 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
             catch (Exception exception)
             {
-                await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
+                await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
             }
             finally
             {
-                context.Sequence.Dispose();
+                sequence.Dispose();
             }
         }
 
