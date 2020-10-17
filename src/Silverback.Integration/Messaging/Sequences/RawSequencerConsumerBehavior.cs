@@ -34,26 +34,16 @@ namespace Silverback.Messaging.Sequences
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            // TODO: Task.Run is needed???
-
-            // Start a separate Task to process the sequence. It will be awaited when the last message is
-            // consumed.
-            // if (context.ProcessingTask != null) // TODO: Needed to combine chunk and batch?
-            // {
-            //     var previousProcessingTask = context.ProcessingTask;
-            //
-            //     context.ProcessingTask = Task.Run(
-            //         async () =>
-            //         {
-            //             await Task.WhenAll(next(context), previousProcessingTask).ConfigureAwait(false);
-            //         });
-            // }
-            // else
-            // {
             context.ProcessingTask = Task.Run(async () => await next(context).ConfigureAwait(false));
-            // }
 
             return Task.CompletedTask;
+        }
+
+        /// <inheritdoc cref="SequencerConsumerBehaviorBase.AwaitOtherBehaviorIfNeededAsync" />
+        protected override async Task AwaitOtherBehaviorIfNeededAsync(ISequence sequence)
+        {
+            if (sequence is ISequenceImplementation sequenceImpl)
+                await sequenceImpl.SequencerBehaviorsTaskCompletionSource.Task.ConfigureAwait(false);
         }
     }
 }

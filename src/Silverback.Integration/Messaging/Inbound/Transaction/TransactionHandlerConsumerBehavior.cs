@@ -57,18 +57,29 @@ namespace Silverback.Messaging.Inbound.Transaction
                     await context.TransactionManager.CommitAsync().ConfigureAwait(false);
                     context.Dispose();
                 }
+                else if (context.IsSequenceStart)
+                {
+                    StartSequenceProcessingAwaiter(context);
+                }
                 else
                 {
-                    await HandleSequenceAsync(context, context.Sequence).ConfigureAwait(false);
+                    if (context.IsSequenceEnd)
+                    {
+                        // Ensure that the commit or rollback was performed before continuing
+                        if (context.Sequence is ISequenceImplementation sequenceImpl)
+                            await sequenceImpl.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
+                    }
+
+                    context.Dispose();
                 }
             }
             catch (Exception exception)
             {
-                // Sequence errors are handled in the parallel thread
+                // Sequence errors are handled in AwaitSequenceProcessingAsync, just await the rollback and rethrow
                 if (context.Sequence != null)
                 {
-                    if (context.Sequence.Length > 0)
-                        await context.Sequence.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
+                    if (context.Sequence.Length > 0 && context.Sequence is ISequenceImplementation sequenceImpl)
+                        await sequenceImpl.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
 
                     throw;
                 }
@@ -78,55 +89,61 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        private static async Task HandleSequenceAsync(ConsumerPipelineContext context, ISequence sequence)
+        private static void StartSequenceProcessingAwaiter(ConsumerPipelineContext context)
         {
-            // This is the first message in the sequence, start another thread to await the sequence completion
-            // and perform the commit or rollback
-            if (context == sequence.Context)
-            {
 #pragma warning disable 4014
-                // ReSharper disable AccessToDisposedClosure
-                Task.Run(() => AwaitSequenceProcessingAsync(context, sequence));
+            // ReSharper disable AccessToDisposedClosure
+            Task.Run(() => AwaitSequenceProcessingAsync(context));
 
-                // ReSharper restore AccessToDisposedClosure
+            // ReSharper restore AccessToDisposedClosure
 #pragma warning restore 4014
-            }
 
-            // If the sequence completed (or the associated processing task completed) wait for the the
-            // asynchronous thread to perform the commit or rollback before continuing.
-            if (sequence.IsComplete || (sequence.Context.ProcessingTask?.IsCompleted ?? false))
-            {
-                await sequence.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
-                sequence.Dispose();
-                context.Dispose();
-            }
+            // TODO: Cleanup
 
-            if (context != sequence.Context)
-                context.Dispose();
+            // If the sequence completed (or the associated processing task completed)
+            // if (sequence.IsComplete || (sequence.Context.ProcessingTask?.IsCompleted ?? false))
+            // {
+            //     await sequence.ProcessedTaskCompletionSource.Task.ConfigureAwait(false);
+            //     sequence.Dispose();
+            //     context.Dispose();
+            // }
+            //
+            // if (context != sequence.Context)
+            //     context.Dispose();
         }
 
         [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
-        private static async Task AwaitSequenceProcessingAsync(ConsumerPipelineContext context, ISequence sequence)
+        private static async Task AwaitSequenceProcessingAsync(ConsumerPipelineContext context)
         {
+            var sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
+            context = sequence.Context;
+
             try
             {
-                if (context.ProcessingTask != null)
+                // Keep awaiting in a loop because the sequence and the processing task may be reassigned
+                while (context.ProcessingTask != null && !context.ProcessingTask.IsCompleted)
+                {
                     await context.ProcessingTask.ConfigureAwait(false);
+
+                    sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
+                    context = sequence.Context;
+                }
 
                 if (!sequence.IsAborted && !context.SequenceStore.HasPendingSequences)
                 {
                     await context.TransactionManager.CommitAsync().ConfigureAwait(false);
 
-                    sequence.ProcessedTaskCompletionSource.SetResult(true);
+                    if (context.Sequence is ISequenceImplementation sequenceImpl)
+                        sequenceImpl.ProcessedTaskCompletionSource.SetResult(true);
                 }
             }
             catch (Exception exception)
             {
-                await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
+                await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
             }
             finally
             {
-                context.Dispose();
+                context.Sequence.Dispose();
             }
         }
 

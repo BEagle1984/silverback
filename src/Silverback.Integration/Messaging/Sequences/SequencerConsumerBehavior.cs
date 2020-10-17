@@ -26,6 +26,21 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISorted.SortIndex" />
         public override int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Sequencer;
 
+        /// <inheritdoc cref="SequencerConsumerBehaviorBase.HandleAsync" />
+        public override Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        {
+            var rawSequence = Check.NotNull(context, nameof(context)).Sequence as ISequenceImplementation;
+
+            try
+            {
+                return base.HandleAsync(context, next);
+            }
+            finally
+            {
+                rawSequence?.SequencerBehaviorsTaskCompletionSource.SetResult(true);
+            }
+        }
+
         /// <inheritdoc cref="SequencerConsumerBehaviorBase.PublishSequenceAsync" />
         protected override Task PublishSequenceAsync(
             ConsumerPipelineContext context,

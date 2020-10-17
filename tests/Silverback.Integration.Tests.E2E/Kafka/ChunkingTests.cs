@@ -1618,6 +1618,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             throw new NotImplementedException();
         }
 
+        // TODO: Test message with single chunk (index 0, last true)
+
         // TODO: Test with concurrent consumers
     }
 }

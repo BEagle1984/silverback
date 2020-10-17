@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Sequences.Batch
     ///     Represent an arbitrary sequence of messages created to consume unrelated messages in batch (see
     ///     <see cref="BatchSettings" />).
     /// </summary>
-    public class BatchSequence : Sequence<IInboundEnvelope>
+    public class BatchSequence : Sequence
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="BatchSequence" /> class.

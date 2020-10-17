@@ -16,7 +16,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Sequences
 {
     /// <inheritdoc cref="ISequence" />
-    public abstract class Sequence<TEnvelope> : ISequenceImplementation
+    public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         where TEnvelope : IRawInboundEnvelope
     {
         private readonly MessageStreamProvider<TEnvelope> _streamProvider;
@@ -33,14 +33,16 @@ namespace Silverback.Messaging.Sequences
 
         // TODO: Log add, complete, abort, etc.?
 
-        private readonly ISilverbackIntegrationLogger<Sequence<TEnvelope>> _logger;
+        private readonly ISilverbackIntegrationLogger<SequenceBase<TEnvelope>> _logger;
 
         private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
         private CancellationTokenSource? _timeoutCancellationTokenSource;
 
+        private ICollection<ISequence>? _sequences;
+
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Sequence{TEnvelope}" /> class.
+        ///     Initializes a new instance of the <see cref="SequenceBase{TEnvelope}" /> class.
         /// </summary>
         /// <param name="sequenceId">
         ///     The identifier that is used to match the consumed messages with their belonging sequence.
@@ -56,7 +58,7 @@ namespace Silverback.Messaging.Sequences
         ///     The timeout to be applied. If not specified the value of <c>Endpoint.Sequence.Timeout</c> will be
         ///     used.
         /// </param>
-        protected Sequence(
+        protected SequenceBase(
             string sequenceId,
             ConsumerPipelineContext context,
             bool enforceTimeout = true,
@@ -67,7 +69,7 @@ namespace Silverback.Messaging.Sequences
 
             _streamProvider = new MessageStreamProvider<TEnvelope>();
 
-            _logger = context.ServiceProvider.GetRequiredService<ISilverbackIntegrationLogger<Sequence<TEnvelope>>>();
+            _logger = context.ServiceProvider.GetRequiredService<ISilverbackIntegrationLogger<SequenceBase<TEnvelope>>>();
 
             _enforceTimeout = enforceTimeout;
             _timeout = timeout ?? Context.Envelope.Endpoint.Sequence.Timeout;
@@ -89,10 +91,18 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.Offsets" />
         public IReadOnlyList<IOffset> Offsets => _offsets;
 
+        /// <inheritdoc cref="ISequence.Sequences" />
+        public IReadOnlyCollection<ISequence> Sequences =>
+            (IReadOnlyCollection<ISequence>?)_sequences ?? Array.Empty<ISequence>();
+
         /// <inheritdoc cref="ISequence.Context" />
         public ConsumerPipelineContext Context { get; }
 
-        /// <inheritdoc cref="ISequence.ProcessedTaskCompletionSource" />
+        /// <inheritdoc cref="ISequenceImplementation.SequencerBehaviorsTaskCompletionSource" />
+        public TaskCompletionSource<bool> SequencerBehaviorsTaskCompletionSource { get; } =
+            new TaskCompletionSource<bool>();
+
+        /// <inheritdoc cref="ISequenceImplementation.ProcessedTaskCompletionSource" />
         public TaskCompletionSource<bool> ProcessedTaskCompletionSource { get; } = new TaskCompletionSource<bool>();
 
         /// <inheritdoc cref="ISequence.StreamProvider" />
@@ -120,14 +130,14 @@ namespace Silverback.Messaging.Sequences
         public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>() => StreamProvider.CreateStream<TMessage>();
 
         /// <inheritdoc cref="ISequence.AddAsync" />
-        public Task AddAsync(IRawInboundEnvelope envelope)
+        public Task AddAsync(IRawInboundEnvelope envelope, ISequence? sequence)
         {
             Check.NotNull(envelope, nameof(envelope));
 
             if (!(envelope is TEnvelope typedEnvelope))
                 throw new ArgumentException($"Expected an envelope of type {typeof(TEnvelope).Name}.");
 
-            return AddCoreAsync(typedEnvelope);
+            return AddCoreAsync(typedEnvelope, sequence);
         }
 
         /// <inheritdoc cref="ISequence.AbortAsync" />
@@ -188,12 +198,33 @@ namespace Silverback.Messaging.Sequences
             GC.SuppressFinalize(this);
         }
 
-        /// <inheritdoc cref="ISequence.AddAsync" />
-        protected virtual async Task AddCoreAsync(TEnvelope envelope)
+        /// <summary>
+        ///     Adds the message to the sequence.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The envelope to be added to the sequence.
+        /// </param>
+        /// <param name="sequence">
+        ///     The sequence to be added to the sequence.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected virtual async Task AddCoreAsync(TEnvelope envelope, ISequence? sequence)
         {
             ResetTimeout();
 
-            _offsets.Add(envelope.Offset);
+            if (sequence != null && sequence != this)
+            {
+                _sequences ??= new List<ISequence>();
+                _sequences.Add(sequence);
+
+                sequence.Offsets.ForEach(offset => _offsets.Add(offset));
+            }
+            else
+            {
+                _offsets.Add(envelope.Offset);
+            }
 
             try
             {
@@ -226,13 +257,14 @@ namespace Silverback.Messaging.Sequences
         }
 
         /// <summary>
-        ///     Implements the logic to recognize the last message in the sequence without relying on the TotalCount property.
+        ///     Implements the logic to recognize the last message in the sequence without relying on the TotalCount
+        ///     property.
         /// </summary>
         /// <param name="envelope">
         ///     The envelope to be added to the sequence.
         /// </param>
         /// <returns>
-        ///    <c>true</c> if it is the last message, otherwise <c>false</c>.
+        ///     <c>true</c> if it is the last message, otherwise <c>false</c>.
         /// </returns>
         protected virtual bool IsLastMessage(TEnvelope envelope) => false;
 
@@ -275,6 +307,10 @@ namespace Silverback.Messaging.Sequences
                 _abortCancellationTokenSource.Dispose();
                 _timeoutCancellationTokenSource?.Cancel();
                 _timeoutCancellationTokenSource?.Dispose();
+                _timeoutCancellationTokenSource = null;
+
+                _sequences?.ForEach(sequence => sequence.Dispose());
+
                 Context.Dispose();
             }
         }

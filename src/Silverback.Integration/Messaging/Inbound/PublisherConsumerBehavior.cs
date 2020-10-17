@@ -67,7 +67,7 @@ namespace Silverback.Messaging.Inbound
                     // TODO: Create only if necessary?
 
                     await EnsureUnboundedStreamIsPublishedAsync(context).ConfigureAwait(false);
-                    await _unboundedSequence!.AddAsync(envelope).ConfigureAwait(false);
+                    await _unboundedSequence!.AddAsync(envelope, null).ConfigureAwait(false);
 
                     if (_unboundedSequence.IsAborted && _unboundedSequence.AbortException != null)
                         throw _unboundedSequence.AbortException; // TODO: Wrap into another exception?

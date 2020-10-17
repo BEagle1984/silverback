@@ -97,10 +97,11 @@ namespace Silverback.Messaging.Sequences
         {
             Check.NotNull(context, nameof(context));
 
-            if (context.SequenceStore.HasPendingSequences)
-                await AbortPreviousSequencesAsync(context).ConfigureAwait(false);
-
             var sequence = CreateNewSequenceCore(sequenceId, context);
+
+            if (context.SequenceStore.HasPendingSequences)
+                await AbortPreviousSequencesAsync(context.SequenceStore, sequence).ConfigureAwait(false);
+
             await context.SequenceStore.AddAsync(sequence).ConfigureAwait(false);
 
             return sequence;
@@ -150,12 +151,19 @@ namespace Silverback.Messaging.Sequences
             return sequence;
         }
 
-        private static async Task AbortPreviousSequencesAsync(ConsumerPipelineContext context)
+        private static async Task AbortPreviousSequencesAsync(ISequenceStore sequenceStore, ISequence currentSequence)
         {
             // TODO: Log
 
-            await context.SequenceStore.ForEachAsync(
-                    previousSequence => previousSequence.AbortAsync(SequenceAbortReason.IncompleteSequence))
+            await sequenceStore.ForEachAsync(
+                    previousSequence =>
+                    {
+                        // Prevent the other sequences to be aborted when a new ChunkSequence is started
+                        if (currentSequence is RawSequence && previousSequence is Sequence)
+                            return Task.CompletedTask;
+
+                        return previousSequence.AbortAsync(SequenceAbortReason.IncompleteSequence);
+                    })
                 .ConfigureAwait(false);
         }
     }

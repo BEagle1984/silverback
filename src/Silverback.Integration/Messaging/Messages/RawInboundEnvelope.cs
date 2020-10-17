@@ -19,16 +19,14 @@ namespace Silverback.Messaging.Messages
             IConsumerEndpoint endpoint,
             string actualEndpointName,
             IOffset offset,
-            IDictionary<string, string>? additionalLogData = null,
-            ISequence? sequence = null)
+            IDictionary<string, string>? additionalLogData = null)
             : this(
                 rawMessage != null ? new MemoryStream(rawMessage) : null,
                 headers,
                 endpoint,
                 actualEndpointName,
                 offset,
-                additionalLogData,
-                sequence)
+                additionalLogData)
         {
         }
 
@@ -38,12 +36,10 @@ namespace Silverback.Messaging.Messages
             IConsumerEndpoint endpoint,
             string actualEndpointName,
             IOffset offset,
-            IDictionary<string, string>? additionalLogData = null,
-            ISequence? sequence = null)
+            IDictionary<string, string>? additionalLogData = null)
             : base(rawMessage, headers, endpoint, additionalLogData)
         {
             ActualEndpointName = actualEndpointName;
-            Sequence = sequence;
             Offset = offset;
         }
 
@@ -51,8 +47,6 @@ namespace Silverback.Messaging.Messages
 
         public string ActualEndpointName { get; }
 
-        public ISequence? Sequence { get; set; }
-
-        public IOffset Offset { get; internal set; }
+        public IOffset Offset { get; }
     }
 }

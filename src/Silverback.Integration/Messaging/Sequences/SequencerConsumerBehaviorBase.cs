@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
@@ -39,7 +38,7 @@ namespace Silverback.Messaging.Sequences
         public abstract int SortIndex { get; }
 
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-        public async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        public virtual async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -52,13 +51,17 @@ namespace Silverback.Messaging.Sequences
                 return;
             }
 
-            // Store the original envelope in case it gets replaced in the GetSequence method (see ChunkSequenceReader)
+            // Store the original envelope in case it is replaced in the GetSequence method (see ChunkSequenceReader)
             var originalEnvelope = context.Envelope;
+
+            // Store the previous sequence since it must be added to the new one (e.g. ChunkSequence into BatchSequence)
+            var previousSequence = context.Sequence;
+
             var sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
 
             if (sequence != null)
             {
-                ((RawInboundEnvelope)context.Envelope).Sequence = sequence;
+                context.SetSequence(sequence, sequence.IsNew);
 
                 if (sequence.IsNew)
                 {
@@ -68,7 +71,16 @@ namespace Silverback.Messaging.Sequences
                         MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);
                 }
 
-                await sequence.AddAsync(originalEnvelope).ConfigureAwait(false);
+                await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
+
+                if (sequence.IsComplete)
+                {
+                    await AwaitOtherBehaviorIfNeededAsync(sequence).ConfigureAwait(false);
+
+                    // Mark the envelope as the end of the sequence only if the sequence wasn't swapped (e.g. chunk -> batch)
+                    if (sequence == sequence.Context.Sequence)
+                        context.SetIsSequenceEnd();
+                }
             }
         }
 
@@ -85,6 +97,20 @@ namespace Silverback.Messaging.Sequences
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         protected abstract Task PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next);
+
+        /// <summary>
+        ///     When overridden in a derived class awaits for the sequence to be processed by the other twin behavior.
+        ///     This is used to have the <see cref="RawSequencerConsumerBehavior" /> wait for the processing by the
+        ///     <see cref="SequencerConsumerBehavior" /> and it's needed to be able to properly determine the sequence
+        ///     end in the case where a ChunkSequence is added into another sequence (e.g. BatchSequence).
+        /// </summary>
+        /// <param name="sequence">
+        ///     The current sequence.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected virtual Task AwaitOtherBehaviorIfNeededAsync(ISequence sequence) => Task.CompletedTask;
 
         private static void MonitorProcessingTaskPrematureCompletion(Task processingTask, ISequence sequence)
         {

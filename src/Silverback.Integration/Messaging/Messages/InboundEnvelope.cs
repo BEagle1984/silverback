@@ -18,8 +18,7 @@ namespace Silverback.Messaging.Messages
                 envelope.Offset,
                 envelope.Endpoint,
                 envelope.ActualEndpointName,
-                envelope.AdditionalLogData,
-                envelope.Sequence)
+                envelope.AdditionalLogData)
         {
         }
 
@@ -29,9 +28,14 @@ namespace Silverback.Messaging.Messages
             IOffset offset,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
-            IDictionary<string, string>? additionalLogData = null,
-            ISequence? sequence = null)
-            : base(rawMessage, headers, endpoint, actualEndpointName, offset, additionalLogData, sequence)
+            IDictionary<string, string>? additionalLogData = null)
+            : base(
+                rawMessage,
+                headers,
+                endpoint,
+                actualEndpointName,
+                offset,
+                additionalLogData)
         {
         }
 

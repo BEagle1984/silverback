@@ -27,10 +27,5 @@ namespace Silverback.Messaging.Messages
         ///     Gets the message offset (or similar construct if using a message broker other than Kafka).
         /// </summary>
         IOffset Offset { get; }
-
-        /// <summary>
-        ///     Gets the <see cref="ISequence"/> this message belongs to.
-        /// </summary>
-        ISequence? Sequence { get; }
     }
 }

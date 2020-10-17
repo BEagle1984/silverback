@@ -153,7 +153,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
             store.HasPendingSequences.Should().BeFalse();
         }
 
-        private sealed class FakeSequence : Sequence<IInboundEnvelope>
+        private sealed class FakeSequence : SequenceBase<IInboundEnvelope>
         {
             public FakeSequence(string sequenceId, bool isComplete, bool isAborted, ISequenceStore store)
                 : base(sequenceId, ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store))

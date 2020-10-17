@@ -67,7 +67,18 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <summary>
         ///     Gets a the <see cref="ISequence" /> the current message belongs to.
         /// </summary>
-        public ISequence? Sequence => Envelope.Sequence;
+        public ISequence? Sequence { get; private set; }
+
+        /// <summary>
+        ///     Gets a value indicating whether the current message was recognized as the beginning of a new
+        ///     sequence.
+        /// </summary>
+        public bool IsSequenceStart { get; private set; }
+
+        /// <summary>
+        ///     Gets a value indicating whether the current message was recognized as the end of the sequence.
+        /// </summary>
+        public bool IsSequenceEnd { get; private set; }
 
         /// <summary>
         ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the required services.
@@ -120,6 +131,30 @@ namespace Silverback.Messaging.Broker.Behaviors
 
             _serviceScope = Check.NotNull(newServiceScope, nameof(newServiceScope));
             ServiceProvider = newServiceScope.ServiceProvider;
+        }
+
+        /// <summary>
+        ///     Sets the current sequence.
+        /// </summary>
+        /// <param name="sequence">
+        ///     The <see cref="ISequence" /> being processed.
+        /// </param>
+        /// <param name="isSequenceStart">
+        ///     A value indicating whether the current message was recognized as the beginning of a new sequence.
+        /// </param>
+        public void SetSequence(ISequence sequence, in bool isSequenceStart)
+        {
+            Sequence = sequence;
+            IsSequenceStart = isSequenceStart;
+        }
+
+        /// <summary>
+        ///     Sets the <see cref="IsSequenceEnd" /> property to <c>true</c>, indicating that the current message was
+        ///     recognized as the end of the sequence.
+        /// </summary>
+        public void SetIsSequenceEnd()
+        {
+            IsSequenceEnd = true;
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />

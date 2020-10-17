@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Chunking;
 
 namespace Silverback.Messaging.Sequences
 {
@@ -80,16 +82,16 @@ namespace Silverback.Messaging.Sequences
         IReadOnlyList<IOffset> Offsets { get; }
 
         /// <summary>
+        ///     Gets the <see cref="ISequence" /> that were added to this sequence (e.g. the
+        ///     <see cref="ChunkSequence" /> whose aggregated message is added to a <see cref="BatchSequence" />.
+        /// </summary>
+        IReadOnlyCollection<ISequence> Sequences { get; }
+
+        /// <summary>
         ///     Gets the <see cref="ConsumerPipelineContext" /> related to the processing of this sequence
         ///     (usually the context of the first message that initiated the sequence).
         /// </summary>
         ConsumerPipelineContext Context { get; }
-
-        /// <summary>
-        ///     Gets the <see cref="TaskCompletionSource{TResult}" /> that is used to notify when the processing is
-        ///     finished (including commit/rollback of the transaction and the offsets).
-        /// </summary>
-        TaskCompletionSource<bool> ProcessedTaskCompletionSource { get; }
 
         /// <summary>
         ///     Gets the <see cref="IMessageStreamProvider" /> that will be pushed with the messages belonging to the
@@ -115,10 +117,13 @@ namespace Silverback.Messaging.Sequences
         /// <param name="envelope">
         ///     The envelope to be added to the sequence.
         /// </param>
+        /// <param name="sequence">
+        ///     The sequence to be added to the sequence.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task AddAsync(IRawInboundEnvelope envelope);
+        Task AddAsync(IRawInboundEnvelope envelope, ISequence? sequence);
 
         /// <summary>
         ///     Aborts the sequence processing. Used for example to signal that an exception occurred or the

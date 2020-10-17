@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Sequences.Unbounded
     ///     This isn't a real sequence but it's used to handle the stream pushed with all messages not actually
     ///     belonging to a sequence.
     /// </summary>
-    internal class UnboundedSequence : Sequence<IInboundEnvelope>
+    internal class UnboundedSequence :Sequence
     {
         public UnboundedSequence(string sequenceId, ConsumerPipelineContext context)
             : base(sequenceId, context, false)
