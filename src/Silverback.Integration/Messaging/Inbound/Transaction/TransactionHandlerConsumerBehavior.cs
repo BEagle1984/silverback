@@ -120,6 +120,10 @@ namespace Silverback.Messaging.Inbound.Transaction
                 {
                     await context.ProcessingTask.ConfigureAwait(false);
 
+                    // Ensure we are at the start of the outer sequence
+                    if (!context.IsSequenceStart)
+                        return;
+
                     sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
                     context = sequence.Context;
                 }

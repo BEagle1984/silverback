@@ -12,7 +12,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound.Transaction
 {
-    /// <inheritdoc cref="IConsumerTransactionManager"/>
+    /// <inheritdoc cref="IConsumerTransactionManager" />
     public class ConsumerTransactionManager : IConsumerTransactionManager
     {
         private readonly ConsumerPipelineContext _context;
@@ -20,10 +20,10 @@ namespace Silverback.Messaging.Inbound.Transaction
         private readonly List<ITransactional> _transactionalServices = new List<ITransactional>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConsumerTransactionManager"/> class.
+        ///     Initializes a new instance of the <see cref="ConsumerTransactionManager" /> class.
         /// </summary>
         /// <param name="context">
-        ///     The current <see cref="ConsumerPipelineContext"/>.
+        ///     The current <see cref="ConsumerPipelineContext" />.
         /// </param>
         public ConsumerTransactionManager(ConsumerPipelineContext context)
         {

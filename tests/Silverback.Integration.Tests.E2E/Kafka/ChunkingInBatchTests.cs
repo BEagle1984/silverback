@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -27,6 +29,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         public async Task Chunking_JsonConsumedInBatch_ProducedAndConsumed()
         {
             var batches = new List<List<TestEventOne>>();
+            string? failedCommit = null;
 
             var serviceProvider = Host.ConfigureServices(
                     services => services
@@ -50,7 +53,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration = new KafkaConsumerConfig
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
                                         },
                                         Batch = new BatchSettings
                                         {
@@ -61,13 +65,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IMessageStreamEnumerable<TestEventOne> streamEnumerable) =>
                             {
                                 var list = new List<TestEventOne>();
+                                batches.Add(list);
 
                                 await foreach (var message in streamEnumerable)
                                 {
                                     list.Add(message);
-                                }
 
-                                batches.Add(list);
+                                    var actualCommittedOffsets = DefaultTopic.GetCommittedOffsetsCount("consumer1");
+                                    var expectedCommittedOffsets = 15 * (batches.Count - 1);
+
+                                    if (actualCommittedOffsets != expectedCommittedOffsets)
+                                    {
+                                        failedCommit ??= $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
+                                                         $"({batches.Count}.{list.Count})";
+                                    }
+                                }
                             }))
                 .Run();
 
@@ -81,7 +93,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = $"Long message {i}"
                         }));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan.FromMinutes(1));
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan.FromSeconds(60));
 
             batches.Should().HaveCount(3);
             batches[0].Should().HaveCount(5);
@@ -105,12 +117,16 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             batches[2][2].Content.Should().Be("Long message 13");
             batches[2][3].Content.Should().Be("Long message 14");
             batches[2][4].Content.Should().Be("Long message 15");
+
+            failedCommit.Should().BeNull();
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(45);
         }
 
         [Fact]
         public async Task Chunking_BinaryFileConsumedInBatch_ProducedAndConsumed()
         {
             var batches = new List<List<string?>>();
+            string? failedCommit = null;
 
             var serviceProvider = Host.ConfigureServices(
                     services => services
@@ -134,7 +150,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration = new KafkaConsumerConfig
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
                                         },
                                         Batch = new BatchSettings
                                         {
@@ -145,14 +162,23 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IMessageStreamEnumerable<BinaryFileMessage> streamEnumerable) =>
                             {
                                 var list = new List<string?>();
+                                batches.Add(list);
 
                                 await foreach (var message in streamEnumerable)
                                 {
+                                    var actualCommittedOffsets = DefaultTopic.GetCommittedOffsetsCount("consumer1");
+                                    var expectedCommittedOffsets = 10 * (batches.Count - 1);
+
+                                    if (actualCommittedOffsets != expectedCommittedOffsets)
+                                    {
+                                        failedCommit ??= $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
+                                                         $"({batches.Count}.{list.Count})";
+                                    }
+
                                     var readAll = await message.Content.ReadAllAsync();
                                     list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
                                 }
 
-                                batches.Add(list);
                             }))
                 .Run();
 
@@ -186,6 +212,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             batches[2][2].Should().Be("Long message 13");
             batches[2][3].Should().Be("Long message 14");
             batches[2][4].Should().Be("Long message 15");
+
+            failedCommit.Should().BeNull();
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(30);
         }
 
         // TODO: Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?
