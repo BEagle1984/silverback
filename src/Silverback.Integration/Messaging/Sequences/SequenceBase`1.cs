@@ -206,6 +206,7 @@ namespace Silverback.Messaging.Sequences
             _streamProvider.Abort();
 
             // TODO: Review this!!!
+            _abortingTaskCompletionSource?.SetResult(true);
             _abortCancellationTokenSource.Cancel();
         }
 
