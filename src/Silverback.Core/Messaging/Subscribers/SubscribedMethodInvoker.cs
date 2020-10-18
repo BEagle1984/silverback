@@ -145,6 +145,16 @@ namespace Silverback.Messaging.Subscribers
                 IEnumerableMessageArgumentResolver enumerableResolver,
                 bool executeAsync)
         {
+            if (messages.Count == 1 && messages.AsReadOnlyList()[0] is IMessageStreamProvider &&
+                enumerableResolver is IStreamEnumerableMessageArgumentResolver resolverFromStreamProvider)
+            {
+                return InvokeWithStreamEnumerable(
+                    messages,
+                    subscribedMethod,
+                    arguments,
+                    resolverFromStreamProvider);
+            }
+
             messages = FilterMessagesAndUnwrapEnvelopes(messages, subscribedMethod).ToList();
 
             if (messages.Count == 0)
