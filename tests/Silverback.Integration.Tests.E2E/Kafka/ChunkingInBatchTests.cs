@@ -93,7 +93,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = $"Long message {i}"
                         }));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan.FromSeconds(60));
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             batches.Should().HaveCount(3);
             batches[0].Should().HaveCount(5);
@@ -188,7 +188,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 i =>
                     publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}"))));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan.FromMinutes(1));
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             batches.Should().HaveCount(3);
             batches[0].Should().HaveCount(5);

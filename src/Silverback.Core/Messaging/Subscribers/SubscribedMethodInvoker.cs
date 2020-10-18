@@ -145,7 +145,8 @@ namespace Silverback.Messaging.Subscribers
                 IEnumerableMessageArgumentResolver enumerableResolver,
                 bool executeAsync)
         {
-            if (messages.Count == 1 && messages.AsReadOnlyList()[0] is IMessageStreamProvider &&
+            if (messages.Count == 1 && messages.AsReadOnlyList()[0] is IMessageStreamProvider streamProvider &&
+                streamProvider.AllowSubscribeAsEnumerable &&
                 enumerableResolver is IStreamEnumerableMessageArgumentResolver resolverFromStreamProvider)
             {
                 return InvokeWithStreamEnumerable(
@@ -180,7 +181,7 @@ namespace Silverback.Messaging.Subscribers
             var streamProviders = FilterMessageStreamEnumerableMessages(messages, subscribedMethod).ToArray();
 
             if (streamProviders.Length == 0)
-                return (messages, null);
+                return (streamProviders, null);
 
             var target = subscribedMethod.ResolveTargetType(_serviceProvider);
 

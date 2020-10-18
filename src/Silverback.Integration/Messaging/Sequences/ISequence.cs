@@ -126,10 +126,15 @@ namespace Silverback.Messaging.Sequences
         /// <param name="sequence">
         ///     The sequence to be added to the sequence.
         /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     number of streams that have been pushed.
         /// </returns>
-        Task AddAsync(IRawInboundEnvelope envelope, ISequence? sequence);
+        Task<int> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled = true);
 
         /// <summary>
         ///     Aborts the sequence processing. Used for example to signal that an exception occurred or the

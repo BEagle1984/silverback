@@ -1,11 +1,13 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Xunit;
@@ -28,9 +30,9 @@ namespace Silverback.Tests.Core.Messaging.Messages
             var task1 = Task.Run(() => eventsList = eventsStream.ToList());
             var task2 = Task.Run(() => testEventOnesList = testEventOneStream.ToList());
 
-            await provider.PushAsync(new TestEventOne());
-            await provider.PushAsync(new TestEventTwo());
-            await provider.PushAsync(new TestCommandOne());
+            await provider.PushAsync(new TestEventOne(), false);
+            await provider.PushAsync(new TestEventTwo(), false);
+            await provider.PushAsync(new TestCommandOne(), false);
 
             await provider.CompleteAsync(); // Implicitly tests that the Complete call is also propagated
 
@@ -38,6 +40,34 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             eventsList.Should().BeEquivalentTo(new TestEventOne(), new TestEventTwo());
             testEventOnesList.Should().BeEquivalentTo(new TestEventOne());
+        }
+
+        [Fact]
+        public async Task PushAsync_MessageWithoutMatchingStream_ExceptionThrown()
+        {
+            var provider = new MessageStreamProvider<IMessage>();
+            var stream = provider.CreateStream<TestEventOne>();
+
+            Task.Run(() => stream.ToList()).RunWithoutBlocking();
+
+            await provider.PushAsync(new TestEventOne());
+            Func<Task> act = () => provider.PushAsync(new TestEventTwo());
+
+            act.Should().Throw<UnhandledMessageException>();
+        }
+
+        [Fact]
+        public async Task PushAsync_MessageWithoutMatchingStreamDisablingException_NoExceptionThrown()
+        {
+            var provider = new MessageStreamProvider<IMessage>();
+            var stream = provider.CreateStream<TestEventOne>();
+
+            Task.Run(() => stream.ToList()).RunWithoutBlocking();
+
+            await provider.PushAsync(new TestEventOne());
+            Func<Task> act = () => provider.PushAsync(new TestEventTwo(), false);
+
+            act.Should().NotThrow();
         }
 
         [Fact]
@@ -74,9 +104,9 @@ namespace Silverback.Tests.Core.Messaging.Messages
             var task1 = Task.Run(() => eventsList = eventsStream.ToList());
             var task2 = Task.Run(() => testEventOnesList = testEventOnesStream.ToList());
 
-            await provider.PushAsync(new TestEnvelope(new TestEventOne()));
-            await provider.PushAsync(new TestEnvelope(new TestEventTwo()));
-            await provider.PushAsync(new TestEnvelope(new TestCommandOne()));
+            await provider.PushAsync(new TestEnvelope(new TestEventOne()), false);
+            await provider.PushAsync(new TestEnvelope(new TestEventTwo()), false);
+            await provider.PushAsync(new TestEnvelope(new TestCommandOne()), false);
 
             await provider.CompleteAsync(); // Implicitly tests that the Complete call is also propagated
 
@@ -84,6 +114,20 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             eventsList.Should().BeEquivalentTo(new TestEventOne(), new TestEventTwo());
             testEventOnesList.Should().BeEquivalentTo(new TestEventOne());
+        }
+
+        [Fact]
+        public async Task PushAsync_EnvelopeWithoutMatchingStream_ExceptionThrown()
+        {
+            var provider = new MessageStreamProvider<IEnvelope>();
+            var stream = provider.CreateStream<TestEventOne>();
+
+            Task.Run(() => stream.ToList()).RunWithoutBlocking();
+
+            await provider.PushAsync(new TestEnvelope(new TestEventOne()));
+            Func<Task> act = () => provider.PushAsync(new TestEnvelope(new TestEventTwo()));
+
+            act.Should().Throw<UnhandledMessageException>();
         }
 
         [Fact]

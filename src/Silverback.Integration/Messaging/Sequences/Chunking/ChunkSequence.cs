@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Sequences.Chunking
         }
 
         /// <inheritdoc cref="SequenceBase{TEnvelope}.AddCoreAsync" />
-        protected override Task AddCoreAsync(IRawInboundEnvelope envelope, ISequence? sequence)
+        protected override Task<int> AddCoreAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -44,9 +44,9 @@ namespace Silverback.Messaging.Sequences.Chunking
                              throw new InvalidOperationException("Chunk index header not found.");
 
             if (!EnsureOrdering(chunkIndex))
-                return Task.CompletedTask;
+                return Task.FromResult(0);
 
-            return base.AddCoreAsync(envelope, sequence);
+            return base.AddCoreAsync(envelope, sequence, throwIfUnhandled);
         }
 
         /// <inheritdoc cref="SequenceBase{TEnvelope}.IsLastMessage" />
@@ -61,8 +61,9 @@ namespace Silverback.Messaging.Sequences.Chunking
         {
             if (_lastIndex == null && index != 0)
             {
-                throw new SequenceException($"Sequence error. Received chunk with index {index} as first " +
-                                            $"chunk for the sequence {SequenceId}, expected index 0. ");
+                throw new SequenceException(
+                    $"Sequence error. Received chunk with index {index} as first " +
+                    $"chunk for the sequence {SequenceId}, expected index 0. ");
             }
 
             if (_lastIndex != null && index == _lastIndex)
@@ -70,8 +71,9 @@ namespace Silverback.Messaging.Sequences.Chunking
 
             if (_lastIndex != null && index != _lastIndex + 1)
             {
-                throw new SequenceException($"Sequence error. Received chunk with index {index} after index " +
-                                            $"{_lastIndex}.");
+                throw new SequenceException(
+                    $"Sequence error. Received chunk with index {index} after index " +
+                    $"{_lastIndex}.");
             }
 
             _lastIndex = index;

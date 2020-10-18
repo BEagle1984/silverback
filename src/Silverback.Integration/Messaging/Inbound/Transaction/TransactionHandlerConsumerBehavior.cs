@@ -70,6 +70,8 @@ namespace Silverback.Messaging.Inbound.Transaction
                 // Sequence errors are handled in AwaitSequenceProcessingAsync, just await the rollback and rethrow
                 if (context.Sequence != null)
                 {
+                    await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
+
                     if (context.Sequence.Length > 0 && context.Sequence is ISequenceImplementation sequenceImpl)
                         await sequenceImpl.ProcessingCompletedTask.ConfigureAwait(false);
 

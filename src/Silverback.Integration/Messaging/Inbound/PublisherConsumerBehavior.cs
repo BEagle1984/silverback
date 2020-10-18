@@ -56,24 +56,29 @@ namespace Silverback.Messaging.Inbound
                 // BinaryFileMessage or another Behavior. In this case we still publish the envelope, ignoring the
                 // sequence.
                 if (context.Sequence.IsBeingConsumed || context.Sequence.IsComplete)
-                    await PublishEnvelopeAsync(context).ConfigureAwait(false);
+                    await PublishEnvelopeAsync(context, context.Envelope.Endpoint.ThrowIfUnhandled).ConfigureAwait(false);
                 else
                     await PublishSequenceAsync(context.Sequence, context).ConfigureAwait(false);
             }
             else
             {
+                var throwIfUnhandled = context.Envelope.Endpoint.ThrowIfUnhandled;
+
                 if (context.Envelope is IInboundEnvelope envelope)
                 {
                     // TODO: Create only if necessary?
 
                     await EnsureUnboundedStreamIsPublishedAsync(context).ConfigureAwait(false);
-                    await _unboundedSequence!.AddAsync(envelope, null).ConfigureAwait(false);
+
+                    int pushedStreamsCount = await _unboundedSequence!.AddAsync(envelope, null, false).ConfigureAwait(false);
 
                     if (_unboundedSequence.IsAborted && _unboundedSequence.AbortException != null)
                         throw _unboundedSequence.AbortException; // TODO: Wrap into another exception?
+
+                    throwIfUnhandled &= pushedStreamsCount == 0;
                 }
 
-                await PublishEnvelopeAsync(context).ConfigureAwait(false);
+                await PublishEnvelopeAsync(context, throwIfUnhandled).ConfigureAwait(false);
             }
 
             await next(context).ConfigureAwait(false);
@@ -85,20 +90,26 @@ namespace Silverback.Messaging.Inbound
             _unboundedSequence?.Dispose();
         }
 
-        private static async Task PublishEnvelopeAsync(ConsumerPipelineContext context)
-        {
-            var publisher = context.ServiceProvider.GetRequiredService<IPublisher>();
-
-            // TODO: Handle ThrowIfUnhandled across single message and stream (and test it)
-            await publisher.PublishAsync(context.Envelope, context.Envelope.Endpoint.ThrowIfUnhandled)
-                .ConfigureAwait(false);
-        }
+        private static async Task PublishEnvelopeAsync(ConsumerPipelineContext context, bool throwIfUnhandled) =>
+            await context.ServiceProvider.GetRequiredService<IPublisher>()
+                .PublishAsync(context.Envelope, throwIfUnhandled).ConfigureAwait(false);
 
         private static async Task PublishSequenceAsync(ISequence sequence, ConsumerPipelineContext context)
         {
             // TODO: Force throwIfUnhandled
 
             context.ProcessingTask = await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);
+        }
+
+        private async Task EnsureUnboundedStreamIsPublishedAsync(ConsumerPipelineContext context)
+        {
+            if (_unboundedSequence != null && _unboundedSequence.IsPending)
+                return;
+
+            _unboundedSequence = new UnboundedSequence("unbounded", context);
+            await context.SequenceStore.AddAsync(_unboundedSequence).ConfigureAwait(false);
+
+            await PublishStreamProviderAsync(_unboundedSequence, context).ConfigureAwait(false);
         }
 
         [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
@@ -150,17 +161,6 @@ namespace Silverback.Messaging.Inbound
             var tcs = new TaskCompletionSource<bool>();
             cancellationToken.Register(s => { ((TaskCompletionSource<bool>)s).SetResult(true); }, tcs);
             return tcs.Task;
-        }
-
-        private async Task EnsureUnboundedStreamIsPublishedAsync(ConsumerPipelineContext context)
-        {
-            if (_unboundedSequence != null && _unboundedSequence.IsPending)
-                return;
-
-            _unboundedSequence = new UnboundedSequence("unbounded", context);
-            await context.SequenceStore.AddAsync(_unboundedSequence).ConfigureAwait(false);
-
-            await PublishStreamProviderAsync(_unboundedSequence, context).ConfigureAwait(false);
         }
     }
 }

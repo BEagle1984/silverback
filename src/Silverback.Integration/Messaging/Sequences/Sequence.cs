@@ -27,12 +27,16 @@ namespace Silverback.Messaging.Sequences
         ///     The timeout to be applied. If not specified the value of <c>Endpoint.Sequence.Timeout</c> will be
         ///     used.
         /// </param>
+        /// <param name="streamProvider">
+        ///     The <see cref="IMessageStreamProvider" /> to be pushed. A new one will be created if not provided.
+        /// </param>
         protected Sequence(
             string sequenceId,
             ConsumerPipelineContext context,
             bool enforceTimeout = true,
-            TimeSpan? timeout = null)
-            : base(sequenceId, context, enforceTimeout, timeout)
+            TimeSpan? timeout = null,
+            IMessageStreamProvider? streamProvider = null)
+            : base(sequenceId, context, enforceTimeout, timeout, streamProvider)
         {
         }
     }

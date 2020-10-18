@@ -7,12 +7,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Relays the streamed messages to all the linked <see cref="MessageStreamEnumerable{TMessage}"/>.
+    ///     Relays the streamed messages to all the linked <see cref="MessageStreamEnumerable{TMessage}" />.
     /// </summary>
     /// <typeparam name="TMessage">
     ///     The type of the messages being streamed.
@@ -28,6 +29,9 @@ namespace Silverback.Messaging.Messages
         /// <inheritdoc cref="IMessageStreamProvider.MessageType" />
         public Type MessageType => typeof(TMessage);
 
+        /// <inheritdoc cref="IMessageStreamProvider.AllowSubscribeAsEnumerable" />
+        public bool AllowSubscribeAsEnumerable { get; set; } = true;
+
         /// <inheritdoc cref="IMessageStreamProvider.StreamsCount" />
         public int StreamsCount => _streams.Count;
 
@@ -42,10 +46,33 @@ namespace Silverback.Messaging.Messages
         ///     A <see cref="CancellationToken" /> used to cancel the operation.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The  <see cref="Task" /> will complete
-        ///     only when the message has actually been pulled and processed.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task will complete only
+        ///     when the message has actually been pulled and processed and its result contains the number of
+        ///     <see cref="IMessageStreamEnumerable{TMessage}" /> that have been pushed.
         /// </returns>
-        public virtual async Task PushAsync(TMessage message, CancellationToken cancellationToken = default)
+        public virtual Task<int> PushAsync(TMessage message, CancellationToken cancellationToken = default) =>
+            PushAsync(message, true, cancellationToken);
+
+        /// <summary>
+        ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the
+        ///     message has actually been pulled and processed.
+        /// </summary>
+        /// <param name="message">
+        ///     The message to be added.
+        /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task will complete only
+        ///     when the message has actually been pulled and processed and its result contains the number of
+        ///     <see cref="IMessageStreamEnumerable{TMessage}" /> that have been pushed.
+        /// </returns>
+        public virtual async Task<int> PushAsync(TMessage message, bool throwIfUnhandled, CancellationToken cancellationToken = default)
         {
             Check.NotNull<object>(message, nameof(message));
 
@@ -59,6 +86,11 @@ namespace Silverback.Messaging.Messages
 
             if (pushTasks.Length > 0)
                 await Task.WhenAll(pushTasks).ConfigureAwait(false);
+
+            if (pushTasks.Length == 0 && throwIfUnhandled)
+                throw new UnhandledMessageException(message!);
+
+            return pushTasks.Length;
         }
 
         /// <summary>
@@ -124,13 +156,6 @@ namespace Silverback.Messaging.Messages
         private static IMessageStreamEnumerable<TMessageLinked> CreateStreamCore<TMessageLinked>() =>
             new MessageStreamEnumerable<TMessageLinked>();
 
-        private void Dispose(bool disposing)
-        {
-            // TODO: Prevent complete being called after abort (or being called twice)
-            if (disposing)
-                AsyncHelper.RunSynchronously(() => CompleteAsync());
-        }
-
         private static Task? PushIfCompatibleTypeAsync(
             IMessageStreamEnumerable stream,
             int messageId,
@@ -155,6 +180,13 @@ namespace Silverback.Messaging.Messages
             }
 
             return null;
+        }
+
+        private void Dispose(bool disposing)
+        {
+            // TODO: Prevent complete being called after abort (or being called twice)
+            if (disposing)
+                AsyncHelper.RunSynchronously(() => CompleteAsync());
         }
     }
 }

@@ -188,12 +188,7 @@ namespace Silverback.Messaging.Publishing
 
             if (!allMessagesHandled && throwIfUnhandled)
             {
-                var errorMessage = messagesList.Count == 1
-                    ? $"No subscriber could be found to handle the message of type {messagesList.First().GetType().FullName}."
-                    : "No subscriber could be found to handle some of the published messages " +
-                      $"({string.Join(", ", messagesList.Select(message => message.GetType().FullName).Distinct())}).";
-
-                throw new UnhandledMessageException(messagesList, errorMessage);
+                throw new UnhandledMessageException(messagesList);
             }
 
             return results.SelectMany(result => result.ReturnValues).ToList();

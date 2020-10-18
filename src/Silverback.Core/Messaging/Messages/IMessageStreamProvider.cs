@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 
 namespace Silverback.Messaging.Messages
 {
@@ -16,7 +17,13 @@ namespace Silverback.Messaging.Messages
         Type MessageType { get; }
 
         /// <summary>
-        ///     Gets the number of <see cref="IMessageStreamEnumerable{TMessage}"/> that have been created via
+        ///     Gets a value indicating whether the stream can be forwarded to the subscribers declare a parameter of
+        ///     type <see cref="IEnumerable{T}" />.
+        /// </summary>
+        bool AllowSubscribeAsEnumerable { get; }
+
+        /// <summary>
+        ///     Gets the number of <see cref="IMessageStreamEnumerable{TMessage}" /> that have been created via
         ///     <see cref="CreateStream" /> or <see cref="CreateStream{TMessage}" />.
         /// </summary>
         int StreamsCount { get; }

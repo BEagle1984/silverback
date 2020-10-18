@@ -65,16 +65,21 @@ namespace Silverback.Messaging.Sequences
         ///     The timeout to be applied. If not specified the value of <c>Endpoint.Sequence.Timeout</c> will be
         ///     used.
         /// </param>
+        /// <param name="streamProvider">
+        ///     The <see cref="IMessageStreamProvider"/> to be pushed. A new one will be created if not provided.
+        /// </param>
         protected SequenceBase(
             string sequenceId,
             ConsumerPipelineContext context,
             bool enforceTimeout = true,
-            TimeSpan? timeout = null)
+            TimeSpan? timeout = null,
+            IMessageStreamProvider? streamProvider = null)
         {
             SequenceId = Check.NotNull(sequenceId, nameof(sequenceId));
             Context = Check.NotNull(context, nameof(context));
 
-            _streamProvider = new MessageStreamProvider<TEnvelope>();
+            _streamProvider = streamProvider as MessageStreamProvider<TEnvelope> ??
+                              new MessageStreamProvider<TEnvelope>();
 
             _logger =
                 context.ServiceProvider.GetRequiredService<ISilverbackIntegrationLogger<SequenceBase<TEnvelope>>>();
@@ -143,14 +148,14 @@ namespace Silverback.Messaging.Sequences
         public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>() => StreamProvider.CreateStream<TMessage>();
 
         /// <inheritdoc cref="ISequence.AddAsync" />
-        public Task AddAsync(IRawInboundEnvelope envelope, ISequence? sequence)
+        public Task<int> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled = true)
         {
             Check.NotNull(envelope, nameof(envelope));
 
             if (!(envelope is TEnvelope typedEnvelope))
                 throw new ArgumentException($"Expected an envelope of type {typeof(TEnvelope).Name}.");
 
-            return AddCoreAsync(typedEnvelope, sequence);
+            return AddCoreAsync(typedEnvelope, sequence, throwIfUnhandled);
         }
 
         /// <inheritdoc cref="ISequence.AbortAsync" />
@@ -220,10 +225,15 @@ namespace Silverback.Messaging.Sequences
         /// <param name="sequence">
         ///     The sequence to be added to the sequence.
         /// </param>
+        /// <param name="throwIfUnhandled">
+        ///     A boolean value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     message.
+        /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     number of streams that have been pushed.
         /// </returns>
-        protected virtual async Task AddCoreAsync(TEnvelope envelope, ISequence? sequence)
+        protected virtual async Task<int> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
         {
             ResetTimeout();
 
@@ -244,8 +254,10 @@ namespace Silverback.Messaging.Sequences
                 if (TotalLength != null && Length > TotalLength)
                 {
                     // TODO: Log? / Throw?
-                    return;
+                    return 0;
                 }
+
+                _abortCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                 Length++;
 
@@ -255,20 +267,24 @@ namespace Silverback.Messaging.Sequences
                     IsCompleting = true;
                 }
 
-                if (!_abortCancellationTokenSource.IsCancellationRequested)
-                {
-                    await _streamProvider.PushAsync(envelope, _abortCancellationTokenSource.Token)
-                        .ConfigureAwait(false);
-                }
+                int pushedStreamsCount = await _streamProvider.PushAsync(
+                        envelope,
+                        throwIfUnhandled,
+                        _abortCancellationTokenSource.Token)
+                    .ConfigureAwait(false);
 
                 if (IsCompleting)
                     await CompleteAsync().ConfigureAwait(false);
+
+                return pushedStreamsCount;
             }
             catch (OperationCanceledException)
             {
                 // Ignore
 
                 // TODO: Is it correct to ignore?
+
+                return 0;
             }
         }
 

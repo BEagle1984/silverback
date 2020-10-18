@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Publishing
         ///     The <see cref="IMessageStreamProvider" /> to be used to generate the streams to be published.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result will contain a
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
         ///     collection of <see cref="Task" /> that will complete when each subscriber completes.
         /// </returns>
         Task<IReadOnlyCollection<Task>> PublishAsync(IMessageStreamProvider streamProvider);

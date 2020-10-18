@@ -125,7 +125,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan.FromMinutes(1));
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(3);
             var receivedContents = receivedMessages.Select(message => message.Content);
