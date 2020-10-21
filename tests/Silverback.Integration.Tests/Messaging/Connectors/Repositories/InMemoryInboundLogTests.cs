@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Database.Model;
 using Silverback.Messaging;
-using Silverback.Messaging.Connectors.Repositories;
+using Silverback.Messaging.Inbound.ExactlyOnce.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Types;
 using Silverback.Util;

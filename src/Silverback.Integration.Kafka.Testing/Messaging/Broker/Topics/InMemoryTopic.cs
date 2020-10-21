@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Microsoft.Extensions.Logging;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Topics
@@ -30,9 +31,12 @@ namespace Silverback.Messaging.Broker.Topics
         ///     The name of the topic.
         /// </param>
         /// <param name="partitions">
-        ///     The number of partitions to create. The default is 5.
+        ///     The number of partitions to create.
         /// </param>
-        public InMemoryTopic(string name, int partitions = 5)
+        /// <param name="logger">
+        ///     The <see cref="ILogger" />.
+        /// </param>
+        public InMemoryTopic(string name, int partitions)
         {
             Name = Check.NotEmpty(name, nameof(name));
 
@@ -57,22 +61,27 @@ namespace Silverback.Messaging.Broker.Topics
         public Offset Push(int partition, Message<byte[]?, byte[]?> message) =>
             _partitions[partition].Add(message);
 
-        /// <inheritdoc cref="IInMemoryTopic.Pull" />
+        /// <inheritdoc cref="IInMemoryTopic.TryPull" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public ConsumeResult<byte[]?, byte[]?> Pull(
+        public bool TryPull(
             string groupId,
             IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
-            CancellationToken cancellationToken)
+            out ConsumeResult<byte[]?, byte[]?>? result)
         {
-            while (true)
+            if (!_committedOffsets.ContainsKey(groupId))
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (TryPull(groupId, partitionOffsets, out var result))
-                    return result!;
-
-                Task.Delay(TimeSpan.FromMilliseconds(10), cancellationToken).Wait(cancellationToken);
+                result = null;
+                return false;
             }
+
+            foreach (var partitionOffset in partitionOffsets.OrderBy(partitionOffset => partitionOffset.Offset.Value))
+            {
+                if (_partitions[partitionOffset.Partition].TryPull(partitionOffset.Offset, out result))
+                    return true;
+            }
+
+            result = null;
+            return false;
         }
 
         /// <inheritdoc cref="IInMemoryTopic.Subscribe" />
@@ -91,9 +100,9 @@ namespace Silverback.Messaging.Broker.Topics
                             partition =>
                                 new KeyValuePair<Partition, Offset>(partition.Partition.Value, Offset.Unset)));
                 }
-            }
 
-            RebalancePartitions(consumer.GroupId);
+                RebalancePartitions(consumer.GroupId);
+            }
         }
 
         /// <inheritdoc cref="IInMemoryTopic.Unsubscribe" />
@@ -104,9 +113,9 @@ namespace Silverback.Messaging.Broker.Topics
             lock (_consumers)
             {
                 _consumers.Remove(consumer);
-            }
 
-            RebalancePartitions(consumer.GroupId);
+                RebalancePartitions(consumer.GroupId);
+            }
         }
 
         /// <inheritdoc cref="IInMemoryTopic.Commit" />
@@ -157,48 +166,27 @@ namespace Silverback.Messaging.Broker.Topics
             }
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private bool TryPull(
-            string groupId,
-            IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
-            out ConsumeResult<byte[]?, byte[]?>? result)
-        {
-            if (!_committedOffsets.ContainsKey(groupId))
-            {
-                result = null;
-                return false;
-            }
-
-            foreach (var partitionOffset in partitionOffsets.OrderBy(partitionOffset => partitionOffset.Offset.Value))
-            {
-                if (_partitions[partitionOffset.Partition].TryPull(partitionOffset.Offset, out result))
-                    return true;
-            }
-
-            result = null;
-            return false;
-        }
-
         private void RebalancePartitions(string groupId)
         {
-            lock (_consumers)
+            _consumers
+                .Where(consumer => consumer.Disposed)
+                .ToList()
+                .ForEach(consumer => _consumers.Remove(consumer));
+
+            var groupConsumers = _consumers.Where(consumer => consumer.GroupId == groupId).ToList();
+
+            var assignments = new List<Partition>[groupConsumers.Count];
+
+            Enumerable.Range(0, groupConsumers.Count).ForEach(i => assignments[i] = new List<Partition>());
+
+            for (int partitionIndex = 0; partitionIndex < _partitions.Count; partitionIndex++)
             {
-                var groupConsumers = _consumers.Where(consumer => consumer.GroupId == groupId).ToList();
+                assignments[partitionIndex % groupConsumers.Count].Add(new Partition(partitionIndex));
+            }
 
-                var assignments = new List<Partition>[groupConsumers.Count];
-
-                Enumerable.Range(0, groupConsumers.Count).ForEach(i => assignments[i] = new List<Partition>());
-
-                for (int partitionIndex = 0; partitionIndex < _partitions.Count; partitionIndex++)
-                {
-                    assignments[partitionIndex % groupConsumers.Count]
-                        .Add(new Partition(partitionIndex));
-                }
-
-                for (int i = 0; i < groupConsumers.Count; i++)
-                {
-                    groupConsumers[i].OnPartitionsAssigned(Name, assignments[i]);
-                }
+            for (int i = 0; i < groupConsumers.Count; i++)
+            {
+                groupConsumers[i].OnPartitionsAssigned(Name, assignments[i]);
             }
         }
 

@@ -65,14 +65,14 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(0);
 
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -120,14 +120,14 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(3);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(0);
 
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
@@ -172,7 +172,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
@@ -215,7 +215,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
@@ -278,7 +278,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(5);
             SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Read(10));

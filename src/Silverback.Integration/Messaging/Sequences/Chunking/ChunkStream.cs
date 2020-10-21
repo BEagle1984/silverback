@@ -165,7 +165,7 @@ namespace Silverback.Messaging.Sequences.Chunking
             // {
             //     // do nothing, just force consuming
             // }
-            // TODO: Is this ^ necessary?
+            // TODO: Reimplement!
         }
 
         /// <inheritdoc cref="Stream.DisposeAsync" />

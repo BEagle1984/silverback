@@ -13,6 +13,11 @@ namespace Silverback.Messaging.Inbound.Transaction
     public interface IConsumerTransactionManager
     {
         /// <summary>
+        ///     Gets a value indicating whether the transaction has completed.
+        /// </summary>
+        bool IsCompleted { get; }
+
+        /// <summary>
         ///     Adds the specified service to the transaction participants to be called upon commit or rollback.
         /// </summary>
         /// <param name="transactionalService">

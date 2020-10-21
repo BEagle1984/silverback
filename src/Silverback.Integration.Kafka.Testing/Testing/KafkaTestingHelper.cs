@@ -11,9 +11,9 @@ using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 
 namespace Silverback.Testing
 {
-    /// <inheritdoc cref="ITestingHelper" />
+    /// <inheritdoc cref="IKafkaTestingHelper" />
     // TODO: Can use a single class for all brokers (e.g. awaiting both Kafka and Rabbit)?
-    public class KafkaTestingHelper : ITestingHelper
+    public class KafkaTestingHelper : IKafkaTestingHelper
     {
         private readonly IInMemoryTopicCollection _topics;
 
@@ -34,12 +34,12 @@ namespace Silverback.Testing
             _outboxReader = outboxReader;
         }
 
-        /// <inheritdoc cref="ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
+        /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
         public Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null) =>
             WaitUntilAllMessagesAreConsumedAsync(null, timeout);
 
-        /// <inheritdoc cref="ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(string[], TimeSpan?)" />
-        Task ITestingHelper.WaitUntilAllMessagesAreConsumedAsync(string[] topicNames, TimeSpan? timeout) =>
+        /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(string[], TimeSpan?)" />
+        Task IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(string[] topicNames, TimeSpan? timeout) =>
             WaitUntilAllMessagesAreConsumedAsync(topicNames, timeout);
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]

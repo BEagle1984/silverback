@@ -13,7 +13,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors.Repositories
+namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
 {
     /// <summary>
     ///     <para>

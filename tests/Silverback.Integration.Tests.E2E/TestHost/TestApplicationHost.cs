@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Silverback.Tests.Integration.E2E.TestTypes.Database;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
 {
@@ -23,6 +25,8 @@ namespace Silverback.Tests.Integration.E2E.TestHost
         private SqliteConnection? _sqliteConnection;
 
         private WebApplicationFactory<BlankStartup>? _applicationFactory;
+
+        private ITestOutputHelper? _testOutputHelper;
 
         public IServiceProvider ServiceProvider =>
             _applicationFactory?.Services ?? throw new InvalidOperationException();
@@ -44,6 +48,13 @@ namespace Silverback.Tests.Integration.E2E.TestHost
             return this;
         }
 
+        public TestApplicationHost WithTestOutputHelper(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+
+            return this;
+        }
+
         public IServiceProvider Run()
         {
             var appRoot = Path.Combine("tests", GetType().Assembly.GetName().Name!);
@@ -54,6 +65,14 @@ namespace Silverback.Tests.Integration.E2E.TestHost
                         .ConfigureServices(
                             services =>
                             {
+                                if (_testOutputHelper != null)
+                                {
+                                    services.AddLogging(
+                                        configure =>
+                                            configure.AddXUnit(_testOutputHelper)
+                                                .SetMinimumLevel(LogLevel.Trace));
+                                }
+
                                 _configurationActions.ForEach(configAction => configAction(services));
 
                                 if (_addDbContext)

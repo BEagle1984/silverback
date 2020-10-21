@@ -17,12 +17,18 @@ using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
     [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public class BinaryFileTests : E2ETestFixture
     {
+        public BinaryFileTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
+
         [Fact]
         public async Task BinaryFile_DefaultSettings_ProducedAndConsumed()
         {
@@ -80,7 +86,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -155,7 +161,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -231,7 +237,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -312,7 +318,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -394,7 +400,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -476,7 +482,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);

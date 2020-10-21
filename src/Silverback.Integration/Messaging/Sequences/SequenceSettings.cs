@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Sequences.Batch;
 
 namespace Silverback.Messaging.Sequences
 {
@@ -16,6 +17,10 @@ namespace Silverback.Messaging.Sequences
         ///     Gets or sets the timeout after which an incomplete sequence that isn't pushed with new messages will
         ///     be aborted and discarded. The default is a conservative 30 minutes.
         /// </summary>
+        /// <remarks>
+        ///     This setting is ignored for batches (<see cref="BatchSequence" />), use the
+        ///     <see cref="BatchSettings.MaxWaitTime" /> instead.
+        /// </remarks>
         public TimeSpan Timeout { get; set; } = TimeSpan.FromMinutes(30);
 
         // TODO: Review summary and find better name (?)!
@@ -44,7 +49,8 @@ namespace Silverback.Messaging.Sequences
                 throw new EndpointConfigurationException("Sequence.Timeout must be greater than 0.");
 
             if (Timeout.TotalMilliseconds > int.MaxValue)
-                throw new EndpointConfigurationException("Sequence.Timeout.TotalMilliseconds must be lower or equal to Int32.MaxValue.");
+                throw new EndpointConfigurationException(
+                    "Sequence.Timeout.TotalMilliseconds must be lower or equal to Int32.MaxValue.");
         }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

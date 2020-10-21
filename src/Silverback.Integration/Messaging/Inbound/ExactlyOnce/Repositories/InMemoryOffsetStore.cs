@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors.Repositories
+namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
 {
     /// <summary>
     ///     <para>

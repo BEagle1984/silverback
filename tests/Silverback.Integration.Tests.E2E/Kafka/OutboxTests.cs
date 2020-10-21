@@ -17,11 +17,17 @@ using Silverback.Tests.Integration.E2E.TestTypes.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
     public class OutboxTests : E2ETestFixture
     {
+        public OutboxTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
+
         [Fact]
         public async Task OutboxProduceStrategy_DefaultSettings_ProducedAndConsumed()
         {
@@ -33,16 +39,18 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .UseDbContext<TestDbContext>()
-                        .WithConnectionToMessageBroker(options => options
-                            .AddMockedKafka()
-                            .AddOutboxDatabaseTable()
-                            .AddOutboxWorker(TimeSpan.FromMilliseconds(100)))
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddMockedKafka()
+                                .AddOutboxDatabaseTable()
+                                .AddOutboxWorker(TimeSpan.FromMilliseconds(100)))
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName)
-                                {
-                                    Strategy = ProduceStrategy.Outbox()
-                                })
+                                .AddOutbound<IIntegrationEvent>(
+                                    new KafkaProducerEndpoint(DefaultTopicName)
+                                    {
+                                        Strategy = ProduceStrategy.Outbox()
+                                    })
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
@@ -69,7 +77,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await dbContext.SaveChangesAsync();
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(15);
             Subscriber.InboundEnvelopes.Should().HaveCount(15);

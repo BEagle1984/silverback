@@ -10,11 +10,12 @@ using Silverback.Messaging.Broker.Topics;
 using Silverback.Testing;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
 {
     [Trait("Category", "E2E")]
-    public class E2ETestFixture : IDisposable
+    public abstract class E2ETestFixture : IDisposable
     {
         protected const string DefaultTopicName = "default-e2e-topic";
 
@@ -22,7 +23,18 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         private OutboundInboundSubscriber? _outboundInboundSubscriber;
 
-        protected TestApplicationHost Host { get; } = new TestApplicationHost();
+        // TODO: Remove
+        protected E2ETestFixture()
+        {
+            Host = new TestApplicationHost();
+        }
+
+        protected E2ETestFixture(ITestOutputHelper testOutputHelper)
+        {
+            Host = new TestApplicationHost().WithTestOutputHelper(testOutputHelper);
+        }
+
+        protected TestApplicationHost Host { get; }
 
         protected SpyBrokerBehavior SpyBehavior => _spyBrokerBehavior ??=
             Host.ServiceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
@@ -34,7 +46,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         protected IInMemoryTopic DefaultTopic => GetTopic(DefaultTopicName);
 
-        protected ITestingHelper TestingHelper => Host.ServiceProvider.GetRequiredService<ITestingHelper>();
+        protected IKafkaTestingHelper KafkaTestingHelper => Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
 
         public void Dispose()
         {

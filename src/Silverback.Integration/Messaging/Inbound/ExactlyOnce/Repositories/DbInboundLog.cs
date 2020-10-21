@@ -2,13 +2,15 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
+using Silverback.Database;
 using Silverback.Database.Model;
+using Silverback.Infrastructure;
+using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Connectors.Repositories
+namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
 {
     /// <summary>
     ///     <para>
@@ -16,23 +18,24 @@ namespace Silverback.Messaging.Connectors.Repositories
     ///         guarantee that each one is processed only once.
     ///     </para>
     ///     <para>
-    ///         The log is simply persisted in memory.
+    ///         An <see cref="IDbContext" /> is used to store the log into the database.
     ///     </para>
     /// </summary>
-    public class InMemoryInboundLog : TransactionalList<InboundLogEntry>, IInboundLog
+    // TODO: Test
+    public class DbInboundLog : RepositoryBase<InboundLogEntry>, IInboundLog
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="InMemoryInboundLog" /> class.
+        ///     Initializes a new instance of the <see cref="DbInboundLog" /> class.
         /// </summary>
-        /// <param name="sharedItems">
-        ///     The log entries shared between the instances of this repository.
+        /// <param name="dbContext">
+        ///     The <see cref="IDbContext" /> to use as storage.
         /// </param>
-        public InMemoryInboundLog(TransactionalListSharedItems<InboundLogEntry> sharedItems)
-            : base(sharedItems)
+        public DbInboundLog(IDbContext dbContext)
+            : base(dbContext)
         {
         }
 
-        /// <inheritdoc cref="IInboundLog.AddAsync" />
+        /// <inheritdoc cref="IInboundLog.Add" />
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task AddAsync(IRawInboundEnvelope envelope)
         {
@@ -48,7 +51,23 @@ namespace Silverback.Messaging.Connectors.Repositories
                 ConsumerGroupName = consumerGroupName
             };
 
-            return AddAsync(logEntry);
+            DbSet.Add(logEntry);
+
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc cref="ITransactional.CommitAsync" />
+        public async Task CommitAsync()
+        {
+            // Call SaveChanges, in case it isn't called by a subscriber
+            await DbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        /// <inheritdoc cref="ITransactional.RollbackAsync" />
+        public Task RollbackAsync()
+        {
+            // Nothing to do, just not saving the changes made to the DbContext
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="IInboundLog.ExistsAsync" />
@@ -60,15 +79,14 @@ namespace Silverback.Messaging.Connectors.Repositories
             string messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId, true)!;
             string consumerGroupName = envelope.Endpoint.GetUniqueConsumerGroupName();
 
-            return Task.FromResult(
-                Items.Union(UncommittedItems).Any(
-                    item =>
-                        item.Item.MessageId == messageId &&
-                        item.Item.EndpointName == envelope.ActualEndpointName &&
-                        item.Item.ConsumerGroupName == consumerGroupName));
+            return DbSet.AsQueryable().AnyAsync(
+                logEntry =>
+                    logEntry.MessageId == messageId &&
+                    logEntry.EndpointName == envelope.ActualEndpointName &&
+                    logEntry.ConsumerGroupName == consumerGroupName);
         }
 
         /// <inheritdoc cref="IInboundLog.GetLengthAsync" />
-        public Task<int> GetLengthAsync() => Task.FromResult(CommittedItemsCount);
+        public Task<int> GetLengthAsync() => DbSet.AsQueryable().CountAsync();
     }
 }

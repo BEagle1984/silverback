@@ -33,7 +33,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddTransient<IConfluentProducerBuilder, MockedConfluentProducerBuilder>()
                 .AddTransient<IConfluentConsumerBuilder, MockedConfluentConsumerBuilder>()
                 .AddSingleton<IInMemoryTopicCollection, InMemoryTopicCollection>()
-                .AddSingleton<ITestingHelper, KafkaTestingHelper>();
+                .AddSingleton<IKafkaTestingHelper, KafkaTestingHelper>();
 
             return services;
         }

@@ -17,11 +17,17 @@ using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
     public class BatchTests : E2ETestFixture
     {
+        public BatchTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
+
         [Fact]
         public async Task Batch_SubscribingToStream_MessagesReceivedAndCommittedInBatch()
         {
@@ -91,7 +97,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         {
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
             receivedBatches[0].Should().HaveCount(10);
@@ -170,7 +176,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         {
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
             receivedBatches[0].Should().HaveCount(10);
@@ -243,7 +249,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
             receivedBatches[0].Should().HaveCount(10);
@@ -306,7 +312,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 2"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(2);
 
@@ -369,7 +375,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 3"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(2);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);

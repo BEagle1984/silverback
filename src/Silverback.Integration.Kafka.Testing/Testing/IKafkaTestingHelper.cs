@@ -9,7 +9,7 @@ namespace Silverback.Testing
     /// <summary>
     ///     Exposes some helper methods to simplify testing.
     /// </summary>
-    public interface ITestingHelper
+    public interface IKafkaTestingHelper
     {
         /// <summary>
         ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been

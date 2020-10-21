@@ -13,7 +13,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Inbound.Transaction
 {
     /// <inheritdoc cref="IConsumerTransactionManager" />
-    public class ConsumerTransactionManager : IConsumerTransactionManager
+    public sealed class ConsumerTransactionManager : IConsumerTransactionManager
     {
         private readonly ConsumerPipelineContext _context;
 
@@ -30,17 +30,10 @@ namespace Silverback.Messaging.Inbound.Transaction
             _context = context;
         }
 
-        /// <summary>
-        ///     Gets a value indicating whether the transaction has completed.
-        /// </summary>
+        /// <inheritdoc cref="IConsumerTransactionManager.IsCompleted"/>
         public bool IsCompleted { get; private set; }
 
-        /// <summary>
-        ///     Adds the specified service to the transaction participants to be called upon commit or rollback.
-        /// </summary>
-        /// <param name="transactionalService">
-        ///     The service to be enlisted.
-        /// </param>
+        /// <inheritdoc cref="IConsumerTransactionManager.Enlist"/>
         public void Enlist(ITransactional transactionalService)
         {
             Check.NotNull(transactionalService, nameof(transactionalService));
@@ -59,7 +52,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
+        /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync"/>
         public async Task CommitAsync()
         {
             EnsureNotCompleted();

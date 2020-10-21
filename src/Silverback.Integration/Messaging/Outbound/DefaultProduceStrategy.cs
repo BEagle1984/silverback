@@ -8,10 +8,11 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Outbound.Routing
+namespace Silverback.Messaging.Outbound
 {
     internal class DefaultProduceStrategy : IProduceStrategy
     {
+        // TODO: Dispose / Reset with IServiceProvider
         private DefaultProduceStrategyImplementation? _implementation;
 
         public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>

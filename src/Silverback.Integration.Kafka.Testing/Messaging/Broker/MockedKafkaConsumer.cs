@@ -84,6 +84,12 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public bool Disposed { get; private set; }
 
+        internal Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>?
+            PartitionsAssignedHandler { get; set; }
+
+        internal Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>?
+            PartitionsRevokedHandler { get; set; }
+
         /// <inheritdoc cref="IConsumer{TKey,TValue}.MemberId" />
         public int AddBrokers(string brokers) => throw new NotSupportedException();
 
@@ -94,48 +100,13 @@ namespace Silverback.Messaging.Broker
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public ConsumeResult<byte[]?, byte[]?> Consume(CancellationToken cancellationToken = default)
         {
-            using var localCancellationTokenSource = new CancellationTokenSource();
-            using var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
-                cancellationToken,
-                localCancellationTokenSource.Token);
-
-            // Process the topics starting from the one that consumed less messages
-            var topicPairs = _currentOffsets
-                .OrderBy(topicPair => topicPair.Value.Sum(partitionPair => partitionPair.Value.Value));
-
-            var tasks = new List<Task<ConsumeResult<byte[]?, byte[]?>>>();
-
-            foreach (var topicPair in topicPairs)
+            while (true)
             {
-                var task = Task.Run(
-                    () => _topics[topicPair.Key].Pull(
-                        GroupId,
-                        topicPair.Value.Select(
-                                partitionPair => new TopicPartitionOffset(
-                                    topicPair.Key,
-                                    partitionPair.Key,
-                                    partitionPair.Value))
-                            .ToList(),
-                        linkedTokenSource.Token));
+                if (TryConsume(cancellationToken, out var result))
+                    return result!;
 
-                tasks.Add(task);
-
-                task.Wait(10, linkedTokenSource.Token);
-
-                if (task.IsCompleted)
-                    break;
+                Task.Delay(TimeSpan.FromMilliseconds(10), cancellationToken).Wait(cancellationToken);
             }
-
-            // ReSharper disable once CoVariantArrayConversion
-            var completedTaskIndex = Task.WaitAny(tasks.ToArray(), cancellationToken);
-            cancellationToken.ThrowIfCancellationRequested();
-            localCancellationTokenSource.Cancel();
-
-            var result = tasks[completedTaskIndex].Result;
-
-            _currentOffsets[result.Topic][result.Partition] = result.Offset + 1;
-
-            return result;
         }
 
         /// <inheritdoc cref="IConsumer{TKey,TValue}.Consume(TimeSpan)" />
@@ -206,6 +177,9 @@ namespace Silverback.Messaging.Broker
             if (offset == null)
                 return;
 
+            if (!_storedOffsets.ContainsKey(offset.Topic))
+                _storedOffsets[offset.Topic] = new ConcurrentDictionary<Partition, Offset>();
+
             _storedOffsets[offset.Topic][offset.Partition] = offset.Offset;
         }
 
@@ -236,6 +210,9 @@ namespace Silverback.Messaging.Broker
         public void Seek(TopicPartitionOffset tpo)
         {
             Check.NotNull(tpo, nameof(tpo));
+
+            if (!_currentOffsets.ContainsKey(tpo.Topic))
+                _currentOffsets[tpo.Topic] = new ConcurrentDictionary<Partition, Offset>();
 
             _currentOffsets[tpo.Topic][tpo.Partition] = tpo.Offset;
         }
@@ -279,34 +256,115 @@ namespace Silverback.Messaging.Broker
 
         internal void OnPartitionsAssigned(string topicName, IReadOnlyCollection<Partition> partitions)
         {
-            // TODO: Invoke revoked event handler
-
-            Assignment.Clear();
-
-            _currentOffsets[topicName] = new ConcurrentDictionary<Partition, Offset>();
-            _storedOffsets[topicName] = new ConcurrentDictionary<Partition, Offset>();
-
             foreach (var partition in partitions)
             {
-                var offset = GetStartingOffset(topicName, partition);
-                Assignment.Add(new TopicPartition(topicName, partition));
-                Seek(offset);
+                Assignment.Remove(new TopicPartition(topicName, partition));
+
+                if (_currentOffsets.ContainsKey(topicName))
+                    _currentOffsets[topicName].TryRemove(partition, out _);
+
+                if (_storedOffsets.ContainsKey(topicName))
+                    _storedOffsets[topicName].TryRemove(partition, out _);
+            }
+
+            var partitionOffsets = partitions
+                .Select(partition => new TopicPartitionOffset(topicName, partition, Offset.Unset)).ToList();
+
+            var revokeHandlerResult = InvokePartitionsRevokedHandler(topicName);
+            if (revokeHandlerResult != null && revokeHandlerResult.Count > 0)
+            {
+                partitionOffsets = partitionOffsets
+                    .Union(revokeHandlerResult)
+                    .GroupBy(partitionOffset => partitionOffset.TopicPartition)
+                    .Select(
+                        group =>
+                            new TopicPartitionOffset(
+                                group.Key,
+                                group.Max(topicPartitionOffset => topicPartitionOffset.Offset)))
+                    .ToList();
+            }
+
+            var assignHandlerResult = InvokePartitionsAssignedHandler(partitionOffsets);
+            if (assignHandlerResult != null)
+                partitionOffsets = assignHandlerResult;
+
+            foreach (var partitionOffset in partitionOffsets)
+            {
+                Assignment.Add(partitionOffset.TopicPartition);
+                Seek(GetStartingOffset(partitionOffset));
             }
         }
 
-        private TopicPartitionOffset GetStartingOffset(string topicName, Partition partition)
+        private List<TopicPartitionOffset>? InvokePartitionsAssignedHandler(
+            IEnumerable<TopicPartitionOffset> partitionOffsets)
         {
-            var topic = _topics[topicName];
-            var offset = topic.GetCommittedOffset(partition, GroupId);
+            return PartitionsAssignedHandler?.Invoke(
+                this,
+                partitionOffsets.Select(partitionOffset => partitionOffset.TopicPartition).ToList())?.ToList();
+        }
 
-            // TODO: Invoke assigned event handler
+        private List<TopicPartitionOffset>? InvokePartitionsRevokedHandler(string topicName) =>
+            PartitionsRevokedHandler?.Invoke(
+                    this,
+                    Assignment.Where(assignment => assignment.Topic == topicName).Select(
+                        partition => new TopicPartitionOffset(
+                            partition,
+                            _topics[partition.Topic].GetCommittedOffset(partition.Partition, GroupId))).ToList())
+                ?.ToList();
+
+        private bool TryConsume(CancellationToken cancellationToken, out ConsumeResult<byte[]?, byte[]?>? result)
+        {
+            // Process the topics starting from the one that consumed less messages
+            var topicPairs = _currentOffsets
+                .OrderBy(topicPair => topicPair.Value.Sum(partitionPair => partitionPair.Value.Value));
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var topicPair in topicPairs)
+            {
+                bool pulled = _topics[topicPair.Key].TryPull(
+                    GroupId,
+                    topicPair.Value.Select(
+                            partitionPair => new TopicPartitionOffset(
+                                topicPair.Key,
+                                partitionPair.Key,
+                                partitionPair.Value))
+                        .ToList(),
+                    out result);
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (pulled)
+                {
+                    if (Assignment.Contains(result!.TopicPartition))
+                    {
+                        _currentOffsets[result.Topic][result.Partition] = result.Offset + 1;
+
+                        return true;
+                    }
+                }
+            }
+
+            result = null;
+            return false;
+        }
+
+        private TopicPartitionOffset GetStartingOffset(TopicPartitionOffset topicPartitionOffset)
+        {
+            if (topicPartitionOffset.Offset == Offset.Beginning)
+                return new TopicPartitionOffset(topicPartitionOffset.TopicPartition, 0);
+
+            var topic = _topics[topicPartitionOffset.Topic];
+            var offset = topicPartitionOffset.Offset == Offset.End
+                ? Offset.End
+                : topic.GetCommittedOffset(topicPartitionOffset.Partition, GroupId);
 
             if (offset == Offset.End)
-                offset = topic.GetLatestOffset(partition) + 1;
+                offset = topic.GetLatestOffset(topicPartitionOffset.Partition) + 1;
             else
-                offset = 0;
+                offset = 0; // TODO: Change to GetFirstOffset
 
-            return new TopicPartitionOffset(topicName, partition, offset);
+            return new TopicPartitionOffset(topicPartitionOffset.TopicPartition, offset);
         }
 
         private async Task AutoCommitAsync()

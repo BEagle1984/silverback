@@ -206,8 +206,18 @@ namespace Silverback.Messaging.Sequences
             _streamProvider.Abort();
 
             // TODO: Review this!!!
+
+            try
+            {
+                _abortCancellationTokenSource.Cancel();
+            }
+            catch (Exception e)
+            {
+                // Ignore
+                Console.WriteLine(e);
+            }
+
             _abortingTaskCompletionSource?.SetResult(true);
-            _abortCancellationTokenSource.Cancel();
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -337,6 +347,9 @@ namespace Silverback.Messaging.Sequences
             // TODO: Ensure Dispose is actually called
             if (disposing)
             {
+                if (_abortingTaskCompletionSource != null)
+                    _abortingTaskCompletionSource.Task.Wait();
+
                 _streamProvider.Dispose();
                 _abortCancellationTokenSource.Dispose();
                 _timeoutCancellationTokenSource?.Cancel();
@@ -446,7 +459,9 @@ namespace Silverback.Messaging.Sequences
                     case SequenceAbortReason.ConsumerAborted:
                     case SequenceAbortReason.Disposing:
                     default:
-                        await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+                        if (!Context.TransactionManager.IsCompleted)
+                            await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+
                         break;
                 }
 

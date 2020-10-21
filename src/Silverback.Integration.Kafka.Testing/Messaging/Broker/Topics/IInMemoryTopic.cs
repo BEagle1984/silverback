@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Broker.Topics
         Offset Push(int partition, Message<byte[]?, byte[]?> message);
 
         /// <summary>
-        ///     Pulls the next message from the topic.
+        ///     Pulls the next message from the topic, if available.
         /// </summary>
         /// <param name="groupId">
         ///     The consumer group id.
@@ -45,17 +45,17 @@ namespace Silverback.Messaging.Broker.Topics
         /// <param name="partitionOffsets">
         ///     The offset of the next message in each partition.
         /// </param>
-        /// <param name="cancellationToken">
-        ///     A <see cref="CancellationToken" /> used to cancel the operation.
+        /// <param name="result">
+        /// The <see cref="ConsumeResult{TKey,TValue}" /> wrapping the pulled message.
         /// </param>
         /// <returns>
-        ///     A <see cref="ConsumeResult{TKey,TValue}" /> wrapping the pulled message.
+        ///     A value indicating whether a message was available for pulling.
         /// </returns>
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        ConsumeResult<byte[]?, byte[]?> Pull(
+        bool TryPull(
             string groupId,
             IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
-            CancellationToken cancellationToken);
+            out ConsumeResult<byte[]?, byte[]?>? result);
 
         /// <summary>
         ///     Subscribes the consumer to the topic.

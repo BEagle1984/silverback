@@ -16,11 +16,17 @@ using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
     public class StreamingTests : E2ETestFixture
     {
+        public StreamingTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
+
         [Fact]
         public async Task Streaming_UnboundedEnumerable_MessagesReceivedAndCommitted()
         {
@@ -68,7 +74,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(15);
             var receivedContents = receivedMessages.Select(message => message.Content);
@@ -125,7 +131,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(3);
             var receivedContents = receivedMessages.Select(message => message.Content);
@@ -188,7 +194,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 2"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(2);
 
@@ -242,7 +248,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 2"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count >= 2);
 
             receivedMessages.Should().HaveCount(2);
@@ -307,7 +313,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 3"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count >= 2);
 
             receivedMessages.Should().HaveCount(2);
@@ -369,7 +375,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 3"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count >= 2);
 
             receivedMessages.Should().HaveCount(2);

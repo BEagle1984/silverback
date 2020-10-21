@@ -15,11 +15,17 @@ using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
     public class ThrowIfUnhandledTests : E2ETestFixture
     {
+        public ThrowIfUnhandledTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
+
         [Fact]
         public async Task ThrowIfUnhandled_DefaultSettings_ConsumerStoppedWhenUnhandled()
         {
@@ -45,11 +51,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         }
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddDelegateSubscriber(
-                            (TestEventOne message) =>
-                            {
-                                receivedMessages.Add(message);
-                            })
+                        .AddDelegateSubscriber((TestEventOne message) => { receivedMessages.Add(message); })
                         .AddDelegateSubscriber(
                             (IEnumerable<TestEventTwo> messages) =>
                             {
@@ -72,7 +74,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             var consumer = serviceProvider.GetRequiredService<IBroker>().Consumers[0];
 
@@ -81,7 +83,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             consumer.IsConnected.Should().BeTrue();
 
             await publisher.PublishAsync(new TestEventFour());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await AsyncTestingUtil.WaitAsync(() => !consumer.IsConnected);
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(4);
             receivedMessages.Should().HaveCount(3);
@@ -138,7 +140,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             var consumer = serviceProvider.GetRequiredService<IBroker>().Consumers[0];
 
@@ -148,7 +150,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await publisher.PublishAsync(new TestEventFour());
             await publisher.PublishAsync(new TestEventThree());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(5);
             receivedMessages.Should().HaveCount(4);
@@ -205,7 +207,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventOne());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             var consumer = serviceProvider.GetRequiredService<IBroker>().Consumers[0];
 
@@ -214,7 +216,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(4);
             consumer.IsConnected.Should().BeFalse();

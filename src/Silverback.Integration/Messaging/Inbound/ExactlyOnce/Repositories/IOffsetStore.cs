@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Inbound.Transaction;
 
-namespace Silverback.Messaging.Connectors.Repositories
+namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
 {
     /// <summary>
     ///     Used by the <see cref="OffsetStoredInboundConnector" /> to keep track of the last processed offsets

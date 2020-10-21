@@ -1,15 +1,12 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
@@ -20,11 +17,21 @@ using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
     public class ChunkingInBatchTests : E2ETestFixture
     {
+        // TODO: Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?
+
+        // TODO: Test message with single chunk (index 0, last true) -> above all if it is the first in the new batch
+
+        public ChunkingInBatchTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
+
         [Fact]
         public async Task Chunking_JsonConsumedInBatch_ProducedAndConsumed()
         {
@@ -93,7 +100,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = $"Long message {i}"
                         }));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             batches.Should().HaveCount(3);
             batches[0].Should().HaveCount(5);
@@ -178,7 +185,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     var readAll = await message.Content.ReadAllAsync();
                                     list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
                                 }
-
                             }))
                 .Run();
 
@@ -188,7 +194,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 i =>
                     publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}"))));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             batches.Should().HaveCount(3);
             batches[0].Should().HaveCount(5);
@@ -216,9 +222,5 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             failedCommit.Should().BeNull();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(30);
         }
-
-        // TODO: Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?
-
-        // TODO: Test message with single chunk (index 0, last true) -> above all if it is the first in the new batch
     }
 }

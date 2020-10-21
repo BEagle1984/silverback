@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
 
@@ -26,6 +27,11 @@ namespace Silverback.Messaging
         ///     consumed messages.
         /// </summary>
         public IErrorPolicy ErrorPolicy { get; set; } = Configuration.ErrorPolicy.Stop();
+
+        /// <summary>
+        ///     Gets or sets the strategy to be used to guarantee that each message is consumed only once.
+        /// </summary>
+        public IExactlyOnceStrategy? ExactlyOnceStrategy { get; set; }
 
         /// <summary>
         ///     Gets or sets the batch settings. Can be used to enable and setup batch processing.

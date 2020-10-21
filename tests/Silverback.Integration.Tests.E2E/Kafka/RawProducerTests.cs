@@ -15,11 +15,17 @@ using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
     public class RawProducerTests : E2ETestFixture
     {
+        public RawProducerTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
+
         [Fact]
         public async Task RawProducer_Stream_ProducedAndConsumed()
         {
@@ -59,7 +65,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
             await producer.ProduceAsync(rawMessageStream, headers);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
@@ -107,7 +113,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
             await producer.ProduceAsync(rawMessage, headers);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);

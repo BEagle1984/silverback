@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Connectors.Repositories
+namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
 {
     /// <summary>
     ///     Used by the <see cref="LoggedInboundConnector" /> to keep track of each processed message and

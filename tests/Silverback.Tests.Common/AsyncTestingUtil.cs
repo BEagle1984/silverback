@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Silverback.Tests
 {
+    // TODO: Change to TimeSpan timeout
     public static class AsyncTestingUtil
     {
         public static void Wait(Func<bool> breakCondition, int timeoutInMilliseconds = 2000)

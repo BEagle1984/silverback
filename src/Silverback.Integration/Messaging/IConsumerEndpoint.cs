@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
 
@@ -32,10 +33,15 @@ namespace Silverback.Messaging
         bool ThrowIfUnhandled { get; } // TODO: Reimplement!
 
         /// <summary>
-        ///     Gets or sets the error policy to be applied when an exception occurs during the processing of the
+        ///     Gets the error policy to be applied when an exception occurs during the processing of the
         ///     consumed messages.
         /// </summary>
-        IErrorPolicy ErrorPolicy { get; set; }
+        IErrorPolicy ErrorPolicy { get; }
+
+        /// <summary>
+        ///     Gets the strategy to be used to guarantee that each message is consumed only once.
+        /// </summary>
+        IExactlyOnceStrategy? ExactlyOnceStrategy { get; }
 
         /// <summary>
         ///     Gets a unique name for the consumer group (e.g. Kafka's consumer group id). This value (joint with

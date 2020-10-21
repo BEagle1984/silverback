@@ -18,6 +18,7 @@ using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
@@ -28,6 +29,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e,
             0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c
         };
+
+        public BasicTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
 
         [Fact]
         public async Task Outbound_DefaultSettings_SerializedAndProduced()
@@ -98,7 +104,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(15);
             Subscriber.InboundEnvelopes.Should().HaveCount(15);
@@ -158,9 +164,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
 
-            await Task.WhenAll(
-                GetTopic("topic1").WaitUntilAllMessagesAreConsumedAsync(),
-                GetTopic("topic2").WaitUntilAllMessagesAreConsumedAsync());
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(10);
             Subscriber.InboundEnvelopes.Should().HaveCount(10);
@@ -220,9 +224,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
 
-            await Task.WhenAll(
-                GetTopic("topic1").WaitUntilAllMessagesAreConsumedAsync(),
-                GetTopic("topic2").WaitUntilAllMessagesAreConsumedAsync());
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(10);
             Subscriber.InboundEnvelopes.Should().HaveCount(10);
@@ -290,7 +292,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = i.ToString(CultureInfo.InvariantCulture)
                         }));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(10);
             Subscriber.InboundEnvelopes.Should().HaveCount(10);
@@ -329,7 +331,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             AutoCommitIntervalMs = 50,
                                             CommitOffsetEach = enableAutoCommit ? -1 : 5
                                         }
-                                    })))
+                                    }))
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
@@ -349,7 +352,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "three"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             await AsyncTestingUtil.WaitAsync(() => DefaultTopic.GetCommittedOffsetsCount("consumer1") == 3);
 
@@ -390,7 +393,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
@@ -444,7 +447,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessageStream);
@@ -487,7 +490,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Handled message"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             received.Should().Be(1);
 
             await publisher.PublishAsync(

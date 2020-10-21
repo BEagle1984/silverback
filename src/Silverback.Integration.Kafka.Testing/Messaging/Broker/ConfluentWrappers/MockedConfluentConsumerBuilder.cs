@@ -137,14 +137,14 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
             // if (_errorHandler != null)
             //     builder.SetErrorHandler(_errorHandler);
             //
-            // if (_partitionsAssignedHandler != null)
-            //     builder.SetPartitionsAssignedHandler(_partitionsAssignedHandler);
-            //
             // if (_partitionsRevokedHandler != null)
             //     builder.SetPartitionsRevokedHandler(_partitionsRevokedHandler);
             //
             // if (_offsetsCommittedHandler != null)
             //     builder.SetOffsetsCommittedHandler(_offsetsCommittedHandler);
+
+            consumer.PartitionsAssignedHandler = _partitionsAssignedHandler;
+            consumer.PartitionsRevokedHandler = _partitionsRevokedHandler;
 
             return consumer;
         }

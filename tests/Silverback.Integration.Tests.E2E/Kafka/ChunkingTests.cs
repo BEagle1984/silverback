@@ -24,6 +24,7 @@ using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
@@ -31,6 +32,15 @@ namespace Silverback.Tests.Integration.E2E.Kafka
     [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public class ChunkingTests : E2ETestFixture
     {
+        // TODO: Test message with single chunk (index 0, last true)
+
+        // TODO: Test with concurrent consumers
+
+        public ChunkingTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
+
         [Fact]
         public async Task Chunking_Json_ProducedAndConsumed()
         {
@@ -73,7 +83,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = $"Long message {i}"
                         }));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(5);
             Subscriber.InboundEnvelopes.Should().HaveCount(5);
@@ -182,7 +192,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
             SpyBehavior.OutboundEnvelopes.ForEach(
@@ -224,10 +234,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        }
+                                        Sequence = new SequenceSettings()
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
@@ -245,7 +252,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
@@ -284,10 +291,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        }
+                                        Sequence = new SequenceSettings()
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
@@ -305,7 +309,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
@@ -344,10 +348,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        }
+                                        Sequence = new SequenceSettings()
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
@@ -365,7 +366,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeadersWithMessageId("1", 2, 3, typeof(TestEventOne)));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
@@ -400,10 +401,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        },
+                                        Sequence = new SequenceSettings(),
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
@@ -423,7 +421,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(6).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 2, true));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(rawMessage);
@@ -457,10 +455,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        },
+                                        Sequence = new SequenceSettings(),
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
@@ -480,7 +475,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(6).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 2, 3));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(rawMessage);
@@ -514,10 +509,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        },
+                                        Sequence = new SequenceSettings(),
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
@@ -537,7 +529,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(6).ToArray(),
                 HeadersHelper.GetChunkHeadersWithMessageId("1", 2, 3));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(rawMessage);
@@ -571,10 +563,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        }
+                                        Sequence = new SequenceSettings()
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
@@ -593,7 +582,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(6).ToArray(),
                 HeadersHelper.GetChunkHeadersWithMessageId("1", 2, 3, typeof(BinaryFileMessage)));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(rawMessage);
@@ -637,10 +626,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        }
+                                        Sequence = new SequenceSettings()
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
@@ -681,7 +667,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage2.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -718,10 +704,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        },
+                                        Sequence = new SequenceSettings(),
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
@@ -764,7 +747,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage2.Skip(6).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 2, 3));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(4);
             receivedFiles.Should().HaveCount(2);
@@ -850,13 +833,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message1);
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
 
             await publisher.PublishAsync(message2);
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
 
@@ -924,7 +907,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     ContentType = "application/pdf"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
@@ -960,10 +943,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         }
                                     }))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) =>
-                            {
-                                throw new InvalidOperationException("Test");
-                            })
+                            (BinaryFileMessage binaryFile) => { throw new InvalidOperationException("Test"); })
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
@@ -982,7 +962,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     ContentType = "application/pdf"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
@@ -1047,10 +1027,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        }
+                                        Sequence = new SequenceSettings()
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
@@ -1074,7 +1051,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage2.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
@@ -1134,10 +1111,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = false
-                                        }
+                                        Sequence = new SequenceSettings()
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
@@ -1161,7 +1135,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage2.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("2", 2, 3, typeof(TestEventOne)));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
@@ -1172,7 +1146,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage1.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -1247,7 +1221,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 2, 3, typeof(TestEventOne)));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
@@ -1336,7 +1310,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("2", 2, 3, typeof(TestEventOne)));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
@@ -1439,7 +1413,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("2", 2, true));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
             receivedFiles.Should().HaveCount(1);
@@ -1483,10 +1457,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
                                         },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            // ConsecutiveMessages = true
-                                        }
+                                        Sequence = new SequenceSettings()
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
@@ -1510,7 +1481,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage2.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
@@ -1675,9 +1646,5 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
             throw new NotImplementedException();
         }
-
-        // TODO: Test message with single chunk (index 0, last true)
-
-        // TODO: Test with concurrent consumers
     }
 }
