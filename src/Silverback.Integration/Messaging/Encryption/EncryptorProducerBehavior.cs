@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
@@ -12,17 +13,17 @@ namespace Silverback.Messaging.Encryption
     /// </summary>
     public class EncryptorProducerBehavior : IProducerBehavior
     {
-        private readonly IMessageTransformerFactory _factory;
+        private readonly ISilverbackCryptoStreamFactory _streamFactory;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="EncryptorProducerBehavior" /> class.
         /// </summary>
-        /// <param name="factory">
-        ///     The <see cref="IMessageTransformerFactory" />.
+        /// <param name="streamFactory">
+        ///     The <see cref="ISilverbackCryptoStreamFactory" />.
         /// </param>
-        public EncryptorProducerBehavior(IMessageTransformerFactory factory)
+        public EncryptorProducerBehavior(ISilverbackCryptoStreamFactory streamFactory)
         {
-            _factory = factory;
+            _streamFactory = streamFactory;
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
@@ -34,12 +35,11 @@ namespace Silverback.Messaging.Encryption
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            if (context.Envelope.Endpoint.Encryption != null)
+            if (context.Envelope.Endpoint.Encryption != null && context.Envelope.RawMessage != null)
             {
-                context.Envelope.RawMessage = await _factory
-                    .GetEncryptor(context.Envelope.Endpoint.Encryption)
-                    .TransformAsync(context.Envelope.RawMessage, context.Envelope.Headers)
-                    .ConfigureAwait(false);
+                context.Envelope.RawMessage = _streamFactory.GetEncryptStream(
+                    context.Envelope.RawMessage,
+                    context.Envelope.Endpoint.Encryption);
             }
 
             await next(context).ConfigureAwait(false);

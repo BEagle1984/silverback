@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Messages
         {
         }
 
-        public bool AutoUnwrap { get; } = true;
+        public bool AutoUnwrap => true;
 
         public object? Message { get; set; }
     }

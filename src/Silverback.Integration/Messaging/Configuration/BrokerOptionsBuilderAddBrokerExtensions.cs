@@ -77,7 +77,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingletonBrokerBehavior<HeadersWriterProducerBehavior>()
                     .AddSingletonBrokerBehavior<HeadersReaderConsumerBehavior>()
                     .Services
-                    .AddSingleton<IMessageTransformerFactory, MessageTransformerFactory>();
+                    .AddSingleton<ISilverbackCryptoStreamFactory, SilverbackCryptoStreamFactory>();
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<CustomHeadersMapperProducerBehavior>()
                     .AddSingletonBrokerBehavior<CustomHeadersMapperConsumerBehavior>()

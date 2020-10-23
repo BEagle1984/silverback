@@ -403,11 +403,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 new MessageHeader("x-custom-header2", "False"));
         }
 
-        [Fact(Skip = "Encryption to be migrated")]
+        [Fact]
         public async Task OutboundAndInbound_Encryption_EncryptedAndDecrypted()
         {
-            throw new NotImplementedException();
-
             var message = new TestEventOne
             {
                 Content = "Hello E2E!"
@@ -436,12 +434,18 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        },
                                         Encryption = new SymmetricEncryptionSettings
                                         {
                                             Key = AesEncryptionKey
                                         }
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
@@ -450,9 +454,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessageStream);
+            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReadAll().Should().NotBeEquivalentTo(rawMessageStream.ReReadAll());
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
         }
 
         [Fact]

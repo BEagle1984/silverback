@@ -65,25 +65,8 @@ namespace Silverback.Messaging.Sequences.Chunking
             set => throw new NotSupportedException();
         }
 
-        /// <inheritdoc cref="Stream.ReadTimeout" />
-        public override int ReadTimeout
-        {
-            get => throw new NotSupportedException();
-            set => throw new NotSupportedException();
-        }
-
-        /// <inheritdoc cref="Stream.WriteTimeout" />
-        public override int WriteTimeout
-        {
-            get => throw new NotSupportedException();
-            set => throw new NotSupportedException();
-        }
-
         /// <inheritdoc cref="Stream.Flush" />
-        public override void Flush()
-        {
-            throw new NotSupportedException();
-        }
+        public override void Flush() => throw new NotSupportedException();
 
         /// <inheritdoc cref="Stream.Read(byte[], int, int)" />
         public override int Read(byte[] buffer, int offset, int count)
