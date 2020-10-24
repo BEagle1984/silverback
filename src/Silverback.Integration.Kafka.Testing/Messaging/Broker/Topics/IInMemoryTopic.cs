@@ -122,6 +122,17 @@ namespace Silverback.Messaging.Broker.Topics
         long GetCommittedOffsetsCount(string groupId);
 
         /// <summary>
+        ///     Gets the <see cref="Offset" /> of the first message in the specified partition.
+        /// </summary>
+        /// <param name="partition">
+        ///     The partition.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="Offset" /> of the first message in the partition.
+        /// </returns>
+        Offset GetFirstOffset(Partition partition);
+
+        /// <summary>
         ///     Gets the <see cref="Offset" /> of the latest message written to the specified partition.
         /// </summary>
         /// <param name="partition">
@@ -130,7 +141,7 @@ namespace Silverback.Messaging.Broker.Topics
         /// <returns>
         ///     The <see cref="Offset" /> of the latest message in the partition.
         /// </returns>
-        Offset GetLatestOffset(Partition partition);
+        Offset GetLastOffset(Partition partition);
 
         /// <summary>
         ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been

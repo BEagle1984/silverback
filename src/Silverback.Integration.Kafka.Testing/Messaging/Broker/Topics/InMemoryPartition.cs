@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
@@ -12,6 +13,8 @@ namespace Silverback.Messaging.Broker.Topics
     /// </summary>
     public class InMemoryPartition
     {
+        private const int MaxRetainedMessages = 100;
+
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private readonly List<Message<byte[]?, byte[]?>> _messages = new List<Message<byte[]?, byte[]?>>();
 
@@ -41,9 +44,14 @@ namespace Silverback.Messaging.Broker.Topics
         public InMemoryTopic Topic { get; }
 
         /// <summary>
+        ///     Gets the <see cref="Offset" /> of the first message in the partition.
+        /// </summary>
+        public Offset FirstOffset { get; private set; } = Offset.Unset;
+
+        /// <summary>
         ///     Gets the <see cref="Offset" /> of the latest written message.
         /// </summary>
-        public Offset LatestOffset => new Offset(_messages.Count - 1);
+        public Offset LastOffset { get; private set; } = Offset.Unset;
 
         /// <summary>
         ///     Writes the specified message to the partition.
@@ -57,13 +65,22 @@ namespace Silverback.Messaging.Broker.Topics
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Offset Add(Message<byte[]?, byte[]?> message)
         {
-            // TODO: Rollover?
-
             lock (_messages)
             {
+                if (_messages.Count == 0)
+                    LastOffset = FirstOffset = new Offset(0);
+                else
+                    LastOffset++;
+
                 _messages.Add(message);
 
-                return new Offset(_messages.Count - 1);
+                if (_messages.Count > MaxRetainedMessages)
+                {
+                    _messages.RemoveAt(0);
+                    FirstOffset++;
+                }
+
+                return new Offset(LastOffset);
             }
         }
 
@@ -82,22 +99,24 @@ namespace Silverback.Messaging.Broker.Topics
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public bool TryPull(Offset offset, out ConsumeResult<byte[]?, byte[]?>? result)
         {
-            if (_messages.Count < offset.Value + 1)
+            lock (_messages)
             {
-                result = null;
-                return false;
+                if (offset.Value > LastOffset || _messages.Count == 0)
+                {
+                    result = null;
+                    return false;
+                }
+
+                result = new ConsumeResult<byte[]?, byte[]?>
+                {
+                    IsPartitionEOF = false,
+                    Message = _messages[(int)(offset.Value - Math.Max(0, FirstOffset.Value))],
+                    Offset = offset,
+                    Partition = Partition,
+                    Topic = Topic.Name
+                };
             }
 
-            // TODO: Will need to handle offset offset (if rolled over)
-
-            result = new ConsumeResult<byte[]?, byte[]?>
-            {
-                IsPartitionEOF = false,
-                Message = _messages[(int)offset.Value],
-                Offset = offset,
-                Partition = Partition,
-                Topic = Topic.Name
-            };
             return true;
         }
     }

@@ -84,8 +84,8 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 
             await streamPublisher.PublishAsync(streamProvider);
 
-            await streamProvider.PushAsync(new TestEventOne());
-            await streamProvider.PushAsync(new TestEventTwo());
+            await streamProvider.PushAsync(new TestEventOne(), false);
+            await streamProvider.PushAsync(new TestEventTwo(), false);
 
             await streamProvider.CompleteAsync();
 
@@ -371,7 +371,7 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             var streamProvider = new MessageStreamProvider<IEnvelope>();
             await streamPublisher.PublishAsync(streamProvider);
 
-            await streamProvider.PushAsync(new TestEnvelope(new TestEventOne(), false));
+            await streamProvider.PushAsync(new TestEnvelope(new TestEventOne(), false), false);
             await streamProvider.PushAsync(new TestEnvelope(new TestEventTwo()));
 
             await AsyncTestingUtil.WaitAsync(() => receivedEvents.Count >= 1);

@@ -54,9 +54,7 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
 
             var producer = new MockedKafkaProducer(_config, _topics);
 
-            // TODO: Use event handlers
-            // if (_statisticsHandler != null)
-            //     builder.SetStatisticsHandler(_statisticsHandler);
+            producer.StatisticsHandler = _statisticsHandler;
 
             return producer;
         }

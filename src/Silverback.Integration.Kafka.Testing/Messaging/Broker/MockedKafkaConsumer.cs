@@ -84,11 +84,17 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public bool Disposed { get; private set; }
 
+        internal Action<IConsumer<byte[]?, byte[]?>, string>? StatisticsHandler { get; set; }
+
+        internal Action<IConsumer<byte[]?, byte[]?>, Error>? ErrorHandler { get; set; }
+
         internal Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>?
             PartitionsAssignedHandler { get; set; }
 
         internal Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>?
             PartitionsRevokedHandler { get; set; }
+
+        internal Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? OffsetsCommittedHandler { get; set; }
 
         /// <inheritdoc cref="IConsumer{TKey,TValue}.MemberId" />
         public int AddBrokers(string brokers) => throw new NotSupportedException();
@@ -186,18 +192,30 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer{TKey,TValue}.Commit()" />
         public List<TopicPartitionOffset> Commit()
         {
-            foreach (var topicPair in _storedOffsets)
+            var topicPartitionOffsets = _storedOffsets.SelectMany(
+                topicPair => topicPair.Value.Select(
+                    partitionPair => new TopicPartitionOffset(
+                        topicPair.Key,
+                        partitionPair.Key,
+                        partitionPair.Value))).ToList();
+
+            var topicPartitionOffsetsByTopic = topicPartitionOffsets.GroupBy(tpo => tpo.Topic);
+
+            foreach (var group in topicPartitionOffsetsByTopic)
             {
-                _topics[topicPair.Key].Commit(
-                    GroupId,
-                    topicPair.Value.Select(
-                        partitionPair => new TopicPartitionOffset(
-                            topicPair.Key,
-                            partitionPair.Key,
-                            partitionPair.Value)));
+                _topics[group.Key].Commit(GroupId, group);
             }
 
-            return new List<TopicPartitionOffset>();
+            OffsetsCommittedHandler?.Invoke(
+                this,
+                new CommittedOffsets(
+                    topicPartitionOffsets
+                        .Select(
+                            topicPartitionOffset =>
+                                new TopicPartitionOffsetError(topicPartitionOffset, null)).ToList(),
+                    null));
+
+            return topicPartitionOffsets;
         }
 
         /// <inheritdoc cref="IConsumer{TKey,TValue}.Commit(IEnumerable{TopicPartitionOffset})" />
@@ -351,18 +369,24 @@ namespace Silverback.Messaging.Broker
 
         private TopicPartitionOffset GetStartingOffset(TopicPartitionOffset topicPartitionOffset)
         {
-            if (topicPartitionOffset.Offset == Offset.Beginning)
-                return new TopicPartitionOffset(topicPartitionOffset.TopicPartition, 0);
+            if (!topicPartitionOffset.Offset.IsSpecial)
+                return topicPartitionOffset;
 
             var topic = _topics[topicPartitionOffset.Topic];
-            var offset = topicPartitionOffset.Offset == Offset.End
-                ? Offset.End
-                : topic.GetCommittedOffset(topicPartitionOffset.Partition, GroupId);
+
+            var offset = topicPartitionOffset.Offset;
+
+            if (offset == Offset.Stored || offset == Offset.Unset)
+                offset = topic.GetCommittedOffset(topicPartitionOffset.Partition, GroupId);
 
             if (offset == Offset.End)
-                offset = topic.GetLatestOffset(topicPartitionOffset.Partition) + 1;
-            else
-                offset = 0; // TODO: Change to GetFirstOffset
+                offset = topic.GetLastOffset(topicPartitionOffset.Partition);
+            else if (offset.IsSpecial)
+                offset = topic.GetFirstOffset(topicPartitionOffset.Partition);
+
+            // If the partition is empty the first offset would be Offset.Unset
+            if (offset.IsSpecial)
+                offset = new Offset(0);
 
             return new TopicPartitionOffset(topicPartitionOffset.TopicPartition, offset);
         }

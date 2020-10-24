@@ -129,22 +129,11 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
 
             var consumer = new MockedKafkaConsumer(_config, _topics);
 
-            // TODO: Use event handlers
-
-            // if (_statisticsHandler != null)
-            //     builder.SetStatisticsHandler(_statisticsHandler);
-            //
-            // if (_errorHandler != null)
-            //     builder.SetErrorHandler(_errorHandler);
-            //
-            // if (_partitionsRevokedHandler != null)
-            //     builder.SetPartitionsRevokedHandler(_partitionsRevokedHandler);
-            //
-            // if (_offsetsCommittedHandler != null)
-            //     builder.SetOffsetsCommittedHandler(_offsetsCommittedHandler);
-
+            consumer.StatisticsHandler = _statisticsHandler;
+            consumer.ErrorHandler = _errorHandler;
             consumer.PartitionsAssignedHandler = _partitionsAssignedHandler;
             consumer.PartitionsRevokedHandler = _partitionsRevokedHandler;
+            consumer.OffsetsCommittedHandler = _offsetsCommittedHandler;
 
             return consumer;
         }

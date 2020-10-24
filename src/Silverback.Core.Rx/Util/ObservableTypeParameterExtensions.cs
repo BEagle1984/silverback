@@ -17,7 +17,7 @@ namespace Silverback.Util
         public static IObservable<object> OfType(this IObservable<object> source, Type type) =>
             typeof(Observable)
                     .GetMethod("OfType", BindingFlags.Static | BindingFlags.Public)
-                    .MakeGenericMethod(type)
+                    ?.MakeGenericMethod(type)
                     .Invoke(null, new object[] { source })
                 as IObservable<object> ?? Observable.Empty<object>();
     }

@@ -44,6 +44,8 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer{TKey,TValue}.Name" />
         public string Name { get; }
 
+        internal Action<IProducer<byte[]?, byte[]?>, string>? StatisticsHandler { get; set; }
+
         /// <inheritdoc cref="IProducer{TKey,TValue}.AddBrokers" />
         public int AddBrokers(string brokers) => throw new NotSupportedException();
 

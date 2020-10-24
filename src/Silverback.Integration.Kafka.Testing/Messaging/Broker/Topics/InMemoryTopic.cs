@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using Microsoft.Extensions.Logging;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Topics
@@ -32,9 +31,6 @@ namespace Silverback.Messaging.Broker.Topics
         /// </param>
         /// <param name="partitions">
         ///     The number of partitions to create.
-        /// </param>
-        /// <param name="logger">
-        ///     The <see cref="ILogger" />.
         /// </param>
         public InMemoryTopic(string name, int partitions)
         {
@@ -68,20 +64,27 @@ namespace Silverback.Messaging.Broker.Topics
             IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
             out ConsumeResult<byte[]?, byte[]?>? result)
         {
-            if (!_committedOffsets.ContainsKey(groupId))
+            try
             {
+                if (!_committedOffsets.ContainsKey(groupId))
+                {
+                    result = null;
+                    return false;
+                }
+
+                foreach (var partitionOffset in partitionOffsets.OrderBy(partitionOffset => partitionOffset.Offset.Value))
+                {
+                    if (_partitions[partitionOffset.Partition].TryPull(partitionOffset.Offset, out result))
+                        return true;
+                }
+
                 result = null;
                 return false;
             }
-
-            foreach (var partitionOffset in partitionOffsets.OrderBy(partitionOffset => partitionOffset.Offset.Value))
+            catch (Exception exception)
             {
-                if (_partitions[partitionOffset.Partition].TryPull(partitionOffset.Offset, out result))
-                    return true;
+                throw new KafkaException(new Error(ErrorCode.Unknown), exception);
             }
-
-            result = null;
-            return false;
         }
 
         /// <inheritdoc cref="IInMemoryTopic.Subscribe" />
@@ -148,9 +151,13 @@ namespace Silverback.Messaging.Broker.Topics
         public long GetCommittedOffsetsCount(string groupId) =>
             GetCommittedOffsets(groupId).Sum(topicPartitionOffset => Math.Max(0, topicPartitionOffset.Offset));
 
-        /// <inheritdoc cref="IInMemoryTopic.GetLatestOffset" />
-        public Offset GetLatestOffset(Partition partition)
-            => _partitions[partition].LatestOffset;
+        /// <inheritdoc cref="IInMemoryTopic.GetFirstOffset" />
+        public Offset GetFirstOffset(Partition partition)
+            => _partitions[partition].FirstOffset;
+
+        /// <inheritdoc cref="IInMemoryTopic.GetLastOffset" />
+        public Offset GetLastOffset(Partition partition)
+            => _partitions[partition].LastOffset;
 
         /// <inheritdoc cref="IInMemoryTopic.WaitUntilAllMessagesAreConsumedAsync" />
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
@@ -200,7 +207,7 @@ namespace Silverback.Messaging.Broker.Topics
             return consumer.Assignment.All(
                 topicPartition =>
                 {
-                    var lastOffset = _partitions[topicPartition.Partition].LatestOffset;
+                    var lastOffset = _partitions[topicPartition.Partition].LastOffset;
                     return lastOffset < 0 || partitionsOffsets[topicPartition.Partition] > lastOffset;
                 });
         }

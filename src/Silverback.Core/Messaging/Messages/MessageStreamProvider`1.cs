@@ -94,9 +94,9 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <summary>
-        ///     Aborts the ongoing enumerations and the pending calls to <see cref="PushAsync" />, then marks the
+        ///     Aborts the ongoing enumerations and the pending calls to <see cref="PushAsync(TMessage,CancellationToken)" />, then marks the
         ///     stream as complete. Calling this method will cause an <see cref="OperationCanceledException" /> to be
-        ///     thrown by the enumerators and the <see cref="PushAsync" /> method.
+        ///     thrown by the enumerators and the <see cref="PushAsync(TMessage,CancellationToken)" /> method.
         /// </summary>
         public void Abort()
         {
