@@ -58,10 +58,6 @@ namespace Silverback.Messaging.Inbound.Transaction
             EnsureNotCompleted();
             IsCompleted = true;
 
-            await _context.ServiceProvider.GetRequiredService<IPublisher>()
-                .PublishAsync(new ConsumingCompletedEvent(_context))
-                .ConfigureAwait(false);
-
             // TODO: At least once is ok? (Consider that the DbContext might have been committed already.
             await _transactionalServices.ForEachAsync(service => service.CommitAsync()).ConfigureAwait(false);
             await _context.Consumer.CommitAsync(_context.Offsets).ConfigureAwait(false);
@@ -75,10 +71,6 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             try
             {
-                await _context.ServiceProvider.GetRequiredService<IPublisher>()
-                    .PublishAsync(new ConsumingAbortedEvent(_context, exception))
-                    .ConfigureAwait(false);
-
                 await _transactionalServices.ForEachAsync(service => service.RollbackAsync())
                     .ConfigureAwait(false);
             }
