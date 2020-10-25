@@ -8,7 +8,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
 {
     /// <summary>
-    ///     Used by the <see cref="LoggedInboundConnector" /> to keep track of each processed message and
+    ///     Used by the <see cref="LogExactlyOnceStrategy" /> to keep track of each processed message and
     ///     guarantee that each one is processed only once.
     /// </summary>
     public interface IInboundLog : ITransactional

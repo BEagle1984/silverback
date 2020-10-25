@@ -4,10 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
-using Silverback.Messaging.Publishing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound.Transaction
@@ -30,10 +27,10 @@ namespace Silverback.Messaging.Inbound.Transaction
             _context = context;
         }
 
-        /// <inheritdoc cref="IConsumerTransactionManager.IsCompleted"/>
+        /// <inheritdoc cref="IConsumerTransactionManager.IsCompleted" />
         public bool IsCompleted { get; private set; }
 
-        /// <inheritdoc cref="IConsumerTransactionManager.Enlist"/>
+        /// <inheritdoc cref="IConsumerTransactionManager.Enlist" />
         public void Enlist(ITransactional transactionalService)
         {
             Check.NotNull(transactionalService, nameof(transactionalService));
@@ -52,7 +49,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync"/>
+        /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
         public async Task CommitAsync()
         {
             EnsureNotCompleted();

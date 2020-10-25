@@ -4,7 +4,6 @@
 using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences.Batch
@@ -29,8 +28,8 @@ namespace Silverback.Messaging.Sequences.Batch
             : base(
                 sequenceId,
                 context,
-                enforceTimeout: Check.NotNull(context, nameof(context)).Envelope.Endpoint.Batch?.MaxWaitTime != null,
-                timeout: Check.NotNull(context, nameof(context)).Envelope.Endpoint.Batch?.MaxWaitTime)
+                Check.NotNull(context, nameof(context)).Envelope.Endpoint.Batch?.MaxWaitTime != null,
+                Check.NotNull(context, nameof(context)).Envelope.Endpoint.Batch?.MaxWaitTime)
         {
             if (context.Envelope.Endpoint.Batch == null)
                 throw new InvalidOperationException("Endpoint.Batch is null.");

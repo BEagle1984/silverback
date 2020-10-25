@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
 {
     /// <summary>
     ///     <para>
-    ///         Used by the <see cref="OffsetStoredInboundConnector" /> to keep track of the last processed
+    ///         Used by the <see cref="OffsetStoreExactlyOnceStrategy" /> to keep track of the last processed
     ///         offsets and guarantee that each message is processed only once.
     ///     </para>
     ///     <para>

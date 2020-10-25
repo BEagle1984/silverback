@@ -1,12 +1,10 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Encryption
 {
@@ -16,11 +14,6 @@ namespace Silverback.Messaging.Encryption
     /// </summary>
     public abstract class SilverbackCryptoStream : Stream
     {
-        /// <summary>
-        ///     Gets the underlying <see cref="CryptoStream"/>.
-        /// </summary>
-        protected abstract CryptoStream CryptoStream { get; }
-
         /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.CanRead" />
         public override bool CanRead => CryptoStream.CanRead;
 
@@ -39,6 +32,12 @@ namespace Silverback.Messaging.Encryption
             get => CryptoStream.Position;
             set => CryptoStream.Position = value;
         }
+
+        /// <summary>
+        ///     Gets the underlying <see cref="CryptoStream" />.
+        /// </summary>
+        protected abstract CryptoStream CryptoStream { get; }
+
         /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.Flush" />
         public override void Flush() => CryptoStream.Flush();
 
@@ -68,7 +67,8 @@ namespace Silverback.Messaging.Encryption
         public override void Write(byte[] buffer, int offset, int count) => CryptoStream.Write(buffer, offset, count);
 
         /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.WriteAsync(byte[],int,int)" />
-        public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) => CryptoStream.WriteAsync(buffer, offset, count, cancellationToken);
+        public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) =>
+            CryptoStream.WriteAsync(buffer, offset, count, cancellationToken);
 
         /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.Close" />
         public override void Close() => CryptoStream.Close();

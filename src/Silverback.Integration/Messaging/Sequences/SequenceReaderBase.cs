@@ -62,9 +62,6 @@ namespace Silverback.Messaging.Sequences
         {
             Check.NotNull(context, nameof(context));
 
-            // if (context.Envelope.Endpoint.Sequence.ConsecutiveMessages)
-            //    return "***default***";
-
             return context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId) ?? "***default***";
         }
 
@@ -153,8 +150,6 @@ namespace Silverback.Messaging.Sequences
 
         private static async Task AbortPreviousSequencesAsync(ISequenceStore sequenceStore, ISequence currentSequence)
         {
-            // TODO: Log
-
             await sequenceStore.ForEachAsync(
                     previousSequence =>
                     {
@@ -162,8 +157,6 @@ namespace Silverback.Messaging.Sequences
                         if (currentSequence is RawSequence && previousSequence is Sequence ||
                             currentSequence is Sequence && previousSequence is RawSequence)
                             return Task.CompletedTask;
-
-                        // Prevent the other sequences to be aborted when a new ChunkSequence is started
 
                         return previousSequence.AbortAsync(SequenceAbortReason.IncompleteSequence);
                     })

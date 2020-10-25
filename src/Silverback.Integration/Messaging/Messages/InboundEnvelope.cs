@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Messages
 {

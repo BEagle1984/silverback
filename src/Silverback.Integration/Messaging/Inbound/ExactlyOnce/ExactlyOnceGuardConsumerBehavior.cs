@@ -9,8 +9,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.Inbound.ExactlyOnce
 {
     /// <summary>
-    ///     Uses the configured implementation of <see cref="IXy" /> to ensure that the message is processed only
-    ///     once.
+    ///     Uses the configured implementation of <see cref="IExactlyOnceStrategy" /> to ensure that the message
+    ///     is processed only once.
     /// </summary>
     public class ExactlyOnceGuardConsumerBehavior : IConsumerBehavior
     {

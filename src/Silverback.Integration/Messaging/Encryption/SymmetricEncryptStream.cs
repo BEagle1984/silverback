@@ -100,7 +100,6 @@ namespace Silverback.Messaging.Encryption
             return length;
         }
 
-
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         private ICryptoTransform CreateCryptoTransform(SymmetricEncryptionSettings settings)
         {

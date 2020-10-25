@@ -4,7 +4,6 @@
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Serialization
@@ -36,11 +35,6 @@ namespace Silverback.Messaging.Serialization
 
             if (envelope is IInboundEnvelope inboundEnvelope && inboundEnvelope.Message != null)
                 return inboundEnvelope;
-
-            // Complete SequencerBehaviorsTask to avoid deadlocks, since the processing will be stuck in here
-            // until the sequence is complete.
-            // if (context.Sequence is ISequenceImplementation sequenceImpl)
-            //     sequenceImpl.CompleteSequencerBehaviorsTask();
 
             var (deserializedObject, deserializedType) = await
                 envelope.Endpoint.Serializer.DeserializeAsync(
