@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Diagnostics
                     IntegrationEventIds.ConsumerFatalError,
                     ex,
                     "Fatal error occurred consuming the message. The consumer will be stopped.",
-                    context.Envelope);
+                    context);
 
                 throw;
             }

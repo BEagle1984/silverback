@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Messaging.Inbound.ExactlyOnce;
 
 namespace Silverback.Messaging.Broker
 {
@@ -14,7 +15,7 @@ namespace Silverback.Messaging.Broker
     ///     </para>
     ///     <para>
     ///         Being able to compare the offsets allows the exactly-one delivery using the
-    ///         <see cref="OffsetStoredInboundConnector" /> and for it to work properly the offsets have to be
+    ///         <see cref="OffsetStoreExactlyOnceStrategy" /> and for it to work properly the offsets have to be
     ///         universally comparable (across restarts and across multiple instances, for a given Key).
     ///     </para>
     /// </summary>

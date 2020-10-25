@@ -150,7 +150,7 @@ namespace Silverback.Messaging.Inbound.Transaction
 
         private async Task<bool> HandleExceptionAsync(ConsumerPipelineContext context, Exception exception)
         {
-            _logger.LogProcessingError(context.Envelope, exception);
+            _logger.LogProcessingError(context, exception);
 
             try
             {

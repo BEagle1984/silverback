@@ -206,6 +206,7 @@ namespace Silverback.Messaging.Broker
                 _topics[group.Key].Commit(GroupId, group);
             }
 
+            // TODO: Invoke only for actually committed offsets
             OffsetsCommittedHandler?.Invoke(
                 this,
                 new CommittedOffsets(

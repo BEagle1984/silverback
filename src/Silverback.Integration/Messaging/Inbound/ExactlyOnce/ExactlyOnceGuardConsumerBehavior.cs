@@ -55,7 +55,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce
             _logger.LogInformationWithMessageInfo(
                 IntegrationEventIds.MessageAlreadyProcessed,
                 "Message is being skipped since it was already processed.",
-                context.Envelope);
+                context);
 
             return true;
         }

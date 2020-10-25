@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Silverback.Messaging;
 
@@ -17,21 +16,26 @@ namespace Silverback.Diagnostics
                                                         "messageType: {messageType}, " +
                                                         "messageId: {messageId}";
 
-        private const string InboundBatchArgumentsTemplate = " | " +
-                                                             "endpointName: {endpointName}, " +
-                                                             "failedAttempts: {failedAttempts}, " +
-                                                             "batchId: {batchId}, " +
-                                                             "batchSize: {batchSize}";
+        private const string InboundSequenceArgumentsTemplate = " | " +
+                                                                "endpointName: {endpointName}, " +
+                                                                "failedAttempts: {failedAttempts}, " +
+                                                                "messageType: {messageType}, " +
+                                                                "messageId: {messageId}, " +
+                                                                "sequenceType: {sequenceType}, " +
+                                                                "sequenceId: {sequenceId}, " +
+                                                                "sequenceLength: {sequenceLength}, " +
+                                                                "sequenceIsNew: {sequenceIsNew}, " +
+                                                                "sequenceIsComplete: {sequenceIsComplete}";
 
         private const string OutboundArgumentsTemplate = " | " +
                                                          "endpointName: {endpointName}, " +
                                                          "messageType: {messageType}, " +
                                                          "messageId: {messageId}";
 
-        private const string OutboundBatchArgumentsTemplate = " | " +
-                                                              "endpointName: {endpointName}";
-
         private readonly Dictionary<Type, string> _inboundLogMessageByEndpointType = new Dictionary<Type, string>();
+
+        private readonly Dictionary<Type, string> _inboundSequenceLogMessageByEndpointType =
+            new Dictionary<Type, string>();
 
         private readonly Dictionary<Type, string> _outboundLogMessageByEndpointType = new Dictionary<Type, string>();
 
@@ -55,20 +59,17 @@ namespace Silverback.Diagnostics
         public string GetInboundMessageLogTemplate(IEndpoint? endpoint) =>
             GetMessageLogTemplate(endpoint, _inboundLogMessageByEndpointType, InboundArgumentsTemplate);
 
+        public string GetInboundSequenceLogTemplate(IEndpoint? endpoint) =>
+            GetMessageLogTemplate(endpoint, _inboundSequenceLogMessageByEndpointType, InboundSequenceArgumentsTemplate);
+
         public string[] GetInboundMessageArguments(IEndpoint? endpoint) =>
             GetMessageArguments(endpoint, _inboundArgumentsByEndpointType);
-
-        [SuppressMessage("", "CA1801", Justification = "Parameter here for consistency.")]
-        public string GetInboundBatchLogTemplate(IEndpoint? endpoint) => InboundBatchArgumentsTemplate;
 
         public string GetOutboundMessageLogTemplate(IEndpoint? endpoint) =>
             GetMessageLogTemplate(endpoint, _outboundLogMessageByEndpointType, OutboundArgumentsTemplate);
 
         public string[] GetOutboundMessageArguments(IEndpoint? endpoint) =>
             GetMessageArguments(endpoint, _outboundArgumentsByEndpointType);
-
-        [SuppressMessage("", "CA1801", Justification = "Parameter here for consistency.")]
-        public string GetOutboundBatchLogTemplate(IEndpoint? endpoint) => OutboundBatchArgumentsTemplate;
 
         private static string GetMessageLogTemplate(
             IEndpoint? endpoint,

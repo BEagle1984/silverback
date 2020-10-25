@@ -82,7 +82,7 @@ namespace Silverback.Messaging.Sequences
                     _logger.LogDebugWithMessageInfo(
                         IntegrationEventIds.SequenceStarted,
                         $"Started new {sequence.GetType().Name}.",
-                        context.Envelope);
+                        context);
                 }
 
                 await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
@@ -90,7 +90,7 @@ namespace Silverback.Messaging.Sequences
                 _logger.LogDebugWithMessageInfo(
                     IntegrationEventIds.MessageAddedToSequence,
                     $"Message added to {sequence.GetType().Name}.",
-                    context.Envelope);
+                    context);
 
                 if (sequence.IsComplete)
                 {
@@ -106,7 +106,7 @@ namespace Silverback.Messaging.Sequences
                     _logger.LogDebugWithMessageInfo(
                         IntegrationEventIds.SequenceCompleted,
                         $"{sequence.GetType().Name} completed.",
-                        context.Envelope);
+                        context);
                 }
             }
         }

@@ -13,7 +13,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
-    ///     This policy retries to process the message that previously failed to be to processed. An optional delay can be
+    ///     This policy retries to process the message that previously failed to be to processed. An optional
+    ///     delay can be
     ///     specified.
     /// </summary>
     /// TODO: Exponential backoff variant
@@ -106,20 +107,20 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
                 await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
 
-                await ApplyDelayAsync(context.Envelope).ConfigureAwait(false);
+                await ApplyDelayAsync(context).ConfigureAwait(false);
 
                 _logger.LogInformationWithMessageInfo(
                     IntegrationEventIds.RetryMessageProcessing,
                     "The message(s) will be processed again.",
-                    context.Envelope);
+                    context);
 
                 return true;
             }
 
-            private async Task ApplyDelayAsync(IRawInboundEnvelope envelope)
+            private async Task ApplyDelayAsync(ConsumerPipelineContext context)
             {
                 var delay = (int)_initialDelay.TotalMilliseconds +
-                            (envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) *
+                            (context.Envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) *
                              (int)_delayIncrement.TotalMilliseconds);
 
                 if (delay <= 0)
@@ -128,7 +129,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 _logger.LogTraceWithMessageInfo(
                     IntegrationEventIds.RetryDelayed,
                     $"Waiting {delay} milliseconds before retrying to process the message(s).",
-                    envelope);
+                    context);
 
                 await Task.Delay(delay).ConfigureAwait(false);
             }

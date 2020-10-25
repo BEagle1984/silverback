@@ -87,7 +87,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 _logger.LogDebugWithMessageInfo(
                     IntegrationEventIds.PolicyChainCompleted,
                     "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.",
-                    context.Envelope);
+                    context);
 
                 return Task.FromResult(false);
             }

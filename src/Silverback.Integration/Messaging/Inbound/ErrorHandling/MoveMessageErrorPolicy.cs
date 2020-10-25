@@ -126,7 +126,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 _logger.LogInformationWithMessageInfo(
                     IntegrationEventIds.MessageMoved,
                     $"The message will be moved to endpoint '{_endpoint.Name}'.",
-                    context.Envelope);
+                    context);
 
                 await PublishToNewEndpointAsync(context.Envelope, exception).ConfigureAwait(false);
 

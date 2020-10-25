@@ -3,10 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -198,24 +200,37 @@ namespace Silverback.Messaging.Sequences
 
             _timeoutCancellationTokenSource?.Cancel();
 
-            await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
+            _logger.LogSequenceAborted(Context.Envelope, this, AbortReason, AbortException);
 
+            await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
             await HandleExceptionAsync(exception).ConfigureAwait(false);
             _streamProvider.Abort();
 
-            // TODO: Review this!!!
-
-            try
-            {
-                _abortCancellationTokenSource.Cancel();
-            }
-            catch (Exception e)
-            {
-                // Ignore
-                Console.WriteLine(e);
-            }
-
+            _abortCancellationTokenSource.Cancel();
             _abortingTaskCompletionSource?.SetResult(true);
+        }
+
+        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
+        void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
+
+        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
+        void ISequenceImplementation.CompleteSequencerBehaviorsTask() =>
+            _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
+
+        /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingCompleted" />
+        void ISequenceImplementation.NotifyProcessingCompleted()
+        {
+            _processingCompleteTaskCompletionSource.TrySetResult(true);
+            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
+        }
+
+        /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
+        void ISequenceImplementation.NotifyProcessingFailed(Exception exception)
+        {
+            _processingCompleteTaskCompletionSource.TrySetException(exception);
+
+            // Don't forward the error, it's enough to handle it once
+            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -367,29 +382,7 @@ namespace Silverback.Messaging.Sequences
         /// </returns>
         protected virtual Task OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
 
-        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
-        void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
-
-        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
-        void ISequenceImplementation.CompleteSequencerBehaviorsTask() =>
-            _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
-
-        /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingCompleted" />
-        void ISequenceImplementation.NotifyProcessingCompleted()
-        {
-            _processingCompleteTaskCompletionSource.TrySetResult(true);
-            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
-        }
-
-        /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
-        void ISequenceImplementation.NotifyProcessingFailed(Exception exception)
-        {
-            _processingCompleteTaskCompletionSource.TrySetException(exception);
-
-            // Don't forward the error, it's enough to handle it once
-            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
-        }
-
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private void ResetTimeout()
         {
             if (!_enforceTimeout)
@@ -420,15 +413,14 @@ namespace Silverback.Messaging.Sequences
                     }
                     catch (Exception ex)
                     {
-                        // TODO: Log
+                        _logger.LogError(ex, "An error occurred aborting the timed out sequence.");
                     }
                 });
         }
 
+        [SuppressMessage("", "CA1031", Justification = "Exeption notified")]
         private async Task HandleExceptionAsync(Exception? exception)
         {
-            _logger.LogSequenceAborted(Context, AbortReason, AbortException);
-
             try
             {
                 switch (AbortReason)

@@ -5,8 +5,13 @@ using System;
 using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.Logging;
+using NSubstitute;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Performance.TestTypes;
 using Silverback.Tests.Types;
 
@@ -54,65 +59,9 @@ namespace Silverback.Tests.Performance
     [MemoryDiagnoser]
     public class SilverbackIntegrationLoggerBenchmark
     {
-        private static readonly List<IRawBrokerEnvelope> SingleEnvelope = new List<IRawBrokerEnvelope>
-        {
-            new RawInboundEnvelope(
-                Array.Empty<byte>(),
-                new MessageHeaderCollection
-                {
-                    new MessageHeader("Test", "Test"),
-                    new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
-                    new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                    new MessageHeader(DefaultMessageHeaders.MessageId, "1234"),
-                },
-                new TestConsumerEndpoint("Test"),
-                "Test",
-                new TestOffset("abc", "1"),
-                new Dictionary<string, string>
-                {
-                    ["offset"] = "1@42"
-                })
-        };
+        private readonly ConsumerPipelineContext SingleMessageContext;
 
-        private static readonly List<IRawBrokerEnvelope> Envelopes = new List<IRawBrokerEnvelope>
-        {
-            new RawInboundEnvelope(
-                Array.Empty<byte>(),
-                new MessageHeaderCollection
-                {
-                    new MessageHeader("Test", "Test"),
-                    new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
-                    new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                    new MessageHeader(DefaultMessageHeaders.MessageId, "1234"),
-                    new MessageHeader(DefaultMessageHeaders.BatchId, "1234"),
-                    new MessageHeader(DefaultMessageHeaders.BatchSize, "11"),
-                },
-                new TestConsumerEndpoint("Test"),
-                "Test",
-                new TestOffset("abc", "1"),
-                new Dictionary<string, string>
-                {
-                    ["offset"] = "1@42"
-                }),
-            new RawInboundEnvelope(
-                Array.Empty<byte>(),
-                new MessageHeaderCollection
-                {
-                    new MessageHeader("Test", "Test"),
-                    new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
-                    new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                    new MessageHeader(DefaultMessageHeaders.MessageId, "5678"),
-                    new MessageHeader(DefaultMessageHeaders.BatchId, "1234"),
-                    new MessageHeader(DefaultMessageHeaders.BatchSize, "11"),
-                },
-                new TestConsumerEndpoint("Test"),
-                "Test",
-                new TestOffset("abc", "2"),
-                new Dictionary<string, string>
-                {
-                    ["offset"] = "1@43"
-                })
-        };
+        private readonly ConsumerPipelineContext SequenceContext;
 
         private readonly ISilverbackIntegrationLogger _integrationLogger;
 
@@ -121,28 +70,69 @@ namespace Silverback.Tests.Performance
             _integrationLogger = new SilverbackIntegrationLogger(
                 new FakeLogger(),
                 new LogTemplates().ConfigureAdditionalData<TestConsumerEndpoint>("offset"));
+
+            SingleMessageContext = ConsumerPipelineContextHelper.CreateSubstitute(
+                new RawInboundEnvelope(
+                    Array.Empty<byte>(),
+                    new MessageHeaderCollection
+                    {
+                        new MessageHeader("Test", "Test"),
+                        new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
+                        new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                        new MessageHeader(DefaultMessageHeaders.MessageId, "1234"),
+                    },
+                    new TestConsumerEndpoint("Test"),
+                    "Test",
+                    new TestOffset("abc", "1"),
+                    new Dictionary<string, string>
+                    {
+                        ["offset"] = "1@42"
+                    }));
+
+            SequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(
+                new RawInboundEnvelope(
+                    Array.Empty<byte>(),
+                    new MessageHeaderCollection
+                    {
+                        new MessageHeader("Test", "Test"),
+                        new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
+                        new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                        new MessageHeader(DefaultMessageHeaders.MessageId, "5678"),
+                        new MessageHeader(DefaultMessageHeaders.BatchId, "1234"),
+                        new MessageHeader(DefaultMessageHeaders.BatchSize, "11"),
+                    },
+                    new TestConsumerEndpoint("Test"),
+                    "Test",
+                    new TestOffset("abc", "2"),
+                    new Dictionary<string, string>
+                    {
+                        ["offset"] = "1@43"
+                    }));
+            var sequence = new BatchSequence("123", SequenceContext);
+            sequence.AddAsync(SequenceContext.Envelope, null, false);
+            SequenceContext.SetSequence(sequence, true);
         }
 
         [Benchmark]
-        public void LogErrorSingleEnvelope()
+        public void LogErrorSingleMessage()
         {
             _integrationLogger.LogWithMessageInfo(
                 LogLevel.Error,
                 new EventId(1, "Something"),
                 null,
                 "This is my log message",
-                SingleEnvelope);
+                SingleMessageContext);
         }
 
         [Benchmark]
-        public void LogErrorMultipleEnvelopes()
+        public void LogErrorSequence()
         {
             _integrationLogger.LogWithMessageInfo(
                 LogLevel.Error,
                 new EventId(1, "Something"),
                 null,
                 "This is my log message",
-                Envelopes);
+                SequenceContext);
         }
 
         [Benchmark]
@@ -153,7 +143,7 @@ namespace Silverback.Tests.Performance
                 new EventId(1, "Something"),
                 null,
                 "This is my log message",
-                SingleEnvelope);
+                SingleMessageContext);
         }
     }
 }

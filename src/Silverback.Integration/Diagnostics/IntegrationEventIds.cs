@@ -20,8 +20,7 @@ namespace Silverback.Diagnostics
         private const int Offset = 1000;
 
         /// <summary>
-        ///     Gets the <see cref="EventId" /> of the log that is written when an inbound message (or a batch of
-        ///     messages) is being processed.
+        ///     Gets the <see cref="EventId" /> of the log that is written when an inbound message is being processed.
         /// </summary>
         /// <remarks>
         ///     Default log level: Information.
@@ -57,7 +56,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId SequenceStarted { get; } =
-            new EventId(Offset + 4, Prefix + nameof(SequenceProcessingAborted));
+            new EventId(Offset + 4, Prefix + nameof(SequenceStarted));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when all messages belonging to the sequence
@@ -67,19 +66,30 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId SequenceCompleted { get; } =
-            new EventId(Offset + 5, Prefix + nameof(SequenceProcessingAborted));
+            new EventId(Offset + 5, Prefix + nameof(SequenceCompleted));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the processing of a sequence of
-        ///     messages is aborted (e.g. because of consumer disconnect, timeout, incomplete sequence, ...).
-        ///     In case of an exception during the processing the <see cref="ErrorProcessingInboundMessage" /> is
-        ///     logged instead.
+        ///     messages is aborted, but not because of an error (an <see cref="ErrorProcessingInboundMessage" /> is
+        ///     logged instead) or an incomplete sequence that gets discarded (an
+        ///     <see cref="IncompleteSequenceDiscarded" /> is logged instead).
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Debug.
+        /// </remarks>
+        public static EventId SequenceProcessingAborted { get; } =
+            new EventId(Offset + 6, Prefix + nameof(SequenceProcessingAborted));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when an incomplete sequence is discarded
+        ///     (e.g. the previous incomplete <see cref="ChunkSequence" /> may be discarded when the message headers
+        ///     indicate the start of a new sequence or in case of timeout).
         /// </summary>
         /// <remarks>
         ///     Default log level: Warning.
         /// </remarks>
-        public static EventId SequenceProcessingAborted { get; } =
-            new EventId(Offset + 6, Prefix + nameof(SequenceProcessingAborted));
+        public static EventId IncompleteSequenceDiscarded { get; } =
+            new EventId(Offset + 7, Prefix + nameof(IncompleteSequenceDiscarded));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when connecting to the message broker.
@@ -143,7 +153,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId BrokerConnectionError { get; } =
-            new EventId(Offset + 17, Prefix + nameof(BrokerConnecting));
+            new EventId(Offset + 17, Prefix + nameof(BrokerConnectionError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the consumer is connected to the
@@ -386,15 +396,5 @@ namespace Silverback.Diagnostics
         /// </remarks>
         public static EventId ErrorProcessingOutboundQueue { get; } =
             new EventId(Offset + 78, Prefix + nameof(ErrorProcessingOutboundQueue));
-
-        /// <summary>
-        ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while cleaning up the
-        ///     temporary chunks from the <see cref="IChunkStore" />.
-        /// </summary>
-        /// <remarks>
-        ///     Default log level: Error.
-        /// </remarks>
-        public static EventId ErrorCleaningChunkStore { get; } =
-            new EventId(Offset + 91, Prefix + nameof(ErrorCleaningChunkStore));
     }
 }

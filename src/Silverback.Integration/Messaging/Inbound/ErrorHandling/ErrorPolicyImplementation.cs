@@ -91,7 +91,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 _logger.LogTraceWithMessageInfo(
                     IntegrationEventIds.PolicyMaxFailedAttemptsExceeded,
                     traceString,
-                    context.Envelope);
+                    context);
 
                 return false;
             }
@@ -104,7 +104,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 _logger.LogTraceWithMessageInfo(
                     IntegrationEventIds.PolicyExceptionNotIncluded,
                     traceString,
-                    context.Envelope);
+                    context);
 
                 return false;
             }
@@ -117,7 +117,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 _logger.LogTraceWithMessageInfo(
                     IntegrationEventIds.PolicyExceptionExcluded,
                     traceString,
-                    context.Envelope);
+                    context);
 
                 return false;
             }
@@ -130,7 +130,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 _logger.LogTraceWithMessageInfo(
                     IntegrationEventIds.PolicyApplyRuleReturnedFalse,
                     traceString,
-                    context.Envelope);
+                    context);
 
                 return false;
             }

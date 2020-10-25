@@ -48,7 +48,7 @@ namespace Silverback.Messaging.Inbound
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            _logger.LogProcessing(context.Envelope);
+            _logger.LogProcessing(context);
 
             if (context.Sequence != null)
             {
