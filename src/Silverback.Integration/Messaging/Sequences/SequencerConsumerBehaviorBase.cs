@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
@@ -23,15 +24,23 @@ namespace Silverback.Messaging.Sequences
     {
         private readonly IReadOnlyCollection<ISequenceReader> _sequenceReaders;
 
+        private readonly ISilverbackIntegrationLogger<SequencerConsumerBehaviorBase> _logger;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="SequencerConsumerBehaviorBase" /> class.
         /// </summary>
         /// <param name="sequenceReaders">
         ///     The <see cref="ISequenceReader" /> implementations to be used.
         /// </param>
-        protected SequencerConsumerBehaviorBase(IEnumerable<ISequenceReader> sequenceReaders)
+        /// <param name="logger">
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        /// </param>
+        protected SequencerConsumerBehaviorBase(
+            IEnumerable<ISequenceReader> sequenceReaders,
+            ISilverbackIntegrationLogger<SequencerConsumerBehaviorBase> logger)
         {
-            _sequenceReaders = sequenceReaders.SortBySortIndex().ToList();
+            _sequenceReaders = Check.NotNull(sequenceReaders, nameof(sequenceReaders)).SortBySortIndex().ToList();
+            _logger = Check.NotNull(logger, nameof(logger));
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
@@ -69,9 +78,19 @@ namespace Silverback.Messaging.Sequences
 
                     if (context.ProcessingTask != null)
                         MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);
+
+                    _logger.LogDebugWithMessageInfo(
+                        IntegrationEventIds.SequenceStarted,
+                        $"Started new {sequence.GetType().Name}.",
+                        context.Envelope);
                 }
 
                 await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
+
+                _logger.LogDebugWithMessageInfo(
+                    IntegrationEventIds.MessageAddedToSequence,
+                    $"Message added to {sequence.GetType().Name}.",
+                    context.Envelope);
 
                 if (sequence.IsComplete)
                 {
@@ -83,6 +102,11 @@ namespace Silverback.Messaging.Sequences
                     {
                         context.SetIsSequenceEnd();
                     }
+
+                    _logger.LogDebugWithMessageInfo(
+                        IntegrationEventIds.SequenceCompleted,
+                        $"{sequence.GetType().Name} completed.",
+                        context.Envelope);
                 }
             }
         }

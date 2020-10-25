@@ -4,6 +4,8 @@
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Chunking;
 
 namespace Silverback.Diagnostics
 {
@@ -13,8 +15,6 @@ namespace Silverback.Diagnostics
     /// </summary>
     public static class IntegrationEventIds
     {
-        // TODO: Review and remove unused
-
         private const string Prefix = "Silverback.Integration_";
 
         private const int Offset = 1000;
@@ -41,13 +41,33 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an inbound message is added to a
-        ///     batch.
+        ///     sequence (e.g. a <see cref="ChunkSequence" /> or a <see cref="BatchSequence" />).
         /// </summary>
         /// <remarks>
-        ///     Default log level: Information.
+        ///     Default log level: Debug.
         /// </remarks>
-        public static EventId MessageAddedToBatch { get; } =
-            new EventId(Offset + 3, Prefix + nameof(MessageAddedToBatch));
+        public static EventId MessageAddedToSequence { get; } =
+            new EventId(Offset + 3, Prefix + nameof(MessageAddedToSequence));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when the first message of a new sequence is
+        ///     consumed.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Debug.
+        /// </remarks>
+        public static EventId SequenceStarted { get; } =
+            new EventId(Offset + 4, Prefix + nameof(SequenceProcessingAborted));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when all messages belonging to the sequence
+        ///     have been consumed and published to the internal bus.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Debug.
+        /// </remarks>
+        public static EventId SequenceCompleted { get; } =
+            new EventId(Offset + 5, Prefix + nameof(SequenceProcessingAborted));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the processing of a sequence of
@@ -59,7 +79,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Warning.
         /// </remarks>
         public static EventId SequenceProcessingAborted { get; } =
-            new EventId(Offset + 4, Prefix + nameof(SequenceProcessingAborted));
+            new EventId(Offset + 6, Prefix + nameof(SequenceProcessingAborted));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when connecting to the message broker.
@@ -165,6 +185,26 @@ namespace Silverback.Diagnostics
         /// </remarks>
         public static EventId ConsumerDisposingError { get; } =
             new EventId(Offset + 24, Prefix + nameof(ConsumerDisposingError));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs in the consumer during
+        ///     the commit operation.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Error.
+        /// </remarks>
+        public static EventId ConsumerCommitError { get; } =
+            new EventId(Offset + 25, Prefix + nameof(ConsumerCommitError));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs in the consumer during
+        ///     the rollback operation.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Error.
+        /// </remarks>
+        public static EventId ConsumerRollbackError { get; } =
+            new EventId(Offset + 26, Prefix + nameof(ConsumerRollbackError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a message is produced.
@@ -276,16 +316,6 @@ namespace Silverback.Diagnostics
         /// </remarks>
         public static EventId ErrorInitializingActivity { get; } =
             new EventId(Offset + 61, Prefix + nameof(ErrorInitializingActivity));
-
-        /// <summary>
-        ///     Gets the <see cref="EventId" /> of the log that is written when the inbound connector is creating the
-        ///     consumer to connect to the inbound endpoint.
-        /// </summary>
-        /// <remarks>
-        ///     Default log level: Trace.
-        /// </remarks>
-        public static EventId InboundConnectorConnecting { get; } =
-            new EventId(Offset + 71, Prefix + nameof(InboundConnectorConnecting));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the message is being skipped since

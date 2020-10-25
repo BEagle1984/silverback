@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 
@@ -18,6 +19,8 @@ namespace Silverback.Messaging.Broker
         where TEndpoint : IConsumerEndpoint
         where TOffset : IOffset
     {
+        private readonly ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TOffset>> _logger;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer{TBroker, TEndpoint, TOffset}" /> class.
         /// </summary>
@@ -44,6 +47,7 @@ namespace Silverback.Messaging.Broker
             ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
+            _logger = logger;
         }
 
         /// <summary>
@@ -57,12 +61,40 @@ namespace Silverback.Messaging.Broker
         protected new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
 
         /// <inheritdoc cref="Consumer.CommitAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IOffset})" />
-        public override Task CommitAsync(IReadOnlyCollection<IOffset> offsets) =>
-            CommitCoreAsync(offsets.Cast<TOffset>().ToList());
+        public override Task CommitAsync(IReadOnlyCollection<IOffset> offsets)
+        {
+            try
+            {
+                return CommitCoreAsync(offsets.Cast<TOffset>().ToList());
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(
+                    IntegrationEventIds.ConsumerCommitError,
+                    exception,
+                    "Error occurred during commit. (offsets: {offsets})",
+                    string.Join(", ", offsets.Select(offset => offset.Value)));
+                throw;
+            }
+        }
 
         /// <inheritdoc cref="Consumer.RollbackAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IOffset})" />
-        public override Task RollbackAsync(IReadOnlyCollection<IOffset> offsets) =>
-            RollbackCoreAsync(offsets.Cast<TOffset>().ToList());
+        public override Task RollbackAsync(IReadOnlyCollection<IOffset> offsets)
+        {
+            try
+            {
+                return RollbackCoreAsync(offsets.Cast<TOffset>().ToList());
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(
+                    IntegrationEventIds.ConsumerRollbackError,
+                    exception,
+                    "Error occurred during rollback. (offsets: {offsets})",
+                    string.Join(", ", offsets.Select(offset => offset.Value)));
+                throw;
+            }
+        }
 
         /// <summary>
         ///     <param>

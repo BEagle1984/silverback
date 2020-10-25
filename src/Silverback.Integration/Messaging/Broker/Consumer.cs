@@ -121,7 +121,7 @@ namespace Silverback.Messaging.Broker
             {
                 // ReSharper disable once AccessToDisposedClosure
                 AsyncHelper.RunSynchronously(
-                    () => _sequenceStore.Where(sequence => sequence.IsPending)
+                    () => _sequenceStore.ToList().Where(sequence => sequence.IsPending)
                         .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted)));
             }
 

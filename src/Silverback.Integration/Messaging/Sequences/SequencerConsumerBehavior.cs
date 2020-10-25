@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
@@ -18,8 +19,13 @@ namespace Silverback.Messaging.Sequences
         /// <param name="sequenceReaders">
         ///     The <see cref="ISequenceReader" /> implementations to be used.
         /// </param>
-        public SequencerConsumerBehavior(IEnumerable<ISequenceReader> sequenceReaders)
-            : base(sequenceReaders.Where(reader => !reader.HandlesRawMessages))
+        /// <param name="logger">
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        /// </param>
+        public SequencerConsumerBehavior(
+            IEnumerable<ISequenceReader> sequenceReaders,
+            ISilverbackIntegrationLogger<SequencerConsumerBehavior> logger)
+            : base(sequenceReaders.Where(reader => !reader.HandlesRawMessages), logger)
         {
         }
 

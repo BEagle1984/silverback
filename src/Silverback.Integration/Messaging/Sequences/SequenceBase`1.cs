@@ -32,8 +32,6 @@ namespace Silverback.Messaging.Sequences
 
         private readonly object _abortLockObject = new object();
 
-        // TODO: Log add, complete, abort, etc.?
-
         private readonly ISilverbackIntegrationLogger<SequenceBase<TEnvelope>> _logger;
 
         private readonly TaskCompletionSource<bool> _sequencerBehaviorsTaskCompletionSource =
@@ -252,8 +250,6 @@ namespace Silverback.Messaging.Sequences
             {
                 _sequences ??= new List<ISequence>();
                 _sequences.Add(sequence);
-
-                sequence.Offsets.ForEach(offset => _offsets.Add(offset));
             }
             else
             {
