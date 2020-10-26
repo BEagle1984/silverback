@@ -42,7 +42,8 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 
             var type = SerializationHelper.GetTypeFromHeaders(headers);
 
-            type.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+            type.Should().NotBeNull();
+            type!.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
         }
 
         [Fact]
@@ -94,11 +95,17 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         }
 
         [Fact]
-        public void GetTypeFromHeader_NoHeaderNullReturned()
+        public void GetTypeFromHeader_NoHeader_ExceptionThrown()
         {
-            var headers = new MessageHeaderCollection();
+            Action act = () => SerializationHelper.GetTypeFromHeaders(new MessageHeaderCollection());
 
-            var type = SerializationHelper.GetTypeFromHeaders(headers);
+            act.Should().Throw<MessageSerializerException>();
+        }
+
+        [Fact]
+        public void GetTypeFromHeader_NoHeaderWithNoThrow_NullReturned()
+        {
+            var type = SerializationHelper.GetTypeFromHeaders(new MessageHeaderCollection(), false);
 
             type.Should().BeNull();
         }

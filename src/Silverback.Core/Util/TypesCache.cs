@@ -15,7 +15,17 @@ namespace Silverback.Util
         {
             Check.NotNull(typeName, nameof(typeName));
 
-            return Cache.GetOrAdd(typeName, _ => ResolveType(typeName, throwOnError));
+            var type = Cache.GetOrAdd(typeName, _ => ResolveType(typeName, throwOnError));
+
+            if (throwOnError && type == null)
+            {
+                type = Cache.AddOrUpdate(
+                    typeName,
+                    _ => ResolveType(typeName, throwOnError),
+                    (_, __) => ResolveType(typeName, throwOnError));
+            }
+
+            return type;
         }
 
         [SuppressMessage("", "CA1031", Justification = "Can catch all, the operation is retried")]
