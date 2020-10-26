@@ -105,7 +105,11 @@ namespace Silverback.Messaging.Broker
 
             ConnectCore();
 
+            if (IsConnected)
+                throw new InvalidOperationException("Already connected.");
+
             IsConnected = true;
+
             _statusInfo.SetConnected();
 
             _logger.LogDebug(

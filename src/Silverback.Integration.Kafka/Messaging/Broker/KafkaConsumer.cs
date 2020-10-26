@@ -468,16 +468,22 @@ namespace Silverback.Messaging.Broker
             if (_innerConsumer == null)
                 return;
 
-            _cancellationTokenSource?.Cancel();
-
-            // Wait until stopped for real before returning to avoid
-            // exceptions when the process exits prematurely
-            while (_isConsuming)
+            if (_cancellationTokenSource != null)
             {
-                await Task.Delay(100).ConfigureAwait(false);
+                _cancellationTokenSource.Cancel();
+
+                _logger.LogTrace("Consuming cancellation token canceled.");
+
+                // Wait until stopped for real before returning to avoid
+                // exceptions when the process exits prematurely
+                while (_isConsuming)
+                {
+                    await Task.Delay(100).ConfigureAwait(false);
+                }
+
+                _cancellationTokenSource.Dispose();
             }
 
-            _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = null;
         }
     }
