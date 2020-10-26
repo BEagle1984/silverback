@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Sequences.Batch
 
         /// <inheritdoc cref="SequenceReaderBase.IsNewSequence" />
         protected override bool IsNewSequence(ConsumerPipelineContext context) =>
-            _currentSequence == null || !_currentSequence.IsPending;
+            _currentSequence == null || !_currentSequence.IsPending || _currentSequence.IsCompleting;
 
         /// <inheritdoc cref="SequenceReaderBase.CreateNewSequenceCore" />
         protected override ISequence CreateNewSequenceCore(string sequenceId, ConsumerPipelineContext context) =>
