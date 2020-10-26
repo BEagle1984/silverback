@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
                 }
             };
 
-            var type = SerializationHelper.GetTypeFromHeaders<object>(headers);
+            var type = SerializationHelper.GetTypeFromHeaders(headers);
 
             type.Should().Be(typeof(TestEventOne));
         }
@@ -40,7 +40,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
                 }
             };
 
-            var type = SerializationHelper.GetTypeFromHeaders<object>(headers);
+            var type = SerializationHelper.GetTypeFromHeaders(headers);
 
             type.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
         }
@@ -56,9 +56,25 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
                 }
             };
 
-            Action act = () => SerializationHelper.GetTypeFromHeaders<object>(headers);
+            Action act = () => SerializationHelper.GetTypeFromHeaders(headers);
 
             act.Should().Throw<TypeLoadException>();
+        }
+
+        [Fact]
+        public void GetTypeFromHeader_NonExistingTypeWithNoThrow_NullReturned()
+        {
+            var headers = new MessageHeaderCollection
+            {
+                {
+                    "x-message-type",
+                    "Baaaad.Event, Silverback.Integration.Tests"
+                }
+            };
+
+            var type = SerializationHelper.GetTypeFromHeaders(headers, false);
+
+            type.Should().BeNull();
         }
 
         [Fact]
@@ -72,19 +88,19 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
                 }
             };
 
-            var type = SerializationHelper.GetTypeFromHeaders<object>(headers);
+            var type = SerializationHelper.GetTypeFromHeaders(headers);
 
             type.Should().Be(typeof(TestEventOne));
         }
 
         [Fact]
-        public void GetTypeFromHeader_NoHeader_DefaultTypeReturned()
+        public void GetTypeFromHeader_NoHeaderNullReturned()
         {
             var headers = new MessageHeaderCollection();
 
-            var type = SerializationHelper.GetTypeFromHeaders<TestEventThree>(headers);
+            var type = SerializationHelper.GetTypeFromHeaders(headers);
 
-            type.Should().Be(typeof(TestEventThree));
+            type.Should().BeNull();
         }
     }
 }

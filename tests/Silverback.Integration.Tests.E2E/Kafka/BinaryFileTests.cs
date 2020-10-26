@@ -59,26 +59,29 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var receivedFiles = new List<byte[]?>();
 
             var serviceProvider = Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
-                            endpoints => endpoints
-                                .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration = new KafkaConsumerConfig
+                    services =>
+                    {
+                        services
+                            .AddLogging()
+                            .AddSilverback()
+                            .UseModel()
+                            .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                            .AddEndpoints(
+                                endpoints => endpoints
+                                    .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint(DefaultTopicName))
+                                    .AddInbound(
+                                        new KafkaConsumerEndpoint(DefaultTopicName)
                                         {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
-                        .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                                            Configuration = new KafkaConsumerConfig
+                                            {
+                                                GroupId = "consumer1",
+                                                AutoCommitIntervalMs = 100
+                                            }
+                                        }))
+                            .AddDelegateSubscriber(
+                                (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
+                            .AddSingletonBrokerBehavior<SpyBrokerBehavior>();
+                    })
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();

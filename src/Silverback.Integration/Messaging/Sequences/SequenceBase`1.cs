@@ -22,6 +22,9 @@ namespace Silverback.Messaging.Sequences
     public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         where TEnvelope : IRawInboundEnvelope
     {
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly TimeSpan AbortTaskAwaitTimeout = TimeSpan.FromSeconds(60);
+
         private readonly MessageStreamProvider<TEnvelope> _streamProvider;
 
         private readonly List<IOffset> _offsets = new List<IOffset>();
@@ -66,7 +69,7 @@ namespace Silverback.Messaging.Sequences
         ///     used.
         /// </param>
         /// <param name="streamProvider">
-        ///     The <see cref="IMessageStreamProvider"/> to be pushed. A new one will be created if not provided.
+        ///     The <see cref="IMessageStreamProvider" /> to be pushed. A new one will be created if not provided.
         /// </param>
         protected SequenceBase(
             string sequenceId,
@@ -194,7 +197,8 @@ namespace Silverback.Messaging.Sequences
                 // Multiple calls to AbortAsync should await until the sequence is aborted for real,
                 // otherwise the TransactionHandlerConsumerBehavior could continue before the abort
                 // is done, preventing the error policies to be correctly and successfully applied.
-                await _abortingTaskCompletionSource!.Task.ConfigureAwait(false);
+                await Task.WhenAny(_abortingTaskCompletionSource!.Task, Task.Delay(AbortTaskAwaitTimeout))
+                    .ConfigureAwait(false);
                 return;
             }
 

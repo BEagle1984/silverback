@@ -41,7 +41,7 @@ namespace Silverback.Messaging.BinaryFiles
                 return envelope;
             }
 
-            var messageType = SerializationHelper.GetTypeFromHeaders<object>(envelope.Headers);
+            var messageType = SerializationHelper.GetTypeFromHeaders(envelope.Headers, false);
             if (messageType == null || !typeof(IBinaryFileMessage).IsAssignableFrom(messageType))
                 return envelope;
 

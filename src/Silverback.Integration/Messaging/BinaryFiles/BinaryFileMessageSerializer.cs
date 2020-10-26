@@ -65,7 +65,7 @@ namespace Silverback.Messaging.BinaryFiles
         {
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
-            var type = SerializationHelper.GetTypeFromHeaders<BinaryFileMessage>(messageHeaders);
+            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders, false) ?? typeof(BinaryFileMessage);
 
             var messageModel = (IBinaryFileMessage)Activator.CreateInstance(type);
             messageModel.Content = messageStream;

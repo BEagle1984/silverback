@@ -44,6 +44,16 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
+        public void GetType_NonExistingTypeWithNoThrow_NullReturned()
+        {
+            var typeName = "Baaaad.Event, Silverback.Core.Tests";
+
+            var type = TypesCache.GetType(typeName, false);
+
+            type.Should().BeNull();
+        }
+
+        [Fact]
         public void GetType_IncompleteTypeName_TypeReturned()
         {
             var typeName = "Silverback.Tests.Core.TestTypes.Messages.TestEventOne, Silverback.Core.Tests";

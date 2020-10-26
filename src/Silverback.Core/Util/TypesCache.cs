@@ -9,17 +9,17 @@ namespace Silverback.Util
 {
     internal static class TypesCache
     {
-        private static readonly ConcurrentDictionary<string, Type> Cache = new ConcurrentDictionary<string, Type>();
+        private static readonly ConcurrentDictionary<string, Type?> Cache = new ConcurrentDictionary<string, Type?>();
 
-        public static Type GetType(string typeName)
+        public static Type? GetType(string typeName, bool throwOnError = true)
         {
             Check.NotNull(typeName, nameof(typeName));
 
-            return Cache.GetOrAdd(typeName, ResolveType);
+            return Cache.GetOrAdd(typeName, _ => ResolveType(typeName, throwOnError));
         }
 
         [SuppressMessage("", "CA1031", Justification = "Can catch all, the operation is retried")]
-        private static Type ResolveType(string typeName)
+        private static Type? ResolveType(string typeName, bool throwOnError)
         {
             Type? type = null;
 
@@ -32,7 +32,7 @@ namespace Silverback.Util
                 // Ignored
             }
 
-            type ??= Type.GetType(CleanAssemblyQualifiedName(typeName), true);
+            type ??= Type.GetType(CleanAssemblyQualifiedName(typeName), throwOnError);
 
             return type;
         }

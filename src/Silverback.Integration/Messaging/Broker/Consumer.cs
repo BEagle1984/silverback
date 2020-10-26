@@ -127,11 +127,8 @@ namespace Silverback.Messaging.Broker
 
             DisconnectCore();
 
-            if (_sequenceStore != null && _sequenceStore.HasPendingSequences)
-            {
-                _sequenceStore?.Dispose();
-                _sequenceStore = null;
-            }
+            _sequenceStore?.Dispose();
+            _sequenceStore = null;
 
             IsConnected = false;
             _statusInfo.SetDisconnected();

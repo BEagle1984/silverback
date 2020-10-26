@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
@@ -117,6 +118,100 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             receivedContents.Should()
                 .BeEquivalentTo(Enumerable.Range(1, 15).Select(i => i.ToString(CultureInfo.InvariantCulture)));
+        }
+
+        [Fact]
+        public async Task OutboundAndInbound_WithHardcodedMessageType_ProducedAndConsumed()
+        {
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(
+                                    new KafkaProducerEndpoint(DefaultTopicName)
+                                    {
+                                        Serializer = new JsonMessageSerializer<TestEventOne>()
+                                    })
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        },
+                                        Serializer = new JsonMessageSerializer<TestEventOne>()
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new TestEventOne());
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.OutboundEnvelopes.Should().HaveCount(1);
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+
+            SpyBehavior.OutboundEnvelopes[0].Headers.Should()
+                .NotContain(header => header.Name == DefaultMessageHeaders.MessageType);
+            SpyBehavior.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
+        }
+
+        [Fact]
+        public async Task Inbound_WithHardcodedMessageType_MessageTypeHeaderIgnored()
+        {
+            var message = new TestEventOne { Content = "Hello E2E!" };
+            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty)).ReadAll() ??
+                                throw new InvalidOperationException("Serializer returned null");
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        },
+                                        Serializer = new JsonMessageSerializer<TestEventOne>()
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.RawProduceAsync(
+                rawMessage,
+                new MessageHeaderCollection
+                {
+                    { DefaultMessageHeaders.MessageType, "Silverback.Bad.TestEventOne, Silverback.Bad" }
+                });
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+
+            SpyBehavior.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
         }
 
         [Fact]
@@ -454,7 +549,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReadAll().Should().NotBeEquivalentTo(rawMessageStream.ReReadAll());
+            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReadAll().Should()
+                .NotBeEquivalentTo(rawMessageStream.ReReadAll());
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
 
