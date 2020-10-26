@@ -59,9 +59,9 @@ namespace Silverback.Tests.Performance
     [MemoryDiagnoser]
     public class SilverbackIntegrationLoggerBenchmark
     {
-        private readonly ConsumerPipelineContext SingleMessageContext;
+        private readonly ConsumerPipelineContext _singleMessageContext;
 
-        private readonly ConsumerPipelineContext SequenceContext;
+        private readonly ConsumerPipelineContext _sequenceContext;
 
         private readonly ISilverbackIntegrationLogger _integrationLogger;
 
@@ -71,7 +71,7 @@ namespace Silverback.Tests.Performance
                 new FakeLogger(),
                 new LogTemplates().ConfigureAdditionalData<TestConsumerEndpoint>("offset"));
 
-            SingleMessageContext = ConsumerPipelineContextHelper.CreateSubstitute(
+            _singleMessageContext = ConsumerPipelineContextHelper.CreateSubstitute(
                 new RawInboundEnvelope(
                     Array.Empty<byte>(),
                     new MessageHeaderCollection
@@ -89,7 +89,7 @@ namespace Silverback.Tests.Performance
                         ["offset"] = "1@42"
                     }));
 
-            SequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(
+            _sequenceContext = ConsumerPipelineContextHelper.CreateSubstitute(
                 new RawInboundEnvelope(
                     Array.Empty<byte>(),
                     new MessageHeaderCollection
@@ -108,9 +108,9 @@ namespace Silverback.Tests.Performance
                     {
                         ["offset"] = "1@43"
                     }));
-            var sequence = new BatchSequence("123", SequenceContext);
-            sequence.AddAsync(SequenceContext.Envelope, null, false);
-            SequenceContext.SetSequence(sequence, true);
+            var sequence = new BatchSequence("123", _sequenceContext);
+            sequence.AddAsync(_sequenceContext.Envelope, null, false);
+            _sequenceContext.SetSequence(sequence, true);
         }
 
         [Benchmark]
@@ -121,7 +121,7 @@ namespace Silverback.Tests.Performance
                 new EventId(1, "Something"),
                 null,
                 "This is my log message",
-                SingleMessageContext);
+                _singleMessageContext);
         }
 
         [Benchmark]
@@ -132,7 +132,7 @@ namespace Silverback.Tests.Performance
                 new EventId(1, "Something"),
                 null,
                 "This is my log message",
-                SequenceContext);
+                _sequenceContext);
         }
 
         [Benchmark]
@@ -143,7 +143,7 @@ namespace Silverback.Tests.Performance
                 new EventId(1, "Something"),
                 null,
                 "This is my log message",
-                SingleMessageContext);
+                _singleMessageContext);
         }
     }
 }

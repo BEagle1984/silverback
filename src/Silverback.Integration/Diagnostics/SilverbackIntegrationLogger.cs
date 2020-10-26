@@ -296,7 +296,7 @@ namespace Silverback.Diagnostics
         {
             logMessage += LogTemplates.GetInboundSequenceLogTemplate(envelope.Endpoint);
 
-            return new object?[]
+            var arguments = new List<object?>
             {
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts),
@@ -308,6 +308,13 @@ namespace Silverback.Diagnostics
                 sequence.IsNew,
                 sequence.IsComplete || sequence.IsCompleting
             };
+
+            foreach (string key in LogTemplates.GetInboundMessageArguments(envelope.Endpoint))
+            {
+                arguments.Add(envelope.AdditionalLogData.TryGetValue(key, out string value) ? value : null);
+            }
+
+            return arguments.ToArray();
         }
 
         private object?[] GetOutboundLogArguments(IRawBrokerEnvelope envelope, ref string logMessage)

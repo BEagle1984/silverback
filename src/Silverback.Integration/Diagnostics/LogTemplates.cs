@@ -50,8 +50,12 @@ namespace Silverback.Diagnostics
             _inboundArgumentsByEndpointType[typeof(TEndpoint)] = additionalData;
             _outboundArgumentsByEndpointType[typeof(TEndpoint)] = additionalData;
 
-            _inboundLogMessageByEndpointType[typeof(TEndpoint)] = InboundArgumentsTemplate + appendString;
-            _outboundLogMessageByEndpointType[typeof(TEndpoint)] = OutboundArgumentsTemplate + appendString;
+            _inboundLogMessageByEndpointType[typeof(TEndpoint)] =
+                InboundArgumentsTemplate + appendString;
+            _inboundSequenceLogMessageByEndpointType[typeof(TEndpoint)] =
+                InboundSequenceArgumentsTemplate + appendString;
+            _outboundLogMessageByEndpointType[typeof(TEndpoint)] =
+                OutboundArgumentsTemplate + appendString;
 
             return this;
         }
