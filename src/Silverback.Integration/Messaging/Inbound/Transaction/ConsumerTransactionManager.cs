@@ -16,6 +16,10 @@ namespace Silverback.Messaging.Inbound.Transaction
 
         private readonly List<ITransactional> _transactionalServices = new List<ITransactional>();
 
+        private bool _isAborted;
+
+        private bool _isCommitted;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConsumerTransactionManager" /> class.
         /// </summary>
@@ -28,7 +32,7 @@ namespace Silverback.Messaging.Inbound.Transaction
         }
 
         /// <inheritdoc cref="IConsumerTransactionManager.IsCompleted" />
-        public bool IsCompleted { get; private set; }
+        public bool IsCompleted => _isAborted || _isCommitted;
 
         /// <inheritdoc cref="IConsumerTransactionManager.Enlist" />
         public void Enlist(ITransactional transactionalService)
@@ -52,8 +56,11 @@ namespace Silverback.Messaging.Inbound.Transaction
         /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
         public async Task CommitAsync()
         {
+            if (_isCommitted)
+                return;
+
             EnsureNotCompleted();
-            IsCompleted = true;
+            _isCommitted = true;
 
             // TODO: At least once is ok? (Consider that the DbContext might have been committed already.
             await _transactionalServices.ForEachAsync(service => service.CommitAsync()).ConfigureAwait(false);
@@ -63,8 +70,11 @@ namespace Silverback.Messaging.Inbound.Transaction
         /// <inheritdoc cref="IConsumerTransactionManager.RollbackAsync" />
         public async Task RollbackAsync(Exception? exception, bool commitOffsets = false)
         {
+            if (_isAborted)
+                return;
+
             EnsureNotCompleted();
-            IsCompleted = true;
+            _isAborted = true;
 
             try
             {

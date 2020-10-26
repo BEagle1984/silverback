@@ -447,8 +447,7 @@ namespace Silverback.Messaging.Sequences
                     case SequenceAbortReason.ConsumerAborted:
                     case SequenceAbortReason.Disposing:
                     default:
-                        if (!Context.TransactionManager.IsCompleted)
-                            await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+                        await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
 
                         break;
                 }
