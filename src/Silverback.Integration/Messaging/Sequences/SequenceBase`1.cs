@@ -407,9 +407,10 @@ namespace Silverback.Messaging.Sequences
             Task.Run(
                 async () =>
                 {
+                    await Task.Delay(_timeout, _timeoutCancellationTokenSource.Token).ConfigureAwait(false);
+
                     try
                     {
-                        await Task.Delay(_timeout, _timeoutCancellationTokenSource.Token).ConfigureAwait(false);
                         await OnTimeoutElapsedAsync().ConfigureAwait(false);
                     }
                     catch (OperationCanceledException)

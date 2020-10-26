@@ -100,6 +100,12 @@ namespace Silverback.Messaging.Broker
             _disconnecting = true;
         }
 
+        /// <inheritdoc cref="Consumer.WaitUntilConsumingStopped" />
+        protected override void WaitUntilConsumingStopped()
+        {
+            // TODO: How to handle this?
+        }
+
         /// <inheritdoc cref="Consumer.DisconnectCore" />
         protected override void DisconnectCore()
         {

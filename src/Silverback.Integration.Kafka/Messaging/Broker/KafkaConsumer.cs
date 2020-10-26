@@ -101,13 +101,23 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer.StopConsuming" />
-        protected override void StopConsuming() => AsyncHelper.RunSynchronously(StopConsumingAsync);
+        protected override void StopConsuming() => _cancellationTokenSource?.Cancel();
+
+        /// <inheritdoc cref="Consumer.WaitUntilConsumingStopped" />
+        protected override void WaitUntilConsumingStopped()
+        {
+            while (_isConsuming)
+            {
+                AsyncHelper.RunSynchronously(() => Task.Delay(100));
+            }
+
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
+        }
 
         /// <inheritdoc cref="Consumer.DisconnectCore" />
         protected override void DisconnectCore()
         {
-            StopConsumingAsync().Wait();
-
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 CommitOffsets();
 
@@ -460,30 +470,6 @@ namespace Silverback.Messaging.Broker
             {
                 _kafkaEventsHandler.CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(null, ex.Error));
             }
-        }
-
-        private async Task StopConsumingAsync()
-        {
-            if (_innerConsumer == null)
-                return;
-
-            if (_cancellationTokenSource != null)
-            {
-                _cancellationTokenSource.Cancel();
-
-                _logger.LogTrace("Consuming cancellation token canceled.");
-
-                // Wait until stopped for real before returning to avoid
-                // exceptions when the process exits prematurely
-                while (_isConsuming)
-                {
-                    await Task.Delay(100).ConfigureAwait(false);
-                }
-
-                _cancellationTokenSource.Dispose();
-            }
-
-            _cancellationTokenSource = null;
         }
     }
 }

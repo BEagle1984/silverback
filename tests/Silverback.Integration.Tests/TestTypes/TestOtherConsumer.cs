@@ -38,6 +38,10 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
+        protected override void WaitUntilConsumingStopped()
+        {
+        }
+
         protected override void DisconnectCore()
         {
         }
