@@ -124,6 +124,11 @@ namespace Silverback.Messaging.Broker
             if (!IsConnected)
                 return;
 
+            _logger.LogTrace("Stopping consumer loop...");
+            StopConsuming();
+            _logger.LogTrace("Consumer loop stopped.");
+
+
             if (_sequenceStore != null)
             {
                 _logger.LogTrace("Aborting pending sequences...");
@@ -137,16 +142,12 @@ namespace Silverback.Messaging.Broker
             }
 
             _logger.LogTrace("Disconnecting...");
-
             DisconnectCore();
-
             _logger.LogTrace("Disconnected.");
 
             _logger.LogTrace("Disposing sequence store...");
-
             _sequenceStore?.Dispose();
             _sequenceStore = null;
-
             _logger.LogTrace("Sequence store disposed.");
 
             IsConnected = false;
@@ -195,7 +196,12 @@ namespace Silverback.Messaging.Broker
         protected abstract void ConnectCore();
 
         /// <summary>
-        ///     Disconnects and stops consuming.
+        ///     Stops the consuming loop.
+        /// </summary>
+        protected abstract void StopConsuming();
+
+        /// <summary>
+        ///     Disconnects the consumer from the message broker.
         /// </summary>
         protected abstract void DisconnectCore();
 

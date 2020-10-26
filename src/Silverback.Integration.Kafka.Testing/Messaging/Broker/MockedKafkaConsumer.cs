@@ -110,7 +110,7 @@ namespace Silverback.Messaging.Broker
                 if (TryConsume(cancellationToken, out var result))
                     return result!;
 
-                Task.Delay(TimeSpan.FromMilliseconds(10), cancellationToken).Wait(cancellationToken);
+                AsyncHelper.RunSynchronously(() => Task.Delay(TimeSpan.FromMilliseconds(10), cancellationToken));
             }
         }
 

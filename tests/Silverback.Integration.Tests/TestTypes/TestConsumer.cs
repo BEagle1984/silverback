@@ -86,6 +86,10 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
+        protected override void StopConsuming()
+        {
+        }
+
         protected override void DisconnectCore()
         {
         }

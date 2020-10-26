@@ -177,7 +177,7 @@ namespace Silverback.Messaging.Broker
 
             while (!_queue.IsCompleted)
             {
-                Task.Delay(100).Wait();
+                AsyncHelper.RunSynchronously(() => Task.Delay(100));
             }
         }
 

@@ -91,13 +91,20 @@ namespace Silverback.Messaging.Broker
                 _consumer);
         }
 
-        /// <inheritdoc cref="Consumer.DisconnectCore" />
-        protected override void DisconnectCore()
+        /// <inheritdoc cref="Consumer.StopConsuming" />
+        protected override void StopConsuming()
         {
             if (_consumer == null)
                 return;
 
             _disconnecting = true;
+        }
+
+        /// <inheritdoc cref="Consumer.DisconnectCore" />
+        protected override void DisconnectCore()
+        {
+            if (_consumer == null)
+                return;
 
             CommitPendingOffset();
 

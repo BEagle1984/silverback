@@ -100,14 +100,13 @@ namespace Silverback.Messaging.Broker
                 TaskScheduler.Default);
         }
 
+        /// <inheritdoc cref="Consumer.StopConsuming" />
+        protected override void StopConsuming() => AsyncHelper.RunSynchronously(StopConsumingAsync);
+
         /// <inheritdoc cref="Consumer.DisconnectCore" />
         protected override void DisconnectCore()
         {
-            _logger.LogTrace("Stopping consumer loop...");
-
             StopConsumingAsync().Wait();
-
-            _logger.LogTrace("Consumer loop stopped.");
 
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 CommitOffsets();

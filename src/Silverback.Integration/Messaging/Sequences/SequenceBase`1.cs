@@ -161,6 +161,11 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.AbortAsync" />
         public async Task AbortAsync(SequenceAbortReason reason, Exception? exception = null)
         {
+            // Prevent aborting a completed or already aborted sequence while disconnecting/disposing
+            if ((reason == SequenceAbortReason.Disposing || reason == SequenceAbortReason.ConsumerAborted) &&
+                !IsPending)
+                return;
+
             if (reason == SequenceAbortReason.None)
                 throw new ArgumentOutOfRangeException(nameof(reason), reason, "Reason not specified.");
 

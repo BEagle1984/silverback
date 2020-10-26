@@ -52,11 +52,9 @@ namespace Silverback.Messaging.Sequences
 
         public void Dispose()
         {
-            foreach (var sequence in _store.Values)
-            {
-                if (sequence.IsPending)
-                    AsyncHelper.RunSynchronously(() => sequence.AbortAsync(SequenceAbortReason.Disposing));
-            }
+            AsyncHelper.RunSynchronously(
+                () => _store.Values
+                    .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.Disposing)));
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
