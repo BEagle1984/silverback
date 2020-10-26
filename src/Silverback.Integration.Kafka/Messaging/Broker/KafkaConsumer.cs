@@ -103,7 +103,11 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer.DisconnectCore" />
         protected override void DisconnectCore()
         {
+            _logger.LogTrace("Stopping consumer loop...");
+
             StopConsumingAsync().Wait();
+
+            _logger.LogTrace("Consumer loop stopped.");
 
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 CommitOffsets();

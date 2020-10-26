@@ -20,6 +20,9 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IConsumer" />
     public abstract class Consumer : IConsumer, IDisposable
     {
+        // ReSharper disable once StaticMemberInGenericType
+        private static readonly TimeSpan SequenceAbortTaskAwaitTimeout = TimeSpan.FromSeconds(60);
+
         private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
 
         private readonly IServiceProvider _serviceProvider;
@@ -119,16 +122,28 @@ namespace Silverback.Messaging.Broker
 
             if (_sequenceStore != null)
             {
+                _logger.LogTrace("Aborting pending sequences...");
+
                 // ReSharper disable once AccessToDisposedClosure
                 AsyncHelper.RunSynchronously(
-                    () => _sequenceStore.ToList().Where(sequence => sequence.IsPending)
+                    () => _sequenceStore.ToList()
                         .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted)));
+
+                _logger.LogTrace("Pending sequences aborted.");
             }
+
+            _logger.LogTrace("Disconnecting...");
 
             DisconnectCore();
 
+            _logger.LogTrace("Disconnected.");
+
+            _logger.LogTrace("Disposing sequence store...");
+
             _sequenceStore?.Dispose();
             _sequenceStore = null;
+
+            _logger.LogTrace("Sequence store disposed.");
 
             IsConnected = false;
             _statusInfo.SetDisconnected();

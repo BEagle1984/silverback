@@ -103,7 +103,6 @@ namespace Silverback.Messaging.Broker
         public ConsumeResult<byte[]?, byte[]?> Consume(int millisecondsTimeout) => throw new NotSupportedException();
 
         /// <inheritdoc cref="IConsumer{TKey,TValue}.Consume(CancellationToken)" />
-        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public ConsumeResult<byte[]?, byte[]?> Consume(CancellationToken cancellationToken = default)
         {
             while (true)

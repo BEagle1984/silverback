@@ -22,9 +22,6 @@ namespace Silverback.Messaging.Sequences
     public abstract class SequenceBase<TEnvelope> : ISequenceImplementation
         where TEnvelope : IRawInboundEnvelope
     {
-        // ReSharper disable once StaticMemberInGenericType
-        private static readonly TimeSpan AbortTaskAwaitTimeout = TimeSpan.FromSeconds(60);
-
         private readonly MessageStreamProvider<TEnvelope> _streamProvider;
 
         private readonly List<IOffset> _offsets = new List<IOffset>();
@@ -197,8 +194,7 @@ namespace Silverback.Messaging.Sequences
                 // Multiple calls to AbortAsync should await until the sequence is aborted for real,
                 // otherwise the TransactionHandlerConsumerBehavior could continue before the abort
                 // is done, preventing the error policies to be correctly and successfully applied.
-                await Task.WhenAny(_abortingTaskCompletionSource!.Task, Task.Delay(AbortTaskAwaitTimeout))
-                    .ConfigureAwait(false);
+                await _abortingTaskCompletionSource!.Task.ConfigureAwait(false);
                 return;
             }
 
