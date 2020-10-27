@@ -121,34 +121,34 @@ namespace Silverback.Messaging.Broker
             if (!IsConnected)
                 return;
 
-            _logger.LogTrace("Stopping consumer loop...");
+            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Stopping consumer...");
             StopConsuming();
-            _logger.LogTrace("Consumer loop stopped.");
+            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Consuming canceled.");
 
             if (_sequenceStore != null)
             {
-                _logger.LogTrace("Aborting pending sequences...");
+                _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Aborting pending sequences...");
 
                 // ReSharper disable once AccessToDisposedClosure
                 AsyncHelper.RunSynchronously(
                     () => _sequenceStore.ToList()
                         .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted)));
 
-                _logger.LogTrace("Pending sequences aborted.");
+                _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Pending sequences aborted.");
             }
 
-            _logger.LogTrace("Stopping consumer loop...");
+            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Waiting until consumer stops...");
             WaitUntilConsumingStopped();
-            _logger.LogTrace("Consumer loop stopped.");
+            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Consumer stopped.");
 
-            _logger.LogTrace("Disconnecting...");
+            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Disconnecting...");
             DisconnectCore();
-            _logger.LogTrace("Disconnected.");
+            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Disconnected.");
 
-            _logger.LogTrace("Disposing sequence store...");
+            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Disposing sequence store...");
             _sequenceStore?.Dispose();
             _sequenceStore = null;
-            _logger.LogTrace("Sequence store disposed.");
+            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Sequence store disposed.");
 
             IsConnected = false;
             _statusInfo.SetDisconnected();

@@ -396,5 +396,14 @@ namespace Silverback.Diagnostics
         /// </remarks>
         public static EventId ErrorProcessingOutboundQueue { get; } =
             new EventId(Offset + 78, Prefix + nameof(ErrorProcessingOutboundQueue));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the low level tracing logs.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Trace.
+        /// </remarks>
+        public static EventId LowLevelTracing { get; } =
+            new EventId(Offset + 999, Prefix + nameof(LowLevelTracing));
     }
 }

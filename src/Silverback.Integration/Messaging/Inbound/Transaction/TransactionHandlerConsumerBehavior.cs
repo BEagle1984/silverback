@@ -48,7 +48,10 @@ namespace Silverback.Messaging.Inbound.Transaction
                 var scope = context.ServiceProvider.CreateScope();
 
                 context.ReplaceServiceScope(scope);
-                context.TransactionManager = new ConsumerTransactionManager(context);
+                context.TransactionManager = new ConsumerTransactionManager(
+                    context,
+                    context.ServiceProvider
+                        .GetRequiredService<ISilverbackIntegrationLogger<ConsumerTransactionManager>>());
 
                 await next(context).ConfigureAwait(false);
 
@@ -73,7 +76,14 @@ namespace Silverback.Messaging.Inbound.Transaction
                     await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
 
                     if (context.Sequence.Length > 0 && context.Sequence is ISequenceImplementation sequenceImpl)
+                    {
+                        _logger.LogTraceWithMessageInfo(
+                            IntegrationEventIds.LowLevelTracing,
+                            "Awaiting sequence processing completed before rethrowing.",
+                            context);
+
                         await sequenceImpl.ProcessingCompletedTask.ConfigureAwait(false);
+                    }
 
                     throw;
                 }
@@ -83,17 +93,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        private static void StartSequenceProcessingAwaiter(ConsumerPipelineContext context)
-        {
-#pragma warning disable 4014
-            // ReSharper disable AccessToDisposedClosure
-            Task.Run(() => AwaitSequenceProcessingAsync(context));
-
-            // ReSharper restore AccessToDisposedClosure
-#pragma warning restore 4014
-        }
-
-        private static async Task AwaitProcessedIfNecessaryAsync(ConsumerPipelineContext context)
+        private async Task AwaitProcessedIfNecessaryAsync(ConsumerPipelineContext context)
         {
             if (context.Sequence == null)
                 throw new InvalidOperationException("Sequence is null");
@@ -103,20 +103,47 @@ namespace Silverback.Messaging.Inbound.Transaction
             if (context.IsSequenceEnd || context.Sequence.IsAborted)
             {
                 if (context.Sequence is ISequenceImplementation sequenceImpl)
+                {
+                    _logger.LogTraceWithMessageInfo(
+                        IntegrationEventIds.LowLevelTracing,
+                        "Sequence ended or aborted: awaiting processing task.",
+                        context);
+
                     await sequenceImpl.ProcessingCompletedTask.ConfigureAwait(false);
+
+                    _logger.LogTraceWithMessageInfo(
+                        IntegrationEventIds.LowLevelTracing,
+                        "Sequence ended or aborted: processing task completed.",
+                        context);
+                }
 
                 context.Dispose();
             }
         }
 
+        private void StartSequenceProcessingAwaiter(ConsumerPipelineContext context)
+        {
+#pragma warning disable 4014
+            // ReSharper disable AccessToDisposedClosure
+            Task.Run(() => AwaitSequenceProcessingAsync(context));
+
+            // ReSharper restore AccessToDisposedClosure
+#pragma warning restore 4014
+        }
+
         [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
-        private static async Task AwaitSequenceProcessingAsync(ConsumerPipelineContext context)
+        private async Task AwaitSequenceProcessingAsync(ConsumerPipelineContext context)
         {
             var sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
             context = sequence.Context;
 
             try
             {
+                _logger.LogTraceWithMessageInfo(
+                    IntegrationEventIds.LowLevelTracing,
+                    "Awaiting sequence processing.",
+                    context);
+
                 // Keep awaiting in a loop because the sequence and the processing task may be reassigned
                 while (context.ProcessingTask != null && !context.ProcessingTask.IsCompleted)
                 {
@@ -124,11 +151,19 @@ namespace Silverback.Messaging.Inbound.Transaction
 
                     // Ensure we are at the start of the outer sequence
                     if (!context.IsSequenceStart)
+                    {
+                        _logger.LogTraceWithMessageInfo(
+                            IntegrationEventIds.LowLevelTracing,
+                            "Processing has completed but it's not the beginning of the outer sequence. No action will be performed.",
+                            context);
                         return;
+                    }
 
                     sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
                     context = sequence.Context;
                 }
+
+                _logger.LogTraceWithMessageInfo(IntegrationEventIds.LowLevelTracing, "Sequence processing completed.", context);
 
                 if (!sequence.IsAborted && !context.SequenceStore.HasPendingSequences)
                 {
