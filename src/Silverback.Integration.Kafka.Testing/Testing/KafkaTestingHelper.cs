@@ -6,6 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Topics;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 
@@ -19,19 +21,28 @@ namespace Silverback.Testing
 
         private readonly IOutboxReader _outboxReader;
 
+        private readonly ISilverbackIntegrationLogger<KafkaTestingHelper> _logger;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="KafkaTestingHelper"/> class.
+        ///     Initializes a new instance of the <see cref="KafkaTestingHelper" /> class.
         /// </summary>
         /// <param name="topics">
-        ///    The <see cref="IInMemoryTopicCollection"/>.
+        ///     The <see cref="IInMemoryTopicCollection" />.
         /// </param>
         /// <param name="outboxReader">
-        ///    The <see cref="IOutboxReader"/>.
+        ///     The <see cref="IOutboxReader" />.
         /// </param>
-        public KafkaTestingHelper(IInMemoryTopicCollection topics, IOutboxReader outboxReader)
+        /// <param name="logger">
+        ///     The <see cref="ISilverbackLogger" />.
+        /// </param>
+        public KafkaTestingHelper(
+            IInMemoryTopicCollection topics,
+            IOutboxReader outboxReader,
+            ISilverbackIntegrationLogger<KafkaTestingHelper> logger)
         {
             _topics = topics;
             _outboxReader = outboxReader;
+            _logger = logger;
         }
 
         /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
@@ -69,7 +80,7 @@ namespace Silverback.Testing
             }
             catch (OperationCanceledException)
             {
-                // Ignore
+                _logger.LogWarning("The timeout elapsed before all messages could be consumed and processed.");
             }
         }
 
