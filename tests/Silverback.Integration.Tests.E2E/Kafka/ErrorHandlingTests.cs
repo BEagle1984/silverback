@@ -5,9 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
@@ -493,9 +496,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
-                            (IIntegrationEvent _) =>
+                            (IIntegrationEvent _, IServiceProvider sp) =>
                             {
+                                var logger = sp.GetRequiredService<ISilverbackLogger<ErrorHandlingTests>>();
                                 tryCount++;
+                                logger.LogInformation($"Handling message ({tryCount})...");
                                 throw new InvalidOperationException("Retry!");
                             }))
                 .Run();
