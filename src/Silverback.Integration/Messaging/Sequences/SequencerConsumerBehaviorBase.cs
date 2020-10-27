@@ -148,7 +148,7 @@ namespace Silverback.Messaging.Sequences
                     {
                         await processingTask.ConfigureAwait(false);
 
-                        if (!sequence.IsPending)
+                        if (!sequence.IsPending || sequence.IsCompleting)
                             return;
 
                         // Abort the uncompleted sequence if the processing task completes, to avoid unreleased locks.
