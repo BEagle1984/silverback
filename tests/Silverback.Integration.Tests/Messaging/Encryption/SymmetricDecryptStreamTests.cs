@@ -8,7 +8,6 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Encryption;
-using Silverback.Messaging.Messages;
 using Silverback.Util;
 using Xunit;
 
@@ -92,7 +91,6 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
             result.Should().NotBeNull();
             result.Should().BeEquivalentTo(_clearTextMessage);
         }
-
 
         [Fact]
         public void Read_UsingRijndaelWithCustomSettings_MessageIsSuccessfullyDecrypted()

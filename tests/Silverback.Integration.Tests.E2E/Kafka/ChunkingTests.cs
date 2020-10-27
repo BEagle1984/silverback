@@ -32,10 +32,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
     [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public class ChunkingTests : E2ETestFixture
     {
-        // TODO: Test message with single chunk (index 0, last true)
-
-        // TODO: Test with concurrent consumers
-
         public ChunkingTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
@@ -970,25 +966,25 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task Chunking_Json_AtomicallyCommitted()
+        public Task Chunking_Json_AtomicallyCommitted()
         {
             throw new NotImplementedException();
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task Chunking_BinaryFile_AtomicallyCommitted()
+        public Task Chunking_BinaryFile_AtomicallyCommitted()
         {
             throw new NotImplementedException();
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task Chunking_Json_BackpressureHandled()
+        public Task Chunking_Json_BackpressureHandled()
         {
             throw new NotImplementedException();
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task Chunking_BinaryFile_BackpressureHandled()
+        public Task Chunking_BinaryFile_BackpressureHandled()
         {
             throw new NotImplementedException();
         }
@@ -1064,14 +1060,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task Chunking_EnforcingConsecutiveJsonChunks_IncompleteSequenceDiscardedOnNoSequenceMessage()
+        public Task Chunking_EnforcingConsecutiveJsonChunks_IncompleteSequenceDiscardedOnNoSequenceMessage()
         {
             // TODO: Ensure that the rollback always happens before the next commit (and doesn't actually rollback the offset)
             throw new NotImplementedException();
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task Chunking_EnforcingConsecutiveJsonChunks_ErrorPolicyIgnoredWhenIncompleteSequenceDiscarded()
+        public Task Chunking_EnforcingConsecutiveJsonChunks_ErrorPolicyIgnoredWhenIncompleteSequenceDiscarded()
         {
             // TODO: Ensure that the abort doesn't trigger the error policies! (for both sequence and no-sequence message)
             throw new NotImplementedException();
@@ -1155,7 +1151,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact(Skip = "Always enforcing consecutive sequences at the moment.")]
-        public async Task Chunking_NotEnforcingConsecutiveJsonChunks_ProcessingErrorAbortsAllSequences()
+        public Task Chunking_NotEnforcingConsecutiveJsonChunks_ProcessingErrorAbortsAllSequences()
         {
             throw new NotImplementedException();
         }
@@ -1494,7 +1490,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact(Skip = "Hard to implement. Worth it?")]
-        public async Task Chunking_BinaryFileMissingFirstChunk_NextMessageConsumedAndCommitted()
+        public Task Chunking_BinaryFileMissingFirstChunk_NextMessageConsumedAndCommitted()
         {
             throw new NotImplementedException();
         }
@@ -1642,7 +1638,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task Chunking_MultipleSequencesFromMultiplePartitions_ConcurrentlyConsumed()
+        public Task Chunking_MultipleSequencesFromMultiplePartitions_ConcurrentlyConsumed()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task Chunking_SingleChunkJson_ProducedAndConsumed()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task Chunking_SingleChunkBinaryFile_ProducedAndConsumed()
         {
             throw new NotImplementedException();
         }

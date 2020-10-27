@@ -67,7 +67,6 @@ namespace Silverback.Messaging.Inbound
                 if (context.Envelope is IInboundEnvelope envelope)
                 {
                     // TODO: Create only if necessary?
-
                     await EnsureUnboundedStreamIsPublishedAsync(context).ConfigureAwait(false);
 
                     int pushedStreamsCount = await _unboundedSequence!.AddAsync(envelope, null, false).ConfigureAwait(false);
@@ -96,8 +95,6 @@ namespace Silverback.Messaging.Inbound
 
         private static async Task PublishSequenceAsync(ISequence sequence, ConsumerPipelineContext context)
         {
-            // TODO: Force throwIfUnhandled
-
             context.ProcessingTask = await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);
         }
 
@@ -143,19 +140,18 @@ namespace Silverback.Messaging.Inbound
                         }
 
                         // TODO: Test abort at first exception
-
                         await Task.WhenAll(processingTasks).ConfigureAwait(false);
                     }
                     catch (Exception exception)
                     {
-                        // TODO: Log
-
                         await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
                         sequence.Dispose();
                     }
                 });
         }
 
+        // TODO: Move in util?
+        [SuppressMessage("", "ASYNC0001", Justification = "Still temporary")]
         private static Task WhenCanceled(CancellationToken cancellationToken)
         {
             var tcs = new TaskCompletionSource<bool>();

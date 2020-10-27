@@ -351,8 +351,6 @@ namespace Silverback.Messaging.Broker
                 logData["kafkaKey"] = deserializedKafkaKey;
             }
 
-            // TODO: Use Offset as message-id if still empty?
-
             headers.AddOrReplace(KafkaMessageHeaders.TimestampKey, message.Timestamp.UtcDateTime.ToString("O"));
 
             await HandleMessageAsync(

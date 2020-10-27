@@ -40,7 +40,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             await service.StartAsync(CancellationToken.None);
 
             var brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
-            brokers.ForEach(broker => AssertionExtensions.Should((bool)broker.IsConnected).BeTrue());
+            brokers.ForEach(broker => broker.IsConnected.Should().BeTrue());
         }
 
         [Fact]

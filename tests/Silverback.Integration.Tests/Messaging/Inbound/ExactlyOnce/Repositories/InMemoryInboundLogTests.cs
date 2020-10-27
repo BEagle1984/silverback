@@ -12,7 +12,7 @@ using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
+namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositories
 {
     public class InMemoryInboundLogTests
     {

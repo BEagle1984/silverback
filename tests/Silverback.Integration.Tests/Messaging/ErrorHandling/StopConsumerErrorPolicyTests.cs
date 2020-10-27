@@ -11,6 +11,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
     public class StopConsumerErrorPolicyTests
     {
+        // ReSharper disable once NotAccessedField.Local
         private readonly ServiceProvider _serviceProvider;
 
         public StopConsumerErrorPolicyTests()
@@ -26,19 +27,19 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task HandleError_Whatever_FalseReturned()
+        public Task HandleError_Whatever_FalseReturned()
         {
             throw new NotImplementedException();
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task HandleError_Whatever_OffsetCommitted()
+        public Task HandleError_Whatever_OffsetCommitted()
         {
             throw new NotImplementedException();
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task HandleError_Whatever_TransactionAborted()
+        public Task HandleError_Whatever_TransactionAborted()
         {
             throw new NotImplementedException();
         }

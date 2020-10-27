@@ -20,8 +20,6 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 {
     public class ProduceBehaviorTests
     {
-        // TODO: Still needed? Replace with E2E?
-
         private readonly ProduceBehavior _behavior;
 
         private readonly InMemoryOutbox _outbox;

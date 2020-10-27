@@ -24,23 +24,23 @@ namespace Silverback.Messaging.Sequences
         public TimeSpan Timeout { get; set; } = TimeSpan.FromMinutes(30);
 
         // TODO: Review summary and find better name (?)!
-        /// <summary>
-        ///     Gets or sets a value indicating whether the messages belonging to the same sequence are always
-        ///     consecutive. The default is <c>true</c>.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         Changing this setting to <c>false</c> causes some overhead and it's less efficient in handling the
-        ///         incomplete sequences. This may result in the offsets not being properly committed in certain
-        ///         circumstances.
-        ///     </para>
-        ///     <para>
-        ///         There can of course be different sequences being processed in different threads, from different
-        ///         topics or partitions.
-        ///     </para>
-        /// </remarks>
+        // /// <summary>
+        // ///     Gets or sets a value indicating whether the messages belonging to the same sequence are always
+        // ///     consecutive. The default is <c>true</c>.
+        // /// </summary>
+        // /// <remarks>
+        // ///     <para>
+        // ///         Changing this setting to <c>false</c> causes some overhead and it's less efficient in handling the
+        // ///         incomplete sequences. This may result in the offsets not being properly committed in certain
+        // ///         circumstances.
+        // ///     </para>
+        // ///     <para>
+        // ///         There can of course be different sequences being processed in different threads, from different
+        // ///         topics or partitions.
+        // ///     </para>
+        // /// </remarks>
         // TODO: Implement in version 2
-        //public bool ConsecutiveMessages { get; set; } = true;
+        // public bool ConsecutiveMessages { get; set; } = true;
 
         /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public void Validate()
@@ -49,8 +49,10 @@ namespace Silverback.Messaging.Sequences
                 throw new EndpointConfigurationException("Sequence.Timeout must be greater than 0.");
 
             if (Timeout.TotalMilliseconds > int.MaxValue)
+            {
                 throw new EndpointConfigurationException(
                     "Sequence.Timeout.TotalMilliseconds must be lower or equal to Int32.MaxValue.");
+            }
         }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

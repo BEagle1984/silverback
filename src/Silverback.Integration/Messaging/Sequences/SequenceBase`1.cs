@@ -310,7 +310,6 @@ namespace Silverback.Messaging.Sequences
                 // Ignore
 
                 // TODO: Is it correct to ignore?
-
                 return 0;
             }
         }

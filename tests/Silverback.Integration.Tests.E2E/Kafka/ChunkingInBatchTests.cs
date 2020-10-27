@@ -24,10 +24,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 {
     public class ChunkingInBatchTests : E2ETestFixture
     {
-        // TODO: Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?
-
-        // TODO: Test message with single chunk (index 0, last true) -> above all if it is the first in the new batch
-
         public ChunkingInBatchTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
@@ -227,14 +223,49 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task Chunking_DisconnectWhileJsonConsumedInBatch_SequencesAborted()
+        public Task Chunking_SingleChunkJsonConsumedInBatch_ProducedAndConsumed()
+        {
+            // TODO: Test message with single chunk (index 0, last true) -> above all if it is the first in the new batch
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task Chunking_SingleChunkBinaryFileConsumedInBatch_ProducedAndConsumed()
+        {
+            // TODO: Test message with single chunk (index 0, last true) -> above all if it is the first in the new batch
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task Chunking_DisconnectWhileJsonConsumedInBatch_SequencesAborted()
         {
             throw new NotImplementedException();
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task Chunking_DisconnectWhileBinaryFileConsumedInBatch_SequencesAborted()
+        public Task Chunking_DisconnectWhileBinaryFileConsumedInBatch_SequencesAborted()
         {
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task Chunking_DeserializationErrorWhileJsonConsumedInBatch_SequencesAborted()
+        {
+            // TODO: Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task Chunking_ProcessingErrorWhileJsonConsumedInBatch_SequencesAborted()
+        {
+            // TODO: Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task Chunking_ProcessingErrorWhileBinaryFileConsumedInBatch_SequencesAborted()
+        {
+            // TODO: Test different error kinds (deserialization, processing, etc.) -> error mid batch, all sequences aborted and disposed?
             throw new NotImplementedException();
         }
     }

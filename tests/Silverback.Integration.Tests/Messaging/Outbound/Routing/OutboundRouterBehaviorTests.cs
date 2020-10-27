@@ -20,8 +20,6 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 {
     public class OutboundRouterBehaviorTests
     {
-        // TODO: Still needed? Replace with E2E?
-
         private readonly OutboundRouterBehavior _behavior;
 
         private readonly IOutboundRoutingConfiguration _routingConfiguration;

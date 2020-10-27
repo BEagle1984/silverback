@@ -11,6 +11,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
     public class SkipMessageErrorPolicyTests
     {
+        // ReSharper disable once NotAccessedField.Local
         private readonly ServiceProvider _serviceProvider;
 
         public SkipMessageErrorPolicyTests()
@@ -26,19 +27,19 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task HandleError_Whatever_TrueReturned()
+        public Task HandleError_Whatever_TrueReturned()
         {
             throw new NotImplementedException();
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task HandleError_Whatever_OffsetCommitted()
+        public Task HandleError_Whatever_OffsetCommitted()
         {
             throw new NotImplementedException();
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task HandleError_Whatever_TransactionAborted()
+        public Task HandleError_Whatever_TransactionAborted()
         {
             throw new NotImplementedException();
         }

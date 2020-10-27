@@ -59,7 +59,8 @@ namespace Silverback.Messaging.Serialization
         {
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
-            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders);
+            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders) ??
+                       throw new InvalidOperationException("Message type is null.");
 
             if (messageStream == null)
                 return (null, type);

@@ -15,7 +15,7 @@ using Silverback.Tests.Integration.TestTypes.Database;
 using Silverback.Tests.Types;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Connectors.Repositories
+namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositories
 {
     public class DbOffsetStoreTests : IAsyncDisposable
     {

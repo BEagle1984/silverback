@@ -265,19 +265,19 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task HandleError_Whatever_TrueReturned()
+        public Task HandleError_Whatever_TrueReturned()
         {
             throw new NotImplementedException();
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task HandleError_SingleMessage_OffsetCommitted()
+        public Task HandleError_SingleMessage_OffsetCommitted()
         {
             throw new NotImplementedException();
         }
 
         [Fact(Skip = "Not yet implemented")]
-        public async Task HandleError_SingleMessage_TransactionAborted()
+        public Task HandleError_SingleMessage_TransactionAborted()
         {
             throw new NotImplementedException();
         }

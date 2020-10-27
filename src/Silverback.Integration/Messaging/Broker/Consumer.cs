@@ -20,9 +20,6 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IConsumer" />
     public abstract class Consumer : IConsumer, IDisposable
     {
-        // ReSharper disable once StaticMemberInGenericType
-        private static readonly TimeSpan SequenceAbortTaskAwaitTimeout = TimeSpan.FromSeconds(60);
-
         private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
 
         private readonly IServiceProvider _serviceProvider;

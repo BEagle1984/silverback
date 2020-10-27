@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
@@ -139,6 +140,7 @@ namespace Silverback.Messaging.Sequences
         /// </returns>
         protected virtual Task AwaitOtherBehaviorIfNeededAsync(ISequence sequence) => Task.CompletedTask;
 
+        [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
         private static void MonitorProcessingTaskPrematureCompletion(Task processingTask, ISequence sequence)
         {
             Task.Run(
@@ -156,8 +158,6 @@ namespace Silverback.Messaging.Sequences
                     }
                     catch (Exception exception)
                     {
-                        // TODO: Log?
-
                         if (!sequence.IsPending)
                             return;
 

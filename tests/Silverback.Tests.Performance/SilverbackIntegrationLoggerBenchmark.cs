@@ -5,13 +5,10 @@ using System;
 using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
 using Microsoft.Extensions.Logging;
-using NSubstitute;
 using Silverback.Diagnostics;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Batch;
-using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Performance.TestTypes;
 using Silverback.Tests.Types;
 

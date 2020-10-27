@@ -50,12 +50,8 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             {
             }
 
-            protected override Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
-            {
-                // TODO: Log (consumer will be stopped)
-
-                return Task.FromResult(false);
-            }
+            protected override Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception) =>
+                Task.FromResult(false);
         }
     }
 }
