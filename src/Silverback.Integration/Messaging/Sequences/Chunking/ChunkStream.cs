@@ -160,7 +160,7 @@ namespace Silverback.Messaging.Sequences.Chunking
             await base.DisposeAsync().ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="Stream.Dispose" />
+        /// <inheritdoc cref="Stream.Dispose(bool)" />
         protected override void Dispose(bool disposing)
         {
             _syncEnumerator?.Dispose();

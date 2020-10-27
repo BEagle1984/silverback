@@ -62,6 +62,8 @@ namespace Silverback.Messaging.Subscribers
             _disposed = true;
             _completeSemaphoreSlim.Dispose();
             _subscribeSemaphoreSlim.Dispose();
+            _subscription?.Dispose();
+            _subscription = null;
         }
 
         IDisposable IObservable<TMessage>.Subscribe(IObserver<TMessage> observer)

@@ -38,15 +38,15 @@ namespace Silverback.Messaging.Broker
             Name = $"{config.ClientId ?? "mocked"}.{Guid.NewGuid():N}";
         }
 
-        /// <inheritdoc cref="IProducer{TKey,TValue}.Handle" />
+        /// <inheritdoc cref="IClient.Handle" />
         public Handle Handle => throw new NotSupportedException();
 
-        /// <inheritdoc cref="IProducer{TKey,TValue}.Name" />
+        /// <inheritdoc cref="IClient.Name" />
         public string Name { get; }
 
         internal Action<IProducer<byte[]?, byte[]?>, string>? StatisticsHandler { get; set; }
 
-        /// <inheritdoc cref="IProducer{TKey,TValue}.AddBrokers" />
+        /// <inheritdoc cref="IClient.AddBrokers" />
         public int AddBrokers(string brokers) => throw new NotSupportedException();
 
         /// <inheritdoc cref="IProducer{TKey,TValue}.ProduceAsync(string,Message{TKey,TValue},CancellationToken)" />

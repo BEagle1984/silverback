@@ -120,6 +120,7 @@ namespace Silverback.Messaging.Messages
                 _readSemaphore.Dispose();
                 _writeSemaphore.Dispose();
                 _processedSemaphore.Dispose();
+                _abortCancellationTokenSource.Dispose();
             }
         }
 

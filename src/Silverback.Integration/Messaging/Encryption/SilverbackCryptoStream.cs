@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Encryption
         public override int Read(byte[] buffer, int offset, int count) =>
             CryptoStream.Read(buffer, offset, count);
 
-        /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.ReadAsync(byte[],int,int)" />
+        /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.ReadAsync(byte[],int,int,CancellationToken)" />
         public override Task<int> ReadAsync(
             byte[] buffer,
             int offset,
@@ -66,11 +66,11 @@ namespace Silverback.Messaging.Encryption
         /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.Write(byte[],int,int)" />
         public override void Write(byte[] buffer, int offset, int count) => CryptoStream.Write(buffer, offset, count);
 
-        /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.WriteAsync(byte[],int,int)" />
+        /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.WriteAsync(byte[],int,int,CancellationToken)" />
         public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken) =>
             CryptoStream.WriteAsync(buffer, offset, count, cancellationToken);
 
-        /// <inheritdoc cref="System.Security.Cryptography.CryptoStream.Close" />
+        /// <inheritdoc cref="Stream.Close" />
         public override void Close() => CryptoStream.Close();
     }
 }

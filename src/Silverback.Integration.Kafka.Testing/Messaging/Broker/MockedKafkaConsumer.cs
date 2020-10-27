@@ -56,10 +56,10 @@ namespace Silverback.Messaging.Broker
                 Task.Run(AutoCommitAsync);
         }
 
-        /// <inheritdoc cref="IConsumer{TKey,TValue}.Handle" />
+        /// <inheritdoc cref="IClient.Handle" />
         public Handle Handle => throw new NotSupportedException();
 
-        /// <inheritdoc cref="IConsumer{TKey,TValue}.Name" />
+        /// <inheritdoc cref="IClient.Name" />
         public string Name { get; }
 
         /// <summary>
