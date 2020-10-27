@@ -145,7 +145,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                     context);
 
                 // Keep awaiting in a loop because the sequence and the processing task may be reassigned
-                while (context.ProcessingTask != null && !context.ProcessingTask.IsCompleted)
+                while (context.ProcessingTask != null)
                 {
                     await context.ProcessingTask.ConfigureAwait(false);
 

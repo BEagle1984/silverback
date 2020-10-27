@@ -454,7 +454,6 @@ namespace Silverback.Messaging.Sequences
                     case SequenceAbortReason.Disposing:
                     default:
                         await Context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
-
                         break;
                 }
 

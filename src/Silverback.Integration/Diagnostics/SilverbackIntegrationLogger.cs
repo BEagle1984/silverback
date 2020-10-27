@@ -80,7 +80,7 @@ namespace Silverback.Diagnostics
                 case SequenceAbortReason.IncompleteSequence:
                     LogWithMessageInfo(
                         LogLevel.Warning,
-                        IntegrationEventIds.SequenceProcessingAborted,
+                        IntegrationEventIds.IncompleteSequenceDiscarded,
                         null,
                         "Discarded incomplete sequence.",
                         envelope,
