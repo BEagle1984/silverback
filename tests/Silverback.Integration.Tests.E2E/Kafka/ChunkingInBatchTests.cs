@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -196,6 +197,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
+            await Task.Delay(5000);
+
             batches.Should().HaveCount(3);
             batches[0].Should().HaveCount(5);
             batches[1].Should().HaveCount(5);
@@ -221,6 +224,18 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             failedCommit.Should().BeNull();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(30);
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public async Task Chunking_DisconnectWhileJsonConsumedInBatch_SequencesAborted()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public async Task Chunking_DisconnectWhileBinaryFileConsumedInBatch_SequencesAborted()
+        {
+            throw new NotImplementedException();
         }
     }
 }

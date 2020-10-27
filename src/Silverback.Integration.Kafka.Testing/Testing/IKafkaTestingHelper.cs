@@ -17,7 +17,7 @@ namespace Silverback.Testing
         /// </summary>
         /// <param name="timeout">
         ///     The timeout after which the method will return even if the messages haven't been
-        ///     processed. The default is 10 seconds.
+        ///     processed. The default is 30 seconds.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> that completes when all messages have been processed.
@@ -33,7 +33,7 @@ namespace Silverback.Testing
         /// </param>
         /// <param name="timeout">
         ///     The timeout after which the method will return even if the messages haven't been
-        ///     processed. The default is 10 seconds.
+        ///     processed. The default is 30 seconds.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> that completes when all messages have been processed.
