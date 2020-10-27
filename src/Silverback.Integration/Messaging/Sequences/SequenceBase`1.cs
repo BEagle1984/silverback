@@ -236,6 +236,7 @@ namespace Silverback.Messaging.Sequences
 
             // Don't forward the error, it's enough to handle it once
             _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
+            _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />

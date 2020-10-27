@@ -64,8 +64,19 @@ namespace Silverback.Messaging.Encryption
             {
                 // Read the IV prepended to the message
                 byte[] buffer = new byte[algorithm.IV.Length];
-                if (stream.Read(buffer, 0, algorithm.IV.Length) == algorithm.IV.Length)
-                    algorithm.IV = buffer;
+
+                int totalReadCount = 0;
+                while (totalReadCount < algorithm.IV.Length)
+                {
+                    int readCount = stream.Read(buffer, totalReadCount, algorithm.IV.Length - totalReadCount);
+
+                    if (readCount == 0)
+                        break;
+
+                    totalReadCount = totalReadCount + readCount;
+                }
+
+                algorithm.IV = buffer;
             }
 
             return algorithm.CreateDecryptor();

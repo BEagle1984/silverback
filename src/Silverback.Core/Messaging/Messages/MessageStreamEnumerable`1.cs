@@ -29,8 +29,6 @@ namespace Silverback.Messaging.Messages
 
         private readonly CancellationTokenSource _abortCancellationTokenSource = new CancellationTokenSource();
 
-        private int _enumeratorsCount;
-
         private PushedMessage? _current;
 
         private bool _isFirstMessage = true;
@@ -87,11 +85,11 @@ namespace Silverback.Messaging.Messages
 
         /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
         public IEnumerator<TMessage> GetEnumerator() =>
-            EnumerateExclusively(() => GetEnumerable().GetEnumerator());
+            GetEnumerable().GetEnumerator();
 
         /// <inheritdoc cref="IAsyncEnumerable{T}.GetAsyncEnumerator" />
         public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
-            EnumerateExclusively(() => GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken));
+            GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken);
 
         /// <inheritdoc cref="IEnumerable.GetEnumerator" />
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -157,19 +155,6 @@ namespace Silverback.Messaging.Messages
                 var currentMessage = (TMessage)_current.Message;
                 yield return currentMessage;
             }
-        }
-
-        private TReturn EnumerateExclusively<TReturn>(Func<TReturn> action)
-        {
-            if (_enumeratorsCount > 0)
-                throw new InvalidOperationException("Only one concurrent enumeration is allowed.");
-
-            Interlocked.Increment(ref _enumeratorsCount);
-
-            if (_enumeratorsCount > 1)
-                throw new InvalidOperationException("Only one concurrent enumeration is allowed.");
-
-            return action.Invoke();
         }
 
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]

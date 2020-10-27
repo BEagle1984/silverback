@@ -527,13 +527,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
         [Fact]
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task EncryptionWithRetries_RetriedMultipleTimes()
+        public async Task RetryPolicy_EncryptedMessage_RetriedMultipleTimes()
         {
             var message = new TestEventOne
             {
                 Content = "Hello E2E!"
             };
-            var rawMessage = await Endpoint.DefaultSerializer.SerializeAsync(
+            var rawMessageStream = await Endpoint.DefaultSerializer.SerializeAsync(
                 message,
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
@@ -558,6 +558,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
                                         Encryption = new SymmetricEncryptionSettings
                                         {
                                             Key = AesEncryptionKey
@@ -580,14 +586,15 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage);
+            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReadAll().Should()
+                .NotBeEquivalentTo(rawMessageStream.ReReadAll());
             SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
             SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task EncryptionAndChunkingWithRetries_RetriedMultipleTimes()
+        public async Task RetryPolicy_EncryptedAndChunkedMessage_RetriedMultipleTimes()
         {
             var message = new TestEventOne
             {
@@ -624,6 +631,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
                                         Encryption = new SymmetricEncryptionSettings
                                         {
                                             Key = AesEncryptionKey
@@ -643,8 +656,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(5);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Read(10));
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
+            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().NotBeEquivalentTo(rawMessage.Read(10));
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
                 {

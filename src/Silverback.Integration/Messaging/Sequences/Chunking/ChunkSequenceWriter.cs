@@ -26,6 +26,12 @@ namespace Silverback.Messaging.Sequences.Chunking
             if (chunkSettings == null || chunkSettings.Size == int.MaxValue)
                 return false;
 
+            if (envelope.RawMessage == null)
+                return false;
+
+            if (!envelope.RawMessage.CanSeek)
+                return true;
+
             return envelope.RawMessage != null && envelope.RawMessage.Length > chunkSettings.Size;
         }
 

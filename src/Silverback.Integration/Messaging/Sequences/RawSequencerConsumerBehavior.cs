@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
@@ -46,10 +47,18 @@ namespace Silverback.Messaging.Sequences
         }
 
         /// <inheritdoc cref="SequencerConsumerBehaviorBase.AwaitOtherBehaviorIfNeededAsync" />
+        [SuppressMessage("", "CA1031", Justification = "Catched in the sequence handling methods")]
         protected override async Task AwaitOtherBehaviorIfNeededAsync(ISequence sequence)
         {
-            if (sequence is ISequenceImplementation sequenceImpl)
-                await sequenceImpl.SequencerBehaviorsTask.ConfigureAwait(false);
+            try
+            {
+                if (sequence is ISequenceImplementation sequenceImpl)
+                    await sequenceImpl.SequencerBehaviorsTask.ConfigureAwait(false);
+            }
+            catch
+            {
+                // TODO: Ok to Swallow?
+            }
         }
     }
 }

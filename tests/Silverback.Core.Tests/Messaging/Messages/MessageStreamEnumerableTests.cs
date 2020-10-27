@@ -137,41 +137,6 @@ namespace Silverback.Tests.Core.Messaging.Messages
         }
 
         [Fact]
-        public void GetEnumerator_CalledMultipleTimes_OnlyOneConcurrentEnumeratorAllowed()
-        {
-            var stream = new MessageStreamEnumerable<int>();
-
-            using var enumerator = stream.GetEnumerator();
-
-            Action getOtherSyncEnumerator = () =>
-            {
-                using var enumerator2 = stream.GetEnumerator();
-            };
-            Action getOtherAsyncEnumerator = () => stream.GetAsyncEnumerator();
-
-            getOtherSyncEnumerator.Should().Throw<InvalidOperationException>();
-            getOtherAsyncEnumerator.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void GetAsyncEnumerator_CalledMultipleTimes_OnlyOneConcurrentEnumeratorAllowed()
-        {
-            var stream = new MessageStreamEnumerable<int>();
-
-            // ReSharper disable once UnusedVariable, needed to avoid CS4014
-            var enumerator = stream.GetAsyncEnumerator();
-
-            Action getOtherSyncEnumerator = () =>
-            {
-                using var enumerator2 = stream.GetEnumerator();
-            };
-            Action getOtherAsyncEnumerator = () => { stream.GetAsyncEnumerator(); };
-
-            getOtherSyncEnumerator.Should().Throw<InvalidOperationException>();
-            getOtherAsyncEnumerator.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
         public async Task CompleteAsync_WhileEnumerating_EnumerationCompleted()
         {
             var completed = false;

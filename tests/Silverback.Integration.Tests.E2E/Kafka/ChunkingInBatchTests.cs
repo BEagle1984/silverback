@@ -98,7 +98,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             Content = $"Long message {i}"
                         }));
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan.FromHours(1));
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             failedCommit.Should().BeNull();
 
