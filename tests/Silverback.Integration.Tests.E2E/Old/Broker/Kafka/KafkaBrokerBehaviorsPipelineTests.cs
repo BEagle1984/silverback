@@ -14,11 +14,17 @@ using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Old.Broker.Kafka
 {
     public class KafkaBrokerBehaviorsPipelineTests : E2ETestFixture
     {
+        public KafkaBrokerBehaviorsPipelineTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
+
         [Fact(Skip = "Deprecated")]
         public async Task DefaultSettings_KafkaKeyAlwaysSet()
         {

@@ -12,11 +12,17 @@ using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Old.Broker
 {
     public class OutboundRoutingTests : E2ETestFixture
     {
+        public OutboundRoutingTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
+
         [Fact(Skip = "Deprecated")]
         public async Task StaticSingleEndpoint_RoutedCorrectly()
         {

@@ -63,7 +63,7 @@ namespace Silverback.Tests.Core.Rx.Messaging
 
             var pushTask = _streamProvider.PushAsync(1);
 
-            await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted, 100);
+            await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted, TimeSpan.FromMilliseconds(100));
             pushTask.IsCompleted.Should().BeFalse();
 
             Task.Run(() => _observable.Subscribe(_ => count++)).RunWithoutBlocking();

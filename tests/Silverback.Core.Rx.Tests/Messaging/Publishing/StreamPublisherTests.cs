@@ -89,7 +89,7 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 
             await streamProvider.CompleteAsync();
 
-            await AsyncTestingUtil.WaitAsync(() => receivedEnumeratedStreams >= 1, 500);
+            await AsyncTestingUtil.WaitAsync(() => receivedEnumeratedStreams >= 1, TimeSpan.FromMilliseconds(500));
             receivedEnumeratedStreams.Should().Be(0);
         }
 

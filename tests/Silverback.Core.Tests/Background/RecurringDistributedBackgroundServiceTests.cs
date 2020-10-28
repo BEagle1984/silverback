@@ -58,7 +58,7 @@ namespace Silverback.Tests.Core.Background
                 _serviceProvider.GetRequiredService<DbDistributedLockManager>());
             await service.StartAsync(CancellationToken.None);
 
-            AsyncTestingUtil.Wait(() => executed);
+            await AsyncTestingUtil.WaitAsync(() => executed);
 
             executed.Should().BeTrue();
         }
@@ -77,7 +77,7 @@ namespace Silverback.Tests.Core.Background
                 new NullLockManager());
             await service.StartAsync(CancellationToken.None);
 
-            AsyncTestingUtil.Wait(() => executed);
+            await AsyncTestingUtil.WaitAsync(() => executed);
 
             executed.Should().BeTrue();
         }
@@ -108,7 +108,7 @@ namespace Silverback.Tests.Core.Background
                 _serviceProvider.GetRequiredService<DbDistributedLockManager>());
             await service2.StartAsync(CancellationToken.None);
 
-            await AsyncTestingUtil.WaitAsync(() => executed2, 100);
+            await AsyncTestingUtil.WaitAsync(() => executed2, TimeSpan.FromMilliseconds(100));
 
             executed1.Should().BeTrue();
             executed2.Should().BeFalse();

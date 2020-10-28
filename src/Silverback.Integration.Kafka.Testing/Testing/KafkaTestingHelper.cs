@@ -14,7 +14,6 @@ using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 namespace Silverback.Testing
 {
     /// <inheritdoc cref="IKafkaTestingHelper" />
-    // TODO: Can use a single class for all brokers (e.g. awaiting both Kafka and Rabbit)?
     public class KafkaTestingHelper : IKafkaTestingHelper
     {
         private readonly IInMemoryTopicCollection _topics;

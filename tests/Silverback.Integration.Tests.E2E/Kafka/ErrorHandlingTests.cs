@@ -406,7 +406,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            tryCount.Should().Be(11); // TODO: Is this the expected behavior? Or should it stop at 10?
+            tryCount.Should().Be(11);
             serviceProvider.GetRequiredService<IBroker>().Consumers[0].IsConnected.Should().BeFalse();
         }
 

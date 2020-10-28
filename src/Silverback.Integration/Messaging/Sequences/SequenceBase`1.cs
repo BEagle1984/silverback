@@ -229,6 +229,9 @@ namespace Silverback.Messaging.Sequences
         /// </returns>
         protected virtual async Task<int> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
         {
+            if (!IsPending || IsCompleting)
+                throw new InvalidOperationException("Cannot add new messages to the complete or aborted sequence.");
+
             ResetTimeout();
 
             if (sequence != null && sequence != this)
@@ -243,12 +246,6 @@ namespace Silverback.Messaging.Sequences
 
             try
             {
-                if (TotalLength != null && Length > TotalLength)
-                {
-                    // TODO: Log? / Throw?
-                    return 0;
-                }
-
                 _abortCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                 Length++;
@@ -273,8 +270,6 @@ namespace Silverback.Messaging.Sequences
             catch (OperationCanceledException)
             {
                 // Ignore
-
-                // TODO: Is it correct to ignore?
                 return 0;
             }
         }

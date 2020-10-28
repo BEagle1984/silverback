@@ -19,6 +19,7 @@ using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Old.Broker
 {
@@ -29,6 +30,11 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e,
             0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c
         };
+
+        public BinaryFileMessageTests(ITestOutputHelper testOutputHelper)
+            : base(testOutputHelper)
+        {
+        }
 
         [Fact(Skip = "Deprecated")]
         public async Task DefaultSettings_ProducedAndConsumed()
@@ -55,10 +61,12 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await publisher.PublishAsync(message);
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().BeEquivalentTo(message.Content.ReReadAll());
+            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReReadAll().Should()
+                .BeEquivalentTo(message.Content.ReReadAll());
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Should().BeAssignableTo<IInboundEnvelope<BinaryFileMessage>>();
-            SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader("content-type", "application/pdf"));
+            SpyBehavior.InboundEnvelopes[0].Headers.Should()
+                .ContainEquivalentOf(new MessageHeader("content-type", "application/pdf"));
             var inboundBinaryFile = (IInboundEnvelope<BinaryFileMessage>)SpyBehavior.InboundEnvelopes[0];
             inboundBinaryFile.Message.Should().NotBeNull();
             inboundBinaryFile.Message!.ContentType.Should().BeEquivalentTo(message.ContentType);

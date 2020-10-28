@@ -1199,7 +1199,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 rawMessage.Skip(10).Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
 
-            await AsyncTestingUtil.WaitAsync(() => DefaultTopic.GetCommittedOffsetsCount("consumer1") > 0, 200);
+            await AsyncTestingUtil.WaitAsync(
+                () => DefaultTopic.GetCommittedOffsetsCount("consumer1") > 0,
+                TimeSpan.FromMilliseconds(200));
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
 
             var originalSequence = await sequenceStore.GetAsync<ChunkSequence>("1");
@@ -1289,7 +1291,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await AsyncTestingUtil.WaitAsync(
                 () => !sequence.IsPending && DefaultTopic.GetCommittedOffsetsCount("consumer1") >= 2,
-                1000);
+                TimeSpan.FromSeconds(1));
             sequence.IsAborted.Should().BeTrue();
 
             sequenceStore.HasPendingSequences.Should().BeFalse();

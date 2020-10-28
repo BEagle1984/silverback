@@ -23,12 +23,6 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         private OutboundInboundSubscriber? _outboundInboundSubscriber;
 
-        // TODO: Remove
-        protected E2ETestFixture()
-        {
-            Host = new TestApplicationHost();
-        }
-
         protected E2ETestFixture(ITestOutputHelper testOutputHelper)
         {
             Host = new TestApplicationHost().WithTestOutputHelper(testOutputHelper);
