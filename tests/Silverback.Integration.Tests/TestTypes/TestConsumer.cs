@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -90,7 +91,7 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        protected override void WaitUntilConsumingStopped()
+        protected override void WaitUntilConsumingStopped(CancellationToken cancellationToken)
         {
         }
 

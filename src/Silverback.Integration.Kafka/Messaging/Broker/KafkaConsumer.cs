@@ -103,12 +103,13 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer.StopConsuming" />
         protected override void StopConsuming() => _cancellationTokenSource?.Cancel();
 
+        /// <param name="cancellationToken"></param>
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStopped" />
-        protected override void WaitUntilConsumingStopped()
+        protected override void WaitUntilConsumingStopped(CancellationToken cancellationToken)
         {
-            while (_isConsuming)
+            while (_isConsuming && !cancellationToken.IsCancellationRequested)
             {
-                AsyncHelper.RunSynchronously(() => Task.Delay(100));
+                AsyncHelper.RunSynchronously(() => Task.Delay(100, cancellationToken));
             }
 
             _cancellationTokenSource?.Dispose();

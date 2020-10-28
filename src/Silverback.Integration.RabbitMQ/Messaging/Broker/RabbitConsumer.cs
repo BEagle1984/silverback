@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -100,8 +101,9 @@ namespace Silverback.Messaging.Broker
             _disconnecting = true;
         }
 
+        /// <param name="cancellationToken"></param>
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStopped" />
-        protected override void WaitUntilConsumingStopped()
+        protected override void WaitUntilConsumingStopped(CancellationToken cancellationToken)
         {
             // TODO: How to handle this?
         }

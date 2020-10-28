@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -32,6 +33,8 @@ namespace Silverback.Messaging.Broker
             new ConcurrentDictionary<IOffset, int>();
 
         private ISequenceStore? _sequenceStore; // TODO: Should be per partition
+
+        private static readonly TimeSpan ConsumerStopWaitTimeout = TimeSpan.FromMinutes(1);
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
@@ -121,34 +124,36 @@ namespace Silverback.Messaging.Broker
             if (!IsConnected)
                 return;
 
-            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Stopping consumer...");
             StopConsuming();
-            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Consuming canceled.");
 
             if (_sequenceStore != null)
             {
-                _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Aborting pending sequences...");
-
                 // ReSharper disable once AccessToDisposedClosure
                 AsyncHelper.RunSynchronously(
                     () => _sequenceStore.ToList()
                         .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted)));
-
-                _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Pending sequences aborted.");
             }
 
-            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Waiting until consumer stops...");
-            WaitUntilConsumingStopped();
-            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Consumer stopped.");
+            using (var cancellationTokenSource = new CancellationTokenSource(ConsumerStopWaitTimeout))
+            {
+                _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Waiting until consumer stops...");
 
-            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Disconnecting...");
+                try
+                {
+                    WaitUntilConsumingStopped(cancellationTokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    // Ignore
+                }
+
+                _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Consumer stopped.");
+            }
+
             DisconnectCore();
-            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Disconnected.");
 
-            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Disposing sequence store...");
             _sequenceStore?.Dispose();
             _sequenceStore = null;
-            _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Sequence store disposed.");
 
             IsConnected = false;
             _statusInfo.SetDisconnected();
@@ -203,7 +208,10 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Waits until the consuming is stopped.
         /// </summary>
-        protected abstract void WaitUntilConsumingStopped();
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+        /// </param>
+        protected abstract void WaitUntilConsumingStopped(CancellationToken cancellationToken);
 
         /// <summary>
         ///     Disconnects the consumer from the message broker.
