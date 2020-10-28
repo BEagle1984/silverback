@@ -82,8 +82,8 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an incomplete sequence is discarded
-        ///     (e.g. the previous incomplete <see cref="ChunkSequence" /> may be discarded when the message headers
-        ///     indicate the start of a new sequence or in case of timeout).
+        ///     (e.g. the consumer started in the middle of sequence or a new sequence starts before the current one is
+        ///     completed or the timeout elapses before the sequence can be completed).
         /// </summary>
         /// <remarks>
         ///     Default log level: Warning.
@@ -316,6 +316,17 @@ namespace Silverback.Diagnostics
         /// </remarks>
         public static EventId MessageSkipped { get; } =
             new EventId(Offset + 49, Prefix + nameof(MessageSkipped));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when the <c>MoveMessageErrorPolicy</c>
+        ///     cannot be applied because the failing message belongs to a sequences (it's either chunked, being
+        ///     processed in batch, etc.).
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Warning.
+        /// </remarks>
+        public static EventId CannotMoveSequences { get; } =
+            new EventId(Offset + 50, Prefix + nameof(MessageMoved));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while trying to

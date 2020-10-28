@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets the optional message headers.
         /// </summary>
-        MessageHeaderCollection Headers { get; } // TODO: Can/must be readonly? Some sort of IReadOnlyHeaderCollection?
+        MessageHeaderCollection Headers { get; }
 
         /// <summary>
         ///     Gets the source or destination endpoint.

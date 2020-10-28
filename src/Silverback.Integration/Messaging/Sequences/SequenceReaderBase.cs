@@ -136,16 +136,7 @@ namespace Silverback.Messaging.Sequences
         {
             Check.NotNull(context, nameof(context));
 
-            var sequence = await context.SequenceStore.GetAsync<ISequence>(sequenceId).ConfigureAwait(false);
-
-            // Skip the message if a sequence cannot be found. It means that the consumer started in the
-            // middle of a sequence.
-            if (sequence == null)
-            {
-                // TODO: Log
-            }
-
-            return sequence;
+            return await context.SequenceStore.GetAsync<ISequence>(sequenceId).ConfigureAwait(false);
         }
 
         private static async Task AbortPreviousSequencesAsync(ISequenceStore sequenceStore, ISequence currentSequence)

@@ -69,46 +69,53 @@ namespace Silverback.Messaging.Sequences
 
             var sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
 
-            if (sequence != null)
+            if (sequence == null)
             {
-                context.SetSequence(sequence, sequence.IsNew);
-
-                if (sequence.IsNew)
-                {
-                    await PublishSequenceAsync(context, next).ConfigureAwait(false);
-
-                    if (context.ProcessingTask != null)
-                        MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);
-
-                    _logger.LogDebugWithMessageInfo(
-                        IntegrationEventIds.SequenceStarted,
-                        $"Started new {sequence.GetType().Name}.",
-                        context);
-                }
-
-                await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
-
-                _logger.LogDebugWithMessageInfo(
-                    IntegrationEventIds.MessageAddedToSequence,
-                    $"Message added to {sequence.GetType().Name}.",
+                _logger.LogWarningWithMessageInfo(
+                    IntegrationEventIds.IncompleteSequenceDiscarded,
+                    "The incomplete sequence is ignored (probably missing the first message).",
                     context);
 
-                if (sequence.IsComplete)
+                return;
+            }
+
+            context.SetSequence(sequence, sequence.IsNew);
+
+            if (sequence.IsNew)
+            {
+                await PublishSequenceAsync(context, next).ConfigureAwait(false);
+
+                if (context.ProcessingTask != null)
+                    MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);
+
+                _logger.LogDebugWithMessageInfo(
+                    IntegrationEventIds.SequenceStarted,
+                    $"Started new {sequence.GetType().Name}.",
+                    context);
+            }
+
+            await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
+
+            _logger.LogDebugWithMessageInfo(
+                IntegrationEventIds.MessageAddedToSequence,
+                $"Message added to {sequence.GetType().Name}.",
+                context);
+
+            if (sequence.IsComplete)
+            {
+                await AwaitOtherBehaviorIfNeededAsync(sequence).ConfigureAwait(false);
+
+                // Mark the envelope as the end of the sequence only if the sequence wasn't swapped (e.g. chunk -> batch)
+                if (sequence.Context.Sequence == null || sequence == sequence.Context.Sequence ||
+                    sequence.Context.Sequence.IsCompleting || sequence.Context.Sequence.IsComplete)
                 {
-                    await AwaitOtherBehaviorIfNeededAsync(sequence).ConfigureAwait(false);
-
-                    // Mark the envelope as the end of the sequence only if the sequence wasn't swapped (e.g. chunk -> batch)
-                    if (sequence.Context.Sequence == null || sequence == sequence.Context.Sequence ||
-                        sequence.Context.Sequence.IsCompleting || sequence.Context.Sequence.IsComplete)
-                    {
-                        context.SetIsSequenceEnd();
-                    }
-
-                    _logger.LogDebugWithMessageInfo(
-                        IntegrationEventIds.SequenceCompleted,
-                        $"{sequence.GetType().Name} completed.",
-                        context);
+                    context.SetIsSequenceEnd();
                 }
+
+                _logger.LogDebugWithMessageInfo(
+                    IntegrationEventIds.SequenceCompleted,
+                    $"{sequence.GetType().Name} completed.",
+                    context);
             }
         }
 

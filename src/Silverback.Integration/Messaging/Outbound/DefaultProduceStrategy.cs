@@ -12,7 +12,6 @@ namespace Silverback.Messaging.Outbound
 {
     internal class DefaultProduceStrategy : IProduceStrategy
     {
-        // TODO: Dispose / Reset with IServiceProvider
         private DefaultProduceStrategyImplementation? _implementation;
 
         public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>

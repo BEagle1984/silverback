@@ -82,7 +82,7 @@ namespace Silverback.Diagnostics
                         LogLevel.Warning,
                         IntegrationEventIds.IncompleteSequenceDiscarded,
                         null,
-                        "Discarded incomplete sequence.",
+                        "The incomplete sequence is discarded.",
                         envelope,
                         sequence);
                     break;
@@ -93,7 +93,7 @@ namespace Silverback.Diagnostics
                         LogLevel.Debug,
                         IntegrationEventIds.SequenceProcessingAborted,
                         null,
-                        $"Sequence processing has been aborted (reason: {reason}).",
+                        $"The sequence processing has been aborted (reason: {reason}).",
                         envelope,
                         sequence);
                     break;

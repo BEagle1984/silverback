@@ -110,8 +110,10 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
                 if (context.Sequence != null)
                 {
-                    // TODO: Log
-                    // TODO: Maybe later implement move for sequences
+                    _logger.LogWarningWithMessageInfo(
+                        IntegrationEventIds.CannotMoveSequences,
+                        $"The message belongs to a {context.Sequence.GetType().Name} and cannot be moved.",
+                        context);
                     return false;
                 }
 
