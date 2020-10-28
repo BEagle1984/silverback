@@ -661,6 +661,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
             SpyBehavior.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().NotBeEquivalentTo(rawMessage.Read(10));
             SpyBehavior.OutboundEnvelopes.ForEach(
