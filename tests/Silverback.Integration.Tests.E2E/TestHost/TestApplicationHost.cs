@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
@@ -27,6 +28,8 @@ namespace Silverback.Tests.Integration.E2E.TestHost
         private WebApplicationFactory<BlankStartup>? _applicationFactory;
 
         private ITestOutputHelper? _testOutputHelper;
+
+        private string? _testMethodName;
 
         public IServiceProvider ServiceProvider =>
             _applicationFactory?.Services ?? throw new InvalidOperationException();
@@ -55,8 +58,14 @@ namespace Silverback.Tests.Integration.E2E.TestHost
             return this;
         }
 
-        public IServiceProvider Run()
+        public IServiceProvider Run([CallerMemberName] string? testMethodName = null)
         {
+            if (_applicationFactory != null)
+                throw new InvalidOperationException("Run can only be called once.");
+
+            _testMethodName = testMethodName;
+            _testOutputHelper?.WriteLine($">>> Creating test host for {testMethodName}.");
+
             var appRoot = Path.Combine("tests", GetType().Assembly.GetName().Name!);
 
             _applicationFactory = new TestApplicationFactory()
@@ -91,6 +100,9 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
             _configurationActions.Clear();
 
+            ServiceProvider.GetService<ILogger<TestApplicationHost>>()
+                ?.LogInformation($"Starting end-to-end test {_testMethodName}.");
+
             return ServiceProvider.CreateScope().ServiceProvider;
         }
 
@@ -100,6 +112,9 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         public void Dispose()
         {
+            ServiceProvider.GetService<ILogger<TestApplicationHost>>()
+                ?.LogInformation($"Disposing test host ({_testMethodName}).");
+
             _sqliteConnection?.Dispose();
             _applicationFactory?.Dispose();
         }
