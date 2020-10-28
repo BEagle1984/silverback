@@ -64,7 +64,6 @@ namespace Silverback.Tests.Integration.E2E.TestHost
                 throw new InvalidOperationException("Run can only be called once.");
 
             _testMethodName = testMethodName;
-            _testOutputHelper?.WriteLine($">>> Creating test host for {testMethodName}.");
 
             var appRoot = Path.Combine("tests", GetType().Assembly.GetName().Name!);
 

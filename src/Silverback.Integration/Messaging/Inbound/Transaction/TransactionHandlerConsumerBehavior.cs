@@ -144,10 +144,13 @@ namespace Silverback.Messaging.Inbound.Transaction
                     "Awaiting sequence processing.",
                     context);
 
-                // Keep awaiting in a loop because the sequence and the processing task may be reassigned
-                while (context.ProcessingTask != null)
+                var processingTask = context.ProcessingTask;
+
+                // Keep awaiting in a loop because the sequence and the processing task may be reassigned,
+                // but guarantee that we always await the task once to rethrow the exception if needed
+                while (processingTask != null)
                 {
-                    await context.ProcessingTask.ConfigureAwait(false);
+                    await processingTask.ConfigureAwait(false);
 
                     // Ensure we are at the start of the outer sequence
                     if (!context.IsSequenceStart)
@@ -161,6 +164,8 @@ namespace Silverback.Messaging.Inbound.Transaction
 
                     sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
                     context = sequence.Context;
+
+                    processingTask = context.ProcessingTask != processingTask ? context.ProcessingTask : null;
                 }
 
                 _logger.LogTraceWithMessageInfo(IntegrationEventIds.LowLevelTracing, "Sequence processing completed.", context);

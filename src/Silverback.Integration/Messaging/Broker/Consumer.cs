@@ -141,13 +141,14 @@ namespace Silverback.Messaging.Broker
                 try
                 {
                     WaitUntilConsumingStopped(cancellationTokenSource.Token);
+                    _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Consumer stopped.");
                 }
                 catch (OperationCanceledException)
                 {
-                    // Ignore
+                    _logger.LogError(
+                        IntegrationEventIds.LowLevelTracing,
+                        "The timeout elapsed before the consumer stopped.");
                 }
-
-                _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Consumer stopped.");
             }
 
             DisconnectCore();
