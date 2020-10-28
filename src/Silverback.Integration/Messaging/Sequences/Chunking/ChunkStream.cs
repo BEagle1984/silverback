@@ -143,12 +143,7 @@ namespace Silverback.Messaging.Sequences.Chunking
         /// <inheritdoc cref="Stream.Close" />
         public override void Close()
         {
-            // Read the whole source stream to flush it.
-            // while (_source.MoveNext())
-            // {
-            //     // do nothing, just force consuming
-            // }
-            // TODO: Reimplement!
+            // Nothing to close
         }
 
         /// <inheritdoc cref="Stream.DisposeAsync" />

@@ -101,6 +101,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer{TKey,TValue}.Flush(CancellationToken)" />
         public void Flush(CancellationToken cancellationToken = default)
         {
+            // Nothing to flush
         }
 
         /// <inheritdoc cref="IProducer{TKey,TValue}.InitTransactions" />
@@ -127,6 +128,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
+            // Nothing to dispose, IDisposable is just inherited from IProducer but it's not needed in the mock
         }
     }
 }

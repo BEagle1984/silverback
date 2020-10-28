@@ -248,6 +248,11 @@ namespace Silverback.Messaging.Subscribers
                 ? InvokeAsync(target, methodInfo, parameters)
                 : Task.FromResult(InvokeSync(target, methodInfo, parameters));
 
+        private static Task<object?> InvokeAsync(object target, MethodInfo methodInfo, object?[] parameters) =>
+            methodInfo.ReturnsTask()
+                ? ((Task)methodInfo.Invoke(target, parameters)).GetReturnValueAsync()
+                : Task.FromResult((object?)methodInfo.Invoke(target, parameters));
+
         private static object? InvokeSync(object target, MethodInfo methodInfo, object?[] parameters) =>
             methodInfo.ReturnsTask()
                 ? AsyncHelper.RunSynchronously(
@@ -257,11 +262,6 @@ namespace Silverback.Messaging.Subscribers
                         return result.GetReturnValueAsync();
                     })
                 : methodInfo.Invoke(target, parameters);
-
-        private static Task<object?> InvokeAsync(object target, MethodInfo methodInfo, object?[] parameters) =>
-            methodInfo.ReturnsTask()
-                ? ((Task)methodInfo.Invoke(target, parameters)).GetReturnValueAsync()
-                : Task.FromResult((object?)methodInfo.Invoke(target, parameters));
 
         private static Task InvokeWithoutBlockingAsync(
             object target,

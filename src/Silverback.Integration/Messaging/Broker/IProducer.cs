@@ -83,6 +83,17 @@ namespace Silverback.Messaging.Broker
             IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
+        ///     Publishes the specified message.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The envelope containing the message to be delivered.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task ProduceAsync(IOutboundEnvelope envelope);
+
+        /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
         /// </summary>
         /// <param name="messageContent">
@@ -110,16 +121,5 @@ namespace Silverback.Messaging.Broker
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         Task RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null);
-
-        /// <summary>
-        ///     Publishes the specified message.
-        /// </summary>
-        /// <param name="envelope">
-        ///     The envelope containing the message to be delivered.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task ProduceAsync(IOutboundEnvelope envelope);
     }
 }

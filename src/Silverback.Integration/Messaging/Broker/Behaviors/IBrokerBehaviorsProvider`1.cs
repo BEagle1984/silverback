@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Broker.Behaviors
     ///     The type of the behaviors to be provided, either <see cref="IProducerBehavior" /> or
     ///     <see cref="IConsumerBehavior" />.
     /// </typeparam>
-    public interface IBrokerBehaviorsProvider<TBehavior>
+    public interface IBrokerBehaviorsProvider<out TBehavior>
         where TBehavior : IBrokerBehavior
     {
         /// <summary>

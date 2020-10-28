@@ -72,25 +72,23 @@ namespace Silverback.Messaging.Messages
         ///     when the message has actually been pulled and processed and its result contains the number of
         ///     <see cref="IMessageStreamEnumerable{TMessage}" /> that have been pushed.
         /// </returns>
-        public virtual async Task<int> PushAsync(TMessage message, bool throwIfUnhandled, CancellationToken cancellationToken = default)
+        public virtual async Task<int> PushAsync(
+            TMessage message,
+            bool throwIfUnhandled,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull<object>(message, nameof(message));
 
             var messageId = Interlocked.Increment(ref _messagesCount);
 
-            // ReSharper disable once InconsistentlySynchronizedField
-            var pushTasks = _streams
-                .Select(stream => PushIfCompatibleTypeAsync(stream, messageId, message, cancellationToken))
-                .Where(task => task != null)
-                .ToArray();
+            var processingTasks = PushToCompatibleStreams(messageId, message, cancellationToken).ToList();
 
-            if (pushTasks.Length > 0)
-                await Task.WhenAll(pushTasks).ConfigureAwait(false);
-
-            if (pushTasks.Length == 0 && throwIfUnhandled)
+            if (processingTasks.Count > 0)
+                await Task.WhenAll(processingTasks).ConfigureAwait(false);
+            else if (throwIfUnhandled)
                 throw new UnhandledMessageException(message!);
 
-            return pushTasks.Length;
+            return processingTasks.Count;
         }
 
         /// <summary>
@@ -153,22 +151,54 @@ namespace Silverback.Messaging.Messages
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
+        ///     resources.
+        /// </summary>
+        /// <param name="disposing">
+        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
+        ///     finalizer.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            // TODO: Prevent complete being called after abort (or being called twice)
+            if (disposing)
+                AsyncHelper.RunSynchronously(() => CompleteAsync());
+        }
+
         private static IMessageStreamEnumerable<TMessageLinked> CreateStreamCore<TMessageLinked>() =>
             new MessageStreamEnumerable<TMessageLinked>();
 
-        private static Task? PushIfCompatibleTypeAsync(
-            IMessageStreamEnumerable stream,
+        private IEnumerable<Task> PushToCompatibleStreams(
             int messageId,
             TMessage message,
             CancellationToken cancellationToken)
         {
+            foreach (var stream in _streams)
+            {
+                if (PushIfCompatibleType(stream, messageId, message, cancellationToken, out var processingTask))
+                    yield return processingTask;
+            }
+        }
+
+        private static bool PushIfCompatibleType(
+            IMessageStreamEnumerable stream,
+            int messageId,
+            TMessage message,
+            CancellationToken cancellationToken,
+            out Task messageProcessingTask)
+        {
             if (message == null)
-                return null;
+            {
+                messageProcessingTask = Task.CompletedTask;
+                return false;
+            }
 
             if (stream.MessageType.IsInstanceOfType(message))
             {
                 var pushedMessage = new PushedMessage(messageId, message, message);
-                return stream.PushAsync(pushedMessage, cancellationToken);
+                messageProcessingTask = stream.PushAsync(pushedMessage, cancellationToken);
+                return true;
             }
 
             var envelope = message as IEnvelope;
@@ -176,17 +206,12 @@ namespace Silverback.Messaging.Messages
                 stream.MessageType.IsInstanceOfType(envelope.Message))
             {
                 var pushedMessage = new PushedMessage(messageId, envelope.Message, message);
-                return stream.PushAsync(pushedMessage, cancellationToken);
+                messageProcessingTask = stream.PushAsync(pushedMessage, cancellationToken);
+                return true;
             }
 
-            return null;
-        }
-
-        private void Dispose(bool disposing)
-        {
-            // TODO: Prevent complete being called after abort (or being called twice)
-            if (disposing)
-                AsyncHelper.RunSynchronously(() => CompleteAsync());
+            messageProcessingTask = Task.CompletedTask;
+            return false;
         }
     }
 }

@@ -64,7 +64,7 @@ namespace Silverback.Diagnostics
             IRawInboundEnvelope envelope,
             ISequence sequence,
             SequenceAbortReason reason,
-            Exception? abortException)
+            Exception? exception)
         {
             switch (reason)
             {
@@ -72,7 +72,7 @@ namespace Silverback.Diagnostics
                     LogWithMessageInfo(
                         LogLevel.Warning,
                         IntegrationEventIds.ErrorProcessingInboundMessage,
-                        abortException,
+                        exception,
                         "Error occurred processing the inbound sequence of messages.",
                         envelope,
                         sequence);
@@ -97,7 +97,6 @@ namespace Silverback.Diagnostics
                         envelope,
                         sequence);
                     break;
-                case SequenceAbortReason.None:
                 default:
                     throw new ArgumentOutOfRangeException(nameof(reason), reason, null);
             }

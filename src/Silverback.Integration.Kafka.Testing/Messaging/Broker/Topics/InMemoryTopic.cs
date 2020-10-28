@@ -161,7 +161,7 @@ namespace Silverback.Messaging.Broker.Topics
 
         /// <inheritdoc cref="IInMemoryTopic.WaitUntilAllMessagesAreConsumedAsync" />
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
-        public async Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken)
+        public async Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default)
         {
             while (!cancellationToken.IsCancellationRequested)
             {

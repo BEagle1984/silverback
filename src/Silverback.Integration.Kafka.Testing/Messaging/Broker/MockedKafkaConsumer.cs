@@ -267,6 +267,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer{TKey,TValue}.Close" />
         public void Close()
         {
+            // Nothing to close, it's just a mock
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -352,14 +353,11 @@ namespace Silverback.Messaging.Broker
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (pulled)
+                if (pulled && Assignment.Contains(result!.TopicPartition))
                 {
-                    if (Assignment.Contains(result!.TopicPartition))
-                    {
-                        _currentOffsets[result.Topic][result.Partition] = result.Offset + 1;
+                    _currentOffsets[result.Topic][result.Partition] = result.Offset + 1;
 
-                        return true;
-                    }
+                    return true;
                 }
             }
 
