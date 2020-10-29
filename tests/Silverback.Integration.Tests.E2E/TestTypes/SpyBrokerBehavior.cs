@@ -10,6 +10,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.E2E.TestTypes
 {
+    // TODO: Move to Silverback.Integration.Testing
     public class SpyBrokerBehavior : IProducerBehavior, IConsumerBehavior
     {
         private readonly List<IOutboundEnvelope> _outboundEnvelopes = new List<IOutboundEnvelope>();
