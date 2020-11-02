@@ -33,14 +33,14 @@ namespace Silverback.Messaging.Sequences.Chunking
         }
 
         /// <inheritdoc cref="SequenceReaderBase.IsNewSequence" />
-        protected override bool IsNewSequence(ConsumerPipelineContext context)
+        protected override Task<bool> IsNewSequence(ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 
             var chunkIndex = context.Envelope.Headers.GetValue<int>(DefaultMessageHeaders.ChunkIndex) ??
                              throw new InvalidOperationException("Chunk index header not found.");
 
-            return chunkIndex == 0;
+            return Task.FromResult(chunkIndex == 0);
         }
 
         /// <inheritdoc cref="SequenceReaderBase.CreateNewSequenceCore" />

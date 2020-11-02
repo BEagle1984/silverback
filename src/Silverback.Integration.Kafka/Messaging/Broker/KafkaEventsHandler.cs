@@ -39,8 +39,8 @@ namespace Silverback.Messaging.Broker
             IConfluentConsumerBuilder consumerBuilder) =>
             consumerBuilder
                 .SetStatisticsHandler(OnConsumerStatistics)
-                .SetPartitionsAssignedHandler(OnPartitionsAssigned)
-                .SetPartitionsRevokedHandler(OnPartitionsRevoked)
+                .SetPartitionsAssignedHandler((consumer, list) => OnPartitionsAssigned(ownerConsumer, consumer, list))
+                .SetPartitionsRevokedHandler((consumer, list) => OnPartitionsRevoked(ownerConsumer, consumer, list))
                 .SetOffsetsCommittedHandler(OnOffsetsCommitted)
                 .SetErrorHandler((_, error) => OnConsumerError(ownerConsumer, error));
 
@@ -75,9 +75,12 @@ namespace Silverback.Messaging.Broker
         }
 
         private IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
+            KafkaConsumer ownerConsumer,
             IConsumer<byte[]?, byte[]?> consumer,
             List<TopicPartition> partitions)
         {
+            ownerConsumer.OnPartitionsAssigned(partitions);
+
             partitions.ForEach(
                 partition =>
                 {
@@ -109,8 +112,13 @@ namespace Silverback.Messaging.Broker
             return partitionsAssignedEvent.Partitions;
         }
 
-        private void OnPartitionsRevoked(IConsumer<byte[]?, byte[]?> consumer, List<TopicPartitionOffset> partitions)
+        private void OnPartitionsRevoked(
+            KafkaConsumer ownerConsumer,
+            IConsumer<byte[]?, byte[]?> consumer,
+            List<TopicPartitionOffset> partitions)
         {
+            ownerConsumer.OnPartitionsRevoked(partitions);
+
             partitions.ForEach(
                 partition =>
                 {

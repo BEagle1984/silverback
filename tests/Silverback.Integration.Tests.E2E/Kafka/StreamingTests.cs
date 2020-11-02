@@ -77,9 +77,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(15);
-            var receivedContents = receivedMessages.Select(message => message.Content);
-            receivedContents.Should().BeEquivalentTo(
-                Enumerable.Range(1, 15).Select(i => i.ToString(CultureInfo.InvariantCulture)));
+            receivedMessages.Select(message => message.Content)
+                .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => i.ToString(CultureInfo.InvariantCulture)));
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(15);
         }
@@ -134,9 +133,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(3);
-            var receivedContents = receivedMessages.Select(message => message.Content);
-            receivedContents.Should().BeEquivalentTo(
-                Enumerable.Range(1, 3).Select(i => i.ToString(CultureInfo.InvariantCulture)));
+            receivedMessages.Select(message => message.Content)
+                .Should().BeEquivalentTo(Enumerable.Range(1, 3).Select(i => i.ToString(CultureInfo.InvariantCulture)));
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
         }
@@ -381,6 +379,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedMessages.Should().HaveCount(2);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
             Broker.Consumers[0].IsConnected.Should().BeFalse();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task Streaming_UnboundedEnumerable_PublishedStreamPerPartition()
+        {
+            throw new NotImplementedException();
         }
     }
 }

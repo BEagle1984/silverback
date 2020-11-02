@@ -14,6 +14,7 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.ConfluentWrappers;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
@@ -83,6 +84,17 @@ namespace Silverback.Messaging.Broker
             _logger = Check.NotNull(logger, nameof(logger));
         }
 
+        internal void OnPartitionsAssigned(List<TopicPartition> partitions)
+        {
+            SequenceStores.Clear();
+            partitions.ForEach(_ => SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>()));
+        }
+
+        internal void OnPartitionsRevoked(List<TopicPartitionOffset> partitions)
+        {
+            // TODO: Handle rebalance (abort sequences etc.)
+        }
+
         /// <inheritdoc cref="Consumer.ConnectCore" />
         protected override void ConnectCore()
         {
@@ -98,6 +110,19 @@ namespace Silverback.Messaging.Broker
                 CancellationToken.None,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
+        }
+
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.GetSequenceStore(Silverback.Messaging.Broker.IOffset)" />
+        protected override ISequenceStore GetSequenceStore(KafkaOffset offset)
+        {
+            Check.NotNull(offset, nameof(offset));
+
+            if (_innerConsumer == null)
+                throw new InvalidOperationException("The consumer is not connected.");
+
+            var partitionIndex = _innerConsumer.Assignment.IndexOf(offset.AsTopicPartition());
+
+            return SequenceStores[partitionIndex];
         }
 
         /// <inheritdoc cref="Consumer.StopConsuming" />
@@ -259,6 +284,7 @@ namespace Silverback.Messaging.Broker
                 }
                 catch
                 {
+                    // TODO: Some errors may not happen inside the pipeline!
                     /* Logged by the FatalExceptionLoggerConsumerBehavior */
 
                     break;

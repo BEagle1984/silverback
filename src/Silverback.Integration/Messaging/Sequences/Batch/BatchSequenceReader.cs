@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
@@ -12,9 +11,9 @@ namespace Silverback.Messaging.Sequences.Batch
     ///     Enables the batch processing creating a <see cref="BatchSequence" /> containing the configured number
     ///     of messages.
     /// </summary>
-    public sealed class BatchSequenceReader : SequenceReaderBase, ISorted, IDisposable
+    public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
     {
-        private BatchSequence? _currentSequence;
+        private const string SequenceId = "batch";
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => int.MaxValue; // Ignored if a proper sequence is detected
@@ -29,21 +28,18 @@ namespace Silverback.Messaging.Sequences.Batch
             return Task.FromResult(isBatchEnabled);
         }
 
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        public void Dispose()
-        {
-            _currentSequence?.Dispose();
-        }
-
         /// <inheritdoc cref="SequenceReaderBase.GetSequenceId" />
-        protected override string GetSequenceId(ConsumerPipelineContext context) => "batch";
+        protected override Task<string> GetSequenceId(ConsumerPipelineContext context) => Task.FromResult(SequenceId);
 
         /// <inheritdoc cref="SequenceReaderBase.IsNewSequence" />
-        protected override bool IsNewSequence(ConsumerPipelineContext context) =>
-            _currentSequence == null || !_currentSequence.IsPending || _currentSequence.IsCompleting;
+        protected override async Task<bool> IsNewSequence(ConsumerPipelineContext context)
+        {
+            var currentSequence = await context.SequenceStore.GetAsync<BatchSequence>(SequenceId).ConfigureAwait(false);
+            return currentSequence == null || !currentSequence.IsPending || currentSequence.IsCompleting;
+        }
 
         /// <inheritdoc cref="SequenceReaderBase.CreateNewSequenceCore" />
         protected override ISequence CreateNewSequenceCore(string sequenceId, ConsumerPipelineContext context) =>
-            _currentSequence = new BatchSequence(sequenceId, context);
+            new BatchSequence(sequenceId, context);
     }
 }
