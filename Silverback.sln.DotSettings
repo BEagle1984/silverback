@@ -293,5 +293,6 @@ This code is licensed under MIT license (see LICENSE file for details)</s:String
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Avro/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Decryptor/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Encryptor/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Rebalance/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Silverback/@EntryIndexedValue">True</s:Boolean>
 </wpf:ResourceDictionary>

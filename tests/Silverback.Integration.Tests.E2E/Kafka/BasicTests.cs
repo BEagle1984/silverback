@@ -411,7 +411,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             GroupId = "consumer1",
                                             EnableAutoCommit = enableAutoCommit,
                                             AutoCommitIntervalMs = 50,
-                                            CommitOffsetEach = enableAutoCommit ? -1 : 5
+                                            CommitOffsetEach = enableAutoCommit ? -1 : 3
                                         }
                                     }))
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
@@ -531,6 +531,108 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await AsyncTestingUtil.WaitAsync(() => Broker.Consumers[0].IsConnected == false);
             Broker.Consumers[0].IsConnected.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task Disconnect_WithoutAutoCommit_PendingOffsetsCommitted()
+        {
+            int receivedMessages = 0;
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            AutoCommitIntervalMs = 50,
+                                            CommitOffsetEach = 10
+                                        }
+                                    }))
+                        .AddDelegateSubscriber((TestEventOne _) => receivedMessages++))
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "one"
+                });
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "two"
+                });
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "three"
+                });
+
+            await AsyncTestingUtil.WaitAsync(() => receivedMessages == 3);
+
+            Broker.Disconnect();
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+        }
+
+        [Fact]
+        public async Task Rebalance_WithoutAutoCommit_PendingOffsetsCommitted()
+        {
+            int receivedMessages = 0;
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            AutoCommitIntervalMs = 50,
+                                            CommitOffsetEach = 10
+                                        }
+                                    }))
+                        .AddDelegateSubscriber((TestEventOne _) => receivedMessages++))
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "one"
+                });
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "two"
+                });
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "three"
+                });
+
+            await AsyncTestingUtil.WaitAsync(() => receivedMessages == 3);
+
+            DefaultTopic.Rebalance();
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
         }
     }
 }

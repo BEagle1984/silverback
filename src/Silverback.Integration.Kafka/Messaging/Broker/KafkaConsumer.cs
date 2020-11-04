@@ -90,9 +90,12 @@ namespace Silverback.Messaging.Broker
             partitions.ForEach(_ => SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>()));
         }
 
-        internal void OnPartitionsRevoked(List<TopicPartitionOffset> partitions)
+        internal void OnPartitionsRevoked()
         {
-            // TODO: Handle rebalance (abort sequences etc.)
+            if (!Endpoint.Configuration.IsAutoCommitEnabled)
+                CommitOffsets();
+
+            SequenceStores.ForEach(store => store.Dispose());
         }
 
         /// <inheritdoc cref="Consumer.ConnectCore" />
@@ -355,8 +358,6 @@ namespace Silverback.Messaging.Broker
         {
             if (_serializer == null)
                 throw new InvalidOperationException("The consumer is not connected.");
-
-            _messagesSinceCommit++;
 
             Dictionary<string, string> logData = new Dictionary<string, string>();
 
