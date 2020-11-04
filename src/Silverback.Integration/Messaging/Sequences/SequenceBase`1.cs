@@ -441,6 +441,7 @@ namespace Silverback.Messaging.Sequences
                         break;
                     case SequenceAbortReason.EnumerationAborted:
                         await Context.TransactionManager.CommitAsync().ConfigureAwait(false);
+                        done = false;
                         break;
                     case SequenceAbortReason.IncompleteSequence:
                         await Context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);

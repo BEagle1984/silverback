@@ -26,6 +26,9 @@ namespace Silverback.Messaging.Sequences.Chunking
             if (chunkSettings == null || chunkSettings.Size == int.MaxValue)
                 return false;
 
+            if (chunkSettings.AlwaysAddHeaders)
+                return true;
+
             if (envelope.RawMessage == null)
                 return false;
 

@@ -157,10 +157,9 @@ namespace Silverback.Messaging.Sequences
                     {
                         await processingTask.ConfigureAwait(false);
 
-                        if (!sequence.IsPending || sequence.IsCompleting)
-                            return;
-
-                        // Abort the uncompleted sequence if the processing task completes, to avoid unreleased locks.
+                        // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
+                        // The reason behind this call here may be counterintuitive but with
+                        // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
                         await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
                     }
                     catch (Exception exception)
