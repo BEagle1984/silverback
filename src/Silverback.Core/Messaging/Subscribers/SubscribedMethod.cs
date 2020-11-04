@@ -98,6 +98,7 @@ namespace Silverback.Messaging.Subscribers
         ///     <see cref="IMessageStreamEnumerable{TMessage}" />, in which case the parameter is forced to
         ///     <c>false</c> (ignoring the setting from the <see cref="SubscribeAttribute" />).
         /// </remarks>
+        // TODO: Does it still make sense to force the stream as non-exclusive? (Isn't it non-exclusive by design?)
         public bool IsExclusive =>
             _isExclusive && !(_messageArgumentResolver is IStreamEnumerableMessageArgumentResolver);
 
