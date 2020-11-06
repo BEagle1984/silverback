@@ -338,7 +338,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     }
                                 }
 
-                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                                lock (receivedFiles)
+                                {
+                                    receivedFiles.Add(binaryFile.Content.ReadAll());
+                                }
                             })
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
