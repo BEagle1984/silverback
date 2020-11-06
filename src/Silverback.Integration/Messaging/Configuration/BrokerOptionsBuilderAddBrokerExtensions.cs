@@ -109,7 +109,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingletonBrokerBehavior<FatalExceptionLoggerConsumerBehavior>()
                     .AddSingletonBrokerBehavior<TransactionHandlerConsumerBehavior>()
                     .AddSingletonBrokerBehavior<ExactlyOnceGuardConsumerBehavior>()
-                    .AddTransientBrokerBehavior<PublisherConsumerBehavior>();
+                    .AddSingletonBrokerBehavior<PublisherConsumerBehavior>();
             }
 
             // Register the broker as IBroker and the type itself, both resolving to the same instance

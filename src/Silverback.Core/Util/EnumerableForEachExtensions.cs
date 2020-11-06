@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace Silverback.Util
 {
-    // TODO: Test
     internal static class EnumerableForEachExtensions
     {
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
@@ -15,6 +14,15 @@ namespace Silverback.Util
             foreach (T element in source)
             {
                 action(element);
+            }
+        }
+
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
+        {
+            var index = 0;
+            foreach (T element in source)
+            {
+                action(element, index++);
             }
         }
 

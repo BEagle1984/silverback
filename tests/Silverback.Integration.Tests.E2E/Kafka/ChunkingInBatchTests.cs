@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -90,13 +89,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 9).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = $"Long message {i}"
-                        }));
+            for (int i = 1; i <= 9; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"Long message {i}" });
+            }
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -184,9 +180,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
-            await Enumerable.Range(1, 15).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}"))));
+            for (int i = 1; i <= 15; i++)
+            {
+                await publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
+            }
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 

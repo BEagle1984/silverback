@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -79,8 +80,6 @@ namespace Silverback.Messaging.Broker
             IConsumer<byte[]?, byte[]?> consumer,
             List<TopicPartition> partitions)
         {
-            ownerConsumer.OnPartitionsAssigned(partitions);
-
             partitions.ForEach(
                 partition =>
                 {
@@ -108,6 +107,11 @@ namespace Silverback.Messaging.Broker
                         topicPartitionOffset.Offset);
                 }
             }
+
+            ownerConsumer.OnPartitionsAssigned(
+                partitionsAssignedEvent.Partitions.Select(
+                    topicPartitionOffset =>
+                        topicPartitionOffset.TopicPartition).ToList());
 
             return partitionsAssignedEvent.Partitions;
         }

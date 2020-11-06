@@ -43,6 +43,19 @@ namespace Silverback.Messaging
         /// </summary>
         public KafkaConsumerConfig Configuration { get; set; } = new KafkaConsumerConfig();
 
+        /// <summary>
+        ///     Gets or sets a value indicating whether the messages from different partitions can be processed
+        ///     concurrently. The default is <c>true</c>.
+        /// </summary>
+        public bool ProcessPartitionsIndependently { get; set; } = true;
+
+        /// <summary>
+        ///     Gets or sets the maximum amount of messages to be buffered in the consumer before being processed.
+        ///     when <see cref="ProcessPartitionsIndependently" /> is set to <c>true</c> (default) the limit will be
+        ///     applied per each partition independently. The default is 1.
+        /// </summary>
+        public int BackpressureLimit { get; set; } = 1;
+
         /// <inheritdoc cref="Endpoint.Validate" />
         public override void Validate()
         {
@@ -50,6 +63,9 @@ namespace Silverback.Messaging
 
             if (Configuration == null)
                 throw new EndpointConfigurationException("Configuration cannot be null.");
+
+            if (BackpressureLimit < 1)
+                throw new EndpointConfigurationException("BackpressureLimit must be greater or equal to 1.");
 
             Configuration.Validate();
         }

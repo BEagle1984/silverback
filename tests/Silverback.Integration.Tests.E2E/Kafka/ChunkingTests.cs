@@ -76,13 +76,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 5).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = $"Long message {i}"
-                        }));
+            for (int i = 1; i <= 5; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"Long message {i}" });
+            }
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -1925,6 +1922,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task Chunking_JsonFromMultiplePartitions_ConcurrentlyConsumed()
         {
+            const int messagesCount = 10;
             const int chunksPerMessage = 3;
 
             var serviceProvider = Host.ConfigureServices(
@@ -1942,7 +1940,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     {
                                         Chunk = new ChunkSettings
                                         {
-                                            Size = 10
+                                            Size = messagesCount
                                         }
                                     })
                                 .AddInbound(
@@ -1960,31 +1958,88 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 10).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = $"Long message {i}"
-                        }));
+            for (int i = 1; i <= messagesCount; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"Long message {i}" });
+            }
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Should().HaveCount(10);
-            Subscriber.InboundEnvelopes.Should().HaveCount(10);
+            Subscriber.OutboundEnvelopes.Should().HaveCount(messagesCount);
+            Subscriber.InboundEnvelopes.Should().HaveCount(messagesCount);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(10 * chunksPerMessage);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(10);
-
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(messagesCount * chunksPerMessage);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(messagesCount);
             SpyBehavior.InboundEnvelopes
                 .Select(envelope => ((TestEventOne)envelope.Message!).Content)
-                .Should().BeEquivalentTo(Enumerable.Range(1, 10).Select(i => $"Long message {i}"));
+                .Should().BeEquivalentTo(Enumerable.Range(1, messagesCount).Select(i => $"Long message {i}"));
         }
 
-        [Fact(Skip = "Not yet implemented")]
-        public Task Chunking_BinaryFilesFromMultiplePartitions_ConcurrentlyConsumed()
+        [Fact]
+        public async Task Chunking_BinaryFilesFromMultiplePartitions_ConcurrentlyConsumed()
         {
-            throw new NotImplementedException();
+            const int messagesCount = 10;
+            const int chunksPerMessage = 3;
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(3)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IBinaryFileMessage>(
+                                    new KafkaProducerEndpoint(DefaultTopicName)
+                                    {
+                                        Chunk = new ChunkSettings
+                                        {
+                                            Size = messagesCount
+                                        }
+                                    })
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+            for (int i = 1; i <= messagesCount; i++)
+            {
+                await publisher.PublishAsync(
+                    new BinaryFileMessage
+                    {
+                        Content = new MemoryStream(
+                            new byte[]
+                            {
+                                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10,
+                                0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x20,
+                                0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x30
+                            }),
+                        ContentType = "application/pdf"
+                    });
+            }
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.OutboundEnvelopes.Should().HaveCount(messagesCount);
+            Subscriber.InboundEnvelopes.Should().HaveCount(messagesCount);
+
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(messagesCount * chunksPerMessage);
+            SpyBehavior.OutboundEnvelopes.ForEach(
+                envelope => envelope.RawMessage.ReReadAll()!.Length.Should().BeLessOrEqualTo(messagesCount));
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(messagesCount);
+            SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeOfType<BinaryFileMessage>());
         }
 
         [Fact(Skip = "Not yet implemented")]
@@ -2048,7 +2103,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
                             {
-                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                                lock (receivedFiles)
+                                {
+                                    receivedFiles.Add(binaryFile.Content.ReadAll());
+                                }
                             })
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();

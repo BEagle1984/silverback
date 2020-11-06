@@ -184,10 +184,11 @@ namespace Silverback.Messaging.Broker
             if (offset == null)
                 return;
 
-            if (!_storedOffsets.ContainsKey(offset.Topic))
-                _storedOffsets[offset.Topic] = new ConcurrentDictionary<Partition, Offset>();
+            var partitionOffsetDictionary = _storedOffsets.GetOrAdd(
+                offset.Topic,
+                _ => new ConcurrentDictionary<Partition, Offset>());
 
-            _storedOffsets[offset.Topic][offset.Partition] = offset.Offset;
+            partitionOffsetDictionary[offset.Partition] = offset.Offset;
         }
 
         /// <inheritdoc cref="IConsumer{TKey,TValue}.Commit()" />
@@ -411,11 +412,20 @@ namespace Silverback.Messaging.Broker
             return new TopicPartitionOffset(topicPartitionOffset.TopicPartition, offset);
         }
 
+        [SuppressMessage("", "CA1031", Justification = "Ensures retry in next iteration")]
         private async Task AutoCommitAsync()
         {
             while (!Disposed)
             {
-                Commit();
+                try
+                {
+                    Commit();
+                }
+                catch (Exception)
+                {
+                    // Ignore
+                }
+
                 await Task.Delay(_config.AutoCommitIntervalMs ?? 5000).ConfigureAwait(false);
             }
         }

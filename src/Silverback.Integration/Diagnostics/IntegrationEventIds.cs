@@ -177,7 +177,7 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an unhandled error occurs while
-        ///     consuming a message and the consumer will be stopped.
+        ///     consuming and the consumer will be stopped.
         /// </summary>
         /// <remarks>
         ///     Default log level: Critical.

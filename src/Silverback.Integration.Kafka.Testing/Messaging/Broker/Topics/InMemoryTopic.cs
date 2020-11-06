@@ -210,7 +210,10 @@ namespace Silverback.Messaging.Broker.Topics
 
             var assignments = new List<Partition>[groupConsumers.Count];
 
-            Enumerable.Range(0, groupConsumers.Count).ForEach(i => assignments[i] = new List<Partition>());
+            for (int i = 0; i < groupConsumers.Count; i++)
+            {
+                assignments[i] = new List<Partition>();
+            }
 
             for (int partitionIndex = 0; partitionIndex < _partitions.Count; partitionIndex++)
             {
