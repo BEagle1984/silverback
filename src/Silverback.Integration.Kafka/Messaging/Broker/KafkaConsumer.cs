@@ -324,65 +324,77 @@ namespace Silverback.Messaging.Broker
             _innerConsumer.Subscribe(Endpoint.Names);
         }
 
-        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private void Consume()
         {
             _isConsuming = true;
 
-            if (_innerConsumer == null)
-                throw new InvalidOperationException("The underlying consumer is not initialized.");
-
             while (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
             {
-                try
-                {
-                    var consumeResult = _innerConsumer.Consume(_cancellationTokenSource.Token);
-
-                    if (consumeResult == null)
-                        continue;
-
-                    _hasConsumedAtLeastOnce = true;
-                    _logger.LogDebug(
-                        KafkaEventIds.ConsumingMessage,
-                        "Consuming message: {topic} {partition} @{offset}.",
-                        consumeResult.Topic,
-                        consumeResult.Partition,
-                        consumeResult.Offset);
-
-                    var partitionIndex = GetPartitionAssignmentIndex(consumeResult.TopicPartition);
-                    var channelIndex = GetChannelIndex(partitionIndex);
-
-                    // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
-                    // synchronously to stay within a single long-running thread.
-                    AsyncHelper.RunSynchronously(
-                        () => _channels![channelIndex].Writer.WriteAsync(
-                            consumeResult,
-                            _cancellationTokenSource.Token));
-                }
-                catch (OperationCanceledException)
-                {
-                    if (_cancellationTokenSource == null || _cancellationTokenSource.IsCancellationRequested)
-                        _logger.LogTrace(KafkaEventIds.ConsumingCanceled, "Consuming canceled.");
-                }
-                catch (KafkaException ex)
-                {
-                    if (!AutoRecoveryIfEnabled(ex))
-                        break;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogCritical(
-                        IntegrationEventIds.ConsumerFatalError,
-                        ex,
-                        "Fatal error occurred while consuming. The consumer will be stopped.");
+                if (!ConsumeOnce(_cancellationTokenSource))
                     break;
-                }
             }
 
             _isConsuming = false;
 
             if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
                 Disconnect();
+        }
+
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+        private bool ConsumeOnce(CancellationTokenSource cancellationTokenSource)
+        {
+            try
+            {
+                if (_innerConsumer == null)
+                    throw new InvalidOperationException("The underlying consumer is not initialized.");
+
+                // Clone the channels array to ensure that the message will be pushed in the current channel,
+                // that may be completed in the meanwhile to signal that a seek operation is pending
+                // TODO: Find more efficient solution
+                var channels = (Channel<ConsumeResult<byte[]?, byte[]?>>[])_channels!.Clone();
+
+                var consumeResult = _innerConsumer.Consume(cancellationTokenSource.Token);
+
+                if (consumeResult == null)
+                    return true;
+
+                _hasConsumedAtLeastOnce = true;
+                _logger.LogDebug(
+                    KafkaEventIds.ConsumingMessage,
+                    "Consuming message: {topic} {partition} @{offset}.",
+                    consumeResult.Topic,
+                    consumeResult.Partition,
+                    consumeResult.Offset);
+
+                var partitionIndex = GetPartitionAssignmentIndex(consumeResult.TopicPartition);
+                var channelIndex = GetChannelIndex(partitionIndex);
+
+                // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
+                // synchronously to stay within a single long-running thread.
+                AsyncHelper.RunSynchronously(
+                    () => channels[channelIndex].Writer.WriteAsync(consumeResult, cancellationTokenSource.Token));
+            }
+            catch (OperationCanceledException)
+            {
+                if (cancellationTokenSource.IsCancellationRequested)
+                    _logger.LogTrace(KafkaEventIds.ConsumingCanceled, "Consuming canceled.");
+            }
+            catch (KafkaException ex)
+            {
+                if (!AutoRecoveryIfEnabled(ex))
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(
+                    IntegrationEventIds.ConsumerFatalError,
+                    ex,
+                    "Fatal error occurred while consuming. The consumer will be stopped.");
+
+                return false;
+            }
+
+            return true;
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
