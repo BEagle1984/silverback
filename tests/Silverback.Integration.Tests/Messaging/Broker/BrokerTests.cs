@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -116,7 +117,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         }
 
         [Fact]
-        public void Connect_WithEndpointConfigurators_InvokedOnce()
+        public async Task ConnectAsync_WithEndpointConfigurators_InvokedOnce()
         {
             var configurator1 = Substitute.For<IEndpointsConfigurator>();
             var configurator2 = Substitute.For<IEndpointsConfigurator>();
@@ -134,17 +135,17 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var broker = serviceProvider.GetRequiredService<TestBroker>();
             var otherBroker = serviceProvider.GetRequiredService<TestOtherBroker>();
 
-            broker.Connect();
-            otherBroker.Connect();
-            broker.Connect();
-            otherBroker.Connect();
+            await broker.ConnectAsync();
+            await otherBroker.ConnectAsync();
+            await broker.ConnectAsync();
+            await otherBroker.ConnectAsync();
 
             configurator1.Received(1).Configure(Arg.Any<IEndpointsConfigurationBuilder>());
             configurator2.Received(1).Configure(Arg.Any<IEndpointsConfigurationBuilder>());
         }
 
         [Fact]
-        public void Connect_WithEndpointConfigurators_EndpointsAreAdded()
+        public async Task ConnectAsync_WithEndpointConfigurators_EndpointsAreAdded()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
@@ -159,8 +160,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var broker = serviceProvider.GetRequiredService<TestBroker>();
             var otherBroker = serviceProvider.GetRequiredService<TestOtherBroker>();
 
-            broker.Connect();
-            otherBroker.Connect();
+            await broker.ConnectAsync();
+            await otherBroker.ConnectAsync();
 
             broker.Consumers.Should().HaveCount(1);
             otherBroker.Consumers.Should().HaveCount(1);

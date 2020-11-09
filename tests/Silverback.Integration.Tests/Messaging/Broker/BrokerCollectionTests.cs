@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -83,7 +84,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         }
 
         [Fact]
-        public void ConnectAndDisconnect_WithMultipleBrokers_AllBrokersConnectedAndDisconnected()
+        public async Task ConnectAsyncAndDisconnectAsync_WithMultipleBrokers_AllBrokersConnectedAndDisconnected()
         {
             var serviceProvider = new ServiceCollection()
                 .AddSingleton<EndpointsConfiguratorsInvoker>()
@@ -100,12 +101,12 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             brokerCollection[0].IsConnected.Should().BeFalse();
             brokerCollection[1].IsConnected.Should().BeFalse();
 
-            brokerCollection.Connect();
+            await brokerCollection.ConnectAsync();
 
             brokerCollection[0].IsConnected.Should().BeTrue();
             brokerCollection[1].IsConnected.Should().BeTrue();
 
-            brokerCollection.Disconnect();
+            await brokerCollection.DisconnectAsync();
 
             brokerCollection[0].IsConnected.Should().BeFalse();
             brokerCollection[1].IsConnected.Should().BeFalse();

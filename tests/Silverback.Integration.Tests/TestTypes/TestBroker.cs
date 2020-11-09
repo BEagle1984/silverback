@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Tests.Types;
@@ -21,7 +22,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public bool SimulateConnectIssues { get; set; }
 
-        protected override void Connect(IEnumerable<IConsumer> consumers)
+        protected override Task ConnectAsync(IEnumerable<IConsumer> consumers)
         {
             if (SimulateConnectIssues)
             {
@@ -29,7 +30,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 throw new IOException("Simulated exception.");
             }
 
-            base.Connect(consumers);
+            return base.ConnectAsync(consumers);
         }
 
         protected override IProducer InstantiateProducer(

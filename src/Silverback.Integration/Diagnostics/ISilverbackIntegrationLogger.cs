@@ -76,6 +76,27 @@ namespace Silverback.Diagnostics
             ConsumerPipelineContext context);
 
         /// <summary>
+        ///     Writes a trace log message, enriching it with the information related to the provided message.
+        /// </summary>
+        /// <param name="eventId">
+        ///     The event id associated with the log.
+        /// </param>
+        /// <param name="exception">
+        ///     The exception to log.
+        /// </param>
+        /// <param name="logMessage">
+        ///     The log message.
+        /// </param>
+        /// <param name="context">
+        ///     The <see cref="ConsumerPipelineContext" /> related to the message being processed.
+        /// </param>
+        void LogTraceWithMessageInfo(
+            EventId eventId,
+            Exception? exception,
+            string logMessage,
+            ConsumerPipelineContext context);
+
+        /// <summary>
         ///     Writes a trace log message, enriching it with the information related to the provided message(s).
         /// </summary>
         /// <param name="eventId">

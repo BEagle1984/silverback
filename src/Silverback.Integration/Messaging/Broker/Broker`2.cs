@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
@@ -151,8 +152,8 @@ namespace Silverback.Messaging.Broker
             return consumer;
         }
 
-        /// <inheritdoc cref="IBroker.Connect" />
-        public void Connect()
+        /// <inheritdoc cref="IBroker.ConnectAsync" />
+        public async Task ConnectAsync()
         {
             if (IsConnected)
                 return;
@@ -167,7 +168,7 @@ namespace Silverback.Messaging.Broker
                 "Connecting to message broker ({broker})...",
                 GetType().Name);
 
-            Connect(_consumers);
+            await ConnectAsync(_consumers).ConfigureAwait(false);
             IsConnected = true;
 
             _logger.LogInformation(
@@ -176,8 +177,8 @@ namespace Silverback.Messaging.Broker
                 GetType().Name);
         }
 
-        /// <inheritdoc cref="IBroker.Disconnect" />
-        public void Disconnect()
+        /// <inheritdoc cref="IBroker.DisconnectAsync" />
+        public async Task DisconnectAsync()
         {
             if (!IsConnected)
                 return;
@@ -190,7 +191,7 @@ namespace Silverback.Messaging.Broker
                 "Disconnecting from message broker ({broker})...",
                 GetType().Name);
 
-            Disconnect(_consumers);
+            await DisconnectAsync(_consumers).ConfigureAwait(false);
             IsConnected = false;
 
             _logger.LogInformation(
@@ -255,8 +256,11 @@ namespace Silverback.Messaging.Broker
         /// <param name="consumers">
         ///     The consumers to be started.
         /// </param>
-        protected virtual void Connect(IEnumerable<IConsumer> consumers) =>
-            consumers.ParallelForEach(consumer => consumer.Connect(), MaxConnectParallelism);
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected virtual Task ConnectAsync(IEnumerable<IConsumer> consumers) =>
+            consumers.ParallelForEachAsync(consumer => consumer.ConnectAsync(), MaxConnectParallelism);
 
         /// <summary>
         ///     Disconnects all the consumers and stops consuming.
@@ -264,8 +268,11 @@ namespace Silverback.Messaging.Broker
         /// <param name="consumers">
         ///     The consumers to be stopped.
         /// </param>
-        protected virtual void Disconnect(IEnumerable<IConsumer> consumers) =>
-            consumers.ParallelForEach(consumer => consumer.Disconnect(), MaxDisconnectParallelism);
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected virtual Task DisconnectAsync(IEnumerable<IConsumer> consumers) =>
+            consumers.ParallelForEachAsync(consumer => consumer.DisconnectAsync(), MaxDisconnectParallelism);
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
@@ -280,7 +287,7 @@ namespace Silverback.Messaging.Broker
             if (!disposing)
                 return;
 
-            Disconnect();
+            AsyncHelper.RunSynchronously(DisconnectAsync);
 
             _consumers?.OfType<IDisposable>().ForEach(o => o.Dispose());
             _consumers = null;

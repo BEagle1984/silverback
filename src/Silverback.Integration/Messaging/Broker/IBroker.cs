@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Silverback.Messaging.Broker
 {
@@ -64,11 +65,17 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Connect to the message broker to start consuming.
         /// </summary>
-        void Connect();
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task ConnectAsync();
 
         /// <summary>
         ///     Disconnect from the message broker to stop consuming.
         /// </summary>
-        void Disconnect();
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task DisconnectAsync();
     }
 }

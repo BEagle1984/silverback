@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
@@ -16,7 +17,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
     public class EndpointsConfigurationTests
     {
         [Fact]
-        public void AddOutbound_MultipleEndpoints_MessagesCorrectlyRouted()
+        public async Task AddOutbound_MultipleEndpoints_MessagesCorrectlyRouted()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
@@ -29,21 +30,21 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                                 .AddOutbound<IIntegrationEvent>(new TestProducerEndpoint("test2"))));
 
             var broker = serviceProvider.GetRequiredService<TestBroker>();
-            broker.Connect();
+            await broker.ConnectAsync();
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
             // -> to both endpoints
-            publisher.Publish(new TestEventOne());
-            publisher.Publish(new TestEventOne());
+            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishAsync(new TestEventOne());
 
             // -> to test2
-            publisher.Publish(new TestEventTwo());
-            publisher.Publish(new TestEventTwo());
-            publisher.Publish(new TestEventTwo());
+            await publisher.PublishAsync(new TestEventTwo());
+            await publisher.PublishAsync(new TestEventTwo());
+            await publisher.PublishAsync(new TestEventTwo());
 
             // -> to nowhere
-            publisher.Publish(new TestInternalEventOne());
+            await publisher.PublishAsync(new TestInternalEventOne());
 
             broker.ProducedMessages.Should().HaveCount(7);
             broker.ProducedMessages.Count(x => x.Endpoint.Name == "test1").Should().Be(2);
@@ -51,7 +52,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         }
 
         [Fact]
-        public void AddOutbound_WithMultipleBrokers_MessagesCorrectlyRouted()
+        public async Task AddOutbound_WithMultipleBrokers_MessagesCorrectlyRouted()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
@@ -67,26 +68,26 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                                 .AddOutbound<TestEventTwo>(new TestOtherProducerEndpoint("test2"))));
 
             var broker = serviceProvider.GetRequiredService<TestBroker>();
-            broker.Connect();
+            await broker.ConnectAsync();
 
             var otherBroker = serviceProvider.GetRequiredService<TestOtherBroker>();
-            otherBroker.Connect();
+            await otherBroker.ConnectAsync();
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
-            publisher.Publish(new TestEventOne());
-            publisher.Publish(new TestEventOne());
+            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishAsync(new TestEventOne());
 
-            publisher.Publish(new TestEventTwo());
-            publisher.Publish(new TestEventTwo());
-            publisher.Publish(new TestEventTwo());
+            await publisher.PublishAsync(new TestEventTwo());
+            await publisher.PublishAsync(new TestEventTwo());
+            await publisher.PublishAsync(new TestEventTwo());
 
             broker.ProducedMessages.Should().HaveCount(2);
             otherBroker.ProducedMessages.Should().HaveCount(3);
         }
 
         [Fact]
-        public void AddInbound_MultipleEndpoints_ConsumersCorrectlyConnected()
+        public async Task AddInbound_MultipleEndpoints_ConsumersCorrectlyConnected()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
@@ -101,13 +102,13 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                                 .AddInbound(new TestConsumerEndpoint("test2"))));
 
             var broker = serviceProvider.GetRequiredService<TestBroker>();
-            broker.Connect();
+            await broker.ConnectAsync();
 
             broker.Consumers.Should().HaveCount(2);
         }
 
         [Fact]
-        public void AddInbound_WithMultipleBrokers_ConsumersCorrectlyConnected()
+        public async Task AddInbound_WithMultipleBrokers_ConsumersCorrectlyConnected()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
@@ -123,10 +124,10 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                                 .AddInbound(new TestOtherConsumerEndpoint("test2"))));
 
             var broker = serviceProvider.GetRequiredService<TestBroker>();
-            broker.Connect();
+            await broker.ConnectAsync();
 
             var otherBroker = serviceProvider.GetRequiredService<TestOtherBroker>();
-            otherBroker.Connect();
+            await otherBroker.ConnectAsync();
 
             broker.Consumers.Should().HaveCount(1);
             otherBroker.Consumers.Should().HaveCount(1);

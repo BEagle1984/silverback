@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -73,11 +74,11 @@ namespace Silverback.Messaging.Broker
                 .AddConsumer(endpoint);
         }
 
-        /// <inheritdoc cref="IBrokerCollection.Connect" />
-        public void Connect() => _brokers.ParallelForEach(broker => broker.Connect(), 2);
+        /// <inheritdoc cref="IBrokerCollection.ConnectAsync" />
+        public Task ConnectAsync() => _brokers.ParallelForEachAsync(broker => broker.ConnectAsync(), 2);
 
-        /// <inheritdoc cref="IBrokerCollection.Disconnect" />
-        public void Disconnect() => _brokers.ParallelForEach(broker => broker.Disconnect(), 2);
+        /// <inheritdoc cref="IBrokerCollection.DisconnectAsync" />
+        public Task DisconnectAsync() => _brokers.ParallelForEachAsync(broker => broker.DisconnectAsync(), 2);
 
         /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
         public IEnumerator<IBroker> GetEnumerator() => _brokers.GetEnumerator();

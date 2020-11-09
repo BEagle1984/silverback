@@ -37,7 +37,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             _serviceProvider = services.BuildServiceProvider();
 
             _broker = _serviceProvider.GetRequiredService<IBroker>();
-            _broker.Connect();
+            _broker.ConnectAsync().Wait();
         }
 
         [Fact(Skip = "Not yet implemented")]

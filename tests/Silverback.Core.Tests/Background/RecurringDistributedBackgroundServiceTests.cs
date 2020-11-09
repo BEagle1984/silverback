@@ -200,9 +200,6 @@ namespace Silverback.Tests.Core.Background
 
         public async ValueTask DisposeAsync()
         {
-            if (_connection == null)
-                return;
-
             _connection.Close();
             await _connection.DisposeAsync();
         }

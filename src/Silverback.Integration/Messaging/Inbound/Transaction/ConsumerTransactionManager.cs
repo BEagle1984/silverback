@@ -47,7 +47,9 @@ namespace Silverback.Messaging.Inbound.Transaction
         public void Enlist(ITransactional transactionalService)
         {
             Check.NotNull(transactionalService, nameof(transactionalService));
-            EnsureNotCompleted();
+
+            if (IsCompleted)
+                throw new InvalidOperationException("The transaction already completed.");
 
             // ReSharper disable once InconsistentlySynchronizedField
             if (_transactionalServices.Contains(transactionalService))
@@ -75,7 +77,9 @@ namespace Silverback.Messaging.Inbound.Transaction
                 return;
             }
 
-            EnsureNotCompleted();
+            if (_isAborted)
+                throw new InvalidOperationException("The transaction already aborted.");
+
             _isCommitted = true;
 
             _logger.LogTraceWithMessageInfo(
@@ -97,7 +101,8 @@ namespace Silverback.Messaging.Inbound.Transaction
         public async Task<bool> RollbackAsync(
             Exception? exception,
             bool commitOffsets = false,
-            bool throwIfAlreadyCommitted = true)
+            bool throwIfAlreadyCommitted = true,
+            bool stopConsuming = true)
         {
             if (_isAborted)
             {
@@ -121,6 +126,7 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             _logger.LogTraceWithMessageInfo(
                 IntegrationEventIds.LowLevelTracing,
+                exception,
                 "Aborting consumer transaction...",
                 _context);
 
@@ -132,9 +138,16 @@ namespace Silverback.Messaging.Inbound.Transaction
             finally
             {
                 if (commitOffsets)
+                {
                     await _context.Consumer.CommitAsync(_context.Offsets).ConfigureAwait(false);
+                }
                 else
+                {
+                    if (stopConsuming)
+                        _context.Consumer.Stop();
+
                     await _context.Consumer.RollbackAsync(_context.Offsets).ConfigureAwait(false);
+                }
             }
 
             _logger.LogTraceWithMessageInfo(
@@ -143,12 +156,6 @@ namespace Silverback.Messaging.Inbound.Transaction
                 _context);
 
             return true;
-        }
-
-        private void EnsureNotCompleted()
-        {
-            if (IsCompleted)
-                throw new InvalidOperationException("The transaction already completed.");
         }
     }
 }

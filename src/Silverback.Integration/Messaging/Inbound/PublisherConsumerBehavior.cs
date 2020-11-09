@@ -128,7 +128,7 @@ namespace Silverback.Messaging.Inbound
                         // TODO: Test whether an exception really cancels all tasks
                         await Task.WhenAny(
                                 Task.WhenAll(tasks),
-                                WhenCanceled(cancellationTokenSource.Token))
+                                cancellationTokenSource.Token.AsTask())
                             .ConfigureAwait(false);
 
                         var exception = tasks.Where(task => task.IsFaulted).Select(task => task.Exception)
@@ -148,15 +148,6 @@ namespace Silverback.Messaging.Inbound
                         sequence.Dispose();
                     }
                 });
-        }
-
-        // TODO: Move in util?
-        [SuppressMessage("", "ASYNC0001", Justification = "Still temporary")]
-        private static Task WhenCanceled(CancellationToken cancellationToken)
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            cancellationToken.Register(s => { ((TaskCompletionSource<bool>)s).SetResult(true); }, tcs);
-            return tcs.Task;
         }
     }
 }

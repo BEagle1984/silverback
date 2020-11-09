@@ -7,7 +7,6 @@ using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -77,9 +76,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             Subscriber.InboundEnvelopes.Should().HaveCount(3);
 
-            var broker = serviceProvider.GetRequiredService<IBroker>();
-            broker.Disconnect();
-            broker.Connect();
+            await Broker.DisconnectAsync();
+            await Broker.ConnectAsync();
 
             await publisher.PublishAsync(
                 new TestEventOne

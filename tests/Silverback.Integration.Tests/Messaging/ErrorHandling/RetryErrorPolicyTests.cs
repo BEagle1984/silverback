@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             _serviceProvider = services.BuildServiceProvider();
 
             var broker = _serviceProvider.GetRequiredService<IBroker>();
-            broker.Connect();
+            broker.ConnectAsync().Wait();
         }
 
         [Theory]

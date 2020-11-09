@@ -46,10 +46,17 @@ namespace Silverback.Messaging.Inbound.Transaction
         /// <param name="throwIfAlreadyCommitted">
         ///     A value indicating whether an exception must be thrown if the transaction was already committed.
         /// </param>
+        /// <param name="stopConsuming">
+        ///     A value indicating whether the consumer must be stopped.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
         ///     value indicating whether the rollback was performed.
         /// </returns>
-        Task<bool> RollbackAsync(Exception? exception, bool commitOffsets = false, bool throwIfAlreadyCommitted = true);
+        Task<bool> RollbackAsync(
+            Exception? exception,
+            bool commitOffsets = false,
+            bool throwIfAlreadyCommitted = true,
+            bool stopConsuming = true);
     }
 }

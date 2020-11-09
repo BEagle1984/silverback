@@ -195,7 +195,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             receivedMessages.Should().HaveCount(2);
 
-            Broker.Disconnect();
+            await Broker.DisconnectAsync();
 
             aborted.Should().BeTrue();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
@@ -250,7 +250,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             receivedMessages.Should().HaveCount(2);
 
-            Broker.Disconnect();
+            await Broker.DisconnectAsync();
 
             completed.Should().BeTrue();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
