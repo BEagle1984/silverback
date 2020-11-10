@@ -134,13 +134,13 @@ namespace Silverback.Messaging.Sequences
         /// <returns>
         ///     The <see cref="ISequence" /> or <c>null</c> if not found.
         /// </returns>
-        protected virtual async Task<ISequence?> GetExistingSequenceAsync(
+        protected virtual Task<ISequence?> GetExistingSequenceAsync(
             ConsumerPipelineContext context,
             string sequenceId)
         {
             Check.NotNull(context, nameof(context));
 
-            return await context.SequenceStore.GetAsync<ISequence>(sequenceId).ConfigureAwait(false);
+            return context.SequenceStore.GetAsync<ISequence>(sequenceId);
         }
 
         private static async Task AbortPreviousSequencesAsync(ISequenceStore sequenceStore, ISequence currentSequence)

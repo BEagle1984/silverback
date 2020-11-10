@@ -29,6 +29,29 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
             result!.SequenceId.Should().Be("bbb");
         }
 
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task GetAsync_PartialId_SequenceReturnedIfMatchPrefixIsTrue(bool matchPrefix)
+        {
+            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
+
+            await store.AddAsync(new ChunkSequence("aaa-123", 10, context));
+
+            var result = await store.GetAsync<ChunkSequence>("aaa", matchPrefix);
+
+            if (matchPrefix)
+            {
+                result.Should().NotBeNull();
+                result!.SequenceId.Should().Be("aaa-123");
+            }
+            else
+            {
+                result.Should().BeNull();
+            }
+        }
+
         [Fact]
         public async Task GetAsync_NotExistingSequence_NullReturned()
         {

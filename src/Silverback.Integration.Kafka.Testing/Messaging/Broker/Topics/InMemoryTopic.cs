@@ -25,6 +25,8 @@ namespace Silverback.Messaging.Broker.Topics
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _committedOffsets =
             new ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>();
 
+        private readonly List<string> _groupsPendingRebalance = new List<string>();
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="InMemoryTopic" /> class.
         /// </summary>
@@ -115,8 +117,18 @@ namespace Silverback.Messaging.Broker.Topics
                                 new KeyValuePair<Partition, Offset>(partition.Partition.Value, Offset.Unset)));
                 }
 
-                // Rebalance asynchronously to mimic the real Kafka
-                Task.Run(() => Rebalance(consumer.GroupId));
+                if (!_groupsPendingRebalance.Contains(consumer.GroupId))
+                {
+                    _groupsPendingRebalance.Add(consumer.GroupId);
+
+                    // Rebalance asynchronously to mimic the real Kafka
+                    Task.Run(
+                        async () =>
+                        {
+                            await Task.Delay(50).ConfigureAwait(false); // TODO: Needed?
+                            Rebalance(consumer.GroupId);
+                        });
+                }
             }
         }
 
@@ -212,6 +224,8 @@ namespace Silverback.Messaging.Broker.Topics
         {
             lock (_consumersLock)
             {
+                _groupsPendingRebalance.Remove(groupId);
+
                 _consumers
                     .Where(consumer => consumer.Disposed)
                     .ToList()

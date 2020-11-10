@@ -243,6 +243,10 @@ namespace Silverback.Messaging.Broker
 
                 _consumeLoopHandler.Start();
                 _channelsManager?.StartReading();
+
+                // Set IsConsuming inside the lock because it is checked in OnPartitionsAssigned to decide to start the
+                // channels manager
+                IsConsuming = true;
             }
         }
 
