@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
 using Silverback.Messaging.Broker;
 using Xunit;
@@ -275,7 +276,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 
             public bool Equals(IBrokerMessageIdentifier? other) => false;
 
-            public int CompareTo(IBrokerMessageOffset? other) => throw new System.NotImplementedException();
+            public int CompareTo(IBrokerMessageOffset? other) =>
+                string.Compare(Value, other?.Value, StringComparison.Ordinal);
         }
     }
 }
