@@ -219,7 +219,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
                 await _queueReader.RetryAsync(message);
             }
 
-            _dbContext.Outbox.Count().Should().Be(3);
+            _dbContext.Outbox.Should().HaveCount(3);
         }
 
         [Fact]
@@ -258,7 +258,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
                 await _queueReader.AcknowledgeAsync(message);
             }
 
-            _dbContext.Outbox.Count().Should().Be(1);
+            _dbContext.Outbox.Should().HaveCount(1);
         }
 
         [Fact]

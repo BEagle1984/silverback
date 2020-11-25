@@ -160,7 +160,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Subscriber.InboundEnvelopes[2].Message.As<TestEventWithUniqueKey>().UniqueKey.Should().Be("2");
             Subscriber.InboundEnvelopes[3].Message.Should().BeOfType<TestEventOne>();
 
-            dbContext.InboundMessages.Count().Should().Be(4);
+            dbContext.InboundMessages.Should().HaveCount(4);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
         }
 

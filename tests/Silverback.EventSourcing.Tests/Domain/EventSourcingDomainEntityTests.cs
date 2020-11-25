@@ -104,7 +104,7 @@ namespace Silverback.Tests.EventSourcing.Domain
             person.ChangePhoneNumber("2");
             person.ChangePhoneNumber("3");
 
-            person.GetNewEvents().Count().Should().Be(3);
+            person.GetNewEvents().Should().HaveCount(3);
             person.GetNewEvents().Select(e => e.Timestamp).ToList().ForEach(t => t.Should().BeAfter(now));
         }
 
@@ -134,7 +134,7 @@ namespace Silverback.Tests.EventSourcing.Domain
                     new PhoneNumberChangedEvent { NewPhoneNumber = "3", Timestamp = DateTime.Now.AddDays(-1) }
                 });
 
-            person.GetNewEvents().Count().Should().Be(3);
+            person.GetNewEvents().Should().HaveCount(3);
             person.GetNewEvents().Select(e => e.Timestamp).ToList().ForEach(t => t.Should().BeBefore(now));
         }
 

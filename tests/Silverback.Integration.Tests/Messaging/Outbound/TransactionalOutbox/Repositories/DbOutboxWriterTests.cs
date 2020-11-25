@@ -68,7 +68,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
             _queueWriter.WriteAsync(SampleOutboundEnvelope);
             _queueWriter.WriteAsync(SampleOutboundEnvelope);
 
-            _dbContext.Outbox.Count().Should().Be(0);
+            _dbContext.Outbox.Should().HaveCount(0);
         }
 
         [Fact]
@@ -80,7 +80,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
             _queueWriter.CommitAsync();
             _dbContext.SaveChanges();
 
-            _dbContext.Outbox.Count().Should().Be(3);
+            _dbContext.Outbox.Should().HaveCount(3);
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
             _queueWriter.WriteAsync(SampleOutboundEnvelope);
             _queueWriter.RollbackAsync();
 
-            _dbContext.Outbox.Count().Should().Be(0);
+            _dbContext.Outbox.Should().HaveCount(0);
         }
 
         [Fact]

@@ -11,7 +11,6 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
     /// <summary>
     ///     Handles the returned message republishing it.
     /// </summary>
-    // TODO: Test
     public class SingleMessageReturnValueHandler : IReturnValueHandler
     {
         private readonly IPublisher _publisher;

@@ -74,7 +74,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(0);
+            SpyBehavior.InboundEnvelopes.Should().BeEmpty();
 
             await publisher.PublishAsync(message2);
 
@@ -129,7 +129,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(3);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(0);
+            SpyBehavior.InboundEnvelopes.Should().BeEmpty();
 
             await publisher.PublishAsync(message2);
 

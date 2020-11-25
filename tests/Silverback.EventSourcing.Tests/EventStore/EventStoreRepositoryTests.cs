@@ -387,8 +387,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             repo.Remove(entity);
 
-            repo.EventStores.Should().HaveCount(0);
-            repo.EventStores.SelectMany(s => s.Events).Count().Should().Be(0);
+            repo.EventStores.Should().BeEmpty();
+            repo.EventStores.SelectMany(s => s.Events).Should().BeEmpty();
         }
 
         [Fact]
@@ -410,8 +410,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             await repo.RemoveAsync(entity);
 
-            repo.EventStores.Should().HaveCount(0);
-            repo.EventStores.SelectMany(s => s.Events).Count().Should().Be(0);
+            repo.EventStores.Should().BeEmpty();
+            repo.EventStores.SelectMany(s => s.Events).Should().BeEmpty();
         }
 
         [Fact]

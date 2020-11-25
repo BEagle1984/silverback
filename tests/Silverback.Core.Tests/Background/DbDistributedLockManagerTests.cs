@@ -61,7 +61,7 @@ namespace Silverback.Tests.Core.Background
                 .AcquireAsync(distributedLockSettings);
 
             var dbContext = GetDbContext();
-            dbContext.Locks.Count().Should().Be(1);
+            dbContext.Locks.Should().HaveCount(1);
             dbContext.Locks.Single().Name.Should().Be("test.resource");
         }
 
@@ -81,7 +81,7 @@ namespace Silverback.Tests.Core.Background
                 .AcquireAsync(DistributedLockSettings.NoLock);
 
             var dbContext = GetDbContext();
-            dbContext.Locks.Count().Should().Be(0);
+            dbContext.Locks.Should().HaveCount(0);
         }
 
         [Fact]
@@ -141,7 +141,7 @@ namespace Silverback.Tests.Core.Background
                 .AcquireAsync(new DistributedLockSettings("test.resource", "unique"));
 
             var dbContext = GetDbContext();
-            dbContext.Locks.Count().Should().Be(1);
+            dbContext.Locks.Should().HaveCount(1);
             dbContext.Locks.Single().Name.Should().Be("test.resource");
             dbContext.Locks.Single().Created.Should().BeAfter(DateTime.UtcNow.AddSeconds(-2));
         }
@@ -218,14 +218,11 @@ namespace Silverback.Tests.Core.Background
             await _serviceProvider.GetRequiredService<DbDistributedLockManager>().ReleaseAsync(settings);
 
             var dbContext = GetDbContext();
-            dbContext.Locks.Count().Should().Be(0);
+            dbContext.Locks.Should().HaveCount(0);
         }
 
         public async ValueTask DisposeAsync()
         {
-            if (_connection == null)
-                return;
-
             _connection.Close();
             await _connection.DisposeAsync();
         }

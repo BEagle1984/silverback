@@ -14,7 +14,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Sequences.Batch;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences

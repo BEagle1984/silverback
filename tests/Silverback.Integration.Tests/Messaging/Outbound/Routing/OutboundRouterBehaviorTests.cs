@@ -131,7 +131,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             await _behavior.HandleAsync(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
 
-            _testSubscriber.ReceivedMessages.Should().HaveCount(0); // Because TestSubscriber discards the envelopes
+            _testSubscriber.ReceivedMessages.Should().BeEmpty(); // Because TestSubscriber discards the envelopes
         }
 
         [Fact]

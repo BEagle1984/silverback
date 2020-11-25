@@ -99,7 +99,7 @@
 //                 });
 //
 //             count.Should().Be(2);
-//             threads.Distinct().Count().Should().BeGreaterThan(1);
+//             threads.Distinct().Should().HaveCountGreaterThan(1);
 //         }
 //
 //         [Fact]
@@ -131,7 +131,7 @@
 //             await Task.Delay(100);
 //
 //             count.Should().Be(4);
-//             threads.Distinct().Count().Should().BeGreaterThan(1);
+//             threads.Distinct().Should().HaveCountGreaterThan(1);
 //         }
 //     }
 // }

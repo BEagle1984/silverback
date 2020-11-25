@@ -110,9 +110,10 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
                 "The offset cannot be deserialized. Both ClrType/Value and Offset are null.");
         }
 
+        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private static IComparableOffset InstantiateOffset(string clrType, string key, string value)
         {
-            var offsetType = TypesCache.GetType(clrType);
+            var offsetType = TypesCache.GetType(clrType)!;
             var offset = (IComparableOffset)Activator.CreateInstance(
                 offsetType,
                 key,

@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace Silverback.Util
 {
-    // TODO: Test or get rid of unused methods?
     internal static class EnumerableSelectExtensions
     {
         public static IEnumerable<TResult> ParallelSelect<T, TResult>(

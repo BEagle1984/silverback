@@ -62,7 +62,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
             await _offsetStore.StoreAsync(new TestOffset("topic1", "2"), new TestConsumerEndpoint("topic1"));
             await _offsetStore.StoreAsync(new TestOffset("topic2", "1"), new TestConsumerEndpoint("topic2"));
 
-            _dbContext.StoredOffsets.Count().Should().Be(0);
+            _dbContext.StoredOffsets.Should().BeEmpty();
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
 
             await _offsetStore.CommitAsync();
 
-            _dbContext.StoredOffsets.Count().Should().Be(3);
+            _dbContext.StoredOffsets.Should().HaveCount(3);
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
 
             await _offsetStore.CommitAsync();
 
-            _dbContext.StoredOffsets.Count().Should().Be(2);
+            _dbContext.StoredOffsets.Should().HaveCount(2);
             _dbContext.StoredOffsets
                 .Single(offset => offset.Key == "topic1|default-group|topic1")
                 .Value.Should().Be("2");
@@ -102,7 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
             await _offsetStore.StoreAsync(new TestOffset("topic1", "2"), new TestConsumerEndpoint("topic1"));
             await _offsetStore.CommitAsync();
 
-            _dbContext.StoredOffsets.Count().Should().Be(2);
+            _dbContext.StoredOffsets.Should().HaveCount(2);
             _dbContext.StoredOffsets
                 .Single(offset => offset.Key == "topic1|default-group|topic1")
                 .Value.Should().Be("2");
@@ -117,7 +117,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
 
             await _offsetStore.RollbackAsync();
 
-            _dbContext.StoredOffsets.Count().Should().Be(0);
+            _dbContext.StoredOffsets.Should().BeEmpty();
         }
 
         [Fact]

@@ -13,7 +13,6 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
     /// <summary>
     ///     Handles the returned <see cref="IObservable{T}" /> republishing all the messages.
     /// </summary>
-    // TODO: Test
     public class ObservableMessagesReturnValueHandler : IReturnValueHandler
     {
         private readonly IPublisher _publisher;

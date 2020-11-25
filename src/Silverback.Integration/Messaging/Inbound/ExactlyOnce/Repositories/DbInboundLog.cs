@@ -21,7 +21,6 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
     ///         An <see cref="IDbContext" /> is used to store the log into the database.
     ///     </para>
     /// </summary>
-    // TODO: Test
     public class DbInboundLog : RepositoryBase<InboundLogEntry>, IInboundLog
     {
         /// <summary>

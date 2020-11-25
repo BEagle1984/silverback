@@ -95,17 +95,33 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         }
 
         [Fact]
-        public void Publish_NewMessagesObservableReturned_MessagesRepublished()
+        public void Publish_MessagesObservableReturned_MessagesRepublished()
         {
             int count = 0;
             var publisher = GetPublisher(
                 builder => builder
-                        .AddDelegateSubscriber(
-                            (TestCommandOne msg) =>
-                                new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
-                        .AddDelegateSubscriber((TestCommandTwo _) => count++));
+                    .AddDelegateSubscriber(
+                        (TestCommandOne msg) =>
+                            new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
+                    .AddDelegateSubscriber((TestCommandTwo _) => count++));
 
             publisher.Publish(new TestCommandOne());
+
+            count.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task PublishAsync_MessagesObservableReturned_MessagesRepublished()
+        {
+            int count = 0;
+            var publisher = GetPublisher(
+                builder => builder
+                    .AddDelegateSubscriber(
+                        (TestCommandOne msg) =>
+                            new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
+                    .AddDelegateSubscriber((TestCommandTwo _) => count++));
+
+            await publisher.PublishAsync(new TestCommandOne());
 
             count.Should().Be(2);
         }

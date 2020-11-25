@@ -12,7 +12,6 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
     /// <summary>
     ///     Handles the returned <see cref="IReadOnlyCollection{T}" /> republishing all the messages.
     /// </summary>
-    // TODO: Test
     public class ReadOnlyCollectionMessagesReturnValueHandler : IReturnValueHandler
     {
         private readonly IBusOptions _busOptions;

@@ -58,7 +58,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             await _outbox.CommitAsync();
 
             var queued = await _outbox.ReadAsync(10);
-            queued.Should().HaveCount(0);
+            queued.Should().BeEmpty();
             _broker.ProducedMessages.Should().HaveCount(3);
         }
 
@@ -78,7 +78,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             var queued = await _outbox.ReadAsync(10);
             queued.Should().HaveCount(3);
-            _broker.ProducedMessages.Should().HaveCount(0);
+            _broker.ProducedMessages.Should().BeEmpty();
         }
     }
 }

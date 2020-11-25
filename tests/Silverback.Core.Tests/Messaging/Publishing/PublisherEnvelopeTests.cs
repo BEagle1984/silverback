@@ -27,8 +27,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             publisher.Publish(new TestEnvelope(new TestCommandOne()));
 
-            messages.OfType<TestEnvelope>().Count().Should().Be(1);
-            messages.OfType<TestCommandOne>().Count().Should().Be(1);
+            messages.OfType<TestEnvelope>().Should().HaveCount(1);
+            messages.OfType<TestCommandOne>().Should().HaveCount(1);
         }
 
         // This test simulates the case where the IRawInboundEnvelope isn't really an IEnvelope
@@ -42,7 +42,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             publisher.Publish(new TestEnvelope(new TestCommandOne()));
 
-            messages.OfType<TestEnvelope>().Count().Should().Be(1);
+            messages.OfType<TestEnvelope>().Should().HaveCount(1);
         }
 
         [Fact]
@@ -56,8 +56,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             await publisher.PublishAsync(new TestEnvelope(new TestCommandOne()));
 
-            messages.OfType<TestEnvelope>().Count().Should().Be(1);
-            messages.OfType<TestCommandOne>().Count().Should().Be(1);
+            messages.OfType<TestEnvelope>().Should().HaveCount(1);
+            messages.OfType<TestCommandOne>().Should().HaveCount(1);
         }
 
         [Fact]
@@ -71,8 +71,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             publisher.Publish(new TestEnvelope(new TestCommandOne(), false));
 
-            messages.OfType<TestEnvelope>().Count().Should().Be(1);
-            messages.OfType<TestCommandOne>().Count().Should().Be(0);
+            messages.OfType<TestEnvelope>().Should().HaveCount(1);
+            messages.OfType<TestCommandOne>().Should().BeEmpty();
         }
 
         [Fact]
@@ -86,8 +86,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             await publisher.PublishAsync(new TestEnvelope(new TestCommandOne(), false));
 
-            messages.OfType<TestEnvelope>().Count().Should().Be(1);
-            messages.OfType<TestCommandOne>().Count().Should().Be(0);
+            messages.OfType<TestEnvelope>().Should().HaveCount(1);
+            messages.OfType<TestCommandOne>().Should().BeEmpty();
         }
 
         [Fact]

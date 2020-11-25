@@ -10,7 +10,6 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
     /// <summary>
     ///     Calls the registered <see cref="IReturnValueHandler" />'s.
     /// </summary>
-    // TODO: Test
     internal class ReturnValueHandlerService
     {
         private readonly IReadOnlyCollection<IReturnValueHandler> _returnValueHandlers;

@@ -44,7 +44,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             repo.Store(person);
             _dbContext.SaveChanges();
 
-            _dbContext.Persons.Count().Should().Be(1);
+            _dbContext.Persons.Should().HaveCount(1);
             _dbContext.Persons.First().Events.Should().HaveCount(2);
         }
 
@@ -60,7 +60,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             await repo.StoreAsync(person);
             await _dbContext.SaveChangesAsync();
 
-            _dbContext.Persons.Count().Should().Be(1);
+            _dbContext.Persons.Should().HaveCount(1);
             _dbContext.Persons.First().Events.Should().HaveCount(2);
         }
 
@@ -87,7 +87,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             repo.Store(person);
             _dbContext.SaveChanges();
 
-            _dbContext.Persons.Count().Should().Be(1);
+            _dbContext.Persons.Should().HaveCount(1);
             _dbContext.Persons.First().Events.Should().HaveCount(3);
         }
 
@@ -114,7 +114,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             await repo.StoreAsync(person);
             await _dbContext.SaveChangesAsync();
 
-            _dbContext.Persons.Count().Should().Be(1);
+            _dbContext.Persons.Should().HaveCount(1);
             _dbContext.Persons.First().Events.Should().HaveCount(3);
         }
 
@@ -619,8 +619,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
             repo.Remove(entity!);
             _dbContext.SaveChanges();
 
-            _dbContext.Persons.Count().Should().Be(0);
-            _dbContext.Persons.SelectMany(s => s.Events).Count().Should().Be(0);
+            _dbContext.Persons.Should().BeEmpty();
+            _dbContext.Persons.SelectMany(s => s.Events).Should().BeEmpty();
         }
 
         [Fact]
@@ -644,8 +644,8 @@ namespace Silverback.Tests.EventSourcing.EventStore
             await repo.RemoveAsync(entity!);
             await _dbContext.SaveChangesAsync();
 
-            _dbContext.Persons.Count().Should().Be(0);
-            _dbContext.Persons.SelectMany(s => s.Events).Count().Should().Be(0);
+            _dbContext.Persons.Should().BeEmpty();
+            _dbContext.Persons.SelectMany(s => s.Events).Should().BeEmpty();
         }
 
         [Fact]

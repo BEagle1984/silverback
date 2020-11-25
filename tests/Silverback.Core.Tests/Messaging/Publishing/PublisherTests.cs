@@ -258,7 +258,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public void Publish_NewMessageReturnedBySubscriber_MessageRepublished()
+        public void Publish_MessageReturnedBySubscriber_MessageRepublished()
         {
             var subscriber = new TestSubscriber();
             var publisher = PublisherTestsHelper.GetPublisher(new TestRepublisher(), subscriber);
@@ -269,7 +269,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public async Task PublishAsync_NewMessageReturnedBySubscriber_MessageRepublished()
+        public async Task PublishAsync_MessageReturnedBySubscriber_MessageRepublished()
         {
             var subscriber = new TestSubscriber();
             var publisher = PublisherTestsHelper.GetPublisher(new TestRepublisher(), subscriber);
@@ -280,7 +280,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public void Publish_NewMessagesReturnedBySubscriber_MessagesRepublished()
+        public void Publish_MessagesReturnedBySubscriber_MessagesRepublished()
         {
             var subscriber = new TestSubscriber();
             var publisher = PublisherTestsHelper.GetPublisher(new TestRepublisher(), subscriber);
@@ -291,7 +291,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public async Task PublishAsync_NewMessagesReturnedBySubscriber_MessagesRepublished()
+        public async Task PublishAsync_MessagesReturnedBySubscriber_MessagesRepublished()
         {
             var subscriber = new TestSubscriber();
             var publisher = PublisherTestsHelper.GetPublisher(new TestRepublisher(), subscriber);
@@ -706,7 +706,97 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public void Publish_NewMessagesReturnedByDelegateSubscription_MessagesRepublished()
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Needed for subscription")]
+        [SuppressMessage("", "CA1801", Justification = "Needed for subscription")]
+        public void Publish_MessagesEnumerableReturnedByDelegateSubscription_MessagesRepublished()
+        {
+            static IEnumerable<ICommand> Handler(TestCommandTwo msg)
+            {
+                yield return new TestCommandOne();
+                yield return new TestCommandOne();
+            }
+
+            var subscriber = new TestSubscriber();
+            var publisher = PublisherTestsHelper.GetPublisher(
+                builder =>
+                    builder
+                        .AddDelegateSubscriber((TestCommandTwo msg) => Handler(msg)),
+                subscriber);
+
+            publisher.Publish(new TestCommandTwo());
+
+            subscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Needed for subscription")]
+        [SuppressMessage("", "CA1801", Justification = "Needed for subscription")]
+        public void PublishAsync_MessagesEnumerableReturnedByDelegateSubscription_MessagesRepublished()
+        {
+            static IEnumerable<ICommand> Handler(TestCommandTwo msg)
+            {
+                yield return new TestCommandOne();
+                yield return new TestCommandOne();
+            }
+
+            var subscriber = new TestSubscriber();
+            var publisher = PublisherTestsHelper.GetPublisher(
+                builder =>
+                    builder
+                        .AddDelegateSubscriber((TestCommandTwo msg) => Handler(msg)),
+                subscriber);
+
+            publisher.Publish(new TestCommandTwo());
+
+            subscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Needed for subscription")]
+        [SuppressMessage("", "CA1801", Justification = "Needed for subscription")]
+        public void Publish_MessagesReadOnlyCollectionReturnedByDelegateSubscription_MessagesRepublished()
+        {
+            static IReadOnlyCollection<object> Handler(TestCommandTwo msg)
+            {
+                return new[] { new TestCommandOne(), new TestCommandOne() };
+            }
+
+            var subscriber = new TestSubscriber();
+            var publisher = PublisherTestsHelper.GetPublisher(
+                builder =>
+                    builder
+                        .AddDelegateSubscriber((TestCommandTwo msg) => Handler(msg)),
+                subscriber);
+
+            publisher.Publish(new TestCommandTwo());
+
+            subscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = "Needed for subscription")]
+        [SuppressMessage("", "CA1801", Justification = "Needed for subscription")]
+        public void PublishAsync_MessagesReadOnlyCollectionReturnedByDelegateSubscription_MessagesRepublished()
+        {
+            static IReadOnlyCollection<object> Handler(TestCommandTwo msg)
+            {
+                return new[] { new TestCommandOne(), new TestCommandOne() };
+            }
+
+            var subscriber = new TestSubscriber();
+            var publisher = PublisherTestsHelper.GetPublisher(
+                builder =>
+                    builder
+                        .AddDelegateSubscriber((TestCommandTwo msg) => Handler(msg)),
+                subscriber);
+
+            publisher.Publish(new TestCommandTwo());
+
+            subscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        public void Publish_MessagesReturnedByMultipleDelegateSubscriptions_MessagesRepublished()
         {
             var subscriber = new TestSubscriber();
             var publisher = PublisherTestsHelper.GetPublisher(
@@ -722,6 +812,27 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 subscriber);
 
             publisher.Publish(new TestCommandTwo());
+
+            subscriber.ReceivedMessagesCount.Should().Be(3);
+        }
+
+        [Fact]
+        public async Task PublishAsync_MessagesReturnedByMultipleDelegateSubscriptions_MessagesRepublished()
+        {
+            var subscriber = new TestSubscriber();
+            var publisher = PublisherTestsHelper.GetPublisher(
+                builder =>
+                    builder
+                        .AddDelegateSubscriber((TestCommandTwo msg) => new TestCommandOne())
+                        .AddDelegateSubscriber(
+                            async (TestCommandTwo msg) =>
+                            {
+                                await Task.Delay(1);
+                                return new TestCommandOne();
+                            }),
+                subscriber);
+
+            await publisher.PublishAsync(new TestCommandTwo());
 
             subscriber.ReceivedMessagesCount.Should().Be(3);
         }
