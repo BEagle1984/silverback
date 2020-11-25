@@ -69,61 +69,73 @@ namespace Silverback.Messaging.Broker
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<RabbitConsumer> logger)
-            : base(broker, endpoint, behaviorsProvider,  serviceProvider, logger)
+            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             _connectionFactory = connectionFactory;
             _logger = logger;
         }
 
-        /// <inheritdoc cref="Consumer.ConnectCore" />
-        protected override void ConnectCore()
+        /// <inheritdoc cref="Consumer.ConnectCoreAsync" />
+        protected override Task ConnectCoreAsync()
         {
             if (_consumer != null)
-                return;
+                return Task.CompletedTask;
 
             (_channel, _queueName) = _connectionFactory.GetChannel(Endpoint);
 
             _consumer = new AsyncEventingBasicConsumer(_channel);
             _consumer.Received += TryHandleMessageAsync;
 
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc cref="Consumer.DisconnectCoreAsync" />
+        protected override Task DisconnectCoreAsync()
+        {
+            if (_consumer == null)
+                return Task.CompletedTask;
+
+            CommitPendingOffset();
+
+            _channel?.Dispose();
+            _channel = null;
+            _queueName = null;
+            _consumer = null;
+
+            _disconnecting = false;
+
+            return Task.CompletedTask;
+        }
+
+        /// <inheritdoc cref="Consumer.StopCore" />
+        protected override void StartCore()
+        {
             _consumerTag = _channel.BasicConsume(
                 _queueName,
                 false,
                 _consumer);
         }
 
-        /// <inheritdoc cref="Consumer.StopConsuming" />
-        protected override void StopConsuming()
+        /// <inheritdoc cref="Consumer.StopCore" />
+        protected override void StopCore()
         {
             if (_consumer == null)
                 return;
 
             _disconnecting = true;
+
+            if (_consumerTag != null)
+            {
+                _channel?.BasicCancel(_consumerTag);
+                _consumerTag = null;
+            }
         }
 
-        /// <param name="cancellationToken"></param>
-        /// <inheritdoc cref="Consumer.WaitUntilConsumingStopped" />
-        protected override void WaitUntilConsumingStopped(CancellationToken cancellationToken)
+        /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />
+        protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken)
         {
             // TODO: How to handle this?
-        }
-
-        /// <inheritdoc cref="Consumer.DisconnectCore" />
-        protected override void DisconnectCore()
-        {
-            if (_consumer == null)
-                return;
-
-            CommitPendingOffset();
-
-            _channel?.BasicCancel(_consumerTag);
-            _channel?.Dispose();
-            _channel = null;
-            _queueName = null;
-            _consumerTag = null;
-            _consumer = null;
-
-            _disconnecting = false;
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.CommitCoreAsync" />
@@ -170,11 +182,15 @@ namespace Silverback.Messaging.Broker
                         logData)
                     .ConfigureAwait(false);
             }
-            catch
+            catch (Exception ex)
             {
-                /* Logged by the FatalExceptionLoggerConsumerBehavior */
+                // TODO: Prevent duplicate log (FatalExceptionLoggerConsumerBehavior)
+                _logger.LogCritical(
+                    IntegrationEventIds.ConsumerFatalError,
+                    ex,
+                    "Fatal error occurred processing the consumed message. The consumer will be stopped.");
 
-                Disconnect();
+                await DisconnectAsync().ConfigureAwait(false);
             }
         }
 

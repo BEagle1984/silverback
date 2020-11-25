@@ -316,7 +316,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             receivedMessages.Should().HaveCount(2);
 
-            Broker.Disconnect();
+            await Broker.DisconnectAsync();
 
             await AsyncTestingUtil.WaitAsync(() => aborted);
 

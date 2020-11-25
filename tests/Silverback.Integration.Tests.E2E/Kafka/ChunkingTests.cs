@@ -1655,10 +1655,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             GroupId = "consumer1",
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            Timeout = TimeSpan.FromMilliseconds(500)
                                         }
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
@@ -1684,7 +1680,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequence!.Length.Should().Be(2);
             sequence!.IsAborted.Should().BeFalse();
 
-            Broker.Disconnect();
+            await Broker.DisconnectAsync();
 
             sequence.IsAborted.Should().BeTrue();
             sequenceStore.HasPendingSequences.Should().BeFalse();
@@ -1721,10 +1717,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             GroupId = "consumer1",
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            Timeout = TimeSpan.FromMilliseconds(500)
                                         },
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))
@@ -1764,7 +1756,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequence!.Length.Should().Be(2);
             sequence!.IsAborted.Should().BeFalse();
 
-            Broker.Disconnect();
+            await Broker.DisconnectAsync();
 
             sequence.IsAborted.Should().BeTrue();
             sequenceStore.HasPendingSequences.Should().BeFalse();
@@ -1801,10 +1793,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             GroupId = "consumer1",
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            Timeout = TimeSpan.FromMilliseconds(500)
                                         }
                                     }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
@@ -1867,10 +1855,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             GroupId = "consumer1",
                                             EnableAutoCommit = false,
                                             CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            Timeout = TimeSpan.FromMilliseconds(500)
                                         },
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))

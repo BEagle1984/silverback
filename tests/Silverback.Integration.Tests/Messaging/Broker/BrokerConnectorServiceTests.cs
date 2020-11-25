@@ -183,7 +183,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             await service.StartAsync(CancellationToken.None);
 
             var testBroker = serviceProvider.GetRequiredService<TestBroker>();
-            testBroker.Connect();
+            await testBroker.ConnectAsync();
             testBroker.IsConnected.Should().BeTrue();
 
             appStoppingTokenSource.Cancel();

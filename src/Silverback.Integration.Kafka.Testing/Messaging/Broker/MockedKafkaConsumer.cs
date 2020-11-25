@@ -31,7 +31,9 @@ namespace Silverback.Messaging.Broker
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _storedOffsets =
             new ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>();
 
-        private bool _partitionsAssigned;
+        private readonly List<TopicPartitionOffset> _temporaryAssignment = new List<TopicPartitionOffset>();
+
+        private readonly List<string> _topicAssignments = new List<string>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MockedKafkaConsumer" /> class.
@@ -82,6 +84,15 @@ namespace Silverback.Messaging.Broker
         public IConsumerGroupMetadata ConsumerGroupMetadata => throw new NotSupportedException();
 
         /// <summary>
+        ///     Gets a value indicating whether the partitions have been assigned to the consumer.
+        /// </summary>
+        /// <remarks>
+        ///     This value indicates that the rebalance process is over. It could be that no partition has actually
+        ///     been assigned.
+        /// </remarks>
+        public bool PartitionsAssigned { get; private set; }
+
+        /// <summary>
         ///     Gets a value indicating whether this instance was disposed.
         /// </summary>
         public bool Disposed { get; private set; }
@@ -128,12 +139,8 @@ namespace Silverback.Messaging.Broker
             lock (Subscription)
             {
                 Subscription.Clear();
-
-                foreach (var topic in topicsList)
-                {
-                    _topics[topic].Subscribe(this);
-                    Subscription.Add(topic);
-                }
+                Subscription.AddRange(topicsList);
+                Subscription.ForEach(topic => _topics[topic].Subscribe(this));
             }
         }
 
@@ -281,17 +288,22 @@ namespace Silverback.Messaging.Broker
 
         internal void OnRebalancing()
         {
-            _partitionsAssigned = false;
+            PartitionsAssigned = false;
         }
 
         internal void OnPartitionsAssigned(string topicName, IReadOnlyCollection<Partition> partitions)
         {
-            var partitionOffsets = partitions
-                .Select(partition => new TopicPartitionOffset(topicName, partition, Offset.Unset))
-                .Union(
-                    Assignment.Where(topicPartition => topicPartition.Topic != topicName)
-                        .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset)))
-                .ToList();
+            _temporaryAssignment.RemoveAll(topicPartitionOffset => topicPartitionOffset.Topic == topicName);
+            _temporaryAssignment.AddRange(
+                partitions.Select(partition => new TopicPartitionOffset(topicName, partition, Offset.Unset)));
+
+            if (!_topicAssignments.Contains(topicName))
+                _topicAssignments.Add(topicName);
+
+            if (_topicAssignments.Count < Subscription.Count)
+                return;
+
+            var partitionOffsets = _temporaryAssignment;
 
             var revokeHandlerResult = InvokePartitionsRevokedHandler(topicName);
             if (revokeHandlerResult != null && revokeHandlerResult.Count > 0)
@@ -319,7 +331,7 @@ namespace Silverback.Messaging.Broker
                 Seek(GetStartingOffset(partitionOffset));
             }
 
-            _partitionsAssigned = true;
+            PartitionsAssigned = true;
         }
 
         private List<TopicPartitionOffset>? InvokePartitionsAssignedHandler(
@@ -330,14 +342,19 @@ namespace Silverback.Messaging.Broker
                 partitionOffsets.Select(partitionOffset => partitionOffset.TopicPartition).ToList())?.ToList();
         }
 
-        private List<TopicPartitionOffset>? InvokePartitionsRevokedHandler(string topicName) =>
-            PartitionsRevokedHandler?.Invoke(
+        private List<TopicPartitionOffset>? InvokePartitionsRevokedHandler(string topicName)
+        {
+            if (PartitionsRevokedHandler == null || Assignment.Count == 0)
+                return null;
+
+            return PartitionsRevokedHandler.Invoke(
                     this,
-                    Assignment.Where(assignment => assignment.Topic == topicName).Select(
+                    Assignment.Where(topicPartition => topicPartition.Topic == topicName).Select(
                         partition => new TopicPartitionOffset(
                             partition,
                             _topics[partition.Topic].GetCommittedOffset(partition.Partition, GroupId))).ToList())
                 ?.ToList();
+        }
 
         private void ClearPartitionsAssignment()
         {
@@ -350,7 +367,7 @@ namespace Silverback.Messaging.Broker
         private bool TryConsume(CancellationToken cancellationToken, out ConsumeResult<byte[]?, byte[]?>? result)
         {
             // Prevent consuming while rebalancing
-            if (!_partitionsAssigned)
+            if (!PartitionsAssigned)
             {
                 result = null;
                 return false;

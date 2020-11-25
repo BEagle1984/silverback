@@ -62,7 +62,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             broker.Consumers[0].IsConnected.Should().BeTrue();
             broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
 
-            broker.Disconnect();
+            await Broker.DisconnectAsync();
 
             broker.Consumers[0].IsConnected.Should().BeFalse();
             broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Disconnected);
@@ -107,7 +107,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Consuming);
             broker.Consumers[0].StatusInfo.History.Last().Timestamp.Should().NotBeNull();
 
-            broker.Disconnect();
+            await Broker.DisconnectAsync();
 
             broker.Consumers[0].StatusInfo.History.Should().HaveCount(3);
             broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Disconnected);

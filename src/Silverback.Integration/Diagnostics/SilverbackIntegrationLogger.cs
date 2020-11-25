@@ -110,6 +110,13 @@ namespace Silverback.Diagnostics
 
         public void LogTraceWithMessageInfo(
             EventId eventId,
+            Exception? exception,
+            string logMessage,
+            ConsumerPipelineContext context) =>
+            LogWithMessageInfo(LogLevel.Trace, eventId, exception, logMessage, context.Envelope, context.Sequence);
+
+        public void LogTraceWithMessageInfo(
+            EventId eventId,
             string logMessage,
             IRawOutboundEnvelope envelope) =>
             LogWithMessageInfo(LogLevel.Trace, eventId, null, logMessage, envelope);

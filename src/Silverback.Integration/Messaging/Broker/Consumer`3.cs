@@ -54,12 +54,12 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Gets the <see cref="IBroker" /> that owns this consumer.
         /// </summary>
-        protected new TBroker Broker => (TBroker)base.Broker;
+        public new TBroker Broker => (TBroker)base.Broker;
 
         /// <summary>
         ///     Gets the <see cref="IConsumerEndpoint" /> representing the endpoint that is being consumed.
         /// </summary>
-        protected new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
+        public new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
 
         /// <inheritdoc cref="Consumer.CommitAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IOffset})" />
         public override Task CommitAsync(IReadOnlyCollection<IOffset> offsets)
@@ -79,12 +79,12 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc cref="Consumer.RollbackAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IOffset})" />
-        public override Task RollbackAsync(IReadOnlyCollection<IOffset> offsets)
+        /// <inheritdoc cref="Consumer.RollbackAsync(IReadOnlyCollection{IOffset})" />
+        public override async Task RollbackAsync(IReadOnlyCollection<IOffset> offsets)
         {
             try
             {
-                return RollbackCoreAsync(offsets.Cast<TOffset>().ToList());
+                await RollbackCoreAsync(offsets.Cast<TOffset>().ToList()).ConfigureAwait(false);
             }
             catch (Exception exception)
             {

@@ -83,21 +83,19 @@ namespace Silverback.Tests.Integration.TestTypes
                 null);
         }
 
-        protected override void ConnectCore()
+        protected override Task ConnectCoreAsync() => Task.CompletedTask;
+
+        protected override Task DisconnectCoreAsync() => Task.CompletedTask;
+
+        protected override void StartCore()
         {
         }
 
-        protected override void StopConsuming()
+        protected override void StopCore()
         {
         }
 
-        protected override void WaitUntilConsumingStopped(CancellationToken cancellationToken)
-        {
-        }
-
-        protected override void DisconnectCore()
-        {
-        }
+        protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
         protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> offsets)
         {
@@ -105,10 +103,6 @@ namespace Silverback.Tests.Integration.TestTypes
             return Task.CompletedTask;
         }
 
-        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> offsets)
-        {
-            // Nothing to do
-            return Task.CompletedTask;
-        }
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> offsets) => Task.CompletedTask;
     }
 }

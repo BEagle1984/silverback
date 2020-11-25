@@ -6,6 +6,7 @@ namespace Silverback.Messaging.Broker
     /// <summary>
     ///     The possible states of the <see cref="IConsumer"/> as exposed in the <see cref="IConsumerStatusInfo"/>.
     /// </summary>
+    // TODO: Should record start/stop as well?
     public enum ConsumerStatus
     {
         /// <summary>

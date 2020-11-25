@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task GetAsync_ExistingSequence_SequenceReturned()
         {
-            var store = new DefaultSequenceStore();
+            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
 
             await store.AddAsync(new ChunkSequence("aaa", 10, context));
@@ -32,7 +32,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task GetAsync_NotExistingSequence_NullReturned()
         {
-            var store = new DefaultSequenceStore();
+            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
 
             await store.AddAsync(new ChunkSequence("aaa", 10, context));
@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task AddAsync_NewSequence_SequenceAddedAndReturned()
         {
-            var store = new DefaultSequenceStore();
+            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
 
             var newSequence = new ChunkSequence("abc", 10, context);
@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task AddAsync_ExistingSequence_SequenceAbortedAndReplaced()
         {
-            var store = new DefaultSequenceStore();
+            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
 
             var originalSequence = new ChunkSequence("abc", 10, context);
@@ -78,7 +78,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task AddAsyncAndGetAsync_Sequence_IsNewFlagAutomaticallyHandled()
         {
-            var store = new DefaultSequenceStore();
+            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
 
             var sequence = await store.AddAsync(new ChunkSequence("abc", 10, context));
@@ -93,7 +93,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task RemoveAsync_ExistingSequence_SequenceRemoved()
         {
-            var store = new DefaultSequenceStore();
+            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
 
             await store.AddAsync(new ChunkSequence("aaa", 10, context));
@@ -110,7 +110,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task RemoveAsync_NotExistingSequence_NoExceptionThrown()
         {
-            var store = new DefaultSequenceStore();
+            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(null, sequenceStore: store);
 
             await store.AddAsync(new ChunkSequence("aaa", 10, context));
@@ -127,7 +127,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public void HasPendingSequences_EmptyStore_FalseReturned()
         {
-            var store = new DefaultSequenceStore();
+            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
 
             store.HasPendingSequences.Should().BeFalse();
         }
@@ -135,7 +135,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task HasPendingSequences_WithIncompleteSequence_TrueReturned()
         {
-            var store = new DefaultSequenceStore();
+            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
 
             await store.AddAsync(new FakeSequence("aaa", true, false, store));
             await store.AddAsync(new FakeSequence("bbb", false, true, store));
@@ -147,7 +147,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task HasPendingSequences_WithAllCompleteOrAbortedSequences_FalseReturned()
         {
-            var store = new DefaultSequenceStore();
+            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
 
             await store.AddAsync(new FakeSequence("aaa", true, false, store));
             await store.AddAsync(new FakeSequence("bbb", false, true, store));

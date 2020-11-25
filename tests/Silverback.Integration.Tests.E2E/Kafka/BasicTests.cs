@@ -373,10 +373,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Subscriber.OutboundEnvelopes.Should().HaveCount(10);
             Subscriber.InboundEnvelopes.Should().HaveCount(10);
 
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
+
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(10);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(10);
             SpyBehavior.InboundEnvelopes
                 .Select(envelope => ((TestEventOne)envelope.Message!).Content)
+                .Distinct()
                 .Should().BeEquivalentTo(Enumerable.Range(1, 10).Select(i => $"{i}"));
         }
 
@@ -476,7 +479,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task Inbound_ThrowIfUnhandled_ExceptionThrownIfMessageIsNotHandled()
+        public async Task Inbound_ThrowIfUnhandled_ConsumerStoppedIfMessageIsNotHandled()
         {
             var received = 0;
             var serviceProvider = Host.ConfigureServices(
@@ -524,7 +527,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task Disconnect_WithoutAutoCommit_PendingOffsetsCommitted()
+        public async Task DisconnectAsync_WithoutAutoCommit_PendingOffsetsCommitted()
         {
             int receivedMessages = 0;
             var serviceProvider = Host.ConfigureServices(
@@ -569,7 +572,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await AsyncTestingUtil.WaitAsync(() => receivedMessages == 3);
 
-            Broker.Disconnect();
+            await Broker.DisconnectAsync();
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
         }
@@ -623,6 +626,65 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             DefaultTopic.Rebalance();
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+        }
+
+        [Fact]
+        public async Task Rebalance_DefaultSettings_ProducedAndConsumedAfterRebalance()
+        {
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 5; i++)
+            {
+                await publisher.PublishAsync(
+                    new TestEventOne
+                    {
+                        Content = $"{i}"
+                    });
+            }
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.OutboundEnvelopes.Should().HaveCount(5);
+            Subscriber.InboundEnvelopes.Should().HaveCount(5);
+
+            DefaultTopic.Rebalance();
+
+            for (int i = 1; i <= 5; i++)
+            {
+                await publisher.PublishAsync(
+                    new TestEventOne
+                    {
+                        Content = $"{i}"
+                    });
+            }
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.OutboundEnvelopes.Should().HaveCount(10);
+            Subscriber.InboundEnvelopes.Should().HaveCount(10);
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
         }
     }
 }

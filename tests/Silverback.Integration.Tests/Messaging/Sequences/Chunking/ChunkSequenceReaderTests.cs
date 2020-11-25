@@ -14,7 +14,8 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 {
     public sealed class ChunkSequenceReaderTests : IDisposable
     {
-        private readonly ISequenceStore _defaultSequenceStore = new DefaultSequenceStore();
+        private readonly ISequenceStore _defaultSequenceStore =
+            new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
 
         [Fact]
         public async Task CanHandle_Chunk_TrueReturned()

@@ -67,7 +67,8 @@ namespace Silverback.Messaging.Broker
         {
             using var scope = _serviceScopeFactory.CreateScope();
 
-            _applicationLifetime.ApplicationStopping.Register(() => _brokerCollection.Disconnect());
+            _applicationLifetime.ApplicationStopping.Register(
+                () => AsyncHelper.RunSynchronously(() => _brokerCollection.DisconnectAsync()));
 
             switch (_connectionOptions.Mode)
             {
@@ -90,7 +91,7 @@ namespace Silverback.Messaging.Broker
             {
                 try
                 {
-                    _brokerCollection.Connect();
+                    await _brokerCollection.ConnectAsync().ConfigureAwait(false);
                     break;
                 }
                 catch (Exception ex)

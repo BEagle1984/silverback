@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -13,6 +14,11 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public interface IConsumer
     {
+        /// <summary>
+        ///     Gets the <see cref="Guid"/> uniquely identifying the consumer instance.
+        /// </summary>
+        Guid Id { get; }
+
         /// <summary>
         ///     Gets the <see cref="IBroker" /> that owns this consumer.
         /// </summary>
@@ -28,6 +34,11 @@ namespace Silverback.Messaging.Broker
         ///     messages.
         /// </summary>
         bool IsConnected { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether this consumer is connected and consuming.
+        /// </summary>
+        bool IsConsuming { get; }
 
         /// <summary>
         ///     Gets the <see cref="IConsumerStatusInfo" /> containing the status details and basic statistics of this
@@ -106,12 +117,28 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Connects and starts consuming.
         /// </summary>
-        void Connect();
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task ConnectAsync();
 
         /// <summary>
         ///     Disconnects and stops consuming.
         /// </summary>
-        void Disconnect();
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task DisconnectAsync();
+
+        /// <summary>
+        ///     Starts consuming. Used after <see cref="Stop"/> has been called to resume consuming.
+        /// </summary>
+        void Start();
+
+        /// <summary>
+        ///     Stops the consumer without disconnecting. Can be used to pause and resume consuming.
+        /// </summary>
+        void Stop();
 
         /// <summary>
         ///     Increments the stored failed attempts count for the specified envelope.

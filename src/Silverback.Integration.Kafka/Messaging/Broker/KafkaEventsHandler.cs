@@ -200,7 +200,7 @@ namespace Silverback.Messaging.Broker
                 KafkaEventIds.ConsumerError,
                 "Error in Kafka consumer: {error} (topic(s): {topics})",
                 error,
-                ((KafkaConsumerEndpoint)consumer.Endpoint).Names);
+                consumer.Endpoint.Names);
         }
     }
 }

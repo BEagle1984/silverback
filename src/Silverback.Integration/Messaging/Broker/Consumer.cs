@@ -67,6 +67,9 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
+        /// <inheritdoc cref="IConsumer.Id" />
+        public Guid Id { get; } = Guid.NewGuid();
+
         /// <inheritdoc cref="IConsumer.Broker" />
         public IBroker Broker { get; }
 
@@ -79,6 +82,9 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.IsConnected" />
         public bool IsConnected { get; private set; }
 
+        /// <inheritdoc cref="IConsumer.IsConsuming" />
+        public bool IsConsuming { get; protected set; }
+
         /// <summary>
         ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </summary>
@@ -89,6 +95,11 @@ namespace Silverback.Messaging.Broker
         ///     multiple stores (e.g. the <c>KafkaConsumer</c> will create a store per each assigned partition).
         /// </summary>
         protected IList<ISequenceStore> SequenceStores { get; } = new List<ISequenceStore>();
+
+        /// <summary>
+        ///     Gets a value indicating whether the consumer is being disconnected.
+        /// </summary>
+        protected bool IsDisconnecting { get; private set; }
 
         /// <inheritdoc cref="IConsumer.CommitAsync(IOffset)" />
         public Task CommitAsync(IOffset offset) => CommitAsync(new[] { offset });
@@ -102,45 +113,48 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.RollbackAsync(IReadOnlyCollection{IOffset})" />
         public abstract Task RollbackAsync(IReadOnlyCollection<IOffset> offsets);
 
-        /// <inheritdoc cref="IConsumer.Connect" />
-        public void Connect()
+        /// <inheritdoc cref="IConsumer.ConnectAsync" />
+        public async Task ConnectAsync()
         {
             if (IsConnected)
                 return;
 
             SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>());
 
-            ConnectCore();
-
-            if (IsConnected)
-                throw new InvalidOperationException("Already connected.");
+            await ConnectCoreAsync().ConfigureAwait(false);
 
             IsConnected = true;
-
             _statusInfo.SetConnected();
-
             _logger.LogDebug(
                 IntegrationEventIds.ConsumerConnected,
                 "Connected consumer to endpoint {endpoint}.",
                 Endpoint.Name);
+
+            Start();
         }
 
-        /// <inheritdoc cref="IConsumer.Disconnect" />
-        public void Disconnect()
+        /// <inheritdoc cref="IConsumer.DisconnectAsync" />
+        public async Task DisconnectAsync()
         {
             if (!IsConnected)
                 return;
 
-            StopConsuming();
+            IsDisconnecting = true;
+
+            // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
+            // but not started)
+            if (IsConsuming)
+                Stop();
+            else
+                StopCore();
 
             if (SequenceStores.Count > 0)
             {
-                // ReSharper disable once AccessToDisposedClosure
-                AsyncHelper.RunSynchronously(
-                    () => SequenceStores
-                        .SelectMany(store => store)
-                        .ToList()
-                        .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted)));
+                await SequenceStores
+                    .SelectMany(store => store)
+                    .ToList()
+                    .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted))
+                    .ConfigureAwait(false);
             }
 
             using (var cancellationTokenSource = new CancellationTokenSource(ConsumerStopWaitTimeout))
@@ -149,7 +163,7 @@ namespace Silverback.Messaging.Broker
 
                 try
                 {
-                    WaitUntilConsumingStopped(cancellationTokenSource.Token);
+                    await WaitUntilConsumingStoppedAsync(cancellationTokenSource.Token).ConfigureAwait(false);
                     _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Consumer stopped.");
                 }
                 catch (OperationCanceledException)
@@ -160,18 +174,41 @@ namespace Silverback.Messaging.Broker
                 }
             }
 
-            DisconnectCore();
+            await DisconnectCoreAsync().ConfigureAwait(false);
 
             SequenceStores.ForEach(store => store.Dispose());
             SequenceStores.Clear();
 
             IsConnected = false;
             _statusInfo.SetDisconnected();
-
             _logger.LogDebug(
                 IntegrationEventIds.ConsumerDisconnected,
                 "Disconnected consumer from endpoint {endpoint}.",
                 Endpoint.Name);
+
+            IsDisconnecting = false;
+        }
+
+        /// <inheritdoc cref="IConsumer.Start" />
+        public void Start()
+        {
+            if (IsConsuming)
+                return;
+
+            StartCore();
+
+            IsConsuming = true;
+        }
+
+        /// <inheritdoc cref="IConsumer.Stop" />
+        public void Stop()
+        {
+            if (!IsConsuming)
+                return;
+
+            StopCore();
+
+            IsConsuming = false;
         }
 
         /// <inheritdoc cref="IConsumer.IncrementFailedAttempts" />
@@ -211,9 +248,41 @@ namespace Silverback.Messaging.Broker
         public IReadOnlyList<ISequenceStore> GetCurrentSequenceStores() => SequenceStores.AsReadOnlyList();
 
         /// <summary>
-        ///     Connects and starts consuming.
+        ///     Connects to the message broker.
         /// </summary>
-        protected abstract void ConnectCore();
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected abstract Task ConnectCoreAsync();
+
+        /// <summary>
+        ///     Disconnects from the message broker.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected abstract Task DisconnectCoreAsync();
+
+        /// <summary>
+        ///     Starts consuming. Called to resume consuming after <see cref="Stop" /> has been called.
+        /// </summary>
+        protected abstract void StartCore();
+
+        /// <summary>
+        ///     Stops consuming while staying connected to the message broker.
+        /// </summary>
+        protected abstract void StopCore();
+
+        /// <summary>
+        ///     Waits until the consuming is stopped.
+        /// </summary>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected abstract Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken);
 
         /// <summary>
         ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.
@@ -228,24 +297,6 @@ namespace Silverback.Messaging.Broker
         protected virtual ISequenceStore GetSequenceStore(IOffset offset) =>
             SequenceStores.FirstOrDefault() ??
             throw new InvalidOperationException("The sequence store is not initialized.");
-
-        /// <summary>
-        ///     Stops the consumer.
-        /// </summary>
-        protected abstract void StopConsuming();
-
-        /// <summary>
-        ///     Waits until the consuming is stopped.
-        /// </summary>
-        /// <param name="cancellationToken">
-        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
-        /// </param>
-        protected abstract void WaitUntilConsumingStopped(CancellationToken cancellationToken);
-
-        /// <summary>
-        ///     Disconnects the consumer from the message broker.
-        /// </summary>
-        protected abstract void DisconnectCore();
 
         /// <summary>
         ///     Handles the consumed message invoking each <see cref="IConsumerBehavior" /> in the pipeline.
@@ -313,7 +364,7 @@ namespace Silverback.Messaging.Broker
 
             try
             {
-                Disconnect();
+                AsyncHelper.RunSynchronously(DisconnectAsync);
             }
             catch (Exception ex)
             {

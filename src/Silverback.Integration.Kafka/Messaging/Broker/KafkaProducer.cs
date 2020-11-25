@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Broker
         private readonly ISilverbackLogger _logger;
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private IProducer<byte[]?, byte[]?>? _innerProducer;
+        private IProducer<byte[]?, byte[]?>? _confluentProducer;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducer" /> class.
@@ -75,7 +75,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
-            DisposeInnerProducer();
+            DisposeConfluentProducer();
         }
 
         /// <inheritdoc cref="Producer.ProduceCore" />
@@ -101,7 +101,7 @@ namespace Silverback.Messaging.Broker
                     kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
                 }
 
-                var deliveryResult = await GetInnerProducer().ProduceAsync(Endpoint.Name, kafkaMessage)
+                var deliveryResult = await GetConfluentProducer().ProduceAsync(Endpoint.Name, kafkaMessage)
                     .ConfigureAwait(false);
 
                 if (Endpoint.Configuration.ArePersistenceStatusReportsEnabled)
@@ -118,7 +118,7 @@ namespace Silverback.Messaging.Broker
             {
                 // Disposing and re-creating the producer will maybe fix the issue
                 if (Endpoint.Configuration.DisposeOnException)
-                    DisposeInnerProducer();
+                    DisposeConfluentProducer();
 
                 throw new ProduceException(
                     "Error occurred producing the message. See inner exception for details.",
@@ -148,12 +148,12 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private IProducer<byte[]?, byte[]?> GetInnerProducer() =>
-            _innerProducer ??=
-                ProducersCache.GetOrAdd(Endpoint.Configuration.ConfluentConfig, _ => CreateInnerProducer());
+        private IProducer<byte[]?, byte[]?> GetConfluentProducer() =>
+            _confluentProducer ??=
+                ProducersCache.GetOrAdd(Endpoint.Configuration.ConfluentConfig, _ => CreateConfluentProducer());
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private IProducer<byte[]?, byte[]?> CreateInnerProducer()
+        private IProducer<byte[]?, byte[]?> CreateConfluentProducer()
         {
             _logger.LogDebug(KafkaEventIds.CreatingConfluentProducer, "Creating Confluent.Kafka.Producer...");
             return _confluentProducerBuilder.Build();
@@ -193,15 +193,15 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private void DisposeInnerProducer()
+        private void DisposeConfluentProducer()
         {
             // Dispose only if still in cache to avoid ObjectDisposedException
             if (!ProducersCache.TryRemove(Endpoint.Configuration.ConfluentConfig, out _))
                 return;
 
-            _innerProducer?.Flush(TimeSpan.FromSeconds(10));
-            _innerProducer?.Dispose();
-            _innerProducer = null;
+            _confluentProducer?.Flush(TimeSpan.FromSeconds(10));
+            _confluentProducer?.Dispose();
+            _confluentProducer = null;
         }
     }
 }

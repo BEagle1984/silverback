@@ -18,6 +18,8 @@ namespace Silverback.Messaging.Broker.Topics
     {
         private readonly List<InMemoryPartition> _partitions;
 
+        private readonly object _consumersLock;
+
         private readonly List<MockedKafkaConsumer> _consumers = new List<MockedKafkaConsumer>();
 
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _committedOffsets =
@@ -32,7 +34,10 @@ namespace Silverback.Messaging.Broker.Topics
         /// <param name="partitions">
         ///     The number of partitions to create.
         /// </param>
-        public InMemoryTopic(string name, int partitions)
+        /// <param name="consumersLock">
+        ///     The object to be locked when an operation is performed on the consumers (e.g. a rebalance).
+        /// </param>
+        public InMemoryTopic(string name, int partitions, object consumersLock)
         {
             Name = Check.NotEmpty(name, nameof(name));
 
@@ -47,6 +52,8 @@ namespace Silverback.Messaging.Broker.Topics
             _partitions = new List<InMemoryPartition>(
                 Enumerable.Range(0, partitions)
                     .Select(i => new InMemoryPartition(i, this)));
+
+            _consumersLock = Check.NotNull(consumersLock, nameof(consumersLock));
         }
 
         /// <inheritdoc cref="IInMemoryTopic.Name" />
@@ -96,7 +103,7 @@ namespace Silverback.Messaging.Broker.Topics
         {
             Check.NotNull(consumer, nameof(consumer));
 
-            lock (_consumers)
+            lock (_consumersLock)
             {
                 _consumers.Add(consumer);
 
@@ -108,7 +115,8 @@ namespace Silverback.Messaging.Broker.Topics
                                 new KeyValuePair<Partition, Offset>(partition.Partition.Value, Offset.Unset)));
                 }
 
-                Rebalance(consumer.GroupId);
+                // Rebalance asynchronously to mimic the real Kafka
+                Task.Run(() => Rebalance(consumer.GroupId));
             }
         }
 
@@ -117,7 +125,7 @@ namespace Silverback.Messaging.Broker.Topics
         {
             Check.NotNull(consumer, nameof(consumer));
 
-            lock (_consumers)
+            lock (_consumersLock)
             {
                 _consumers.Remove(consumer);
 
@@ -183,46 +191,52 @@ namespace Silverback.Messaging.Broker.Topics
                 if (_consumers.All(HasFinishedConsuming))
                     return;
 
-                await Task.Delay(100, cancellationToken).ConfigureAwait(false);
+                await Task.Delay(50, cancellationToken).ConfigureAwait(false);
             }
         }
 
         /// <inheritdoc cref="IInMemoryTopic.Rebalance" />
         public void Rebalance()
         {
-            // ReSharper disable once InconsistentlySynchronizedField
-            _consumers
-                .Select(consumer => consumer.GroupId)
-                .Distinct()
-                .ForEach(Rebalance);
+            lock (_consumersLock)
+            {
+                // ReSharper disable once InconsistentlySynchronizedField
+                _consumers
+                    .Select(consumer => consumer.GroupId)
+                    .Distinct()
+                    .ForEach(Rebalance);
+            }
         }
 
         private void Rebalance(string groupId)
         {
-            _consumers
-                .Where(consumer => consumer.Disposed)
-                .ToList()
-                .ForEach(consumer => _consumers.Remove(consumer));
-
-            _consumers.ForEach(consumer => consumer.OnRebalancing());
-
-            var groupConsumers = _consumers.Where(consumer => consumer.GroupId == groupId).ToList();
-
-            var assignments = new List<Partition>[groupConsumers.Count];
-
-            for (int i = 0; i < groupConsumers.Count; i++)
+            lock (_consumersLock)
             {
-                assignments[i] = new List<Partition>();
-            }
+                _consumers
+                    .Where(consumer => consumer.Disposed)
+                    .ToList()
+                    .ForEach(consumer => _consumers.Remove(consumer));
 
-            for (int partitionIndex = 0; partitionIndex < _partitions.Count; partitionIndex++)
-            {
-                assignments[partitionIndex % groupConsumers.Count].Add(new Partition(partitionIndex));
-            }
+                _consumers.ForEach(consumer => consumer.OnRebalancing());
 
-            for (int i = 0; i < groupConsumers.Count; i++)
-            {
-                groupConsumers[i].OnPartitionsAssigned(Name, assignments[i]);
+                var groupConsumers = _consumers.Where(consumer => consumer.GroupId == groupId).ToList();
+
+                var assignments = new List<Partition>[groupConsumers.Count];
+
+                for (int i = 0; i < groupConsumers.Count; i++)
+                {
+                    assignments[i] = new List<Partition>();
+                }
+
+                for (int partitionIndex = 0; partitionIndex < _partitions.Count; partitionIndex++)
+                {
+                    assignments[partitionIndex % groupConsumers.Count].Add(new Partition(partitionIndex));
+                }
+
+                for (int i = 0; i < groupConsumers.Count; i++)
+                {
+                    groupConsumers[i].OnPartitionsAssigned(Name, assignments[i]);
+                }
             }
         }
 
@@ -230,6 +244,9 @@ namespace Silverback.Messaging.Broker.Topics
         {
             if (consumer.Disposed)
                 return true;
+
+            if (!consumer.PartitionsAssigned)
+                return false;
 
             var partitionsOffsets = _committedOffsets[consumer.GroupId];
 
