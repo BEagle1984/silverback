@@ -150,12 +150,20 @@ namespace Silverback.Messaging.Sequences
         [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
         private static void MonitorProcessingTaskPrematureCompletion(Task processingTask, ISequence sequence)
         {
+            if (sequence.ParentSequence != null)
+                return;
+
             Task.Run(
                 async () =>
                 {
                     try
                     {
                         await processingTask.ConfigureAwait(false);
+
+                        // Abort only parent sequences and don't consider the enumeration as aborted if the
+                        // sequence is actually complete
+                        if (sequence.ParentSequence != null || sequence.IsComplete)
+                            return;
 
                         // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
                         // The reason behind this call here may be counterintuitive but with
@@ -164,7 +172,7 @@ namespace Silverback.Messaging.Sequences
                     }
                     catch (Exception exception)
                     {
-                        if (!sequence.IsPending)
+                        if (!sequence.IsPending || sequence.ParentSequence != null)
                             return;
 
                         await sequence.AbortAsync(SequenceAbortReason.Error, exception)

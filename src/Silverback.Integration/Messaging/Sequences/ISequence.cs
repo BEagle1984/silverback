@@ -94,6 +94,12 @@ namespace Silverback.Messaging.Sequences
         IReadOnlyCollection<ISequence> Sequences { get; }
 
         /// <summary>
+        ///     Gets the <see cref="ISequence" /> that contain this sequence (e.g. the
+        ///     <see cref="ChunkSequence" /> whose aggregated message is added to a <see cref="BatchSequence" />.
+        /// </summary>
+        ISequence? ParentSequence { get; }
+
+        /// <summary>
         ///     Gets the <see cref="ConsumerPipelineContext" /> related to the processing of this sequence
         ///     (usually the context of the first message that initiated the sequence).
         /// </summary>

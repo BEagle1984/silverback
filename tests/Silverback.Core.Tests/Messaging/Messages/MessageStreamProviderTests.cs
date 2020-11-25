@@ -30,8 +30,8 @@ namespace Silverback.Tests.Core.Messaging.Messages
             var task1 = Task.Run(() => eventsList = eventsStream.ToList());
             var task2 = Task.Run(() => testEventOnesList = testEventOneStream.ToList());
 
-            await provider.PushAsync(new TestEventOne(), false);
-            await provider.PushAsync(new TestEventTwo(), false);
+            await provider.PushAsync(new TestEventOne());
+            await provider.PushAsync(new TestEventTwo());
             await provider.PushAsync(new TestCommandOne(), false);
 
             await provider.CompleteAsync(); // Implicitly tests that the Complete call is also propagated
@@ -40,6 +40,29 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             eventsList.Should().BeEquivalentTo(new TestEventOne(), new TestEventTwo());
             testEventOnesList.Should().BeEquivalentTo(new TestEventOne());
+        }
+
+        [Fact]
+        public async Task PushAsync_Messages_ReturnedAfterMessagesProcessed()
+        {
+            var provider = new MessageStreamProvider<IMessage>();
+            var stream = provider.CreateStream<IEvent>();
+
+            var processed = false;
+
+            Task.Run(
+                async () =>
+                {
+                    await Task.Delay(50);
+                    stream.GetEnumerator().MoveNext();
+                    await Task.Delay(50);
+                    processed = true;
+                    stream.GetEnumerator().MoveNext();
+                }).RunWithoutBlocking();
+
+            await provider.PushAsync(new TestEventOne());
+
+            processed.Should().BeTrue();
         }
 
         [Fact]

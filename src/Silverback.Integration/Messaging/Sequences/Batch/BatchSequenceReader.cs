@@ -33,11 +33,11 @@ namespace Silverback.Messaging.Sequences.Batch
         protected override Task<string> GetSequenceId(ConsumerPipelineContext context) => Task.FromResult(SequenceIdPrefix);
 
         /// <inheritdoc cref="SequenceReaderBase.IsNewSequence" />
-        protected override async Task<bool> IsNewSequence(ConsumerPipelineContext context)
+        protected override async Task<bool> IsNewSequence(string sequenceId, ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 
-            var currentSequence = await context.SequenceStore.GetAsync<BatchSequence>(SequenceIdPrefix, true).ConfigureAwait(false);
+            var currentSequence = await context.SequenceStore.GetAsync<BatchSequence>(sequenceId, true).ConfigureAwait(false);
             return currentSequence == null || !currentSequence.IsPending || currentSequence.IsCompleting;
         }
 

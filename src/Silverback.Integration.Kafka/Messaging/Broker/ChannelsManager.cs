@@ -222,7 +222,7 @@ namespace Silverback.Messaging.Broker
 
         private async Task ReadChannelOnceAsync(
             ChannelReader<ConsumeResult<byte[]?, byte[]?>> channelReader,
-            int index,
+            int channelIndex,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -230,7 +230,7 @@ namespace Silverback.Messaging.Broker
             _logger.LogTrace(
                 IntegrationEventIds.LowLevelTracing,
                 "Reading channel {channelIndex}...",
-                index);
+                channelIndex);
 
             var consumeResult = await channelReader.ReadAsync(cancellationToken).ConfigureAwait(false);
 

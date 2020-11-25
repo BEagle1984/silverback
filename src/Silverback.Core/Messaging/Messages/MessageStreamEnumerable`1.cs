@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Messages
             await _writeSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
 
             if (_isComplete)
-                throw new InvalidOperationException("The stream has been marked as complete.");
+                throw new InvalidOperationException($"The stream has been marked as complete.");
 
             _current = pushedMessage;
             SafelyRelease(_readSemaphore);

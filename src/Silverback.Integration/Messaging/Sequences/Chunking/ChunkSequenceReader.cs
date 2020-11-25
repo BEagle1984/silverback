@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Sequences.Chunking
         }
 
         /// <inheritdoc cref="SequenceReaderBase.IsNewSequence" />
-        protected override Task<bool> IsNewSequence(ConsumerPipelineContext context)
+        protected override Task<bool> IsNewSequence(string sequenceId, ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 

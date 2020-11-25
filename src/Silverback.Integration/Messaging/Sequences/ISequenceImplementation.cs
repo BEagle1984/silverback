@@ -3,6 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Chunking;
 
 namespace Silverback.Messaging.Sequences
 {
@@ -32,6 +34,15 @@ namespace Silverback.Messaging.Sequences
         ///     The value to be set.
         /// </param>
         void SetIsNew(bool value);
+
+        /// <summary>
+        ///     Sets the <see cref="ISequence" /> that were added to this sequence (e.g. the
+        ///     <see cref="ChunkSequence" /> whose aggregated message is added to a <see cref="BatchSequence" />.
+        /// </summary>
+        /// <param name="parentSequence">
+        ///     The parent sequence.
+        /// </param>
+        void SetParentSequence(ISequence parentSequence);
 
         /// <summary>
         ///     Completes the <see cref="Task" /> that is used to notify when the sequence went through both

@@ -220,6 +220,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventThree());
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
+            await AsyncTestingUtil.WaitAsync(() => !consumer.IsConnected);
+
             receivedMessages.Should().HaveCount(4);
             consumer.IsConnected.Should().BeFalse();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);

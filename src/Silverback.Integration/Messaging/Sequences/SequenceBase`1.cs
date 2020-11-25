@@ -42,6 +42,8 @@ namespace Silverback.Messaging.Sequences
         private readonly TaskCompletionSource<bool> _processingCompleteTaskCompletionSource =
             new TaskCompletionSource<bool>();
 
+        private readonly SemaphoreSlim _addingSemaphoreSlim = new SemaphoreSlim(1, 1);
+
         private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
         private CancellationTokenSource? _timeoutCancellationTokenSource;
@@ -81,8 +83,8 @@ namespace Silverback.Messaging.Sequences
             _streamProvider = streamProvider as MessageStreamProvider<TEnvelope> ??
                               new MessageStreamProvider<TEnvelope>();
 
-            _logger =
-                context.ServiceProvider.GetRequiredService<ISilverbackIntegrationLogger<SequenceBase<TEnvelope>>>();
+            _logger = context.ServiceProvider
+                .GetRequiredService<ISilverbackIntegrationLogger<SequenceBase<TEnvelope>>>();
 
             _enforceTimeout = enforceTimeout;
             _timeout = timeout ?? Context.Envelope.Endpoint.Sequence.Timeout;
@@ -110,6 +112,9 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.Sequences" />
         public IReadOnlyCollection<ISequence> Sequences =>
             (IReadOnlyCollection<ISequence>?)_sequences ?? Array.Empty<ISequence>();
+
+        /// <inheritdoc cref="ISequence.ParentSequence" />
+        public ISequence? ParentSequence { get; private set; }
 
         /// <inheritdoc cref="ISequence.Context" />
         public ConsumerPipelineContext Context { get; }
@@ -178,6 +183,9 @@ namespace Silverback.Messaging.Sequences
         void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
 
         /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
+        void ISequenceImplementation.SetParentSequence(ISequence parentSequence) => ParentSequence = parentSequence;
+
+        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
         void ISequenceImplementation.CompleteSequencerBehaviorsTask() =>
             _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
 
@@ -238,11 +246,14 @@ namespace Silverback.Messaging.Sequences
             {
                 _sequences ??= new List<ISequence>();
                 _sequences.Add(sequence);
+                (sequence as ISequenceImplementation)?.SetParentSequence(this);
             }
             else
             {
                 _offsets.Add(envelope.Offset);
             }
+
+            await _addingSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
             try
             {
@@ -272,6 +283,21 @@ namespace Silverback.Messaging.Sequences
                 // Ignore
                 return 0;
             }
+            catch (Exception ex)
+            {
+                _logger.LogTrace(
+                    IntegrationEventIds.LowLevelTracing,
+                    ex,
+                    "Error occurred adding message to {sequenceType} '{sequenceId}'.",
+                    GetType().Name,
+                    SequenceId);
+
+                throw;
+            }
+            finally
+            {
+                _addingSemaphoreSlim.Release();
+            }
         }
 
         /// <summary>
@@ -300,6 +326,13 @@ namespace Silverback.Messaging.Sequences
             if (!IsPending)
                 return;
 
+            _logger.LogTrace(
+                IntegrationEventIds.LowLevelTracing,
+                "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
+                GetType().Name,
+                SequenceId,
+                Length);
+
             IsComplete = true;
             IsCompleting = false;
 
@@ -320,10 +353,15 @@ namespace Silverback.Messaging.Sequences
         protected virtual void Dispose(bool disposing)
         {
             // TODO: Ensure Dispose is actually called
+            _logger.LogTrace(
+                IntegrationEventIds.LowLevelTracing,
+                "Disposing {sequenceType} '{sequenceId}'...",
+                GetType().Name,
+                SequenceId);
+
             if (disposing)
             {
-                if (_abortingTaskCompletionSource != null)
-                    _abortingTaskCompletionSource.Task.Wait();
+                _abortingTaskCompletionSource?.Task.Wait();
 
                 _streamProvider.Dispose();
                 _abortCancellationTokenSource.Dispose();
@@ -332,6 +370,9 @@ namespace Silverback.Messaging.Sequences
                 _timeoutCancellationTokenSource = null;
 
                 _sequences?.ForEach(sequence => sequence.Dispose());
+
+                _addingSemaphoreSlim.Wait();
+                _addingSemaphoreSlim.Dispose();
 
                 Context.Dispose();
             }
@@ -411,6 +452,14 @@ namespace Silverback.Messaging.Sequences
                 await _abortingTaskCompletionSource!.Task.ConfigureAwait(false);
                 return;
             }
+
+            _logger.LogTrace(
+                IntegrationEventIds.LowLevelTracing,
+                AbortException,
+                "Aborting {sequenceType} '{sequenceId}' ({abortReason})...",
+                GetType().Name,
+                SequenceId,
+                AbortReason);
 
             _timeoutCancellationTokenSource?.Cancel();
 

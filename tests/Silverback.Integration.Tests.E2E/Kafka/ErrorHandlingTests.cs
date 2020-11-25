@@ -412,8 +412,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
+            await AsyncTestingUtil.WaitAsync(() => !Broker.Consumers[0].IsConnected);
+
             tryCount.Should().Be(11);
-            serviceProvider.GetRequiredService<IBroker>().Consumers[0].IsConnected.Should().BeFalse();
+            Broker.Consumers[0].IsConnected.Should().BeFalse();
         }
 
         [Fact]

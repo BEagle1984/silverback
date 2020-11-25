@@ -28,8 +28,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
         }
 
-        // TODO: Fix
-        [Fact(Skip = "Must fix, flaky, race condition")]
+        [Fact]
         public async Task Chunking_JsonConsumedInBatch_ProducedAndConsumed()
         {
             var batches = new List<List<TestEventOne>>();
@@ -40,7 +39,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(
@@ -118,8 +119,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(27);
         }
 
-        // TODO: Fix
-        [Fact(Skip = "Must fix, flaky, race condition")]
+        [Fact]
         public async Task Chunking_BinaryFileConsumedInBatch_ProducedAndConsumed()
         {
             var batches = new List<List<string?>>();
@@ -130,7 +130,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IBinaryFileMessage>(
@@ -186,8 +188,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             }
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
-
-            await Task.Delay(5000);
 
             batches.Should().HaveCount(3);
             batches[0].Should().HaveCount(5);

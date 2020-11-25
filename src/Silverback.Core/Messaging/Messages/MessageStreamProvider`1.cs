@@ -96,10 +96,7 @@ namespace Silverback.Messaging.Messages
         ///     stream as complete. Calling this method will cause an <see cref="OperationCanceledException" /> to be
         ///     thrown by the enumerators and the <see cref="PushAsync(TMessage,CancellationToken)" /> method.
         /// </summary>
-        public void Abort()
-        {
-            _streams.ParallelForEach(stream => stream.Abort());
-        }
+        public void Abort() => _streams.ParallelForEach(stream => stream.Abort());
 
         /// <summary>
         ///     Marks the stream as complete, meaning no more messages will be pushed.
@@ -110,11 +107,9 @@ namespace Silverback.Messaging.Messages
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        public async Task CompleteAsync(CancellationToken cancellationToken = default)
-        {
+        public async Task CompleteAsync(CancellationToken cancellationToken = default) =>
             await _streams.ParallelForEachAsync(stream => stream.CompleteAsync(cancellationToken))
                 .ConfigureAwait(false);
-        }
 
         /// <inheritdoc cref="IMessageStreamProvider.CreateStream" />
         public IMessageStreamEnumerable<object> CreateStream(Type messageType)
