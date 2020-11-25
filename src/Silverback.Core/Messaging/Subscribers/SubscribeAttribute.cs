@@ -28,6 +28,7 @@ namespace Silverback.Messaging.Subscribers
         /// <remarks>
         ///     This setting is ignored when subscribing to an <see cref="IMessageStreamEnumerable{TMessage}" />.
         /// </remarks>
+        // TODO: Does it still make sense to force the stream as non-exclusive? (Isn't it non-exclusive by design?)
         public bool Exclusive { get; set; } = true;
 
         /// <summary>
@@ -44,6 +45,7 @@ namespace Silverback.Messaging.Subscribers
         /// <remarks>
         ///     This setting is ignored when subscribing to an enumerable, a collection or an observable of messages.
         /// </remarks>
+        // TODO: Deprecate? (Doesn't apply to consumed messages anymore)
         public bool Parallel { get; set; }
 
         /// <summary>
@@ -54,6 +56,7 @@ namespace Silverback.Messaging.Subscribers
         /// <remarks>
         ///     This setting is ignored when subscribing to an enumerable, a collection or an observable of messages.
         /// </remarks>
+        // TODO: Deprecate? (Doesn't apply to consumed messages anymore)
         public int MaxDegreeOfParallelism
         {
             get => _maxDegreeOfParallelism;
