@@ -21,9 +21,9 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IConsumer" />
     public abstract class Consumer : IConsumer, IDisposable
     {
-        private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
+        private static readonly TimeSpan ConsumerStopWaitTimeout = TimeSpan.FromMinutes(1);
 
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
 
         private readonly ISilverbackIntegrationLogger<Consumer> _logger;
 
@@ -31,10 +31,6 @@ namespace Silverback.Messaging.Broker
 
         private readonly ConcurrentDictionary<IOffset, int> _failedAttemptsDictionary =
             new ConcurrentDictionary<IOffset, int>();
-
-        private ISequenceStore? _sequenceStore; // TODO: Should be per partition
-
-        private static readonly TimeSpan ConsumerStopWaitTimeout = TimeSpan.FromMinutes(1);
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
@@ -65,7 +61,7 @@ namespace Silverback.Messaging.Broker
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
 
             _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
-            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+            ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _logger = Check.NotNull(logger, nameof(logger));
 
             Endpoint.Validate();
@@ -82,6 +78,17 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="IConsumer.IsConnected" />
         public bool IsConnected { get; private set; }
+
+        /// <summary>
+        ///     Gets the <see cref="IServiceProvider" /> to be used to resolve the required services.
+        /// </summary>
+        protected IServiceProvider ServiceProvider { get; }
+
+        /// <summary>
+        ///     Gets the <see cref="ISequenceStore" /> instances used by this consumer. Some brokers will require
+        ///     multiple stores (e.g. the <c>KafkaConsumer</c> will create a store per each assigned partition).
+        /// </summary>
+        protected IList<ISequenceStore> SequenceStores { get; } = new List<ISequenceStore>();
 
         /// <inheritdoc cref="IConsumer.CommitAsync(IOffset)" />
         public Task CommitAsync(IOffset offset) => CommitAsync(new[] { offset });
@@ -101,7 +108,7 @@ namespace Silverback.Messaging.Broker
             if (IsConnected)
                 return;
 
-            _sequenceStore = _serviceProvider.GetRequiredService<ISequenceStore>();
+            SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>());
 
             ConnectCore();
 
@@ -126,11 +133,13 @@ namespace Silverback.Messaging.Broker
 
             StopConsuming();
 
-            if (_sequenceStore != null)
+            if (SequenceStores.Count > 0)
             {
                 // ReSharper disable once AccessToDisposedClosure
                 AsyncHelper.RunSynchronously(
-                    () => _sequenceStore.ToList()
+                    () => SequenceStores
+                        .SelectMany(store => store)
+                        .ToList()
                         .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted)));
             }
 
@@ -153,8 +162,8 @@ namespace Silverback.Messaging.Broker
 
             DisconnectCore();
 
-            _sequenceStore?.Dispose();
-            _sequenceStore = null;
+            SequenceStores.ForEach(store => store.Dispose());
+            SequenceStores.Clear();
 
             IsConnected = false;
             _statusInfo.SetDisconnected();
@@ -164,10 +173,6 @@ namespace Silverback.Messaging.Broker
                 "Disconnected consumer from endpoint {endpoint}.",
                 Endpoint.Name);
         }
-
-        /// <inheritdoc cref="IConsumer.Disconnect" />
-        public virtual ISequenceStore GetSequenceStore(IOffset offset) =>
-            _sequenceStore ?? throw new InvalidOperationException("The sequence store is not initialized.");
 
         /// <inheritdoc cref="IConsumer.IncrementFailedAttempts" />
         public int IncrementFailedAttempts(IRawInboundEnvelope envelope)
@@ -197,9 +202,32 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
+        ///     Gets the <see cref="ISequenceStore" /> instances used by this consumer. Some brokers will require
+        ///     multiple stores (e.g. the <c>KafkaConsumer</c> will create a store per each assigned partition).
+        /// </summary>
+        /// <returns>
+        ///     The list of <see cref="ISequenceStore" />.
+        /// </returns>
+        public IReadOnlyList<ISequenceStore> GetCurrentSequenceStores() => SequenceStores.AsReadOnlyList();
+
+        /// <summary>
         ///     Connects and starts consuming.
         /// </summary>
         protected abstract void ConnectCore();
+
+        /// <summary>
+        ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.
+        /// </summary>
+        /// <param name="offset">
+        ///     The offset may determine which store is being used. For example a dedicated sequence store is used per
+        ///     each Kafka partition, since they may be processed concurrently.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISequenceStore" />.
+        /// </returns>
+        protected virtual ISequenceStore GetSequenceStore(IOffset offset) =>
+            SequenceStores.FirstOrDefault() ??
+            throw new InvalidOperationException("The sequence store is not initialized.");
 
         /// <summary>
         ///     Stops the consumer.
@@ -264,7 +292,7 @@ namespace Silverback.Messaging.Broker
                 envelope,
                 this,
                 GetSequenceStore(offset),
-                _serviceProvider);
+                ServiceProvider);
 
             await ExecutePipelineAsync(consumerPipelineContext).ConfigureAwait(false);
         }

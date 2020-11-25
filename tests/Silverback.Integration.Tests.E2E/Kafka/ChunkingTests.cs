@@ -124,11 +124,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 }
             }
 
-            var receivedContents =
-                SpyBehavior.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).Content);
-
-            receivedContents.Should()
-                .BeEquivalentTo(Enumerable.Range(1, 5).Select(i => $"Long message {i}"));
+            SpyBehavior.InboundEnvelopes
+                .Select(envelope => ((TestEventOne)envelope.Message!).Content)
+                .Should().BeEquivalentTo(Enumerable.Range(1, 5).Select(i => $"Long message {i}"));
         }
 
         [Fact]
@@ -202,8 +200,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope => envelope.RawMessage.ReReadAll()!.Length.Should().BeLessOrEqualTo(10));
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.ForEach(
-                envelope => envelope.Message.Should().BeOfType<BinaryFileMessage>());
+            SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeOfType<BinaryFileMessage>());
 
             receivedFiles.Should().HaveCount(2);
             receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
@@ -264,8 +261,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
 
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
+            var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
+            sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
         }
 
         [Fact]
@@ -323,9 +320,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
 
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
-        }
+            var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
+            sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
+}
 
         [Fact]
         public async Task Chunking_JsonWithMessageIdHeader_Consumed()
@@ -382,9 +379,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
 
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
-        }
+            var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
+            sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
+}
 
         [Fact]
         public async Task Chunking_BinaryFileWithIsLastChunkHeader_Consumed()
@@ -438,9 +435,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
 
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
-        }
+            var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
+            sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
+}
 
         [Fact]
         public async Task Chunking_BinaryFileWithChunksCountHeader_Consumed()
@@ -494,9 +491,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
 
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
-        }
+            var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
+            sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
+}
 
         [Fact]
         public async Task Chunking_BinaryFileWithMessageIdHeader_Consumed()
@@ -550,9 +547,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
 
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
-        }
+            var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
+            sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
+}
 
         [Fact]
         public async Task Chunking_BinaryFileWithMessageTypeHeader_Consumed()
@@ -605,9 +602,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
 
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
-        }
+            var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
+            sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
+}
 
         [Fact]
         public async Task Chunking_JsonWithDuplicatedChunks_DuplicatesIgnored()
@@ -695,9 +692,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
 
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
-        }
+            var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
+            sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
+}
 
         [Fact]
         public async Task Chunking_BinaryFileWithDuplicatedChunks_DuplicatesIgnored()
@@ -776,9 +773,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
 
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
-        }
+            var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
+            sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
+}
 
         [Fact]
         public async Task Chunking_BinaryFileReadAborted_CommittedAndNextMessageConsumed()
@@ -1087,9 +1084,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
 
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
-        }
+            var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
+            sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
+}
 
         [Fact(Skip = "Not yet implemented")]
         public Task Chunking_EnforcingConsecutiveJsonChunks_IncompleteSequenceDiscardedOnNoSequenceMessage()
@@ -1225,7 +1222,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Run();
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            var sequenceStore = broker.Consumers[0].GetCurrentSequenceStores()[0];
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
 
             await producer.RawProduceAsync(
@@ -1305,7 +1302,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Run();
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            var sequenceStore = broker.Consumers[0].GetCurrentSequenceStores()[0];
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
 
             await producer.RawProduceAsync(
@@ -1411,7 +1408,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Run();
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            var sequenceStore = broker.Consumers[0].GetCurrentSequenceStores()[0];
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
 
             await producer.RawProduceAsync(
@@ -1529,9 +1526,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
 
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
-            sequenceStore.HasPendingSequences.Should().BeFalse();
-        }
+            var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
+            sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
+}
 
         [Fact(Skip = "Hard to implement. Worth it?")]
         public Task Chunking_BinaryFileMissingFirstChunk_NextMessageConsumedAndCommitted()
@@ -1577,7 +1574,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Run();
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            var sequenceStore = broker.Consumers[0].GetCurrentSequenceStores()[0];
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
 
             await producer.RawProduceAsync(
@@ -1657,7 +1654,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Run();
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var sequenceStore = broker.Consumers[0].GetSequenceStore(new KafkaOffset(DefaultTopicName, 0, 0));
+            var sequenceStore = broker.Consumers[0].GetCurrentSequenceStores()[0];
             var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
 
             await producer.RawProduceAsync(
@@ -1685,8 +1682,67 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
         }
 
+        [Fact]
+        public async Task Chunking_JsonFromMultiplePartitions_ConcurrentlyConsumed()
+        {
+            const int chunksPerMessage = 3;
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(3)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(
+                                    new KafkaProducerEndpoint(DefaultTopicName)
+                                    {
+                                        Chunk = new ChunkSettings
+                                        {
+                                            Size = 10
+                                        }
+                                    })
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+
+            await Enumerable.Range(1, 10).ForEachAsync(
+                i =>
+                    publisher.PublishAsync(
+                        new TestEventOne
+                        {
+                            Content = $"Long message {i}"
+                        }));
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.OutboundEnvelopes.Should().HaveCount(10);
+            Subscriber.InboundEnvelopes.Should().HaveCount(10);
+
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(10 * chunksPerMessage);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(10);
+
+            SpyBehavior.InboundEnvelopes
+                .Select(envelope => ((TestEventOne)envelope.Message!).Content)
+                .Should().BeEquivalentTo(Enumerable.Range(1, 10).Select(i => $"Long message {i}"));
+        }
+
         [Fact(Skip = "Not yet implemented")]
-        public Task Chunking_MultipleSequencesFromMultiplePartitions_ConcurrentlyConsumed()
+        public Task Chunking_BinaryFilesFromMultiplePartitions_ConcurrentlyConsumed()
         {
             throw new NotImplementedException();
         }

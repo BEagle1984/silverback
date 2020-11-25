@@ -85,11 +85,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(15);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(15);
 
-            var receivedContents =
-                SpyBehavior.InboundEnvelopes.Select(envelope => ((TestEventOne)envelope.Message!).Content);
-
-            receivedContents.Should()
-                .BeEquivalentTo(Enumerable.Range(1, 15).Select(i => i.ToString(CultureInfo.InvariantCulture)));
+            SpyBehavior.InboundEnvelopes
+                .Select(envelope => ((TestEventOne)envelope.Message!).Content)
+                .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => i.ToString(CultureInfo.InvariantCulture)));
         }
     }
 }

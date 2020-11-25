@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
 {
@@ -129,5 +130,20 @@ namespace Silverback.Messaging.Broker
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         protected abstract Task RollbackCoreAsync(IReadOnlyCollection<TOffset> offsets);
+
+        /// <inheritdoc cref="Consumer.GetSequenceStore"/>
+        protected override ISequenceStore GetSequenceStore(IOffset offset) => GetSequenceStore((TOffset)offset);
+
+        /// <summary>
+        ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.
+        /// </summary>
+        /// <param name="offset">
+        ///     The offset may determine which store is being used. For example a dedicated sequence store is used per
+        ///     each Kafka partition, since they may be processed concurrently.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISequenceStore" />.
+        /// </returns>
+        protected virtual ISequenceStore GetSequenceStore(TOffset offset) => base.GetSequenceStore(offset);
     }
 }

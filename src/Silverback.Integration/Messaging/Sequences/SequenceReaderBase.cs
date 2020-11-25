@@ -38,8 +38,8 @@ namespace Silverback.Messaging.Sequences
         {
             Check.NotNull(context, nameof(context));
 
-            string sequenceId = GetSequenceId(context);
-            bool isNewSequence = IsNewSequence(context);
+            string sequenceId = await GetSequenceId(context).ConfigureAwait(false);
+            bool isNewSequence = await IsNewSequence(context).ConfigureAwait(false);
 
             if (string.IsNullOrEmpty(sequenceId))
                 throw new InvalidOperationException("Sequence identifier not found or invalid.");
@@ -56,13 +56,16 @@ namespace Silverback.Messaging.Sequences
         ///     The current <see cref="ConsumerPipelineContext" />.
         /// </param>
         /// <returns>
-        ///     The recognized sequence identifier, or <c>null</c>.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
+        ///     the recognized sequence identifier, or <c>null</c>.
         /// </returns>
-        protected virtual string GetSequenceId(ConsumerPipelineContext context)
+        protected virtual Task<string> GetSequenceId(ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 
-            return context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId) ?? "***default***";
+            string messageId = context.Envelope.Headers.GetValue(DefaultMessageHeaders.MessageId) ?? "***default***";
+
+            return Task.FromResult(messageId);
         }
 
         /// <summary>
@@ -72,9 +75,10 @@ namespace Silverback.Messaging.Sequences
         ///     The current <see cref="ConsumerPipelineContext" />.
         /// </param>
         /// <returns>
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
         ///     <c>true</c> if a new sequence is starting; otherwise <c>false</c>.
         /// </returns>
-        protected abstract bool IsNewSequence(ConsumerPipelineContext context);
+        protected abstract Task<bool> IsNewSequence(ConsumerPipelineContext context);
 
         /// <summary>
         ///     Creates the new sequence and adds it to the store.

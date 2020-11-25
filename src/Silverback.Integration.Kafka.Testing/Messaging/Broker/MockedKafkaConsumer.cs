@@ -286,7 +286,11 @@ namespace Silverback.Messaging.Broker
         internal void OnPartitionsAssigned(string topicName, IReadOnlyCollection<Partition> partitions)
         {
             var partitionOffsets = partitions
-                .Select(partition => new TopicPartitionOffset(topicName, partition, Offset.Unset)).ToList();
+                .Select(partition => new TopicPartitionOffset(topicName, partition, Offset.Unset))
+                .Union(
+                    Assignment.Where(topicPartition => topicPartition.Topic != topicName)
+                        .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset)))
+                .ToList();
 
             var revokeHandlerResult = InvokePartitionsRevokedHandler(topicName);
             if (revokeHandlerResult != null && revokeHandlerResult.Count > 0)
@@ -302,7 +306,7 @@ namespace Silverback.Messaging.Broker
                     .ToList();
             }
 
-            ClearPartitionsAssignment(topicName);
+            ClearPartitionsAssignment();
 
             var assignHandlerResult = InvokePartitionsAssignedHandler(partitionOffsets);
             if (assignHandlerResult != null)
@@ -334,16 +338,12 @@ namespace Silverback.Messaging.Broker
                             _topics[partition.Topic].GetCommittedOffset(partition.Partition, GroupId))).ToList())
                 ?.ToList();
 
-        private void ClearPartitionsAssignment(string topicName)
+        private void ClearPartitionsAssignment()
         {
-            var assignmentsToRemove = Assignment.Where(topicPartition => topicPartition.Topic == topicName).ToList();
-            assignmentsToRemove.ForEach(topicPartition => Assignment.Remove(topicPartition));
+            Assignment.ToList().ForEach(topicPartition => Assignment.Remove(topicPartition));
 
-            if (_currentOffsets.ContainsKey(topicName))
-                _currentOffsets[topicName].Clear();
-
-            if (_storedOffsets.ContainsKey(topicName))
-                _storedOffsets[topicName].Clear();
+            _currentOffsets.Clear();
+            _storedOffsets.Clear();
         }
 
         private bool TryConsume(CancellationToken cancellationToken, out ConsumeResult<byte[]?, byte[]?>? result)

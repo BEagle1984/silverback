@@ -114,18 +114,6 @@ namespace Silverback.Messaging.Broker
         void Disconnect();
 
         /// <summary>
-        ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.
-        /// </summary>
-        /// <param name="offset">
-        ///     The offset may determine which store is being used. For example a dedicated sequence store is used per
-        ///     each Kafka partition, since they may be processed concurrently.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="ISequenceStore" />.
-        /// </returns>
-        ISequenceStore GetSequenceStore(IOffset offset);
-
-        /// <summary>
         ///     Increments the stored failed attempts count for the specified envelope.
         /// </summary>
         /// <param name="envelope">
@@ -143,5 +131,14 @@ namespace Silverback.Messaging.Broker
         ///     The offset.
         /// </param>
         void ClearFailedAttempts(IRawInboundEnvelope envelope);
+
+        /// <summary>
+        ///     Gets the <see cref="ISequenceStore" /> instances used by this consumer. Some brokers will require
+        ///     multiple stores (e.g. the <c>KafkaConsumer</c> will create a store per each assigned partition).
+        /// </summary>
+        /// <returns>
+        ///    The list of <see cref="ISequenceStore"/>.
+        /// </returns>
+        IReadOnlyList<ISequenceStore> GetCurrentSequenceStores();
     }
 }
