@@ -7,7 +7,7 @@ using Silverback.Messaging.Subscribers.ArgumentResolvers;
 
 namespace Silverback.Messaging.Messages
 {
-    internal class LazyMessageStreamEnumerable<TMessage>
+    internal sealed class LazyMessageStreamEnumerable<TMessage>
         : ILazyMessageStreamEnumerable<TMessage>, ILazyMessageStreamEnumerable, ILazyArgumentValue, IDisposable
     {
         private readonly TaskCompletionSource<IMessageStreamEnumerable> _taskCompletionSource =

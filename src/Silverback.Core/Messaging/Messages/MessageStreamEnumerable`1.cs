@@ -37,6 +37,10 @@ namespace Silverback.Messaging.Messages
 
         /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(PushedMessage,System.Threading.CancellationToken)" />
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
+        [SuppressMessage(
+            "ReSharper",
+            "InconsistentlySynchronizedField",
+            Justification = "The lock is important to avoid multiple complete/abort, here is not important")]
         public async Task PushAsync(PushedMessage pushedMessage, CancellationToken cancellationToken = default)
         {
             Check.NotNull(pushedMessage, nameof(pushedMessage));
