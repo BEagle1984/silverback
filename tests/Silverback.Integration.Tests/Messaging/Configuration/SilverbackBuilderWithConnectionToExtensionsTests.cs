@@ -15,7 +15,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             var serviceProvider = new ServiceCollection()
                 .AddSilverback()
-                .WithConnectionToMessageBroker(options => { })
+                .WithConnectionToMessageBroker(_ => { })
                 .Services.BuildServiceProvider();
 
             serviceProvider.GetService<IBrokerCollection>().Should().NotBeNull();

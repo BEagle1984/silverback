@@ -101,7 +101,7 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             var publisher = GetPublisher(
                 builder => builder
                     .AddDelegateSubscriber(
-                        (TestCommandOne msg) =>
+                        (TestCommandOne _) =>
                             new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
                     .AddDelegateSubscriber((TestCommandTwo _) => count++));
 
@@ -117,7 +117,7 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             var publisher = GetPublisher(
                 builder => builder
                     .AddDelegateSubscriber(
-                        (TestCommandOne msg) =>
+                        (TestCommandOne _) =>
                             new[] { new TestCommandTwo(), new TestCommandTwo() }.ToObservable())
                     .AddDelegateSubscriber((TestCommandTwo _) => count++));
 

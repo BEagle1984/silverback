@@ -111,7 +111,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             int count = 0;
             var publisher = PublisherTestsHelper.GetPublisher(
                 silverbackBuilder => silverbackBuilder
-                    .AddDelegateSubscriber<object>((msg, sp) => sp != null ? count++ : count = 0));
+                    .AddDelegateSubscriber<object>((_, sp) => sp != null ? count++ : count = 0));
 
             publisher.Publish(new TestCommandOne());
             publisher.Publish(new TestCommandTwo());
@@ -126,7 +126,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var publisher = PublisherTestsHelper.GetPublisher(
                 silverbackBuilder => silverbackBuilder
                     .AddDelegateSubscriber<object>(
-                        (message, serviceProvider) => serviceProvider != null ? count++ : count = 0));
+                        (_, serviceProvider) => serviceProvider != null ? count++ : count = 0));
 
             await publisher.PublishAsync(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandTwo());
@@ -617,9 +617,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var publisher = PublisherTestsHelper.GetPublisher(
                 builder =>
                     builder
-                        .AddDelegateSubscriber((ITestMessage msg) => receivedMessagesCount++)
+                        .AddDelegateSubscriber((ITestMessage _) => receivedMessagesCount++)
                         .AddDelegateSubscriber(
-                            async (ITestMessage msg) =>
+                            async (ITestMessage _) =>
                             {
                                 await Task.Delay(1);
                                 asyncReceivedMessagesCount++;
@@ -639,9 +639,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var publisher = PublisherTestsHelper.GetPublisher(
                 builder =>
                     builder
-                        .AddDelegateSubscriber((ITestMessage msg) => receivedMessagesCount++)
+                        .AddDelegateSubscriber((ITestMessage _) => receivedMessagesCount++)
                         .AddDelegateSubscriber(
-                            async (ITestMessage msg) =>
+                            async (ITestMessage _) =>
                             {
                                 await Task.Delay(1);
                                 asyncReceivedMessagesCount++;
@@ -802,9 +802,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var publisher = PublisherTestsHelper.GetPublisher(
                 builder =>
                     builder
-                        .AddDelegateSubscriber((TestCommandTwo msg) => new TestCommandOne())
+                        .AddDelegateSubscriber((TestCommandTwo _) => new TestCommandOne())
                         .AddDelegateSubscriber(
-                            async (TestCommandTwo msg) =>
+                            async (TestCommandTwo _) =>
                             {
                                 await Task.Delay(1);
                                 return new TestCommandOne();
@@ -823,9 +823,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var publisher = PublisherTestsHelper.GetPublisher(
                 builder =>
                     builder
-                        .AddDelegateSubscriber((TestCommandTwo msg) => new TestCommandOne())
+                        .AddDelegateSubscriber((TestCommandTwo _) => new TestCommandOne())
                         .AddDelegateSubscriber(
-                            async (TestCommandTwo msg) =>
+                            async (TestCommandTwo _) =>
                             {
                                 await Task.Delay(1);
                                 return new TestCommandOne();
@@ -1106,7 +1106,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher =
                 PublisherTestsHelper.GetPublisher(
-                    builder => builder.AddDelegateSubscriber((TestEventOne x) => calls++));
+                    builder => builder.AddDelegateSubscriber((TestEventOne _) => calls++));
 
             publisher.Publish(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 
@@ -1120,7 +1120,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             var publisher =
                 PublisherTestsHelper.GetPublisher(
-                    builder => builder.AddDelegateSubscriber((TestEventOne x) => calls++));
+                    builder => builder.AddDelegateSubscriber((TestEventOne _) => calls++));
 
             await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 
@@ -1133,7 +1133,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var calls = 0;
 
             var publisher =
-                PublisherTestsHelper.GetPublisher(builder => builder.AddDelegateSubscriber((IEvent x) => calls++));
+                PublisherTestsHelper.GetPublisher(builder => builder.AddDelegateSubscriber((IEvent _) => calls++));
 
             publisher.Publish(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 
@@ -1146,7 +1146,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var calls = 0;
 
             var publisher =
-                PublisherTestsHelper.GetPublisher(builder => builder.AddDelegateSubscriber((IEvent x) => calls++));
+                PublisherTestsHelper.GetPublisher(builder => builder.AddDelegateSubscriber((IEvent _) => calls++));
 
             await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 
@@ -1159,7 +1159,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var calls = 0;
 
             var publisher =
-                PublisherTestsHelper.GetPublisher(builder => builder.AddDelegateSubscriber((ICommand x) => calls++));
+                PublisherTestsHelper.GetPublisher(builder => builder.AddDelegateSubscriber((ICommand _) => calls++));
 
             publisher.Publish(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 
@@ -1172,7 +1172,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var calls = 0;
 
             var publisher =
-                PublisherTestsHelper.GetPublisher(builder => builder.AddDelegateSubscriber((ICommand x) => calls++));
+                PublisherTestsHelper.GetPublisher(builder => builder.AddDelegateSubscriber((ICommand _) => calls++));
 
             await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 
@@ -1241,7 +1241,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var calls = 0;
 
             var publisher = PublisherTestsHelper.GetPublisher(
-                builder => builder.AddDelegateSubscriber((IEnumerable<ICommand> x) => calls++));
+                builder => builder.AddDelegateSubscriber((IEnumerable<ICommand> _) => calls++));
 
             publisher.Publish(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 
@@ -1254,7 +1254,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var calls = 0;
 
             var publisher = PublisherTestsHelper.GetPublisher(
-                builder => builder.AddDelegateSubscriber((IEnumerable<ICommand> x) => calls++));
+                builder => builder.AddDelegateSubscriber((IEnumerable<ICommand> _) => calls++));
 
             await publisher.PublishAsync(new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() });
 

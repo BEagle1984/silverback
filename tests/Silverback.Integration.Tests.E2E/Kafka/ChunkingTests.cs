@@ -1048,7 +1048,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         }
                                     }))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) => throw new InvalidOperationException("Test"))
+                            (BinaryFileMessage _) => throw new InvalidOperationException("Test"))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 

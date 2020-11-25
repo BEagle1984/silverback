@@ -134,7 +134,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         }
                                     }))
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventOne> eventsStream) => { receivedBatches++; }))
+                            (IMessageStreamEnumerable<TestEventOne> _) => { receivedBatches++; }))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -189,7 +189,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 var dummy = eventsStream.ToList();
                             })
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventTwo> eventsStream) => receivedBatches2++))
+                            (IMessageStreamEnumerable<TestEventTwo> _) => receivedBatches2++))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -237,9 +237,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         }
                                     }))
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventOne> eventsStream) => receivedBatches1++)
+                            (IMessageStreamEnumerable<TestEventOne> _) => receivedBatches1++)
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventTwo> eventsStream) => receivedBatches2++))
+                            (IMessageStreamEnumerable<TestEventTwo> _) => receivedBatches2++))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();

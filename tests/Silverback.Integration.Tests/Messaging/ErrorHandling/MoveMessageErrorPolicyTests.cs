@@ -221,7 +221,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var policy = ErrorPolicy
                 .Move(TestProducerEndpoint.GetDefault())
-                .Transform((originalEnvelope, ex) => { originalEnvelope.Message = new TestEventTwo(); })
+                .Transform((originalEnvelope, _) => { originalEnvelope.Message = new TestEventTwo(); })
                 .Build(_serviceProvider);
 
             var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("hey oh!"));

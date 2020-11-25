@@ -77,12 +77,12 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 PublisherTestsHelper.GetPublisher(
                     builder => builder
                         .AddDelegateSubscriber(
-                            (IReadOnlyCollection<IEvent> enumerable) =>
+                            (IReadOnlyCollection<IEvent> _) =>
                             {
                                 Interlocked.Increment(ref receivedEnumeratedStreams);
                             })
                         .AddDelegateSubscriber(
-                            (List<TestEventOne> list) => { Interlocked.Increment(ref receivedEnumeratedStreams); })));
+                            (List<TestEventOne> _) => { Interlocked.Increment(ref receivedEnumeratedStreams); })));
 
             var streamProvider = new MessageStreamProvider<IEvent>();
 

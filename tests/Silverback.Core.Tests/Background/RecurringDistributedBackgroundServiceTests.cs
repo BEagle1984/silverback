@@ -89,7 +89,7 @@ namespace Silverback.Tests.Core.Background
             bool executed2 = false;
 
             var service1 = new TestRecurringDistributedBackgroundService(
-                stoppingToken =>
+                _ =>
                 {
                     executed1 = true;
                     return Task.CompletedTask;

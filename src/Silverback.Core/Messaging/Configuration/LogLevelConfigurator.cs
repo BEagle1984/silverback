@@ -13,14 +13,14 @@ namespace Silverback.Messaging.Configuration
 
         public ILogLevelConfigurator SetLogLevel(EventId eventId, LogLevel logLevel)
         {
-            _logLevelDictionary[eventId] = (exception, originalLogLevel, message) => logLevel;
+            _logLevelDictionary[eventId] = (_, _, _) => logLevel;
 
             return this;
         }
 
         public ILogLevelConfigurator SetLogLevel(EventId eventId, Func<Exception, LogLevel, LogLevel> logLevelFunc)
         {
-            _logLevelDictionary[eventId] = (exception, originalLogLevel, message) => logLevelFunc(exception, originalLogLevel);
+            _logLevelDictionary[eventId] = (exception, originalLogLevel, _) => logLevelFunc(exception, originalLogLevel);
 
             return this;
         }

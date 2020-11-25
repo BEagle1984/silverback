@@ -27,7 +27,7 @@ namespace Silverback.Tests.Core.Diagnostics
         {
             var logLevelDictionary = new LogLevelDictionary
             {
-                { CoreEventIds.BackgroundServiceStarting, (e, l, m) => LogLevel.Error }
+                { CoreEventIds.BackgroundServiceStarting, (_, _, _) => LogLevel.Error }
             };
             var internalLogger = new LoggerSubstitute<object>();
             var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
@@ -42,7 +42,7 @@ namespace Silverback.Tests.Core.Diagnostics
         {
             var logLevelDictionary = new LogLevelDictionary
             {
-                { CoreEventIds.BackgroundServiceStarting, (e, l, m) => LogLevel.Error }
+                { CoreEventIds.BackgroundServiceStarting, (_, _, _) => LogLevel.Error }
             };
             var internalLogger = new LoggerSubstitute<object>();
             var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
@@ -59,7 +59,7 @@ namespace Silverback.Tests.Core.Diagnostics
             {
                 {
                     CoreEventIds.BackgroundServiceStarting,
-                    (exception, originalLogLevel, message) =>
+                    (exception, originalLogLevel, _) =>
                     {
                         if (exception is InvalidOperationException)
                         {
@@ -89,7 +89,7 @@ namespace Silverback.Tests.Core.Diagnostics
             {
                 {
                     CoreEventIds.BackgroundServiceStarting,
-                    (exception, originalLogLevel, message) =>
+                    (exception, originalLogLevel, _) =>
                     {
                         if (exception is InvalidOperationException)
                         {
@@ -119,7 +119,7 @@ namespace Silverback.Tests.Core.Diagnostics
             {
                 {
                     CoreEventIds.BackgroundServiceStarting,
-                    (exception, originalLogLevel, message) =>
+                    (_, originalLogLevel, message) =>
                     {
                         if (message.Value == "TestMessage 10")
                         {

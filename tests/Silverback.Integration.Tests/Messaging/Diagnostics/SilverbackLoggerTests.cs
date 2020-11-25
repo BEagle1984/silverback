@@ -62,7 +62,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 .AddSilverback()
                 .WithLogLevels(
                     configurator => configurator
-                        .SetLogLevel(CoreEventIds.DistributedLockAcquired, (_, __) => LogLevel.Warning));
+                        .SetLogLevel(CoreEventIds.DistributedLockAcquired, (_, _) => LogLevel.Warning));
 
             var serviceProvider = services.BuildServiceProvider();
 

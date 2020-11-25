@@ -22,7 +22,7 @@ namespace Silverback.Util
                 type = Cache.AddOrUpdate(
                     typeName,
                     _ => ResolveType(typeName, throwOnError),
-                    (_, __) => ResolveType(typeName, throwOnError));
+                    (_, _) => ResolveType(typeName, throwOnError));
             }
 
             return type;
