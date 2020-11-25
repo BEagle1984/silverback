@@ -13,6 +13,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Unbounded;
+using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Inbound
@@ -23,6 +24,8 @@ namespace Silverback.Messaging.Inbound
     public sealed class PublisherConsumerBehavior : IConsumerBehavior
     {
         private readonly ISilverbackIntegrationLogger<PublisherConsumerBehavior> _logger;
+
+        private bool? _enableMessageStreamEnumerable;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="PublisherConsumerBehavior" /> class.
@@ -62,9 +65,8 @@ namespace Silverback.Messaging.Inbound
             {
                 var throwIfUnhandled = context.Envelope.Endpoint.ThrowIfUnhandled;
 
-                if (context.Envelope is IInboundEnvelope envelope)
+                if (IsMessageStreamEnabled(context) && context.Envelope is IInboundEnvelope envelope)
                 {
-                    // TODO: Create only if necessary?
                     var unboundedSequence = await GetUnboundedSequence(context).ConfigureAwait(false);
 
                     int pushedStreamsCount =
@@ -177,5 +179,9 @@ namespace Silverback.Messaging.Inbound
                     }
                 });
         }
+
+        private bool IsMessageStreamEnabled(ConsumerPipelineContext context) =>
+            _enableMessageStreamEnumerable ??=
+                context.ServiceProvider.GetRequiredService<SubscribedMethodsLoader>().EnableMessageStreamEnumerable;
     }
 }
