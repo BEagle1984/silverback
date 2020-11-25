@@ -29,8 +29,8 @@ namespace Silverback.Messaging.Configuration
         public string? CertPath { get; set; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the peer certificate should be checked for revocation
-        ///     (default is <c>false</c>).
+        ///     Gets or sets a value indicating whether the peer certificate should be checked for revocation.
+        ///     The default is <c>false</c>.
         /// </summary>
         /// <remarks>
         ///     Uses the built-in .NET mechanics for checking a certificate against CRLs.

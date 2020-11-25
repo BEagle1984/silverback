@@ -25,22 +25,22 @@ namespace Silverback.Background
         ///     The name of the lock / the resource being locked.
         /// </param>
         /// <param name="uniqueId">
-        ///     A unique identifier representing the entity trying to acquire the lock (default is a new
-        ///     <see cref="System.Guid" />).
+        ///     A unique identifier representing the entity trying to acquire the lock. Th default is a new
+        ///     <see cref="System.Guid" />.
         /// </param>
         /// <param name="acquireTimeout">
-        ///     After the acquire timeout is expired the lock manager will abort the lock acquisition (default is no
-        ///     timeout).
+        ///     After the acquire timeout is expired the lock manager will abort the lock acquisition. The default is no
+        ///     timeout.
         /// </param>
         /// <param name="acquireRetryInterval">
-        ///     The interval at which the lock manager checks if a lock can be acquired for the specified resource
-        ///     (default is 30 seconds).
+        ///     The interval at which the lock manager checks if a lock can be acquired for the specified resource.
+        ///     The default is 30 seconds.
         /// </param>
         /// <param name="heartbeatTimeout">
-        ///     After the heartbeat timeout is expired the lock will be considered released (default is 1 minute).
+        ///     After the heartbeat timeout is expired the lock will be considered released. The default is 1 minute.
         /// </param>
         /// <param name="heartbeatInterval">
-        ///     The interval at which the heartbeat has to be sent (default is 1 second).
+        ///     The interval at which the heartbeat has to be sent. The default is 1 second.
         /// </param>
         public DistributedLockSettings(
             string resourceName = "",

@@ -35,8 +35,11 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
             result.Should().BeTrue();
         }
 
-        [Fact]
-        public void MustCreateSequence_MessageSmallerThanChunkSize_FalseReturned()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void MustCreateSequence_MessageSmallerThanChunkSize_ReturnedAccordingToAlwaysAddHeadersFlag(
+            bool alwaysAddHeaders)
         {
             var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10 };
             var envelope = new OutboundEnvelope(
@@ -46,14 +49,15 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 {
                     Chunk = new ChunkSettings
                     {
-                        Size = 10
+                        Size = 10,
+                        AlwaysAddHeaders = alwaysAddHeaders
                     }
                 });
 
             var writer = new ChunkSequenceWriter();
             var result = writer.CanHandle(envelope);
 
-            result.Should().BeFalse();
+            result.Should().Be(alwaysAddHeaders);
         }
 
         [Fact]

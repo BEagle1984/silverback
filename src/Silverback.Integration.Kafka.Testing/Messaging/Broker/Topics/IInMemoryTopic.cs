@@ -164,5 +164,10 @@ namespace Silverback.Messaging.Broker.Topics
         ///     A <see cref="Task" /> that completes when all messages have been processed.
         /// </returns>
         Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        ///     Simulates a rebalance and causes all assignments to be revoked and reassigned.
+        /// </summary>
+        void Rebalance();
     }
 }

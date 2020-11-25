@@ -32,8 +32,7 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Gets or sets the maximum amount of time to wait for the message produce to be acknowledge before
         ///     considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative
-        ///     acknowledgment (default is a quite
-        ///     conservative 5 seconds).
+        ///     acknowledgment. The default is a quite conservative 5 seconds.
         /// </summary>
         public TimeSpan? ConfirmationTimeout { get; set; } = TimeSpan.FromSeconds(5);
 

@@ -108,7 +108,7 @@ namespace Silverback.Messaging.Broker.Topics
                                 new KeyValuePair<Partition, Offset>(partition.Partition.Value, Offset.Unset)));
                 }
 
-                RebalancePartitions(consumer.GroupId);
+                Rebalance(consumer.GroupId);
             }
         }
 
@@ -121,7 +121,7 @@ namespace Silverback.Messaging.Broker.Topics
             {
                 _consumers.Remove(consumer);
 
-                RebalancePartitions(consumer.GroupId);
+                Rebalance(consumer.GroupId);
             }
         }
 
@@ -187,7 +187,17 @@ namespace Silverback.Messaging.Broker.Topics
             }
         }
 
-        private void RebalancePartitions(string groupId)
+        /// <inheritdoc cref="IInMemoryTopic.Rebalance" />
+        public void Rebalance()
+        {
+            // ReSharper disable once InconsistentlySynchronizedField
+            _consumers
+                .Select(consumer => consumer.GroupId)
+                .Distinct()
+                .ForEach(Rebalance);
+        }
+
+        private void Rebalance(string groupId)
         {
             _consumers
                 .Where(consumer => consumer.Disposed)

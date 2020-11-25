@@ -322,7 +322,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
-}
+        }
 
         [Fact]
         public async Task Chunking_JsonWithMessageIdHeader_Consumed()
@@ -381,7 +381,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
-}
+        }
 
         [Fact]
         public async Task Chunking_BinaryFileWithIsLastChunkHeader_Consumed()
@@ -437,7 +437,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
-}
+        }
 
         [Fact]
         public async Task Chunking_BinaryFileWithChunksCountHeader_Consumed()
@@ -493,7 +493,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
-}
+        }
 
         [Fact]
         public async Task Chunking_BinaryFileWithMessageIdHeader_Consumed()
@@ -549,7 +549,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
-}
+        }
 
         [Fact]
         public async Task Chunking_BinaryFileWithMessageTypeHeader_Consumed()
@@ -604,7 +604,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
-}
+        }
 
         [Fact]
         public async Task Chunking_JsonWithDuplicatedChunks_DuplicatesIgnored()
@@ -694,7 +694,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
-}
+        }
 
         [Fact]
         public async Task Chunking_BinaryFileWithDuplicatedChunks_DuplicatesIgnored()
@@ -775,7 +775,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
-}
+        }
 
         [Fact]
         public async Task Chunking_BinaryFileReadAborted_CommittedAndNextMessageConsumed()
@@ -840,6 +840,100 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 {
                                     // Read only first chunk
                                     var buffer = new byte[10];
+                                    binaryFile.Content!.Read(buffer, 0, 10);
+                                    return;
+                                }
+
+                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                            })
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+            await publisher.PublishAsync(message1);
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+
+            await publisher.PublishAsync(message2);
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
+
+            SpyBehavior.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
+            SpyBehavior.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should().Be("text/plain");
+
+            receivedFiles.Should().HaveCount(1);
+            receivedFiles[0].Should().BeEquivalentTo(message2.Content.ReReadAll());
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
+        }
+
+        [Fact]
+        public async Task Chunking_BinaryFileReadAbortedMidChunk_CommittedAndNextMessageConsumed()
+        {
+            var message1 = new BinaryFileMessage
+            {
+                Content = new MemoryStream(
+                    new byte[]
+                    {
+                        0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10,
+                        0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x20,
+                        0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x30
+                    }),
+                ContentType = "application/pdf"
+            };
+
+            var message2 = new BinaryFileMessage
+            {
+                Content = new MemoryStream(
+                    new byte[]
+                    {
+                        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30,
+                        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x40,
+                        0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x50
+                    }),
+                ContentType = "text/plain"
+            };
+
+            var receivedFiles = new List<byte[]?>();
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IBinaryFileMessage>(
+                                    new KafkaProducerEndpoint(DefaultTopicName)
+                                    {
+                                        Chunk = new ChunkSettings
+                                        {
+                                            Size = 10
+                                        }
+                                    })
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
+                        .AddDelegateSubscriber(
+                            (BinaryFileMessage binaryFile) =>
+                            {
+                                if (binaryFile.ContentType != "text/plain")
+                                {
+                                    // Read only part of first chunk
+                                    var buffer = new byte[5];
                                     binaryFile.Content!.Read(buffer, 0, 10);
                                     return;
                                 }
@@ -1086,7 +1180,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
-}
+        }
 
         [Fact(Skip = "Not yet implemented")]
         public Task Chunking_EnforcingConsecutiveJsonChunks_IncompleteSequenceDiscardedOnNoSequenceMessage()
@@ -1528,7 +1622,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var sequenceStores = broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.HasPendingSequences).Should().BeFalse();
-}
+        }
 
         [Fact(Skip = "Hard to implement. Worth it?")]
         public Task Chunking_BinaryFileMissingFirstChunk_NextMessageConsumedAndCommitted()
@@ -1753,10 +1847,169 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             throw new NotImplementedException();
         }
 
-        [Fact(Skip = "Not yet implemented")]
-        public Task Chunking_SingleChunkBinaryFile_ProducedAndConsumed()
+        [Fact]
+        public async Task Chunking_SingleChunkBinaryFile_ProducedAndConsumed()
         {
-            throw new NotImplementedException();
+            var message1 = new BinaryFileMessage
+            {
+                Content = new MemoryStream(
+                    new byte[]
+                    {
+                        0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
+                    }),
+                ContentType = "application/pdf"
+            };
+
+            var message2 = new BinaryFileMessage
+            {
+                Content = new MemoryStream(
+                    new byte[]
+                    {
+                        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38
+                    }),
+                ContentType = "text/plain"
+            };
+
+            var receivedFiles = new List<byte[]?>();
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IBinaryFileMessage>(
+                                    new KafkaProducerEndpoint(DefaultTopicName)
+                                    {
+                                        Chunk = new ChunkSettings
+                                        {
+                                            Size = 10
+                                        }
+                                    })
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
+                        .AddDelegateSubscriber(
+                            (BinaryFileMessage binaryFile) =>
+                            {
+                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                            })
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+            await publisher.PublishAsync(message1);
+            await publisher.PublishAsync(message2);
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            receivedFiles.Should().HaveCount(2);
+            receivedFiles[0].Should().BeEquivalentTo(message1.Content.ReReadAll());
+            receivedFiles[1].Should().BeEquivalentTo(message2.Content.ReReadAll());
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
+        }
+
+        [Fact]
+        public async Task Chunking_SingleChunkBinaryFileReadAborted_CommittedAndNextMessageConsumed()
+        {
+            var message1 = new BinaryFileMessage
+            {
+                Content = new MemoryStream(
+                    new byte[]
+                    {
+                        0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08
+                    }),
+                ContentType = "application/pdf"
+            };
+
+            var message2 = new BinaryFileMessage
+            {
+                Content = new MemoryStream(
+                    new byte[]
+                    {
+                        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30,
+                        0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x40,
+                        0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x50
+                    }),
+                ContentType = "text/plain"
+            };
+
+            var receivedFiles = new List<byte[]?>();
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IBinaryFileMessage>(
+                                    new KafkaProducerEndpoint(DefaultTopicName)
+                                    {
+                                        Chunk = new ChunkSettings
+                                        {
+                                            Size = 10
+                                        }
+                                    })
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
+                        .AddDelegateSubscriber(
+                            (BinaryFileMessage binaryFile) =>
+                            {
+                                if (binaryFile.ContentType != "text/plain")
+                                {
+                                    // Read only first chunk
+                                    var buffer = new byte[10];
+                                    binaryFile.Content!.Read(buffer, 0, 10);
+                                    return;
+                                }
+
+                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                            })
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+
+            await publisher.PublishAsync(message1);
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
+
+            await publisher.PublishAsync(message2);
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
+
+            SpyBehavior.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
+            SpyBehavior.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should().Be("text/plain");
+
+            receivedFiles.Should().HaveCount(1);
+            receivedFiles[0].Should().BeEquivalentTo(message2.Content.ReReadAll());
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(4);
         }
     }
 }

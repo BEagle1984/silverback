@@ -27,7 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     add the services to.
         /// </param>
         /// <param name="interval">
-        ///     The interval between each run (default is 500ms).
+        ///     The interval between each run. The default is 500ms.
         /// </param>
         /// <param name="enforceMessageOrder">
         ///     If set to <c>true</c> the message order will be ensured, retrying the same message until it can be
@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The number of messages to be loaded from the queue at once.
         /// </param>
         /// <param name="distributedLockSettings">
-        ///     The settings for the locking mechanism (default settings will be used if not specified).
+        ///     The settings for the locking mechanism. The default settings will be used if not specified.
         /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
