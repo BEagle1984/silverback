@@ -148,7 +148,7 @@ namespace Silverback.Messaging.Publishing
         ///     The command to be executed.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" />representing the asynchronous operation.
+        ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         Task ExecuteAsync(ICommand commandMessage);
 
@@ -166,7 +166,7 @@ namespace Silverback.Messaging.Publishing
         ///     message.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" />representing the asynchronous operation.
+        ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         Task ExecuteAsync(ICommand commandMessage, bool throwIfUnhandled);
 

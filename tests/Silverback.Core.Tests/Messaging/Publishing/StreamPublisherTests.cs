@@ -2,12 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Tests.Types;
@@ -15,7 +17,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Publishing
 {
-    public class PublisherStreamingTests
+    public class StreamPublisherTests
     {
         [Fact]
         public async Task Publish_MessageStreamProvider_StreamedMessagesReceived()
@@ -24,7 +26,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var receivedEvents = 0;
             var receivedTestEventOnes = 0;
 
-            var publisher = PublisherTestsHelper.GetPublisher(
+            var streamPublisher = new StreamPublisher(PublisherTestsHelper.GetPublisher(
                 builder => builder
                     .AddDelegateSubscriber(
                         (IMessageStreamEnumerable<IEvent> enumerable) =>
@@ -43,13 +45,13 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                             {
                                 Interlocked.Increment(ref receivedTestEventOnes);
                             }
-                        }));
+                        })));
 
             var streamProvider1 = new MessageStreamProvider<IEvent>(20);
             var streamProvider2 = new MessageStreamProvider<IEvent>(20);
 
-            Task.Run(() => publisher.Publish(streamProvider1)).RunWithoutBlocking();
-            publisher.PublishAsync(streamProvider2).RunWithoutBlocking();
+            streamPublisher.Publish(streamProvider1);
+            await streamPublisher.PublishAsync(streamProvider2);
 
             await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 4); // TODO: GET RID OF THIS!!
             receivedStreams.Should().Be(4);
@@ -61,6 +63,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             await AsyncTestingUtil.WaitAsync(() => receivedEvents >= 4 && receivedTestEventOnes >= 2);
 
+            receivedStreams.Should().Be(4);
             receivedEvents.Should().Be(4);
             receivedTestEventOnes.Should().Be(2);
         }
@@ -100,7 +103,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         {
             var receivedStreams = 0;
 
-            var publisher = PublisherTestsHelper.GetPublisher(
+            var streamPublisher = new StreamPublisher(PublisherTestsHelper.GetPublisher(
                 builder => builder
                     .AddDelegateSubscriber(
                         (IMessageStreamEnumerable<IEvent> enumerable) =>
@@ -116,13 +119,13 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                         (IMessageStreamEnumerable<TestCommandOne> enumerable) =>
                         {
                             Interlocked.Increment(ref receivedStreams);
-                        }));
+                        })));
 
             var streamProvider1 = new MessageStreamProvider<IEvent>(20);
             var streamProvider2 = new MessageStreamProvider<IEvent>(20);
 
-            Task.Run(() => publisher.Publish(streamProvider1)).RunWithoutBlocking();
-            publisher.PublishAsync(streamProvider2).RunWithoutBlocking();
+            streamPublisher.Publish(streamProvider1);
+            await streamPublisher.PublishAsync(streamProvider2);
 
             await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 4);
             receivedStreams.Should().Be(4);
@@ -134,16 +137,15 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var receivedStreams = 0;
             var received = 0;
 
-            var publisher = PublisherTestsHelper.GetPublisher(
+            var streamPublisher = new StreamPublisher(PublisherTestsHelper.GetPublisher(
                 builder => builder
                     .AddDelegateSubscriber(
                         (IMessageStreamEnumerable<IEvent> enumerable) =>
                         {
                             Interlocked.Increment(ref receivedStreams);
-
                             foreach (var dummy in enumerable)
                             {
-                                if (Interlocked.Increment(ref received) >= 5)
+                                if (Interlocked.Increment(ref received) >= 3)
                                     throw new TestException();
                             }
                         })
@@ -151,34 +153,103 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                         async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
                         {
                             Interlocked.Increment(ref receivedStreams);
-
                             await foreach (var dummy in enumerable)
                             {
                                 Interlocked.Increment(ref received);
                             }
-                        }));
+                        })));
 
-            var streamProvider = new MessageStreamProvider<IEvent>(20);
+            var streamProvider = new MessageStreamProvider<IEvent>();
 
-            var task = publisher.PublishAsync(streamProvider);
-
-            await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 2); // TODO: GET RID OF THIS!!
-
-
-            // TODO: PublishAsync must complete only when the streams have been published
-            //         -> an additional Task must be returned to catch the error
-            // Task streamCompleteTask = await publisher.PublishAsync(streamProvider); -> Task<Task> PublishAsync
-
+            var tasks = streamPublisher.Publish(streamProvider);
 
             await streamProvider.PushAsync(new TestEventOne());
             await streamProvider.PushAsync(new TestEventOne());
-            await streamProvider.PushAsync(new TestEventTwo());
-            await streamProvider.PushAsync(new TestEventTwo());
+            await streamProvider.PushAsync(new TestEventOne());
 
             await AsyncTestingUtil.WaitAsync(() => received >= 5);
 
-            Func<Task> act = async () => await task;
+            Func<Task> act = async () => await await Task.WhenAny(tasks);
+
             act.Should().Throw<TargetInvocationException>();
+        }
+
+        [Fact]
+        public async Task PublishAsync_MessageStreamProvider_ProcessExceptionRethrown()
+        {
+            var received = 0;
+
+            var streamPublisher = new StreamPublisher(PublisherTestsHelper.GetPublisher(
+                builder => builder
+                    .AddDelegateSubscriber(
+                        (IMessageStreamEnumerable<IEvent> enumerable) =>
+                        {
+                            foreach (var dummy in enumerable)
+                            {
+                                if (Interlocked.Increment(ref received) >= 3)
+                                    throw new TestException();
+                            }
+                        })
+                    .AddDelegateSubscriber(
+                        async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
+                        {
+                            await foreach (var dummy in enumerable)
+                            {
+                            }
+                        })));
+
+            var streamProvider = new MessageStreamProvider<IEvent>();
+
+            var tasks = await streamPublisher.PublishAsync(streamProvider);
+
+            await streamProvider.PushAsync(new TestEventOne());
+            await streamProvider.PushAsync(new TestEventOne());
+            await streamProvider.PushAsync(new TestEventOne());
+
+            Func<Task> act = async () => await await Task.WhenAny(tasks);
+
+            act.Should().Throw<TargetInvocationException>();
+        }
+
+        [Fact]
+        public async Task PublishAsync_MessageStreamProviderCompletedAfterException_AllPendingTasksCompleted()
+        {
+            var received = 0;
+
+            var streamPublisher = new StreamPublisher(PublisherTestsHelper.GetPublisher(
+                builder => builder
+                    .AddDelegateSubscriber(
+                        (IMessageStreamEnumerable<IEvent> enumerable) =>
+                        {
+                            foreach (var dummy in enumerable)
+                            {
+                                if (Interlocked.Increment(ref received) >= 3)
+                                    throw new TestException();
+                            }
+                        })
+                    .AddDelegateSubscriber(
+                        async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
+                        {
+                            await foreach (var dummy in enumerable)
+                            {
+                            }
+                        })));
+
+            var streamProvider = new MessageStreamProvider<IEvent>();
+
+            var tasks = await streamPublisher.PublishAsync(streamProvider);
+
+            await streamProvider.PushAsync(new TestEventOne());
+            await streamProvider.PushAsync(new TestEventOne());
+            await streamProvider.PushAsync(new TestEventOne());
+
+            var whenAnyTask = await Task.WhenAny(tasks);
+
+            if (whenAnyTask.Status == TaskStatus.Faulted)
+                await streamProvider.CompleteAsync();
+
+            await AsyncTestingUtil.WaitAsync(() => tasks.All(task => task.IsCompleted || task.IsFaulted));
+            tasks.All(task => task.IsCompleted || task.IsFaulted).Should().BeTrue();
         }
 
         [Fact]
@@ -188,7 +259,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var receivedEnvelopes = 0;
             var receivedTestEnvelopes = 0;
 
-            var publisher = PublisherTestsHelper.GetPublisher(
+            var streamPublisher = new StreamPublisher(PublisherTestsHelper.GetPublisher(
                 builder => builder
                     .AddDelegateSubscriber(
                         (IMessageStreamEnumerable<IEnvelope> enumerable) =>
@@ -207,10 +278,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                             {
                                 Interlocked.Increment(ref receivedTestEnvelopes);
                             }
-                        }));
+                        })));
 
             var streamProvider = new MessageStreamProvider<IEnvelope>(20);
-            publisher.PublishAsync(streamProvider).RunWithoutBlocking();
+            await streamPublisher.PublishAsync(streamProvider);
 
             await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 2);
             receivedStreams.Should().Be(2);
@@ -231,7 +302,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var receivedTestEventOnes = 0;
             var receivedTestEnvelopes = 0;
 
-            var publisher = PublisherTestsHelper.GetPublisher(
+            var streamPublisher = new StreamPublisher(PublisherTestsHelper.GetPublisher(
                 builder => builder
                     .AddDelegateSubscriber(
                         (IMessageStreamEnumerable<TestEventOne> enumerable) =>
@@ -250,10 +321,10 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                             {
                                 Interlocked.Increment(ref receivedTestEnvelopes);
                             }
-                        }));
+                        })));
 
             var stream = new MessageStreamProvider<IEnvelope>(20);
-            publisher.PublishAsync(stream).RunWithoutBlocking();
+            await streamPublisher.PublishAsync(stream);
 
             await AsyncTestingUtil.WaitAsync(() => receivedStreams >= 2);
             receivedStreams.Should().Be(2);
