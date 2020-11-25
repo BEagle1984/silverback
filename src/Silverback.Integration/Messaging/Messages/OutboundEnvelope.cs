@@ -9,6 +9,8 @@ namespace Silverback.Messaging.Messages
 {
     internal class OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
     {
+        private object? _message;
+
         public OutboundEnvelope(
             object? message,
             IEnumerable<MessageHeader>? headers,
@@ -17,7 +19,7 @@ namespace Silverback.Messaging.Messages
             IOffset? offset = null)
             : base(headers, endpoint, offset)
         {
-            Message = message;
+            _message = message;
 
             if (Message is byte[] rawMessage)
                 RawMessage = new MemoryStream(rawMessage);
@@ -30,6 +32,14 @@ namespace Silverback.Messaging.Messages
 
         public bool AutoUnwrap { get; }
 
-        public object? Message { get; set; }
+        public object? Message
+        {
+            get => _message;
+            set
+            {
+                _message = value;
+                RawMessage = null;
+            }
+        }
     }
 }

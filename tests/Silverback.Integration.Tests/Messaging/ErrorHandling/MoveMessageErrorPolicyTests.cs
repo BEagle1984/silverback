@@ -57,14 +57,12 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
+                "hey oh!",
                 new MemoryStream(),
                 null,
                 new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name)
-            {
-                Message = "hey oh!"
-            };
+                TestConsumerEndpoint.GetDefault().Name);
 
             await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
@@ -80,23 +78,20 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
 
             var message = new TestEventOne { Content = "hey oh!" };
-            var headers = new MessageHeaderCollection();
+            var headers = new MessageHeaderCollection
+            {
+                { "key1", "value1" },
+                { "key2", "value2" }
+            };
             var rawContent = await TestConsumerEndpoint.GetDefault().Serializer
                 .SerializeAsync(message, headers, MessageSerializationContext.Empty);
             var envelope = new InboundEnvelope(
+                message,
                 rawContent,
                 headers,
                 new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name)
-            {
-                Message = message,
-                Headers =
-                {
-                    { "key1", "value1" },
-                    { "key2", "value2" }
-                }
-            };
+                TestConsumerEndpoint.GetDefault().Name);
 
             await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
@@ -117,21 +112,12 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         public async Task HandleError_NotDeserializedInboundMessage_MessagePreserved()
         {
             var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
-
             var envelope = new InboundEnvelope(
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
                 new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name)
-            {
-                Message = null,
-                Headers =
-                {
-                    { "key1", "value1" },
-                    { "key2", "value2" }
-                }
-            };
+                TestConsumerEndpoint.GetDefault().Name);
 
             await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
@@ -147,21 +133,19 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         public async Task HandleError_InboundMessage_HeadersPreserved()
         {
             var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
-
+            var headers = new MessageHeaderCollection
+            {
+                { "key1", "value1" },
+                { "key2", "value2" }
+            };
             var envelope = new InboundEnvelope(
+                "hey oh!",
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
-                null,
+                headers,
                 new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name)
-            {
-                Message = "hey oh!",
-                Headers =
-                {
-                    { "key1", "value1" },
-                    { "key2", "value2" }
-                }
-            };
+                TestConsumerEndpoint.GetDefault().Name);
+
             await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
                 new InvalidOperationException("test"));
@@ -234,21 +218,13 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         public async Task HandleError_SingleMessage_SourceEndpointHeaderIsSet()
         {
             var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
-
             var envelope = new InboundEnvelope(
+                "hey oh!",
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
                 new TestOffset(),
                 new TestConsumerEndpoint("source-endpoint"),
-                "source-endpoint")
-            {
-                Message = "hey oh!",
-                Headers =
-                {
-                    { "key1", "value1" },
-                    { "key2", "value2" }
-                }
-            };
+                "source-endpoint");
 
             await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),

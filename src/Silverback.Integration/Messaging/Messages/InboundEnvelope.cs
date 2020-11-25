@@ -38,6 +38,25 @@ namespace Silverback.Messaging.Messages
         {
         }
 
+        public InboundEnvelope(
+            object message,
+            Stream? rawMessage,
+            IEnumerable<MessageHeader>? headers,
+            IOffset offset,
+            IConsumerEndpoint endpoint,
+            string actualEndpointName,
+            IDictionary<string, string>? additionalLogData = null)
+            : base(
+                rawMessage,
+                headers,
+                endpoint,
+                actualEndpointName,
+                offset,
+                additionalLogData)
+        {
+            Message = message;
+        }
+
         public bool AutoUnwrap => true;
 
         public object? Message { get; set; }

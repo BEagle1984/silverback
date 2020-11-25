@@ -31,6 +31,6 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets or sets the serialized message body.
         /// </summary>
-        Stream? RawMessage { get; set; } // TODO: Should this be get only? Or all the rest should be get/set as well?
+        Stream? RawMessage { get; set; }
     }
 }
