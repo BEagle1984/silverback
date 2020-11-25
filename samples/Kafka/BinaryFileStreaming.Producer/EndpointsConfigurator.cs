@@ -1,7 +1,4 @@
-﻿// Copyright (c) 2020 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
-
-using Silverback.Messaging;
+﻿using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Chunking;
@@ -18,7 +15,8 @@ namespace Silverback.Samples.BinaryFileStreaming.Producer
                 .AddOutbound<BinaryFileMessage>(
                     new KafkaProducerEndpoint("samples-binary-file-streaming")
                     {
-                        // The producer only needs the bootstrap server address to be able to connect
+                        // The producer only needs the bootstrap server address to be
+                        // able to connect
                         Configuration = new KafkaProducerConfig
                         {
                             BootstrapServers = "PLAINTEXT://localhost:9092"

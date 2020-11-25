@@ -1,7 +1,7 @@
 - name: Concepts
   href: concepts/
-- name: Tutorials
-  href: tutorials/
+- name: Samples
+  href: samples/
 - name: API Documentation
   href: api/
 - name: Releases

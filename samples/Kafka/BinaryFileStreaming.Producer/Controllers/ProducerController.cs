@@ -1,7 +1,4 @@
-﻿// Copyright (c) 2020 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
-
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Silverback.Messaging.Messages;
@@ -22,7 +19,9 @@ namespace Silverback.Samples.BinaryFileStreaming.Producer.Controllers
         }
 
         [HttpPost("binary-file")]
-        public async Task<IActionResult> ProduceBinaryFile(string filePath, string? contentType)
+        public async Task<IActionResult> ProduceBinaryFile(
+            string filePath,
+            string? contentType)
         {
             // Open specified file stream
             using var fileStream = System.IO.File.OpenRead(filePath);
@@ -33,21 +32,25 @@ namespace Silverback.Samples.BinaryFileStreaming.Producer.Controllers
             if (!string.IsNullOrEmpty(contentType))
                 binaryFileMessage.ContentType = contentType;
 
-            // Publish the BinaryFileMessage that will be routed to the outbound endpoint. The FileStream will
-            // be read and produced chunk by chunk, without the entire file being loaaded into memory.
+            // Publish the BinaryFileMessage that will be routed to the outbound
+            // endpoint. The FileStream will be read and produced chunk by chunk,
+            // without the entire file being loaded into memory.
             await _publisher.PublishAsync(binaryFileMessage);
 
             return NoContent();
         }
 
         [HttpPost("custom-binary-file")]
-        public async Task<IActionResult> ProduceBinaryFileWithCustomHeaders(string filePath, string? contentType)
+        public async Task<IActionResult> ProduceBinaryFileWithCustomHeaders(
+            string filePath,
+            string? contentType)
         {
             // Open specified file stream
             using var fileStream = System.IO.File.OpenRead(filePath);
 
-            // Create a CustomBinaryFileMessage that wraps the file stream. The CustomBinaryFileMessage extends the
-            // BinaryFileMessage adding an extra Filename property that is also exported as header.
+            // Create a CustomBinaryFileMessage that wraps the file stream. The
+            // CustomBinaryFileMessage extends the BinaryFileMessage adding an extra
+            // Filename property that is also exported as header.
             var binaryFileMessage = new CustomBinaryFileMessage
             {
                 Content = fileStream,
@@ -57,8 +60,9 @@ namespace Silverback.Samples.BinaryFileStreaming.Producer.Controllers
             if (!string.IsNullOrEmpty(contentType))
                 binaryFileMessage.ContentType = contentType;
 
-            // Publish the BinaryFileMessage that will be routed to the outbound endpoint. The FileStream will
-            // be read and produced chunk by chunk, without the entire file being loaded into memory.
+            // Publish the BinaryFileMessage that will be routed to the outbound
+            // endpoint. The FileStream will be read and produced chunk by chunk,
+            // without the entire file being loaded into memory.
             await _publisher.PublishAsync(binaryFileMessage);
 
             return NoContent();

@@ -30,8 +30,8 @@
       },
       {
         "files": [
-          "tutorials/**.md",
-          "tutorials/**/toc.yml"
+          "samples/**.md",
+          "samples/**/toc.yml"
         ]
       },
       {

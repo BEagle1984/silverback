@@ -1,7 +1,4 @@
-﻿// Copyright (c) 2020 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
-
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -23,7 +20,8 @@ namespace Silverback.Samples.BinaryFileStreaming.Consumer.Subscribers
             _logger = logger;
         }
 
-        public async Task OnBinaryFileMessageReceived(CustomBinaryFileMessage binaryFileMessage)
+        public async Task OnBinaryFileMessageReceived(
+            CustomBinaryFileMessage binaryFileMessage)
         {
             EnsureTargetFolderExists();
 
@@ -36,8 +34,9 @@ namespace Silverback.Samples.BinaryFileStreaming.Consumer.Subscribers
 
             if (binaryFileMessage.Content != null)
             {
-                // Asynchronously copy the message content to the FileStream. The message chunks are streamed directly
-                // and the entire file is never loaded into memory.
+                // Asynchronously copy the message content to the FileStream.
+                // The message chunks are streamed directly and the entire file is
+                // never loaded into memory.
                 await binaryFileMessage.Content.CopyToAsync(fileStream);
             }
 
@@ -45,7 +44,8 @@ namespace Silverback.Samples.BinaryFileStreaming.Consumer.Subscribers
             if (_random.Next(2) == 1)
                 throw new InvalidOperationException("You must fail!");
 
-            _logger.LogInformation($"Written {fileStream.Length} bytes into {filename}.");
+            _logger.LogInformation(
+                $"Written {fileStream.Length} bytes into {filename}.");
         }
 
         private static void EnsureTargetFolderExists()

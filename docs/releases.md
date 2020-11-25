@@ -8,12 +8,18 @@ uid: releases
 
 ### What's new
 
+* Refactor Silverback.Integration to support streaming
+    * Create [`IMessageStreamEnumerable<TMessage>`](xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1) (see <xref:streaming>)
+    * Improve chunking support in conjunction with streaming, requiring only one chunk at a time to be loaded into memory
+    * Redesign sequences handling to support chunking, batch consuming and future sequences as well (see <xref:sequences>)
+* Process Kafka partitions independently and concurrently (see <xref:kafka-partitioning>)
 * Simplify subscribers registration and get rid of the `ISubscriber` interface (see <xref:subscribe>)
 * Simplify configuration and reduce boiler plate (see <xref:subscribe> and <xref:message-broker>)
 * Connect brokers and handle graceful shutdown automatically (see <xref:message-broker>)
 * Scan subscribers automatically at startup to reduce cost of first message
 * Add `IServiceCollection.ConfigureSilverback` extension method to conveniently split the configuration code (see <xref:enabling-silverback>)
 * Improve code quality (enhance CI pipeline to use Roslyn analyzers and integrate [SonarCloud](https://sonarcloud.io/dashboard?id=silverback))
+* Increase automated tests coverage
 * Enable nullable reference types and adjust all API
 * Document the entire public API (see [API Documentation](~/api/Microsoft.Extensions.DependencyInjection.html))
 * Add option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see `throwIfUnhandled` argument in the [`IPublisher`](xref:Silverback.Messaging.Publishing.IPublisher) methods and [`ThrowIfUnhandled`](xref:Silverback.Messaging.IConsumerEndpoint#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled) property in the [`IConsumerEndpoint`](xref:Silverback.Messaging.IConsumerEndpoint))
@@ -30,6 +36,7 @@ uid: releases
 
 ### Breaking Changes
 
+* The chunks belonging to the same message must be contiguous (interleaved messages are at the moment not supported anymore)
 * Removed `ISubscriber` interface
 * Removed `BusConfigurator` (moved all the configuration into the `ISilverbackBuilder` extension methods)
     * Replaced `BusConfigurator.Connect` with `IBroker.ConfigureEnpoints`/`IBrokerCollection.ConfigureEnpoints`/`IEndpointConfigurator` (see <xref:message-broker>)
@@ -60,8 +67,9 @@ uid: releases
 * Some minor breaking changes to the `InMemoryBroker`
 * Removed `PartitioningKeyMemberAttribute`, use `KafkaKeyMemberAttribute` instead
 * `Silverback.Integration.Configuration` has been discontinued
-* The `Settings` property has been renamed to `Options` in the default `JsonMessageSerializer` (since the switch to System.Text.Json)
+* Renamed `Settings` property to `Options` in the default `JsonMessageSerializer` (since the switch to System.Text.Json)
 * Removed `LogWithLevel` method from `SkipMessageErrorPolicy`, use the new `WithLogLevels` configuration instead
+* Removed `Parallel` option from `SubscribeAttribute`
 
 ## [2.2.0](https://github.com/BEagle1984/silverback/releases/tag/v2.2.0)
 

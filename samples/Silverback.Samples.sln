@@ -4,6 +4,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 ProjectSection(SolutionItems) = preProject
 	Directory.Build.props = Directory.Build.props
 	README.md = README.md
+	CodeAnalysis.ruleset = CodeAnalysis.ruleset
+	stylecop.json = stylecop.json
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kafka", "Kafka", "{4A403180-A52A-488B-A6F8-53CBF9AE604E}"
