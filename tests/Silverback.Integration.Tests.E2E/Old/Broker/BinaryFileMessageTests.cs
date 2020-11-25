@@ -45,7 +45,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                 ContentType = "application/pdf"
             };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message);
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
@@ -83,7 +83,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                 CustomHeader = "hello!"
             };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -95,7 +95,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message);
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
@@ -117,7 +117,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                 ContentType = "application/pdf"
             };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -133,7 +133,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message);
 
@@ -154,7 +154,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                 ContentType = "application/pdf"
             };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -174,7 +174,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message);
 
@@ -191,7 +191,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -206,7 +206,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
             await producer.ProduceAsync(rawContent);
@@ -225,7 +225,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -240,7 +240,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
             await producer.ProduceAsync(rawContent);
@@ -263,7 +263,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                 new MessageHeader("x-custom-header", "hello!")
             };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -278,7 +278,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
             var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
             await producer.ProduceAsync(rawContent, headers);
@@ -309,7 +309,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                 ContentType = "application/pdf"
             };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -339,7 +339,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message);
 
@@ -372,7 +372,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                 CustomHeader = "hello!"
             };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -402,7 +402,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message);
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(5);

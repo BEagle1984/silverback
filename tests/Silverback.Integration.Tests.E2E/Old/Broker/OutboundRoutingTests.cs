@@ -26,7 +26,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
         [Fact(Skip = "Deprecated")]
         public async Task StaticSingleEndpoint_RoutedCorrectly()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
         [Fact(Skip = "Deprecated")]
         public async Task StaticBroadcast_RoutedCorrectly()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -71,7 +71,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
@@ -85,7 +85,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
         [Fact(Skip = "Deprecated")]
         public async Task DynamicCustomRouting_RoutedCorrectly()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -98,7 +98,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<ICommandPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<ICommandPublisher>();
             await publisher.ExecuteAsync(new TestPrioritizedCommand { Priority = Priority.Low });
             await publisher.ExecuteAsync(new TestPrioritizedCommand { Priority = Priority.Low });
             await publisher.ExecuteAsync(new TestPrioritizedCommand { Priority = Priority.High });

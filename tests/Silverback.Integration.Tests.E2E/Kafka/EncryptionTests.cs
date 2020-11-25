@@ -45,7 +45,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var message1 = new TestEventOne { Content = "Message 1" };
             var message2 = new TestEventOne { Content = "Message 2" };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -80,7 +80,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
@@ -112,7 +112,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -152,7 +152,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
@@ -212,7 +212,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var receivedFiles = new List<byte[]?>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services =>
                     {
                         services
@@ -251,7 +251,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     })
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
@@ -293,7 +293,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var receivedFiles = new List<byte[]?>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services =>
                     {
                         services
@@ -336,7 +336,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     })
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();

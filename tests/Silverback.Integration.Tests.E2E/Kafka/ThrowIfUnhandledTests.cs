@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
             var receivedMessages = new List<object>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -70,13 +70,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            var consumer = serviceProvider.GetRequiredService<IBroker>().Consumers[0];
+            var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
             receivedMessages.Should().HaveCount(3);
@@ -96,7 +96,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
             var receivedMessages = new List<object>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -136,13 +136,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            var consumer = serviceProvider.GetRequiredService<IBroker>().Consumers[0];
+            var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
             receivedMessages.Should().HaveCount(3);
@@ -162,7 +162,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         public async Task ThrowIfUnhandled_Batch_ConsumerStoppedWhenUnhandled()
         {
             var receivedMessages = new List<object>();
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -205,13 +205,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventOne());
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            var consumer = serviceProvider.GetRequiredService<IBroker>().Consumers[0];
+            var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
 
             receivedMessages.Should().HaveCount(3);
             consumer.IsConnected.Should().BeTrue();

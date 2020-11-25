@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
             var receivedMessages = new List<TestEventOne>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -65,7 +65,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= 15; i++)
             {
@@ -86,7 +86,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
             var receivedMessages = new List<TestEventOne>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -120,7 +120,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     })))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= 3; i++)
             {
@@ -142,7 +142,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             bool aborted = false;
             var receivedMessages = new List<TestEventOne>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -179,7 +179,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(
                 new TestEventOne
                 {
@@ -209,7 +209,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             bool completed = false;
             var receivedMessages = new ConcurrentBag<TestEventOne>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -235,7 +235,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     () => completed = true)))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(
                 new TestEventOne
                 {
@@ -263,7 +263,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
             var receivedMessages = new List<TestEventOne>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -297,7 +297,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(
                 new TestEventOne
                 {
@@ -327,7 +327,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
             var receivedMessages = new List<TestEventOne>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -361,7 +361,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     })))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(
                 new TestEventOne
                 {
@@ -392,7 +392,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var receivedMessages = new ConcurrentBag<TestEventOne>();
             var receivedStreams = new ConcurrentBag<IMessageStreamEnumerable<TestEventOne>>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -424,7 +424,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= 15; i++)
             {
@@ -447,7 +447,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var receivedMessages = new ConcurrentBag<TestEventOne>();
             var receivedStreams = new ConcurrentBag<IMessageStreamEnumerable<TestEventOne>>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -480,7 +480,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= 15; i++)
             {
@@ -503,7 +503,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var receivedMessages = new List<TestEventWithKafkaKey>();
             var taskCompletionSource = new TaskCompletionSource<bool>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -539,7 +539,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= 3; i++)
             {

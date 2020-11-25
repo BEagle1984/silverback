@@ -28,7 +28,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task StatusInfo_ConsumingAndDisconnecting_StatusIsCorrectlySet()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -50,12 +50,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
 
             broker.Consumers[0].IsConnected.Should().BeTrue();
             broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -71,7 +71,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task StatusInfo_ConsumingAndDisconnecting_StatusHistoryRecorded()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -93,13 +93,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
 
             broker.Consumers[0].StatusInfo.History.Should().HaveCount(1);
             broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Connected);
             broker.Consumers[0].StatusInfo.History.Last().Timestamp.Should().NotBeNull();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -117,7 +117,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task StatusInfo_Consuming_LastConsumedMessageTracked()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -142,12 +142,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventOne());
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
             broker.Consumers[0].StatusInfo.LatestConsumedMessageOffset.Should().BeOfType<KafkaOffset>();
             broker.Consumers[0].StatusInfo.LatestConsumedMessageOffset.As<KafkaOffset>().Offset.Should().Be(1);
             broker.Consumers[0].StatusInfo.LatestConsumedMessageTimestamp.Should().NotBeNull();

@@ -32,7 +32,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
 
             var message = new TestEventOne { Content = "Hello E2E!" };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddScoped<ScopeIdentifier>()
@@ -55,7 +55,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
             await publisher.PublishAsync(message);
             await publisher.PublishAsync(message);
@@ -71,7 +71,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
 
             var message = new TestEventOne { Content = "Hello E2E!" };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddScoped<ScopeIdentifier>()
@@ -101,7 +101,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
             scopes.Should().Be(3);

@@ -35,7 +35,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             string? failedCommit = null;
             string? enumerationAborted = null;
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -95,7 +95,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= 9; i++)
             {
@@ -134,7 +134,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             string? failedCommit = null;
             string? enumerationAborted = null;
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -195,7 +195,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             for (int i = 1; i <= 15; i++)
             {
@@ -240,7 +240,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             string? failedCommit = null;
             string? enumerationAborted = null;
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -300,7 +300,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= 9; i++)
             {
@@ -339,7 +339,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             string? failedCommit = null;
             string? enumerationAborted = null;
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -400,7 +400,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             for (int i = 1; i <= 15; i++)
             {

@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task OutboxProduceStrategy_DefaultSettings_ProducedAndConsumed()
         {
-            var serviceProvider = Host
+            Host
                 .WithTestDbContext()
                 .ConfigureServices(
                     services => services
@@ -62,8 +62,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
-            var dbContext = serviceProvider.GetRequiredService<TestDbContext>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            var dbContext = Host.ScopedServiceProvider.GetRequiredService<TestDbContext>();
 
             for (int i = 1; i <= 15; i++)
             {

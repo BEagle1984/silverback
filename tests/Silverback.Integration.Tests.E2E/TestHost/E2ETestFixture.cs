@@ -23,6 +23,12 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         private OutboundInboundSubscriber? _outboundInboundSubscriber;
 
+        private IBroker? _broker;
+
+        private IInMemoryTopic? _defaultTopic;
+
+        private IKafkaTestingHelper? _kafkaTestingHelper;
+
         protected E2ETestFixture(ITestOutputHelper testOutputHelper)
         {
             Host = new TestApplicationHost().WithTestOutputHelper(testOutputHelper);
@@ -31,16 +37,17 @@ namespace Silverback.Tests.Integration.E2E.TestHost
         protected TestApplicationHost Host { get; }
 
         protected SpyBrokerBehavior SpyBehavior => _spyBrokerBehavior ??=
-            Host.ServiceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
+            Host.ScopedServiceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
 
         protected OutboundInboundSubscriber Subscriber => _outboundInboundSubscriber ??=
-            Host.ServiceProvider.GetRequiredService<OutboundInboundSubscriber>();
+            Host.ScopedServiceProvider.GetRequiredService<OutboundInboundSubscriber>();
 
-        protected IBroker Broker => Host.ServiceProvider.GetRequiredService<IBroker>();
+        protected IBroker Broker => _broker ??= Host.ScopedServiceProvider.GetRequiredService<IBroker>();
 
-        protected IInMemoryTopic DefaultTopic => GetTopic(DefaultTopicName);
+        protected IInMemoryTopic DefaultTopic => _defaultTopic ??= GetTopic(DefaultTopicName);
 
-        protected IKafkaTestingHelper KafkaTestingHelper => Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
+        protected IKafkaTestingHelper KafkaTestingHelper =>
+            _kafkaTestingHelper ??= Host.ScopedServiceProvider.GetRequiredService<IKafkaTestingHelper>();
 
         public void Dispose()
         {
@@ -49,7 +56,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost
         }
 
         protected IInMemoryTopic GetTopic(string name) =>
-            Host.ServiceProvider.GetRequiredService<IInMemoryTopicCollection>()[name];
+            Host.ScopedServiceProvider.GetRequiredService<IInMemoryTopicCollection>()[name];
 
         protected virtual void Dispose(bool disposing)
         {

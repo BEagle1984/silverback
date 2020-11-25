@@ -48,7 +48,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                 Content = "Hello E2E!"
             };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -68,7 +68,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
@@ -96,7 +96,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                 Content = "Hello E2E!"
             };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -123,7 +123,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
@@ -155,7 +155,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                 CustomHeader2 = false
             };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -175,7 +175,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
@@ -196,7 +196,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                 Content = "Hello E2E!"
             };
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -218,7 +218,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
@@ -250,7 +250,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                  MessageSerializationContext.Empty) ??
                              throw new InvalidOperationException("Serializer returned null");
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -281,7 +281,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();

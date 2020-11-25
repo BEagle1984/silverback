@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task ExactlyOnce_InMemoryInboundLog_DuplicatedMessagesIgnored()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -54,7 +54,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(
@@ -96,7 +96,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task ExactlyOnce_DbInboundLog_DuplicatedMessagesIgnored()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -123,8 +123,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .WithTestDbContext()
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
-            var dbContext = serviceProvider.GetRequiredService<TestDbContext>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            var dbContext = Host.ScopedServiceProvider.GetRequiredService<TestDbContext>();
 
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(
@@ -167,7 +167,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task ExactlyOnce_InMemoryOffsetStore_DuplicatedMessagesIgnored()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -198,7 +198,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Offset.Beginning)).ToList()))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(
                 new TestEventOne
@@ -235,7 +235,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task ExactlyOnce_DbOffsetStore_DuplicatedMessagesIgnored()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -268,7 +268,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .WithTestDbContext()
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(
                 new TestEventOne

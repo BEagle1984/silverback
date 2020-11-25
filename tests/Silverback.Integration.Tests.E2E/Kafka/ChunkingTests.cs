@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
             const int chunksPerMessage = 3;
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -74,7 +74,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= 5; i++)
             {
@@ -155,7 +155,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var receivedFiles = new List<byte[]?>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -187,7 +187,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
@@ -794,7 +794,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var receivedFiles = new List<byte[]?>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -837,7 +837,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message1);
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
@@ -888,7 +888,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var receivedFiles = new List<byte[]?>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -931,7 +931,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message1);
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
@@ -956,7 +956,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task Chunking_BinaryFileProcessingFailedAfterFirstChunk_DisconnectedAndNotCommitted()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -995,7 +995,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(
                 new BinaryFileMessage
@@ -1020,7 +1020,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task Chunking_BinaryFileProcessingFailedImmediately_DisconnectedAndNotCommitted()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -1052,7 +1052,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(
                 new BinaryFileMessage
@@ -2090,7 +2090,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             const int messagesCount = 10;
             const int chunksPerMessage = 3;
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -2121,7 +2121,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= messagesCount; i++)
             {
@@ -2331,7 +2331,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var receivedFiles = new List<byte[]?>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -2369,7 +2369,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
@@ -2409,7 +2409,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var receivedFiles = new List<byte[]?>();
 
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -2452,7 +2452,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message1);
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();

@@ -27,7 +27,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task Retention_ProducedLotOfMessages_FirstMessagesRemoved()
         {
-            var serviceProvider = Host.ConfigureServices(
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -51,7 +51,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= 100; i++)
             {
