@@ -103,14 +103,6 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.IsBeingConsumed" />
         public bool IsBeingConsumed => _streamProvider.StreamsCount > 0;
 
-        /// <inheritdoc cref="ISequence.BrokerMessageIdentifiers" />
-        public IReadOnlyList<IBrokerMessageIdentifier> BrokerMessageIdentifiers =>
-            _sequences != null
-                ? _messageIdentifiers
-                    .Union(_sequences.SelectMany(sequence => sequence.BrokerMessageIdentifiers))
-                    .ToList()
-                : _messageIdentifiers;
-
         /// <inheritdoc cref="ISequence.Sequences" />
         public IReadOnlyCollection<ISequence> Sequences =>
             (IReadOnlyCollection<ISequence>?)_sequences ?? Array.Empty<ISequence>();
@@ -180,6 +172,14 @@ namespace Silverback.Messaging.Sequences
 
             return AbortCoreAsync(reason, exception);
         }
+
+        /// <inheritdoc cref="ISequence.GetBrokerMessageIdentifiers" />
+        public IReadOnlyList<IBrokerMessageIdentifier> GetBrokerMessageIdentifiers() =>
+            _sequences != null
+                ? _messageIdentifiers
+                    .Union(_sequences.SelectMany(sequence => sequence.GetBrokerMessageIdentifiers()))
+                    .ToList()
+                : _messageIdentifiers;
 
         /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
         void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;

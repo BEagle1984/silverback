@@ -54,13 +54,6 @@ namespace Silverback.Messaging.Broker.Behaviors
         public IConsumer Consumer { get; }
 
         /// <summary>
-        ///     Gets the identifiers of the messages being handled in this context (either the single message or the
-        ///     sequence).
-        /// </summary>
-        public IReadOnlyCollection<IBrokerMessageIdentifier> BrokerMessageIdentifiers =>
-            Sequence?.BrokerMessageIdentifiers ?? new[] { Envelope.BrokerMessageIdentifier };
-
-        /// <summary>
         ///     Gets the <see cref="ISequenceStore" /> used to temporary store the pending sequences being consumed.
         /// </summary>
         public ISequenceStore SequenceStore { get; }
@@ -119,6 +112,16 @@ namespace Silverback.Messaging.Broker.Behaviors
         ///     all subscribers return.
         /// </summary>
         public Task? ProcessingTask { get; internal set; }
+
+        /// <summary>
+        ///     Gets the identifiers of the messages being handled in this context (either the single message or the
+        ///     sequence).
+        /// </summary>
+        /// <returns>
+        ///     The list of identifiers.
+        /// </returns>
+        public IReadOnlyCollection<IBrokerMessageIdentifier> GetBrokerMessageIdentifiers() =>
+            Sequence?.GetBrokerMessageIdentifiers() ?? new[] { Envelope.BrokerMessageIdentifier };
 
         /// <summary>
         ///     Replaces the <see cref="IServiceProvider" /> with the one from the specified scope.

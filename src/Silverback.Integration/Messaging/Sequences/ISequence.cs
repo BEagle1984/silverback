@@ -83,11 +83,6 @@ namespace Silverback.Messaging.Sequences
         Exception? AbortException { get; }
 
         /// <summary>
-        ///     Gets the identifiers of the messages belonging to the sequence.
-        /// </summary>
-        IReadOnlyList<IBrokerMessageIdentifier> BrokerMessageIdentifiers { get; }
-
-        /// <summary>
         ///     Gets the <see cref="ISequence" /> that were added to this sequence (e.g. the
         ///     <see cref="ChunkSequence" /> whose aggregated message is added to a <see cref="BatchSequence" />.
         /// </summary>
@@ -156,5 +151,13 @@ namespace Silverback.Messaging.Sequences
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         Task AbortAsync(SequenceAbortReason reason, Exception? exception = null);
+
+        /// <summary>
+        ///     Gets the identifiers of the messages belonging to the sequence.
+        /// </summary>
+        /// <returns>
+        ///     The list of identifiers.
+        /// </returns>
+        IReadOnlyList<IBrokerMessageIdentifier> GetBrokerMessageIdentifiers();
     }
 }

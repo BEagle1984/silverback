@@ -89,7 +89,7 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             // TODO: At least once is ok? (Consider that the DbContext might have been committed already.
             await _transactionalServices.ForEachAsync(service => service.CommitAsync()).ConfigureAwait(false);
-            await _context.Consumer.CommitAsync(_context.BrokerMessageIdentifiers).ConfigureAwait(false);
+            await _context.Consumer.CommitAsync(_context.GetBrokerMessageIdentifiers()).ConfigureAwait(false);
 
             _logger.LogTraceWithMessageInfo(
                 IntegrationEventIds.LowLevelTracing,
@@ -139,14 +139,14 @@ namespace Silverback.Messaging.Inbound.Transaction
             {
                 if (commitConsumer)
                 {
-                    await _context.Consumer.CommitAsync(_context.BrokerMessageIdentifiers).ConfigureAwait(false);
+                    await _context.Consumer.CommitAsync(_context.GetBrokerMessageIdentifiers()).ConfigureAwait(false);
                 }
                 else
                 {
                     if (stopConsuming)
                         _context.Consumer.Stop();
 
-                    await _context.Consumer.RollbackAsync(_context.BrokerMessageIdentifiers).ConfigureAwait(false);
+                    await _context.Consumer.RollbackAsync(_context.GetBrokerMessageIdentifiers()).ConfigureAwait(false);
                 }
             }
 
