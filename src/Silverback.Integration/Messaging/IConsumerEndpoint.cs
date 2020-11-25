@@ -30,7 +30,7 @@ namespace Silverback.Messaging
         ///     received message. The default is <c>false</c> and it means that the unhandled messages are silently
         ///     discarded.
         /// </summary>
-        bool ThrowIfUnhandled { get; } // TODO: Reimplement!
+        bool ThrowIfUnhandled { get; }
 
         /// <summary>
         ///     Gets the error policy to be applied when an exception occurs during the processing of the
