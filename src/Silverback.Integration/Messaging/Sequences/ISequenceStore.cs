@@ -26,11 +26,14 @@ namespace Silverback.Messaging.Sequences
         /// <param name="sequenceId">
         ///     The sequence identifier.
         /// </param>
+        /// <param name="matchPrefix">
+        ///     Enables sequence id prefix matching (String.StartsWith).
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     <see cref="ISequence" /> instance.
         /// </returns>
-        Task<TSequence?> GetAsync<TSequence>(string sequenceId)
+        Task<TSequence?> GetAsync<TSequence>(string sequenceId, bool matchPrefix = false)
             where TSequence : class, ISequence;
 
         /// <summary>

@@ -197,6 +197,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await Broker.DisconnectAsync();
 
+            await AsyncTestingUtil.WaitAsync(() => aborted); // TODO: Necessary?
+
             aborted.Should().BeTrue();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
         }

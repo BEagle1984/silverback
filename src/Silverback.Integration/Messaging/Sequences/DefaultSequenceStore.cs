@@ -30,10 +30,20 @@ namespace Silverback.Messaging.Sequences
 
         public int Count => _store.Count;
 
-        public Task<TSequence?> GetAsync<TSequence>(string sequenceId)
+        public Task<TSequence?> GetAsync<TSequence>(string sequenceId, bool prefixMatch = false)
             where TSequence : class, ISequence
         {
-            _store.TryGetValue(sequenceId, out var sequence);
+            ISequence? sequence;
+
+            if (prefixMatch)
+            {
+                sequence = _store.FirstOrDefault(
+                    keyValuePair => keyValuePair.Key.StartsWith(sequenceId, StringComparison.Ordinal)).Value;
+            }
+            else
+            {
+                _store.TryGetValue(sequenceId, out sequence);
+            }
 
             if (sequence is ISequenceImplementation sequenceImpl)
                 sequenceImpl.SetIsNew(false);

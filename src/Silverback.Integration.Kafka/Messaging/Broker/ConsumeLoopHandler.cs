@@ -128,12 +128,19 @@ namespace Silverback.Messaging.Broker
                     consumeResult.Partition,
                     consumeResult.Offset);
 
-                // Wait until the ChannelsManager is set (after the partitions have been assigned)
-                while (_channelsManager == null)
+                if (_channelsManager == null)
                 {
-                    Task.Delay(50, cancellationToken).Wait(cancellationToken);
+                    _logger.LogDebug(
+                        KafkaEventIds.ConsumingMessage,
+                        "Waiting for channels manager to be initialized...");
 
-                    cancellationToken.ThrowIfCancellationRequested();
+                    // Wait until the ChannelsManager is set (after the partitions have been assigned)
+                    while (_channelsManager == null)
+                    {
+                        Task.Delay(50, cancellationToken).Wait(cancellationToken);
+
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
                 }
 
                 _channelsManager.Write(consumeResult, cancellationToken);

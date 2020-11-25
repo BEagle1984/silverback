@@ -95,13 +95,13 @@ namespace Silverback.Messaging.Inbound
 
         private static async Task<UnboundedSequence> GetUnboundedSequence(ConsumerPipelineContext context)
         {
-            const string sequenceId = "-unbounded-";
+            const string sequenceIdPrefix = "unbounded|";
 
-            var sequence = await context.SequenceStore.GetAsync<UnboundedSequence>(sequenceId).ConfigureAwait(false);
+            var sequence = await context.SequenceStore.GetAsync<UnboundedSequence>(sequenceIdPrefix, true).ConfigureAwait(false);
             if (sequence != null && sequence.IsPending)
                 return sequence;
 
-            sequence = new UnboundedSequence(sequenceId, context);
+            sequence = new UnboundedSequence(sequenceIdPrefix + Guid.NewGuid().ToString("N"), context);
             await context.SequenceStore.AddAsync(sequence).ConfigureAwait(false);
 
             await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);

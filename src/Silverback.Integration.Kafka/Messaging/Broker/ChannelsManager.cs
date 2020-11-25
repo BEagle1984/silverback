@@ -98,9 +98,21 @@ namespace Silverback.Messaging.Broker
 
         // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
         // synchronously to stay within a single long-running thread with the Consume loop.
-        public void Write(ConsumeResult<byte[]?, byte[]?> consumeResult, CancellationToken cancellationToken) =>
+        public void Write(ConsumeResult<byte[]?, byte[]?> consumeResult, CancellationToken cancellationToken)
+        {
+            int channelIndex = GetChannelIndex(consumeResult.TopicPartition);
+
+            _logger.LogDebug(
+                KafkaEventIds.ConsumingMessage,
+                "Writing message ({topic} {partition} @{offset}) to channel {channelIndex}.",
+                consumeResult.Topic,
+                consumeResult.Partition,
+                consumeResult.Offset,
+                channelIndex);
+
             AsyncHelper.RunSynchronously(
-                () => GetChannelWriter(consumeResult.TopicPartition).WriteAsync(consumeResult, cancellationToken));
+                () => _channels[channelIndex].Writer.WriteAsync(consumeResult, cancellationToken));
+        }
 
         public void Dispose()
         {
@@ -174,7 +186,7 @@ namespace Silverback.Messaging.Broker
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    await ReadChannelOnceAsync(channelReader, cancellationToken).ConfigureAwait(false);
+                    await ReadChannelOnceAsync(channelReader, index, cancellationToken).ConfigureAwait(false);
                 }
             }
             catch (OperationCanceledException)
@@ -210,9 +222,15 @@ namespace Silverback.Messaging.Broker
 
         private async Task ReadChannelOnceAsync(
             ChannelReader<ConsumeResult<byte[]?, byte[]?>> channelReader,
+            int index,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            _logger.LogTrace(
+                IntegrationEventIds.LowLevelTracing,
+                "Reading channel {channelIndex}...",
+                index);
 
             var consumeResult = await channelReader.ReadAsync(cancellationToken).ConfigureAwait(false);
 
@@ -239,9 +257,6 @@ namespace Silverback.Messaging.Broker
             await _consumer.HandleMessageAsync(consumeResult.Message, consumeResult.TopicPartitionOffset)
                 .ConfigureAwait(false);
         }
-
-        private ChannelWriter<ConsumeResult<byte[]?, byte[]?>> GetChannelWriter(TopicPartition topicPartition) =>
-            _channels[GetChannelIndex(topicPartition)].Writer;
 
         private int GetChannelIndex(TopicPartition topicPartition) =>
             _consumer.Endpoint.ProcessPartitionsIndependently ? GetPartitionAssignmentIndex(topicPartition) : 0;
