@@ -33,6 +33,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
             var batches = new List<List<TestEventOne>>();
             string? failedCommit = null;
+            string? enumerationAborted = null;
 
             var serviceProvider = Host.ConfigureServices(
                     services => services
@@ -85,6 +86,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                          $"({batches.Count}.{list.Count})";
                                     }
                                 }
+
+                                if (list.Count != 3)
+                                {
+                                    enumerationAborted ??= $"Enumeration completed after {list.Count} messages " +
+                                                           $"({batches.Count}.{list.Count})";
+                                }
                             }))
                 .Run();
 
@@ -98,6 +105,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             failedCommit.Should().BeNull();
+            enumerationAborted.Should().BeNull();
 
             batches.Should().HaveCount(3);
             batches[0].Should().HaveCount(3);
@@ -124,6 +132,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         {
             var batches = new List<List<string?>>();
             string? failedCommit = null;
+            string? enumerationAborted = null;
 
             var serviceProvider = Host.ConfigureServices(
                     services => services
@@ -177,6 +186,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     var readAll = await message.Content.ReadAllAsync();
                                     list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
                                 }
+
+                                if (list.Count != 5)
+                                {
+                                    enumerationAborted ??= $"Enumeration completed after {list.Count} messages " +
+                                                     $"({batches.Count}.{list.Count})";
+                                }
                             }))
                 .Run();
 
@@ -188,6 +203,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             }
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            failedCommit.Should().BeNull();
+            enumerationAborted.Should().BeNull();
 
             batches.Should().HaveCount(3);
             batches[0].Should().HaveCount(5);
@@ -212,7 +230,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             batches[2][3].Should().Be("Long message 14");
             batches[2][4].Should().Be("Long message 15");
 
-            failedCommit.Should().BeNull();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(30);
         }
 

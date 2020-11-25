@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -146,9 +147,10 @@ namespace Silverback.Messaging.Sequences
             return context.SequenceStore.GetAsync<ISequence>(sequenceId);
         }
 
-        private static async Task AbortPreviousSequencesAsync(ISequenceStore sequenceStore, ISequence currentSequence)
-        {
-            await sequenceStore.ForEachAsync(
+        private static Task AbortPreviousSequencesAsync(ISequenceStore sequenceStore, ISequence currentSequence) =>
+            sequenceStore
+                .Where(previousSequence => previousSequence.IsPending)
+                .ForEachAsync(
                     previousSequence =>
                     {
                         // Prevent Sequence and RawSequence to mess with each other
@@ -157,8 +159,6 @@ namespace Silverback.Messaging.Sequences
                             return Task.CompletedTask;
 
                         return previousSequence.AbortAsync(SequenceAbortReason.IncompleteSequence);
-                    })
-                .ConfigureAwait(false);
-        }
+                    });
     }
 }

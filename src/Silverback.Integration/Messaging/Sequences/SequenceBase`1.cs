@@ -14,6 +14,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences.Batch;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
@@ -265,6 +266,13 @@ namespace Silverback.Messaging.Sequences
                 {
                     TotalLength = Length;
                     IsCompleting = true;
+
+                    _logger.LogTrace(
+                        IntegrationEventIds.LowLevelTracing,
+                        "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength}...",
+                        GetType().Name,
+                        SequenceId,
+                        TotalLength);
                 }
 
                 int pushedStreamsCount = await _streamProvider.PushAsync(

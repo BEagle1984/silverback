@@ -157,7 +157,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                     {
                         _logger.LogTraceWithMessageInfo(
                             IntegrationEventIds.LowLevelTracing,
-                            "Processing has completed but it's not the beginning of the outer sequence. No action will be performed.",
+                            $"{sequence.GetType().Name} processing has completed but it's not the beginning of the outer sequence. No action will be performed.",
                             context);
                         return;
                     }
@@ -168,9 +168,12 @@ namespace Silverback.Messaging.Inbound.Transaction
                     processingTask = context.ProcessingTask != processingTask ? context.ProcessingTask : null;
                 }
 
-                _logger.LogTraceWithMessageInfo(IntegrationEventIds.LowLevelTracing, "Sequence processing completed.", context);
+                _logger.LogTraceWithMessageInfo(
+                    IntegrationEventIds.LowLevelTracing,
+                    $"{sequence.GetType().Name} '{sequence.SequenceId}' processing completed.",
+                    context);
 
-                if (!sequence.IsAborted && !context.SequenceStore.HasPendingSequences)
+                if (!sequence.IsAborted)
                 {
                     await context.TransactionManager.CommitAsync().ConfigureAwait(false);
 

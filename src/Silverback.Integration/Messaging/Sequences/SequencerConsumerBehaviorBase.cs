@@ -114,7 +114,7 @@ namespace Silverback.Messaging.Sequences
 
                 _logger.LogDebugWithMessageInfo(
                     IntegrationEventIds.SequenceCompleted,
-                    $"{sequence.GetType().Name} completed.",
+                    $"{sequence.GetType().Name} '{sequence.SequenceId}' completed.",
                     context);
             }
         }
