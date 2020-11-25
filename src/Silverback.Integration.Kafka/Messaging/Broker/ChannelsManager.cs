@@ -114,7 +114,7 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogDebug(
                 KafkaEventIds.ConsumingMessage,
-                "Writing message ({topic} {partition} @{offset}) to channel {channelIndex}.",
+                "Writing message ({topic}[{partition}] @{offset}) to channel {channelIndex}.",
                 consumeResult.Topic,
                 consumeResult.Partition,
                 consumeResult.Offset,
@@ -192,8 +192,9 @@ namespace Silverback.Messaging.Broker
             {
                 _logger.LogTrace(
                     IntegrationEventIds.LowLevelTracing,
-                    "Starting channel {channelIndex} processing loop...",
-                    index);
+                    "Starting channel {channelIndex} processing loop... (consumerId: {consumerId})",
+                    index,
+                    _consumer.Id);
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
@@ -205,8 +206,9 @@ namespace Silverback.Messaging.Broker
                 // Ignore
                 _logger.LogTrace(
                     IntegrationEventIds.LowLevelTracing,
-                    "Exiting channel {channelIndex} processing loop (operation canceled).",
-                    index);
+                    "Exiting channel {channelIndex} processing loop (operation canceled). (consumerId: {consumerId})",
+                    index,
+                    _consumer.Id);
             }
             catch (Exception ex)
             {
@@ -215,7 +217,8 @@ namespace Silverback.Messaging.Broker
                     _logger.LogCritical(
                         IntegrationEventIds.ConsumerFatalError,
                         ex,
-                        "Fatal error occurred processing the consumed message. The consumer will be stopped.");
+                        "Fatal error occurred processing the consumed message. The consumer will be stopped. (consumerId: {consumerId})",
+                        _consumer.Id);
                 }
 
                 IsReading[index] = false;
@@ -229,8 +232,9 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogTrace(
                 IntegrationEventIds.LowLevelTracing,
-                "Exited channel {channelIndex} processing loop.",
-                index);
+                "Exited channel {channelIndex} processing loop. (consumerId: {consumerId})",
+                index,
+                _consumer.Id);
         }
 
         private async Task ReadChannelOnceAsync(
@@ -242,8 +246,9 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogTrace(
                 IntegrationEventIds.LowLevelTracing,
-                "Reading channel {channelIndex}...",
-                channelIndex);
+                "Reading channel {channelIndex}... (consumerId: {consumerId})",
+                channelIndex,
+                _consumer.Id);
 
             var consumeResult = await channelReader.ReadAsync(cancellationToken).ConfigureAwait(false);
 
@@ -253,10 +258,11 @@ namespace Silverback.Messaging.Broker
             {
                 _logger.LogInformation(
                     KafkaEventIds.EndOfPartition,
-                    "Partition EOF reached: {topic} {partition} @{offset}.",
+                    "Partition EOF reached: {topic}[{partition}]@{offset}. (consumerId: {consumerId})",
                     consumeResult.Topic,
                     consumeResult.Partition,
-                    consumeResult.Offset);
+                    consumeResult.Offset,
+                    _consumer.Id);
                 return;
             }
 

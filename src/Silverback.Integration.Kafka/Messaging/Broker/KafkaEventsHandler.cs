@@ -85,7 +85,7 @@ namespace Silverback.Messaging.Broker
                 {
                     _logger.LogInformation(
                         KafkaEventIds.PartitionsAssigned,
-                        "Assigned partition {topic} {partition}, member id: {memberId}",
+                        "Assigned partition {topic}[{partition}], member id: {memberId}",
                         partition.Topic,
                         partition.Partition,
                         consumer.MemberId);
@@ -101,7 +101,7 @@ namespace Silverback.Messaging.Broker
                 {
                     _logger.LogDebug(
                         KafkaEventIds.PartitionOffsetReset,
-                        "{topic} {partition} offset will be reset to {offset}.",
+                        "{topic}[{partition}] offset will be reset to {offset}.",
                         topicPartitionOffset.Topic,
                         topicPartitionOffset.Partition,
                         topicPartitionOffset.Offset);
@@ -128,7 +128,7 @@ namespace Silverback.Messaging.Broker
                 {
                     _logger.LogInformation(
                         KafkaEventIds.PartitionsRevoked,
-                        "Revoked partition {topic} {partition}, member id: {memberId}",
+                        "Revoked partition {topic}[{partition}], member id: {memberId}",
                         partition.Topic,
                         partition.Partition,
                         consumer.MemberId);
@@ -148,7 +148,7 @@ namespace Silverback.Messaging.Broker
                 {
                     _logger.LogError(
                         KafkaEventIds.KafkaEventsHandlerErrorWhileCommittingOffset,
-                        "Error occurred committing the offset {topic} {partition} @{offset}: {errorCode} - {errorReason}",
+                        "Error occurred committing the offset {topic}[{partition}] @{offset}: {errorCode} - {errorReason}",
                         offset.Topic,
                         offset.Partition,
                         offset.Offset,
@@ -159,7 +159,7 @@ namespace Silverback.Messaging.Broker
                 {
                     _logger.LogDebug(
                         KafkaEventIds.OffsetCommitted,
-                        "Successfully committed offset {topic} {partition} @{offset}",
+                        "Successfully committed offset {topic}[{partition}] @{offset}",
                         offset.Topic,
                         offset.Partition,
                         offset.Offset);

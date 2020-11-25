@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Diagnostics;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -123,16 +124,18 @@ namespace Silverback.Messaging.Broker
 
                 _logger.LogDebug(
                     KafkaEventIds.ConsumingMessage,
-                    "Consuming message: {topic} {partition} @{offset}.",
+                    "Consuming message: {topic}[{partition}]@{offset}. (consumerId: {consumerId})",
                     consumeResult.Topic,
                     consumeResult.Partition,
-                    consumeResult.Offset);
+                    consumeResult.Offset,
+                    _consumer.Id);
 
                 if (_channelsManager == null)
                 {
                     _logger.LogDebug(
                         KafkaEventIds.ConsumingMessage,
-                        "Waiting for channels manager to be initialized...");
+                        "Waiting for channels manager to be initialized... (consumerId: {consumerId})",
+                        _consumer.Id);
 
                     // Wait until the ChannelsManager is set (after the partitions have been assigned)
                     while (_channelsManager == null)
@@ -148,7 +151,12 @@ namespace Silverback.Messaging.Broker
             catch (OperationCanceledException)
             {
                 if (cancellationToken.IsCancellationRequested)
-                    _logger.LogTrace(KafkaEventIds.ConsumingCanceled, "Consuming canceled.");
+                {
+                    _logger.LogTrace(
+                        KafkaEventIds.ConsumingCanceled,
+                        "Consuming canceled. (consumerId: {consumerId})",
+                        _consumer.Id);
+                }
             }
             catch (KafkaException ex)
             {
@@ -157,10 +165,14 @@ namespace Silverback.Messaging.Broker
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(
-                    IntegrationEventIds.ConsumerFatalError,
-                    ex,
-                    "Fatal error occurred while consuming. The consumer will be stopped.");
+                if (!(ex is ConsumerPipelineFatalException))
+                {
+                    _logger.LogCritical(
+                        IntegrationEventIds.ConsumerFatalError,
+                        ex,
+                        "Fatal error occurred while consuming. The consumer will be stopped. (consumerId: {consumerId})",
+                        _consumer.Id);
+                }
 
                 return false;
             }
