@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer
+namespace Silverback.Samples.Kafka.Basic.Consumer
 {
     public static class Program
     {

@@ -70,6 +70,7 @@ uid: releases
 * Renamed `Settings` property to `Options` in the default `JsonMessageSerializer` (since the switch to System.Text.Json)
 * Removed `LogWithLevel` method from `SkipMessageErrorPolicy`, use the new `WithLogLevels` configuration instead
 * Removed `Parallel` option from `SubscribeAttribute`
+* Renamed `Offset` to a more generic `BrokerMessageIdentifier` in the Silverback.Integration abstractions (including the envelopes)
 
 ## [2.2.0](https://github.com/BEagle1984/silverback/releases/tag/v2.2.0)
 

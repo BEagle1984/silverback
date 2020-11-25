@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Subscribers;
 
-namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer
+namespace Silverback.Samples.Kafka.Basic.Producer
 {
     public class Startup
     {
@@ -18,10 +17,10 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer
 
                 // Delegate the inbound/outbound endpoints configuration to a separate
                 // class.
-                .AddEndpointsConfigurator<EndpointsConfigurator>()
+                .AddEndpointsConfigurator<EndpointsConfigurator>();
 
-                // Register the subscribers
-                .AddSingletonSubscriber<BinaryFileSubscriber>();
+            // Add the hosted service that produces the random sample messages
+            services.AddHostedService<ProducerBackgroundService>();
         }
 
         public void Configure()

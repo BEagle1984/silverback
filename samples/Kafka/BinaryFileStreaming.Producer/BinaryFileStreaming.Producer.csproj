@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
-        <RootNamespace>Silverback.Samples.BinaryFileStreaming.Producer</RootNamespace>
+        <RootNamespace>Silverback.Samples.Kafka.BinaryFileStreaming.Producer</RootNamespace>
         <LangVersion>$(LangVersion)</LangVersion>
     </PropertyGroup>
 

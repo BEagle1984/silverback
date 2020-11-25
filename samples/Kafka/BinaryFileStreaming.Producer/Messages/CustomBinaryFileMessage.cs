@@ -1,6 +1,6 @@
 ﻿using Silverback.Messaging.Messages;
 
-namespace Silverback.Samples.BinaryFileStreaming.Producer.Messages
+namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer.Messages
 {
     public class CustomBinaryFileMessage : BinaryFileMessage
     {

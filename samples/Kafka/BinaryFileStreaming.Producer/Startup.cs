@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Silverback.Samples.BinaryFileStreaming.Producer
+namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer
 {
     public class Startup
     {

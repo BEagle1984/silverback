@@ -1,2 +1,6 @@
-- name: Files Streaming
-  href: binaryfile-streaming.md
+- name: Kafka
+  items:
+  - name: Basic
+    href: kafka/basic.md
+  - name: Files Streaming
+    href: kafka/binaryfile-streaming.md

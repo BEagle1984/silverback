@@ -13,9 +13,18 @@ docker-compose up -d
 
 ## Kafka
 
+### Basic
+
+Produce and consume basic message.
+
+1. Run the two applications
+    1. `dotnet run -p ./samples/Kafka/Basic.Producer/.` 
+    1. `dotnet run -p ./samples/Kafka/Basic.Consumer/.`
+1. Observe the console output while the messages are produced and consumed
+
 ### Binary Files Streaming
 
-Demonstrates how to stream a binary file through Kafka.
+Binary file streaming through Kafka.
 
 1. Run the two applications
     1. `dotnet run -p ./samples/Kafka/BinaryFileStreaming.Producer/.` 

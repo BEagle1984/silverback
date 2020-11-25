@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Samples.BinaryFileStreaming.Producer.Messages;
+using Silverback.Samples.Kafka.BinaryFileStreaming.Producer.Messages;
 
-namespace Silverback.Samples.BinaryFileStreaming.Producer.Controllers
+namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer.Controllers
 {
     [ApiController]
     [Route("[controller]")]

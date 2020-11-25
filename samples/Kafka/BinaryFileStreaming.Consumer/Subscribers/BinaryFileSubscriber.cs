@@ -2,9 +2,9 @@
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Silverback.Samples.BinaryFileStreaming.Consumer.Messages;
+using Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Messages;
 
-namespace Silverback.Samples.BinaryFileStreaming.Consumer.Subscribers
+namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Subscribers
 {
     public class BinaryFileSubscriber
     {

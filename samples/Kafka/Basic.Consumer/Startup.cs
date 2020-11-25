@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Subscribers;
 
-namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer
+namespace Silverback.Samples.Kafka.Basic.Consumer
 {
     public class Startup
     {
@@ -21,7 +20,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer
                 .AddEndpointsConfigurator<EndpointsConfigurator>()
 
                 // Register the subscribers
-                .AddSingletonSubscriber<BinaryFileSubscriber>();
+                .AddSingletonSubscriber<SampleMessageSubscriber>();
         }
 
         public void Configure()
