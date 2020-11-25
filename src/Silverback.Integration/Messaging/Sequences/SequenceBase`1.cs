@@ -268,7 +268,7 @@ namespace Silverback.Messaging.Sequences
 
                     _logger.LogTrace(
                         IntegrationEventIds.LowLevelTracing,
-                        "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength}...",
+                        "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
                         GetType().Name,
                         SequenceId,
                         TotalLength);

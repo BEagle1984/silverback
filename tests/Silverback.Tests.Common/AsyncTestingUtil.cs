@@ -19,8 +19,15 @@ namespace Silverback.Tests
 
             for (double i = 0; i < timeout.Value.TotalMilliseconds; i += Interval.TotalMilliseconds)
             {
-                if (await breakCondition())
-                    break;
+                try
+                {
+                    if (await breakCondition())
+                        break;
+                }
+                catch (Exception)
+                {
+                    // Ignore
+                }
 
                 await Task.Delay(Interval);
             }

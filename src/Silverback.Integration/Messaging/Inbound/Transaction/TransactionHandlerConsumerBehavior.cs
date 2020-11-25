@@ -139,17 +139,17 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             try
             {
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.LowLevelTracing,
-                    "Awaiting sequence processing.",
-                    context);
-
                 var processingTask = context.ProcessingTask;
 
                 // Keep awaiting in a loop because the sequence and the processing task may be reassigned,
                 // but guarantee that we always await the task once to rethrow the exception if needed
                 while (processingTask != null)
                 {
+                    _logger.LogTraceWithMessageInfo(
+                        IntegrationEventIds.LowLevelTracing,
+                        $"Awaiting {sequence.GetType().Name} '{sequence.SequenceId}' processing task.",
+                        context);
+
                     await processingTask.ConfigureAwait(false);
 
                     // Ensure we are at the start of the outer sequence
@@ -168,9 +168,13 @@ namespace Silverback.Messaging.Inbound.Transaction
                     processingTask = context.ProcessingTask != processingTask ? context.ProcessingTask : null;
                 }
 
+                string logMessage = sequence.IsPending
+                    ? $"{sequence.GetType().Name} '{sequence.SequenceId}' processing seems completed but the sequence is still pending."
+                    : $"{sequence.GetType().Name} '{sequence.SequenceId}' processing completed.";
+
                 _logger.LogTraceWithMessageInfo(
                     IntegrationEventIds.LowLevelTracing,
-                    $"{sequence.GetType().Name} '{sequence.SequenceId}' processing completed.",
+                    logMessage,
                     context);
 
                 if (!sequence.IsAborted)
