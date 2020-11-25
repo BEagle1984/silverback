@@ -23,11 +23,11 @@ This package adds a mocked implementation of the Kafka broker, suitable for in-m
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.Kafka.Testing.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Integration.Kafka.Testing.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Silverback.Integration.Kafka.Testing.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Integration.Kafka.Testing.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

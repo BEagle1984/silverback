@@ -23,11 +23,11 @@ This package It contains the storage implementation to integrate Silverback with
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Core.EntityFrameworkCore.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Core.EntityFrameworkCore.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Silverback.Core.EntityFrameworkCore.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Core.EntityFrameworkCore.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

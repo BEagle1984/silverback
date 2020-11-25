@@ -23,11 +23,11 @@ This package contains the legacy IMessageSerializer based on Newtonsoft.Json.</D
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.Newtonsoft.xml</DocumentationFile>
+        <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Integration.Newtonsoft.xml</DocumentationFile>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <DocumentationFile>bin\Release\netstandard2.0\Silverback.Integration.Newtonsoft.xml</DocumentationFile>
+        <DocumentationFile>bin\Release\netstandard2.1\Silverback.Integration.Newtonsoft.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>

@@ -23,11 +23,11 @@ This package contains an implementation of an event store that perfectly integra
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.EventSourcing.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.EventSourcing.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Silverback.EventSourcing.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.1\Silverback.EventSourcing.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -23,15 +23,15 @@ This package contains the default messages interfaces and domain entity implemen
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Core.Model.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Core.Model.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Silverback.Core.Model.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Core.Model.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
   </ItemGroup>
-  
+
 </Project>

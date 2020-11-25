@@ -23,11 +23,11 @@ This package contains an implementation of Silverback.Integration for the popula
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.Kafka.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Integration.Kafka.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Silverback.Integration.Kafka.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Integration.Kafka.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

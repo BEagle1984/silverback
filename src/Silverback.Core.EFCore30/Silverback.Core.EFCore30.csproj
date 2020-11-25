@@ -23,11 +23,11 @@ This package It contains the storage implementation to integrate Silverback with
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Core.EFCore30.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Core.EFCore30.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Silverback.Core.EFCore30.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Core.EFCore30.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -37,5 +37,5 @@ This package It contains the storage implementation to integrate Silverback with
   <ItemGroup>
     <ProjectReference Include="..\Silverback.Core\Silverback.Core.csproj" />
   </ItemGroup>
-  
+
 </Project>

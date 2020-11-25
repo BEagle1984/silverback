@@ -23,11 +23,11 @@ This package adds the support for Apache Avro and the schema registry on top of 
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netstandard2.0\Silverback.Integration.Kafka.SchemaRegistry.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Integration.Kafka.SchemaRegistry.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\Silverback.Integration.Kafka.SchemaRegistry.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.1\Silverback.Integration.Kafka.SchemaRegistry.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
