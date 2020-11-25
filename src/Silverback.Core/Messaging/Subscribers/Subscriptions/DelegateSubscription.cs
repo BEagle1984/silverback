@@ -18,12 +18,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
         {
             Check.NotNull(handler, nameof(handler));
 
-            _method = new SubscribedMethod(
-                _ => handler.Target,
-                handler.Method,
-                options?.Exclusive,
-                options?.Parallel,
-                options?.MaxDegreeOfParallelism);
+            _method = new SubscribedMethod(_ => handler.Target, handler.Method, options?.Exclusive);
         }
 
         public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider)

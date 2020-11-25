@@ -12,8 +12,6 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
-    // TODO: Customizable back pressure?
-
     /// <inheritdoc cref="IMessageStreamEnumerable{TMessage}" />
     /// <remarks>
     ///     This implementation is not thread-safe.

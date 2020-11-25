@@ -129,9 +129,7 @@ namespace Silverback.Messaging.Subscribers
                     {
                         arguments[0] = singleResolver.GetValue(message);
                         return InvokeAsync(target, subscribedMethod.MethodInfo, arguments, executeAsync);
-                    },
-                    subscribedMethod.IsParallel,
-                    subscribedMethod.MaxDegreeOfParallelism)
+                    })
                 .ConfigureAwait(false);
 
             return (messages, returnValues.ToList());

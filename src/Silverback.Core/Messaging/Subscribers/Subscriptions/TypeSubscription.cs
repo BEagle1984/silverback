@@ -40,9 +40,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
             return new SubscribedMethod(
                 serviceProvider => serviceProvider.GetRequiredService(targetType),
                 methodInfo,
-                subscribeAttribute?.Exclusive,
-                subscribeAttribute?.Parallel,
-                subscribeAttribute?.MaxDegreeOfParallelism);
+                subscribeAttribute?.Exclusive);
         }
 
         private IEnumerable<SubscribedMethod> GetSubscribedMethods(object subscriber, IServiceProvider serviceProvider)

@@ -3,7 +3,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Subscribers
 {
@@ -17,61 +16,11 @@ namespace Silverback.Messaging.Subscribers
     [AttributeUsage(AttributeTargets.Method)]
     public sealed class SubscribeAttribute : Attribute
     {
-        private int _maxDegreeOfParallelism = int.MaxValue;
-
         /// <summary>
         ///     Gets or sets a value indicating whether the method can be executed concurrently to other methods
         ///     handling the <b>same message</b>. The default value is <c>true</c> (the method will be executed
-        ///     sequentially to other subscribers), unless an <see cref="IMessageStreamEnumerable{TMessage}" /> is
-        ///     being subscribed, in which case this parameter is in fact ignored and always considered <c>false</c>.
+        ///     sequentially to other subscribers).
         /// </summary>
-        /// <remarks>
-        ///     This setting is ignored when subscribing to an <see cref="IMessageStreamEnumerable{TMessage}" />.
-        /// </remarks>
-        // TODO: Does it still make sense to force the stream as non-exclusive? (Isn't it non-exclusive by design?)
         public bool Exclusive { get; set; } = true;
-
-        /// <summary>
-        ///     <para>
-        ///         Gets or sets a value indicating whether the method can be executed concurrently when multiple
-        ///         messages are published at the same time (with a single call to the <c>Publish</c> method.
-        ///         The default value is <c>false</c> (the messages are processed sequentially).
-        ///     </para>
-        ///     <para>
-        ///         Note that this setting doesn't apply to the messages consumed from a message broker. Refer to the
-        ///         endpoint settings to control the behavior of the consumer.
-        ///     </para>
-        /// </summary>
-        /// <remarks>
-        ///     This setting is ignored when subscribing to an enumerable, a collection or an observable of messages.
-        /// </remarks>
-        // TODO: Deprecate? (Doesn't apply to consumed messages anymore)
-        public bool Parallel { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the maximum number of messages that are processed concurrently. Used only together with
-        ///     <c>Parallel = true</c>. The default value is <c>Int32.MaxValue</c> and means that there is no limit to
-        ///     the degree of parallelism.
-        /// </summary>
-        /// <remarks>
-        ///     This setting is ignored when subscribing to an enumerable, a collection or an observable of messages.
-        /// </remarks>
-        // TODO: Deprecate? (Doesn't apply to consumed messages anymore)
-        public int MaxDegreeOfParallelism
-        {
-            get => _maxDegreeOfParallelism;
-            set
-            {
-                if (value <= 0)
-                {
-                    throw new ArgumentOutOfRangeException(
-                        nameof(value),
-                        value,
-                        "MaxDegreeOfParallelism must be greater or equal to 1.");
-                }
-
-                _maxDegreeOfParallelism = value;
-            }
-        }
     }
 }
