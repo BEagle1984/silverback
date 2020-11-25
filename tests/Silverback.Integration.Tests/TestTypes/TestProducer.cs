@@ -32,16 +32,16 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public IList<ProducedMessage> ProducedMessages { get; }
 
-        protected override IOffset? ProduceCore(IOutboundEnvelope envelope)
+        protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope)
         {
             ProducedMessages.Add(new ProducedMessage(envelope.RawMessage, envelope.Headers, Endpoint));
             return null;
         }
 
-        protected override Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope)
+        protected override Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             Produce(envelope.RawMessage, envelope.Headers);
-            return Task.FromResult<IOffset?>(null);
+            return Task.FromResult<IBrokerMessageIdentifier?>(null);
         }
     }
 }

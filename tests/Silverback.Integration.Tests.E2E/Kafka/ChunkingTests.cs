@@ -108,7 +108,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 else
                 {
                     envelope.Headers.GetValue(DefaultMessageHeaders.FirstChunkOffset).Should()
-                        .Be(firstEnvelope.Offset!.Value);
+                        .Be(firstEnvelope.BrokerMessageIdentifier!.Value);
                 }
 
                 if (envelope == lastEnvelope)

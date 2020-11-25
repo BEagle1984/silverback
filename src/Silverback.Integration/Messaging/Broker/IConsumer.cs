@@ -49,71 +49,71 @@ namespace Silverback.Messaging.Broker
 
         /// <summary>
         ///     <param>
-        ///         Confirms that the message at the specified offset has been successfully processed.
+        ///         Confirms that the specified message has been successfully processed.
         ///     </param>
         ///     <param>
-        ///         The acknowledgement will be sent to the message broker and the message will never be processed
+        ///         The acknowledgement will be sent to the message broker and the message will never be consumed
         ///         again (by the same logical consumer / consumer group).
         ///     </param>
         /// </summary>
-        /// <param name="offset">
-        ///     The offset to be committed.
+        /// <param name="brokerMessageIdentifier">
+        ///     The identifier of the message to be committed.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task CommitAsync(IOffset offset);
+        Task CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier);
 
         /// <summary>
         ///     <param>
-        ///         Confirms that the messages at the specified offsets have been successfully processed.
+        ///         Confirms that the specified messages have been successfully processed.
         ///     </param>
         ///     <param>
-        ///         The acknowledgement will be sent to the message broker and the message will never be processed
+        ///         The acknowledgement will be sent to the message broker and the message will never be consumed
         ///         again (by the same logical consumer / consumer group).
         ///     </param>
         /// </summary>
-        /// <param name="offsets">
-        ///     The offsets to be committed.
+        /// <param name="brokerMessageIdentifiers">
+        ///     The identifiers of to message be committed.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task CommitAsync(IReadOnlyCollection<IOffset> offsets);
+        Task CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
 
         /// <summary>
         ///     <param>
-        ///         Notifies that an error occured while processing the message at the specified offset.
+        ///         Notifies that an error occured while processing the specified message.
+        ///     </param>
+        ///     <param>
+        ///         If necessary the information will be sent to the message broker to ensure that the message will
+        ///         be consumed again.
+        ///     </param>
+        /// </summary>
+        /// <param name="brokerMessageIdentifier">
+        ///     The identifier of the message to be rolled back.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task RollbackAsync(IBrokerMessageIdentifier brokerMessageIdentifier);
+
+        /// <summary>
+        ///     <param>
+        ///         Notifies that an error occured while processing the specified messages.
         ///     </param>
         ///     <param>
         ///         If necessary the information will be sent to the message broker to ensure that the message will
         ///         be re-processed.
         ///     </param>
         /// </summary>
-        /// <param name="offset">
-        ///     The offset to be rolled back.
+        /// <param name="brokerMessageIdentifiers">
+        ///     The identifiers of to message be rolled back.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task RollbackAsync(IOffset offset);
-
-        /// <summary>
-        ///     <param>
-        ///         Notifies that an error occured while processing the messages at the specified offsets.
-        ///     </param>
-        ///     <param>
-        ///         If necessary the information will be sent to the message broker to ensure that the message will
-        ///         be re-processed.
-        ///     </param>
-        /// </summary>
-        /// <param name="offsets">
-        ///     The offsets to be rolled back.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task RollbackAsync(IReadOnlyCollection<IOffset> offsets);
+        Task RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
 
         /// <summary>
         ///     Connects and starts consuming.
@@ -151,14 +151,6 @@ namespace Silverback.Messaging.Broker
         ///     The current failed attempts count after the increment.
         /// </returns>
         int IncrementFailedAttempts(IRawInboundEnvelope envelope);
-
-        /// <summary>
-        ///     Removes the stored failed attempts counter for the specified envelope.
-        /// </summary>
-        /// <param name="envelope">
-        ///     The offset.
-        /// </param>
-        void ClearFailedAttempts(IRawInboundEnvelope envelope);
 
         /// <summary>
         ///     Gets the <see cref="ISequenceStore" /> instances used by this consumer. Some brokers will require

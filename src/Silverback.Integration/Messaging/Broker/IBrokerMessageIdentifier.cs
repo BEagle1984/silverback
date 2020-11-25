@@ -8,29 +8,29 @@ namespace Silverback.Messaging.Broker
 {
     /// <summary>
     ///     <para>
-    ///         Contains the information about the position in the messages stream being produced or consumed.
+    ///         Represents the primary identifier used by the message broker to recognize the exact message.
     ///     </para>
     ///     <para>
-    ///         It can represent a Kafka offset or other similar constructs.
+    ///         It can represent a Kafka offset, a RabbitMQ delivery tag or other similar constructs.
     ///     </para>
     ///     <para>
-    ///         The <see cref="IComparableOffset" /> interface should be implemented whenever possible to allow
-    ///         the exactly-one delivery using the <see cref="OffsetStoreExactlyOnceStrategy" />.
+    ///         The <see cref="IBrokerMessageOffset" /> interface should be implemented whenever possible
+    ///         to allow the exactly-one delivery using the <see cref="OffsetStoreExactlyOnceStrategy" />.
     ///     </para>
     /// </summary>
     /// <remarks>
     ///     The classes implementing this interface should also implement a public constructor accepting key and
     ///     value as string arguments.
     /// </remarks>
-    public interface IOffset : IEquatable<IOffset>
+    public interface IBrokerMessageIdentifier : IEquatable<IBrokerMessageIdentifier>
     {
         /// <summary>
-        ///     Gets the unique key of the queue, topic or partition this offset belongs to.
+        ///     Gets the unique key of the queue, topic or partition the message was produced to or consumed from.
         /// </summary>
         string Key { get; }
 
         /// <summary>
-        ///     Gets the offset value.
+        ///     Gets the identifier value.
         /// </summary>
         string Value { get; }
     }

@@ -9,17 +9,19 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <inheritdoc cref="IComparableOffset" />
-    public sealed class KafkaOffset : IComparableOffset
+    /// <summary>
+    ///     Represents the position of the message in a partition.
+    /// </summary>
+    public sealed class KafkaOffset : IBrokerMessageOffset
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaOffset" /> class.
         /// </summary>
         /// <param name="key">
-        ///     The unique key of the queue, topic or partition this offset belongs to.
+        ///     The unique key of the queue, topic or partition the message was produced to or consumed from.
         /// </param>
         /// <param name="value">
-        ///     The offset value.
+        ///     The identifier value.
         /// </param>
         public KafkaOffset(string key, string value)
         {
@@ -90,10 +92,10 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public long Offset { get; }
 
-        /// <inheritdoc cref="IOffset.Key" />
+        /// <inheritdoc cref="IBrokerMessageIdentifier.Key" />
         public string Key { get; }
 
-        /// <inheritdoc cref="IOffset.Value" />
+        /// <inheritdoc cref="IBrokerMessageIdentifier.Value" />
         public string Value { get; }
 
         /// <summary>
@@ -196,7 +198,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IComparable{T}.CompareTo" />
-        public int CompareTo(IOffset? other)
+        public int CompareTo(IBrokerMessageOffset? other)
         {
             if (ReferenceEquals(this, other))
                 return 0;
@@ -210,7 +212,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-        public bool Equals(IOffset? other)
+        public bool Equals(IBrokerMessageIdentifier? other)
         {
             if (ReferenceEquals(this, other))
                 return true;
@@ -236,7 +238,7 @@ namespace Silverback.Messaging.Broker
             if (obj.GetType() != GetType())
                 return false;
 
-            return Equals((IOffset)obj);
+            return Equals((IBrokerMessageIdentifier)obj);
         }
 
         /// <inheritdoc cref="object.GetHashCode" />

@@ -13,9 +13,9 @@ namespace Silverback.Messaging.Messages
         public RawOutboundEnvelope(
             IEnumerable<MessageHeader>? headers,
             IProducerEndpoint endpoint,
-            IOffset? offset = null,
+            IBrokerMessageIdentifier? brokerMessageIdentifier = null,
             IDictionary<string, string>? additionalLogData = null)
-            : this(null, headers, endpoint, offset, additionalLogData)
+            : this(null, headers, endpoint, brokerMessageIdentifier, additionalLogData)
         {
         }
 
@@ -23,15 +23,15 @@ namespace Silverback.Messaging.Messages
             Stream? rawMessage,
             IEnumerable<MessageHeader>? headers,
             IProducerEndpoint endpoint,
-            IOffset? offset = null,
+            IBrokerMessageIdentifier? brokerMessageIdentifier = null,
             IDictionary<string, string>? additionalLogData = null)
             : base(rawMessage, headers, endpoint, additionalLogData)
         {
-            Offset = offset;
+            BrokerMessageIdentifier = brokerMessageIdentifier;
         }
 
         public new IProducerEndpoint Endpoint => (IProducerEndpoint)base.Endpoint;
 
-        public IOffset? Offset { get; internal set; }
+        public IBrokerMessageIdentifier? BrokerMessageIdentifier { get; internal set; }
     }
 }

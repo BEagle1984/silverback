@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Silverback.Messaging.Inbound.Transaction
 {
     /// <summary>
-    ///     Handles the consumer transaction. It commits or rolls back both the offsets and the enlisted
+    ///     Handles the consumer transaction. It commits or rolls back both the consumer and the enlisted
     ///     transactional services (see <see cref="ITransactional" />).
     /// </summary>
     public interface IConsumerTransactionManager
@@ -39,8 +39,8 @@ namespace Silverback.Messaging.Inbound.Transaction
         /// <param name="exception">
         ///     The exception that caused the rollback.
         /// </param>
-        /// <param name="commitOffsets">
-        ///     A value indicating whether the offsets have to be committed anyway. This depends on the error policy
+        /// <param name="commitConsumer">
+        ///     A value indicating whether the consumer have to be committed anyway. This depends on the error policy
         ///     being applied.
         /// </param>
         /// <param name="throwIfAlreadyCommitted">
@@ -55,7 +55,7 @@ namespace Silverback.Messaging.Inbound.Transaction
         /// </returns>
         Task<bool> RollbackAsync(
             Exception? exception,
-            bool commitOffsets = false,
+            bool commitConsumer = false,
             bool throwIfAlreadyCommitted = true,
             bool stopConsuming = true);
     }

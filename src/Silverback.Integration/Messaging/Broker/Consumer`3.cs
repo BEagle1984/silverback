@@ -14,13 +14,22 @@ using Silverback.Messaging.Sequences;
 namespace Silverback.Messaging.Broker
 {
     /// <inheritdoc cref="Consumer" />
+    /// <typeparam name="TBroker">
+    ///     The type of the related <see cref="IBroker" /> implementation.
+    /// </typeparam>
+    /// <typeparam name="TEndpoint">
+    ///     The type of the <see cref="IConsumerEndpoint" /> implementation used by this consumer implementation.
+    /// </typeparam>
+    /// <typeparam name="TIdentifier">
+    ///     The type of the <see cref="IBrokerMessageIdentifier" /> used by this broker implementation.
+    /// </typeparam>
     [SuppressMessage("", "CA1005", Justification = Justifications.NoWayToReduceTypeParameters)]
-    public abstract class Consumer<TBroker, TEndpoint, TOffset> : Consumer
+    public abstract class Consumer<TBroker, TEndpoint, TIdentifier> : Consumer
         where TBroker : IBroker
         where TEndpoint : IConsumerEndpoint
-        where TOffset : IOffset
+        where TIdentifier : IBrokerMessageIdentifier
     {
-        private readonly ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TOffset>> _logger;
+        private readonly ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TIdentifier>> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer{TBroker, TEndpoint, TOffset}" /> class.
@@ -45,7 +54,7 @@ namespace Silverback.Messaging.Broker
             TEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TOffset>> logger)
+            ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TIdentifier>> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             _logger = logger;
@@ -61,89 +70,55 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
 
-        /// <inheritdoc cref="Consumer.CommitAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IOffset})" />
-        public override Task CommitAsync(IReadOnlyCollection<IOffset> offsets)
+        /// <inheritdoc cref="Consumer.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        protected override Task CommitCoreAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
         {
             try
             {
-                return CommitCoreAsync(offsets.Cast<TOffset>().ToList());
+                return CommitCoreAsync(brokerMessageIdentifiers.Cast<TIdentifier>().ToList());
             }
             catch (Exception exception)
             {
                 _logger.LogError(
                     IntegrationEventIds.ConsumerCommitError,
                     exception,
-                    "Error occurred during commit. (offsets: {offsets})",
-                    string.Join(", ", offsets.Select(offset => offset.Value)));
+                    "Error occurred during commit. ({identifiers})",
+                    string.Join(", ", brokerMessageIdentifiers.Select(identifier => identifier.Value)));
                 throw;
             }
         }
 
-        /// <inheritdoc cref="Consumer.RollbackAsync(IReadOnlyCollection{IOffset})" />
-        public override async Task RollbackAsync(IReadOnlyCollection<IOffset> offsets)
+        /// <inheritdoc cref="Consumer.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        protected override async Task RollbackCoreAsync(
+            IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
         {
             try
             {
-                await RollbackCoreAsync(offsets.Cast<TOffset>().ToList()).ConfigureAwait(false);
+                await RollbackCoreAsync(brokerMessageIdentifiers.Cast<TIdentifier>().ToList()).ConfigureAwait(false);
             }
             catch (Exception exception)
             {
                 _logger.LogError(
                     IntegrationEventIds.ConsumerRollbackError,
                     exception,
-                    "Error occurred during rollback. (offsets: {offsets})",
-                    string.Join(", ", offsets.Select(offset => offset.Value)));
+                    "Error occurred during rollback. ({identifiers})",
+                    string.Join(", ", brokerMessageIdentifiers.Select(identifier => identifier.Value)));
                 throw;
             }
         }
 
-        /// <summary>
-        ///     <param>
-        ///         Confirms that the messages at the specified offsets have been successfully processed.
-        ///     </param>
-        ///     <param>
-        ///         The acknowledgement will be sent to the message broker and the message will never be processed
-        ///         again (by the same logical consumer / consumer group).
-        ///     </param>
-        /// </summary>
-        /// <param name="offsets">
-        ///     The offsets to be committed.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        protected abstract Task CommitCoreAsync(IReadOnlyCollection<TOffset> offsets);
+        /// <inheritdoc cref="Consumer.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        protected abstract Task CommitCoreAsync(IReadOnlyCollection<TIdentifier> brokerMessageIdentifiers);
 
-        /// <summary>
-        ///     <param>
-        ///         Notifies that an error occured while processing the messages at the specified offsets.
-        ///     </param>
-        ///     <param>
-        ///         If necessary the information will be sent to the message broker to ensure that the message will
-        ///         be re-processed.
-        ///     </param>
-        /// </summary>
-        /// <param name="offsets">
-        ///     The offsets to be rolled back.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        protected abstract Task RollbackCoreAsync(IReadOnlyCollection<TOffset> offsets);
+        /// <inheritdoc cref="Consumer.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        protected abstract Task RollbackCoreAsync(IReadOnlyCollection<TIdentifier> brokerMessageIdentifiers);
 
-        /// <inheritdoc cref="Consumer.GetSequenceStore"/>
-        protected override ISequenceStore GetSequenceStore(IOffset offset) => GetSequenceStore((TOffset)offset);
+        /// <inheritdoc cref="Consumer.GetSequenceStore" />
+        protected override ISequenceStore GetSequenceStore(IBrokerMessageIdentifier brokerMessageIdentifier) =>
+            GetSequenceStore((TIdentifier)brokerMessageIdentifier);
 
-        /// <summary>
-        ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.
-        /// </summary>
-        /// <param name="offset">
-        ///     The offset may determine which store is being used. For example a dedicated sequence store is used per
-        ///     each Kafka partition, since they may be processed concurrently.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="ISequenceStore" />.
-        /// </returns>
-        protected virtual ISequenceStore GetSequenceStore(TOffset offset) => base.GetSequenceStore(offset);
+        /// <inheritdoc cref="Consumer.GetSequenceStore" />
+        protected virtual ISequenceStore GetSequenceStore(TIdentifier brokerMessageIdentifier) =>
+            base.GetSequenceStore(brokerMessageIdentifier);
     }
 }

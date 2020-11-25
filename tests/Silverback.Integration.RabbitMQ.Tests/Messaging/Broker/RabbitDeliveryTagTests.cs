@@ -7,12 +7,12 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 {
-    public class RabbitOffsetTests
+    public class RabbitDeliveryTagTests
     {
         [Fact]
         public void Constructor_WithKeyValueString_ProperlyConstructed()
         {
-            var offset = new RabbitOffset("test-queue", "42");
+            var offset = new RabbitDeliveryTag("test-queue", "42");
 
             offset.Key.Should().Be("test-queue");
             offset.Value.Should().Be("42");
@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [Fact]
         public void Constructor_WithTopicPartitionOffset_ProperlyConstructed()
         {
-            var offset = new RabbitOffset("test-queue", 42);
+            var offset = new RabbitDeliveryTag("test-queue", 42);
 
             offset.Key.Should().Be("test-queue");
             offset.Value.Should().Be("42");
@@ -36,7 +36,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [Fact]
         public void EqualsOffset_SameInstance_TrueReturned()
         {
-            var offset = new RabbitOffset("test-queue", 42);
+            var offset = new RabbitDeliveryTag("test-queue", 42);
 
             var result = offset.Equals(offset);
 
@@ -46,7 +46,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [Fact]
         public void EqualsObject_SameInstance_TrueReturned()
         {
-            var offset = new RabbitOffset("test-queue", 42);
+            var offset = new RabbitDeliveryTag("test-queue", 42);
 
             var result = offset.Equals((object)offset);
 
@@ -58,15 +58,15 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [InlineData("abc", 1, "abc", 2, false)]
         [InlineData("abc", 2, "abc", 1, false)]
         [InlineData("abc", 1, "def", 1, false)]
-        public void EqualsOffset_AnotherRabbitOffset_ProperlyCompared(
+        public void EqualsOffset_AnotherRabbitDeliveryTag_ProperlyCompared(
             string consumerTag1,
             ulong deliveryTag1,
             string consumerTag2,
             ulong deliveryTag2,
             bool expected)
         {
-            var offset1 = new RabbitOffset(consumerTag1, deliveryTag1);
-            var offset2 = new RabbitOffset(consumerTag2, deliveryTag2);
+            var offset1 = new RabbitDeliveryTag(consumerTag1, deliveryTag1);
+            var offset2 = new RabbitDeliveryTag(consumerTag2, deliveryTag2);
 
             var result = offset1.Equals(offset2);
 
@@ -78,15 +78,15 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [InlineData("abc", 1, "abc", 2, false)]
         [InlineData("abc", 2, "abc", 1, false)]
         [InlineData("abc", 1, "def", 1, false)]
-        public void EqualsObject_AnotherRabbitOffset_ProperlyCompared(
+        public void EqualsObject_AnotherRabbitDeliveryTag_ProperlyCompared(
             string consumerTag1,
             ulong deliveryTag1,
             string consumerTag2,
             ulong deliveryTag2,
             bool expected)
         {
-            var offset1 = new RabbitOffset(consumerTag1, deliveryTag1);
-            var offset2 = new RabbitOffset(consumerTag2, deliveryTag2);
+            var offset1 = new RabbitDeliveryTag(consumerTag1, deliveryTag1);
+            var offset2 = new RabbitDeliveryTag(consumerTag2, deliveryTag2);
 
             var result = offset1.Equals((object)offset2);
 
@@ -96,7 +96,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [Fact]
         public void EqualsOffset_Null_FalseReturned()
         {
-            var offset1 = new RabbitOffset("test-queue", 42);
+            var offset1 = new RabbitDeliveryTag("test-queue", 42);
 
             var result = offset1.Equals(null);
 
@@ -106,7 +106,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [Fact]
         public void EqualsObject_Null_FalseReturned()
         {
-            var offset1 = new RabbitOffset("test-queue", 42);
+            var offset1 = new RabbitDeliveryTag("test-queue", 42);
 
             var result = offset1.Equals((object?)null);
 
@@ -116,7 +116,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [Fact]
         public void EqualsOffset_DifferentOffsetType_FalseReturned()
         {
-            var offset1 = new RabbitOffset("test-queue", 42);
+            var offset1 = new RabbitDeliveryTag("test-queue", 42);
             var offset2 = new TestOtherOffset("test-queue", "42");
 
             var result = offset1.Equals(offset2);
@@ -127,7 +127,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [Fact]
         public void EqualsObject_DifferentOffsetType_FalseReturned()
         {
-            var offset1 = new RabbitOffset("test-queue", 42);
+            var offset1 = new RabbitDeliveryTag("test-queue", 42);
             var offset2 = new TestOtherOffset("test-queue", "42");
 
             // ReSharper disable once SuspiciousTypeConversion.Global
@@ -136,7 +136,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
             result.Should().BeFalse();
         }
 
-        private class TestOtherOffset : IOffset
+        private class TestOtherOffset : IBrokerMessageIdentifier
         {
             public TestOtherOffset(string key, string value)
             {
@@ -148,7 +148,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 
             public string Value { get; }
 
-            public bool Equals(IOffset? other) => false;
+            public bool Equals(IBrokerMessageIdentifier? other) => false;
         }
     }
 }

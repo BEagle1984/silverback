@@ -18,20 +18,20 @@ namespace Silverback.Messaging.Broker
 
         public DateTime? LatestConsumedMessageTimestamp { get; private set; }
 
-        public IOffset? LatestConsumedMessageOffset { get; private set; }
+        public IBrokerMessageIdentifier? LatestConsumedMessageIdentifier { get; private set; }
 
         public void SetConnected() => ChangeStatus(ConsumerStatus.Connected);
 
         public void SetDisconnected() => ChangeStatus(ConsumerStatus.Disconnected);
 
-        public void RecordConsumedMessage(IOffset? offset)
+        public void RecordConsumedMessage(IBrokerMessageIdentifier? brokerMessageIdentifier)
         {
             if (Status == ConsumerStatus.Connected)
                 ChangeStatus(ConsumerStatus.Consuming);
 
             ConsumedMessagesCount++;
             LatestConsumedMessageTimestamp = DateTime.Now;
-            LatestConsumedMessageOffset = offset;
+            LatestConsumedMessageIdentifier = brokerMessageIdentifier;
         }
 
         private void ChangeStatus(ConsumerStatus status)

@@ -16,7 +16,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task Store_ForDifferentEndpoints_AllOffsetsStored()
         {
-            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
+            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IBrokerMessageOffset>());
 
             await store.StoreAsync(
                 new TestOffset("key1", "1"),
@@ -35,7 +35,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task Store_ForDifferentConsumerGroups_AllOffsetsStored()
         {
-            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
+            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IBrokerMessageOffset>());
 
             await store.StoreAsync(
                 new TestOffset("key1", "1"),
@@ -54,7 +54,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task Store_ForDifferentPartitions_AllOffsetsStored()
         {
-            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
+            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IBrokerMessageOffset>());
 
             await store.StoreAsync(
                 new TestOffset("key1", "1"),
@@ -73,7 +73,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task Store_SameTopicPartitionAndGroup_OffsetIsReplaced()
         {
-            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
+            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IBrokerMessageOffset>());
 
             await store.StoreAsync(
                 new TestOffset("key1", "1"),
@@ -92,7 +92,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task GetLatestValue_WithMultipleOffsetsStored_CorrectOffsetIsReturned()
         {
-            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
+            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IBrokerMessageOffset>());
 
             await store.StoreAsync(
                 new TestOffset("key1", "1"),
@@ -128,7 +128,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task GetLatestValue_NotStoredOffsets_NullIsReturned()
         {
-            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
+            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IBrokerMessageOffset>());
 
             await store.StoreAsync(
                 new TestOffset("key1", "1"),
@@ -148,7 +148,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task GetLatestValue_CommittedOffsetsFromMultipleInstances_LastCommittedValueReturned()
         {
-            var sharedList = new TransactionalDictionarySharedItems<string, IComparableOffset>();
+            var sharedList = new TransactionalDictionarySharedItems<string, IBrokerMessageOffset>();
 
             var store = new InMemoryOffsetStore(sharedList);
             await store.StoreAsync(
@@ -178,7 +178,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task Rollback_Store_Reverted()
         {
-            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IComparableOffset>());
+            var store = new InMemoryOffsetStore(new TransactionalDictionarySharedItems<string, IBrokerMessageOffset>());
 
             await store.StoreAsync(
                 new TestOffset("key1", "1"),

@@ -206,7 +206,6 @@ namespace Silverback.Messaging.Inbound.Transaction
                 bool handled = await ErrorPoliciesHelper.ApplyErrorPoliciesAsync(context, exception)
                     .ConfigureAwait(false);
 
-                // TODO: Carefully test: exception handled once and always rolled back
                 if (!handled)
                 {
                     if (context.Sequence != null && (context.Sequence.Context.ProcessingTask?.IsCompleted ?? true))

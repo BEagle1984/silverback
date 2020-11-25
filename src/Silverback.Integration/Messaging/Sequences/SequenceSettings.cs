@@ -31,7 +31,7 @@ namespace Silverback.Messaging.Sequences
         // /// <remarks>
         // ///     <para>
         // ///         Changing this setting to <c>false</c> causes some overhead and it's less efficient in handling the
-        // ///         incomplete sequences. This may result in the offsets not being properly committed in certain
+        // ///         incomplete sequences. This may result in the messages not being properly committed in certain
         // ///         circumstances.
         // ///     </para>
         // ///     <para>

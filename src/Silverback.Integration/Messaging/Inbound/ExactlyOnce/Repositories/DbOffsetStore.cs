@@ -38,7 +38,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
         }
 
         /// <inheritdoc cref="IOffsetStore.StoreAsync" />
-        public async Task StoreAsync(IComparableOffset offset, IConsumerEndpoint endpoint)
+        public async Task StoreAsync(IBrokerMessageOffset offset, IConsumerEndpoint endpoint)
         {
             Check.NotNull(offset, nameof(offset));
             Check.NotNull(endpoint, nameof(endpoint));
@@ -73,7 +73,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
         }
 
         /// <inheritdoc cref="IOffsetStore.GetLatestValueAsync" />
-        public async Task<IComparableOffset?> GetLatestValueAsync(string offsetKey, IConsumerEndpoint endpoint)
+        public async Task<IBrokerMessageOffset?> GetLatestValueAsync(string offsetKey, IConsumerEndpoint endpoint)
         {
             Check.NotNull(offsetKey, nameof(offsetKey));
             Check.NotNull(endpoint, nameof(endpoint));
@@ -84,7 +84,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
             return DeserializeOffset(storedOffsetEntity);
         }
 
-        private static IComparableOffset? DeserializeOffset(StoredOffset? storedOffsetEntity)
+        private static IBrokerMessageOffset? DeserializeOffset(StoredOffset? storedOffsetEntity)
         {
             if (storedOffsetEntity == null)
                 return null;
@@ -111,10 +111,10 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
         }
 
         [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private static IComparableOffset InstantiateOffset(string clrType, string key, string value)
+        private static IBrokerMessageOffset InstantiateOffset(string clrType, string key, string value)
         {
             var offsetType = TypesCache.GetType(clrType)!;
-            var offset = (IComparableOffset)Activator.CreateInstance(
+            var offset = (IBrokerMessageOffset)Activator.CreateInstance(
                 offsetType,
                 key,
                 value);

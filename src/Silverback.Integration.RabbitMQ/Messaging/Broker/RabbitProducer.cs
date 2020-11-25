@@ -86,11 +86,11 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Producer.ProduceCore" />
-        protected override IOffset? ProduceCore(IOutboundEnvelope envelope) =>
+        protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
 
         /// <inheritdoc cref="Producer.ProduceCoreAsync" />
-        protected override Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope)
+        protected override Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             var queuedMessage = new QueuedMessage(envelope);
 
@@ -186,12 +186,12 @@ namespace Silverback.Messaging.Broker
             public QueuedMessage(IRawOutboundEnvelope envelope)
             {
                 Envelope = envelope;
-                TaskCompletionSource = new TaskCompletionSource<IOffset?>();
+                TaskCompletionSource = new TaskCompletionSource<IBrokerMessageIdentifier?>();
             }
 
             public IRawOutboundEnvelope Envelope { get; }
 
-            public TaskCompletionSource<IOffset?> TaskCompletionSource { get; }
+            public TaskCompletionSource<IBrokerMessageIdentifier?> TaskCompletionSource { get; }
         }
     }
 }

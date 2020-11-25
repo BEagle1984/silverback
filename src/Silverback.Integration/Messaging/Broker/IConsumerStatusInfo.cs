@@ -32,8 +32,8 @@ namespace Silverback.Messaging.Broker
         DateTime? LatestConsumedMessageTimestamp { get; }
 
         /// <summary>
-        ///     Gets the offset of the latest consumed message.
+        ///     Gets the message identifier of the latest consumed message.
         /// </summary>
-        IOffset? LatestConsumedMessageOffset { get; }
+        IBrokerMessageIdentifier? LatestConsumedMessageIdentifier { get; }
     }
 }

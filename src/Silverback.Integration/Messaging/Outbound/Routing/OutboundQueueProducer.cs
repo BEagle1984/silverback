@@ -52,13 +52,13 @@ namespace Silverback.Messaging.Outbound.Routing
         }
 
         /// <inheritdoc cref="Producer.ProduceCore" />
-        protected override IOffset ProduceCore(IOutboundEnvelope envelope)
+        protected override IBrokerMessageIdentifier ProduceCore(IOutboundEnvelope envelope)
         {
             throw new InvalidOperationException("Only asynchronous operations are supported.");
         }
 
         /// <inheritdoc cref="Producer.ProduceCoreAsync" />
-        protected override async Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope)
+        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 

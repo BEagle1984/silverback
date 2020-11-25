@@ -16,12 +16,12 @@ namespace Silverback.Messaging.Messages
         new IProducerEndpoint Endpoint { get; }
 
         /// <summary>
-        ///     Gets the message offset (or similar construct if using a message broker other than Kafka).
+        ///     Gets the message identifier on the message broker (the Kafka offset or similar).
         /// </summary>
         /// <remarks>
-        ///     The offset value will be set only after the message has been successfully submitted to the message
+        ///     The identifier value will be set only after the message has been successfully published to the message
         ///     broker.
         /// </remarks>
-        IOffset? Offset { get; }
+        IBrokerMessageIdentifier? BrokerMessageIdentifier { get; }
     }
 }

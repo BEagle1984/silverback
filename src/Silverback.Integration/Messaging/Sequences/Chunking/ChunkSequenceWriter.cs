@@ -56,7 +56,7 @@ namespace Silverback.Messaging.Sequences.Chunking
                 ? (int?)Math.Ceiling(envelope.RawMessage.Length / (double)chunkSize)
                 : null;
 
-            IOffset? firstChunkOffset = null;
+            IBrokerMessageOffset? firstChunkOffset = null;
 
             int chunkIndex = 0;
 
@@ -83,7 +83,7 @@ namespace Silverback.Messaging.Sequences.Chunking
 
                 // Read and store the offset of the first chunk, after it has been produced (after yield return)
                 if (chunkIndex == 0)
-                    firstChunkOffset = chunkEnvelope.Offset;
+                    firstChunkOffset = chunkEnvelope.BrokerMessageIdentifier as IBrokerMessageOffset;
 
                 chunkIndex++;
             }

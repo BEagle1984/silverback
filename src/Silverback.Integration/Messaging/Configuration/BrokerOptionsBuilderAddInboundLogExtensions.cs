@@ -47,7 +47,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         ///     <para>
         ///         Adds the necessary services to enable the <see cref="LogExactlyOnceStrategy" /> storing the
-        ///         offsets in memory.
+        ///         messages identifiers in memory.
         ///     </para>
         ///     <para>
         ///         The <see cref="LogExactlyOnceStrategy" /> stores uses an <see cref="IInboundLog" /> to

@@ -45,12 +45,12 @@ namespace Silverback.Tests.Integration.TestTypes
 
         protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
-        protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers)
         {
-            AcknowledgeCount += offsets.Count;
+            AcknowledgeCount += brokerMessageIdentifiers.Count;
             return Task.CompletedTask;
         }
 
-        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> offsets) => Task.CompletedTask;
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers) => Task.CompletedTask;
     }
 }

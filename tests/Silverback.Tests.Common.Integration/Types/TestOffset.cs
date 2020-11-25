@@ -8,7 +8,7 @@ using Silverback.Messaging.Broker;
 
 namespace Silverback.Tests.Types
 {
-    public class TestOffset : IComparableOffset
+    public class TestOffset : IBrokerMessageOffset
     {
         public TestOffset()
         {
@@ -26,19 +26,19 @@ namespace Silverback.Tests.Types
 
         public string Value { get; }
 
-        public static bool operator <(TestOffset left, TestOffset right) =>
+        public static bool operator <(TestOffset? left, TestOffset? right) =>
             Comparer<TestOffset>.Default.Compare(left, right) < 0;
 
-        public static bool operator >(TestOffset left, TestOffset right) =>
+        public static bool operator >(TestOffset? left, TestOffset? right) =>
             Comparer<TestOffset>.Default.Compare(left, right) > 0;
 
-        public static bool operator <=(TestOffset left, TestOffset right) =>
+        public static bool operator <=(TestOffset? left, TestOffset? right) =>
             Comparer<TestOffset>.Default.Compare(left, right) <= 0;
 
-        public static bool operator >=(TestOffset left, TestOffset right) =>
+        public static bool operator >=(TestOffset? left, TestOffset? right) =>
             Comparer<TestOffset>.Default.Compare(left, right) >= 0;
 
-        public static bool operator ==(TestOffset left, TestOffset right)
+        public static bool operator ==(TestOffset? left, TestOffset? right)
         {
             if (ReferenceEquals(left, null))
                 return ReferenceEquals(right, null);
@@ -48,7 +48,7 @@ namespace Silverback.Tests.Types
 
         public static bool operator !=(TestOffset left, TestOffset right) => !(left == right);
 
-        public int CompareTo(IOffset? other)
+        public int CompareTo(IBrokerMessageOffset? other)
         {
             if (other == null)
                 return 0;
@@ -61,7 +61,7 @@ namespace Silverback.Tests.Types
 
         public string ToLogString() => Value;
 
-        public bool Equals(IOffset? other)
+        public bool Equals(IBrokerMessageIdentifier? other)
         {
             if (ReferenceEquals(this, other))
                 return true;
@@ -85,7 +85,7 @@ namespace Silverback.Tests.Types
             if (obj.GetType() != GetType())
                 return false;
 
-            return Equals((IOffset)obj);
+            return Equals((IBrokerMessageIdentifier)obj);
         }
 
         public override int GetHashCode() => HashCode.Combine(Key, Value);

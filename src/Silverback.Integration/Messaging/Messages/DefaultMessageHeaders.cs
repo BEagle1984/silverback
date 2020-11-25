@@ -50,7 +50,7 @@ namespace Silverback.Messaging.Messages
         public const string IsLastChunk = "x-chunk-last";
 
         /// <summary>
-        ///     The <see cref="IOffset" /> value of the first chunk of the same message.
+        ///     The <see cref="IBrokerMessageOffset" /> value of the first chunk of the same message.
         /// </summary>
         public const string FirstChunkOffset = "x-chunk-first-offset";
 

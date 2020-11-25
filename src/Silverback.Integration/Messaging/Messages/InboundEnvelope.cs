@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Messages
             : this(
                 envelope.RawMessage,
                 envelope.Headers,
-                envelope.Offset,
+                envelope.BrokerMessageIdentifier,
                 envelope.Endpoint,
                 envelope.ActualEndpointName,
                 envelope.AdditionalLogData)
@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Messages
         public InboundEnvelope(
             Stream? rawMessage,
             IEnumerable<MessageHeader>? headers,
-            IOffset offset,
+            IBrokerMessageIdentifier brokerMessageIdentifier,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
             IDictionary<string, string>? additionalLogData = null)
@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Messages
                 headers,
                 endpoint,
                 actualEndpointName,
-                offset,
+                brokerMessageIdentifier,
                 additionalLogData)
         {
         }
@@ -42,7 +42,7 @@ namespace Silverback.Messaging.Messages
             object message,
             Stream? rawMessage,
             IEnumerable<MessageHeader>? headers,
-            IOffset offset,
+            IBrokerMessageIdentifier brokerMessageIdentifier,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
             IDictionary<string, string>? additionalLogData = null)
@@ -51,7 +51,7 @@ namespace Silverback.Messaging.Messages
                 headers,
                 endpoint,
                 actualEndpointName,
-                offset,
+                brokerMessageIdentifier,
                 additionalLogData)
         {
             Message = message;

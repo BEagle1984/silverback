@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Messages
                 envelope.Headers,
                 envelope.Endpoint,
                 envelope.ActualEndpointName,
-                envelope.Offset,
+                envelope.BrokerMessageIdentifier,
                 envelope.AdditionalLogData);
     }
 }

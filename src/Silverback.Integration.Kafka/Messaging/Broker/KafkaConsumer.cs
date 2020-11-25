@@ -260,15 +260,15 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.GetSequenceStore(Silverback.Messaging.Broker.IOffset)" />
-        protected override ISequenceStore GetSequenceStore(KafkaOffset offset)
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.GetSequenceStore(IBrokerMessageIdentifier)" />
+        protected override ISequenceStore GetSequenceStore(KafkaOffset brokerMessageIdentifier)
         {
-            Check.NotNull(offset, nameof(offset));
+            Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
 
             if (_channelsManager == null)
                 throw new InvalidOperationException("The ChannelsManager is not initialized.");
 
-            return _channelsManager.GetSequenceStore(offset.AsTopicPartition());
+            return _channelsManager.GetSequenceStore(brokerMessageIdentifier.AsTopicPartition());
         }
 
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />
@@ -286,13 +286,13 @@ namespace Silverback.Messaging.Broker
             _channelsManager = null;
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.CommitCoreAsync" />
-        protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> offsets)
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
             if (_confluentConsumer == null)
                 throw new InvalidOperationException("The consumer is not connected.");
 
-            var lastOffsets = offsets
+            var lastOffsets = brokerMessageIdentifiers
                 .GroupBy(offset => offset.Key)
                 .Select(
                     offsetsGroup => offsetsGroup
@@ -313,8 +313,8 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.RollbackCoreAsync" />
-        protected override async Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> offsets)
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        protected override async Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
             if (_confluentConsumer == null)
                 throw new InvalidOperationException("The consumer is not connected.");
@@ -322,7 +322,7 @@ namespace Silverback.Messaging.Broker
             if (IsConsuming && _consumeLoopHandler != null)
                 await _consumeLoopHandler.Stop().ConfigureAwait(false);
 
-            offsets
+            brokerMessageIdentifiers
                 .GroupBy(offset => offset.Key)
                 .Select(
                     offsetsGroup => offsetsGroup

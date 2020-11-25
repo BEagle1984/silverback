@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce
 
                 var envelope = context.Envelope;
 
-                if (!(envelope.Offset is IComparableOffset comparableOffset))
+                if (!(envelope.BrokerMessageIdentifier is IBrokerMessageOffset offset))
                 {
                     throw new InvalidOperationException(
                         "The message broker implementation doesn't seem to support comparable offsets. " +
@@ -44,15 +44,15 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce
                         "to ensure exactly-once processing.");
                 }
 
-                var latestOffset = await _offsetStore.GetLatestValueAsync(envelope.Offset.Key, envelope.Endpoint)
+                var latestOffset = await _offsetStore.GetLatestValueAsync(envelope.BrokerMessageIdentifier.Key, envelope.Endpoint)
                     .ConfigureAwait(false);
 
-                if (latestOffset != null && latestOffset.CompareTo(comparableOffset) >= 0)
+                if (latestOffset != null && latestOffset.CompareTo(offset) >= 0)
                     return true;
 
                 context.TransactionManager.Enlist(_offsetStore);
 
-                await _offsetStore.StoreAsync(comparableOffset, envelope.Endpoint).ConfigureAwait(false);
+                await _offsetStore.StoreAsync(offset, envelope.Endpoint).ConfigureAwait(false);
                 return false;
             }
         }

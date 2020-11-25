@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Sequences
 
         /// <summary>
         ///     Gets a <see cref="Task" /> that will complete when the processing is completed (including
-        ///     commit/rollback of the transaction and the offsets).
+        ///     commit/rollback of the transaction).
         /// </summary>
         Task ProcessingCompletedTask { get; }
 

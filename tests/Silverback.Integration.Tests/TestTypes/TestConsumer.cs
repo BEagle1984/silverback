@@ -38,7 +38,7 @@ namespace Silverback.Tests.Integration.TestTypes
         public Task TestHandleMessage(
             object message,
             IEnumerable<MessageHeader>? headers = null,
-            IOffset? offset = null,
+            TestOffset? offset = null,
             IMessageSerializer? serializer = null) =>
             TestHandleMessage(message, new MessageHeaderCollection(headers), offset, serializer);
 
@@ -46,13 +46,13 @@ namespace Silverback.Tests.Integration.TestTypes
         public Task TestConsume(
             byte[]? rawMessage,
             IEnumerable<MessageHeader>? headers = null,
-            IOffset? offset = null) =>
+            TestOffset? offset = null) =>
             TestHandleMessage(rawMessage, new MessageHeaderCollection(headers), offset);
 
         public async Task TestHandleMessage(
             object message,
             MessageHeaderCollection? headers,
-            IOffset? offset = null,
+            TestOffset? offset = null,
             IMessageSerializer? serializer = null)
         {
             if (serializer == null)
@@ -67,7 +67,7 @@ namespace Silverback.Tests.Integration.TestTypes
         }
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public async Task TestHandleMessage(byte[]? rawMessage, MessageHeaderCollection headers, IOffset? offset = null)
+        public async Task TestHandleMessage(byte[]? rawMessage, MessageHeaderCollection headers, TestOffset? offset = null)
         {
             if (!Broker.IsConnected)
                 throw new InvalidOperationException("The broker is not connected.");
@@ -97,12 +97,12 @@ namespace Silverback.Tests.Integration.TestTypes
 
         protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
-        protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers)
         {
-            AcknowledgeCount += offsets.Count;
+            AcknowledgeCount += brokerMessageIdentifiers.Count;
             return Task.CompletedTask;
         }
 
-        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> offsets) => Task.CompletedTask;
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers) => Task.CompletedTask;
     }
 }

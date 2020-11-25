@@ -54,10 +54,11 @@ namespace Silverback.Messaging.Broker.Behaviors
         public IConsumer Consumer { get; }
 
         /// <summary>
-        ///     Gets the offsets of the messages being handled in this context (either the single message or the
+        ///     Gets the identifiers of the messages being handled in this context (either the single message or the
         ///     sequence).
         /// </summary>
-        public IReadOnlyCollection<IOffset> Offsets => Sequence?.Offsets ?? new[] { Envelope.Offset };
+        public IReadOnlyCollection<IBrokerMessageIdentifier> BrokerMessageIdentifiers =>
+            Sequence?.BrokerMessageIdentifiers ?? new[] { Envelope.BrokerMessageIdentifier };
 
         /// <summary>
         ///     Gets the <see cref="ISequenceStore" /> used to temporary store the pending sequences being consumed.

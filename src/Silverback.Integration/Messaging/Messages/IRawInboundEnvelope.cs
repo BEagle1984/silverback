@@ -23,8 +23,8 @@ namespace Silverback.Messaging.Messages
         string ActualEndpointName { get; }
 
         /// <summary>
-        ///     Gets the message offset (or similar construct if using a message broker other than Kafka).
+        ///     Gets the message identifier on the message broker (the Kafka offset or similar).
         /// </summary>
-        IOffset Offset { get; }
+        IBrokerMessageIdentifier BrokerMessageIdentifier { get; }
     }
 }

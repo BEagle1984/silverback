@@ -83,9 +83,9 @@ namespace Silverback.Messaging.Sequences
         Exception? AbortException { get; }
 
         /// <summary>
-        ///     Gets the offsets of the messages belonging to the sequence.
+        ///     Gets the identifiers of the messages belonging to the sequence.
         /// </summary>
-        IReadOnlyList<IOffset> Offsets { get; }
+        IReadOnlyList<IBrokerMessageIdentifier> BrokerMessageIdentifiers { get; }
 
         /// <summary>
         ///     Gets the <see cref="ISequence" /> that were added to this sequence (e.g. the

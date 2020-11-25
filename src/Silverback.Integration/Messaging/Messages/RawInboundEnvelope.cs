@@ -17,14 +17,14 @@ namespace Silverback.Messaging.Messages
             IEnumerable<MessageHeader>? headers,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
-            IOffset offset,
+            IBrokerMessageIdentifier brokerMessageIdentifier,
             IDictionary<string, string>? additionalLogData = null)
             : this(
                 rawMessage != null ? new MemoryStream(rawMessage) : null,
                 headers,
                 endpoint,
                 actualEndpointName,
-                offset,
+                brokerMessageIdentifier,
                 additionalLogData)
         {
         }
@@ -34,18 +34,18 @@ namespace Silverback.Messaging.Messages
             IEnumerable<MessageHeader>? headers,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
-            IOffset offset,
+            IBrokerMessageIdentifier brokerMessageIdentifier,
             IDictionary<string, string>? additionalLogData = null)
             : base(rawMessage, headers, endpoint, additionalLogData)
         {
             ActualEndpointName = actualEndpointName;
-            Offset = offset;
+            BrokerMessageIdentifier = brokerMessageIdentifier;
         }
 
         public new IConsumerEndpoint Endpoint => (IConsumerEndpoint)base.Endpoint;
 
         public string ActualEndpointName { get; }
 
-        public IOffset Offset { get; }
+        public IBrokerMessageIdentifier BrokerMessageIdentifier { get; }
     }
 }

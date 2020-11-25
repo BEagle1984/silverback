@@ -115,7 +115,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task StatusInfo_Consuming_LastConsumedMessageTracked()
+        public async Task StatusInfo_Consuming_LatestConsumedMessageTracked()
         {
             Host.ConfigureServices(
                     services => services
@@ -148,8 +148,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
-            broker.Consumers[0].StatusInfo.LatestConsumedMessageOffset.Should().BeOfType<KafkaOffset>();
-            broker.Consumers[0].StatusInfo.LatestConsumedMessageOffset.As<KafkaOffset>().Offset.Should().Be(1);
+            broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.Should().BeOfType<KafkaOffset>();
+            broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.As<KafkaOffset>().Offset.Should().Be(1);
             broker.Consumers[0].StatusInfo.LatestConsumedMessageTimestamp.Should().NotBeNull();
         }
     }

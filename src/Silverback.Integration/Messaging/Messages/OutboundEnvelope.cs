@@ -16,8 +16,8 @@ namespace Silverback.Messaging.Messages
             IEnumerable<MessageHeader>? headers,
             IProducerEndpoint endpoint,
             bool autoUnwrap = false,
-            IOffset? offset = null)
-            : base(headers, endpoint, offset)
+            IBrokerMessageIdentifier? brokerMessageIdentifier = null)
+            : base(headers, endpoint, brokerMessageIdentifier)
         {
             _message = message;
 

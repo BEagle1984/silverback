@@ -74,7 +74,7 @@ namespace Silverback.Messaging.Broker
                         new ProducerPipelineContext(envelope, this, _serviceProvider),
                         finalContext =>
                         {
-                            ((RawOutboundEnvelope)finalContext.Envelope).Offset =
+                            ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
                                 ProduceCore(finalContext.Envelope);
 
                             return Task.CompletedTask;
@@ -99,7 +99,7 @@ namespace Silverback.Messaging.Broker
                 new ProducerPipelineContext(envelope, this, _serviceProvider),
                 async finalContext =>
                 {
-                    ((RawOutboundEnvelope)finalContext.Envelope).Offset =
+                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
                         await ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
                 }).ConfigureAwait(false);
 
@@ -113,27 +113,27 @@ namespace Silverback.Messaging.Broker
             => ProduceAsync(new ProcessedOutboundEnvelope(messageStream, headers, Endpoint));
 
         /// <summary>
-        ///     Publishes the specified message and returns its offset.
+        ///     Publishes the specified message and returns its identifier.
         /// </summary>
         /// <param name="envelope">
         ///     The <see cref="RawBrokerEnvelope" /> containing body, headers, endpoint, etc.
         /// </param>
         /// <returns>
-        ///     The message offset.
+        ///     The message identifier assigned by the broker (the Kafka offset or similar).
         /// </returns>
-        protected abstract IOffset? ProduceCore(IOutboundEnvelope envelope);
+        protected abstract IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope);
 
         /// <summary>
-        ///     Publishes the specified message and returns its offset.
+        ///     Publishes the specified message and returns its identifier.
         /// </summary>
         /// <param name="envelope">
         ///     The <see cref="RawBrokerEnvelope" /> containing body, headers, endpoint, etc.
         /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
-        ///     message offset.
+        ///     message identifier assigned by the broker (the Kafka offset or similar).
         /// </returns>
-        protected abstract Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope);
+        protected abstract Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope);
 
         private Task ExecutePipelineIfNeededAsync(
             ProducerPipelineContext context,

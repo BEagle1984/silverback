@@ -149,7 +149,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             var offsetA = new KafkaOffset("test-topic", 2, valueA);
             var offsetB = valueB != null ? new KafkaOffset("test-topic", 2, valueB.Value) : null;
 
-            var result = offsetA.CompareTo((IOffset?)offsetB);
+            var result = offsetA.CompareTo((IBrokerMessageOffset?)offsetB);
 
             result.Should().Be(expectedResult);
         }
@@ -261,7 +261,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             result.Should().BeFalse();
         }
 
-        private class TestOtherOffset : IOffset
+        private class TestOtherOffset : IBrokerMessageOffset
         {
             public TestOtherOffset(string key, string value)
             {
@@ -273,7 +273,9 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 
             public string Value { get; }
 
-            public bool Equals(IOffset? other) => false;
+            public bool Equals(IBrokerMessageIdentifier? other) => false;
+
+            public int CompareTo(IBrokerMessageOffset? other) => throw new System.NotImplementedException();
         }
     }
 }

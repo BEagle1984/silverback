@@ -6,19 +6,21 @@ using System.Globalization;
 
 namespace Silverback.Messaging.Broker
 {
-    /// <inheritdoc cref="IOffset" />
-    public sealed class RabbitOffset : IOffset
+    /// <summary>
+    ///     Represents the unique message identifier assigned by the message broker.
+    /// </summary>
+    public sealed class RabbitDeliveryTag : IBrokerMessageIdentifier
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="RabbitOffset" /> class.
+        ///     Initializes a new instance of the <see cref="RabbitDeliveryTag" /> class.
         /// </summary>
         /// <param name="key">
-        ///     The unique key of the queue, topic or partition this offset belongs to.
+        ///    The unique key of the queue, topic or partition the message was produced to or consumed from.
         /// </param>
         /// <param name="value">
-        ///     The offset value.
+        ///     The identifier value.
         /// </param>
-        public RabbitOffset(string key, string value)
+        public RabbitDeliveryTag(string key, string value)
         {
             ConsumerTag = key;
             DeliveryTag = ulong.Parse(value, CultureInfo.InvariantCulture);
@@ -26,7 +28,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="RabbitOffset" /> class.
+        ///     Initializes a new instance of the <see cref="RabbitDeliveryTag" /> class.
         /// </summary>
         /// <param name="consumerTag">
         ///     The consumer identifier.
@@ -34,7 +36,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="deliveryTag">
         ///     The delivery (message) identifier.
         /// </param>
-        public RabbitOffset(string consumerTag, ulong deliveryTag)
+        public RabbitDeliveryTag(string consumerTag, ulong deliveryTag)
         {
             ConsumerTag = consumerTag;
             DeliveryTag = deliveryTag;
@@ -51,21 +53,21 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public ulong DeliveryTag { get; }
 
-        /// <inheritdoc cref="IOffset.Key" />
+        /// <inheritdoc cref="IBrokerMessageIdentifier.Key" />
         public string Key => ConsumerTag;
 
-        /// <inheritdoc cref="IOffset.Value" />
+        /// <inheritdoc cref="IBrokerMessageIdentifier.Value" />
         public string Value { get; }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-        public bool Equals(IOffset? other)
+        public bool Equals(IBrokerMessageIdentifier? other)
         {
             if (ReferenceEquals(this, other))
                 return true;
             if (ReferenceEquals(other, null))
                 return false;
 
-            if (!(other is RabbitOffset otherRabbitOffset))
+            if (!(other is RabbitDeliveryTag otherRabbitOffset))
                 return false;
 
             return ConsumerTag == otherRabbitOffset.ConsumerTag && DeliveryTag == otherRabbitOffset.DeliveryTag;
@@ -82,7 +84,7 @@ namespace Silverback.Messaging.Broker
             if (obj.GetType() != GetType())
                 return false;
 
-            return Equals((IOffset)obj);
+            return Equals((IBrokerMessageIdentifier)obj);
         }
 
         /// <inheritdoc cref="object.GetHashCode" />

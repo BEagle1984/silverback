@@ -18,7 +18,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Broker
 {
     /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
-    public class RabbitConsumer : Consumer<RabbitBroker, RabbitConsumerEndpoint, RabbitOffset>
+    public class RabbitConsumer : Consumer<RabbitBroker, RabbitConsumerEndpoint, RabbitDeliveryTag>
     {
         private readonly IRabbitConnectionFactory _connectionFactory;
 
@@ -38,7 +38,7 @@ namespace Silverback.Messaging.Broker
 
         private int _pendingOffsetsCount;
 
-        private RabbitOffset? _pendingOffset;
+        private RabbitDeliveryTag? _pendingDeliveryTag;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitConsumer" /> class.
@@ -138,17 +138,17 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.CommitCoreAsync" />
-        protected override Task CommitCoreAsync(IReadOnlyCollection<RabbitOffset> offsets)
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        protected override Task CommitCoreAsync(IReadOnlyCollection<RabbitDeliveryTag> brokerMessageIdentifiers)
         {
-            CommitOrStoreOffset(offsets.OrderBy(offset => offset.DeliveryTag).Last());
+            CommitOrStoreDeliveryTag(brokerMessageIdentifiers.OrderBy(deliveryTag => deliveryTag.DeliveryTag).Last());
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.RollbackCoreAsync" />
-        protected override Task RollbackCoreAsync(IReadOnlyCollection<RabbitOffset> offsets)
+        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<RabbitDeliveryTag> brokerMessageIdentifiers)
         {
-            BasicNack(offsets.Max(offset => offset.DeliveryTag));
+            BasicNack(brokerMessageIdentifiers.Max(deliveryTag => deliveryTag.DeliveryTag));
             return Task.CompletedTask;
         }
 
@@ -157,18 +157,18 @@ namespace Silverback.Messaging.Broker
         {
             try
             {
-                var offset = new RabbitOffset(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
+                var deliveryTag = new RabbitDeliveryTag(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
 
                 Dictionary<string, string> logData = new Dictionary<string, string>
                 {
-                    ["deliveryTag"] = $"{offset.DeliveryTag.ToString(CultureInfo.InvariantCulture)}",
+                    ["deliveryTag"] = $"{deliveryTag.DeliveryTag.ToString(CultureInfo.InvariantCulture)}",
                     ["routingKey"] = deliverEventArgs.RoutingKey
                 };
 
                 _logger.LogDebug(
                     RabbitEventIds.ConsumingMessage,
                     "Consuming message {offset} from endpoint {endpointName}.",
-                    offset.Value,
+                    deliveryTag.Value,
                     Endpoint.Name);
 
                 // TODO: Test this!
@@ -179,7 +179,7 @@ namespace Silverback.Messaging.Broker
                         deliverEventArgs.Body.ToArray(),
                         deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders(),
                         Endpoint.Name,
-                        offset,
+                        deliveryTag,
                         logData)
                     .ConfigureAwait(false);
             }
@@ -195,17 +195,17 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private void CommitOrStoreOffset(RabbitOffset offset)
+        private void CommitOrStoreDeliveryTag(RabbitDeliveryTag deliveryTag)
         {
             lock (_pendingOffsetLock)
             {
                 if (Endpoint.AcknowledgeEach == 1)
                 {
-                    BasicAck(offset.DeliveryTag);
+                    BasicAck(deliveryTag.DeliveryTag);
                     return;
                 }
 
-                _pendingOffset = offset;
+                _pendingDeliveryTag = deliveryTag;
                 _pendingOffsetsCount++;
             }
 
@@ -217,11 +217,11 @@ namespace Silverback.Messaging.Broker
         {
             lock (_pendingOffsetLock)
             {
-                if (_pendingOffset == null)
+                if (_pendingDeliveryTag == null)
                     return;
 
-                BasicAck(_pendingOffset.DeliveryTag);
-                _pendingOffset = null;
+                BasicAck(_pendingDeliveryTag.DeliveryTag);
+                _pendingDeliveryTag = null;
                 _pendingOffsetsCount = 0;
             }
         }

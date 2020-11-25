@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
     ///         The log is simply persisted in memory.
     ///     </para>
     /// </summary>
-    public class InMemoryOffsetStore : TransactionalDictionary<string, IComparableOffset>, IOffsetStore
+    public class InMemoryOffsetStore : TransactionalDictionary<string, IBrokerMessageOffset>, IOffsetStore
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="InMemoryOffsetStore" /> class.
@@ -25,13 +25,13 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
         /// <param name="sharedItems">
         ///     The offsets shared between the instances of this repository.
         /// </param>
-        public InMemoryOffsetStore(TransactionalDictionarySharedItems<string, IComparableOffset> sharedItems)
+        public InMemoryOffsetStore(TransactionalDictionarySharedItems<string, IBrokerMessageOffset> sharedItems)
             : base(sharedItems)
         {
         }
 
         /// <inheritdoc cref="IOffsetStore.StoreAsync" />
-        public Task StoreAsync(IComparableOffset offset, IConsumerEndpoint endpoint)
+        public Task StoreAsync(IBrokerMessageOffset offset, IConsumerEndpoint endpoint)
         {
             Check.NotNull(offset, nameof(offset));
             Check.NotNull(endpoint, nameof(endpoint));
@@ -40,9 +40,9 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
         }
 
         /// <inheritdoc cref="IOffsetStore.GetLatestValueAsync" />
-        public Task<IComparableOffset?> GetLatestValueAsync(string offsetKey, IConsumerEndpoint endpoint) =>
+        public Task<IBrokerMessageOffset?> GetLatestValueAsync(string offsetKey, IConsumerEndpoint endpoint) =>
             Task.FromResult(
-                (IComparableOffset?)Items.Union(UncommittedItems)
+                (IBrokerMessageOffset?)Items.Union(UncommittedItems)
                     .Where(pair => pair.Key == GetKey(offsetKey, endpoint))
                     .Select(pair => pair.Value)
                     .Max());

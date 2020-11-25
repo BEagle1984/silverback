@@ -29,8 +29,8 @@ namespace Silverback.Messaging.Broker
 
         private readonly ConsumerStatusInfo _statusInfo = new ConsumerStatusInfo();
 
-        private readonly ConcurrentDictionary<IOffset, int> _failedAttemptsDictionary =
-            new ConcurrentDictionary<IOffset, int>();
+        private readonly ConcurrentDictionary<IBrokerMessageIdentifier, int> _failedAttemptsDictionary =
+            new ConcurrentDictionary<IBrokerMessageIdentifier, int>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
@@ -101,17 +101,46 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         protected bool IsDisconnecting { get; private set; }
 
-        /// <inheritdoc cref="IConsumer.CommitAsync(IOffset)" />
-        public Task CommitAsync(IOffset offset) => CommitAsync(new[] { offset });
+        /// <inheritdoc cref="IConsumer.CommitAsync(IBrokerMessageIdentifier)" />
+        public Task CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier)
+        {
+            Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
 
-        /// <inheritdoc cref="IConsumer.CommitAsync(IReadOnlyCollection{IOffset})" />
-        public abstract Task CommitAsync(IReadOnlyCollection<IOffset> offsets);
+            return CommitAsync(new[] { brokerMessageIdentifier });
+        }
 
-        /// <inheritdoc cref="IConsumer.RollbackAsync(IOffset)" />
-        public Task RollbackAsync(IOffset offset) => RollbackAsync(new[] { offset });
+        /// <inheritdoc cref="IConsumer.CommitAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        public async Task CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
+        {
+            Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
-        /// <inheritdoc cref="IConsumer.RollbackAsync(IReadOnlyCollection{IOffset})" />
-        public abstract Task RollbackAsync(IReadOnlyCollection<IOffset> offsets);
+            await CommitCoreAsync(brokerMessageIdentifiers).ConfigureAwait(false);
+
+            if (_failedAttemptsDictionary.IsEmpty)
+                return;
+
+            // TODO: Is this the most efficient way to remove a bunch of items?
+            foreach (var messageIdentifier in brokerMessageIdentifiers)
+            {
+                _failedAttemptsDictionary.TryRemove(messageIdentifier, out _);
+            }
+        }
+
+        /// <inheritdoc cref="IConsumer.RollbackAsync(IBrokerMessageIdentifier)" />
+        public Task RollbackAsync(IBrokerMessageIdentifier brokerMessageIdentifier)
+        {
+            Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
+
+            return RollbackAsync(new[] { brokerMessageIdentifier });
+        }
+
+        /// <inheritdoc cref="IConsumer.RollbackAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        public Task RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
+        {
+            Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
+
+            return RollbackCoreAsync(brokerMessageIdentifiers);
+        }
 
         /// <inheritdoc cref="IConsumer.ConnectAsync" />
         public async Task ConnectAsync()
@@ -215,18 +244,9 @@ namespace Silverback.Messaging.Broker
             Check.NotNull(envelope, nameof(envelope));
 
             return _failedAttemptsDictionary.AddOrUpdate(
-                envelope.Offset,
+                envelope.BrokerMessageIdentifier,
                 _ => envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) + 1,
                 (_, count) => count + 1);
-        }
-
-        /// <inheritdoc cref="IConsumer.ClearFailedAttempts" />
-        // TODO: Call it!
-        public void ClearFailedAttempts(IRawInboundEnvelope envelope)
-        {
-            Check.NotNull(envelope, nameof(envelope));
-
-            _failedAttemptsDictionary.Remove(envelope.Offset, out _);
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -272,6 +292,29 @@ namespace Silverback.Messaging.Broker
         protected abstract void StopCore();
 
         /// <summary>
+        ///     Commits the specified messages sending the acknowledgement to the message broker.
+        /// </summary>
+        /// <param name="brokerMessageIdentifiers">
+        ///     The identifiers of to message be committed.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected abstract Task CommitCoreAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
+
+        /// <summary>
+        ///     If necessary notifies the message broker that the specified messages couldn't be processed
+        ///     successfully, to ensure that they will be consumed again.
+        /// </summary>
+        /// <param name="brokerMessageIdentifiers">
+        ///     The identifiers of to message be rolled back.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected abstract Task RollbackCoreAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
+
+        /// <summary>
         ///     Waits until the consuming is stopped.
         /// </summary>
         /// <param name="cancellationToken">
@@ -285,19 +328,21 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.
         /// </summary>
-        /// <param name="offset">
-        ///     The offset may determine which store is being used. For example a dedicated sequence store is used per
-        ///     each Kafka partition, since they may be processed concurrently.
+        /// <param name="brokerMessageIdentifier">
+        ///     The message identifier (the offset in Kafka) may determine which store is being used. For example a
+        ///     dedicated sequence store is used per each Kafka partition, since they may be processed concurrently.
         /// </param>
         /// <returns>
         ///     The <see cref="ISequenceStore" />.
         /// </returns>
-        protected virtual ISequenceStore GetSequenceStore(IOffset offset)
+        protected virtual ISequenceStore GetSequenceStore(IBrokerMessageIdentifier brokerMessageIdentifier)
         {
             if (SequenceStores.Count == 0)
             {
                 lock (SequenceStores)
+                {
                     SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>());
+                }
             }
 
             return SequenceStores.FirstOrDefault() ??
@@ -316,8 +361,8 @@ namespace Silverback.Messaging.Broker
         /// <param name="sourceEndpointName">
         ///     The name of the actual endpoint (topic) where the message has been delivered.
         /// </param>
-        /// <param name="offset">
-        ///     The offset of the consumed message.
+        /// <param name="brokerMessageIdentifier">
+        ///     The identifier of the consumed message.
         /// </param>
         /// <param name="additionalLogData">
         ///     An optional dictionary containing the broker specific data to be logged when processing the consumed
@@ -332,7 +377,7 @@ namespace Silverback.Messaging.Broker
             byte[]? message,
             IReadOnlyCollection<MessageHeader> headers,
             string sourceEndpointName,
-            IOffset offset,
+            IBrokerMessageIdentifier brokerMessageIdentifier,
             IDictionary<string, string>? additionalLogData)
         {
             var envelope = new RawInboundEnvelope(
@@ -340,15 +385,15 @@ namespace Silverback.Messaging.Broker
                 headers,
                 Endpoint,
                 sourceEndpointName,
-                offset,
+                brokerMessageIdentifier,
                 additionalLogData);
 
-            _statusInfo.RecordConsumedMessage(offset);
+            _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);
 
             var consumerPipelineContext = new ConsumerPipelineContext(
                 envelope,
                 this,
-                GetSequenceStore(offset),
+                GetSequenceStore(brokerMessageIdentifier),
                 ServiceProvider);
 
             await ExecutePipelineAsync(consumerPipelineContext).ConfigureAwait(false);

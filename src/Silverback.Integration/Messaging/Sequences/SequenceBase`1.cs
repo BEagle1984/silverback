@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Sequences
     {
         private readonly MessageStreamProvider<TEnvelope> _streamProvider;
 
-        private readonly List<IOffset> _offsets = new List<IOffset>();
+        private readonly List<IBrokerMessageIdentifier> _messageIdentifiers = new List<IBrokerMessageIdentifier>();
 
         private readonly bool _enforceTimeout;
 
@@ -103,11 +103,13 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequence.IsBeingConsumed" />
         public bool IsBeingConsumed => _streamProvider.StreamsCount > 0;
 
-        /// <inheritdoc cref="ISequence.Offsets" />
-        public IReadOnlyList<IOffset> Offsets =>
+        /// <inheritdoc cref="ISequence.BrokerMessageIdentifiers" />
+        public IReadOnlyList<IBrokerMessageIdentifier> BrokerMessageIdentifiers =>
             _sequences != null
-                ? _offsets.Union(_sequences.SelectMany(sequence => sequence.Offsets)).ToList()
-                : _offsets;
+                ? _messageIdentifiers
+                    .Union(_sequences.SelectMany(sequence => sequence.BrokerMessageIdentifiers))
+                    .ToList()
+                : _messageIdentifiers;
 
         /// <inheritdoc cref="ISequence.Sequences" />
         public IReadOnlyCollection<ISequence> Sequences =>
@@ -250,7 +252,7 @@ namespace Silverback.Messaging.Sequences
             }
             else
             {
-                _offsets.Add(envelope.Offset);
+                _messageIdentifiers.Add(envelope.BrokerMessageIdentifier);
             }
 
             await _addingSemaphoreSlim.WaitAsync().ConfigureAwait(false);
