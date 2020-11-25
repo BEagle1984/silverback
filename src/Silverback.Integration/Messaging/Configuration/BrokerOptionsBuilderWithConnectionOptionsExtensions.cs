@@ -13,19 +13,21 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class BrokerOptionsBuilderWithConnectionOptionsExtensions
     {
         /// <summary>
-        ///     Specifies the <see cref="BrokerConnectionOptions"/>.
+        ///     Specifies the <see cref="BrokerConnectionOptions" />.
         /// </summary>
         /// <param name="brokerOptionsBuilder">
         ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
         ///     add the services to.
         /// </param>
         /// <param name="connectionOptions">
-        /// The <see cref="BrokerConnectionOptions"/> to apply.
+        ///     The <see cref="BrokerConnectionOptions" /> to apply.
         /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static IBrokerOptionsBuilder WithConnectionOptions(this IBrokerOptionsBuilder brokerOptionsBuilder, BrokerConnectionOptions connectionOptions)
+        public static IBrokerOptionsBuilder WithConnectionOptions(
+            this IBrokerOptionsBuilder brokerOptionsBuilder,
+            BrokerConnectionOptions connectionOptions)
         {
             Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 

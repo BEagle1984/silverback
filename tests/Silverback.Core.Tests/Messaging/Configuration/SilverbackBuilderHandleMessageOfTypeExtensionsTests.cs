@@ -19,7 +19,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new UnhandledMessage();
+            static UnhandledMessage Republish(TestEventOne message) => new();
             void Receive(UnhandledMessage message) => received++;
 
             var publisher = GetPublisher(
@@ -61,7 +61,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new UnhandledMessage();
+            static UnhandledMessage Republish(TestEventOne message) => new();
             void Receive(UnhandledMessage message) => received++;
 
             var publisher = GetPublisher(
@@ -81,7 +81,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new UnhandledMessage();
+            static UnhandledMessage Republish(TestEventOne message) => new();
             void Receive(UnhandledMessage message) => received++;
 
             var publisher = GetPublisher(
@@ -101,7 +101,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new UnhandledMessage();
+            static UnhandledMessage Republish(TestEventOne message) => new();
             void Receive(UnhandledMessage message) => received++;
 
             var publisher = GetPublisher(
@@ -121,7 +121,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new UnhandledMessage();
+            static UnhandledMessage Republish(TestEventOne message) => new();
             void Receive(UnhandledMessage message) => received++;
 
             var publisher = GetPublisher(
@@ -141,7 +141,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             int received = 0;
 
-            static UnhandledMessage Republish(TestEventOne message) => new UnhandledMessage();
+            static UnhandledMessage Republish(TestEventOne message) => new();
             void Receive(UnhandledMessage message) => received++;
 
             var publisher = GetPublisher(

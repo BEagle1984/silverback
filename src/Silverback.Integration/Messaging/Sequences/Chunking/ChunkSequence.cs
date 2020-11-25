@@ -36,7 +36,10 @@ namespace Silverback.Messaging.Sequences.Chunking
         }
 
         /// <inheritdoc cref="SequenceBase{TEnvelope}.AddCoreAsync" />
-        protected override Task<int> AddCoreAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
+        protected override Task<int> AddCoreAsync(
+            IRawInboundEnvelope envelope,
+            ISequence? sequence,
+            bool throwIfUnhandled)
         {
             Check.NotNull(envelope, nameof(envelope));
 

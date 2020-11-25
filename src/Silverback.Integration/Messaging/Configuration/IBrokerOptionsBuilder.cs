@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ISilverbackBuilder SilverbackBuilder { get; }
 
         /// <summary>
-        ///     Gets the <see cref="ILogTemplates"/>.
+        ///     Gets the <see cref="ILogTemplates" />.
         /// </summary>
         ILogTemplates LogTemplates { get; }
     }

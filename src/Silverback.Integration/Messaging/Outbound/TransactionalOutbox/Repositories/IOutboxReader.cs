@@ -32,8 +32,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
         Task<TimeSpan> GetMaxAgeAsync();
 
         /// <summary>
-        ///     Reads the specified number of messages from the outbox (according to the FIFO rule). The operation must
-        ///     be acknowledged for the messages to be removed.
+        ///     Reads the specified number of messages from the outbox (according to the FIFO rule). The operation
+        ///     must be acknowledged for the messages to be removed.
         /// </summary>
         /// <param name="count">
         ///     The number of items to be dequeued.

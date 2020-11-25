@@ -9,7 +9,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
 {
     public class NonExclusiveSubscriberTestService
     {
-        public ParallelTestingUtil Parallel { get; } = new ParallelTestingUtil();
+        public ParallelTestingUtil Parallel { get; } = new();
 
         [Subscribe(Exclusive = false)]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]

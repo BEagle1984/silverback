@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
             bool autoSubscribeAllPublicMethods)
         {
             bool exists = collection.OfType<TypeSubscription>()
-                    .Any(existingSubscription => existingSubscription.SubscribedType == subscriberType);
+                .Any(existingSubscription => existingSubscription.SubscribedType == subscriberType);
 
             if (exists)
                 return;

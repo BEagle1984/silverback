@@ -170,7 +170,7 @@ namespace Silverback.Messaging.Inbound.Transaction
 
                 string logMessage = sequence.IsPending
                     ? $"{sequence.GetType().Name} '{sequence.SequenceId}' processing seems " +
-                      $"completed but the sequence is still pending. " +
+                      "completed but the sequence is still pending. " +
                       $"(ProcessingTask.Status={context.ProcessingTask?.Status}, ProcessingTask.Id={context.ProcessingTask?.Id})"
                     : $"{sequence.GetType().Name} '{sequence.SequenceId}' processing completed.";
 

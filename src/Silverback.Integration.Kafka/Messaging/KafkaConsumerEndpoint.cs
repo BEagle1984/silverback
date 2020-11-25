@@ -44,13 +44,13 @@ namespace Silverback.Messaging
         ///     Gets the event handlers configuration. Can be used to bind some handlers to the Kafka events
         ///     such as partitions revoked/assigned, error, statistics and offsets committed.
         /// </summary>
-        public KafkaConsumerEventsHandlers Events { get; } = new KafkaConsumerEventsHandlers();
+        public KafkaConsumerEventsHandlers Events { get; } = new();
 
         /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
         ///     dictionary provided by the Confluent.Kafka library.
         /// </summary>
-        public KafkaConsumerConfig Configuration { get; set; } = new KafkaConsumerConfig();
+        public KafkaConsumerConfig Configuration { get; set; } = new();
 
         /// <summary>
         ///     Gets or sets a value indicating whether the partitions must be processed independently.

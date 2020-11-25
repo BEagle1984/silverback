@@ -27,13 +27,13 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Gets the Kafka event handlers configuration.
         /// </summary>
-        public KafkaProducerEventsHandlers Events { get; } = new KafkaProducerEventsHandlers();
+        public KafkaProducerEventsHandlers Events { get; } = new();
 
         /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
         ///     dictionary provided by the Confluent.Kafka library.
         /// </summary>
-        public KafkaProducerConfig Configuration { get; set; } = new KafkaProducerConfig();
+        public KafkaProducerConfig Configuration { get; set; } = new();
 
         /// <inheritdoc cref="ProducerEndpoint.Validate" />
         public override void Validate()

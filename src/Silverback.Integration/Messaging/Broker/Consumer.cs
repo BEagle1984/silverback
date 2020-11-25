@@ -27,10 +27,9 @@ namespace Silverback.Messaging.Broker
 
         private readonly ISilverbackIntegrationLogger<Consumer> _logger;
 
-        private readonly ConsumerStatusInfo _statusInfo = new ConsumerStatusInfo();
+        private readonly ConsumerStatusInfo _statusInfo = new();
 
-        private readonly ConcurrentDictionary<IBrokerMessageIdentifier, int> _failedAttemptsDictionary =
-            new ConcurrentDictionary<IBrokerMessageIdentifier, int>();
+        private readonly ConcurrentDictionary<IBrokerMessageIdentifier, int> _failedAttemptsDictionary = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
@@ -321,7 +320,8 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected abstract Task RollbackCoreAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
+        protected abstract Task RollbackCoreAsync(
+            IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
 
         /// <summary>
         ///     Waits until the consuming is stopped.

@@ -45,7 +45,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly IServiceProvider _serviceProvider;
 
-        private ConcurrentBag<IConsumer>? _consumers = new ConcurrentBag<IConsumer>();
+        private ConcurrentBag<IConsumer>? _consumers = new();
 
         private ConcurrentDictionary<IEndpoint, IProducer>? _producers;
 

@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns>
         ///     The error policy instance.
         /// </returns>
-        public static StopConsumerErrorPolicy Stop() => new StopConsumerErrorPolicy();
+        public static StopConsumerErrorPolicy Stop() => new();
 
         /// <summary>
         ///     Builds an instance of the <see cref="SkipMessageErrorPolicy" /> that skips the messages that fail to
@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns>
         ///     The error policy instance.
         /// </returns>
-        public static SkipMessageErrorPolicy Skip() => new SkipMessageErrorPolicy();
+        public static SkipMessageErrorPolicy Skip() => new();
 
         /// <summary>
         ///     Builds an instance of the <see cref="RetryErrorPolicy" /> that retries to process the messages that
@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Configuration
         ///     The error policy instance.
         /// </returns>
         /// <param name="retriesCount">
-        ///    The maximum number of retries to be performed.
+        ///     The maximum number of retries to be performed.
         /// </param>
         /// <param name="initialDelay">
         ///     The optional delay to be applied to the first retry.
@@ -64,8 +64,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns>
         ///     The error policy instance.
         /// </returns>
-        public static MoveMessageErrorPolicy Move(IProducerEndpoint endpoint) =>
-            new MoveMessageErrorPolicy(endpoint);
+        public static MoveMessageErrorPolicy Move(IProducerEndpoint endpoint) => new(endpoint);
 
         /// <summary>
         ///     Builds a chain combining multiple error policies to be sequentially applied.
@@ -76,8 +75,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns>
         ///     The error policy instance.
         /// </returns>
-        public static ErrorPolicyChain Chain(params ErrorPolicyBase[] policies) =>
-            Chain(policies.AsEnumerable());
+        public static ErrorPolicyChain Chain(params ErrorPolicyBase[] policies) => Chain(policies.AsEnumerable());
 
         /// <summary>
         ///     Builds a chain combining multiple error policies to be sequentially applied.
@@ -88,7 +86,6 @@ namespace Silverback.Messaging.Configuration
         /// <returns>
         ///     The error policy instance.
         /// </returns>
-        public static ErrorPolicyChain Chain(IEnumerable<ErrorPolicyBase> policies) =>
-            new ErrorPolicyChain(policies);
+        public static ErrorPolicyChain Chain(IEnumerable<ErrorPolicyBase> policies) => new(policies);
     }
 }

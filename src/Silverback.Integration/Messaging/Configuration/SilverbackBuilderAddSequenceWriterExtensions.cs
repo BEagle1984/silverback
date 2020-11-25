@@ -53,13 +53,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static ISilverbackBuilder AddTransientSequenceWriter<TWriter>(
-            this ISilverbackBuilder silverbackBuilder)
+        public static ISilverbackBuilder AddTransientSequenceWriter<TWriter>(this ISilverbackBuilder silverbackBuilder)
             where TWriter : class, ISequenceWriter =>
             AddTransientSequenceWriter(silverbackBuilder, typeof(TWriter));
 
         /// <summary>
-        ///     Adds a transient sequence writer with a factory specified in <paramref name="implementationFactory" /> to
+        ///     Adds a transient sequence writer with a factory specified in <paramref name="implementationFactory" />
+        ///     to
         ///     the <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
@@ -122,13 +122,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static ISilverbackBuilder AddSingletonSequenceWriter<TWriter>(
-            this ISilverbackBuilder silverbackBuilder)
+        public static ISilverbackBuilder AddSingletonSequenceWriter<TWriter>(this ISilverbackBuilder silverbackBuilder)
             where TWriter : class, ISequenceWriter =>
             AddSingletonSequenceWriter(silverbackBuilder, typeof(TWriter));
 
         /// <summary>
-        ///     Adds a singleton sequence writer with a factory specified in <paramref name="implementationFactory" /> to
+        ///     Adds a singleton sequence writer with a factory specified in <paramref name="implementationFactory" />
+        ///     to
         ///     the <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
@@ -153,7 +153,8 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a singleton sequence writer with an instance specified in <paramref name="implementationInstance" />
+        ///     Adds a singleton sequence writer with an instance specified in
+        ///     <paramref name="implementationInstance" />
         ///     to the <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">

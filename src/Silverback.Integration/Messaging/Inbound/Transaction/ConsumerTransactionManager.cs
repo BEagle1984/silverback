@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Inbound.Transaction
 
         private readonly ISilverbackIntegrationLogger<ConsumerTransactionManager> _logger;
 
-        private readonly List<ITransactional> _transactionalServices = new List<ITransactional>();
+        private readonly List<ITransactional> _transactionalServices = new();
 
         private bool _isAborted;
 

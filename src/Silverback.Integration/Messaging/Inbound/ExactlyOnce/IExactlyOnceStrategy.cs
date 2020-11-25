@@ -17,7 +17,8 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce
         ///     The <see cref="IServiceProvider" /> to be used to build the strategy.
         /// </param>
         /// <returns>
-        ///     An instance of <see cref="IExactlyOnceStrategyImplementation" /> that can be used to produce the messages.
+        ///     An instance of <see cref="IExactlyOnceStrategyImplementation" /> that can be used to produce the
+        ///     messages.
         /// </returns>
         IExactlyOnceStrategyImplementation Build(IServiceProvider serviceProvider);
     }

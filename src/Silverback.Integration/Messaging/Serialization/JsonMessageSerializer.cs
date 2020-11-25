@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Gets the default static instance of <see cref="JsonMessageSerializer" />.
         /// </summary>
-        public static JsonMessageSerializer Default { get; } = new JsonMessageSerializer();
+        public static JsonMessageSerializer Default { get; } = new();
 
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]

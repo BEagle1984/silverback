@@ -30,7 +30,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="IServiceCollection" /> so that additional calls can be chained.
         /// </returns>
-        public static IServiceCollection UseMockedKafka(this IServiceCollection services, Action<IMockedKafkaOptionsBuilder>? optionsAction = null)
+        public static IServiceCollection UseMockedKafka(
+            this IServiceCollection services,
+            Action<IMockedKafkaOptionsBuilder>? optionsAction = null)
         {
             services
                 .RemoveAll<IConfluentConsumerBuilder>()

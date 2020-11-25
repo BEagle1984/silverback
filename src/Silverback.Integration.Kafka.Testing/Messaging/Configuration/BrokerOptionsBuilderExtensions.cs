@@ -27,7 +27,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static IBrokerOptionsBuilder AddMockedKafka(this IBrokerOptionsBuilder brokerOptionsBuilder, Action<IMockedKafkaOptionsBuilder>? optionsAction = null)
+        public static IBrokerOptionsBuilder AddMockedKafka(
+            this IBrokerOptionsBuilder brokerOptionsBuilder,
+            Action<IMockedKafkaOptionsBuilder>? optionsAction = null)
         {
             Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 

@@ -10,7 +10,7 @@ using Silverback.Messaging.Broker.Topics;
 namespace Silverback.Messaging.Broker.ConfluentWrappers
 {
     /// <summary>
-    ///     The builder for the <see cref="MockedKafkaConsumer"/>.
+    ///     The builder for the <see cref="MockedKafkaConsumer" />.
     /// </summary>
     public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
     {

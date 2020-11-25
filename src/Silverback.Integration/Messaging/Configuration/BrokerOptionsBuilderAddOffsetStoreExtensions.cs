@@ -46,8 +46,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
         /// <summary>
         ///     <para>
-        ///         Adds the necessary services to enable the <see cref="OffsetStoreExactlyOnceStrategy" /> storing the
-        ///         offsets in memory.
+        ///         Adds the necessary services to enable the <see cref="OffsetStoreExactlyOnceStrategy" /> storing
+        ///         the offsets in memory.
         ///     </para>
         ///     <para>
         ///         The <see cref="OffsetStoreExactlyOnceStrategy" /> stores uses an <see cref="IOffsetStore" /> to

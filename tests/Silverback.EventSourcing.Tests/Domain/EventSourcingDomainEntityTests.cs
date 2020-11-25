@@ -185,7 +185,7 @@ namespace Silverback.Tests.EventSourcing.Domain
                     new NameChangedEvent { NewName = "1", Timestamp = DateTime.Today.AddDays(-10) },
                     new NameChangedEvent { NewName = "2", Timestamp = DateTime.Today.AddDays(-5) },
                     new NameChangedEvent { NewName = "3", Timestamp = DateTime.Today.AddDays(-5) },
-                    new NameChangedEvent { NewName = "4", Timestamp = DateTime.Today.AddDays(-9) },
+                    new NameChangedEvent { NewName = "4", Timestamp = DateTime.Today.AddDays(-9) }
                 });
 
             person.MergeEvents(

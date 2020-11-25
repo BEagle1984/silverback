@@ -24,25 +24,23 @@ namespace Silverback.Messaging.Sequences
     {
         private readonly MessageStreamProvider<TEnvelope> _streamProvider;
 
-        private readonly List<IBrokerMessageIdentifier> _messageIdentifiers = new List<IBrokerMessageIdentifier>();
+        private readonly List<IBrokerMessageIdentifier> _messageIdentifiers = new();
 
         private readonly bool _enforceTimeout;
 
         private readonly TimeSpan _timeout;
 
-        private readonly CancellationTokenSource _abortCancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _abortCancellationTokenSource = new();
 
-        private readonly object _abortLockObject = new object();
+        private readonly object _abortLockObject = new();
 
         private readonly ISilverbackIntegrationLogger<SequenceBase<TEnvelope>> _logger;
 
-        private readonly TaskCompletionSource<bool> _sequencerBehaviorsTaskCompletionSource =
-            new TaskCompletionSource<bool>();
+        private readonly TaskCompletionSource<bool> _sequencerBehaviorsTaskCompletionSource = new();
 
-        private readonly TaskCompletionSource<bool> _processingCompleteTaskCompletionSource =
-            new TaskCompletionSource<bool>();
+        private readonly TaskCompletionSource<bool> _processingCompleteTaskCompletionSource = new();
 
-        private readonly SemaphoreSlim _addingSemaphoreSlim = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _addingSemaphoreSlim = new(1, 1);
 
         private TaskCompletionSource<bool>? _abortingTaskCompletionSource;
 
@@ -107,9 +105,6 @@ namespace Silverback.Messaging.Sequences
         public IReadOnlyCollection<ISequence> Sequences =>
             (IReadOnlyCollection<ISequence>?)_sequences ?? Array.Empty<ISequence>();
 
-        /// <inheritdoc cref="ISequence.ParentSequence" />
-        public ISequence? ParentSequence { get; private set; }
-
         /// <inheritdoc cref="ISequence.Context" />
         public ConsumerPipelineContext Context { get; }
 
@@ -121,6 +116,9 @@ namespace Silverback.Messaging.Sequences
 
         /// <inheritdoc cref="ISequence.StreamProvider" />
         public IMessageStreamProvider StreamProvider => _streamProvider;
+
+        /// <inheritdoc cref="ISequence.ParentSequence" />
+        public ISequence? ParentSequence { get; private set; }
 
         /// <inheritdoc cref="ISequence.AbortException" />
         public Exception? AbortException { get; private set; }
@@ -142,6 +140,33 @@ namespace Silverback.Messaging.Sequences
 
         /// <inheritdoc cref="ISequence.AbortReason" />
         public SequenceAbortReason AbortReason { get; private set; }
+
+        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
+        void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
+
+        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
+        void ISequenceImplementation.SetParentSequence(ISequence parentSequence) => ParentSequence = parentSequence;
+
+        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
+        void ISequenceImplementation.CompleteSequencerBehaviorsTask() =>
+            _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
+
+        /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingCompleted" />
+        void ISequenceImplementation.NotifyProcessingCompleted()
+        {
+            _processingCompleteTaskCompletionSource.TrySetResult(true);
+            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
+        }
+
+        /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
+        void ISequenceImplementation.NotifyProcessingFailed(Exception exception)
+        {
+            _processingCompleteTaskCompletionSource.TrySetException(exception);
+
+            // Don't forward the error, it's enough to handle it once
+            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
+            _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
+        }
 
         /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />
         public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>() => StreamProvider.CreateStream<TMessage>();
@@ -180,33 +205,6 @@ namespace Silverback.Messaging.Sequences
                     .Union(_sequences.SelectMany(sequence => sequence.GetBrokerMessageIdentifiers()))
                     .ToList()
                 : _messageIdentifiers;
-
-        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
-        void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
-
-        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
-        void ISequenceImplementation.SetParentSequence(ISequence parentSequence) => ParentSequence = parentSequence;
-
-        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
-        void ISequenceImplementation.CompleteSequencerBehaviorsTask() =>
-            _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
-
-        /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingCompleted" />
-        void ISequenceImplementation.NotifyProcessingCompleted()
-        {
-            _processingCompleteTaskCompletionSource.TrySetResult(true);
-            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
-        }
-
-        /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
-        void ISequenceImplementation.NotifyProcessingFailed(Exception exception)
-        {
-            _processingCompleteTaskCompletionSource.TrySetException(exception);
-
-            // Don't forward the error, it's enough to handle it once
-            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
-            _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
-        }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()

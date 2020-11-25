@@ -9,7 +9,7 @@ namespace Silverback.Util
 {
     internal static class TypesCache
     {
-        private static readonly ConcurrentDictionary<string, Type?> Cache = new ConcurrentDictionary<string, Type?>();
+        private static readonly ConcurrentDictionary<string, Type?> Cache = new();
 
         public static Type? GetType(string typeName, bool throwOnError = true)
         {

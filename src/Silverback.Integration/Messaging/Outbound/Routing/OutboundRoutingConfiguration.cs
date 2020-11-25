@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Outbound.Routing
 {
     internal class OutboundRoutingConfiguration : IOutboundRoutingConfiguration
     {
-        private readonly List<OutboundRoute> _routes = new List<OutboundRoute>();
+        private readonly List<OutboundRoute> _routes = new();
 
         public IReadOnlyCollection<IOutboundRoute> Routes => _routes.AsReadOnly();
 

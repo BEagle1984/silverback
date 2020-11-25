@@ -22,7 +22,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public Stream? Message { get; }
 
-        public MessageHeaderCollection Headers { get; } = new MessageHeaderCollection();
+        public MessageHeaderCollection Headers { get; } = new();
 
         public IEndpoint Endpoint { get; }
     }

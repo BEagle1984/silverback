@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Broker
         ///     Initializes a new instance of the <see cref="RabbitDeliveryTag" /> class.
         /// </summary>
         /// <param name="key">
-        ///    The unique key of the queue, topic or partition the message was produced to or consumed from.
+        ///     The unique key of the queue, topic or partition the message was produced to or consumed from.
         /// </param>
         /// <param name="value">
         ///     The identifier value.

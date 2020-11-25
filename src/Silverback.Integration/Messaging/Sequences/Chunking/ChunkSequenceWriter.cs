@@ -13,7 +13,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Sequences.Chunking
 {
     /// <summary>
-    ///     Creates the chunks sequence according to the <see cref="ChunkSettings"/>.
+    ///     Creates the chunks sequence according to the <see cref="ChunkSettings" />.
     /// </summary>
     public class ChunkSequenceWriter : ISequenceWriter
     {

@@ -26,12 +26,12 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Gets or sets the RabbitMQ connection settings.
         /// </summary>
-        public RabbitConnectionConfig Connection { get; set; } = new RabbitConnectionConfig();
+        public RabbitConnectionConfig Connection { get; set; } = new();
 
         /// <summary>
         ///     Gets or sets the queue configuration.
         /// </summary>
-        public RabbitQueueConfig Queue { get; set; } = new RabbitQueueConfig();
+        public RabbitQueueConfig Queue { get; set; } = new();
 
         /// <summary>
         ///     Gets or sets the number of message to be processed before sending the acknowledgment to the server.

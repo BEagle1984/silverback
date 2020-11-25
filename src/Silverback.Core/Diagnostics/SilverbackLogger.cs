@@ -34,8 +34,12 @@ namespace Silverback.Diagnostics
             Exception exception,
             Func<TState, Exception, string> formatter)
         {
-            Func<Exception, LogLevel, Lazy<string>, LogLevel> logLevelFunc = _logLevelDictionary.GetValueOrDefault(eventId, (_, _, _) => logLevel);
-            LogLevel logLevelToUse = logLevelFunc(exception, logLevel, new Lazy<string>(() => formatter(state, exception)));
+            Func<Exception, LogLevel, Lazy<string>, LogLevel> logLevelFunc =
+                _logLevelDictionary.GetValueOrDefault(eventId, (_, _, _) => logLevel);
+            LogLevel logLevelToUse = logLevelFunc(
+                exception,
+                logLevel,
+                new Lazy<string>(() => formatter(state, exception)));
             _logger.Log(logLevelToUse, eventId, state, exception, formatter);
         }
     }

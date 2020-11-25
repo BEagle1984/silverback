@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Broker.Topics
     {
         private const int MaxRetainedMessages = 100;
 
-        private readonly List<Message<byte[]?, byte[]?>> _messages = new List<Message<byte[]?, byte[]?>>();
+        private readonly List<Message<byte[]?, byte[]?>> _messages = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="InMemoryPartition" /> class.

@@ -38,7 +38,6 @@ namespace Silverback.Testing
         /// <returns>
         ///     A <see cref="Task" /> that completes when all messages have been processed.
         /// </returns>
-        ///
         Task WaitUntilAllMessagesAreConsumedAsync(string[] topicNames, TimeSpan? timeout = null);
     }
 }

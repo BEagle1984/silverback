@@ -43,7 +43,8 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) =>
+            Task.CompletedTask;
 
         protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers)
         {
@@ -51,6 +52,7 @@ namespace Silverback.Tests.Integration.TestTypes
             return Task.CompletedTask;
         }
 
-        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers) => Task.CompletedTask;
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers) =>
+            Task.CompletedTask;
     }
 }

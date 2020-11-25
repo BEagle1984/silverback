@@ -29,8 +29,8 @@ namespace Silverback.Background
         ///     <see cref="System.Guid" />.
         /// </param>
         /// <param name="acquireTimeout">
-        ///     After the acquire timeout is expired the lock manager will abort the lock acquisition. The default is no
-        ///     timeout.
+        ///     After the acquire timeout is expired the lock manager will abort the lock acquisition. The default is
+        ///     no timeout.
         /// </param>
         /// <param name="acquireRetryInterval">
         ///     The interval at which the lock manager checks if a lock can be acquired for the specified resource.

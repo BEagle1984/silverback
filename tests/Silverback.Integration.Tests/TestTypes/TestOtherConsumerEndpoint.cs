@@ -15,7 +15,7 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        public static TestOtherConsumerEndpoint GetDefault() => new TestOtherConsumerEndpoint("test");
+        public static TestOtherConsumerEndpoint GetDefault() => new("test");
 
         public override string GetUniqueConsumerGroupName() => Name;
 

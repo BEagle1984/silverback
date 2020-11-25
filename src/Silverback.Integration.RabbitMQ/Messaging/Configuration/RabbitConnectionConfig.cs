@@ -14,8 +14,7 @@ namespace Silverback.Messaging.Configuration
     /// </summary>
     public sealed class RabbitConnectionConfig : IEquatable<RabbitConnectionConfig>, IValidatableEndpointSettings
     {
-        private static readonly ConfigurationDictionaryComparer<string, object> ClientPropertiesComparer =
-            new ConfigurationDictionaryComparer<string, object>();
+        private static readonly ConfigurationDictionaryComparer<string, object> ClientPropertiesComparer = new();
 
         /// <summary>
         ///     Gets or sets the AMQP URI SSL protocols.
@@ -72,7 +71,7 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         ///     Gets or sets the SSL options setting.
         /// </summary>
-        public RabbitSslOption Ssl { get; set; } = new RabbitSslOption();
+        public RabbitSslOption Ssl { get; set; } = new();
 
         /// <summary>
         ///     Gets or sets a value indicating whether the automatic connection recovery must recover recover also

@@ -42,9 +42,9 @@ namespace Silverback.Tests.Integration.Diagnostics
                     new MemoryStream(),
                     new MessageHeaderCollection
                     {
-                        new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
-                        new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                        new MessageHeader(DefaultMessageHeaders.MessageId, "1234")
+                        new(DefaultMessageHeaders.FailedAttempts, 1),
+                        new(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                        new(DefaultMessageHeaders.MessageId, "1234")
                     },
                     new TestOffset(),
                     new TestConsumerEndpoint("Test"),
@@ -59,11 +59,11 @@ namespace Silverback.Tests.Integration.Diagnostics
                     new MemoryStream(),
                     new MessageHeaderCollection
                     {
-                        new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
-                        new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                        new MessageHeader(DefaultMessageHeaders.MessageId, "1234"),
-                        new MessageHeader(DefaultMessageHeaders.BatchId, "3"),
-                        new MessageHeader(DefaultMessageHeaders.BatchSize, "10")
+                        new(DefaultMessageHeaders.FailedAttempts, 1),
+                        new(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                        new(DefaultMessageHeaders.MessageId, "1234"),
+                        new(DefaultMessageHeaders.BatchId, "3"),
+                        new(DefaultMessageHeaders.BatchSize, "10")
                     },
                     new TestOffset(),
                     new TestConsumerEndpoint("Test")
@@ -86,8 +86,8 @@ namespace Silverback.Tests.Integration.Diagnostics
                 new MemoryStream(),
                 new MessageHeaderCollection
                 {
-                    new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                    new MessageHeader(DefaultMessageHeaders.MessageId, "1234")
+                    new(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                    new(DefaultMessageHeaders.MessageId, "1234")
                 },
                 new TestProducerEndpoint("Test"),
                 null,

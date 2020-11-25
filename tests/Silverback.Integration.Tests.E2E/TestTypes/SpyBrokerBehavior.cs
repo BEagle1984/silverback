@@ -13,9 +13,9 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
     // TODO: Move to Silverback.Integration.Testing
     public class SpyBrokerBehavior : IProducerBehavior, IConsumerBehavior
     {
-        private readonly List<IOutboundEnvelope> _outboundEnvelopes = new List<IOutboundEnvelope>();
+        private readonly List<IOutboundEnvelope> _outboundEnvelopes = new();
 
-        private readonly List<IInboundEnvelope> _inboundEnvelopes = new List<IInboundEnvelope>();
+        private readonly List<IInboundEnvelope> _inboundEnvelopes = new();
 
         [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock on writes only")]
         public IReadOnlyList<IOutboundEnvelope> OutboundEnvelopes => _outboundEnvelopes.ToList();

@@ -42,7 +42,7 @@ namespace Silverback.Messaging
         ///     Gets or sets the sequence settings. A sequence is a set of related messages, like the chunks belonging
         ///     to the same message or the messages in a dataset.
         /// </summary>
-        public SequenceSettings Sequence { get; set; } = new SequenceSettings();
+        public SequenceSettings Sequence { get; set; } = new();
 
         /// <summary>
         ///     Gets or sets a value indicating whether an exception must be thrown if no subscriber is handling the

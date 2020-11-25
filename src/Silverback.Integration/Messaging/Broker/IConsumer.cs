@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Broker
     public interface IConsumer
     {
         /// <summary>
-        ///     Gets the <see cref="Guid"/> uniquely identifying the consumer instance.
+        ///     Gets the <see cref="Guid" /> uniquely identifying the consumer instance.
         /// </summary>
         Guid Id { get; }
 
@@ -131,7 +131,7 @@ namespace Silverback.Messaging.Broker
         Task DisconnectAsync();
 
         /// <summary>
-        ///     Starts consuming. Used after <see cref="Stop"/> has been called to resume consuming.
+        ///     Starts consuming. Used after <see cref="Stop" /> has been called to resume consuming.
         /// </summary>
         void Start();
 
@@ -156,7 +156,7 @@ namespace Silverback.Messaging.Broker
         ///     multiple stores (e.g. the <c>KafkaConsumer</c> will create a store per each assigned partition).
         /// </summary>
         /// <returns>
-        ///    The list of <see cref="ISequenceStore"/>.
+        ///     The list of <see cref="ISequenceStore" />.
         /// </returns>
         IReadOnlyList<ISequenceStore> GetCurrentSequenceStores();
     }

@@ -10,7 +10,7 @@ namespace Silverback.Tests.Performance.TestTypes
 {
     public class WeekWhetherForecastsEvent
     {
-        public static WeekWhetherForecastsEvent Sample { get; } = new WeekWhetherForecastsEvent
+        public static WeekWhetherForecastsEvent Sample { get; } = new()
         {
             Monday = new WhetherForecast
             {

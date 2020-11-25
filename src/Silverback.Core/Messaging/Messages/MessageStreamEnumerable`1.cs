@@ -19,15 +19,15 @@ namespace Silverback.Messaging.Messages
     internal class MessageStreamEnumerable<TMessage>
         : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
     {
-        private readonly SemaphoreSlim _writeSemaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _writeSemaphore = new(1, 1);
 
-        private readonly SemaphoreSlim _readSemaphore = new SemaphoreSlim(0, 1);
+        private readonly SemaphoreSlim _readSemaphore = new(0, 1);
 
-        private readonly SemaphoreSlim _processedSemaphore = new SemaphoreSlim(0, 1);
+        private readonly SemaphoreSlim _processedSemaphore = new(0, 1);
 
-        private readonly CancellationTokenSource _abortCancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _abortCancellationTokenSource = new();
 
-        private readonly object _completeLock = new object();
+        private readonly object _completeLock = new();
 
         private PushedMessage? _current;
 
@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Messages
             await _writeSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
 
             if (_isComplete)
-                throw new InvalidOperationException($"The stream has been marked as complete.");
+                throw new InvalidOperationException("The stream has been marked as complete.");
 
             _current = pushedMessage;
             SafelyRelease(_readSemaphore);
@@ -94,12 +94,12 @@ namespace Silverback.Messaging.Messages
         public IEnumerator<TMessage> GetEnumerator() =>
             GetEnumerable().GetEnumerator();
 
+        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
         /// <inheritdoc cref="IAsyncEnumerable{T}.GetAsyncEnumerator" />
         public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
             GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken);
-
-        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()

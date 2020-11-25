@@ -14,9 +14,9 @@ namespace Silverback.Messaging.Subscribers
     {
         private readonly ISubject<TMessage> _subject = new Subject<TMessage>();
 
-        private readonly SemaphoreSlim _subscribeSemaphoreSlim = new SemaphoreSlim(0, 1);
+        private readonly SemaphoreSlim _subscribeSemaphoreSlim = new(0, 1);
 
-        private readonly SemaphoreSlim _completeSemaphoreSlim = new SemaphoreSlim(0, 1);
+        private readonly SemaphoreSlim _completeSemaphoreSlim = new(0, 1);
 
         private IDisposable? _subscription;
 

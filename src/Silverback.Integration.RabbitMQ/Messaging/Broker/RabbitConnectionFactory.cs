@@ -12,8 +12,7 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IRabbitConnectionFactory" />
     public sealed class RabbitConnectionFactory : IRabbitConnectionFactory
     {
-        private readonly ConcurrentDictionary<RabbitConnectionConfig, IConnection> _connections =
-            new ConcurrentDictionary<RabbitConnectionConfig, IConnection>();
+        private readonly ConcurrentDictionary<RabbitConnectionConfig, IConnection> _connections = new();
 
         /// <inheritdoc cref="IRabbitConnectionFactory.GetChannel(RabbitProducerEndpoint)" />
         public IModel GetChannel(RabbitProducerEndpoint endpoint)

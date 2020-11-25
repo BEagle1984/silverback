@@ -8,8 +8,8 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model
 {
     /// <summary>
-    ///     Extends the <see cref="OutboxStoredMessage" /> adding the specific information related to a message stored
-    ///     in the transactional outbox table.
+    ///     Extends the <see cref="OutboxStoredMessage" /> adding the specific information related to a message
+    ///     stored in the transactional outbox table.
     /// </summary>
     public class DbOutboxStoredMessage : OutboxStoredMessage
     {

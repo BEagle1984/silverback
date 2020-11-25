@@ -16,7 +16,7 @@ namespace Silverback.Tests.Types
         {
         }
 
-        public static TestProducerEndpoint GetDefault() => new TestProducerEndpoint("test");
+        public static TestProducerEndpoint GetDefault() => new("test");
 
         public bool Equals(TestProducerEndpoint? other)
         {

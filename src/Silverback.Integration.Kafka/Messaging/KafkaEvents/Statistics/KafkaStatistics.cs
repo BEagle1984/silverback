@@ -55,17 +55,17 @@ namespace Silverback.Messaging.KafkaEvents.Statistics
 
         [JsonPropertyName("brokers")]
         [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
-        public Dictionary<string, BrokerStatistics> Brokers { get; set; } = new Dictionary<string, BrokerStatistics>();
+        public Dictionary<string, BrokerStatistics> Brokers { get; set; } = new();
 
         [JsonPropertyName("topics")]
         [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
-        public Dictionary<string, TopicStatistics> Topics { get; set; } = new Dictionary<string, TopicStatistics>();
+        public Dictionary<string, TopicStatistics> Topics { get; set; } = new();
 
         [JsonPropertyName("cgrp")]
-        public ConsumerGroupStatistics ConsumerGroup { get; set; } = new ConsumerGroupStatistics();
+        public ConsumerGroupStatistics ConsumerGroup { get; set; } = new();
 
         [JsonPropertyName("eos")]
-        public ExactlyOnceSemanticsStatistics ExactlyOnceSemantics { get; set; } = new ExactlyOnceSemanticsStatistics();
+        public ExactlyOnceSemanticsStatistics ExactlyOnceSemantics { get; set; } = new();
 
         [JsonPropertyName("tx")]
         public long Tx { get; set; }

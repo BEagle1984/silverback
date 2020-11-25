@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Broker
         ConsumerStatus Status { get; }
 
         /// <summary>
-        ///     Gets the collection of <see cref="IConsumerStatusChange"/> recording all state transitions.
+        ///     Gets the collection of <see cref="IConsumerStatusChange" /> recording all state transitions.
         /// </summary>
         IReadOnlyCollection<IConsumerStatusChange> History { get; }
 

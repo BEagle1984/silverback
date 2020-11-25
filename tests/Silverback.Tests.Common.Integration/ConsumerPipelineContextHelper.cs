@@ -24,7 +24,7 @@ namespace Silverback.Tests
             IConsumer? consumer = null,
             ISequenceStore? sequenceStore = null,
             IConsumerEndpoint? endpoint = null) =>
-            new ConsumerPipelineContext(
+            new(
                 envelope ?? new RawInboundEnvelope(
                     Stream.Null,
                     Array.Empty<MessageHeader>(),

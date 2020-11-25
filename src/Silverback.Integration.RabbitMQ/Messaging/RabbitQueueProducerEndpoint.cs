@@ -28,7 +28,7 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Gets or sets the queue configuration.
         /// </summary>
-        public RabbitQueueConfig Queue { get; set; } = new RabbitQueueConfig();
+        public RabbitQueueConfig Queue { get; set; } = new();
 
         /// <inheritdoc cref="RabbitProducerEndpoint.Validate" />
         public override void Validate()

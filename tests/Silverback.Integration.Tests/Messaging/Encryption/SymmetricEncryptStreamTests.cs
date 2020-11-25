@@ -71,7 +71,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
             var result = await cryptoStream.ReadAllAsync();
             result.Should().NotBeNull();
-            result!.Length.Should().Be((128 * 2) / 8);
+            result!.Length.Should().Be(128 * 2 / 8);
             result.Should().NotBeEquivalentTo(ClearTextMessage);
         }
 
@@ -92,7 +92,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
             var result = cryptoStream.ReadAll();
             result.Should().NotBeNull();
-            result!.Length.Should().Be((128 * 2) / 8);
+            result!.Length.Should().Be(128 * 2 / 8);
             result.Should().NotBeEquivalentTo(ClearTextMessage);
         }
 
@@ -373,6 +373,6 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
         }
 
         private static byte[] GenerateKey(int size, int seed = 1) =>
-            Enumerable.Range(seed, (seed + (size / 8)) - 1).Select(n => (byte)n).ToArray();
+            Enumerable.Range(seed, seed + (size / 8) - 1).Select(n => (byte)n).ToArray();
     }
 }

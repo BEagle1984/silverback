@@ -10,8 +10,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
 {
     public class SilverbackLoggerTests
     {
-        private readonly LoggerSubstitute<SilverbackLoggerTests>
-            _logger = new LoggerSubstitute<SilverbackLoggerTests>();
+        private readonly LoggerSubstitute<SilverbackLoggerTests> _logger = new();
 
         [Fact]
         public void Log_WithDefaultLogLevel_MessageLogged()

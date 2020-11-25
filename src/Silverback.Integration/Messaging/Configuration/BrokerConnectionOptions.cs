@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         ///     Gets the default options.
         /// </summary>
-        public static BrokerConnectionOptions Default { get; } = new BrokerConnectionOptions();
+        public static BrokerConnectionOptions Default { get; } = new();
 
         /// <summary>
         ///     Gets or sets the <see cref="BrokerConnectionMode" />. The default is

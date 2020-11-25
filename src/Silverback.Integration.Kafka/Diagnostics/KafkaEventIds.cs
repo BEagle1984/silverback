@@ -24,7 +24,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId ConsumingMessage { get; } =
-            new EventId(Offset + 11, Prefix + nameof(ConsumingMessage));
+            new(Offset + 11, Prefix + nameof(ConsumingMessage));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the end of partition is reached.
@@ -33,7 +33,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId EndOfPartition { get; } =
-            new EventId(Offset + 12, Prefix + nameof(EndOfPartition));
+            new(Offset + 12, Prefix + nameof(EndOfPartition));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a
@@ -44,7 +44,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Warning.
         /// </remarks>
         public static EventId KafkaExceptionAutoRecovery { get; } =
-            new EventId(Offset + 13, Prefix + nameof(KafkaExceptionAutoRecovery));
+            new(Offset + 13, Prefix + nameof(KafkaExceptionAutoRecovery));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a
@@ -55,7 +55,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Critical.
         /// </remarks>
         public static EventId KafkaExceptionNoAutoRecovery { get; } =
-            new EventId(Offset + 14, Prefix + nameof(KafkaExceptionNoAutoRecovery));
+            new(Offset + 14, Prefix + nameof(KafkaExceptionNoAutoRecovery));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the <see cref="KafkaConsumer" /> is
@@ -65,7 +65,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Critical.
         /// </remarks>
         public static EventId ErrorRecoveringFromKafkaException { get; } =
-            new EventId(Offset + 15, Prefix + nameof(ErrorRecoveringFromKafkaException));
+            new(Offset + 15, Prefix + nameof(ErrorRecoveringFromKafkaException));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the <c>Consume</c> is aborted (usually
@@ -75,7 +75,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Trace.
         /// </remarks>
         public static EventId ConsumingCanceled { get; } =
-            new EventId(Offset + 16, Prefix + nameof(ConsumingCanceled));
+            new(Offset + 16, Prefix + nameof(ConsumingCanceled));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
@@ -85,7 +85,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId CreatingConfluentProducer { get; } =
-            new EventId(Offset + 21, Prefix + nameof(CreatingConfluentProducer));
+            new(Offset + 21, Prefix + nameof(CreatingConfluentProducer));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the message is sent to the broker but
@@ -95,7 +95,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Warning.
         /// </remarks>
         public static EventId ProduceNotAcknowledged { get; } =
-            new EventId(Offset + 22, Prefix + nameof(ProduceNotAcknowledged));
+            new(Offset + 22, Prefix + nameof(ProduceNotAcknowledged));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a new consumer group partition
@@ -105,7 +105,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId PartitionsAssigned { get; } =
-            new EventId(Offset + 31, Prefix + nameof(PartitionsAssigned));
+            new(Offset + 31, Prefix + nameof(PartitionsAssigned));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the offset is being reset.
@@ -114,7 +114,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId PartitionOffsetReset { get; } =
-            new EventId(Offset + 32, Prefix + nameof(PartitionOffsetReset));
+            new(Offset + 32, Prefix + nameof(PartitionOffsetReset));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a group partition assignment is being
@@ -124,7 +124,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId PartitionsRevoked { get; } =
-            new EventId(Offset + 33, Prefix + nameof(PartitionsRevoked));
+            new(Offset + 33, Prefix + nameof(PartitionsRevoked));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an offset is successfully committed.
@@ -133,7 +133,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId OffsetCommitted { get; } =
-            new EventId(Offset + 34, Prefix + nameof(OffsetCommitted));
+            new(Offset + 34, Prefix + nameof(OffsetCommitted));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while committing the
@@ -143,7 +143,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId KafkaEventsHandlerErrorWhileCommittingOffset { get; } =
-            new EventId(Offset + 35, Prefix + nameof(KafkaEventsHandlerErrorWhileCommittingOffset));
+            new(Offset + 35, Prefix + nameof(KafkaEventsHandlerErrorWhileCommittingOffset));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error is reported by the
@@ -154,7 +154,7 @@ namespace Silverback.Diagnostics
         ///     error).
         /// </remarks>
         public static EventId ConsumerError { get; } =
-            new EventId(Offset + 36, Prefix + nameof(ConsumerError));
+            new(Offset + 36, Prefix + nameof(ConsumerError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the error event handler throws an
@@ -164,7 +164,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId KafkaErrorHandlerError { get; } =
-            new EventId(Offset + 37, Prefix + nameof(KafkaErrorHandlerError));
+            new(Offset + 37, Prefix + nameof(KafkaErrorHandlerError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the consumer statistics are received.
@@ -173,7 +173,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId ConsumerStatisticsReceived { get; } =
-            new EventId(Offset + 38, Prefix + nameof(ConsumerStatisticsReceived));
+            new(Offset + 38, Prefix + nameof(ConsumerStatisticsReceived));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the producer statistics are received.
@@ -182,7 +182,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId ProducerStatisticsReceived { get; } =
-            new EventId(Offset + 39, Prefix + nameof(ProducerStatisticsReceived));
+            new(Offset + 39, Prefix + nameof(ProducerStatisticsReceived));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the statistics JSOn cannot be
@@ -192,7 +192,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId StatisticsDeserializationError { get; } =
-            new EventId(Offset + 40, Prefix + nameof(StatisticsDeserializationError));
+            new(Offset + 40, Prefix + nameof(StatisticsDeserializationError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an exception is thrown disconnecting
@@ -202,7 +202,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Warning.
         /// </remarks>
         public static EventId ConsumerDisconnectError { get; } =
-            new EventId(Offset + 50, Prefix + nameof(ConsumerDisconnectError));
+            new(Offset + 50, Prefix + nameof(ConsumerDisconnectError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a log is being written by the
@@ -212,7 +212,7 @@ namespace Silverback.Diagnostics
         ///     The default log level depends on the level notified by the library.
         /// </remarks>
         public static EventId ConfluentKafkaProducerLog { get; } =
-            new EventId(Offset + 200, Prefix + nameof(ConfluentKafkaProducerLog));
+            new(Offset + 200, Prefix + nameof(ConfluentKafkaProducerLog));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a log is being written by the
@@ -222,6 +222,6 @@ namespace Silverback.Diagnostics
         ///     The default log level depends on the level notified by the library.
         /// </remarks>
         public static EventId ConfluentKafkaConsumerLog { get; } =
-            new EventId(Offset + 200, Prefix + nameof(ConfluentKafkaConsumerLog));
+            new(Offset + 200, Prefix + nameof(ConfluentKafkaConsumerLog));
     }
 }

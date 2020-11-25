@@ -17,7 +17,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
 {
     public class JsonMessageSerializerTests
     {
-        private static readonly MessageHeaderCollection TestEventOneMessageTypeHeaders = new MessageHeaderCollection
+        private static readonly MessageHeaderCollection TestEventOneMessageTypeHeaders = new()
         {
             {
                 "x-message-type",

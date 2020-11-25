@@ -245,14 +245,9 @@ namespace Silverback.Messaging.Broker
         public override int GetHashCode() => HashCode.Combine(Topic, Partition, Offset);
 
         internal TopicPartition AsTopicPartition() =>
-            new TopicPartition(
-                Topic,
-                new Partition(Partition));
+            new(Topic, new Partition(Partition));
 
         internal TopicPartitionOffset AsTopicPartitionOffset() =>
-            new TopicPartitionOffset(
-                Topic,
-                new Partition(Partition),
-                new Offset(Offset));
+            new(Topic, new Partition(Partition), new Offset(Offset));
     }
 }

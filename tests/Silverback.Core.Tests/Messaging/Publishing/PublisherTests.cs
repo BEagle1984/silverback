@@ -186,8 +186,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             var service2 = new TestServiceTwo();
             var publisher = PublisherTestsHelper.GetPublisher(
                 silverbackBuilder => silverbackBuilder
-                    .AddSingletonSubscriber(service1, autoSubscribeAllPublicMethods: false)
-                    .AddSingletonSubscriber(service2, autoSubscribeAllPublicMethods: false));
+                    .AddSingletonSubscriber(service1, false)
+                    .AddSingletonSubscriber(service2, false));
 
             await publisher.PublishAsync(new TestCommandOne()); // service1 +2
             await publisher.PublishAsync(new TestCommandTwo()); // service2 +2

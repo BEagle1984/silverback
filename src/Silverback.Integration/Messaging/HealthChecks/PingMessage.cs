@@ -23,6 +23,6 @@ namespace Silverback.Messaging.HealthChecks
         /// <returns>
         ///     The new <see cref="PingMessage" />.
         /// </returns>
-        public static PingMessage New() => new PingMessage { TimeStamp = DateTime.UtcNow };
+        public static PingMessage New() => new() { TimeStamp = DateTime.UtcNow };
     }
 }

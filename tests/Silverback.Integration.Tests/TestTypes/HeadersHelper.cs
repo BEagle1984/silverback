@@ -21,7 +21,7 @@ namespace Silverback.Tests.Integration.TestTypes
             {
                 new MessageHeader(DefaultMessageHeaders.MessageId, messageId),
                 new MessageHeader(DefaultMessageHeaders.ChunkIndex, chunkIndex),
-                new MessageHeader(DefaultMessageHeaders.ChunksCount, chunksCount),
+                new MessageHeader(DefaultMessageHeaders.ChunksCount, chunksCount)
             };
     }
 }

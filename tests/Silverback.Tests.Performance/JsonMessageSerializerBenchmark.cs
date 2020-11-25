@@ -16,14 +16,14 @@ namespace Silverback.Tests.Performance
     [MemoryDiagnoser]
     public class JsonMessageSerializerBenchmark
     {
-        private readonly NewtonsoftJsonMessageSerializer _newtonsoftSerializer = new NewtonsoftJsonMessageSerializer();
+        private readonly NewtonsoftJsonMessageSerializer _newtonsoftSerializer = new();
 
-        private readonly JsonMessageSerializer _serializer = new JsonMessageSerializer();
+        private readonly JsonMessageSerializer _serializer = new();
 
-        private readonly MessageHeaderCollection _messageHeaderCollection = new MessageHeaderCollection();
+        private readonly MessageHeaderCollection _messageHeaderCollection = new();
 
         private readonly MessageSerializationContext _messageSerializationContext =
-            new MessageSerializationContext(new TestProducerEndpoint("Name"));
+            new(new TestProducerEndpoint("Name"));
 
         [Benchmark(Baseline = true, Description = "Newtonsoft based JsonMessageSerializer")]
         [BenchmarkCategory("Serialize")]

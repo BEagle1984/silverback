@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Gets the default instance of an empty context.
         /// </summary>
-        public static MessageSerializationContext Empty { get; } = new MessageSerializationContext(null);
+        public static MessageSerializationContext Empty { get; } = new(null);
 
         /// <summary>
         ///     Gets the related endpoint configuration.

@@ -53,7 +53,8 @@ namespace Silverback.Messaging.Sequences
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            var sequenceReader = await _sequenceReaders.FirstOrDefaultAsync(reader => reader.CanHandleAsync(context)).ConfigureAwait(false);
+            var sequenceReader = await _sequenceReaders.FirstOrDefaultAsync(reader => reader.CanHandleAsync(context))
+                .ConfigureAwait(false);
 
             if (sequenceReader == null)
             {

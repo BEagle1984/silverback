@@ -206,7 +206,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                 .Add<TestEventThree>(_ => new StaticOutboundRouter(new TestProducerEndpoint("eventThree")));
 
             await _behavior.HandleAsync(new[] { new TestEventOne() }, Task.FromResult!);
-            await _behavior.HandleAsync(new[] { new TestEventThree(), }, Task.FromResult!);
+            await _behavior.HandleAsync(new[] { new TestEventThree() }, Task.FromResult!);
             await _behavior.HandleAsync(new[] { new TestEventTwo() }, Task.FromResult!);
 
             _broker.ProducedMessages.Should().HaveCount(2);

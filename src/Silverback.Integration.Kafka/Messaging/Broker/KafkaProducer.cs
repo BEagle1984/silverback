@@ -23,8 +23,7 @@ namespace Silverback.Messaging.Broker
     public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
         private static readonly ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>> ProducersCache =
-            new ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>>(
-                new ConfigurationDictionaryComparer<string, string>());
+            new(new ConfigurationDictionaryComparer<string, string>());
 
         private readonly IConfluentProducerBuilder _confluentProducerBuilder;
 

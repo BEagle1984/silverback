@@ -13,10 +13,9 @@ namespace Silverback.Messaging.Broker.Topics
     {
         private readonly IMockedKafkaOptions _options;
 
-        private readonly ConcurrentDictionary<string, InMemoryTopic> _topics =
-            new ConcurrentDictionary<string, InMemoryTopic>();
+        private readonly ConcurrentDictionary<string, InMemoryTopic> _topics = new();
 
-        private readonly object _consumersLock = new object();
+        private readonly object _consumersLock = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="InMemoryTopicCollection" /> class.

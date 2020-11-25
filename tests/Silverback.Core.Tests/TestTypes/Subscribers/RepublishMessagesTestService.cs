@@ -16,7 +16,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
-        private TestCommandOne OnCommandReceived(TestEventOne message) => new TestCommandOne();
+        private TestCommandOne OnCommandReceived(TestEventOne message) => new();
 
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]

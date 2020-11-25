@@ -19,14 +19,14 @@ namespace Silverback.Messaging.KafkaEvents.Statistics
         public long MetadataAge { get; set; }
 
         [JsonPropertyName("batchsize")]
-        public WindowStatistics BatchSize { get; set; } = new WindowStatistics();
+        public WindowStatistics BatchSize { get; set; } = new();
 
         [JsonPropertyName("batchcnt")]
-        public WindowStatistics BatchCnt { get; set; } = new WindowStatistics();
+        public WindowStatistics BatchCnt { get; set; } = new();
 
         [JsonPropertyName("partitions")]
         [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
         public Dictionary<string, PartitionStatistics> Partitions { get; set; } =
-            new Dictionary<string, PartitionStatistics>();
+            new();
     }
 }

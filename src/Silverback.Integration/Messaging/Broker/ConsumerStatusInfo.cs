@@ -8,11 +8,11 @@ namespace Silverback.Messaging.Broker
 {
     internal class ConsumerStatusInfo : IConsumerStatusInfo
     {
-        private readonly List<IConsumerStatusChange> _history = new List<IConsumerStatusChange>();
-
-        public ConsumerStatus Status { get; private set; }
+        private readonly List<IConsumerStatusChange> _history = new();
 
         public IReadOnlyCollection<IConsumerStatusChange> History => _history;
+
+        public ConsumerStatus Status { get; private set; }
 
         public int ConsumedMessagesCount { get; private set; }
 

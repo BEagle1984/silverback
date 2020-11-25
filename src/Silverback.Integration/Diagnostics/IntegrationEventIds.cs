@@ -26,7 +26,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId ProcessingInboundMessage { get; } =
-            new EventId(Offset + 1, Prefix + nameof(ProcessingInboundMessage));
+            new(Offset + 1, Prefix + nameof(ProcessingInboundMessage));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while processing an
@@ -36,7 +36,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Warning.
         /// </remarks>
         public static EventId ErrorProcessingInboundMessage { get; } =
-            new EventId(Offset + 2, Prefix + nameof(ErrorProcessingInboundMessage));
+            new(Offset + 2, Prefix + nameof(ErrorProcessingInboundMessage));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an inbound message is added to a
@@ -46,7 +46,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId MessageAddedToSequence { get; } =
-            new EventId(Offset + 3, Prefix + nameof(MessageAddedToSequence));
+            new(Offset + 3, Prefix + nameof(MessageAddedToSequence));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the first message of a new sequence is
@@ -56,7 +56,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId SequenceStarted { get; } =
-            new EventId(Offset + 4, Prefix + nameof(SequenceStarted));
+            new(Offset + 4, Prefix + nameof(SequenceStarted));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when all messages belonging to the sequence
@@ -66,7 +66,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId SequenceCompleted { get; } =
-            new EventId(Offset + 5, Prefix + nameof(SequenceCompleted));
+            new(Offset + 5, Prefix + nameof(SequenceCompleted));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the processing of a sequence of
@@ -78,18 +78,19 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId SequenceProcessingAborted { get; } =
-            new EventId(Offset + 6, Prefix + nameof(SequenceProcessingAborted));
+            new(Offset + 6, Prefix + nameof(SequenceProcessingAborted));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an incomplete sequence is discarded
-        ///     (e.g. the consumer started in the middle of sequence or a new sequence starts before the current one is
+        ///     (e.g. the consumer started in the middle of sequence or a new sequence starts before the current one
+        ///     is
         ///     completed or the timeout elapses before the sequence can be completed).
         /// </summary>
         /// <remarks>
         ///     Default log level: Warning.
         /// </remarks>
         public static EventId IncompleteSequenceDiscarded { get; } =
-            new EventId(Offset + 7, Prefix + nameof(IncompleteSequenceDiscarded));
+            new(Offset + 7, Prefix + nameof(IncompleteSequenceDiscarded));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when connecting to the message broker.
@@ -98,7 +99,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId BrokerConnecting { get; } =
-            new EventId(Offset + 11, Prefix + nameof(BrokerConnecting));
+            new(Offset + 11, Prefix + nameof(BrokerConnecting));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when connected to the message broker.
@@ -107,7 +108,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId BrokerConnected { get; } =
-            new EventId(Offset + 12, Prefix + nameof(BrokerConnected));
+            new(Offset + 12, Prefix + nameof(BrokerConnected));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when disconnecting from the message broker.
@@ -116,7 +117,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId BrokerDisconnecting { get; } =
-            new EventId(Offset + 13, Prefix + nameof(BrokerDisconnecting));
+            new(Offset + 13, Prefix + nameof(BrokerDisconnecting));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when disconnected from the message broker.
@@ -125,7 +126,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId BrokerDisconnected { get; } =
-            new EventId(Offset + 14, Prefix + nameof(BrokerDisconnected));
+            new(Offset + 14, Prefix + nameof(BrokerDisconnected));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a new consumer is being instantiated.
@@ -134,7 +135,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId CreatingNewConsumer { get; } =
-            new EventId(Offset + 15, Prefix + nameof(CreatingNewConsumer));
+            new(Offset + 15, Prefix + nameof(CreatingNewConsumer));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a new producer is being instantiated.
@@ -143,7 +144,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId CreatingNewProducer { get; } =
-            new EventId(Offset + 16, Prefix + nameof(CreatingNewProducer));
+            new(Offset + 16, Prefix + nameof(CreatingNewProducer));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an exception is thrown when connecting
@@ -153,7 +154,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId BrokerConnectionError { get; } =
-            new EventId(Offset + 17, Prefix + nameof(BrokerConnectionError));
+            new(Offset + 17, Prefix + nameof(BrokerConnectionError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the consumer is connected to the
@@ -163,7 +164,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId ConsumerConnected { get; } =
-            new EventId(Offset + 21, Prefix + nameof(ConsumerConnected));
+            new(Offset + 21, Prefix + nameof(ConsumerConnected));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the consumer is disconnected from the
@@ -173,7 +174,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId ConsumerDisconnected { get; } =
-            new EventId(Offset + 22, Prefix + nameof(ConsumerDisconnected));
+            new(Offset + 22, Prefix + nameof(ConsumerDisconnected));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an unhandled error occurs while
@@ -183,7 +184,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Critical.
         /// </remarks>
         public static EventId ConsumerFatalError { get; } =
-            new EventId(Offset + 23, Prefix + nameof(ConsumerFatalError));
+            new(Offset + 23, Prefix + nameof(ConsumerFatalError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while the consumer is
@@ -194,7 +195,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Warning.
         /// </remarks>
         public static EventId ConsumerDisposingError { get; } =
-            new EventId(Offset + 24, Prefix + nameof(ConsumerDisposingError));
+            new(Offset + 24, Prefix + nameof(ConsumerDisposingError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs in the consumer during
@@ -204,7 +205,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId ConsumerCommitError { get; } =
-            new EventId(Offset + 25, Prefix + nameof(ConsumerCommitError));
+            new(Offset + 25, Prefix + nameof(ConsumerCommitError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs in the consumer during
@@ -214,7 +215,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId ConsumerRollbackError { get; } =
-            new EventId(Offset + 26, Prefix + nameof(ConsumerRollbackError));
+            new(Offset + 26, Prefix + nameof(ConsumerRollbackError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a message is produced.
@@ -223,7 +224,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId MessageProduced { get; } =
-            new EventId(Offset + 31, Prefix + nameof(MessageProduced));
+            new(Offset + 31, Prefix + nameof(MessageProduced));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written during the evaluation of an error policy,
@@ -234,7 +235,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Trace.
         /// </remarks>
         public static EventId PolicyMaxFailedAttemptsExceeded { get; } =
-            new EventId(Offset + 41, Prefix + nameof(PolicyMaxFailedAttemptsExceeded));
+            new(Offset + 41, Prefix + nameof(PolicyMaxFailedAttemptsExceeded));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written during the evaluation of an error policy,
@@ -244,7 +245,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Trace.
         /// </remarks>
         public static EventId PolicyExceptionNotIncluded { get; } =
-            new EventId(Offset + 42, Prefix + nameof(PolicyExceptionNotIncluded));
+            new(Offset + 42, Prefix + nameof(PolicyExceptionNotIncluded));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written during the evaluation of an error policy,
@@ -254,7 +255,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Trace.
         /// </remarks>
         public static EventId PolicyExceptionExcluded { get; } =
-            new EventId(Offset + 43, Prefix + nameof(PolicyExceptionExcluded));
+            new(Offset + 43, Prefix + nameof(PolicyExceptionExcluded));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written during the evaluation of an error policy,
@@ -264,7 +265,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Trace.
         /// </remarks>
         public static EventId PolicyApplyRuleReturnedFalse { get; } =
-            new EventId(Offset + 44, Prefix + nameof(PolicyApplyRuleReturnedFalse));
+            new(Offset + 44, Prefix + nameof(PolicyApplyRuleReturnedFalse));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when all chained policies have been applied
@@ -274,7 +275,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId PolicyChainCompleted { get; } =
-            new EventId(Offset + 45, Prefix + nameof(PolicyChainCompleted));
+            new(Offset + 45, Prefix + nameof(PolicyChainCompleted));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a message couldn't be processed and
@@ -284,7 +285,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId RetryMessageProcessing { get; } =
-            new EventId(Offset + 46, Prefix + nameof(RetryMessageProcessing));
+            new(Offset + 46, Prefix + nameof(RetryMessageProcessing));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a message couldn't be processed and a
@@ -295,7 +296,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId RetryDelayed { get; } =
-            new EventId(Offset + 47, Prefix + nameof(RetryDelayed));
+            new(Offset + 47, Prefix + nameof(RetryDelayed));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a message couldn't be processed and is
@@ -305,7 +306,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId MessageMoved { get; } =
-            new EventId(Offset + 48, Prefix + nameof(MessageMoved));
+            new(Offset + 48, Prefix + nameof(MessageMoved));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a message couldn't be processed and is
@@ -315,7 +316,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId MessageSkipped { get; } =
-            new EventId(Offset + 49, Prefix + nameof(MessageSkipped));
+            new(Offset + 49, Prefix + nameof(MessageSkipped));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the <c>MoveMessageErrorPolicy</c>
@@ -326,7 +327,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Warning.
         /// </remarks>
         public static EventId CannotMoveSequences { get; } =
-            new EventId(Offset + 50, Prefix + nameof(MessageMoved));
+            new(Offset + 50, Prefix + nameof(MessageMoved));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while trying to
@@ -336,7 +337,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Warning.
         /// </remarks>
         public static EventId ErrorInitializingActivity { get; } =
-            new EventId(Offset + 61, Prefix + nameof(ErrorInitializingActivity));
+            new(Offset + 61, Prefix + nameof(ErrorInitializingActivity));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the message is being skipped since
@@ -346,7 +347,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId MessageAlreadyProcessed { get; } =
-            new EventId(Offset + 72, Prefix + nameof(MessageAlreadyProcessed));
+            new(Offset + 72, Prefix + nameof(MessageAlreadyProcessed));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the message is being written to the
@@ -356,7 +357,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId OutboundMessageWrittenToOutbox { get; } =
-            new EventId(Offset + 73, Prefix + nameof(OutboundMessageWrittenToOutbox));
+            new(Offset + 73, Prefix + nameof(OutboundMessageWrittenToOutbox));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
@@ -366,7 +367,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Trace.
         /// </remarks>
         public static EventId ReadingMessagesFromOutbox { get; } =
-            new EventId(Offset + 74, Prefix + nameof(ReadingMessagesFromOutbox));
+            new(Offset + 74, Prefix + nameof(ReadingMessagesFromOutbox));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
@@ -376,7 +377,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Trace.
         /// </remarks>
         public static EventId OutboxEmpty { get; } =
-            new EventId(Offset + 75, Prefix + nameof(OutboxEmpty));
+            new(Offset + 75, Prefix + nameof(OutboxEmpty));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the message stored in the outbox is
@@ -386,7 +387,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId ProcessingOutboxStoredMessage { get; } =
-            new EventId(Offset + 76, Prefix + nameof(ProcessingOutboxStoredMessage));
+            new(Offset + 76, Prefix + nameof(ProcessingOutboxStoredMessage));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while producing the
@@ -396,7 +397,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId ErrorProducingOutboxStoredMessage { get; } =
-            new EventId(Offset + 77, Prefix + nameof(ErrorProducingOutboxStoredMessage));
+            new(Offset + 77, Prefix + nameof(ErrorProducingOutboxStoredMessage));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while the
@@ -406,7 +407,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId ErrorProcessingOutboundQueue { get; } =
-            new EventId(Offset + 78, Prefix + nameof(ErrorProcessingOutboundQueue));
+            new(Offset + 78, Prefix + nameof(ErrorProcessingOutboundQueue));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the low level tracing logs.
@@ -415,6 +416,6 @@ namespace Silverback.Diagnostics
         ///     Default log level: Trace.
         /// </remarks>
         public static EventId LowLevelTracing { get; } =
-            new EventId(Offset + 999, Prefix + nameof(LowLevelTracing));
+            new(Offset + 999, Prefix + nameof(LowLevelTracing));
     }
 }

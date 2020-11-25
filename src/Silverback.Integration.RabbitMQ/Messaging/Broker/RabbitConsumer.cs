@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly ISilverbackIntegrationLogger<RabbitConsumer> _logger;
 
-        private readonly object _pendingOffsetLock = new object();
+        private readonly object _pendingOffsetLock = new();
 
         private IModel? _channel;
 
@@ -51,7 +51,7 @@ namespace Silverback.Messaging.Broker
         ///     The endpoint to be consumed.
         /// </param>
         /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}"/>.
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
         /// <param name="connectionFactory">
         ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
@@ -160,7 +160,7 @@ namespace Silverback.Messaging.Broker
             {
                 var deliveryTag = new RabbitDeliveryTag(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
 
-                Dictionary<string, string> logData = new Dictionary<string, string>
+                Dictionary<string, string> logData = new()
                 {
                     ["deliveryTag"] = $"{deliveryTag.DeliveryTag.ToString(CultureInfo.InvariantCulture)}",
                     ["routingKey"] = deliverEventArgs.RoutingKey

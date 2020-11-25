@@ -51,6 +51,6 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via Reflection")]
         private static LazyMessageStreamObservable<TMessage> CreateObservable<TMessage>(
             ILazyMessageStreamEnumerable<TMessage> enumerable) =>
-            new LazyMessageStreamObservable<TMessage>(enumerable);
+            new(enumerable);
     }
 }

@@ -75,7 +75,10 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
 
             Func<Task> act = () =>
                 new RabbitRoutingKeyInitializerProducerBehavior().HandleAsync(
-                    new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
+                    new ProducerPipelineContext(
+                        envelope,
+                        Substitute.For<IProducer>(),
+                        Substitute.For<IServiceProvider>()),
                     _ => Task.CompletedTask);
 
             act.Should().Throw<InvalidOperationException>();

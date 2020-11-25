@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new[]
             {
-                new MessageHeader("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName),
+                new MessageHeader("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName)
             };
             var envelope = new RawInboundEnvelope(
                 rawContent,
@@ -84,7 +84,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new[]
             {
-                new MessageHeader("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName),
+                new MessageHeader("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName)
             };
             var endpoint = TestConsumerEndpoint.GetDefault();
             endpoint.Serializer = new BinaryFileMessageSerializer();

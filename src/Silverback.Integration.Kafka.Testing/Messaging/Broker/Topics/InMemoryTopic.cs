@@ -19,12 +19,12 @@ namespace Silverback.Messaging.Broker.Topics
 
         private readonly object _consumersLock;
 
-        private readonly List<MockedKafkaConsumer> _consumers = new List<MockedKafkaConsumer>();
+        private readonly List<MockedKafkaConsumer> _consumers = new();
 
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _committedOffsets =
-            new ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>();
+            new();
 
-        private readonly List<string> _groupsPendingRebalance = new List<string>();
+        private readonly List<string> _groupsPendingRebalance = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="InMemoryTopic" /> class.

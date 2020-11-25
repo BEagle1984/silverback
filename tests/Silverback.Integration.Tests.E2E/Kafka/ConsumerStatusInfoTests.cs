@@ -37,15 +37,16 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(new KafkaConsumerEndpoint(DefaultTopicName)
-                                {
-                                    Configuration =
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        GroupId = "consumer1",
-                                        EnableAutoCommit = false,
-                                        CommitOffsetEach = 1
-                                    }
-                                }))
+                                        Configuration =
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        }
+                                    }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -80,15 +81,16 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
-                                .AddInbound(new KafkaConsumerEndpoint(DefaultTopicName)
-                                {
-                                    Configuration =
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        GroupId = "consumer1",
-                                        EnableAutoCommit = false,
-                                        CommitOffsetEach = 1
-                                    }
-                                }))
+                                        Configuration =
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        }
+                                    }))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();

@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Gets or sets the options to be passed to the <see cref="JsonSerializer" />.
         /// </summary>
-        public JsonSerializerOptions Options { get; set; } = new JsonSerializerOptions();
+        public JsonSerializerOptions Options { get; set; } = new();
 
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]

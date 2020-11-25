@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 namespace Silverback.Messaging.Inbound.Transaction
 {
     /// <summary>
-    ///     Declares the <c>CommitAsync</c> and <c>RollbackAsync</c> methods, allowing the service to be enlisted into the
-    ///     consumer transaction (see <see cref="ConsumerTransactionManager" />).
+    ///     Declares the <c>CommitAsync</c> and <c>RollbackAsync</c> methods, allowing the service to be enlisted
+    ///     into the consumer transaction (see <see cref="ConsumerTransactionManager" />).
     /// </summary>
     public interface ITransactional
     {

@@ -9,8 +9,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.KafkaEvents.Statistics
 {
     public class KafkaStatisticsDeserializerTests
     {
-        private readonly IntegrationLoggerSubstitute<KafkaStatisticsDeserializerTests> _logger =
-            new IntegrationLoggerSubstitute<KafkaStatisticsDeserializerTests>();
+        private readonly IntegrationLoggerSubstitute<KafkaStatisticsDeserializerTests> _logger = new();
 
         [Fact]
         public void TryDeserialize_ValidStatisticsJson_StatisticsProperlyDeserialized()

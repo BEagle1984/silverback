@@ -396,7 +396,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
         {
             var provider = new MessageStreamProvider<IEvent>();
             var lazyStream = provider.CreateLazyStream<TestEventTwo>();
-            List<TestEventTwo> receivedTwos = new List<TestEventTwo>();
+            List<TestEventTwo> receivedTwos = new();
 
             Task.Run(
                 async () =>

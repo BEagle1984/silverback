@@ -23,7 +23,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId ConsumingMessage { get; } =
-            new EventId(Offset + 11, Prefix + nameof(ConsumingMessage));
+            new(Offset + 11, Prefix + nameof(ConsumingMessage));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a delivery tag is successfully
@@ -33,7 +33,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId Commit { get; } =
-            new EventId(Offset + 12, Prefix + nameof(Commit));
+            new(Offset + 12, Prefix + nameof(Commit));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while committing the
@@ -43,7 +43,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId CommitError { get; } =
-            new EventId(Offset + 13, Prefix + nameof(CommitError));
+            new(Offset + 13, Prefix + nameof(CommitError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a delivery tag is successfully rolled
@@ -53,7 +53,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId Rollback { get; } =
-            new EventId(Offset + 14, Prefix + nameof(Rollback));
+            new(Offset + 14, Prefix + nameof(Rollback));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while rolling back the
@@ -63,7 +63,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId RollbackError { get; } =
-            new EventId(Offset + 15, Prefix + nameof(RollbackError));
+            new(Offset + 15, Prefix + nameof(RollbackError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the processing of the producer queue
@@ -74,6 +74,6 @@ namespace Silverback.Diagnostics
         ///     Default log level: Trace.
         /// </remarks>
         public static EventId ProducerQueueProcessingCanceled { get; } =
-            new EventId(Offset + 21, Prefix + nameof(ProducerQueueProcessingCanceled));
+            new(Offset + 21, Prefix + nameof(ProducerQueueProcessingCanceled));
     }
 }

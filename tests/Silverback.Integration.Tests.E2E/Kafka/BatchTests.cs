@@ -133,8 +133,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             Size = 10
                                         }
                                     }))
-                        .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventOne> _) => { receivedBatches++; }))
+                        .AddDelegateSubscriber((IMessageStreamEnumerable<TestEventOne> _) => { receivedBatches++; }))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -188,8 +187,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 receivedBatches1++;
                                 var dummy = eventsStream.ToList();
                             })
-                        .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventTwo> _) => receivedBatches2++))
+                        .AddDelegateSubscriber((IMessageStreamEnumerable<TestEventTwo> _) => receivedBatches2++))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -236,10 +234,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             Size = 3
                                         }
                                     }))
-                        .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventOne> _) => receivedBatches1++)
-                        .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventTwo> _) => receivedBatches2++))
+                        .AddDelegateSubscriber((IMessageStreamEnumerable<TestEventOne> _) => receivedBatches1++)
+                        .AddDelegateSubscriber((IMessageStreamEnumerable<TestEventTwo> _) => receivedBatches2++))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();

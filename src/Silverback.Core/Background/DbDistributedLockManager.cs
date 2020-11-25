@@ -188,7 +188,9 @@ namespace Silverback.Background
             }
         }
 
-        private static async Task<bool> AcquireLockAsync(DistributedLockSettings settings, IServiceProvider serviceProvider)
+        private static async Task<bool> AcquireLockAsync(
+            DistributedLockSettings settings,
+            IServiceProvider serviceProvider)
         {
             var heartbeatThreshold = GetHeartbeatThreshold(settings.HeartbeatTimeout);
             var (dbSet, dbContext) = GetDbSet(serviceProvider);

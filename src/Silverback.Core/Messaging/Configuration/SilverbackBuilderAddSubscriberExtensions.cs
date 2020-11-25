@@ -517,7 +517,8 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Registers the base type to be resolved as subscriber. The actual types have to be added to the <see cref="IServiceCollection" /> separately.
+        ///     Registers the base type to be resolved as subscriber. The actual types have to be added to the
+        ///     <see cref="IServiceCollection" /> separately.
         /// </summary>
         /// <typeparam name="TSubscriber">
         ///     The base type of the subscribers (class or interface).
@@ -535,7 +536,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
         /// <remarks>
-        ///     The subscribers will have to be registered twice (with the base type and the type itself: <c>.AddScoped&lt;BaseType, Subscriber&gt;.AddScoped&lt;Subscriber&gt;</c>).
+        ///     The subscribers will have to be registered twice (with the base type and the type itself:
+        ///     <c>.AddScoped&lt;BaseType, Subscriber&gt;.AddScoped&lt;Subscriber&gt;</c>).
         /// </remarks>
         public static ISilverbackBuilder AddSubscribers<TSubscriber>(
             this ISilverbackBuilder silverbackBuilder,

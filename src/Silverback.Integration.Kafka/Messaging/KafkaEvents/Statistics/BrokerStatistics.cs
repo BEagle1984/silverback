@@ -88,24 +88,23 @@ namespace Silverback.Messaging.KafkaEvents.Statistics
         public long Disconnects { get; set; }
 
         [JsonPropertyName("int_latency")]
-        public WindowStatistics IntLatency { get; set; } = new WindowStatistics();
+        public WindowStatistics IntLatency { get; set; } = new();
 
         [JsonPropertyName("outbuf_latency")]
-        public WindowStatistics OutbufLatency { get; set; } = new WindowStatistics();
+        public WindowStatistics OutbufLatency { get; set; } = new();
 
         [JsonPropertyName("rtt")]
-        public WindowStatistics Rtt { get; set; } = new WindowStatistics();
+        public WindowStatistics Rtt { get; set; } = new();
 
         [JsonPropertyName("throttle")]
-        public WindowStatistics Throttle { get; set; } = new WindowStatistics();
+        public WindowStatistics Throttle { get; set; } = new();
 
         [JsonPropertyName("req")]
         [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
-        public Dictionary<string, long> Requests { get; set; } = new Dictionary<string, long>();
+        public Dictionary<string, long> Requests { get; set; } = new();
 
         [JsonPropertyName("toppars")]
         [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
-        public Dictionary<string, TopicPartitions> TopicPartitions { get; set; } =
-            new Dictionary<string, TopicPartitions>();
+        public Dictionary<string, TopicPartitions> TopicPartitions { get; set; } = new();
     }
 }

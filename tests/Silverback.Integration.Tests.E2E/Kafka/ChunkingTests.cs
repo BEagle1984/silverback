@@ -90,9 +90,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             for (int i = 0; i < SpyBehavior.OutboundEnvelopes.Count; i++)
             {
-                var firstEnvelope = SpyBehavior.OutboundEnvelopes[(i / chunksPerMessage) * chunksPerMessage];
-                var lastEnvelope =
-                    SpyBehavior.OutboundEnvelopes[(((i / chunksPerMessage) * chunksPerMessage) + chunksPerMessage) - 1];
+                int firstEnvelopeIndex = i / chunksPerMessage * chunksPerMessage;
+                var firstEnvelope = SpyBehavior.OutboundEnvelopes[firstEnvelopeIndex];
+                var lastEnvelope = SpyBehavior.OutboundEnvelopes[firstEnvelopeIndex + chunksPerMessage - 1];
                 var envelope = SpyBehavior.OutboundEnvelopes[i];
 
                 envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).Should()
@@ -1044,8 +1044,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             AutoCommitIntervalMs = 100
                                         }
                                     }))
-                        .AddDelegateSubscriber(
-                            (BinaryFileMessage _) => throw new InvalidOperationException("Test"))
+                        .AddDelegateSubscriber((BinaryFileMessage _) => throw new InvalidOperationException("Test"))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 

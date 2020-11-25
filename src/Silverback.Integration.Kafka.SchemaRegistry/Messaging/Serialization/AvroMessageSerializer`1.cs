@@ -24,12 +24,12 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Gets or sets the schema registry configuration.
         /// </summary>
-        public SchemaRegistryConfig SchemaRegistryConfig { get; set; } = new SchemaRegistryConfig();
+        public SchemaRegistryConfig SchemaRegistryConfig { get; set; } = new();
 
         /// <summary>
         ///     Gets or sets the Avro serializer configuration.
         /// </summary>
-        public AvroSerializerConfig AvroSerializerConfig { get; set; } = new AvroSerializerConfig();
+        public AvroSerializerConfig AvroSerializerConfig { get; set; } = new();
 
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         public async ValueTask<Stream?> SerializeAsync(
@@ -87,7 +87,7 @@ namespace Silverback.Messaging.Serialization
         private static SerializationContext GetConfluentSerializationContext(
             MessageComponentType componentType,
             MessageSerializationContext context) =>
-            new SerializationContext(componentType, context.ActualEndpointName);
+            new(componentType, context.ActualEndpointName);
 
         private async ValueTask<byte[]?> SerializeAsync<TValue>(
             object? message,

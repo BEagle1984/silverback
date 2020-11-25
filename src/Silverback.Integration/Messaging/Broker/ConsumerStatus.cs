@@ -4,7 +4,8 @@
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
-    ///     The possible states of the <see cref="IConsumer"/> as exposed in the <see cref="IConsumerStatusInfo"/>.
+    ///     The possible states of the <see cref="IConsumer" /> as exposed in the
+    ///     <see cref="IConsumerStatusInfo" />.
     /// </summary>
     public enum ConsumerStatus
     {

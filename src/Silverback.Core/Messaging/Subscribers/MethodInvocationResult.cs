@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Subscribers
         }
 
         public static MethodInvocationResult Empty { get; } =
-            new MethodInvocationResult(Array.Empty<object>(), Array.Empty<object>());
+            new(Array.Empty<object>(), Array.Empty<object>());
 
         public IReadOnlyCollection<object> HandledMessages { get; }
 

@@ -73,10 +73,10 @@ namespace Silverback.Tests.Performance
                     Array.Empty<byte>(),
                     new MessageHeaderCollection
                     {
-                        new MessageHeader("Test", "Test"),
-                        new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
-                        new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                        new MessageHeader(DefaultMessageHeaders.MessageId, "1234"),
+                        new("Test", "Test"),
+                        new(DefaultMessageHeaders.FailedAttempts, 1),
+                        new(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                        new(DefaultMessageHeaders.MessageId, "1234")
                     },
                     new TestConsumerEndpoint("Test"),
                     "Test",
@@ -91,12 +91,12 @@ namespace Silverback.Tests.Performance
                     Array.Empty<byte>(),
                     new MessageHeaderCollection
                     {
-                        new MessageHeader("Test", "Test"),
-                        new MessageHeader(DefaultMessageHeaders.FailedAttempts, 1),
-                        new MessageHeader(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                        new MessageHeader(DefaultMessageHeaders.MessageId, "5678"),
-                        new MessageHeader(DefaultMessageHeaders.BatchId, "1234"),
-                        new MessageHeader(DefaultMessageHeaders.BatchSize, "11"),
+                        new("Test", "Test"),
+                        new(DefaultMessageHeaders.FailedAttempts, 1),
+                        new(DefaultMessageHeaders.MessageType, "Something.Xy"),
+                        new(DefaultMessageHeaders.MessageId, "5678"),
+                        new(DefaultMessageHeaders.BatchId, "1234"),
+                        new(DefaultMessageHeaders.BatchSize, "11")
                     },
                     new TestConsumerEndpoint("Test"),
                     "Test",

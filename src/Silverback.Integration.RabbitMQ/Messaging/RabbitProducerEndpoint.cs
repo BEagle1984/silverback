@@ -27,7 +27,7 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Gets or sets the RabbitMQ connection settings.
         /// </summary>
-        public RabbitConnectionConfig Connection { get; set; } = new RabbitConnectionConfig();
+        public RabbitConnectionConfig Connection { get; set; } = new();
 
         /// <summary>
         ///     Gets or sets the maximum amount of time to wait for the message produce to be acknowledge before

@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Headers
     internal static class HeaderAttributeHelper
     {
         private static readonly ConcurrentDictionary<string, IReadOnlyCollection<DecoratedProperty>> PropertiesCache =
-            new ConcurrentDictionary<string, IReadOnlyCollection<DecoratedProperty>>();
+            new();
 
         public static IEnumerable<MessageHeader> GetHeaders(object? message)
         {

@@ -11,7 +11,7 @@ namespace Silverback.Tests
 {
     public class LoggerSubstitute<T> : ISilverbackLogger<T>
     {
-        private readonly List<ReceivedCall> _receivedCalls = new List<ReceivedCall>();
+        private readonly List<ReceivedCall> _receivedCalls = new();
 
         public void Received(LogLevel logLevel, Type? exceptionType, string? message = null)
         {

@@ -32,7 +32,7 @@ namespace Silverback.Util
         ///     The successfully completed task.
         /// </returns>
         public static ValueTask<TResult> FromResult<TResult>(TResult result) =>
-            new ValueTask<TResult>(result);
+            new(result);
 
         /// <summary>
         ///     Creates a <see cref="ValueTask" /> that has completed due to cancellation with the specified
@@ -45,7 +45,7 @@ namespace Silverback.Util
         ///     The canceled task.
         /// </returns>
         public static ValueTask FromCanceled(CancellationToken cancellationToken) =>
-            new ValueTask(Task.FromCanceled(cancellationToken));
+            new(Task.FromCanceled(cancellationToken));
 
         /// <summary>
         ///     Creates a <see cref="ValueTask{TResult}" /> that has completed due to cancellation with the specified
@@ -58,7 +58,7 @@ namespace Silverback.Util
         ///     The canceled task.
         /// </returns>
         public static ValueTask<TResult> FromCanceled<TResult>(CancellationToken cancellationToken) =>
-            new ValueTask<TResult>(Task.FromCanceled<TResult>(cancellationToken));
+            new(Task.FromCanceled<TResult>(cancellationToken));
 
         /// <summary>
         ///     Creates a <see cref="ValueTask" /> that has completed with the specified exception.
@@ -70,7 +70,7 @@ namespace Silverback.Util
         ///     The faulted task.
         /// </returns>
         public static ValueTask FromException(Exception exception) =>
-            new ValueTask(Task.FromException(exception));
+            new(Task.FromException(exception));
 
         /// <summary>
         ///     Creates a <see cref="ValueTask{TResult}" /> that has completed with the specified exception.
@@ -82,6 +82,6 @@ namespace Silverback.Util
         ///     The faulted task.
         /// </returns>
         public static ValueTask<TResult> FromException<TResult>(Exception exception) =>
-            new ValueTask<TResult>(Task.FromException<TResult>(exception));
+            new(Task.FromException<TResult>(exception));
     }
 }

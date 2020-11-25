@@ -26,9 +26,9 @@ namespace Silverback.Messaging.Broker
         [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
         private ChannelsManager? _channelsManager;
 
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource _cancellationTokenSource = new();
 
-        private TaskCompletionSource<bool> _consumeTaskCompletionSource = new TaskCompletionSource<bool>();
+        private TaskCompletionSource<bool> _consumeTaskCompletionSource = new();
 
         public ConsumeLoopHandler(
             KafkaConsumer consumer,
@@ -42,9 +42,9 @@ namespace Silverback.Messaging.Broker
             _logger = Check.NotNull(logger, nameof(logger));
         }
 
-        public bool IsConsuming { get; private set; }
-
         public Task Stopping => _consumeTaskCompletionSource.Task;
+
+        public bool IsConsuming { get; private set; }
 
         public void Start()
         {

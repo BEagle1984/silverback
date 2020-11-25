@@ -29,7 +29,7 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Gets or sets the exchange configuration.
         /// </summary>
-        public RabbitExchangeConfig Exchange { get; set; } = new RabbitExchangeConfig();
+        public RabbitExchangeConfig Exchange { get; set; } = new();
 
         /// <inheritdoc cref="RabbitProducerEndpoint.Validate" />
         public override void Validate()

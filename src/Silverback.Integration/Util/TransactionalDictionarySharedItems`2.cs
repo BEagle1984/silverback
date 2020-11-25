@@ -20,6 +20,6 @@ namespace Silverback.Util
         /// <summary>
         ///     Gets the underlying <see cref="Dictionary{TKey,TValue}" /> containing the persisted items.
         /// </summary>
-        public Dictionary<TKey, TValue> Items { get; } = new Dictionary<TKey, TValue>();
+        public Dictionary<TKey, TValue> Items { get; } = new();
     }
 }

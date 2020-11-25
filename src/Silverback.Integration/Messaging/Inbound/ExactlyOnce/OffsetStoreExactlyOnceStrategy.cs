@@ -44,7 +44,9 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce
                         "to ensure exactly-once processing.");
                 }
 
-                var latestOffset = await _offsetStore.GetLatestValueAsync(envelope.BrokerMessageIdentifier.Key, envelope.Endpoint)
+                var latestOffset = await _offsetStore.GetLatestValueAsync(
+                        envelope.BrokerMessageIdentifier.Key,
+                        envelope.Endpoint)
                     .ConfigureAwait(false);
 
                 if (latestOffset != null && latestOffset.CompareTo(offset) >= 0)

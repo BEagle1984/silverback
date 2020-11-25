@@ -40,7 +40,9 @@ namespace Silverback.Messaging.Configuration
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static ISilverbackBuilder HandleMessagesOfType(this ISilverbackBuilder silverbackBuilder, Type messageType)
+        public static ISilverbackBuilder HandleMessagesOfType(
+            this ISilverbackBuilder silverbackBuilder,
+            Type messageType)
         {
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 

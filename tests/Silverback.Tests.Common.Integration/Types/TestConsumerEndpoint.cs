@@ -17,7 +17,7 @@ namespace Silverback.Tests.Types
 
         public string GroupId { get; set; } = "default-group";
 
-        public static TestConsumerEndpoint GetDefault() => new TestConsumerEndpoint("test");
+        public static TestConsumerEndpoint GetDefault() => new("test");
 
         public override string GetUniqueConsumerGroupName() => $"{Name}|{GroupId}";
 

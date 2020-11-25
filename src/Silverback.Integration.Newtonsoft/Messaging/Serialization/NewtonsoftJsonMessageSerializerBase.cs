@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Gets or sets the settings to be applied to the Json.NET serializer.
         /// </summary>
-        public JsonSerializerSettings Settings { get; set; } = new JsonSerializerSettings
+        public JsonSerializerSettings Settings { get; set; } = new()
         {
             Formatting = Formatting.None,
             DateFormatHandling = DateFormatHandling.IsoDateFormat,

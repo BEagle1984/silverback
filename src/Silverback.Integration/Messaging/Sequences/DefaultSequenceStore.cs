@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Sequences
     {
         private readonly Guid _id = Guid.NewGuid();
 
-        private readonly Dictionary<string, ISequence> _store = new Dictionary<string, ISequence>();
+        private readonly Dictionary<string, ISequence> _store = new();
 
         private readonly ISilverbackIntegrationLogger<DefaultSequenceStore> _logger;
 

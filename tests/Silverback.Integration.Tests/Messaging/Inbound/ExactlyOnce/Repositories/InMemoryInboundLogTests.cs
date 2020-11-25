@@ -135,7 +135,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
 
             var headers = new[]
             {
-                new MessageHeader("x-message-id", messageId ?? Guid.NewGuid()),
+                new MessageHeader("x-message-id", messageId ?? Guid.NewGuid())
             };
 
             return new RawInboundEnvelope(

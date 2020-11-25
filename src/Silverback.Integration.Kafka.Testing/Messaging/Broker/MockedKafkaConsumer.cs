@@ -25,14 +25,14 @@ namespace Silverback.Messaging.Broker
         private readonly IInMemoryTopicCollection _topics;
 
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _currentOffsets =
-            new ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>();
+            new();
 
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _storedOffsets =
-            new ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>();
+            new();
 
-        private readonly List<TopicPartitionOffset> _temporaryAssignment = new List<TopicPartitionOffset>();
+        private readonly List<TopicPartitionOffset> _temporaryAssignment = new();
 
-        private readonly List<string> _topicAssignments = new List<string>();
+        private readonly List<string> _topicAssignments = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MockedKafkaConsumer" /> class.
@@ -74,10 +74,10 @@ namespace Silverback.Messaging.Broker
         public string MemberId { get; }
 
         /// <inheritdoc cref="IConsumer{TKey,TValue}.Assignment" />
-        public List<TopicPartition> Assignment { get; } = new List<TopicPartition>();
+        public List<TopicPartition> Assignment { get; } = new();
 
         /// <inheritdoc cref="IConsumer{TKey,TValue}.Subscription" />
-        public List<string> Subscription { get; } = new List<string>();
+        public List<string> Subscription { get; } = new();
 
         /// <inheritdoc cref="IConsumer{TKey,TValue}.ConsumerGroupMetadata" />
         public IConsumerGroupMetadata ConsumerGroupMetadata => throw new NotSupportedException();

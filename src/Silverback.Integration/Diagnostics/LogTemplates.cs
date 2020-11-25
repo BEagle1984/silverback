@@ -34,16 +34,15 @@ namespace Silverback.Diagnostics
                                                          "messageType: {messageType}, " +
                                                          "messageId: {messageId}";
 
-        private readonly Dictionary<Type, string> _inboundLogMessageByEndpointType = new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _inboundLogMessageByEndpointType = new();
 
-        private readonly Dictionary<Type, string> _inboundSequenceLogMessageByEndpointType =
-            new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _inboundSequenceLogMessageByEndpointType = new();
 
-        private readonly Dictionary<Type, string> _outboundLogMessageByEndpointType = new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _outboundLogMessageByEndpointType = new();
 
-        private readonly Dictionary<Type, string[]> _inboundArgumentsByEndpointType = new Dictionary<Type, string[]>();
+        private readonly Dictionary<Type, string[]> _inboundArgumentsByEndpointType = new();
 
-        private readonly Dictionary<Type, string[]> _outboundArgumentsByEndpointType = new Dictionary<Type, string[]>();
+        private readonly Dictionary<Type, string[]> _outboundArgumentsByEndpointType = new();
 
         public ILogTemplates ConfigureAdditionalData<TEndpoint>(params string[] additionalData)
         {

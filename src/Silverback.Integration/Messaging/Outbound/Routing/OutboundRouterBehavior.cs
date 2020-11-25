@@ -23,8 +23,7 @@ namespace Silverback.Messaging.Outbound.Routing
 
         private readonly IOutboundRoutingConfiguration _routing;
 
-        private readonly ConcurrentDictionary<IOutboundRoute, IOutboundRouter> _routers =
-            new ConcurrentDictionary<IOutboundRoute, IOutboundRouter>();
+        private readonly ConcurrentDictionary<IOutboundRoute, IOutboundRouter> _routers = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="OutboundRouterBehavior" /> class.
@@ -58,7 +57,8 @@ namespace Silverback.Messaging.Outbound.Routing
             return await next(messages).ConfigureAwait(false);
         }
 
-        private async Task<IReadOnlyCollection<object>> WrapAndRepublishRoutedMessagesAsync(IEnumerable<object> messages)
+        private async Task<IReadOnlyCollection<object>> WrapAndRepublishRoutedMessagesAsync(
+            IEnumerable<object> messages)
         {
             var envelopesToRepublish = messages
                 .Where(message => !(message is IOutboundEnvelope))

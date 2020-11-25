@@ -48,7 +48,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 new byte[] { 0x01, 0x02, 0x03 },
                 new MessageHeaderCollection
                 {
-                    { DefaultMessageHeaders.MessageId, "123" },
+                    { DefaultMessageHeaders.MessageId, "123" }
                 },
                 new TestConsumerEndpoint("test"),
                 "test",
@@ -72,7 +72,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 {
                     { DefaultMessageHeaders.MessageId, "123" },
                     { DefaultMessageHeaders.ChunkIndex, "0" },
-                    { DefaultMessageHeaders.ChunksCount, "4" },
+                    { DefaultMessageHeaders.ChunksCount, "4" }
                 },
                 new TestConsumerEndpoint("test"),
                 "test",
@@ -98,7 +98,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 {
                     { DefaultMessageHeaders.MessageId, "123" },
                     { DefaultMessageHeaders.ChunkIndex, "0" },
-                    { DefaultMessageHeaders.ChunksCount, "4" },
+                    { DefaultMessageHeaders.ChunksCount, "4" }
                 },
                 new TestConsumerEndpoint("test"),
                 "test",
@@ -109,7 +109,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 {
                     { DefaultMessageHeaders.MessageId, "123" },
                     { DefaultMessageHeaders.ChunkIndex, "1" },
-                    { DefaultMessageHeaders.ChunksCount, "4" },
+                    { DefaultMessageHeaders.ChunksCount, "4" }
                 },
                 new TestConsumerEndpoint("test"),
                 "test",
@@ -148,7 +148,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 {
                     { DefaultMessageHeaders.MessageId, "123" },
                     { DefaultMessageHeaders.ChunkIndex, "1" },
-                    { DefaultMessageHeaders.ChunksCount, "4" },
+                    { DefaultMessageHeaders.ChunksCount, "4" }
                 },
                 new TestConsumerEndpoint("test"),
                 "test",

@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Broker
         private readonly IInMemoryTopicCollection _topics;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MockedKafkaProducer"/> class.
+        ///     Initializes a new instance of the <see cref="MockedKafkaProducer" /> class.
         /// </summary>
         /// <param name="config">
         ///     The producer configuration.

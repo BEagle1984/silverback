@@ -19,7 +19,8 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             _argumentResolvers = argumentResolvers.Reverse();
         }
 
-        public (IMessageArgumentResolver Resolver, Type MessageArgumentType, Type MessageType) GetMessageArgumentResolver(SubscribedMethod method)
+        public (IMessageArgumentResolver Resolver, Type MessageArgumentType, Type MessageType)
+            GetMessageArgumentResolver(SubscribedMethod method)
         {
             var parameterInfo = method.Parameters[0];
             var resolver = GetMessageArgumentResolver(parameterInfo, method.MethodInfo);
@@ -52,8 +53,8 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             {
                 var errorMessage = $"No resolver could be found for argument '{parameterInfo.Name}' " +
                                    $"of type {parameterInfo.ParameterType.FullName}. " +
-                                   $"Please note that the message (or the enumerable, collection or stream) must " +
-                                   $"always be the first argument of the subscribing method.";
+                                   "Please note that the message (or the enumerable, collection or stream) must " +
+                                   "always be the first argument of the subscribing method.";
 
                 throw new SubscribedMethodInvocationException(methodInfo, errorMessage);
             }

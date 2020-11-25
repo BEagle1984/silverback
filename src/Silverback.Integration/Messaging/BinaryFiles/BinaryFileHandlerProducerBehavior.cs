@@ -15,7 +15,7 @@ namespace Silverback.Messaging.BinaryFiles
     /// </summary>
     public class BinaryFileHandlerProducerBehavior : IProducerBehavior
     {
-        private readonly BinaryFileMessageSerializer _binaryFileMessageSerializer = new BinaryFileMessageSerializer();
+        private readonly BinaryFileMessageSerializer _binaryFileMessageSerializer = new();
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.BinaryFileHandler;

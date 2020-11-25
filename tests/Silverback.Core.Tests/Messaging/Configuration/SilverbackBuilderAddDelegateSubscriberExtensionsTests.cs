@@ -86,7 +86,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             int received = 0;
 
-            static TestEventTwo ReceiveOne(TestEventOne message) => new TestEventTwo();
+            static TestEventTwo ReceiveOne(TestEventOne message) => new();
             void ReceiveTwo(TestEventTwo message) => received++;
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
@@ -238,7 +238,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             int received = 0;
 
-            static TestEventTwo ReceiveOne(IEnumerable<TestEventOne> messages) => new TestEventTwo();
+            static TestEventTwo ReceiveOne(IEnumerable<TestEventOne> messages) => new();
             void ReceiveTwo(TestEventTwo message) => received++;
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(

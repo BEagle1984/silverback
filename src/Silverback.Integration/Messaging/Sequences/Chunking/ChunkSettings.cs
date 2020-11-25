@@ -14,15 +14,16 @@ namespace Silverback.Messaging.Sequences.Chunking
     public sealed class ChunkSettings : IEquatable<ChunkSettings>, IValidatableEndpointSettings
     {
         /// <summary>
-        ///     Gets or sets the size in bytes of each chunk. The default is <see cref="int.MaxValue"/>, meaning that
+        ///     Gets or sets the size in bytes of each chunk. The default is <see cref="int.MaxValue" />, meaning that
         ///     chunking is disabled.
         /// </summary>
         public int Size { get; set; } = int.MaxValue;
 
         /// <summary>
         ///     Gets or sets a value indicating whether the <c>x-chunk-index</c> and related headers have to be added
-        ///     to the produced message in any case, even if its size doesn't exceed the single chunk size. The default
-        ///     is <c>true</c>. This setting is ignored if chunking is disabled (<see cref="Size"/> is not set).
+        ///     to the produced message in any case, even if its size doesn't exceed the single chunk size. The
+        ///     default is <c>true</c>. This setting is ignored if chunking is disabled (<see cref="Size" /> is not
+        ///     set).
         /// </summary>
         public bool AlwaysAddHeaders { get; set; } = true;
 

@@ -64,7 +64,10 @@ namespace Silverback.Tests.Integration.TestTypes
             await TestHandleMessage(buffer, headers, offset);
         }
 
-        public async Task TestHandleMessage(byte[]? rawMessage, MessageHeaderCollection headers, TestOffset? offset = null)
+        public async Task TestHandleMessage(
+            byte[]? rawMessage,
+            MessageHeaderCollection headers,
+            TestOffset? offset = null)
         {
             if (!Broker.IsConnected)
                 throw new InvalidOperationException("The broker is not connected.");
@@ -92,7 +95,8 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) =>
+            Task.CompletedTask;
 
         protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers)
         {
@@ -100,6 +104,7 @@ namespace Silverback.Tests.Integration.TestTypes
             return Task.CompletedTask;
         }
 
-        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers) => Task.CompletedTask;
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers) =>
+            Task.CompletedTask;
     }
 }

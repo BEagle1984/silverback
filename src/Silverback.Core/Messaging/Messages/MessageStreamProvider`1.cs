@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Messages
     /// </typeparam>
     internal class MessageStreamProvider<TMessage> : IMessageStreamProvider, IDisposable
     {
-        private readonly List<ILazyMessageStreamEnumerable> _lazyStreams = new List<ILazyMessageStreamEnumerable>();
+        private readonly List<ILazyMessageStreamEnumerable> _lazyStreams = new();
 
         private int _messagesCount;
 

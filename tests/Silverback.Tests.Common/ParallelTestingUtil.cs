@@ -11,7 +11,7 @@ namespace Silverback.Tests
     {
         private int _lastStep;
 
-        public ConcurrentBag<int> Steps { get; } = new ConcurrentBag<int>();
+        public ConcurrentBag<int> Steps { get; } = new();
 
         public void DoWork()
         {

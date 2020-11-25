@@ -54,7 +54,9 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                 Array.Empty<MessageHeader>(),
                 new TestProducerEndpoint("test"));
 
-            await _behavior.HandleAsync(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult!);
+            await _behavior.HandleAsync(
+                new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope },
+                Task.FromResult!);
             await _outbox.CommitAsync();
 
             var queued = await _outbox.ReadAsync(10);
@@ -73,7 +75,9 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                     Strategy = ProduceStrategy.Outbox()
                 });
 
-            await _behavior.HandleAsync(new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope }, Task.FromResult!);
+            await _behavior.HandleAsync(
+                new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope },
+                Task.FromResult!);
             await _outbox.CommitAsync();
 
             var queued = await _outbox.ReadAsync(10);

@@ -53,13 +53,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static ISilverbackBuilder AddTransientSequenceReader<TReader>(
-            this ISilverbackBuilder silverbackBuilder)
+        public static ISilverbackBuilder AddTransientSequenceReader<TReader>(this ISilverbackBuilder silverbackBuilder)
             where TReader : class, ISequenceReader =>
             AddTransientSequenceReader(silverbackBuilder, typeof(TReader));
 
         /// <summary>
-        ///     Adds a transient sequence reader with a factory specified in <paramref name="implementationFactory" /> to
+        ///     Adds a transient sequence reader with a factory specified in <paramref name="implementationFactory" />
+        ///     to
         ///     the <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
@@ -122,13 +122,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static ISilverbackBuilder AddSingletonSequenceReader<TReader>(
-            this ISilverbackBuilder silverbackBuilder)
+        public static ISilverbackBuilder AddSingletonSequenceReader<TReader>(this ISilverbackBuilder silverbackBuilder)
             where TReader : class, ISequenceReader =>
             AddSingletonSequenceReader(silverbackBuilder, typeof(TReader));
 
         /// <summary>
-        ///     Adds a singleton sequence reader with a factory specified in <paramref name="implementationFactory" /> to
+        ///     Adds a singleton sequence reader with a factory specified in <paramref name="implementationFactory" />
+        ///     to
         ///     the <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">
@@ -153,7 +153,8 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds a singleton sequence reader with an instance specified in <paramref name="implementationInstance" />
+        ///     Adds a singleton sequence reader with an instance specified in
+        ///     <paramref name="implementationInstance" />
         ///     to the <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
         /// </summary>
         /// <param name="silverbackBuilder">

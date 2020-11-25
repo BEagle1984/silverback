@@ -12,8 +12,7 @@ namespace Silverback.Messaging.Configuration
     /// </summary>
     public abstract class RabbitEndpointConfig : IValidatableEndpointSettings
     {
-        private static readonly ConfigurationDictionaryComparer<string, object> ArgumentsComparer =
-            new ConfigurationDictionaryComparer<string, object>();
+        private static readonly ConfigurationDictionaryComparer<string, object> ArgumentsComparer = new();
 
         /// <summary>
         ///     Gets or sets a value indicating whether the queue or the exchange will survive a broker restart.

@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Configuration
 {
     internal class LogLevelConfigurator : ILogLevelConfigurator
     {
-        private readonly LogLevelDictionary _logLevelDictionary = new LogLevelDictionary();
+        private readonly LogLevelDictionary _logLevelDictionary = new();
 
         public ILogLevelConfigurator SetLogLevel(EventId eventId, LogLevel logLevel)
         {
@@ -20,12 +20,15 @@ namespace Silverback.Messaging.Configuration
 
         public ILogLevelConfigurator SetLogLevel(EventId eventId, Func<Exception, LogLevel, LogLevel> logLevelFunc)
         {
-            _logLevelDictionary[eventId] = (exception, originalLogLevel, _) => logLevelFunc(exception, originalLogLevel);
+            _logLevelDictionary[eventId] =
+                (exception, originalLogLevel, _) => logLevelFunc(exception, originalLogLevel);
 
             return this;
         }
 
-        public ILogLevelConfigurator SetLogLevel(EventId eventId, Func<Exception, LogLevel, Lazy<string>, LogLevel> logLevelFunc)
+        public ILogLevelConfigurator SetLogLevel(
+            EventId eventId,
+            Func<Exception, LogLevel, Lazy<string>, LogLevel> logLevelFunc)
         {
             _logLevelDictionary[eventId] = logLevelFunc;
 

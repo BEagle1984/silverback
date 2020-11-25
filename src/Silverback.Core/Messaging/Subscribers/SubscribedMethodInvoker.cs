@@ -94,6 +94,81 @@ namespace Silverback.Messaging.Subscribers
             return messages.Where(message => filters.All(filter => filter.MustProcess(message))).ToList();
         }
 
+        private static IEnumerable<object> FilterMessagesAndUnwrapEnvelopes(
+            IEnumerable<object> messages,
+            SubscribedMethod subscribedMethod)
+        {
+            foreach (var message in messages)
+            {
+                if (message is IEnvelope envelope && envelope.AutoUnwrap &&
+                    subscribedMethod.MessageType.IsInstanceOfType(envelope.Message))
+                {
+                    yield return envelope.Message!;
+                }
+                else if (subscribedMethod.MessageType.IsInstanceOfType(message))
+                {
+                    yield return message;
+                }
+            }
+        }
+
+        private static IEnumerable<IMessageStreamProvider> FilterMessageStreamEnumerableMessages(
+            IEnumerable<object> messages,
+            SubscribedMethod subscribedMethod)
+        {
+            foreach (var message in messages)
+            {
+                if (message is IMessageStreamProvider streamProvider)
+                {
+                    if (subscribedMethod.MessageArgumentType.IsInstanceOfType(message))
+                        yield return streamProvider;
+
+                    // There is no way to properly match the message types in the case of a stream of IEnvelope
+                    // and a subscriber that is not handling a stream of envelopes. The envelopes can contain any
+                    // type of message (object? Message) and will automatically be unwrapped, filtered and properly
+                    // routed by the MessageStreamEnumerable.
+                    if (typeof(IEnvelope).IsAssignableFrom(streamProvider.MessageType) &&
+                        !typeof(IEnvelope).IsAssignableFrom(subscribedMethod.MessageType))
+                        yield return streamProvider;
+
+                    if (streamProvider.MessageType.IsAssignableFrom(subscribedMethod.MessageType))
+                        yield return streamProvider;
+                }
+            }
+        }
+
+        private static Task<object?> InvokeAsync(
+            object target,
+            MethodInfo methodInfo,
+            object?[] parameters,
+            bool executeAsync) =>
+            executeAsync
+                ? InvokeAsync(target, methodInfo, parameters)
+                : Task.FromResult(InvokeSync(target, methodInfo, parameters));
+
+        private static Task<object?> InvokeAsync(object target, MethodInfo methodInfo, object?[] parameters) =>
+            methodInfo.ReturnsTask()
+                ? ((Task)methodInfo.Invoke(target, parameters)).GetReturnValueAsync()
+                : Task.FromResult((object?)methodInfo.Invoke(target, parameters));
+
+        private static object? InvokeSync(object target, MethodInfo methodInfo, object?[] parameters) =>
+            methodInfo.ReturnsTask()
+                ? AsyncHelper.RunSynchronously(
+                    () =>
+                    {
+                        var result = (Task)methodInfo.Invoke(target, parameters);
+                        return result.GetReturnValueAsync();
+                    })
+                : methodInfo.Invoke(target, parameters);
+
+        private static Task InvokeWithoutBlockingAsync(
+            object target,
+            MethodInfo methodInfo,
+            object?[] parameters) =>
+            methodInfo.ReturnsTask()
+                ? (Task)methodInfo.Invoke(target, parameters)
+                : Task.Run(() => (object?)methodInfo.Invoke(target, parameters));
+
         private object?[] GetArgumentValuesArray(SubscribedMethod method)
         {
             var values = new object?[method.Parameters.Count];
@@ -212,80 +287,5 @@ namespace Silverback.Messaging.Subscribers
 
             return (messages, resultTasks.ToArray());
         }
-
-        private static IEnumerable<object> FilterMessagesAndUnwrapEnvelopes(
-            IEnumerable<object> messages,
-            SubscribedMethod subscribedMethod)
-        {
-            foreach (var message in messages)
-            {
-                if (message is IEnvelope envelope && envelope.AutoUnwrap &&
-                    subscribedMethod.MessageType.IsInstanceOfType(envelope.Message))
-                {
-                    yield return envelope.Message!;
-                }
-                else if (subscribedMethod.MessageType.IsInstanceOfType(message))
-                {
-                    yield return message;
-                }
-            }
-        }
-
-        private static IEnumerable<IMessageStreamProvider> FilterMessageStreamEnumerableMessages(
-            IEnumerable<object> messages,
-            SubscribedMethod subscribedMethod)
-        {
-            foreach (var message in messages)
-            {
-                if (message is IMessageStreamProvider streamProvider)
-                {
-                    if (subscribedMethod.MessageArgumentType.IsInstanceOfType(message))
-                        yield return streamProvider;
-
-                    // There is no way to properly match the message types in the case of a stream of IEnvelope
-                    // and a subscriber that is not handling a stream of envelopes. The envelopes can contain any
-                    // type of message (object? Message) and will automatically be unwrapped, filtered and properly
-                    // routed by the MessageStreamEnumerable.
-                    if (typeof(IEnvelope).IsAssignableFrom(streamProvider.MessageType) &&
-                        !typeof(IEnvelope).IsAssignableFrom(subscribedMethod.MessageType))
-                        yield return streamProvider;
-
-                    if (streamProvider.MessageType.IsAssignableFrom(subscribedMethod.MessageType))
-                        yield return streamProvider;
-                }
-            }
-        }
-
-        private static Task<object?> InvokeAsync(
-            object target,
-            MethodInfo methodInfo,
-            object?[] parameters,
-            bool executeAsync) =>
-            executeAsync
-                ? InvokeAsync(target, methodInfo, parameters)
-                : Task.FromResult(InvokeSync(target, methodInfo, parameters));
-
-        private static Task<object?> InvokeAsync(object target, MethodInfo methodInfo, object?[] parameters) =>
-            methodInfo.ReturnsTask()
-                ? ((Task)methodInfo.Invoke(target, parameters)).GetReturnValueAsync()
-                : Task.FromResult((object?)methodInfo.Invoke(target, parameters));
-
-        private static object? InvokeSync(object target, MethodInfo methodInfo, object?[] parameters) =>
-            methodInfo.ReturnsTask()
-                ? AsyncHelper.RunSynchronously(
-                    () =>
-                    {
-                        var result = (Task)methodInfo.Invoke(target, parameters);
-                        return result.GetReturnValueAsync();
-                    })
-                : methodInfo.Invoke(target, parameters);
-
-        private static Task InvokeWithoutBlockingAsync(
-            object target,
-            MethodInfo methodInfo,
-            object?[] parameters) =>
-            methodInfo.ReturnsTask()
-                ? (Task)methodInfo.Invoke(target, parameters)
-                : Task.Run(() => (object?)methodInfo.Invoke(target, parameters));
     }
 }

@@ -19,7 +19,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost
     public sealed class TestApplicationHost : IDisposable
     {
         private readonly List<Action<IServiceCollection>>
-            _configurationActions = new List<Action<IServiceCollection>>();
+            _configurationActions = new();
 
         private bool _addDbContext;
 

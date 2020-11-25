@@ -22,7 +22,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId SubscriberResultDiscarded { get; } =
-            new EventId(11, Prefix + nameof(SubscriberResultDiscarded));
+            new(11, Prefix + nameof(SubscriberResultDiscarded));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
@@ -32,7 +32,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId AcquiringDistributedLock { get; } =
-            new EventId(21, Prefix + nameof(AcquiringDistributedLock));
+            new(21, Prefix + nameof(AcquiringDistributedLock));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
@@ -42,7 +42,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId DistributedLockAcquired { get; } =
-            new EventId(22, Prefix + nameof(DistributedLockAcquired));
+            new(22, Prefix + nameof(DistributedLockAcquired));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while the
@@ -52,7 +52,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId FailedToAcquireDistributedLock { get; } =
-            new EventId(23, Prefix + nameof(FailedToAcquireDistributedLock));
+            new(23, Prefix + nameof(FailedToAcquireDistributedLock));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
@@ -62,7 +62,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId DistributedLockReleased { get; } =
-            new EventId(24, Prefix + nameof(DistributedLockReleased));
+            new(24, Prefix + nameof(DistributedLockReleased));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while the
@@ -72,7 +72,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId FailedToReleaseDistributedLock { get; } =
-            new EventId(25, Prefix + nameof(FailedToReleaseDistributedLock));
+            new(25, Prefix + nameof(FailedToReleaseDistributedLock));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while the
@@ -82,7 +82,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId FailedToCheckDistributedLock { get; } =
-            new EventId(26, Prefix + nameof(FailedToCheckDistributedLock));
+            new(26, Prefix + nameof(FailedToCheckDistributedLock));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while the
@@ -92,7 +92,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId FailedToSendDistributedLockHeartbeat { get; } =
-            new EventId(27, Prefix + nameof(FailedToSendDistributedLockHeartbeat));
+            new(27, Prefix + nameof(FailedToSendDistributedLockHeartbeat));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written the
@@ -102,7 +102,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId BackgroundServiceStarting { get; } =
-            new EventId(41, Prefix + nameof(BackgroundServiceStarting));
+            new(41, Prefix + nameof(BackgroundServiceStarting));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the lock has been acquired and the
@@ -112,7 +112,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId BackgroundServiceLockAcquired { get; } =
-            new EventId(42, Prefix + nameof(BackgroundServiceLockAcquired));
+            new(42, Prefix + nameof(BackgroundServiceLockAcquired));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs executing the
@@ -122,7 +122,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId BackgroundServiceException { get; } =
-            new EventId(43, Prefix + nameof(BackgroundServiceException));
+            new(43, Prefix + nameof(BackgroundServiceException));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
@@ -132,7 +132,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Information.
         /// </remarks>
         public static EventId RecurringBackgroundServiceStopped { get; } =
-            new EventId(51, Prefix + nameof(RecurringBackgroundServiceStopped));
+            new(51, Prefix + nameof(RecurringBackgroundServiceStopped));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
@@ -142,7 +142,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId RecurringDistributedBackgroundServiceSleeping { get; } =
-            new EventId(52, Prefix + nameof(RecurringDistributedBackgroundServiceSleeping));
+            new(52, Prefix + nameof(RecurringDistributedBackgroundServiceSleeping));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an exception is thrown during an
@@ -153,6 +153,6 @@ namespace Silverback.Diagnostics
         ///     Default log level: Debug.
         /// </remarks>
         public static EventId RecurringDistributedBackgroundServiceException { get; } =
-            new EventId(53, Prefix + nameof(RecurringDistributedBackgroundServiceException));
+            new(53, Prefix + nameof(RecurringDistributedBackgroundServiceException));
     }
 }

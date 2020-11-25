@@ -24,9 +24,9 @@ namespace Silverback.Messaging.Broker
 
         private readonly ISilverbackIntegrationLogger<Producer> _logger;
 
-        private readonly BlockingCollection<QueuedMessage> _queue = new BlockingCollection<QueuedMessage>();
+        private readonly BlockingCollection<QueuedMessage> _queue = new();
 
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         private IModel? _channel;
 

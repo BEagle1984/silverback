@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Broker.Behaviors
         ///     The <see cref="IProducer" /> that triggered this pipeline.
         /// </param>
         /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider"/> to be used to resolve the required services.
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         public ProducerPipelineContext(IOutboundEnvelope envelope, IProducer producer, IServiceProvider serviceProvider)
         {
@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Broker.Behaviors
         public IOutboundEnvelope Envelope { get; set; }
 
         /// <summary>
-        ///     Gets or sets the <see cref="IServiceProvider"/> to be used to resolve the required services.
+        ///     Gets or sets the <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </summary>
         public IServiceProvider ServiceProvider { get; set; }
     }

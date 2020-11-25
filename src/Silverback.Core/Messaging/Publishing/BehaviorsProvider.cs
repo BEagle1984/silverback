@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Publishing
         }
 
         /// <inheritdoc cref="IBehaviorsProvider.CreateStack" />
-        public Stack<IBehavior> CreateStack() => new Stack<IBehavior>(GetBehaviors());
+        public Stack<IBehavior> CreateStack() => new(GetBehaviors());
 
         private IReadOnlyCollection<IBehavior> GetBehaviors()
         {
