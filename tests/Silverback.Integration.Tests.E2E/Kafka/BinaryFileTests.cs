@@ -141,7 +141,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddOutbound<IBinaryFileMessage>(
                                     new KafkaProducerEndpoint(DefaultTopicName)
                                     {
-                                        Serializer = new BinaryFileMessageSerializer()
+                                        Serializer = BinaryFileMessageSerializer.Default
                                     })
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
@@ -151,7 +151,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
                                         },
-                                        Serializer = new BinaryFileMessageSerializer()
+                                        Serializer = BinaryFileMessageSerializer.Default
                                     }))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
@@ -213,7 +213,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddOutbound<IBinaryFileMessage>(
                                     new KafkaProducerEndpoint(DefaultTopicName)
                                     {
-                                        Serializer = new BinaryFileMessageSerializer()
+                                        Serializer = BinaryFileMessageSerializer.Default
                                     })
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
@@ -223,7 +223,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
                                         },
-                                        Serializer = new BinaryFileMessageSerializer()
+                                        Serializer = BinaryFileMessageSerializer.Default
                                     }))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>

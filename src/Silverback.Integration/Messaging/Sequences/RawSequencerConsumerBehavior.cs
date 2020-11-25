@@ -41,7 +41,9 @@ namespace Silverback.Messaging.Sequences
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            context.ProcessingTask = Task.Run(async () => await next(context).ConfigureAwait(false));
+            var processingTask = Task.Run(async () => await next(context).ConfigureAwait(false));
+
+            context.ProcessingTask ??= processingTask;
 
             return Task.CompletedTask;
         }

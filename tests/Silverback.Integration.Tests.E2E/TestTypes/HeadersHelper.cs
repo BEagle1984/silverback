@@ -10,6 +10,9 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
 {
     public static class HeadersHelper
     {
+        public static MessageHeader[] GetHeaders(string kafkaKey, Type? messageType = null) =>
+            GetHeadersCore(null, kafkaKey, messageType).ToArray();
+
         public static MessageHeader[] GetChunkHeaders(
             string kafkaKey,
             int chunkIndex,
@@ -50,12 +53,9 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
             Type? messageType = null) =>
             GetChunkHeadersCore(messageId, null, chunkIndex, null, null, messageType).ToArray();
 
-        private static IEnumerable<MessageHeader> GetChunkHeadersCore(
+        private static IEnumerable<MessageHeader> GetHeadersCore(
             string? messageId,
             string? kafkaKey,
-            int chunkIndex,
-            int? chunksCount,
-            bool? isLastChunk,
             Type? messageType)
         {
             if (!string.IsNullOrEmpty(messageId))
@@ -66,6 +66,20 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
 
             if (messageType != null)
                 yield return new MessageHeader(DefaultMessageHeaders.MessageType, messageType.AssemblyQualifiedName);
+        }
+
+        private static IEnumerable<MessageHeader> GetChunkHeadersCore(
+            string? messageId,
+            string? kafkaKey,
+            int chunkIndex,
+            int? chunksCount,
+            bool? isLastChunk,
+            Type? messageType)
+        {
+            foreach (var header in GetHeadersCore(messageId, kafkaKey, messageType))
+            {
+                yield return header;
+            }
 
             yield return new MessageHeader(DefaultMessageHeaders.ChunkIndex, chunkIndex);
 

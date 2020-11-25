@@ -39,9 +39,7 @@ namespace Silverback.Messaging.Inbound
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Publisher;
 
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-        public async Task HandleAsync(
-            ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
+        public async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
@@ -88,12 +86,19 @@ namespace Silverback.Messaging.Inbound
             await context.ServiceProvider.GetRequiredService<IPublisher>()
                 .PublishAsync(context.Envelope, throwIfUnhandled).ConfigureAwait(false);
 
-        private static async Task PublishSequenceAsync(ISequence sequence, ConsumerPipelineContext context)
+        private async Task PublishSequenceAsync(ISequence sequence, ConsumerPipelineContext context)
         {
-            context.ProcessingTask = await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);
+            var processingTask = await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);
+
+            context.ProcessingTask = processingTask;
+
+            _logger.LogTraceWithMessageInfo(
+                IntegrationEventIds.LowLevelTracing,
+                $"Published {sequence.GetType().Name} '{sequence.SequenceId}' (ProcessingTask.Id={processingTask.Id}).",
+                context);
         }
 
-        private static async Task<UnboundedSequence> GetUnboundedSequence(ConsumerPipelineContext context)
+        private async Task<UnboundedSequence> GetUnboundedSequence(ConsumerPipelineContext context)
         {
             const string sequenceIdPrefix = "unbounded|";
 
@@ -110,8 +115,13 @@ namespace Silverback.Messaging.Inbound
         }
 
         [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
-        private static async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context)
+        private async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context)
         {
+            _logger.LogTraceWithMessageInfo(
+                IntegrationEventIds.LowLevelTracing,
+                $"Publishing {sequence.GetType().Name} '{sequence.SequenceId}'...",
+                context);
+
             var publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
 
             var processingTasks = await publisher.PublishAsync(sequence.StreamProvider).ConfigureAwait(false);
@@ -146,6 +156,13 @@ namespace Silverback.Messaging.Inbound
                     {
                         await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
                         sequence.Dispose();
+                    }
+                    finally
+                    {
+                        _logger.LogTraceWithMessageInfo(
+                            IntegrationEventIds.LowLevelTracing,
+                            $"{sequence.GetType().Name} '{sequence.SequenceId}' processing completed.",
+                            context);
                     }
                 });
         }

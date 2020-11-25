@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
@@ -148,34 +149,42 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         }
 
         [Fact]
-        public void HasPendingSequences_EmptyStore_FalseReturned()
+        public void GetPendingSequences_EmptyStore_EmptyCollectionReturned()
         {
             var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
 
-            store.HasPendingSequences.Should().BeFalse();
+            var result = store.GetPendingSequences();
+
+            result.Should().BeEmpty();
         }
 
         [Fact]
-        public async Task HasPendingSequences_WithIncompleteSequence_TrueReturned()
+        public async Task GetPendingSequences_WithIncompleteSequence_PendingSequencesReturned()
         {
             var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
 
             await store.AddAsync(new FakeSequence("aaa", true, false, store));
             await store.AddAsync(new FakeSequence("bbb", false, true, store));
             await store.AddAsync(new FakeSequence("ccc", false, false, store));
+            await store.AddAsync(new FakeSequence("ddd", false, false, store));
 
-            store.HasPendingSequences.Should().BeTrue();
+            var result = store.GetPendingSequences();
+
+            result.Should().HaveCount(2);
+            result.Select(sequence => sequence.SequenceId).Should().BeEquivalentTo("ccc", "ddd");
         }
 
         [Fact]
-        public async Task HasPendingSequences_WithAllCompleteOrAbortedSequences_FalseReturned()
+        public async Task GetPendingSequences_WithAllCompleteOrAbortedSequences_EmptyCollectionReturned()
         {
             var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
 
             await store.AddAsync(new FakeSequence("aaa", true, false, store));
             await store.AddAsync(new FakeSequence("bbb", false, true, store));
 
-            store.HasPendingSequences.Should().BeFalse();
+            var result = store.GetPendingSequences();
+
+            result.Should().BeEmpty();
         }
 
         private sealed class FakeSequence : SequenceBase<IInboundEnvelope>

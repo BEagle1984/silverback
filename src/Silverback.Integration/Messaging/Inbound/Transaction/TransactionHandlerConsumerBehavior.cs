@@ -141,8 +141,8 @@ namespace Silverback.Messaging.Inbound.Transaction
             {
                 var processingTask = context.ProcessingTask;
 
-                // Keep awaiting in a loop because the sequence and the processing task may be reassigned,
-                // but guarantee that we always await the task once to rethrow the exception if needed
+                // Keep awaiting in a loop because the sequence and the processing task may be reassigned
+                // (a ChunkSequence may be added to another sequence only after the message is complete and deserialized)
                 while (processingTask != null)
                 {
                     _logger.LogTraceWithMessageInfo(
@@ -157,7 +157,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                     {
                         _logger.LogTraceWithMessageInfo(
                             IntegrationEventIds.LowLevelTracing,
-                            $"{sequence.GetType().Name} processing has completed but it's not the beginning of the outer sequence. No action will be performed.",
+                            $"{sequence.GetType().Name} '{sequence.SequenceId}' processing has completed but it's not the beginning of the outer sequence. No action will be performed.",
                             context);
                         return;
                     }
@@ -169,7 +169,9 @@ namespace Silverback.Messaging.Inbound.Transaction
                 }
 
                 string logMessage = sequence.IsPending
-                    ? $"{sequence.GetType().Name} '{sequence.SequenceId}' processing seems completed but the sequence is still pending."
+                    ? $"{sequence.GetType().Name} '{sequence.SequenceId}' processing seems " +
+                      $"completed but the sequence is still pending. " +
+                      $"(ProcessingTask.Status={context.ProcessingTask?.Status}, ProcessingTask.Id={context.ProcessingTask?.Id})"
                     : $"{sequence.GetType().Name} '{sequence.SequenceId}' processing completed.";
 
                 _logger.LogTraceWithMessageInfo(

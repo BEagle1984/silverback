@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -104,8 +103,7 @@ namespace Silverback.Messaging.Sequences
 
             var sequence = CreateNewSequenceCore(sequenceId, context);
 
-            if (context.SequenceStore.HasPendingSequences)
-                await AbortPreviousSequencesAsync(context.SequenceStore, sequence).ConfigureAwait(false);
+            await AbortPreviousSequencesAsync(context.SequenceStore, sequence).ConfigureAwait(false);
 
             await context.SequenceStore.AddAsync(sequence).ConfigureAwait(false);
 
@@ -149,7 +147,7 @@ namespace Silverback.Messaging.Sequences
 
         private static Task AbortPreviousSequencesAsync(ISequenceStore sequenceStore, ISequence currentSequence) =>
             sequenceStore
-                .Where(previousSequence => previousSequence.IsPending)
+                .GetPendingSequences()
                 .ForEachAsync(
                     previousSequence =>
                     {

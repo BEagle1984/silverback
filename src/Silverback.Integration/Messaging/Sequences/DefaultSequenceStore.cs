@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Sequences.Unbounded;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
@@ -24,9 +25,6 @@ namespace Silverback.Messaging.Sequences
         {
             _logger = logger;
         }
-
-        public bool HasPendingSequences =>
-            _store.Any(sequencePair => sequencePair.Value.IsPending);
 
         public int Count => _store.Count;
 
@@ -82,6 +80,12 @@ namespace Silverback.Messaging.Sequences
             _store.Remove(sequenceId);
             return Task.CompletedTask;
         }
+
+        public IReadOnlyCollection<ISequence> GetPendingSequences(bool includeUnbounded = false) =>
+            _store.Values.Where(
+                    sequence =>
+                        sequence.IsPending && (includeUnbounded || !(sequence is UnboundedSequence)))
+                .ToList();
 
         public IEnumerator<ISequence> GetEnumerator() => _store.Values.GetEnumerator();
 

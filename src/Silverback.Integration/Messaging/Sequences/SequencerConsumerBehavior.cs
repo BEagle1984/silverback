@@ -33,13 +33,22 @@ namespace Silverback.Messaging.Sequences
         public override int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Sequencer;
 
         /// <inheritdoc cref="SequencerConsumerBehaviorBase.HandleAsync" />
-        public override Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
+        public override async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
         {
             var rawSequence = Check.NotNull(context, nameof(context)).Sequence as ISequenceImplementation;
 
             try
             {
-                return base.HandleAsync(context, next);
+                await base.HandleAsync(context, next).ConfigureAwait(false);
+
+                // Abort all pending sequences if the current message doesn't belong to a sequence
+                if (context.Sequence == null)
+                {
+                    await context.SequenceStore
+                        .GetPendingSequences()
+                        .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.IncompleteSequence))
+                        .ConfigureAwait(false);
+                }
             }
             finally
             {

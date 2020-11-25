@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Messaging.Sequences.Unbounded;
 
 namespace Silverback.Messaging.Sequences
 {
@@ -12,11 +13,6 @@ namespace Silverback.Messaging.Sequences
     /// </summary>
     public interface ISequenceStore : IReadOnlyCollection<ISequence>, IDisposable
     {
-        /// <summary>
-        ///     Gets a value indicating whether there currently are pending sequences in the store.
-        /// </summary>
-        bool HasPendingSequences { get; }
-
         /// <summary>
         ///     Gets the sequence with the specified id.
         /// </summary>
@@ -62,5 +58,16 @@ namespace Silverback.Messaging.Sequences
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         Task RemoveAsync(string sequenceId);
+
+        /// <summary>
+        ///     Returns the pending sequences currently in the store.
+        /// </summary>
+        /// <param name="includeUnbounded">
+        ///     A value indicating whether the <see cref="UnboundedSequence" /> instances have to be returned as well.
+        /// </param>
+        /// <returns>
+        ///     The collection of sequences.
+        /// </returns>
+        IReadOnlyCollection<ISequence> GetPendingSequences(bool includeUnbounded = false);
     }
 }
