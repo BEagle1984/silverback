@@ -78,7 +78,7 @@ namespace Silverback.Messaging.Broker
             _logger = Check.NotNull(logger, nameof(logger));
 
             _confluentConsumerBuilder = serviceProvider.GetRequiredService<IConfluentConsumerBuilder>();
-            _confluentConsumerBuilder.SetConfig(endpoint.Configuration.ConfluentConfig);
+            _confluentConsumerBuilder.SetConfig(endpoint.Configuration.GetConfluentConfig());
             _confluentConsumerBuilder.SetEventsHandlers(this, logger);
         }
 

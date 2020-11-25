@@ -29,7 +29,7 @@ namespace Silverback.Testing
         ///     processed and committed.
         /// </summary>
         /// <param name="topicNames">
-        ///     The topics to be monitored.
+        ///     The name of the topics to be monitored.
         /// </param>
         /// <param name="timeout">
         ///     The timeout after which the method will return even if the messages haven't been

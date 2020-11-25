@@ -9,12 +9,12 @@ using Silverback.Util;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    ///     Adds the <c>AddOutbound</c> method to the <see cref="IEndpointsConfigurationBuilder" />.
+    ///     Adds the <c>AddInbound</c> method to the <see cref="IEndpointsConfigurationBuilder" />.
     /// </summary>
     public static class EndpointsConfigurationBuilderAddInboundExtensions
     {
         /// <summary>
-        ///     Adds and inbound endpoint.
+        ///     Adds an inbound endpoint.
         /// </summary>
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
@@ -38,9 +38,10 @@ namespace Silverback.Messaging.Configuration
 
             if (consumersCount <= 0)
             {
-                throw new ArgumentException(
-                    "The consumers count must be greater or equal to 1.",
-                    nameof(consumersCount));
+                throw new ArgumentOutOfRangeException(
+                    nameof(consumersCount),
+                    consumersCount,
+                    "The consumers count must be greater or equal to 1.");
             }
 
             var serviceProvider = endpointsConfigurationBuilder.ServiceProvider;

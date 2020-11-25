@@ -5,9 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -34,19 +32,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -78,19 +77,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -127,19 +127,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();

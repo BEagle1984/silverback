@@ -6,9 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
@@ -72,7 +72,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                 Array.Empty<MessageHeader>(),
                 new TestProducerEndpoint("test")
                 {
-                    Strategy = ProduceStrategy.Outbox()
+                    Strategy = new OutboxProduceStrategy()
                 });
 
             await _behavior.HandleAsync(

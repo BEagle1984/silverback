@@ -28,10 +28,25 @@ namespace Silverback.Messaging
         /// <inheritdoc cref="IEndpoint.Name" />
         public string Name { get; protected set; }
 
-        /// <inheritdoc cref="IEndpoint.Serializer" />
+        /// <summary>
+        ///     Gets or sets the <see cref="IMessageSerializer" /> to be used to serialize or deserialize the messages
+        ///     being produced or consumed.
+        /// </summary>
         public IMessageSerializer Serializer { get; set; } = DefaultSerializer;
 
-        /// <inheritdoc cref="IEndpoint.Encryption" />
+        /// <summary>
+        ///     <para>
+        ///         Gets or sets the encryption settings. This optional settings enables the end-to-end message
+        ///         encryption.
+        ///     </para>
+        ///     <para>
+        ///         When enabled the messages are transparently encrypted by the producer and decrypted by the
+        ///         consumer.
+        ///     </para>
+        ///     <para>
+        ///         Set it to <c>null</c> (default) to disable this feature.
+        ///     </para>
+        /// </summary>
         public EncryptionSettings? Encryption { get; set; }
 
         /// <inheritdoc cref="IEndpoint.Validate" />

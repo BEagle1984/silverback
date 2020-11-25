@@ -24,7 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     the services to.
         /// </param>
         /// <param name="optionsAction">
-        ///     Additional options (such as message broker type and connectors).
+        ///     Additional options such as the actual message brokers to be used.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.

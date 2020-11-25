@@ -6,8 +6,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -42,22 +40,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddMockedKafka()
                                 .AddOutboxDatabaseTable()
                                 .AddOutboxWorker(TimeSpan.FromMilliseconds(100)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Strategy = ProduceStrategy.Outbox()
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceToOutbox())
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();

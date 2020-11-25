@@ -6,7 +6,7 @@ using System.Globalization;
 using System.IO;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
@@ -47,9 +47,12 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var testPolicy = new TestErrorPolicy();
 
-            var chain = ErrorPolicy.Chain(
-                    ErrorPolicy.Retry().MaxFailedAttempts(3),
-                    testPolicy)
+            var chain = new ErrorPolicyChain(
+                    new[]
+                    {
+                        new RetryErrorPolicy().MaxFailedAttempts(3),
+                        testPolicy
+                    })
                 .Build(_serviceProvider);
 
             var result = chain.CanHandle(
@@ -81,9 +84,12 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var testPolicy = new TestErrorPolicy();
 
-            var chain = ErrorPolicy.Chain(
-                    ErrorPolicy.Retry(3),
-                    testPolicy)
+            var chain = new ErrorPolicyChain(
+                    new[]
+                    {
+                        new RetryErrorPolicy().MaxFailedAttempts(3),
+                        testPolicy
+                    })
                 .Build(_serviceProvider);
 
             chain.HandleErrorAsync(
@@ -124,7 +130,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new TestErrorPolicy().MaxFailedAttempts(2)
             };
 
-            var chain = ErrorPolicy.Chain(policies)
+            var chain = new ErrorPolicyChain(policies)
                 .Build(_serviceProvider);
 
             chain.HandleErrorAsync(

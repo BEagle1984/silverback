@@ -44,11 +44,9 @@ namespace Silverback.Messaging.Encryption
         ///         Gets or sets the optional initialization vector (IV) for the symmetric algorithm.
         ///     </para>
         ///     <para>
-        ///         <b>
-        ///             Important:
-        ///         </b> If <c>null</c> no fixed IV is provided and the producer will automatically generate a random
-        ///         one for each
-        ///         message that will also be prepended to the actual encrypted message to be available to the
+        ///         <b>Important:</b> If <c>null</c> no fixed IV is provided and the producer will automatically
+        ///         generate a random one for each message that will also be prepended to the actual encrypted message
+        ///         to be available to the
         ///         consumer.
         ///     </para>
         /// </summary>

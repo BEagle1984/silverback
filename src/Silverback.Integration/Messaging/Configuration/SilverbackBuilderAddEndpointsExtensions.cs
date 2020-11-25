@@ -21,7 +21,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     the services to.
         /// </param>
         /// <param name="configureAction">
-        ///     The delegate <see cref="Action" /> applying the endpoints configuration.
+        ///     An <see cref="Action{T}" /> that takes the <see cref="IEndpointsConfigurationBuilder" /> and adds the
+        ///     outbound and inbound endpoints.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.

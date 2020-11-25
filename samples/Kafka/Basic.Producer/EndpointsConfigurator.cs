@@ -11,18 +11,22 @@ namespace Silverback.Samples.Kafka.Basic.Producer
         public void Configure(IEndpointsConfigurationBuilder builder)
         {
             builder
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
 
-                // Produce the messages to the samples-basic topic
-                .AddOutbound<SampleMessage>(
-                    new KafkaProducerEndpoint("samples-basic")
-                    {
-                        // The producer only needs the bootstrap server address to be
-                        // able to connect
-                        Configuration = new KafkaProducerConfig
-                        {
-                            BootstrapServers = "PLAINTEXT://localhost:9092"
-                        }
-                    });
+                        // Configure the properties needed by all consumers/producers
+                        .Configure(
+                            config =>
+                            {
+                                // The bootstrap server address is needed to connect
+                                config.BootstrapServers =
+                                    "PLAINTEXT://localhost:9092";
+                            })
+
+                        // Produce the SampleMessage to the samples-basic topic
+                        .AddOutbound<SampleMessage>(
+                            endpoint => endpoint
+                                .ProduceTo("samples-basic")));
         }
     }
 }

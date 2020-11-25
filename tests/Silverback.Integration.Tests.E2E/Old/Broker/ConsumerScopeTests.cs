@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -86,7 +87,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                 .AddInbound(
                                     new KafkaConsumerEndpoint("test-e2e")
                                     {
-                                        ErrorPolicy = ErrorPolicy.Retry().MaxFailedAttempts(10)
+                                        ErrorPolicy = new RetryErrorPolicy().MaxFailedAttempts(10)
                                     }))
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _, IServiceProvider localServiceProvider) =>

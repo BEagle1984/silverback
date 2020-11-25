@@ -222,9 +222,9 @@ namespace Silverback.Messaging.Broker.Topics
                     .ToList()
                     .ForEach(consumer => _consumers.Remove(consumer));
 
-                _consumers.ForEach(consumer => consumer.OnRebalancing());
-
                 var groupConsumers = _consumers.Where(consumer => consumer.GroupId == groupId).ToList();
+
+                groupConsumers.ForEach(consumer => consumer.OnRebalancing());
 
                 var assignments = new List<Partition>[groupConsumers.Count];
 

@@ -46,23 +46,29 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.ProduceAsync(rawMessageStream, headers);
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
@@ -94,23 +100,29 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.ProduceAsync(rawMessage, headers);
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();

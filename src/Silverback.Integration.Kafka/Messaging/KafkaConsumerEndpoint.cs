@@ -21,30 +21,56 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
         /// </summary>
-        /// <param name="names">
-        ///     The names of the topics.
+        /// <param name="topicNames">
+        ///     The name of the topics.
         /// </param>
-        public KafkaConsumerEndpoint(params string[] names)
+        public KafkaConsumerEndpoint(params string[] topicNames)
+            : this(topicNames, null)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
+        /// </summary>
+        /// <param name="topicName">
+        ///     The name of the topic.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaConsumerConfig" />.
+        /// </param>
+        public KafkaConsumerEndpoint(string topicName, KafkaClientConfig? clientConfig = null)
+            : this(new[] { topicName }, clientConfig)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
+        /// </summary>
+        /// <param name="topicNames">
+        ///     The name of the topics.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaConsumerConfig" />.
+        /// </param>
+        public KafkaConsumerEndpoint(string[] topicNames, KafkaClientConfig? clientConfig = null)
             : base(string.Empty)
         {
-            Names = names;
+            Names = topicNames;
 
-            if (names == null)
+            if (topicNames == null || topicNames.Length == 0)
                 return;
 
-            Name = names.Length > 1 ? "[" + string.Join(",", names) + "]" : names[0];
+            Name = topicNames.Length > 1 ? "[" + string.Join(",", topicNames) + "]" : topicNames[0];
+
+            Configuration = new KafkaConsumerConfig(clientConfig);
         }
 
         /// <summary>
         ///     Gets the names of the topics.
         /// </summary>
         public IReadOnlyCollection<string> Names { get; }
-
-        /// <summary>
-        ///     Gets the event handlers configuration. Can be used to bind some handlers to the Kafka events
-        ///     such as partitions revoked/assigned, error, statistics and offsets committed.
-        /// </summary>
-        public KafkaConsumerEventsHandlers Events { get; } = new();
 
         /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
@@ -68,12 +94,18 @@ namespace Silverback.Messaging
         public int MaxDegreeOfParallelism { get; set; } = 10;
 
         /// <summary>
-        ///     Gets or sets the maximum amount of messages to be buffered in the consumer before being processed.
-        ///     when <see cref="ProcessPartitionsIndependently" /> is set to <c>true</c> (default) the limit will be
+        ///     Gets or sets the maximum number of messages to be consumed and enqueued waiting to be processed.
+        ///     When <see cref="ProcessPartitionsIndependently" /> is set to <c>true</c> (default) the limit will be
         ///     applied per partition.
         ///     The default is 1.
         /// </summary>
         public int BackpressureLimit { get; set; } = 1;
+
+        /// <summary>
+        ///     Gets the event handlers configuration. Can be used to bind some handlers to the Kafka events
+        ///     such as partitions revoked/assigned, error, statistics and offsets committed.
+        /// </summary>
+        public KafkaConsumerEventsHandlers Events { get; } = new();
 
         /// <inheritdoc cref="Endpoint.Validate" />
         public override void Validate()

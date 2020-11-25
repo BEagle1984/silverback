@@ -19,21 +19,26 @@ namespace Silverback.Messaging
         /// <param name="name">
         ///     The name of the topic.
         /// </param>
-        public KafkaProducerEndpoint(string name)
+        /// <param name="clientConfig">
+        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaProducerConfig" />.
+        /// </param>
+        public KafkaProducerEndpoint(string name, KafkaClientConfig? clientConfig = null)
             : base(name)
         {
+            Configuration = new KafkaProducerConfig(clientConfig);
         }
-
-        /// <summary>
-        ///     Gets the Kafka event handlers configuration.
-        /// </summary>
-        public KafkaProducerEventsHandlers Events { get; } = new();
 
         /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
         ///     dictionary provided by the Confluent.Kafka library.
         /// </summary>
-        public KafkaProducerConfig Configuration { get; set; } = new();
+        public KafkaProducerConfig Configuration { get; set; }
+
+        /// <summary>
+        ///     Gets the Kafka event handlers configuration.
+        /// </summary>
+        public KafkaProducerEventsHandlers Events { get; } = new();
 
         /// <inheritdoc cref="ProducerEndpoint.Validate" />
         public override void Validate()

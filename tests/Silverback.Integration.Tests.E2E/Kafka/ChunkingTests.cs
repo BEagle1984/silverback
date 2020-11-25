@@ -12,11 +12,9 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
-using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
-using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -48,25 +46,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = 10
-                                        }
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EnableChunking(10))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -160,25 +155,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = 10
-                                        }
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EnableChunking(10))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => { receivedFiles.Add(binaryFile.Content.ReadAll()); })
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
@@ -218,24 +210,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 0, typeof(TestEventOne)));
@@ -276,24 +274,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
@@ -334,24 +338,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
                 HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3, typeof(TestEventOne)));
@@ -388,26 +398,32 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings(),
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .ConsumeBinaryFiles()
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll())))
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage.Take(3).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 0, false));
@@ -443,26 +459,32 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings(),
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .ConsumeBinaryFiles()
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll())))
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage.Take(3).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 0, 3));
@@ -498,26 +520,32 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings(),
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .ConsumeBinaryFiles()
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll())))
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage.Take(3).ToArray(),
                 HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3));
@@ -553,25 +581,31 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll())))
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage.Take(3).ToArray(),
                 HeadersHelper.GetChunkHeadersWithMessageId("1", 0, 3, typeof(BinaryFileMessage)));
@@ -617,24 +651,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
 
             await producer.RawProduceAsync(
                 rawMessage1.Take(10).ToArray(),
@@ -697,26 +737,32 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings(),
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .ConsumeBinaryFiles()
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll())))
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
 
             await producer.RawProduceAsync(
                 rawMessage1.Take(3).ToArray(),
@@ -799,25 +845,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = 10
-                                        }
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EnableChunking(10))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
                             {
@@ -893,25 +936,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = 10
-                                        }
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EnableChunking(10))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
                             {
@@ -961,25 +1001,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = 10
-                                        }
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EnableChunking(10))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
                             {
@@ -1025,25 +1062,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = 10
-                                        }
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EnableChunking(10))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddDelegateSubscriber((BinaryFileMessage _) => throw new InvalidOperationException("Test"))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
@@ -1095,24 +1129,31 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
+                        .AddDelegateSubscriber((BinaryFileMessage _) => throw new InvalidOperationException("Test"))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage1.Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
@@ -1166,24 +1207,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage1.Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
@@ -1231,25 +1278,31 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings(),
-                                        ErrorPolicy = ErrorPolicy.Retry()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Retry(5))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage1.Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
@@ -1303,24 +1356,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage1.Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
@@ -1380,23 +1439,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -1455,27 +1521,31 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            Timeout = TimeSpan.FromMilliseconds(500)
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .WithSequenceTimeout(TimeSpan.FromMilliseconds(500))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -1549,23 +1619,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings
-                                        {
-                                            Timeout = TimeSpan.FromMilliseconds(500)
-                                        },
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .ConsumeBinaryFiles()
+                                        .WithSequenceTimeout(TimeSpan.FromMilliseconds(500))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
                             {
@@ -1582,7 +1650,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -1659,24 +1733,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage1.Skip(10).Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 1, typeof(TestEventOne)));
@@ -1731,24 +1811,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Sequence = new SequenceSettings()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll())))
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
             await producer.RawProduceAsync(
                 rawMessage1.Skip(10).Take(10).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 1, typeof(BinaryFileMessage)));
@@ -1794,22 +1880,29 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -1857,19 +1950,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .ConsumeBinaryFiles()
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddDelegateSubscriber(
                             async (BinaryFileMessage binaryFile) =>
                             {
@@ -1886,7 +1980,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -1934,22 +2034,29 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -1997,19 +2104,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            EnableAutoCommit = false,
-                                            CommitOffsetEach = 1
-                                        },
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .ConsumeBinaryFiles()
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddDelegateSubscriber(
                             async (BinaryFileMessage binaryFile) =>
                             {
@@ -2026,7 +2134,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -2070,25 +2184,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(3)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = 10
-                                        }
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EnableChunking(10))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
@@ -2145,18 +2256,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(3)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .ConsumeBinaryFiles()
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
                             {
@@ -2171,7 +2283,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
 
             await producer.RawProduceAsync(
                 rawMessage1.Take(10).ToArray(),
@@ -2238,30 +2356,33 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = 50
-                                        }
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EnableChunking(50))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
-            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            var producer = Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
 
             await producer.RawProduceAsync(
                 rawMessage1.ToArray(),
@@ -2311,25 +2432,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = 10
-                                        }
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EnableChunking(10))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
                             {
@@ -2389,25 +2507,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = 10
-                                        }
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EnableChunking(10))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        }
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
                             {

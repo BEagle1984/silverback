@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.KafkaEvents.Statistics;
 
@@ -23,6 +22,6 @@ namespace Silverback.Messaging.KafkaEvents
         ///         configuration property (disabled by default).
         ///     </para>
         /// </summary>
-        public Func<KafkaStatistics, string, KafkaProducer, Task>? StatisticsHandler { get; set; }
+        public Action<KafkaStatistics, string, KafkaProducer>? StatisticsHandler { get; set; }
     }
 }

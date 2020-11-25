@@ -26,7 +26,7 @@ namespace Silverback.Messaging
         ///     Gets or sets the error policy to be applied when an exception occurs during the processing of the
         ///     consumed messages.
         /// </summary>
-        public IErrorPolicy ErrorPolicy { get; set; } = Configuration.ErrorPolicy.Stop();
+        public IErrorPolicy ErrorPolicy { get; set; } = new StopConsumerErrorPolicy();
 
         /// <summary>
         ///     Gets or sets the strategy to be used to guarantee that each message is consumed only once.

@@ -27,7 +27,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void GetProducer_SomeEndpoint_ProducerIsReturned()
         {
-            var producer = _broker.GetProducer(new KafkaProducerEndpoint("test-endpoint"));
+            var producer = _broker.GetProducer(
+                new KafkaProducerEndpoint("test-endpoint")
+                {
+                    Configuration =
+                    {
+                        BootstrapServers = "PLAINTEXT://whatever:1111"
+                    }
+                });
 
             producer.Should().NotBeNull();
         }
@@ -35,8 +42,23 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void GetProducer_SameEndpoint_SameInstanceIsReturned()
         {
-            var producer = _broker.GetProducer(new KafkaProducerEndpoint("test-endpoint"));
-            var producer2 = _broker.GetProducer(new KafkaProducerEndpoint("test-endpoint"));
+            var producer = _broker.GetProducer(
+                new KafkaProducerEndpoint("test-endpoint")
+                {
+                    Configuration =
+                    {
+                        BootstrapServers = "PLAINTEXT://whatever:1111"
+                    }
+                });
+
+            var producer2 = _broker.GetProducer(
+                new KafkaProducerEndpoint("test-endpoint")
+                {
+                    Configuration =
+                    {
+                        BootstrapServers = "PLAINTEXT://whatever:1111"
+                    }
+                });
 
             producer2.Should().BeSameAs(producer);
         }
@@ -69,8 +91,23 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void GetProducer_DifferentEndpoint_DifferentInstanceIsReturned()
         {
-            var producer = _broker.GetProducer(new KafkaProducerEndpoint("test-endpoint"));
-            var producer2 = _broker.GetProducer(new KafkaProducerEndpoint("other-endpoint"));
+            var producer = _broker.GetProducer(
+                new KafkaProducerEndpoint("test-endpoint")
+                {
+                    Configuration =
+                    {
+                        BootstrapServers = "PLAINTEXT://whatever:1111"
+                    }
+                });
+
+            var producer2 = _broker.GetProducer(
+                new KafkaProducerEndpoint("other-endpoint")
+                {
+                    Configuration =
+                    {
+                        BootstrapServers = "PLAINTEXT://whatever:1111"
+                    }
+                });
 
             producer2.Should().NotBeSameAs(producer);
         }
@@ -102,7 +139,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void AddConsumer_SomeEndpoint_ConsumerIsReturned()
         {
-            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
+            var consumer = _broker.AddConsumer(
+                new KafkaConsumerEndpoint("test-endpoint")
+                {
+                    Configuration =
+                    {
+                        BootstrapServers = "PLAINTEXT://whatever:1111"
+                    }
+                });
 
             consumer.Should().NotBeNull();
         }
@@ -110,8 +154,23 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void AddConsumer_SameEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
-            var consumer2 = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
+            var consumer = _broker.AddConsumer(
+                new KafkaConsumerEndpoint("test-endpoint")
+                {
+                    Configuration =
+                    {
+                        BootstrapServers = "PLAINTEXT://whatever:1111"
+                    }
+                });
+
+            var consumer2 = _broker.AddConsumer(
+                new KafkaConsumerEndpoint("test-endpoint")
+                {
+                    Configuration =
+                    {
+                        BootstrapServers = "PLAINTEXT://whatever:1111"
+                    }
+                });
 
             consumer2.Should().NotBeSameAs(consumer);
         }
@@ -119,8 +178,23 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void AddConsumer_DifferentEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
-            var consumer2 = _broker.AddConsumer(new KafkaConsumerEndpoint("other-endpoint"));
+            var consumer = _broker.AddConsumer(
+                new KafkaConsumerEndpoint("test-endpoint")
+                {
+                    Configuration =
+                    {
+                        BootstrapServers = "PLAINTEXT://whatever:1111"
+                    }
+                });
+
+            var consumer2 = _broker.AddConsumer(
+                new KafkaConsumerEndpoint("other-endpoint")
+                {
+                    Configuration =
+                    {
+                        BootstrapServers = "PLAINTEXT://whatever:1111"
+                    }
+                });
 
             consumer2.Should().NotBeSameAs(consumer);
         }

@@ -20,10 +20,6 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     /// TODO: Exponential backoff variant
     public class RetryErrorPolicy : ErrorPolicyBase
     {
-        private readonly TimeSpan _initialDelay;
-
-        private readonly TimeSpan _delayIncrement;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="RetryErrorPolicy" /> class.
         /// </summary>
@@ -35,10 +31,10 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         /// </param>
         public RetryErrorPolicy(TimeSpan? initialDelay = null, TimeSpan? delayIncrement = null)
         {
-            _initialDelay = initialDelay ?? TimeSpan.Zero;
-            _delayIncrement = delayIncrement ?? TimeSpan.Zero;
+            InitialDelay = initialDelay ?? TimeSpan.Zero;
+            DelayIncrement = delayIncrement ?? TimeSpan.Zero;
 
-            if (_initialDelay < TimeSpan.Zero)
+            if (InitialDelay < TimeSpan.Zero)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(initialDelay),
@@ -46,7 +42,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                     "The specified initial delay must be greater than TimeSpan.Zero.");
             }
 
-            if (_delayIncrement < TimeSpan.Zero)
+            if (DelayIncrement < TimeSpan.Zero)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(delayIncrement),
@@ -55,11 +51,15 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             }
         }
 
+        internal TimeSpan InitialDelay { get; }
+
+        internal TimeSpan DelayIncrement { get; }
+
         /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
         protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
             new RetryErrorPolicyImplementation(
-                _initialDelay,
-                _delayIncrement,
+                InitialDelay,
+                DelayIncrement,
                 MaxFailedAttemptsCount,
                 ExcludedExceptions,
                 IncludedExceptions,

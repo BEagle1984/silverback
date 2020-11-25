@@ -169,7 +169,7 @@ namespace Silverback.Messaging.Publishing
 
             IReadOnlyCollection<object> messagesList = messages.AsReadOnlyCollection();
 
-            if (!messagesList.Any())
+            if (messagesList.Count == 0)
                 return Array.Empty<object>();
 
             Check.HasNoNulls(messagesList, nameof(messages));

@@ -18,6 +18,18 @@ namespace Silverback.Messaging.Configuration
         private const bool KafkaDefaultAutoCommitEnabled = true;
 
         /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaConsumerConfig" /> class.
+        /// </summary>
+        /// <param name="clientConfig">
+        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaConsumerConfig" />.
+        /// </param>
+        public KafkaConsumerConfig(KafkaClientConfig? clientConfig = null)
+            : base(clientConfig?.GetConfluentConfig())
+        {
+        }
+
+        /// <summary>
         ///     Gets a value indicating whether autocommit is enabled according to the explicit
         ///     configuration and Kafka defaults.
         /// </summary>
@@ -35,9 +47,16 @@ namespace Silverback.Messaging.Configuration
         /// </summary>
         public bool EnableAutoRecovery { get; set; } = true;
 
-        /// <inheritdoc cref="ConfluentClientConfigProxy.Validate" />
+        /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+        // TODO: Test validation
         public override void Validate()
         {
+            if (string.IsNullOrEmpty(BootstrapServers))
+            {
+                throw new EndpointConfigurationException(
+                    "BootstrapServers is required to connect with the message broker.");
+            }
+
             if (IsAutoCommitEnabled && CommitOffsetEach >= 0)
             {
                 throw new EndpointConfigurationException(

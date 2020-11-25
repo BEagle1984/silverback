@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Sequences.Chunking;
 
@@ -27,7 +26,7 @@ namespace Silverback.Messaging
         ///     Gets or sets the strategy to be used to produce the messages. If no strategy is specified, the
         ///     messages will be sent to the message broker directly.
         /// </summary>
-        public IProduceStrategy Strategy { get; set; } = ProduceStrategy.Default();
+        public IProduceStrategy Strategy { get; set; } = new DefaultProduceStrategy();
 
         /// <summary>
         ///     Gets or sets the message chunking settings. This option can be used to split large messages into

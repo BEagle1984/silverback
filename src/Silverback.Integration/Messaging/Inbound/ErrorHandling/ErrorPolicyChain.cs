@@ -25,6 +25,17 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         /// <param name="policies">
         ///     The policies to be chained.
         /// </param>
+        public ErrorPolicyChain(params ErrorPolicyBase[] policies)
+            : this(policies.AsEnumerable())
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ErrorPolicyChain" /> class.
+        /// </summary>
+        /// <param name="policies">
+        ///     The policies to be chained.
+        /// </param>
         public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies)
         {
             _policies = Check.NotNull(policies, nameof(policies)).ToList();

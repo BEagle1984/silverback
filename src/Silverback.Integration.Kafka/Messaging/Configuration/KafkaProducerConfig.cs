@@ -18,6 +18,18 @@ namespace Silverback.Messaging.Configuration
         private const bool KafkaDefaultEnableDeliveryReports = true;
 
         /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducerConfig" /> class.
+        /// </summary>
+        /// <param name="clientConfig">
+        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaProducerConfig" />.
+        /// </param>
+        public KafkaProducerConfig(KafkaClientConfig? clientConfig = null)
+            : base(clientConfig?.GetConfluentConfig())
+        {
+        }
+
+        /// <summary>
         ///     Gets a value indicating whether delivery reports are enabled according to the explicit
         ///     configuration and Kafka defaults.
         /// </summary>
@@ -25,7 +37,7 @@ namespace Silverback.Messaging.Configuration
 
         /// <summary>
         ///     Specifies whether an exception must be thrown by the producer if the persistence is not acknowledge
-        ///     by the broker.
+        ///     by the broker. The default is <c>true</c>.
         /// </summary>
         public bool ThrowIfNotAcknowledged { get; set; } = true;
 
@@ -45,9 +57,16 @@ namespace Silverback.Messaging.Configuration
              DeliveryReportFields == "all" ||
              DeliveryReportFields.Contains("status", StringComparison.Ordinal));
 
-        /// <inheritdoc cref="ConfluentClientConfigProxy.Validate" />
+        /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+        // TODO: Test validation
         public override void Validate()
         {
+            if (string.IsNullOrEmpty(BootstrapServers))
+            {
+                throw new EndpointConfigurationException(
+                    "BootstrapServers is required to connect with the message broker.");
+            }
+
             if (ThrowIfNotAcknowledged && !ArePersistenceStatusReportsEnabled)
             {
                 throw new EndpointConfigurationException(

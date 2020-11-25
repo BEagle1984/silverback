@@ -18,8 +18,6 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     /// </summary>
     public class MoveMessageErrorPolicy : ErrorPolicyBase
     {
-        private readonly IProducerEndpoint _endpoint;
-
         private Action<IOutboundEnvelope, Exception>? _transformationAction;
 
         /// <summary>
@@ -34,8 +32,10 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             endpoint.Validate();
 
-            _endpoint = endpoint;
+            Endpoint = endpoint;
         }
+
+        internal IProducerEndpoint Endpoint { get; }
 
         /// <summary>
         ///     Defines an <see cref="Action{T}" /> to be called to modify (or completely rewrite) the message being
@@ -57,7 +57,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
         protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
             new MoveMessageErrorPolicyImplementation(
-                _endpoint,
+                Endpoint,
                 _transformationAction,
                 MaxFailedAttemptsCount,
                 ExcludedExceptions,

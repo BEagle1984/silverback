@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -38,19 +36,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             options => options
                                 .AddMockedKafka(mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1))
                                 .AddInMemoryInboundLog())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        ExactlyOnceStrategy = ExactlyOnceStrategy.Log()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnsureExactlyOnce(strategy => strategy.LogMessages())
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
@@ -106,19 +106,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             options => options
                                 .AddMockedKafka(mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1))
                                 .AddInboundLogDatabaseTable())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        ExactlyOnceStrategy = ExactlyOnceStrategy.Log()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnsureExactlyOnce(strategy => strategy.LogMessages())
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .WithTestDbContext()
                 .Run();
@@ -176,27 +178,26 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             options => options
                                 .AddMockedKafka(mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1))
                                 .AddInMemoryOffsetStore())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore(),
-                                        Events =
-                                        {
-                                            PartitionsAssignedHandler = (partitions, _) =>
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnsureExactlyOnce(strategy => strategy.StoreOffsets())
+                                        .OnPartitionsAssigned(
+                                            (partitions, _) =>
                                                 partitions.Select(
                                                     topicPartition => new TopicPartitionOffset(
                                                         topicPartition,
-                                                        Offset.Beginning))
-                                        }
-                                    }))
+                                                        Offset.Beginning)))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
@@ -247,27 +248,26 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             options => options
                                 .AddMockedKafka(mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1))
                                 .AddOffsetStoreDatabaseTable())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore(),
-                                        Events =
-                                        {
-                                            PartitionsAssignedHandler = (partitions, _) =>
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnsureExactlyOnce(strategy => strategy.StoreOffsets())
+                                        .OnPartitionsAssigned(
+                                            (partitions, _) =>
                                                 partitions.Select(
                                                     topicPartition => new TopicPartitionOffset(
                                                         topicPartition,
-                                                        Offset.Beginning))
-                                        }
-                                    }))
+                                                        Offset.Beginning)))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .WithTestDbContext()
                 .Run();

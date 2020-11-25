@@ -10,7 +10,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Batch;
@@ -47,7 +47,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public void CanHandle_SingleMessage_TrueReturned()
         {
-            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(),
@@ -66,7 +66,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public void CanHandle_Sequence_FalseReturned()
         {
-            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(),
@@ -94,7 +94,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public void CanHandle_RawSequence_FalseReturned()
         {
-            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(),
@@ -116,7 +116,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_InboundMessage_MessageMoved()
         {
-            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(),
@@ -136,7 +136,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_InboundMessage_MessagePreserved()
         {
-            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
 
             var message = new TestEventOne { Content = "hey oh!" };
             var headers = new MessageHeaderCollection
@@ -172,7 +172,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_NotDeserializedInboundMessage_MessagePreserved()
         {
-            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
@@ -193,7 +193,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_InboundMessage_HeadersPreserved()
         {
-            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var headers = new MessageHeaderCollection
             {
                 { "key1", "value1" },
@@ -219,8 +219,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_WithTransform_MessageTranslated()
         {
-            var policy = ErrorPolicy
-                .Move(TestProducerEndpoint.GetDefault())
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault())
                 .Transform((originalEnvelope, _) => { originalEnvelope.Message = new TestEventTwo(); })
                 .Build(_serviceProvider);
 
@@ -253,8 +252,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task Transform_SingleMessage_HeadersProperlyModified()
         {
-            var policy = ErrorPolicy
-                .Move(TestProducerEndpoint.GetDefault())
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault())
                 .Transform((outboundEnvelope, ex) => { outboundEnvelope.Headers.Add("error", ex.GetType().Name); })
                 .Build(_serviceProvider);
 
@@ -278,7 +276,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_SingleMessage_SourceEndpointHeaderIsSet()
         {
-            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
@@ -304,7 +302,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_SingleMessage_TrueReturned()
         {
-            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
@@ -323,7 +321,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_Whatever_ConsumerCommittedButTransactionAborted()
         {
-            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var policy = new MoveMessageErrorPolicy(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),

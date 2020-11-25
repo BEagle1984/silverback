@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -36,7 +36,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public void CanHandle_Whatever_TrueReturned()
         {
-            var policy = ErrorPolicy.Skip().Build(_serviceProvider);
+            var policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(),
@@ -55,7 +55,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_Whatever_TrueReturned()
         {
-            var policy = ErrorPolicy.Skip().Build(_serviceProvider);
+            var policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(),
@@ -74,7 +74,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleError_Whatever_ConsumerCommittedButTransactionAborted()
         {
-            var policy = ErrorPolicy.Skip().Build(_serviceProvider);
+            var policy = new SkipMessageErrorPolicy().Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),

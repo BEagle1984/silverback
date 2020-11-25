@@ -8,8 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging;
-using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -66,18 +64,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             .AddSilverback()
                             .UseModel()
                             .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                            .AddEndpoints(
+                            .AddKafkaEndpoints(
                                 endpoints => endpoints
-                                    .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint(DefaultTopicName))
+                                    .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                    .AddOutbound<IBinaryFileMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                     .AddInbound(
-                                        new KafkaConsumerEndpoint(DefaultTopicName)
-                                        {
-                                            Configuration =
-                                            {
-                                                GroupId = "consumer1",
-                                                AutoCommitIntervalMs = 100
-                                            }
-                                        }))
+                                        endpoint => endpoint
+                                            .ConsumeFrom(DefaultTopicName)
+                                            .Configure(
+                                                config =>
+                                                {
+                                                    config.GroupId = "consumer1";
+                                                    config.AutoCommitIntervalMs = 50;
+                                                })))
                             .AddDelegateSubscriber(
                                 (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
                             .AddSingletonBrokerBehavior<SpyBrokerBehavior>();
@@ -134,23 +133,23 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceBinaryFiles())
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })
+                                        .ConsumeBinaryFiles()))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
@@ -206,23 +205,25 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceBinaryFiles(
+                                            serializer => serializer
+                                                .UseModel<BinaryFileMessage>()))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        Serializer = BinaryFileMessageSerializer.Default
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })
+                                        .ConsumeBinaryFiles()))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
                             {
@@ -290,23 +291,25 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Serializer = new BinaryFileMessageSerializer()
-                                    })
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceBinaryFiles())
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        Serializer = new BinaryFileMessageSerializer<CustomBinaryFileMessage>()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })
+                                        .ConsumeBinaryFiles(
+                                            serializer => serializer
+                                                .UseModel<CustomBinaryFileMessage>())))
                         .AddDelegateSubscriber(
                             (CustomBinaryFileMessage binaryFile) =>
                             {
@@ -377,19 +380,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IBinaryFileMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        Serializer = new BinaryFileMessageSerializer<CustomBinaryFileMessage>()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })
+                                        .ConsumeBinaryFiles(
+                                            serializer => serializer
+                                                .UseModel<CustomBinaryFileMessage>())))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
                             {
@@ -461,19 +467,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddEndpoints(
+                        .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IBinaryFileMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    new KafkaConsumerEndpoint(DefaultTopicName)
-                                    {
-                                        Configuration =
-                                        {
-                                            GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
-                                        },
-                                        Serializer = new BinaryFileMessageSerializer<CustomBinaryFileMessage>()
-                                    }))
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })
+                                        .ConsumeBinaryFiles(
+                                            serializer => serializer.UseModel<CustomBinaryFileMessage>())))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
                             {

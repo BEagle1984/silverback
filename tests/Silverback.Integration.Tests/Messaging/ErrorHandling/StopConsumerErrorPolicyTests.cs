@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -37,7 +37,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public void CanHandle_Whatever_TrueReturned()
         {
-            var policy = ErrorPolicy.Stop().Build(_serviceProvider);
+            var policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(),
@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_Whatever_FalseReturned()
         {
-            var policy = ErrorPolicy.Stop().Build(_serviceProvider);
+            var policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(),
@@ -77,7 +77,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         {
             /* The consumer will be stopped and the transaction aborted by the consumer/behavior */
 
-            var policy = ErrorPolicy.Stop().Build(_serviceProvider);
+            var policy = new StopConsumerErrorPolicy().Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),

@@ -66,10 +66,10 @@ namespace Silverback.Messaging.KafkaEvents
                 {
                     logger.LogInformation(
                         KafkaEventIds.PartitionsAssigned,
-                        "Assigned partition {topic}[{partition}], member id: {memberId}",
+                        "Assigned partition {topic}[{partition}]. (consumerId: {consumerId})",
                         partition.Topic,
                         partition.Partition.Value,
-                        consumer.MemberId);
+                        consumer.Id);
                 });
 
             var topicPartitionOffsets =
@@ -82,10 +82,11 @@ namespace Silverback.Messaging.KafkaEvents
                 {
                     logger.LogDebug(
                         KafkaEventIds.PartitionOffsetReset,
-                        "{topic}[{partition}] offset will be reset to {offset}.",
+                        "{topic}[{partition}] offset will be reset to {offset}. (consumerId: {consumerId})",
                         topicPartitionOffset.Topic,
                         topicPartitionOffset.Partition.Value,
-                        topicPartitionOffset.Offset);
+                        topicPartitionOffset.Offset,
+                        consumer.Id);
                 }
             }
 
@@ -109,10 +110,11 @@ namespace Silverback.Messaging.KafkaEvents
                 {
                     logger.LogInformation(
                         KafkaEventIds.PartitionsRevoked,
-                        "Revoked partition {topic}[{partition}], member id: {memberId}",
+                        "Revoked partition {topic}[{partition}]. (consumerId: {consumerId})",
                         partition.Topic,
                         partition.Partition.Value,
-                        consumer.MemberId);
+                        consumer.MemberId,
+                        consumer.Id);
                 });
 
             consumer.Endpoint.Events.PartitionsRevokedHandler?.Invoke(partitions, consumer);
@@ -132,21 +134,23 @@ namespace Silverback.Messaging.KafkaEvents
                 {
                     logger.LogError(
                         KafkaEventIds.KafkaEventsHandlerErrorWhileCommittingOffset,
-                        "Error occurred committing the offset {topic}[{partition}] @{offset}: {errorCode} - {errorReason}",
+                        "Error occurred committing the offset {topic}[{partition}] @{offset}: {errorCode} - {errorReason} (consumerId: {consumerId})",
                         offset.Topic,
                         offset.Partition.Value,
                         offset.Offset,
                         offset.Error.Code,
-                        offset.Error.Reason);
+                        offset.Error.Reason,
+                        consumer.Id);
                 }
                 else
                 {
                     logger.LogDebug(
                         KafkaEventIds.OffsetCommitted,
-                        "Successfully committed offset {topic}[{partition}] @{offset}",
+                        "Successfully committed offset {topic}[{partition}] @{offset} (consumerId: {consumerId})",
                         offset.Topic,
                         offset.Partition.Value,
-                        offset.Offset);
+                        offset.Offset,
+                        consumer.Id);
                 }
             }
 

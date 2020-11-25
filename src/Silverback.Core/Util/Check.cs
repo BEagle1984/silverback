@@ -39,7 +39,7 @@ namespace Silverback.Util
             if (value.Count == 0)
             {
                 NotEmpty(parameterName, nameof(parameterName));
-                throw new ArgumentException("Value cannot be an empty collection.");
+                throw new ArgumentException("Value cannot be an empty collection.", parameterName);
             }
 
             return value;
@@ -55,7 +55,7 @@ namespace Silverback.Util
             if (value is null)
                 exception = new ArgumentNullException(parameterName);
             else if (value.Trim().Length == 0)
-                exception = new ArgumentException("Value cannot be empty.");
+                exception = new ArgumentException("Value cannot be empty.", parameterName);
 
             if (exception != null)
             {
@@ -97,7 +97,7 @@ namespace Silverback.Util
             return value;
         }
 
-        public static IReadOnlyCollection<string> HasNoNullsOrEmpties(
+        public static IReadOnlyCollection<string> HasNoEmpties(
             IReadOnlyCollection<string>? value,
             [InvokerParameterName] [System.Diagnostics.CodeAnalysis.NotNull]
             string parameterName)

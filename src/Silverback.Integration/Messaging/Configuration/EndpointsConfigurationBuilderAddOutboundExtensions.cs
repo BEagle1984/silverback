@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Configuration
     public static class EndpointsConfigurationBuilderAddOutboundExtensions
     {
         /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
+        ///     Adds an outbound endpoint for the specified message type.
         /// </summary>
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
+        ///     Adds an outbound endpoint for the specified message type.
         /// </summary>
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
@@ -65,7 +65,34 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
+        ///     Adds an outbound endpoint for the specified message type.
+        /// </summary>
+        /// <param name="endpointsConfigurationBuilder">
+        ///     The <see cref="IEndpointsConfigurationBuilder" />.
+        /// </param>
+        /// <param name="messageType">
+        ///     The type of the messages to be published to this endpoint.
+        /// </param>
+        /// <param name="endpoints">
+        ///     The endpoints (topics).
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static IEndpointsConfigurationBuilder AddOutbound(
+            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
+            Type messageType,
+            params IProducerEndpoint[] endpoints)
+        {
+            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(messageType, nameof(messageType));
+            Check.NotNull(endpoints, nameof(endpoints));
+
+            return endpointsConfigurationBuilder.AddOutbound(messageType, (IEnumerable<IProducerEndpoint>)endpoints);
+        }
+
+        /// <summary>
+        ///     Adds an outbound endpoint for the specified message type.
         /// </summary>
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
@@ -85,6 +112,7 @@ namespace Silverback.Messaging.Configuration
             IEnumerable<IProducerEndpoint> endpoints)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(messageType, nameof(messageType));
             Check.NotNull(endpoints, nameof(endpoints));
 
             return endpointsConfigurationBuilder.AddOutbound(
@@ -93,7 +121,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
+        ///     Adds an outbound endpoint for the specified message type.
         /// </summary>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be published to this endpoint.
@@ -118,7 +146,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
+        ///     Adds an outbound endpoint for the specified message type.
         /// </summary>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be published to this endpoint.
@@ -143,7 +171,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
+        ///     Adds an outbound endpoint for the specified message type.
         /// </summary>
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
@@ -164,6 +192,8 @@ namespace Silverback.Messaging.Configuration
             Type routerType)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(messageType, nameof(messageType));
+            Check.NotNull(routerType, nameof(routerType));
 
             endpointsConfigurationBuilder.GetOutboundRoutingConfiguration().Add(
                 messageType,
@@ -173,7 +203,7 @@ namespace Silverback.Messaging.Configuration
         }
 
         /// <summary>
-        ///     Adds and outbound endpoint for the specified message type.
+        ///     Adds an outbound endpoint for the specified message type.
         /// </summary>
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
@@ -193,6 +223,7 @@ namespace Silverback.Messaging.Configuration
             IOutboundRouter router)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(messageType, nameof(messageType));
             Check.NotNull(router, nameof(router));
 
             endpointsConfigurationBuilder.GetOutboundRoutingConfiguration()

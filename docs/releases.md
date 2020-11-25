@@ -8,13 +8,14 @@ uid: releases
 
 ### What's new
 
+* Simplify subscribers registration and get rid of the `ISubscriber` interface (see <xref:subscribe>)
+* Simplify configuration and reduce boiler plate (see <xref:subscribe> and <xref:message-broker>)
+* Improved endpoints configuration API (see <xref:message-broker>)
 * Refactor Silverback.Integration to support streaming
     * Create [`IMessageStreamEnumerable<TMessage>`](xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1) (see <xref:streaming>)
     * Improve chunking support in conjunction with streaming, requiring only one chunk at a time to be loaded into memory
     * Redesign sequences handling to support chunking, batch consuming and future sequences as well (see <xref:sequences>)
 * Process Kafka partitions independently and concurrently (see <xref:kafka-partitioning>)
-* Simplify subscribers registration and get rid of the `ISubscriber` interface (see <xref:subscribe>)
-* Simplify configuration and reduce boiler plate (see <xref:subscribe> and <xref:message-broker>)
 * Connect brokers and handle graceful shutdown automatically (see <xref:message-broker>)
 * Scan subscribers automatically at startup to reduce cost of first message
 * Add `IServiceCollection.ConfigureSilverback` extension method to conveniently split the configuration code (see <xref:enabling-silverback>)

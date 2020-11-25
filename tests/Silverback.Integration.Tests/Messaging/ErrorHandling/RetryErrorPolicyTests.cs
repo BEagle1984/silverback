@@ -8,7 +8,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -45,7 +45,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             int failedAttempts,
             bool expectedResult)
         {
-            var policy = ErrorPolicy.Retry().MaxFailedAttempts(3).Build(_serviceProvider);
+            var policy = new RetryErrorPolicy().MaxFailedAttempts(3).Build(_serviceProvider);
 
             var rawMessage = new MemoryStream();
             var headers = new[]
@@ -70,7 +70,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_Whatever_TrueReturned()
         {
-            var policy = ErrorPolicy.Retry().MaxFailedAttempts(3).Build(_serviceProvider);
+            var policy = new RetryErrorPolicy().MaxFailedAttempts(3).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(),
@@ -89,7 +89,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [Fact]
         public async Task HandleErrorAsync_Whatever_ConsumerRolledBackAndTransactionAborted()
         {
-            var policy = ErrorPolicy.Retry().MaxFailedAttempts(3).Build(_serviceProvider);
+            var policy = new RetryErrorPolicy().MaxFailedAttempts(3).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
                 "hey oh!",
                 new MemoryStream(),

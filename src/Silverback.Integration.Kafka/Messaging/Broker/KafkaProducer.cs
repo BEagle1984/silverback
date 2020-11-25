@@ -63,7 +63,7 @@ namespace Silverback.Messaging.Broker
             _logger = logger;
 
             _confluentProducerBuilder = serviceProvider.GetRequiredService<IConfluentProducerBuilder>();
-            _confluentProducerBuilder.SetConfig(endpoint.Configuration.ConfluentConfig);
+            _confluentProducerBuilder.SetConfig(endpoint.Configuration.GetConfluentConfig());
             _confluentProducerBuilder.SetEventsHandlers(this, logger);
         }
 
@@ -142,7 +142,7 @@ namespace Silverback.Messaging.Broker
 
         private IProducer<byte[]?, byte[]?> GetConfluentProducer() =>
             _confluentProducer ??=
-                ProducersCache.GetOrAdd(Endpoint.Configuration.ConfluentConfig, _ => CreateConfluentProducer());
+                ProducersCache.GetOrAdd(Endpoint.Configuration.GetConfluentConfig(), _ => CreateConfluentProducer());
 
         private IProducer<byte[]?, byte[]?> CreateConfluentProducer()
         {
@@ -186,7 +186,7 @@ namespace Silverback.Messaging.Broker
         private void DisposeConfluentProducer()
         {
             // Dispose only if still in cache to avoid ObjectDisposedException
-            if (!ProducersCache.TryRemove(Endpoint.Configuration.ConfluentConfig, out _))
+            if (!ProducersCache.TryRemove(Endpoint.Configuration.GetConfluentConfig(), out _))
                 return;
 
             _confluentProducer?.Flush(TimeSpan.FromSeconds(10));
