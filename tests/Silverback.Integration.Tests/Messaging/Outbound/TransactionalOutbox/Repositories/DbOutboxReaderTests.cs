@@ -154,7 +154,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
                 });
             await _dbContext.SaveChangesAsync();
 
-            var message = (await _queueReader.ReadAsync(1)).FirstOrDefault();
+            var message = (await _queueReader.ReadAsync(1)).First();
 
             message.Headers.Should().BeEquivalentTo(
                 new MessageHeader("one", "1"),

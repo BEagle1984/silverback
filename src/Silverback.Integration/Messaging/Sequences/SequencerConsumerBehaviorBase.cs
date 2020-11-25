@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Sequences
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            var sequenceReader = await GetSequenceReaderAsync(context).ConfigureAwait(false);
+            var sequenceReader = await _sequenceReaders.FirstOrDefaultAsync(reader => reader.CanHandleAsync(context)).ConfigureAwait(false);
 
             if (sequenceReader == null)
             {
@@ -179,18 +179,6 @@ namespace Silverback.Messaging.Sequences
                             .ConfigureAwait(false);
                     }
                 });
-        }
-
-        // TODO: Implement FirstOrDefaultAsync
-        private async Task<ISequenceReader?> GetSequenceReaderAsync(ConsumerPipelineContext context)
-        {
-            foreach (var reader in _sequenceReaders)
-            {
-                if (await reader.CanHandleAsync(context).ConfigureAwait(false))
-                    return reader;
-            }
-
-            return null;
         }
     }
 }

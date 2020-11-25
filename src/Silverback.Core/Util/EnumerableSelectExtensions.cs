@@ -107,19 +107,5 @@ namespace Silverback.Util
             var results = await ParallelSelectAsync(source, selector, maxDegreeOfParallelism).ConfigureAwait(false);
             return results.SelectMany(r => r);
         }
-
-        public static async Task<IEnumerable<T>> WhereAsync<T>(
-            this IEnumerable<T> source,
-            Func<T, Task<bool>> predicate)
-        {
-            var results = new List<T>();
-            await source.ForEachAsync(
-                async s =>
-                {
-                    if (await predicate(s).ConfigureAwait(false))
-                        results.Add(s);
-                }).ConfigureAwait(false);
-            return results;
-        }
     }
 }

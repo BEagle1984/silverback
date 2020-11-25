@@ -11,7 +11,6 @@ namespace Silverback.Util
     ///     Adds some extension methods to the <see cref="IObservable{T}" /> that gets the target type as
     ///     <see cref="Type" /> instead of generic type parameter.
     /// </summary>
-    // TODO: Test
     internal static class ObservableTypeParameterExtensions
     {
         public static IObservable<object> OfType(this IObservable<object> source, Type type) =>

@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -2114,7 +2115,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     {
                                         Chunk = new ChunkSettings
                                         {
-                                            Size = messagesCount
+                                            Size = 10
                                         }
                                     })
                                 .AddInbound(
@@ -2152,10 +2153,29 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task Chunking_BinaryFilesFromMultiplePartitions_ConcurrentlyConsumed()
         {
-            const int messagesCount = 10;
-            const int chunksPerMessage = 3;
+            var rawMessage1 = new byte[]
+            {
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10,
+                0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x20,
+                0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x30
+            };
+            var rawMessage2 = new byte[]
+            {
+                0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30,
+                0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x40,
+                0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x50
+            };
+            var rawMessage3 = new byte[]
+            {
+                0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30,
+                0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x50,
+                0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x20
+            };
 
-            var serviceProvider = Host.ConfigureServices(
+            int receivedFilesCount = 0;
+            var receivedFiles = new List<byte[]?>();
+
+            Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
@@ -2165,14 +2185,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(3)))
                         .AddEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<IBinaryFileMessage>(
-                                    new KafkaProducerEndpoint(DefaultTopicName)
-                                    {
-                                        Chunk = new ChunkSettings
-                                        {
-                                            Size = messagesCount
-                                        }
-                                    })
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
@@ -2180,40 +2192,64 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
-                                        }
+                                        },
+                                        Serializer = BinaryFileMessageSerializer.Default
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddDelegateSubscriber(
+                            (BinaryFileMessage binaryFile) =>
+                            {
+                                Interlocked.Increment(ref receivedFilesCount);
+
+                                byte[]? fileContent = binaryFile.Content.ReadAll();
+
+                                lock (receivedFiles)
+                                {
+                                    receivedFiles.Add(fileContent);
+                                }
+                            }))
                 .Run();
 
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
+            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
 
-            for (int i = 1; i <= messagesCount; i++)
-            {
-                await publisher.PublishAsync(
-                    new BinaryFileMessage
-                    {
-                        Content = new MemoryStream(
-                            new byte[]
-                            {
-                                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10,
-                                0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x20,
-                                0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x30
-                            }),
-                        ContentType = "application/pdf"
-                    });
-            }
+            await producer.RawProduceAsync(
+                rawMessage1.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 0, 3));
+            await producer.RawProduceAsync(
+                rawMessage1.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1, 3));
+            await producer.RawProduceAsync(
+                rawMessage2.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("2", 0));
+            await producer.RawProduceAsync(
+                rawMessage2.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("2", 1));
+            await producer.RawProduceAsync(
+                rawMessage3.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("3", 0));
+            await producer.RawProduceAsync(
+                rawMessage3.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("3", 1));
+
+            await AsyncTestingUtil.WaitAsync(() => receivedFilesCount == 3);
+
+            receivedFilesCount.Should().Be(3);
+            receivedFiles.Should().BeEmpty();
+
+            await producer.RawProduceAsync(
+                rawMessage3.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders("3", 2, true));
+            await producer.RawProduceAsync(
+                rawMessage2.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders("2", 2, true));
+            await producer.RawProduceAsync(
+                rawMessage1.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 2, 3));
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Should().HaveCount(messagesCount);
-            Subscriber.InboundEnvelopes.Should().HaveCount(messagesCount);
-
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(messagesCount * chunksPerMessage);
-            SpyBehavior.OutboundEnvelopes.ForEach(
-                envelope => envelope.RawMessage.ReReadAll()!.Length.Should().BeLessOrEqualTo(messagesCount));
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(messagesCount);
-            SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeOfType<BinaryFileMessage>());
+            receivedFilesCount.Should().Be(3);
+            receivedFiles.Should().HaveCount(3);
+            receivedFiles.Should().BeEquivalentTo(rawMessage1, rawMessage2, rawMessage3);
         }
 
         [Fact]

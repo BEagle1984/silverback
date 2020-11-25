@@ -357,7 +357,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
             result.Should().HaveCount(32);
         }
 
-        [Fact(Skip = "Not easy to implement")]
+        [Fact]
         public void Read_EmptyStream_EmptyStreamEncrypted()
         {
             var cryptoStream = new SymmetricEncryptStream(

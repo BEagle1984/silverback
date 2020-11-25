@@ -21,6 +21,6 @@ namespace Silverback.Tests.Performance.TestTypes
 
         public bool IsEnabled(LogLevel logLevel) => logLevel >= LogLevel.Warning;
 
-        public IDisposable BeginScope<TState>(TState state) => throw new NotImplementedException();
+        public IDisposable BeginScope<TState>(TState state) => throw new NotSupportedException();
     }
 }

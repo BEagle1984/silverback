@@ -84,15 +84,5 @@ namespace Silverback.Tests.Core.Util
 
             result.Should().BeEquivalentTo(1, 1, 2, 2, 3, 3, 4, 4, 5, 5);
         }
-
-        [Fact]
-        public async Task WhereAsync_Function_Filtered()
-        {
-            var enumerable = Enumerable.Range(1, 5);
-
-            var result = await enumerable.WhereAsync(i => Task.FromResult(i % 2 == 0));
-
-            result.Should().BeEquivalentTo(2, 4);
-        }
     }
 }

@@ -24,7 +24,6 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
     ///         An <see cref="IDbContext" /> is used to read from a queue stored in a database table.
     ///     </para>
     /// </summary>
-    // TODO: Test
     public class DbOutboxReader : RepositoryBase<OutboxMessage>, IOutboxReader
     {
         /// <summary>

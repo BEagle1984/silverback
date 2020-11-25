@@ -122,12 +122,7 @@ namespace Silverback.Messaging.Broker.Topics
                     _groupsPendingRebalance.Add(consumer.GroupId);
 
                     // Rebalance asynchronously to mimic the real Kafka
-                    Task.Run(
-                        async () =>
-                        {
-                            await Task.Delay(50).ConfigureAwait(false); // TODO: Needed?
-                            Rebalance(consumer.GroupId);
-                        });
+                    Task.Run(() => Rebalance(consumer.GroupId));
                 }
             }
         }
