@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Sequences.Chunking
     ///     <see cref="ChunkSequenceReader" /> and it is asynchronously pushed with the chunks being
     ///     consumed.
     /// </summary>
-    public class ChunkStream : Stream
+    public sealed class ChunkStream : Stream
     {
         private readonly IMessageStreamEnumerable<IRawInboundEnvelope> _source;
 
@@ -148,17 +148,21 @@ namespace Silverback.Messaging.Sequences.Chunking
         public override async ValueTask DisposeAsync()
         {
             if (_asyncEnumerator != null)
+            {
                 await _asyncEnumerator.DisposeAsync().ConfigureAwait(false);
+                _asyncEnumerator = null;
+            }
 
             await base.DisposeAsync().ConfigureAwait(false);
-
-            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc cref="Stream.Dispose(bool)" />
         protected override void Dispose(bool disposing)
         {
+            _asyncEnumerator?.DisposeAsync().AsTask().Wait();
+            _asyncEnumerator = null;
             _syncEnumerator?.Dispose();
+            _syncEnumerator = null;
 
             base.Dispose(disposing);
         }

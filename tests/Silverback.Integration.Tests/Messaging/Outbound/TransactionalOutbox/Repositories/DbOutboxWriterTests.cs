@@ -3,7 +3,6 @@
 
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +17,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Repositories
 {
-    public class DbOutboxWriterTests : IAsyncDisposable
+    public sealed class DbOutboxWriterTests : IDisposable
     {
         private static readonly IOutboundEnvelope SampleOutboundEnvelope = new OutboundEnvelope(
             new TestEventOne { Content = "Test" },
@@ -110,13 +109,11 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
             outboundMessage.SerializedHeaders.Should().NotBeNullOrEmpty();
         }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
-            await _dbContext.DisposeAsync();
-            await _connection.DisposeAsync();
+            _dbContext.Dispose();
+            _connection.Dispose();
             _scope.Dispose();
-
-            GC.SuppressFinalize(this);
         }
     }
 }

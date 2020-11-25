@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Silverback.Tests.EventSourcing.EventStore
 {
-    public sealed class DbEventStoreRepositoryTests : IAsyncDisposable
+    public sealed class DbEventStoreRepositoryTests : IDisposable
     {
         private readonly TestDbContext _dbContext;
 
@@ -672,15 +672,11 @@ namespace Silverback.Tests.EventSourcing.EventStore
             act.Should().Throw<EventStoreNotFoundException>();
         }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
-            if (_connection == null)
-                return;
-
             _connection.Close();
-            await _connection.DisposeAsync();
-
-            await _dbContext.DisposeAsync();
+            _connection.Dispose();
+            _dbContext.Dispose();
         }
     }
 }

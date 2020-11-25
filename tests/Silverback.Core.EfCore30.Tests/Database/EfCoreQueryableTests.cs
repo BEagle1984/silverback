@@ -13,7 +13,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.EFCore30.Database
 {
-    public sealed class EfCoreQueryableTests : IAsyncDisposable
+    public sealed class EfCoreQueryableTests : IDisposable
     {
         private readonly TestDbContextInitializer _dbInitializer;
 
@@ -238,12 +238,10 @@ namespace Silverback.Tests.Core.EFCore30.Database
             result.First().Value.Should().Be(15);
         }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
-            _dbContext?.Dispose();
-
-            if (_dbInitializer != null)
-                await _dbInitializer.DisposeAsync();
+            _dbContext.Dispose();
+            _dbInitializer.Dispose();
         }
     }
 }

@@ -17,7 +17,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Repositories
 {
-    public class DbOutboxReaderTests : IAsyncDisposable
+    public sealed class DbOutboxReaderTests : IDisposable
     {
         // TestEventOne { Content = "Test" }
         private static readonly byte[] SampleContent =
@@ -295,13 +295,11 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
             length.Should().Be(3);
         }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
-            await _dbContext.DisposeAsync();
-            await _connection.DisposeAsync();
+            _dbContext.Dispose();
+            _connection.Dispose();
             _scope.Dispose();
-
-            GC.SuppressFinalize(this);
         }
     }
 }

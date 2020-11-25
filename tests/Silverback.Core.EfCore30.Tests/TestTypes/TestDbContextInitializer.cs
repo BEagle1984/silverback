@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
@@ -11,7 +10,7 @@ using Silverback.Messaging.Publishing;
 // ReSharper disable once CheckNamespace
 namespace Silverback.Tests.Core.EFCore30.TestTypes
 {
-    public sealed class TestDbContextInitializer : IAsyncDisposable
+    public sealed class TestDbContextInitializer : IDisposable
     {
         private SqliteConnection? _connection;
 
@@ -34,13 +33,13 @@ namespace Silverback.Tests.Core.EFCore30.TestTypes
             return dbContext;
         }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
             if (_connection == null)
                 return;
 
             _connection.Close();
-            await _connection.DisposeAsync();
+            _connection.Dispose();
         }
     }
 }

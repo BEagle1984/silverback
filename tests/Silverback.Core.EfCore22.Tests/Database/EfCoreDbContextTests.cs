@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Database;
 using Silverback.Tests.Core.EFCore30.TestTypes;
@@ -11,7 +10,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.EFCore22.Database
 {
-    public sealed class EfCoreDbContextTests : IAsyncDisposable
+    public sealed class EfCoreDbContextTests : IDisposable
     {
         private readonly TestDbContextInitializer _dbInitializer;
 
@@ -35,12 +34,10 @@ namespace Silverback.Tests.Core.EFCore22.Database
             dbSet.Should().BeOfType<EfCoreDbSet<Person>>();
         }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
-            _dbContext?.Dispose();
-
-            if (_dbInitializer != null)
-                await _dbInitializer.DisposeAsync();
+            _dbContext.Dispose();
+            _dbInitializer.Dispose();
         }
     }
 }

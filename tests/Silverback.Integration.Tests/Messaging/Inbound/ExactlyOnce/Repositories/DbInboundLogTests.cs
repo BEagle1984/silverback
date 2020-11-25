@@ -17,7 +17,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositories
 {
-    public class DbInboundLogTests : IAsyncDisposable
+    public sealed class DbInboundLogTests : IDisposable
     {
         private readonly SqliteConnection _connection;
 
@@ -265,14 +265,11 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
             result.Should().BeFalse();
         }
 
-        [Fact]
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
-            await _dbContext.DisposeAsync();
-            await _connection.DisposeAsync();
+            _dbContext.Dispose();
+            _connection.Dispose();
             _scope.Dispose();
-
-            GC.SuppressFinalize(this);
         }
     }
 }

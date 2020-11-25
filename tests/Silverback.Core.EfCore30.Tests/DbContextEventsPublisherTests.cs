@@ -16,7 +16,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.EFCore30
 {
-    public sealed class DbContextEventsPublisherTests : IAsyncDisposable
+    public sealed class DbContextEventsPublisherTests : IDisposable
     {
         private readonly TestDbContext _dbContext;
 
@@ -155,15 +155,11 @@ namespace Silverback.Tests.Core.EFCore30
             await _publisher.Received(1).PublishAsync(Arg.Any<TransactionAbortedEvent>());
         }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
-            if (_connection == null)
-                return;
-
             _connection.Close();
-            await _connection.DisposeAsync();
-
-            await _dbContext.DisposeAsync();
+            _connection.Dispose();
+            _dbContext.Dispose();
         }
     }
 }
