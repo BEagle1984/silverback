@@ -2,48 +2,51 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using FluentAssertions;
-using Silverback.Messaging.Messages;
+using Silverback.Messaging.KafkaEvents.Statistics;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
+namespace Silverback.Tests.Integration.Kafka.Messaging.KafkaEvents.Statistics
 {
-    public class KafkaStatisticsEventTests
+    public class KafkaStatisticsDeserializerTests
     {
+        private readonly IntegrationLoggerSubstitute<KafkaStatisticsDeserializerTests> _logger =
+            new IntegrationLoggerSubstitute<KafkaStatisticsDeserializerTests>();
+
         [Fact]
-        public void Constructor_ValidStatisticsJSON_StatisticsProperlyDeserialized()
+        public void TryDeserialize_ValidStatisticsJson_StatisticsProperlyDeserialized()
         {
             var resourcesHelper = new ResourcesHelper(GetType().Assembly);
             var json = resourcesHelper.GetAsString("Silverback.Tests.Integration.Kafka.Resources.statistics.json");
 
-            var statisticsEvent = new KafkaStatisticsEvent(json);
+            var statistics = KafkaStatisticsDeserializer.TryDeserialize(json, _logger);
 
             // Global fields
-            statisticsEvent.Statistics.Name.Should().Be("Test#consumer-1");
-            statisticsEvent.Statistics.ClientId.Should().Be("Test");
-            statisticsEvent.Statistics.Type.Should().Be("consumer");
-            statisticsEvent.Statistics.Ts.Should().Be(7817348490);
-            statisticsEvent.Statistics.Time.Should().Be(1583314688);
-            statisticsEvent.Statistics.ReplyQ.Should().Be(1);
-            statisticsEvent.Statistics.MsgCnt.Should().Be(2);
-            statisticsEvent.Statistics.MsgSize.Should().Be(3);
-            statisticsEvent.Statistics.MsgMax.Should().Be(4);
-            statisticsEvent.Statistics.MsgSizeMax.Should().Be(5);
-            statisticsEvent.Statistics.SimpleCnt.Should().Be(6);
-            statisticsEvent.Statistics.MetadataCacheCnt.Should().Be(1);
-            statisticsEvent.Statistics.Tx.Should().Be(340);
-            statisticsEvent.Statistics.TxBytes.Should().Be(34401);
-            statisticsEvent.Statistics.Rx.Should().Be(339);
-            statisticsEvent.Statistics.RxBytes.Should().Be(44058);
-            statisticsEvent.Statistics.TxMsgs.Should().Be(7);
-            statisticsEvent.Statistics.TxMsgBytes.Should().Be(8);
-            statisticsEvent.Statistics.RxMsgs.Should().Be(43);
-            statisticsEvent.Statistics.RxMsgBytes.Should().Be(3870);
+            statistics.Name.Should().Be("Test#consumer-1");
+            statistics.ClientId.Should().Be("Test");
+            statistics.Type.Should().Be("consumer");
+            statistics.Ts.Should().Be(7817348490);
+            statistics.Time.Should().Be(1583314688);
+            statistics.ReplyQ.Should().Be(1);
+            statistics.MsgCnt.Should().Be(2);
+            statistics.MsgSize.Should().Be(3);
+            statistics.MsgMax.Should().Be(4);
+            statistics.MsgSizeMax.Should().Be(5);
+            statistics.SimpleCnt.Should().Be(6);
+            statistics.MetadataCacheCnt.Should().Be(1);
+            statistics.Tx.Should().Be(340);
+            statistics.TxBytes.Should().Be(34401);
+            statistics.Rx.Should().Be(339);
+            statistics.RxBytes.Should().Be(44058);
+            statistics.TxMsgs.Should().Be(7);
+            statistics.TxMsgBytes.Should().Be(8);
+            statistics.RxMsgs.Should().Be(43);
+            statistics.RxMsgBytes.Should().Be(3870);
 
             // Broker fields
-            statisticsEvent.Statistics.Brokers.Should().HaveCount(1);
-            statisticsEvent.Statistics.Brokers.Should().ContainKey("kafka1:29092/1");
+            statistics.Brokers.Should().HaveCount(1);
+            statistics.Brokers.Should().ContainKey("kafka1:29092/1");
 
-            var broker = statisticsEvent.Statistics.Brokers["kafka1:29092/1"];
+            var broker = statistics.Brokers["kafka1:29092/1"];
             broker.Name.Should().Be("kafka1:29092/1");
             broker.NodeId.Should().Be(1);
             broker.NodeName.Should().Be("kafka1:29092");
@@ -157,10 +160,10 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             toppar.Partition.Should().Be(0);
 
             // Topic fields
-            statisticsEvent.Statistics.Topics.Should().HaveCount(1);
-            statisticsEvent.Statistics.Topics.Should().ContainKey("test-event");
+            statistics.Topics.Should().HaveCount(1);
+            statistics.Topics.Should().ContainKey("test-event");
 
-            var topic = statisticsEvent.Statistics.Topics["test-event"];
+            var topic = statistics.Topics["test-event"];
             topic.Topic.Should().Be("test-event");
             topic.MetadataAge.Should().Be(29005);
             topic.BatchSize.Should().NotBeNull();
@@ -270,9 +273,9 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             partition2.AckedMsgId.Should().Be(123);
 
             // Consumer Group fields
-            statisticsEvent.Statistics.ConsumerGroup.Should().NotBeNull();
+            statistics.ConsumerGroup.Should().NotBeNull();
 
-            var consumerGroup = statisticsEvent.Statistics.ConsumerGroup;
+            var consumerGroup = statistics.ConsumerGroup;
             consumerGroup.State.Should().Be("up");
             consumerGroup.StateAge.Should().Be(34005);
             consumerGroup.JoinState.Should().Be("started");
@@ -282,9 +285,9 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             consumerGroup.AssignmentSize.Should().Be(1);
 
             // EOS fields
-            statisticsEvent.Statistics.ExactlyOnceSemantics.Should().NotBeNull();
+            statistics.ExactlyOnceSemantics.Should().NotBeNull();
 
-            var eos = statisticsEvent.Statistics.ExactlyOnceSemantics;
+            var eos = statistics.ExactlyOnceSemantics;
             eos.IdempState.Should().Be("Assigned");
             eos.IdempStateAge.Should().Be(12345);
             eos.TxnState.Should().Be("InTransaction");
@@ -293,6 +296,16 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             eos.ProducerId.Should().Be(13);
             eos.ProducerEpoch.Should().Be(12345);
             eos.EpochCnt.Should().Be(7890);
+        }
+
+        [Fact]
+        public void TryDeserialize_InvalidStatisticsJson_EmptyStatisticsReturned()
+        {
+            var json = "{ WTF?! }";
+
+            var statistics = KafkaStatisticsDeserializer.TryDeserialize(json, _logger);
+
+            statistics.Should().NotBeNull();
         }
     }
 }

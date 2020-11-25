@@ -17,6 +17,8 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
 
         private Action<IProducer<byte[]?, byte[]?>, string>? _statisticsHandler;
 
+        private Action<IProducer<byte[]?, byte[]?>, LogMessage>? _logHandler;
+
         /// <inheritdoc cref="IConfluentProducerBuilder.SetConfig" />
         public IConfluentProducerBuilder SetConfig(ProducerConfig config)
         {
@@ -32,6 +34,13 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentProducerBuilder.SetLogHandler" />
+        public IConfluentProducerBuilder SetLogHandler(Action<IProducer<byte[]?, byte[]?>, LogMessage> logHandler)
+        {
+            _logHandler = logHandler;
+            return this;
+        }
+
         /// <inheritdoc cref="IConfluentProducerBuilder.Build" />
         public IProducer<byte[]?, byte[]?> Build()
         {
@@ -42,6 +51,9 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
 
             if (_statisticsHandler != null)
                 builder.SetStatisticsHandler(_statisticsHandler);
+
+            if (_logHandler != null)
+                builder.SetLogHandler(_logHandler);
 
             return builder.Build();
         }

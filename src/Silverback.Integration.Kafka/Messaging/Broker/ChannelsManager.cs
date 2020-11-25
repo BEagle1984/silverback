@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Broker
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public ChannelsManager(
-            IList<TopicPartition> partitions,
+            IReadOnlyList<TopicPartition> partitions,
             KafkaConsumer consumer,
             IList<ISequenceStore> sequenceStores,
             ISilverbackIntegrationLogger logger)
@@ -114,9 +114,9 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogDebug(
                 KafkaEventIds.ConsumingMessage,
-                "Writing message ({topic}[{partition}] @{offset}) to channel {channelIndex}.",
+                "Writing message ({topic}[{partition}]@{offset}) to channel {channelIndex}.",
                 consumeResult.Topic,
-                consumeResult.Partition,
+                consumeResult.Partition.Value,
                 consumeResult.Offset,
                 channelIndex);
 
@@ -260,7 +260,7 @@ namespace Silverback.Messaging.Broker
                     KafkaEventIds.EndOfPartition,
                     "Partition EOF reached: {topic}[{partition}]@{offset}. (consumerId: {consumerId})",
                     consumeResult.Topic,
-                    consumeResult.Partition,
+                    consumeResult.Partition.Value,
                     consumeResult.Offset,
                     _consumer.Id);
                 return;

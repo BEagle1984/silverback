@@ -126,7 +126,7 @@ namespace Silverback.Messaging.Broker
                     KafkaEventIds.ConsumingMessage,
                     "Consuming message: {topic}[{partition}]@{offset}. (consumerId: {consumerId})",
                     consumeResult.Topic,
-                    consumeResult.Partition,
+                    consumeResult.Partition.Value,
                     consumeResult.Offset,
                     _consumer.Id);
 

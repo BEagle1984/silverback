@@ -29,6 +29,8 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
 
         private Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? _offsetsCommittedHandler;
 
+        private Action<IConsumer<byte[]?, byte[]?>, LogMessage>? _logHandler;
+
         /// <inheritdoc cref="IConfluentConsumerBuilder.SetConfig" />
         public IConfluentConsumerBuilder SetConfig(ConsumerConfig config)
         {
@@ -107,6 +109,13 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentConsumerBuilder.SetLogHandler" />
+        public IConfluentConsumerBuilder SetLogHandler(Action<IConsumer<byte[]?, byte[]?>, LogMessage> logHandler)
+        {
+            _logHandler = logHandler;
+            return this;
+        }
+
         /// <inheritdoc cref="IConfluentConsumerBuilder.Build" />
         public IConsumer<byte[]?, byte[]?> Build()
         {
@@ -129,6 +138,9 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
 
             if (_offsetsCommittedHandler != null)
                 builder.SetOffsetsCommittedHandler(_offsetsCommittedHandler);
+
+            if (_logHandler != null)
+                builder.SetLogHandler(_logHandler);
 
             return builder.Build();
         }

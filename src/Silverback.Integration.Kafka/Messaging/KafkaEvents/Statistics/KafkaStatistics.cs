@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 #pragma warning disable 1591 // Will maybe document later
 
-namespace Silverback.Messaging.Messages.Statistics
+namespace Silverback.Messaging.KafkaEvents.Statistics
 {
     /// <summary>
     ///     A Kafka statistics event. See

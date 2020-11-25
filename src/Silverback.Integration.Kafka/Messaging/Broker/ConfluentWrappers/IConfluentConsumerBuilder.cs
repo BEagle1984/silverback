@@ -11,6 +11,7 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
     /// <summary>
     ///     The <see cref="IConsumer{TKey,TValue}" /> builder used by the <see cref="KafkaConsumer" />.
     /// </summary>
+    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public interface IConfluentConsumerBuilder
     {
         /// <summary>
@@ -33,7 +34,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
         /// <returns>
         ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         IConfluentConsumerBuilder SetStatisticsHandler(Action<IConsumer<byte[]?, byte[]?>, string> statisticsHandler);
 
         /// <summary>
@@ -45,7 +45,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
         /// <returns>
         ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         IConfluentConsumerBuilder SetErrorHandler(Action<IConsumer<byte[]?, byte[]?>, Error> errorHandler);
 
         /// <summary>
@@ -57,7 +56,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
         /// <returns>
         ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         IConfluentConsumerBuilder SetPartitionsAssignedHandler(
             Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>
                 partitionsAssignedHandler);
@@ -71,7 +69,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
         /// <returns>
         ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         IConfluentConsumerBuilder SetPartitionsAssignedHandler(
             Action<IConsumer<byte[]?, byte[]?>, List<TopicPartition>> partitionsAssignedHandler);
 
@@ -84,7 +81,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
         /// <returns>
         ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         IConfluentConsumerBuilder SetPartitionsRevokedHandler(
             Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>
                 partitionsRevokedHandler);
@@ -98,7 +94,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
         /// <returns>
         ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         IConfluentConsumerBuilder SetPartitionsRevokedHandler(
             Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>> partitionsRevokedHandler);
 
@@ -111,9 +106,20 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
         /// <returns>
         ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         IConfluentConsumerBuilder SetOffsetsCommittedHandler(
             Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets> offsetsCommittedHandler);
+
+        /// <summary>
+        ///     Set the handler to call when there is information available to be logged. If not specified, a default
+        ///     callback that writes to stderr will be used.
+        /// </summary>
+        /// <param name="logHandler">
+        ///     The event handler.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public IConfluentConsumerBuilder SetLogHandler(Action<IConsumer<byte[]?, byte[]?>, LogMessage> logHandler);
 
         /// <summary>
         ///     Builds the <see cref="IConsumer{TKey,TValue}" /> instance.
@@ -121,7 +127,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
         /// <returns>
         ///     The <see cref="IConsumer{TKey,TValue}" />.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         IConsumer<byte[]?, byte[]?> Build();
     }
 }

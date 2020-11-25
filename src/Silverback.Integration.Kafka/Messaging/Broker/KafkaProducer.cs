@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.ConfluentWrappers;
+using Silverback.Messaging.KafkaEvents;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -63,13 +64,11 @@ namespace Silverback.Messaging.Broker
             Check.NotNull(endpoint, nameof(endpoint));
             Check.NotNull(serviceProvider, nameof(serviceProvider));
 
+            _logger = logger;
+
             _confluentProducerBuilder = serviceProvider.GetRequiredService<IConfluentProducerBuilder>();
             _confluentProducerBuilder.SetConfig(endpoint.Configuration.ConfluentConfig);
-
-            serviceProvider.GetRequiredService<KafkaEventsHandler>()
-                .SetProducerEventsHandlers(_confluentProducerBuilder);
-
-            _logger = logger;
+            _confluentProducerBuilder.SetEventsHandlers(this, logger);
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />

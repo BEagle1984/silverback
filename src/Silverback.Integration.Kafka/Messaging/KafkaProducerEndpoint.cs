@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.KafkaEvents;
 
 namespace Silverback.Messaging
 {
@@ -22,6 +23,11 @@ namespace Silverback.Messaging
             : base(name)
         {
         }
+
+        /// <summary>
+        ///     Gets the Kafka event handlers configuration.
+        /// </summary>
+        public KafkaProducerEventsHandlers Events { get; } = new KafkaProducerEventsHandlers();
 
         /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration

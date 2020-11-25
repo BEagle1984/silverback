@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.KafkaEvents;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 
@@ -38,6 +39,12 @@ namespace Silverback.Messaging
         ///     Gets the names of the topics.
         /// </summary>
         public IReadOnlyCollection<string> Names { get; }
+
+        /// <summary>
+        ///     Gets the event handlers configuration. Can be used to bind some handlers to the Kafka events
+        ///     such as partitions revoked/assigned, error, statistics and offsets committed.
+        /// </summary>
+        public KafkaConsumerEventsHandlers Events { get; } = new KafkaConsumerEventsHandlers();
 
         /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
@@ -76,11 +83,11 @@ namespace Silverback.Messaging
             if (Configuration == null)
                 throw new EndpointConfigurationException("Configuration cannot be null.");
 
-            if (BackpressureLimit < 1)
-                throw new EndpointConfigurationException("BackpressureLimit must be greater or equal to 1.");
-
             if (MaxDegreeOfParallelism < 1)
                 throw new EndpointConfigurationException("MaxDegreeOfParallelism must be greater or equal to 1.");
+
+            if (BackpressureLimit < 1)
+                throw new EndpointConfigurationException("BackpressureLimit must be greater or equal to 1.");
 
             Configuration.Validate();
         }

@@ -3,7 +3,6 @@
 
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Diagnostics
 {
@@ -158,8 +157,8 @@ namespace Silverback.Diagnostics
             new EventId(Offset + 36, Prefix + nameof(ConsumerError));
 
         /// <summary>
-        ///     Gets the <see cref="EventId" /> of the log that is written when a subscriber to the
-        ///     <see cref="KafkaErrorEvent" /> throws an unhandled exception.
+        ///     Gets the <see cref="EventId" /> of the log that is written when the error event handler throws an
+        ///     unhandled exception.
         /// </summary>
         /// <remarks>
         ///     Default log level: Error.
@@ -186,6 +185,16 @@ namespace Silverback.Diagnostics
             new EventId(Offset + 39, Prefix + nameof(ProducerStatisticsReceived));
 
         /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when the statistics JSOn cannot be
+        ///     deserialized.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Error.
+        /// </remarks>
+        public static EventId StatisticsDeserializationError { get; } =
+            new EventId(Offset + 40, Prefix + nameof(StatisticsDeserializationError));
+
+        /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an exception is thrown disconnecting
         ///     the consumer.
         /// </summary>
@@ -194,5 +203,25 @@ namespace Silverback.Diagnostics
         /// </remarks>
         public static EventId ConsumerDisconnectError { get; } =
             new EventId(Offset + 50, Prefix + nameof(ConsumerDisconnectError));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when a log is being written by the
+        ///     underlying Confluent.Kafka library.
+        /// </summary>
+        /// <remarks>
+        ///     The default log level depends on the level notified by the library.
+        /// </remarks>
+        public static EventId ConfluentKafkaProducerLog { get; } =
+            new EventId(Offset + 200, Prefix + nameof(ConfluentKafkaProducerLog));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when a log is being written by the
+        ///     underlying Confluent.Kafka library.
+        /// </summary>
+        /// <remarks>
+        ///     The default log level depends on the level notified by the library.
+        /// </remarks>
+        public static EventId ConfluentKafkaConsumerLog { get; } =
+            new EventId(Offset + 200, Prefix + nameof(ConfluentKafkaConsumerLog));
     }
 }

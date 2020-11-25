@@ -38,8 +38,4 @@ This package contains an implementation of Silverback.Integration for the popula
     <ProjectReference Include="..\Silverback.Integration\Silverback.Integration.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Messaging\Messages\Statistics\" />
-  </ItemGroup>
-
 </Project>

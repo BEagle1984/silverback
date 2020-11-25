@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 #pragma warning disable 1591 // Will maybe document later
 
-namespace Silverback.Messaging.Messages.Statistics
+namespace Silverback.Messaging.KafkaEvents.Statistics
 {
     [SuppressMessage("ReSharper", "SA1600", Justification = "Will maybe document later")]
     public class WindowStatistics

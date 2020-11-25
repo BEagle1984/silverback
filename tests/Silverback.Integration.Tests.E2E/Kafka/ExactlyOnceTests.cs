@@ -44,7 +44,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -112,7 +112,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -182,20 +182,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
                                         },
-                                        ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore()
+                                        ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore(),
+                                        Events =
+                                        {
+                                            PartitionsAssignedHandler = (partitions, _) =>
+                                                partitions.Select(
+                                                    topicPartition => new TopicPartitionOffset(
+                                                        topicPartition,
+                                                        Offset.Beginning))
+                                        }
                                     }))
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>()
-                        .AddDelegateSubscriber(
-                            (KafkaPartitionsAssignedEvent message) =>
-                                message.Partitions = message.Partitions.Select(
-                                    topicPartitionOffset => new TopicPartitionOffset(
-                                        topicPartitionOffset.TopicPartition,
-                                        Offset.Beginning)).ToList()))
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -251,20 +253,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
                                         },
-                                        ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore()
+                                        ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore(),
+                                        Events =
+                                        {
+                                            PartitionsAssignedHandler = (partitions, _) =>
+                                                partitions.Select(
+                                                    topicPartition => new TopicPartitionOffset(
+                                                        topicPartition,
+                                                        Offset.Beginning))
+                                        }
                                     }))
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>()
-                        .AddDelegateSubscriber(
-                            (KafkaPartitionsAssignedEvent message) =>
-                                message.Partitions = message.Partitions.Select(
-                                    topicPartitionOffset => new TopicPartitionOffset(
-                                        topicPartitionOffset.TopicPartition,
-                                        Offset.Beginning)).ToList()))
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .WithTestDbContext()
                 .Run();
 

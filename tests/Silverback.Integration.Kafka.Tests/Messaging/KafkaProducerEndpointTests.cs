@@ -4,7 +4,6 @@
 using Confluent.Kafka;
 using FluentAssertions;
 using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Xunit;
 
@@ -17,7 +16,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         {
             var endpoint = new KafkaProducerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Configuration =
                 {
                     Acks = Acks.Leader
                 }
@@ -31,7 +30,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         {
             var endpoint1 = new KafkaProducerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Configuration =
                 {
                     Acks = Acks.Leader
                 }
@@ -39,7 +38,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
 
             var endpoint2 = new KafkaProducerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Configuration =
                 {
                     Acks = Acks.Leader
                 }
@@ -53,7 +52,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         {
             var endpoint1 = new KafkaProducerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Configuration =
                 {
                     Acks = Acks.Leader
                 }
@@ -61,7 +60,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
 
             var endpoint2 = new KafkaProducerEndpoint("endpoint2")
             {
-                Configuration = new KafkaProducerConfig
+                Configuration =
                 {
                     Acks = Acks.Leader
                 }
@@ -75,7 +74,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         {
             var endpoint1 = new KafkaProducerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Configuration =
                 {
                     Acks = Acks.Leader
                 }
@@ -83,7 +82,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
 
             var endpoint2 = new KafkaProducerEndpoint("endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Configuration =
                 {
                     Acks = Acks.All
                 }

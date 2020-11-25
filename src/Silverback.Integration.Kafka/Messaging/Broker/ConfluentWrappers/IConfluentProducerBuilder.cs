@@ -10,6 +10,7 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
     /// <summary>
     ///     The <see cref="IProducer{TKey,TValue}" /> builder used by the <see cref="KafkaProducer" />.
     /// </summary>
+    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public interface IConfluentProducerBuilder
     {
         /// <summary>
@@ -32,8 +33,19 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
         /// <returns>
         ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         IConfluentProducerBuilder SetStatisticsHandler(Action<IProducer<byte[]?, byte[]?>, string> statisticsHandler);
+
+        /// <summary>
+        ///     Set the handler to call when there is information available to be logged. If not specified, a default
+        ///     callback that writes to stderr will be used.
+        /// </summary>
+        /// <param name="logHandler">
+        ///     The event handler.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IConfluentProducerBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public IConfluentProducerBuilder SetLogHandler(Action<IProducer<byte[]?, byte[]?>, LogMessage> logHandler);
 
         /// <summary>
         ///     Builds the <see cref="IProducer{TKey,TValue}" /> instance.
@@ -41,7 +53,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
         /// <returns>
         ///     The <see cref="IProducer{TKey,TValue}" />.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         IProducer<byte[]?, byte[]?> Build();
     }
 }

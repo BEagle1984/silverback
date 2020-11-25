@@ -6,7 +6,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
@@ -48,7 +47,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             var producer = _broker.GetProducer(
                 new KafkaProducerEndpoint("test-endpoint")
                 {
-                    Configuration = new KafkaProducerConfig
+                    Configuration =
                     {
                         BootstrapServers = "PLAINTEXT://whatever:1111",
                         MessageTimeoutMs = 2000
@@ -57,7 +56,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             var producer2 = _broker.GetProducer(
                 new KafkaProducerEndpoint("test-endpoint")
                 {
-                    Configuration = new KafkaProducerConfig
+                    Configuration =
                     {
                         BootstrapServers = "PLAINTEXT://whatever:1111",
                         MessageTimeoutMs = 2000
@@ -82,7 +81,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             var producer = _broker.GetProducer(
                 new KafkaProducerEndpoint("test-endpoint")
                 {
-                    Configuration = new KafkaProducerConfig
+                    Configuration =
                     {
                         BootstrapServers = "PLAINTEXT://whatever:1111",
                         MessageTimeoutMs = 2010
@@ -91,7 +90,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             var producer2 = _broker.GetProducer(
                 new KafkaProducerEndpoint("test-endpoint")
                 {
-                    Configuration = new KafkaProducerConfig
+                    Configuration =
                     {
                         BootstrapServers = "PLAINTEXT://whatever:1111",
                         MessageTimeoutMs = 2000

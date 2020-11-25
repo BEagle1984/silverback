@@ -24,8 +24,7 @@ namespace Silverback.Messaging.Configuration
                 .AddSingletonBrokerBehavior<KafkaMessageKeyInitializerProducerBehavior>()
                 .Services
                 .AddTransient<IConfluentProducerBuilder, ConfluentProducerBuilder>()
-                .AddTransient<IConfluentConsumerBuilder, ConfluentConsumerBuilder>()
-                .AddSingleton<KafkaEventsHandler>();
+                .AddTransient<IConfluentConsumerBuilder, ConfluentConsumerBuilder>();
 
             brokerOptionsBuilder.LogTemplates
                 .ConfigureAdditionalData<KafkaConsumerEndpoint>("offset", "kafkaKey")

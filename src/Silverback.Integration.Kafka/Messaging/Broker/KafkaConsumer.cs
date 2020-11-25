@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.ConfluentWrappers;
+using Silverback.Messaging.KafkaEvents;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
@@ -28,8 +29,6 @@ namespace Silverback.Messaging.Broker
         private static readonly TimeSpan CloseTimeout = TimeSpan.FromSeconds(30); // TODO: Should be configurable
 
         private readonly IConfluentConsumerBuilder _confluentConsumerBuilder;
-
-        private readonly KafkaEventsHandler _kafkaEventsHandler;
 
         private readonly ISilverbackIntegrationLogger<KafkaConsumer> _logger;
 
@@ -77,16 +76,19 @@ namespace Silverback.Messaging.Broker
             Check.NotNull(endpoint, nameof(endpoint));
             Check.NotNull(serviceProvider, nameof(serviceProvider));
 
+            _logger = Check.NotNull(logger, nameof(logger));
+
             _confluentConsumerBuilder = serviceProvider.GetRequiredService<IConfluentConsumerBuilder>();
             _confluentConsumerBuilder.SetConfig(endpoint.Configuration.ConfluentConfig);
-
-            _kafkaEventsHandler = serviceProvider.GetRequiredService<KafkaEventsHandler>();
-            _kafkaEventsHandler.SetConsumerEventsHandlers(this, _confluentConsumerBuilder);
-
-            _logger = Check.NotNull(logger, nameof(logger));
+            _confluentConsumerBuilder.SetEventsHandlers(this, logger);
         }
 
-        internal void OnPartitionsAssigned(List<TopicPartition> partitions)
+        /// <summary>
+        ///     Gets the (dynamic) group member id of this consumer (as set by the broker).
+        /// </summary>
+        public string MemberId => _confluentConsumer?.MemberId ?? string.Empty;
+
+        internal void OnPartitionsAssigned(IReadOnlyList<TopicPartition> partitions)
         {
             if (IsDisconnecting)
                 return;
@@ -336,7 +338,7 @@ namespace Silverback.Messaging.Broker
             Subscribe();
         }
 
-        private void InitConsumeLoopHandlerAndChannelsManager(IList<TopicPartition> partitions)
+        private void InitConsumeLoopHandlerAndChannelsManager(IReadOnlyList<TopicPartition> partitions)
         {
             _channelsManager ??= new ChannelsManager(partitions, this, SequenceStores, _logger);
             _consumeLoopHandler ??= new ConsumeLoopHandler(this, _confluentConsumer!, _channelsManager, _logger);
@@ -452,23 +454,31 @@ namespace Silverback.Messaging.Broker
             try
             {
                 var offsets = _confluentConsumer!.Commit();
-                _kafkaEventsHandler.CreateScopeAndPublishEvent(
-                    new KafkaOffsetsCommittedEvent(
+
+                Endpoint.Events.OffsetsCommittedHandler?.Invoke(
+                    new CommittedOffsets(
                         offsets.Select(
                                 offset =>
                                     new TopicPartitionOffsetError(
                                         offset,
                                         new Error(ErrorCode.NoError)))
-                            .ToList()));
+                            .ToList(),
+                        new Error(ErrorCode.NoError)),
+                    this);
             }
             catch (TopicPartitionOffsetException ex)
             {
-                _kafkaEventsHandler.CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(ex.Results, ex.Error));
+                Endpoint.Events.OffsetsCommittedHandler?.Invoke(
+                    new CommittedOffsets(ex.Results, ex.Error),
+                    this);
+
                 throw;
             }
             catch (KafkaException ex)
             {
-                _kafkaEventsHandler.CreateScopeAndPublishEvent(new KafkaOffsetsCommittedEvent(null, ex.Error));
+                Endpoint.Events.OffsetsCommittedHandler?.Invoke(
+                    new CommittedOffsets(null, ex.Error),
+                    this);
             }
         }
     }

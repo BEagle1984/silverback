@@ -46,6 +46,13 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentProducerBuilder.SetLogHandler" />
+        public IConfluentProducerBuilder SetLogHandler(Action<IProducer<byte[]?, byte[]?>, LogMessage> logHandler)
+        {
+            // Not yet implemented / not needed
+            return this;
+        }
+
         /// <inheritdoc cref="IConfluentProducerBuilder.Build" />
         public IProducer<byte[]?, byte[]?> Build()
         {

@@ -78,7 +78,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -131,7 +131,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint("topic1")
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -140,7 +140,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint("topic2")
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -222,7 +222,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -269,7 +269,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -313,7 +313,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint("topic1")
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -322,7 +322,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint("topic2")
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -379,7 +379,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint("topic1", "topic2")
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -435,7 +435,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -444,7 +444,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -491,7 +491,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -541,7 +541,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             EnableAutoCommit = enableAutoCommit,
@@ -596,7 +596,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -635,7 +635,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -683,7 +683,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             EnableAutoCommit = false,
@@ -734,7 +734,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             EnableAutoCommit = false,
@@ -784,7 +784,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -843,7 +843,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100
@@ -913,7 +913,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     new KafkaConsumerEndpoint(DefaultTopicName)
                                     {
-                                        Configuration = new KafkaConsumerConfig
+                                        Configuration =
                                         {
                                             GroupId = "consumer1",
                                             AutoCommitIntervalMs = 100

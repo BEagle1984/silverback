@@ -43,11 +43,11 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Gets the <typeparamref name="TBroker" /> that owns this producer.
         /// </summary>
-        protected new TBroker Broker => (TBroker)base.Broker;
+        public new TBroker Broker => (TBroker)base.Broker;
 
         /// <summary>
         ///     Gets the <typeparamref name="TEndpoint" /> representing the endpoint that is being produced to.
         /// </summary>
-        protected new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
+        public new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
     }
 }

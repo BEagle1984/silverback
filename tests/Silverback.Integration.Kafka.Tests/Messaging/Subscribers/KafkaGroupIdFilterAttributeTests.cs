@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
 using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
@@ -30,7 +29,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
                 new TestOffset(),
                 new KafkaConsumerEndpoint("my-topic")
                 {
-                    Configuration = new KafkaConsumerConfig
+                    Configuration =
                     {
                         GroupId = envelopeGroupId
                     }

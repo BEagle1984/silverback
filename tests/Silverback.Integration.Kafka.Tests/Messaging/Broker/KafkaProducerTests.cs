@@ -30,7 +30,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         {
             var endpoint = new KafkaProducerEndpoint("test-endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Configuration =
                 {
                     BootstrapServers = "PLAINTEXT://whatever:1111",
                     MessageTimeoutMs = 10
@@ -38,7 +38,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             };
             var endpointCopy = new KafkaProducerEndpoint("test-endpoint")
             {
-                Configuration = new KafkaProducerConfig
+                Configuration =
                 {
                     BootstrapServers = "PLAINTEXT://whatever:1111",
                     MessageTimeoutMs = 10

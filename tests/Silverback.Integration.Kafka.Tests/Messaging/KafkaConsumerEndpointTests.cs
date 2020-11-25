@@ -3,7 +3,6 @@
 
 using FluentAssertions;
 using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging
@@ -15,7 +14,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         {
             var endpoint = new KafkaConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Configuration =
                 {
                     AutoCommitIntervalMs = 1000
                 }
@@ -29,7 +28,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         {
             var endpoint1 = new KafkaConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Configuration =
                 {
                     AutoCommitIntervalMs = 1000
                 }
@@ -37,7 +36,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
 
             var endpoint2 = new KafkaConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Configuration =
                 {
                     AutoCommitIntervalMs = 1000
                 }
@@ -51,7 +50,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         {
             var endpoint1 = new KafkaConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Configuration =
                 {
                     AutoCommitIntervalMs = 1000
                 }
@@ -59,7 +58,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
 
             var endpoint2 = new KafkaConsumerEndpoint("endpoint2")
             {
-                Configuration = new KafkaConsumerConfig
+                Configuration =
                 {
                     AutoCommitIntervalMs = 1000
                 }
@@ -73,7 +72,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         {
             var endpoint1 = new KafkaConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Configuration =
                 {
                     AutoCommitIntervalMs = 1000
                 }
@@ -81,7 +80,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
 
             var endpoint2 = new KafkaConsumerEndpoint("endpoint")
             {
-                Configuration = new KafkaConsumerConfig
+                Configuration =
                 {
                     BrokerAddressTtl = 2000
                 }

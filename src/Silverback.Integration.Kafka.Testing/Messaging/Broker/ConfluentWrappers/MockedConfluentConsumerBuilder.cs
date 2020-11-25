@@ -121,6 +121,13 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
             return this;
         }
 
+        /// <inheritdoc cref="IConfluentConsumerBuilder.SetLogHandler" />
+        public IConfluentConsumerBuilder SetLogHandler(Action<IConsumer<byte[]?, byte[]?>, LogMessage> logHandler)
+        {
+            // Not yet implemented / not needed
+            return this;
+        }
+
         /// <inheritdoc cref="IConfluentConsumerBuilder.Build" />
         public IConsumer<byte[]?, byte[]?> Build()
         {
