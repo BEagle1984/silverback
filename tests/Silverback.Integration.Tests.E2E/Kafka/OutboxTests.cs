@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -15,7 +14,6 @@ using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
-using Silverback.Util;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -67,13 +65,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
             var dbContext = serviceProvider.GetRequiredService<TestDbContext>();
 
-            await Enumerable.Range(1, 15).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
-                        }));
+            for (int i = 1; i <= 15; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
 
             await dbContext.SaveChangesAsync();
 
@@ -87,7 +82,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             SpyBehavior.InboundEnvelopes
                 .Select(envelope => ((TestEventOne)envelope.Message!).Content)
-                .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => i.ToString(CultureInfo.InvariantCulture)));
+                .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
         }
     }
 }

@@ -20,11 +20,9 @@ namespace Silverback.Messaging.Inbound
     /// <summary>
     ///     Publishes the consumed messages to the internal bus.
     /// </summary>
-    public sealed class PublisherConsumerBehavior : IConsumerBehavior, IDisposable
+    public sealed class PublisherConsumerBehavior : IConsumerBehavior
     {
         private readonly ISilverbackIntegrationLogger<PublisherConsumerBehavior> _logger;
-
-        private UnboundedSequence? _unboundedSequence;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="PublisherConsumerBehavior" /> class.
@@ -53,9 +51,14 @@ namespace Silverback.Messaging.Inbound
             if (context.Sequence != null)
             {
                 if (context.Sequence is RawSequence)
-                    await PublishEnvelopeAsync(context, context.Envelope.Endpoint.ThrowIfUnhandled).ConfigureAwait(false);
+                {
+                    await PublishEnvelopeAsync(context, context.Envelope.Endpoint.ThrowIfUnhandled)
+                        .ConfigureAwait(false);
+                }
                 else
+                {
                     await PublishSequenceAsync(context.Sequence, context).ConfigureAwait(false);
+                }
             }
             else
             {
@@ -64,12 +67,13 @@ namespace Silverback.Messaging.Inbound
                 if (context.Envelope is IInboundEnvelope envelope)
                 {
                     // TODO: Create only if necessary?
-                    await EnsureUnboundedStreamIsPublishedAsync(context).ConfigureAwait(false);
+                    var unboundedSequence = await GetUnboundedSequence(context).ConfigureAwait(false);
 
-                    int pushedStreamsCount = await _unboundedSequence!.AddAsync(envelope, null, false).ConfigureAwait(false);
+                    int pushedStreamsCount =
+                        await unboundedSequence!.AddAsync(envelope, null, false).ConfigureAwait(false);
 
-                    if (_unboundedSequence.IsAborted && _unboundedSequence.AbortException != null)
-                        throw _unboundedSequence.AbortException; // TODO: Wrap into another exception?
+                    if (unboundedSequence.IsAborted && unboundedSequence.AbortException != null)
+                        throw unboundedSequence.AbortException; // TODO: Wrap into another exception?
 
                     throwIfUnhandled &= pushedStreamsCount == 0;
                 }
@@ -78,12 +82,6 @@ namespace Silverback.Messaging.Inbound
             }
 
             await next(context).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        public void Dispose()
-        {
-            _unboundedSequence?.Dispose();
         }
 
         private static async Task PublishEnvelopeAsync(ConsumerPipelineContext context, bool throwIfUnhandled) =>
@@ -95,15 +93,20 @@ namespace Silverback.Messaging.Inbound
             context.ProcessingTask = await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);
         }
 
-        private async Task EnsureUnboundedStreamIsPublishedAsync(ConsumerPipelineContext context)
+        private static async Task<UnboundedSequence> GetUnboundedSequence(ConsumerPipelineContext context)
         {
-            if (_unboundedSequence != null && _unboundedSequence.IsPending)
-                return;
+            const string sequenceId = "-unbounded-";
 
-            _unboundedSequence = new UnboundedSequence("unbounded", context);
-            await context.SequenceStore.AddAsync(_unboundedSequence).ConfigureAwait(false);
+            var sequence = await context.SequenceStore.GetAsync<UnboundedSequence>(sequenceId).ConfigureAwait(false);
+            if (sequence != null && sequence.IsPending)
+                return sequence;
 
-            await PublishStreamProviderAsync(_unboundedSequence, context).ConfigureAwait(false);
+            sequence = new UnboundedSequence(sequenceId, context);
+            await context.SequenceStore.AddAsync(sequence).ConfigureAwait(false);
+
+            await PublishStreamProviderAsync(sequence, context).ConfigureAwait(false);
+
+            return sequence;
         }
 
         [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]

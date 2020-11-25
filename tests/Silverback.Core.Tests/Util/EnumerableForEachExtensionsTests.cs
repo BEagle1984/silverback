@@ -24,6 +24,14 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
+        public void ForEach_ActionWithIndex_Enumerated()
+        {
+            var enumerable = Enumerable.Range(0, 5);
+
+            enumerable.ForEach((i, index) => index.Should().Be(i));
+        }
+
+        [Fact]
         public async Task ForEachAsync_EnumerableWithAsyncFunc_Enumerated()
         {
             var enumerable = Enumerable.Range(1, 5);

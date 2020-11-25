@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -90,13 +89,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 15).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
-                        }));
+            for (int i = 1; i <= 15; i++)
+            {
+                await publisher.PublishAsync(
+                    new TestEventOne
+                    {
+                        Content = $"{i}"
+                    });
+            }
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -107,7 +107,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             SpyBehavior.InboundEnvelopes.Should().HaveCount(15);
             SpyBehavior.InboundEnvelopes
                 .Select(envelope => ((TestEventOne)envelope.Message!).Content)
-                .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => i.ToString(CultureInfo.InvariantCulture)));
+                .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
         }
 
         [Fact]
@@ -241,13 +241,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 5).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
-                        }));
+            for (int i = 1; i <= 5; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -267,7 +264,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     .Select(envelope => ((TestEventOne)envelope.Message!).Content);
 
             var expectedMessages =
-                Enumerable.Range(1, 5).Select(i => i.ToString(CultureInfo.InvariantCulture)).ToList();
+                Enumerable.Range(1, 5).Select(i => $"{i}").ToList();
 
             receivedContentsTopic1.Should().BeEquivalentTo(expectedMessages);
             receivedContentsTopic2.Should().BeEquivalentTo(expectedMessages);
@@ -301,13 +298,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 5).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
-                        }));
+            for (int i = 1; i <= 5; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -327,7 +321,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     .Select(envelope => ((TestEventOne)envelope.Message!).Content);
 
             var expectedMessages =
-                Enumerable.Range(1, 5).Select(i => i.ToString(CultureInfo.InvariantCulture)).ToList();
+                Enumerable.Range(1, 5).Select(i => $"{i}").ToList();
 
             receivedContentsTopic1.Should().BeEquivalentTo(expectedMessages);
             receivedContentsTopic2.Should().BeEquivalentTo(expectedMessages);
@@ -369,13 +363,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 10).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
-                        }));
+            for (int i = 1; i <= 10; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -386,7 +377,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             SpyBehavior.InboundEnvelopes.Should().HaveCount(10);
             SpyBehavior.InboundEnvelopes
                 .Select(envelope => ((TestEventOne)envelope.Message!).Content)
-                .Should().BeEquivalentTo(Enumerable.Range(1, 10).Select(i => i.ToString(CultureInfo.InvariantCulture)));
+                .Should().BeEquivalentTo(Enumerable.Range(1, 10).Select(i => $"{i}"));
         }
 
         [Theory]
@@ -436,8 +427,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            await AsyncTestingUtil.WaitAsync(() => DefaultTopic.GetCommittedOffsetsCount("consumer1") == 3);
-
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
         }
 
@@ -469,7 +458,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             AutoCommitIntervalMs = 100
                                         }
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
                 .Run();
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();

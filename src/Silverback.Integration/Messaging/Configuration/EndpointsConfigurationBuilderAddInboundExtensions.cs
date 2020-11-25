@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Util;
@@ -47,7 +46,10 @@ namespace Silverback.Messaging.Configuration
             var serviceProvider = endpointsConfigurationBuilder.ServiceProvider;
             var brokerCollection = serviceProvider.GetRequiredService<IBrokerCollection>();
 
-            Enumerable.Range(0, consumersCount).ForEach(_ => brokerCollection.AddConsumer(endpoint));
+            for (int i = 0; i < consumersCount; i++)
+            {
+                brokerCollection.AddConsumer(endpoint);
+            }
 
             return endpointsConfigurationBuilder;
         }

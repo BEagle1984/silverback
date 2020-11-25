@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Linq;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using FluentAssertions;
@@ -13,7 +12,6 @@ using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
-using Silverback.Util;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -55,14 +53,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 100).ForEachAsync(_ => publisher.PublishAsync(new TestEventOne()));
+            for (int i = 1; i <= 100; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne());
+            }
+
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(100);
             DefaultTopic.GetFirstOffset(new Partition(0)).Should().Be(new Offset(0));
             DefaultTopic.GetLastOffset(new Partition(0)).Should().Be(new Offset(99));
 
-            await Enumerable.Range(1, 10).ForEachAsync(_ => publisher.PublishAsync(new TestEventOne()));
+            for (int i = 1; i <= 10; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne());
+            }
+
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(110);

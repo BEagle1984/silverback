@@ -46,7 +46,7 @@ namespace Silverback.Messaging.Diagnostics
                 _logger.LogCriticalWithMessageInfo(
                     IntegrationEventIds.ConsumerFatalError,
                     ex,
-                    "Fatal error occurred consuming the message. The consumer will be stopped.",
+                    "Fatal error occurred processing the consumed message. The consumer will be stopped.",
                     context);
 
                 throw;

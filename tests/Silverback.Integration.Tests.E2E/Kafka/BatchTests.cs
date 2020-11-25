@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -15,7 +14,6 @@ using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
-using Silverback.Util;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -76,13 +74,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 15).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
-                        }));
+            for (int i = 1; i <= 15; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
             await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
             receivedBatches.Should().HaveCount(2);
@@ -92,13 +88,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
 
-            await Enumerable.Range(16, 5).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
-                        }));
+            for (int i = 16; i <= 20; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
@@ -157,13 +151,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 15).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
-                        }));
+            for (int i = 1; i <= 15; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
             await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
             receivedBatches.Should().HaveCount(2);
@@ -173,13 +165,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
 
-            await Enumerable.Range(16, 5).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
-                        }));
+            for (int i = 16; i <= 20; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
@@ -239,13 +229,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 15).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
-                        }));
+            for (int i = 1; i <= 15; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
             await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
 
             receivedBatches.Should().HaveCount(2);
@@ -358,7 +346,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Configuration = new KafkaConsumerConfig
                                         {
                                             GroupId = "consumer1",
-                                            AutoCommitIntervalMs = 100
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Batch = new BatchSettings
+                                        {
+                                            Size = 3
                                         }
                                     }))
                         .AddDelegateSubscriber(
@@ -446,13 +439,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
 
-            await Enumerable.Range(1, 10).ForEachAsync(
-                i =>
-                    publisher.PublishAsync(
-                        new TestEventOne
-                        {
-                            Content = i.ToString(CultureInfo.InvariantCulture)
-                        }));
+            for (int i = 1; i <= 10; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
             await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 10);
 
             receivedBatches.Count.Should().BeGreaterThan(1);

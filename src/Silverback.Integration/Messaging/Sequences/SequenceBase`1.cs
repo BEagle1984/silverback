@@ -225,7 +225,12 @@ namespace Silverback.Messaging.Sequences
         protected virtual async Task<int> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
         {
             if (!IsPending || IsCompleting)
+            {
+                if (IsAborted)
+                    return 0;
+
                 throw new InvalidOperationException("Cannot add new messages to the complete or aborted sequence.");
+            }
 
             ResetTimeout();
 

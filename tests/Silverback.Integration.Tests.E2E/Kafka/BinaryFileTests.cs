@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -127,7 +128,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 ContentType = "text/plain"
             };
 
-            var receivedFiles = new List<byte[]?>();
+            var receivedFiles = new ConcurrentBag<byte[]?>();
 
             var serviceProvider = Host.ConfigureServices(
                     services => services
@@ -225,7 +226,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Serializer = new BinaryFileMessageSerializer()
                                     }))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
+                            (BinaryFileMessage binaryFile) =>
+                            {
+                                lock (receivedFiles)
+                                {
+                                    receivedFiles.Add(binaryFile.Content.ReadAll());
+                                }
+                            })
                         .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
@@ -305,7 +312,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddDelegateSubscriber(
                             (CustomBinaryFileMessage binaryFile) =>
                             {
-                                receivedFiles.Add(binaryFile.Content.ReadAll());
+                                lock (receivedFiles)
+                                {
+                                    receivedFiles.Add(binaryFile.Content.ReadAll());
+                                }
                             })
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
@@ -383,7 +393,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Serializer = new BinaryFileMessageSerializer<CustomBinaryFileMessage>()
                                     }))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
+                            (BinaryFileMessage binaryFile) =>
+                            {
+                                lock (receivedFiles)
+                                {
+                                    receivedFiles.Add(binaryFile.Content.ReadAll());
+                                }
+                            })
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();
 
@@ -461,7 +477,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         Serializer = new BinaryFileMessageSerializer<CustomBinaryFileMessage>()
                                     }))
                         .AddDelegateSubscriber(
-                            (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
+                            (BinaryFileMessage binaryFile) =>
+                            {
+                                lock (receivedFiles)
+                                {
+                                    receivedFiles.Add(binaryFile.Content.ReadAll());
+                                }
+                            })
                         .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
                         .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
                 .Run();

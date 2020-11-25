@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +35,10 @@ namespace Silverback.Messaging.Broker
 
         private readonly ISilverbackIntegrationLogger<KafkaConsumer> _logger;
 
+        private readonly object _messagesSinceCommitLock = new object();
+
+        private readonly object _channelsLock = new object();
+
         private IKafkaMessageSerializer? _serializer;
 
         private bool _isConsuming;
@@ -45,6 +50,8 @@ namespace Silverback.Messaging.Broker
         private CancellationTokenSource? _cancellationTokenSource;
 
         private IConsumer<byte[]?, byte[]?>? _innerConsumer;
+
+        private Channel<ConsumeResult<byte[]?, byte[]?>>[]? _channels;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaConsumer" /> class.
@@ -86,16 +93,46 @@ namespace Silverback.Messaging.Broker
 
         internal void OnPartitionsAssigned(List<TopicPartition> partitions)
         {
-            SequenceStores.Clear();
-            partitions.ForEach(_ => SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>()));
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            lock (_channelsLock)
+            {
+                _channels = Endpoint.ProcessPartitionsIndependently
+                    ? new Channel<ConsumeResult<byte[]?, byte[]?>>[partitions.Count]
+                    : new Channel<ConsumeResult<byte[]?, byte[]?>>[1];
+            }
+
+            if (Endpoint.ProcessPartitionsIndependently)
+            {
+                partitions.ForEach((_, i) => InitChannelReader(i));
+            }
+            else
+            {
+                InitChannelReader(0);
+            }
+
+            Task.Factory.StartNew(
+                Consume,
+                CancellationToken.None,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default);
         }
 
         internal void OnPartitionsRevoked()
         {
+            _cancellationTokenSource?.Cancel();
+            WaitUntilConsumingStopped(CancellationToken.None);
+
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 CommitOffsets();
 
             SequenceStores.ForEach(store => store.Dispose());
+            SequenceStores.Clear();
+
+            lock (_channelsLock)
+            {
+                _channels = null;
+            }
         }
 
         /// <inheritdoc cref="Consumer.ConnectCore" />
@@ -104,15 +141,7 @@ namespace Silverback.Messaging.Broker
             _serializer = Endpoint.Serializer as IKafkaMessageSerializer ??
                           new DefaultKafkaMessageSerializer(Endpoint.Serializer);
 
-            _cancellationTokenSource = new CancellationTokenSource();
-
             InitInnerConsumer();
-
-            Task.Factory.StartNew(
-                ConsumeAsync,
-                CancellationToken.None,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}.GetSequenceStore(Silverback.Messaging.Broker.IOffset)" />
@@ -123,9 +152,9 @@ namespace Silverback.Messaging.Broker
             if (_innerConsumer == null)
                 throw new InvalidOperationException("The consumer is not connected.");
 
-            var partitionIndex = _innerConsumer.Assignment.IndexOf(offset.AsTopicPartition());
-
-            return SequenceStores[partitionIndex];
+            return Endpoint.ProcessPartitionsIndependently
+                ? SequenceStores[GetPartitionAssignmentIndex(offset.AsTopicPartition())]
+                : SequenceStores[0];
         }
 
         /// <inheritdoc cref="Consumer.StopConsuming" />
@@ -196,13 +225,49 @@ namespace Silverback.Messaging.Broker
                 .ForEach(
                     topicPartitionOffset =>
                     {
-                        if (_innerConsumer.Assignment.Contains(topicPartitionOffset.TopicPartition))
+                        var partitionIndex = GetPartitionAssignmentIndex(topicPartitionOffset.TopicPartition);
+                        if (partitionIndex >= 0)
+                        {
+                            lock (_channelsLock)
+                            {
+                                if (_channels != null)
+                                {
+                                    var channelIndex = GetChannelIndex(partitionIndex);
+
+                                    // The new channel must be set before completing the old one to allow the process loop
+                                    // to continue
+                                    var currentChannel = _channels[channelIndex];
+                                    _channels[channelIndex] = CreateBoundedChannel();
+                                    currentChannel.Writer.Complete(new OperationCanceledException());
+                                }
+                            }
+
                             _innerConsumer.Seek(topicPartitionOffset);
+                        }
                     });
 
             // Nothing to do here. With Kafka the uncommitted messages will be implicitly re-consumed.
             return Task.CompletedTask;
         }
+
+        // TODO: Can test setting for backpressure limit?
+        private Channel<ConsumeResult<byte[]?, byte[]?>> CreateBoundedChannel() =>
+            Channel.CreateBounded<ConsumeResult<byte[]?, byte[]?>>(Endpoint.BackpressureLimit);
+
+        private void InitChannelReader(int channelIndex)
+        {
+            if (_channels == null)
+                throw new InvalidOperationException("The channels array is not initialized.");
+
+            SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>());
+            _channels[channelIndex] = CreateBoundedChannel();
+            Task.Run(() => ReadChannelAsync(channelIndex));
+        }
+
+        private int GetPartitionAssignmentIndex(TopicPartition topicPartition) =>
+            _innerConsumer?.Assignment.IndexOf(topicPartition) ?? -1;
+
+        private int GetChannelIndex(int partitionIndex) => Endpoint.ProcessPartitionsIndependently ? partitionIndex : 0;
 
         private void InitInnerConsumer()
         {
@@ -260,108 +325,156 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task ConsumeAsync()
+        private void Consume()
         {
             _isConsuming = true;
 
-            if (_cancellationTokenSource == null)
-            {
-                throw new InvalidOperationException(
-                    "The cancellation token is null, probably because the consumer is not properly connected.");
-            }
+            if (_innerConsumer == null)
+                throw new InvalidOperationException("The underlying consumer is not initialized.");
 
-            while (!_cancellationTokenSource.IsCancellationRequested)
+            while (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
             {
                 try
                 {
-                    await ReceiveMessageAsync().ConfigureAwait(false);
+                    var consumeResult = _innerConsumer.Consume(_cancellationTokenSource.Token);
+
+                    if (consumeResult == null)
+                        continue;
+
+                    _hasConsumedAtLeastOnce = true;
+                    _logger.LogDebug(
+                        KafkaEventIds.ConsumingMessage,
+                        "Consuming message: {topic} {partition} @{offset}.",
+                        consumeResult.Topic,
+                        consumeResult.Partition,
+                        consumeResult.Offset);
+
+                    var partitionIndex = GetPartitionAssignmentIndex(consumeResult.TopicPartition);
+                    var channelIndex = GetChannelIndex(partitionIndex);
+
+                    // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
+                    // synchronously to stay within a single long-running thread.
+                    AsyncHelper.RunSynchronously(
+                        () => _channels![channelIndex].Writer.WriteAsync(
+                            consumeResult,
+                            _cancellationTokenSource.Token));
                 }
                 catch (OperationCanceledException)
                 {
-                    _logger.LogTrace(KafkaEventIds.ConsumingCanceled, "Consuming canceled.");
+                    if (_cancellationTokenSource == null || _cancellationTokenSource.IsCancellationRequested)
+                        _logger.LogTrace(KafkaEventIds.ConsumingCanceled, "Consuming canceled.");
                 }
                 catch (KafkaException ex)
                 {
-                    if (!await AutoRecoveryIfEnabledAsync(ex).ConfigureAwait(false))
+                    if (!AutoRecoveryIfEnabled(ex))
                         break;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // TODO: Some errors may not happen inside the pipeline!
-                    /* Logged by the FatalExceptionLoggerConsumerBehavior */
-
+                    _logger.LogCritical(
+                        IntegrationEventIds.ConsumerFatalError,
+                        ex,
+                        "Fatal error occurred while consuming. The consumer will be stopped.");
                     break;
                 }
             }
 
             _isConsuming = false;
 
-            if (!_cancellationTokenSource.IsCancellationRequested)
+            if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
                 Disconnect();
         }
 
-        private async Task ReceiveMessageAsync()
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+        private async Task ReadChannelAsync(int index)
         {
-            if (_innerConsumer == null)
-                throw new InvalidOperationException("The underlying consumer is not initialized.");
-
-            if (_cancellationTokenSource == null)
+            try
             {
-                throw new InvalidOperationException(
-                    "The cancellation token is null, probably because the underlying " +
-                    "consumer is not initialized.");
+                _logger.LogTrace(
+                    IntegrationEventIds.LowLevelTracing,
+                    "Starting channel {channelIndex} processing loop...",
+                    index);
+
+                if (_channels == null)
+                    throw new InvalidOperationException("Channels not initialized.");
+
+                while (true)
+                {
+                    var channelReader = _channels[index].Reader;
+
+                    await ReadChannelOnceAsync(channelReader).ConfigureAwait(false);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore
+                _logger.LogTrace(
+                    IntegrationEventIds.LowLevelTracing,
+                    "Exiting channel {channelIndex} processing loop (operation canceled).",
+                    index);
+            }
+            catch (Exception ex)
+            {
+                // TODO: Prevent duplicate log (FatalExceptionLoggerConsumerBehavior)
+                _logger.LogCritical(
+                    IntegrationEventIds.ConsumerFatalError,
+                    ex,
+                    "Fatal error occurred processing the consumed message. The consumer will be stopped.");
+
+                _cancellationTokenSource?.Cancel();
+                Disconnect();
             }
 
-            var result = _innerConsumer.Consume(_cancellationTokenSource.Token);
+            _logger.LogTrace(
+                IntegrationEventIds.LowLevelTracing,
+                "Exited channel {channelIndex) processing loop.",
+                index);
+        }
 
-            if (result == null)
-                return;
+        private async Task ReadChannelOnceAsync(ChannelReader<ConsumeResult<byte[]?, byte[]?>> channelReader)
+        {
+            if (_cancellationTokenSource == null)
+                throw new OperationCanceledException();
 
-            if (result.IsPartitionEOF)
+            _cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+            var consumeResult = await channelReader.ReadAsync(_cancellationTokenSource.Token)
+                .ConfigureAwait(false);
+
+            _cancellationTokenSource?.Token.ThrowIfCancellationRequested();
+
+            if (consumeResult.IsPartitionEOF)
             {
                 _logger.LogInformation(
                     KafkaEventIds.EndOfPartition,
                     "Partition EOF reached: {topic} {partition} @{offset}.",
-                    result.Topic,
-                    result.Partition,
-                    result.Offset);
+                    consumeResult.Topic,
+                    consumeResult.Partition,
+                    consumeResult.Offset);
                 return;
             }
 
-            _hasConsumedAtLeastOnce = true;
-            _logger.LogDebug(
-                KafkaEventIds.ConsumingMessage,
-                "Consuming message: {topic} {partition} @{offset}.",
-                result.Topic,
-                result.Partition,
-                result.Offset);
-
-            await OnMessageReceivedAsync(result.Message, result.TopicPartitionOffset).ConfigureAwait(false);
-        }
-
-        private async Task OnMessageReceivedAsync(
-            Message<byte[]?, byte[]?> message,
-            TopicPartitionOffset topicPartitionOffset)
-        {
             // Checking if the message was sent to the subscribed topic is necessary
             // when reusing the same consumer for multiple topics.
             if (!Endpoint.Names.Any(
                 endpointName =>
-                    topicPartitionOffset.Topic.Equals(endpointName, StringComparison.OrdinalIgnoreCase)))
+                    consumeResult.Topic.Equals(endpointName, StringComparison.OrdinalIgnoreCase)))
                 return;
 
-            await TryHandleMessageAsync(message, topicPartitionOffset).ConfigureAwait(false);
+            await HandleMessageAsync(consumeResult.Message, consumeResult.TopicPartitionOffset)
+                .ConfigureAwait(false);
         }
 
-        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task TryHandleMessageAsync(Message<byte[]?, byte[]?> message, TopicPartitionOffset tpo)
+        private async Task HandleMessageAsync(
+            Message<byte[]?, byte[]?> message,
+            TopicPartitionOffset topicPartitionOffset)
         {
             if (_serializer == null)
                 throw new InvalidOperationException("The consumer is not connected.");
 
             Dictionary<string, string> logData = new Dictionary<string, string>();
 
-            var offset = new KafkaOffset(tpo);
+            var offset = new KafkaOffset(topicPartitionOffset);
             logData["offset"] = $"{offset.Partition}@{offset.Offset}";
 
             var headers = new MessageHeaderCollection(message.Headers.ToSilverbackHeaders());
@@ -371,7 +484,7 @@ namespace Silverback.Messaging.Broker
                 string deserializedKafkaKey = _serializer.DeserializeKey(
                     message.Key,
                     headers,
-                    new MessageSerializationContext(Endpoint, tpo.Topic));
+                    new MessageSerializationContext(Endpoint, topicPartitionOffset.Topic));
 
                 headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, deserializedKafkaKey);
                 headers.AddIfNotExists(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
@@ -384,13 +497,13 @@ namespace Silverback.Messaging.Broker
             await HandleMessageAsync(
                     message.Value,
                     headers,
-                    tpo.Topic,
+                    topicPartitionOffset.Topic,
                     offset,
                     logData)
                 .ConfigureAwait(false);
         }
 
-        private async Task<bool> AutoRecoveryIfEnabledAsync(KafkaException ex)
+        private bool AutoRecoveryIfEnabled(KafkaException ex)
         {
             if (Endpoint.Configuration.EnableAutoRecovery)
             {
@@ -400,7 +513,7 @@ namespace Silverback.Messaging.Broker
                     "KafkaException occurred. The consumer will try to recover. (topic(s): {topics})",
                     (object)Endpoint.Names);
 
-                await ResetInnerConsumerAsync().ConfigureAwait(false);
+                ResetInnerConsumer();
             }
             else
             {
@@ -419,7 +532,7 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task ResetInnerConsumerAsync()
+        private void ResetInnerConsumer()
         {
             while (true)
             {
@@ -438,7 +551,7 @@ namespace Silverback.Messaging.Broker
                         "Failed to recover from consumer exception. Will retry in {SecondsUntilRetry} seconds.",
                         RecoveryDelay.TotalSeconds);
 
-                    await Task.Delay(RecoveryDelay).ConfigureAwait(false);
+                    Task.Delay(RecoveryDelay, _cancellationTokenSource?.Token ?? CancellationToken.None).Wait();
                 }
             }
         }
@@ -448,7 +561,15 @@ namespace Silverback.Messaging.Broker
             if (_innerConsumer == null)
                 throw new InvalidOperationException("The underlying consumer is not initialized.");
 
-            offsets.ForEach(_innerConsumer.StoreOffset);
+            foreach (var offset in offsets)
+            {
+                _logger.LogTrace(
+                    IntegrationEventIds.LowLevelTracing,
+                    "Storing offset {partition} @{offset}.",
+                    offset.Partition,
+                    offset.Offset.Value);
+                _innerConsumer.StoreOffset(offset);
+            }
         }
 
         private void CommitOffsetsIfNeeded()
@@ -456,15 +577,18 @@ namespace Silverback.Messaging.Broker
             if (Endpoint.Configuration.IsAutoCommitEnabled)
                 return;
 
-            if (++_messagesSinceCommit < Endpoint.Configuration.CommitOffsetEach)
-                return;
+            lock (_messagesSinceCommitLock)
+            {
+                if (++_messagesSinceCommit < Endpoint.Configuration.CommitOffsetEach)
+                    return;
+
+                _messagesSinceCommit = 0;
+            }
 
             if (_innerConsumer == null)
                 throw new InvalidOperationException("The underlying consumer is not initialized.");
 
             _innerConsumer.Commit();
-
-            _messagesSinceCommit = 0;
         }
 
         private void CommitOffsets()
