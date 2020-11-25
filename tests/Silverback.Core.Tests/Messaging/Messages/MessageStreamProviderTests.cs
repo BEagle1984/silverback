@@ -276,7 +276,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             await enumerator2.MoveNextAsync();
 
-            await AsyncTestingUtil.WaitAsync(() => pushTask1.IsCompleted);
+            await AsyncTestingUtil.WaitAsync(() => pushTask2.IsCompleted);
             pushTask2.IsCompleted.Should().BeTrue();
         }
 
