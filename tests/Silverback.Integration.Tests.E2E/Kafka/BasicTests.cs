@@ -112,6 +112,98 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
+        public async Task OutboundAndInbound_MultipleTopicsForDifferentMessages_ProducedAndConsumed()
+        {
+            var receivedEvents = new List<IEvent>();
+            var receivedTestEventOnes = new List<TestEventOne>();
+            var receivedTestEventTwos = new List<TestEventTwo>();
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<TestEventOne>(new KafkaProducerEndpoint("topic1"))
+                                .AddOutbound<TestEventTwo>(new KafkaProducerEndpoint("topic2"))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint("topic1")
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    })
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint("topic2")
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
+                        .AddDelegateSubscriber(
+                            (IInboundEnvelope<IEvent> envelope) =>
+                            {
+                                lock (receivedEvents)
+                                {
+                                    receivedEvents.Add(envelope.Message!);
+                                }
+                            })
+                        .AddDelegateSubscriber(
+                            (TestEventOne message) =>
+                            {
+                                lock (receivedTestEventOnes)
+                                {
+                                    receivedTestEventOnes.Add(message);
+                                }
+                            })
+                        .AddDelegateSubscriber(
+                            (TestEventTwo message) =>
+                            {
+                                lock (receivedTestEventTwos)
+                                {
+                                    receivedTestEventTwos.Add(message);
+                                }
+                            }))
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 5; i++)
+            {
+                await publisher.PublishAsync(
+                    new TestEventOne
+                    {
+                        Content = $"{i}"
+                    });
+                await publisher.PublishAsync(
+                    new TestEventTwo
+                    {
+                        Content = $"{i}"
+                    });
+                await publisher.PublishAsync(
+                    new TestEventThree
+                    {
+                        Content = $"{i}"
+                    });
+            }
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            receivedEvents.Should().HaveCount(10);
+            receivedTestEventOnes.Should().HaveCount(5);
+            receivedTestEventTwos.Should().HaveCount(5);
+
+            GetTopic("topic1").GetCommittedOffsetsCount("consumer1").Should().Be(5);
+            GetTopic("topic2").GetCommittedOffsetsCount("consumer1").Should().Be(5);
+        }
+
+        [Fact]
         public async Task OutboundAndInbound_WithHardcodedMessageType_ProducedAndConsumed()
         {
             var serviceProvider = Host.ConfigureServices(
