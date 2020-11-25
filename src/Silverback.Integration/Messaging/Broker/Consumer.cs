@@ -154,8 +154,9 @@ namespace Silverback.Messaging.Broker
             _statusInfo.SetConnected();
             _logger.LogDebug(
                 IntegrationEventIds.ConsumerConnected,
-                "Connected consumer to endpoint {endpoint}.",
-                Endpoint.Name);
+                "Connected consumer to endpoint {endpoint}. (consumerId: {consumerId})",
+                Endpoint.Name,
+                Id);
 
             Start();
         }
@@ -186,18 +187,25 @@ namespace Silverback.Messaging.Broker
 
             using (var cancellationTokenSource = new CancellationTokenSource(ConsumerStopWaitTimeout))
             {
-                _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Waiting until consumer stops...");
+                _logger.LogTrace(
+                    IntegrationEventIds.LowLevelTracing,
+                    "Waiting until consumer stops...  (consumerId: {consumerId})",
+                    Id);
 
                 try
                 {
                     await WaitUntilConsumingStoppedAsync(cancellationTokenSource.Token).ConfigureAwait(false);
-                    _logger.LogTrace(IntegrationEventIds.LowLevelTracing, "Consumer stopped.");
+                    _logger.LogTrace(
+                        IntegrationEventIds.LowLevelTracing,
+                        "Consumer stopped. (consumerId: {consumerId})",
+                        Id);
                 }
                 catch (OperationCanceledException)
                 {
                     _logger.LogError(
                         IntegrationEventIds.LowLevelTracing,
-                        "The timeout elapsed before the consumer stopped.");
+                        "The timeout elapsed before the consumer stopped. (consumerId: {consumerId})",
+                        Id);
                 }
             }
 
@@ -210,8 +218,9 @@ namespace Silverback.Messaging.Broker
             _statusInfo.SetDisconnected();
             _logger.LogDebug(
                 IntegrationEventIds.ConsumerDisconnected,
-                "Disconnected consumer from endpoint {endpoint}.",
-                Endpoint.Name);
+                "Disconnected consumer from endpoint {endpoint}. (consumerId: {consumerId})",
+                Endpoint.Name,
+                Id);
 
             IsDisconnecting = false;
         }
@@ -422,8 +431,9 @@ namespace Silverback.Messaging.Broker
                 _logger.LogWarning(
                     IntegrationEventIds.ConsumerDisposingError,
                     ex,
-                    "Error occurred while disposing consumer from endpoint {endpoint}.",
-                    Endpoint.Name);
+                    "Error occurred while disposing consumer from endpoint {endpoint}. (consumerId: {consumerId})",
+                    Endpoint.Name,
+                    Id);
             }
         }
 

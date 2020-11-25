@@ -11,12 +11,14 @@ namespace Silverback.Diagnostics
     internal class LogTemplates : ILogTemplates
     {
         private const string InboundArgumentsTemplate = " | " +
+                                                        "consumerId: {consumerId}, " +
                                                         "endpointName: {endpointName}, " +
                                                         "failedAttempts: {failedAttempts}, " +
                                                         "messageType: {messageType}, " +
                                                         "messageId: {messageId}";
 
         private const string InboundSequenceArgumentsTemplate = " | " +
+                                                                "consumerId: {consumerId}, " +
                                                                 "endpointName: {endpointName}, " +
                                                                 "failedAttempts: {failedAttempts}, " +
                                                                 "messageType: {messageType}, " +

@@ -61,7 +61,7 @@ namespace Silverback.Diagnostics
         }
 
         public void LogSequenceAborted(
-            IRawInboundEnvelope envelope,
+            ConsumerPipelineContext context,
             ISequence sequence,
             SequenceAbortReason reason,
             Exception? exception)
@@ -74,8 +74,9 @@ namespace Silverback.Diagnostics
                         IntegrationEventIds.ErrorProcessingInboundMessage,
                         exception,
                         "Error occurred processing the inbound sequence of messages.",
-                        envelope,
-                        sequence);
+                        context.Envelope,
+                        sequence,
+                        context.Consumer.Id);
                     break;
                 case SequenceAbortReason.IncompleteSequence:
                     LogWithMessageInfo(
@@ -83,8 +84,9 @@ namespace Silverback.Diagnostics
                         IntegrationEventIds.IncompleteSequenceDiscarded,
                         null,
                         "The incomplete sequence is discarded.",
-                        envelope,
-                        sequence);
+                        context.Envelope,
+                        sequence,
+                        context.Consumer.Id);
                     break;
                 case SequenceAbortReason.EnumerationAborted:
                 case SequenceAbortReason.ConsumerAborted:
@@ -94,8 +96,9 @@ namespace Silverback.Diagnostics
                         IntegrationEventIds.SequenceProcessingAborted,
                         null,
                         $"The sequence processing has been aborted (reason: {reason}).",
-                        envelope,
-                        sequence);
+                        context.Envelope,
+                        sequence,
+                        context.Consumer.Id);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(reason), reason, null);
@@ -106,14 +109,14 @@ namespace Silverback.Diagnostics
             EventId eventId,
             string logMessage,
             ConsumerPipelineContext context) =>
-            LogWithMessageInfo(LogLevel.Trace, eventId, null, logMessage, context.Envelope, context.Sequence);
+            LogWithMessageInfo(LogLevel.Trace, eventId, null, logMessage, context);
 
         public void LogTraceWithMessageInfo(
             EventId eventId,
             Exception? exception,
             string logMessage,
             ConsumerPipelineContext context) =>
-            LogWithMessageInfo(LogLevel.Trace, eventId, exception, logMessage, context.Envelope, context.Sequence);
+            LogWithMessageInfo(LogLevel.Trace, eventId, exception, logMessage, context);
 
         public void LogTraceWithMessageInfo(
             EventId eventId,
@@ -125,7 +128,7 @@ namespace Silverback.Diagnostics
             EventId eventId,
             string logMessage,
             ConsumerPipelineContext context) =>
-            LogWithMessageInfo(LogLevel.Debug, eventId, null, logMessage, context.Envelope, context.Sequence);
+            LogWithMessageInfo(LogLevel.Debug, eventId, null, logMessage, context);
 
         public void LogDebugWithMessageInfo(
             EventId eventId,
@@ -137,7 +140,7 @@ namespace Silverback.Diagnostics
             EventId eventId,
             string logMessage,
             ConsumerPipelineContext context) =>
-            LogWithMessageInfo(LogLevel.Information, eventId, null, logMessage, context.Envelope, context.Sequence);
+            LogWithMessageInfo(LogLevel.Information, eventId, null, logMessage, context);
 
         public void LogInformationWithMessageInfo(
             EventId eventId,
@@ -149,7 +152,7 @@ namespace Silverback.Diagnostics
             EventId eventId,
             string logMessage,
             ConsumerPipelineContext context) =>
-            LogWithMessageInfo(LogLevel.Warning, eventId, null, logMessage, context.Envelope, context.Sequence);
+            LogWithMessageInfo(LogLevel.Warning, eventId, null, logMessage, context);
 
         public void LogWarningWithMessageInfo(
             EventId eventId,
@@ -162,7 +165,7 @@ namespace Silverback.Diagnostics
             Exception exception,
             string logMessage,
             ConsumerPipelineContext context) =>
-            LogWithMessageInfo(LogLevel.Warning, eventId, exception, logMessage, context.Envelope, context.Sequence);
+            LogWithMessageInfo(LogLevel.Warning, eventId, exception, logMessage, context);
 
         public void LogWarningWithMessageInfo(
             EventId eventId,
@@ -175,7 +178,7 @@ namespace Silverback.Diagnostics
             EventId eventId,
             string logMessage,
             ConsumerPipelineContext context) =>
-            LogWithMessageInfo(LogLevel.Error, eventId, null, logMessage, context.Envelope, context.Sequence);
+            LogWithMessageInfo(LogLevel.Error, eventId, null, logMessage, context);
 
         public void LogErrorWithMessageInfo(
             EventId eventId,
@@ -188,7 +191,7 @@ namespace Silverback.Diagnostics
             Exception exception,
             string logMessage,
             ConsumerPipelineContext context) =>
-            LogWithMessageInfo(LogLevel.Error, eventId, exception, logMessage, context.Envelope, context.Sequence);
+            LogWithMessageInfo(LogLevel.Error, eventId, exception, logMessage, context);
 
         public void LogErrorWithMessageInfo(
             EventId eventId,
@@ -201,7 +204,7 @@ namespace Silverback.Diagnostics
             EventId eventId,
             string logMessage,
             ConsumerPipelineContext context) =>
-            LogWithMessageInfo(LogLevel.Critical, eventId, null, logMessage, context.Envelope, context.Sequence);
+            LogWithMessageInfo(LogLevel.Critical, eventId, null, logMessage, context);
 
         public void LogCriticalWithMessageInfo(
             EventId eventId,
@@ -214,7 +217,7 @@ namespace Silverback.Diagnostics
             Exception exception,
             string logMessage,
             ConsumerPipelineContext context) =>
-            LogWithMessageInfo(LogLevel.Critical, eventId, exception, logMessage, context.Envelope, context.Sequence);
+            LogWithMessageInfo(LogLevel.Critical, eventId, exception, logMessage, context);
 
         public void LogCriticalWithMessageInfo(
             EventId eventId,
@@ -229,7 +232,14 @@ namespace Silverback.Diagnostics
             Exception? exception,
             string logMessage,
             ConsumerPipelineContext context) =>
-            LogWithMessageInfo(logLevel, eventId, exception, logMessage, context.Envelope, context.Sequence);
+            LogWithMessageInfo(
+                logLevel,
+                eventId,
+                exception,
+                logMessage,
+                context.Envelope,
+                context.Sequence,
+                context.Consumer.Id);
 
         public void LogWithMessageInfo(
             LogLevel logLevel,
@@ -237,22 +247,23 @@ namespace Silverback.Diagnostics
             Exception? exception,
             string logMessage,
             IRawOutboundEnvelope envelope) =>
-            LogWithMessageInfo(logLevel, eventId, exception, logMessage, envelope, null);
+            LogWithMessageInfo(logLevel, eventId, exception, logMessage, envelope, null, null);
 
-        public void LogWithMessageInfo(
+        private void LogWithMessageInfo(
             LogLevel logLevel,
             EventId eventId,
             Exception? exception,
             string logMessage,
             IRawBrokerEnvelope envelope,
-            ISequence? sequence = null)
+            ISequence? sequence,
+            Guid? consumerId)
         {
             if (!_logger.IsEnabled(logLevel))
                 return;
 
             Check.NotEmpty(logMessage, nameof(logMessage));
 
-            var arguments = GetLogArguments(envelope, sequence, ref logMessage);
+            var arguments = GetLogArguments(envelope, sequence, consumerId, ref logMessage);
 
             if (exception != null)
                 _logger.Log(logLevel, eventId, exception, logMessage, arguments);
@@ -260,7 +271,11 @@ namespace Silverback.Diagnostics
                 _logger.Log(logLevel, eventId, logMessage, arguments);
         }
 
-        private object?[] GetLogArguments(IRawBrokerEnvelope envelope, ISequence? sequence, ref string logMessage)
+        private object?[] GetLogArguments(
+            IRawBrokerEnvelope envelope,
+            ISequence? sequence,
+            Guid? consumerId,
+            ref string logMessage)
         {
             if (envelope == null)
                 return Array.Empty<object>();
@@ -268,19 +283,20 @@ namespace Silverback.Diagnostics
             if (envelope is IRawInboundEnvelope inboundEnvelope)
             {
                 return sequence == null
-                    ? GetInboundLogArguments(inboundEnvelope, ref logMessage)
-                    : GetInboundSequenceLogArguments(inboundEnvelope, sequence, ref logMessage);
+                    ? GetInboundLogArguments(inboundEnvelope, consumerId, ref logMessage)
+                    : GetInboundSequenceLogArguments(inboundEnvelope, sequence, consumerId, ref logMessage);
             }
 
             return GetOutboundLogArguments(envelope, ref logMessage);
         }
 
-        private object?[] GetInboundLogArguments(IRawInboundEnvelope envelope, ref string logMessage)
+        private object?[] GetInboundLogArguments(IRawInboundEnvelope envelope, Guid? consumerId, ref string logMessage)
         {
             logMessage += LogTemplates.GetInboundMessageLogTemplate(envelope.Endpoint);
 
             var arguments = new List<object?>
             {
+                consumerId,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
@@ -298,12 +314,14 @@ namespace Silverback.Diagnostics
         private object?[] GetInboundSequenceLogArguments(
             IRawInboundEnvelope envelope,
             ISequence sequence,
+            Guid? consumerId,
             ref string logMessage)
         {
             logMessage += LogTemplates.GetInboundSequenceLogTemplate(envelope.Endpoint);
 
             var arguments = new List<object?>
             {
+                consumerId,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),

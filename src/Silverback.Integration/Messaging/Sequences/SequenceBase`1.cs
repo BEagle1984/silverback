@@ -474,7 +474,7 @@ namespace Silverback.Messaging.Sequences
 
             await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
             if (await HandleExceptionAsync(exception).ConfigureAwait(false))
-                _logger.LogSequenceAborted(Context.Envelope, this, AbortReason, AbortException);
+                _logger.LogSequenceAborted(Context, this, AbortReason, AbortException);
 
             _streamProvider.Abort();
 

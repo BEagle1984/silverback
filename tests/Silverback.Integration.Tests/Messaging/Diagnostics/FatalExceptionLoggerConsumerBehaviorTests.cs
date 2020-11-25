@@ -73,7 +73,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                     Substitute.For<IServiceProvider>()),
                 _ => throw new InvalidCastException());
 
-            act.Should().ThrowExactly<InvalidCastException>();
+            act.Should().ThrowExactly<ConsumerPipelineFatalException>()
+                .WithInnerExceptionExactly<InvalidCastException>();
         }
     }
 }

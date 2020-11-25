@@ -191,7 +191,8 @@ namespace Silverback.Messaging.Broker
                     _logger.LogCritical(
                         IntegrationEventIds.ConsumerFatalError,
                         ex,
-                        "Fatal error occurred processing the consumed message. The consumer will be stopped.");
+                        "Fatal error occurred processing the consumed message. The consumer will be stopped. (consumerId: {consumerId})",
+                        Id);
                 }
 
                 await DisconnectAsync().ConfigureAwait(false);
@@ -240,16 +241,18 @@ namespace Silverback.Messaging.Broker
 
                 _logger.LogDebug(
                     RabbitEventIds.Commit,
-                    "Successfully committed (basic.ack) the delivery tag {deliveryTag}.",
-                    deliveryTag);
+                    "Successfully committed (basic.ack) the delivery tag {deliveryTag}. (consumerId: {consumerId})",
+                    deliveryTag,
+                    Id);
             }
             catch (Exception ex)
             {
                 _logger.LogError(
                     RabbitEventIds.CommitError,
                     ex,
-                    "Error occurred committing (basic.ack) the delivery tag {deliveryTag}.",
-                    deliveryTag);
+                    "Error occurred committing (basic.ack) the delivery tag {deliveryTag}. (consumerId: {consumerId})",
+                    deliveryTag,
+                    Id);
 
                 throw;
             }
@@ -266,16 +269,18 @@ namespace Silverback.Messaging.Broker
 
                 _logger.LogDebug(
                     RabbitEventIds.Rollback,
-                    "Successfully rolled back (basic.nack) the delivery tag {deliveryTag}.",
-                    deliveryTag);
+                    "Successfully rolled back (basic.nack) the delivery tag {deliveryTag}. (consumerId: {consumerId})",
+                    deliveryTag,
+                    Id);
             }
             catch (Exception ex)
             {
                 _logger.LogError(
                     RabbitEventIds.RollbackError,
                     ex,
-                    "Error occurred rolling back (basic.nack) the delivery tag {deliveryTag}.",
-                    deliveryTag);
+                    "Error occurred rolling back (basic.nack) the delivery tag {deliveryTag}. (consumerId: {consumerId})",
+                    deliveryTag,
+                    Id);
 
                 throw;
             }

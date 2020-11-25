@@ -164,15 +164,17 @@ namespace Silverback.Messaging.Broker
         {
             if (!Endpoint.Configuration.EnableAutoRecovery)
             {
-                const string errorMessage = "Fatal error occurred consuming a message. The consumer will be stopped. " +
+                const string errorMessage = "KafkaException occurred.. The consumer will be stopped. " +
                                             "Enable auto recovery to allow Silverback to automatically try to reconnect " +
-                                            "(EnableAutoRecovery=true in the endpoint configuration). (topic(s): {topics})";
+                                            "(EnableAutoRecovery=true in the endpoint configuration). " +
+                                            "(consumerId: {consumerId}, topic(s): {topics})";
 
                 _logger.LogCritical(
                     KafkaEventIds.KafkaExceptionNoAutoRecovery,
                     ex,
                     errorMessage,
-                    (object)Endpoint.Names);
+                    Id,
+                    Endpoint.Names);
 
                 return false;
             }
@@ -185,8 +187,9 @@ namespace Silverback.Messaging.Broker
                 _logger.LogWarning(
                     KafkaEventIds.KafkaExceptionAutoRecovery,
                     ex,
-                    "KafkaException occurred. The consumer will try to recover. (topic(s): {topics})",
-                    (object)Endpoint.Names);
+                    "KafkaException occurred. The consumer will try to recover. (consumerId: {consumerId}, topic(s): {topics})",
+                    Id,
+                    Endpoint.Names);
 
                 ResetConfluentConsumer(cancellationToken);
 
@@ -391,8 +394,9 @@ namespace Silverback.Messaging.Broker
                 _logger.LogWarning(
                     KafkaEventIds.ConsumerDisconnectError,
                     ex,
-                    "Error disconnecting consumer. (topic(s): {topics})",
-                    (object)Endpoint.Names);
+                    "Error disconnecting consumer. (consumerId: {consumerId}, topic(s): {topics})",
+                    Id,
+                    Endpoint.Names);
             }
             finally
             {
@@ -427,8 +431,10 @@ namespace Silverback.Messaging.Broker
                     _logger.LogCritical(
                         KafkaEventIds.ErrorRecoveringFromKafkaException,
                         ex,
-                        "Failed to recover from consumer exception. Will retry in {SecondsUntilRetry} seconds.",
-                        RecoveryDelay.TotalSeconds);
+                        "Failed to recover from consumer exception. Will retry in {SecondsUntilRetry} seconds. (consumerId: {consumerId}, topic(s): {topics})",
+                        RecoveryDelay.TotalSeconds,
+                        Id,
+                        Endpoint.Names);
 
                     Task.Delay(RecoveryDelay, cancellationToken).Wait(cancellationToken);
                 }
@@ -444,7 +450,8 @@ namespace Silverback.Messaging.Broker
             {
                 _logger.LogTrace(
                     IntegrationEventIds.LowLevelTracing,
-                    "Storing offset {partition}@{offset}.",
+                    "Storing offset {topic}[{partition}]@{offset}.",
+                    offset.Topic,
                     offset.Partition.Value,
                     offset.Offset.Value);
                 _confluentConsumer.StoreOffset(offset);

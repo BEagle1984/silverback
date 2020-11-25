@@ -40,8 +40,8 @@ namespace Silverback.Diagnostics
         ///     Writes the standard <i>"Error occurred processing the inbound sequence of messages"</i> or
         ///     <i>"Sequence processing has been aborted"</i> log message.
         /// </summary>
-        /// <param name="envelope">
-        ///     The <see cref="IRawInboundEnvelope" /> containing the message being processed.
+        /// <param name="context">
+        ///     The <see cref="ConsumerPipelineContext" /> related to the message being processed.
         /// </param>
         /// <param name="sequence">
         ///     The <see cref="ISequence" /> being aborted.
@@ -53,7 +53,7 @@ namespace Silverback.Diagnostics
         ///     The exception that caused the abort, if an exception was thrown.
         /// </param>
         void LogSequenceAborted(
-            IRawInboundEnvelope envelope,
+            ConsumerPipelineContext context,
             ISequence sequence,
             SequenceAbortReason reason,
             Exception? exception);

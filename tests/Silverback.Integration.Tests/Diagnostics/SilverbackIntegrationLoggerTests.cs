@@ -104,6 +104,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Processing inbound message. | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -120,6 +121,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Processing inbound message. | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -141,6 +143,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Error occurred processing the inbound message. | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -157,6 +160,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Error occurred processing the inbound message. | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -181,6 +185,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -200,6 +205,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -224,6 +230,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -243,6 +250,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -267,6 +275,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -286,6 +295,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -310,6 +320,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -330,6 +341,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -349,6 +361,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -374,6 +387,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -398,6 +412,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -418,6 +433,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -437,6 +453,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -462,6 +479,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -486,6 +504,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -506,6 +525,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -525,6 +545,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -550,6 +571,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -613,6 +635,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -634,6 +657,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -655,6 +679,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
@@ -681,6 +706,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             const string expectedMessage =
                 "Log message | " +
+                "consumerId: 00000000-0000-0000-0000-000000000000, " +
                 "endpointName: TestActual, " +
                 "failedAttempts: 1, " +
                 "messageType: Something.Xy, " +
