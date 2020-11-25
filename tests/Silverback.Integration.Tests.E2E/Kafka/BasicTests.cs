@@ -383,6 +383,53 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Should().BeEquivalentTo(Enumerable.Range(1, 10).Select(i => $"{i}"));
         }
 
+        [Fact]
+        public async Task OutboundAndInbound_MultipleConsumerInstances_ProducedAndConsumed()
+        {
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }, 2))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 10; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.OutboundEnvelopes.Should().HaveCount(10);
+            Subscriber.InboundEnvelopes.Should().HaveCount(10);
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
+
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(10);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(10);
+            SpyBehavior.InboundEnvelopes
+                .Select(envelope => ((TestEventOne)envelope.Message!).Content)
+                .Distinct()
+                .Should().BeEquivalentTo(Enumerable.Range(1, 10).Select(i => $"{i}"));
+        }
+
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
