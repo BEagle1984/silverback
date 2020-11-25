@@ -88,9 +88,6 @@ namespace Silverback.Messaging.Broker
 
         internal void OnPartitionsAssigned(List<TopicPartition> partitions)
         {
-            if (_confluentConsumer == null)
-                throw new InvalidOperationException("The consumer is not connected.");
-
             if (IsDisconnecting)
                 return;
 
@@ -126,9 +123,6 @@ namespace Silverback.Messaging.Broker
             Message<byte[]?, byte[]?> message,
             TopicPartitionOffset topicPartitionOffset)
         {
-            if (_serializer == null)
-                throw new InvalidOperationException("The consumer is not connected.");
-
             Dictionary<string, string> logData = new Dictionary<string, string>();
 
             var offset = new KafkaOffset(topicPartitionOffset);
@@ -138,7 +132,7 @@ namespace Silverback.Messaging.Broker
 
             if (message.Key != null)
             {
-                string deserializedKafkaKey = _serializer.DeserializeKey(
+                string deserializedKafkaKey = _serializer!.DeserializeKey(
                     message.Key,
                     headers,
                     new MessageSerializationContext(Endpoint, topicPartitionOffset.Topic));
@@ -235,9 +229,6 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer.StartCore" />
         protected override void StartCore()
         {
-            if (_confluentConsumer == null)
-                throw new InvalidOperationException("The consumer is not connected.");
-
             lock (_channelsLock)
             {
                 // The consume loop must start immediately because the Confluent consumer connects for real only when
@@ -268,10 +259,7 @@ namespace Silverback.Messaging.Broker
         {
             Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
 
-            if (_channelsManager == null)
-                throw new InvalidOperationException("The ChannelsManager is not initialized.");
-
-            return _channelsManager.GetSequenceStore(brokerMessageIdentifier.AsTopicPartition());
+            return _channelsManager!.GetSequenceStore(brokerMessageIdentifier.AsTopicPartition());
         }
 
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />
@@ -292,9 +280,6 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
         protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
-            if (_confluentConsumer == null)
-                throw new InvalidOperationException("The consumer is not connected.");
-
             var lastOffsets = brokerMessageIdentifiers
                 .GroupBy(offset => offset.Key)
                 .Select(
@@ -319,9 +304,6 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
         protected override async Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
-            if (_confluentConsumer == null)
-                throw new InvalidOperationException("The consumer is not connected.");
-
             if (IsConsuming && _consumeLoopHandler != null)
                 await _consumeLoopHandler.Stop().ConfigureAwait(false);
 
@@ -340,12 +322,9 @@ namespace Silverback.Messaging.Broker
 
         private void Seek(TopicPartitionOffset topicPartitionOffset)
         {
-            if (_confluentConsumer == null)
-                throw new InvalidOperationException("The consumer is not connected.");
-
             _channelsManager?.StopReading(topicPartitionOffset.TopicPartition);
 
-            _confluentConsumer.Seek(topicPartitionOffset);
+            _confluentConsumer!.Seek(topicPartitionOffset);
 
             if (IsConsuming)
                 _channelsManager?.StartReading(topicPartitionOffset.TopicPartition);
@@ -406,13 +385,7 @@ namespace Silverback.Messaging.Broker
             _confluentConsumer = null;
         }
 
-        private void Subscribe()
-        {
-            if (_confluentConsumer == null)
-                throw new InvalidOperationException("The underlying consumer is not initialized.");
-
-            _confluentConsumer.Subscribe(Endpoint.Names);
-        }
+        private void Subscribe() => _confluentConsumer!.Subscribe(Endpoint.Names);
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private void ResetConfluentConsumer(CancellationToken cancellationToken)
@@ -443,9 +416,6 @@ namespace Silverback.Messaging.Broker
 
         private void StoreOffset(IEnumerable<TopicPartitionOffset> offsets)
         {
-            if (_confluentConsumer == null)
-                throw new InvalidOperationException("The underlying consumer is not initialized.");
-
             foreach (var offset in offsets)
             {
                 _logger.LogTrace(
@@ -454,7 +424,7 @@ namespace Silverback.Messaging.Broker
                     offset.Topic,
                     offset.Partition.Value,
                     offset.Offset.Value);
-                _confluentConsumer.StoreOffset(offset);
+                _confluentConsumer!.StoreOffset(offset);
             }
         }
 
@@ -471,10 +441,7 @@ namespace Silverback.Messaging.Broker
                 _messagesSinceCommit = 0;
             }
 
-            if (_confluentConsumer == null)
-                throw new InvalidOperationException("The underlying consumer is not initialized.");
-
-            _confluentConsumer.Commit();
+            _confluentConsumer!.Commit();
         }
 
         private void CommitOffsets()
@@ -484,10 +451,7 @@ namespace Silverback.Messaging.Broker
 
             try
             {
-                if (_confluentConsumer == null)
-                    throw new InvalidOperationException("The underlying consumer is not initialized.");
-
-                var offsets = _confluentConsumer.Commit();
+                var offsets = _confluentConsumer!.Commit();
                 _kafkaEventsHandler.CreateScopeAndPublishEvent(
                     new KafkaOffsetsCommittedEvent(
                         offsets.Select(

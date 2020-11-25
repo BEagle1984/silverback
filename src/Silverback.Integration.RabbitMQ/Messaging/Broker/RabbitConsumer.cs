@@ -234,10 +234,7 @@ namespace Silverback.Messaging.Broker
         {
             try
             {
-                if (_channel == null)
-                    throw new InvalidOperationException("The consumer is not connected.");
-
-                _channel.BasicAck(deliveryTag, true);
+                _channel!.BasicAck(deliveryTag, true);
 
                 _logger.LogDebug(
                     RabbitEventIds.Commit,
@@ -262,10 +259,7 @@ namespace Silverback.Messaging.Broker
         {
             try
             {
-                if (_channel == null)
-                    throw new InvalidOperationException("The consumer is not connected.");
-
-                _channel.BasicNack(deliveryTag, true, true);
+                _channel!.BasicNack(deliveryTag, true, true);
 
                 _logger.LogDebug(
                     RabbitEventIds.Rollback,
