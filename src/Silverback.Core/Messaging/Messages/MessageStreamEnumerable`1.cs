@@ -27,14 +27,13 @@ namespace Silverback.Messaging.Messages
 
         private readonly CancellationTokenSource _abortCancellationTokenSource = new CancellationTokenSource();
 
+        private readonly object _completeLock = new object();
+
         private PushedMessage? _current;
 
         private bool _isFirstMessage = true;
 
         private bool _isComplete;
-
-        /// <inheritdoc cref="IMessageStreamEnumerable.MessageType" />
-        public Type MessageType => typeof(TMessage);
 
         /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(PushedMessage,System.Threading.CancellationToken)" />
         [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
@@ -59,20 +58,27 @@ namespace Silverback.Messaging.Messages
         /// <inheritdoc cref="IMessageStreamEnumerable.Abort" />
         public void Abort()
         {
-            if (_isComplete)
-                return;
+            lock (_completeLock)
+            {
+                if (_isComplete)
+                    return;
 
-            _isComplete = true;
+                _isComplete = true;
+            }
+
             _abortCancellationTokenSource.Cancel();
         }
 
         /// <inheritdoc cref="IMessageStreamEnumerable.CompleteAsync" />
         public async Task CompleteAsync(CancellationToken cancellationToken = default)
         {
-            if (_isComplete)
-                return;
+            lock (_completeLock)
+            {
+                if (_isComplete)
+                    return;
 
-            _isComplete = true;
+                _isComplete = true;
+            }
 
             await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
 

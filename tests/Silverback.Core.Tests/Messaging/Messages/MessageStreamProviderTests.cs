@@ -392,6 +392,64 @@ namespace Silverback.Tests.Core.Messaging.Messages
         }
 
         [Fact]
+        public async Task CreateLazyStream_PushingMessages_StreamCreatedWhenMatchingMessagePushed()
+        {
+            var provider = new MessageStreamProvider<IEvent>();
+            var lazyStream = provider.CreateLazyStream<TestEventTwo>();
+            List<TestEventTwo> receivedTwos = new List<TestEventTwo>();
+
+            Task.Run(
+                async () =>
+                {
+                    await lazyStream.WaitUntilCreated();
+                    foreach (var message in lazyStream.Stream!)
+                    {
+                        receivedTwos.Add(message);
+                    }
+                }).RunWithoutBlocking();
+
+            var createStreamTask = lazyStream.WaitUntilCreated();
+
+            await provider.PushAsync(new TestEventOne(), false);
+            await provider.PushAsync(new TestEventOne(), false);
+
+            createStreamTask.Status.Should().NotBe(TaskStatus.RanToCompletion);
+            lazyStream.Stream.Should().BeNull();
+
+            await provider.PushAsync(new TestEventTwo());
+
+            createStreamTask.Status.Should().Be(TaskStatus.RanToCompletion);
+            lazyStream.Stream.Should().BeOfType<MessageStreamEnumerable<TestEventTwo>>();
+
+            await provider.PushAsync(new TestEventTwo());
+
+            receivedTwos.Should().HaveCount(2);
+
+            await provider.CompleteAsync();
+        }
+
+        [Fact]
+        public void CreateLazyStream_CalledTwiceForSameType_NewInstanceReturned()
+        {
+            var provider = new MessageStreamProvider<IMessage>();
+            var stream1 = provider.CreateLazyStream<IEvent>();
+            var stream2 = provider.CreateLazyStream<IEvent>();
+
+            stream2.Should().NotBeSameAs(stream1);
+        }
+
+        [Fact]
+        public void CreateLazyStream_GenericAndNonGenericVersions_EquivalentInstanceReturned()
+        {
+            var provider = new MessageStreamProvider<IMessage>();
+
+            var stream1 = provider.CreateLazyStream<IEvent>();
+            var stream2 = provider.CreateLazyStream(typeof(IEvent));
+
+            stream2.Should().BeOfType(stream1.GetType());
+        }
+
+        [Fact]
         public void CreateStream_CalledTwiceForSameType_NewInstanceReturned()
         {
             var provider = new MessageStreamProvider<IMessage>();

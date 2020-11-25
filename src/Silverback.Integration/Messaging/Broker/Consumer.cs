@@ -119,8 +119,6 @@ namespace Silverback.Messaging.Broker
             if (IsConnected)
                 return;
 
-            SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>());
-
             await ConnectCoreAsync().ConfigureAwait(false);
 
             IsConnected = true;
@@ -294,9 +292,17 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     The <see cref="ISequenceStore" />.
         /// </returns>
-        protected virtual ISequenceStore GetSequenceStore(IOffset offset) =>
-            SequenceStores.FirstOrDefault() ??
-            throw new InvalidOperationException("The sequence store is not initialized.");
+        protected virtual ISequenceStore GetSequenceStore(IOffset offset)
+        {
+            if (SequenceStores.Count == 0)
+            {
+                lock (SequenceStores)
+                    SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>());
+            }
+
+            return SequenceStores.FirstOrDefault() ??
+                   throw new InvalidOperationException("The sequence store is not initialized.");
+        }
 
         /// <summary>
         ///     Handles the consumed message invoking each <see cref="IConsumerBehavior" /> in the pipeline.

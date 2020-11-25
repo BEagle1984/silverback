@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,15 +42,15 @@ namespace Silverback.Util
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        public static async Task CancelOnExceptionAsync(
-            this Task task,
-            CancellationTokenSource cancellationTokenSource)
+        public static async Task CancelOnExceptionAsync(this Task task, CancellationTokenSource cancellationTokenSource)
         {
-            try
-            {
-                await task.ConfigureAwait(false);
-            }
-            catch
+            // TODO: Array pool?
+            var tasks = new[] { task, cancellationTokenSource.Token.AsTask() };
+            await Task.WhenAny(tasks).ConfigureAwait(false);
+
+            var exception = tasks.Where(t => t.IsFaulted).Select(t => t.Exception).FirstOrDefault();
+
+            if (exception != null)
             {
                 try
                 {
@@ -59,9 +60,9 @@ namespace Silverback.Util
                 {
                     // Ignore
                 }
-
-                throw;
             }
+
+            await task.ConfigureAwait(false);
         }
 
         /// <summary>
@@ -80,11 +81,13 @@ namespace Silverback.Util
             this Task<T> task,
             CancellationTokenSource cancellationTokenSource)
         {
-            try
-            {
-                return await task.ConfigureAwait(false);
-            }
-            catch
+            // TODO: Array pool?
+            var tasks = new[] { task, cancellationTokenSource.Token.AsTask() };
+            await Task.WhenAny(tasks).ConfigureAwait(false);
+
+            var exception = tasks.Where(t => t.IsFaulted).Select(t => t.Exception).FirstOrDefault();
+
+            if (exception != null)
             {
                 try
                 {
@@ -94,9 +97,9 @@ namespace Silverback.Util
                 {
                     // Ignore
                 }
-
-                throw;
             }
+
+            return await task.ConfigureAwait(false);
         }
     }
 }

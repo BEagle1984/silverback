@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Inbound.Transaction;
@@ -21,13 +22,14 @@ namespace Silverback.Tests
             IServiceProvider? serviceProvider = null,
             IConsumerTransactionManager? transactionManager = null,
             IConsumer? consumer = null,
-            ISequenceStore? sequenceStore = null) =>
+            ISequenceStore? sequenceStore = null,
+            IConsumerEndpoint? endpoint = null) =>
             new ConsumerPipelineContext(
                 envelope ?? new RawInboundEnvelope(
                     Stream.Null,
                     Array.Empty<MessageHeader>(),
-                    new TestConsumerEndpoint("test"),
-                    "test",
+                    endpoint ?? new TestConsumerEndpoint("test"),
+                    endpoint?.Name ?? "test",
                     new TestOffset()),
                 consumer ?? Substitute.For<IConsumer>(),
                 sequenceStore ?? Substitute.For<ISequenceStore>(),

@@ -30,6 +30,6 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         /// <returns>
         ///     The actual value to be forwarded to the subscribed method.
         /// </returns>
-        object GetValue(IMessageStreamProvider streamProvider, Type targetMessageType);
+        ILazyArgumentValue GetValue(IMessageStreamProvider streamProvider, Type targetMessageType);
     }
 }

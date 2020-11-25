@@ -14,11 +14,6 @@ namespace Silverback.Messaging.Messages
     internal interface IMessageStreamEnumerable
     {
         /// <summary>
-        ///     Gets the type of the messages being streamed.
-        /// </summary>
-        Type MessageType { get; }
-
-        /// <summary>
         ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the
         ///     message has actually been pulled and processed.
         /// </summary>

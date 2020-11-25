@@ -35,6 +35,8 @@ namespace Silverback.Messaging.Broker
 
         private readonly TaskCompletionSource<bool>[] _readTaskCompletionSources;
 
+        private readonly SemaphoreSlim? _messagesLimiterSemaphoreSlim;
+
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public ChannelsManager(
             IList<TopicPartition> partitions,
@@ -51,6 +53,13 @@ namespace Silverback.Messaging.Broker
             _channels = consumer.Endpoint.ProcessPartitionsIndependently
                 ? new Channel<ConsumeResult<byte[]?, byte[]?>>[partitions.Count]
                 : new Channel<ConsumeResult<byte[]?, byte[]?>>[1];
+
+            if (consumer.Endpoint.MaxDegreeOfParallelism < _channels.Length)
+            {
+                _messagesLimiterSemaphoreSlim = new SemaphoreSlim(
+                    consumer.Endpoint.MaxDegreeOfParallelism,
+                    consumer.Endpoint.MaxDegreeOfParallelism);
+            }
 
             _readCancellationTokenSource = new CancellationTokenSource[_channels.Length];
             _readTaskCompletionSources = new TaskCompletionSource<bool>[_channels.Length];
@@ -118,6 +127,7 @@ namespace Silverback.Messaging.Broker
         {
             StopReading();
             _readCancellationTokenSource.ForEach(cancellationTokenSource => cancellationTokenSource.Dispose());
+            _messagesLimiterSemaphoreSlim?.Dispose();
         }
 
         private void StartReading(int channelIndex)
@@ -254,8 +264,18 @@ namespace Silverback.Messaging.Broker
                     consumeResult.Topic.Equals(endpointName, StringComparison.OrdinalIgnoreCase)))
                 return;
 
-            await _consumer.HandleMessageAsync(consumeResult.Message, consumeResult.TopicPartitionOffset)
-                .ConfigureAwait(false);
+            if (_messagesLimiterSemaphoreSlim != null)
+                await _messagesLimiterSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+
+            try
+            {
+                await _consumer.HandleMessageAsync(consumeResult.Message, consumeResult.TopicPartitionOffset)
+                    .ConfigureAwait(false);
+            }
+            finally
+            {
+                _messagesLimiterSemaphoreSlim?.Release();
+            }
         }
 
         private int GetChannelIndex(TopicPartition topicPartition) =>

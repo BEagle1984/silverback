@@ -35,7 +35,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         }
 
         /// <inheritdoc cref="IStreamEnumerableMessageArgumentResolver.GetValue" />
-        public object GetValue(IMessageStreamProvider streamProvider, Type targetMessageType)
+        public ILazyArgumentValue GetValue(IMessageStreamProvider streamProvider, Type targetMessageType)
         {
             Check.NotNull(streamProvider, nameof(streamProvider));
 
@@ -43,14 +43,14 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
                 "CreateObservable",
                 BindingFlags.Static | BindingFlags.NonPublic);
 
-            return _createObservableMethodInfo!
+            return (ILazyArgumentValue)_createObservableMethodInfo!
                 .MakeGenericMethod(targetMessageType)
-                .Invoke(this, new object[] { streamProvider.CreateStream(targetMessageType) });
+                .Invoke(this, new object[] { streamProvider.CreateLazyStream(targetMessageType) });
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via Reflection")]
-        private static IMessageStreamObservable<TMessage> CreateObservable<TMessage>(
-            IMessageStreamEnumerable<TMessage> enumerable) =>
-            new MessageStreamObservable<TMessage>(enumerable);
+        private static LazyMessageStreamObservable<TMessage> CreateObservable<TMessage>(
+            ILazyMessageStreamEnumerable<TMessage> enumerable) =>
+            new LazyMessageStreamObservable<TMessage>(enumerable);
     }
 }

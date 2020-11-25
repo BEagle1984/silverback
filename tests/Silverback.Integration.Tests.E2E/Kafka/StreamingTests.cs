@@ -496,5 +496,94 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(15);
         }
+
+        [Fact]
+        public async Task Streaming_FromMultiplePartitionsWithLimitedParallelism_ConcurrencyLimited()
+        {
+            var receivedMessages = new List<TestEventWithKafkaKey>();
+            var taskCompletionSource = new TaskCompletionSource<bool>();
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        },
+                                        MaxDegreeOfParallelism = 2
+                                    }))
+                        .AddDelegateSubscriber(
+                            async (IMessageStreamEnumerable<TestEventWithKafkaKey> eventsStream) =>
+                            {
+                                await foreach (var message in eventsStream)
+                                {
+                                    lock (receivedMessages)
+                                    {
+                                        receivedMessages.Add(message);
+                                    }
+
+                                    await taskCompletionSource.Task;
+                                }
+                            }))
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 3; i++)
+            {
+                await publisher.PublishAsync(
+                    new TestEventWithKafkaKey
+                    {
+                        KafkaKey = 1,
+                        Content = $"{i}"
+                    });
+                await publisher.PublishAsync(
+                    new TestEventWithKafkaKey
+                    {
+                        KafkaKey = 2,
+                        Content = $"{i}"
+                    });
+                await publisher.PublishAsync(
+                    new TestEventWithKafkaKey
+                    {
+                        KafkaKey = 3,
+                        Content = $"{i}"
+                    });
+                await publisher.PublishAsync(
+                    new TestEventWithKafkaKey
+                    {
+                        KafkaKey = 4,
+                        Content = $"{i}"
+                    });
+            }
+
+            await AsyncTestingUtil.WaitAsync(() => receivedMessages.Count >= 2);
+            await Task.Delay(100);
+
+            try
+            {
+                receivedMessages.Should().HaveCount(2);
+            }
+            finally
+            {
+                taskCompletionSource.SetResult(true);
+            }
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            receivedMessages.Should().HaveCount(12);
+        }
     }
 }

@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Messages
         int StreamsCount { get; }
 
         /// <summary>
-        ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> of that will be linked with this
+        ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> that will be linked with this
         ///     provider and will be pushed with the messages matching the type <paramref name="messageType" />.
         /// </summary>
         /// <param name="messageType">
@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Messages
         IMessageStreamEnumerable<object> CreateStream(Type messageType);
 
         /// <summary>
-        ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> of that will be linked with this
+        ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> that will be linked with this
         ///     provider and will be pushed with the messages matching the type <typeparamref name="TMessage" />.
         /// </summary>
         /// <typeparam name="TMessage">
@@ -51,5 +51,31 @@ namespace Silverback.Messaging.Messages
         ///     The linked <see cref="IMessageStreamEnumerable{TMessage}" />.
         /// </returns>
         IMessageStreamEnumerable<TMessage> CreateStream<TMessage>();
+
+        /// <summary>
+        ///     Creates a new <see cref="ILazyMessageStreamEnumerable{TMessage}" /> that will be linked with this
+        ///     provider and will create the <see cref="IMessageStreamEnumerable{TMessage}" /> as soon as a message
+        ///     matching the type <paramref name="messageType" /> is pushed.
+        /// </summary>
+        /// <param name="messageType">
+        ///     The type of the messages to be streamed to the linked stream.
+        /// </param>
+        /// <returns>
+        ///     The linked <see cref="ILazyMessageStreamEnumerable{TMessage}" />.
+        /// </returns>
+        ILazyMessageStreamEnumerable<object> CreateLazyStream(Type messageType);
+
+        /// <summary>
+        ///     Creates a new <see cref="ILazyMessageStreamEnumerable{TMessage}" /> that will be linked with this
+        ///     provider and will create the <see cref="IMessageStreamEnumerable{TMessage}" /> as soon as a message
+        ///     matching the type <typeparamref name="TMessage" /> is pushed.
+        /// </summary>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be streamed to the linked stream.
+        /// </typeparam>
+        /// <returns>
+        ///     The linked <see cref="ILazyMessageStreamEnumerable{TMessage}" />.
+        /// </returns>
+        ILazyMessageStreamEnumerable<TMessage> CreateLazyStream<TMessage>();
     }
 }

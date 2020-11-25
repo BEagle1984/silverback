@@ -187,8 +187,27 @@ namespace Silverback.Messaging.Subscribers
                 .Select(
                     streamProvider =>
                     {
-                        arguments[0] = streamEnumerableResolver.GetValue(streamProvider, subscribedMethod.MessageType);
-                        return InvokeWithoutBlockingAsync(target, subscribedMethod.MethodInfo, arguments);
+                        var lazyStream = streamEnumerableResolver.GetValue(
+                            streamProvider,
+                            subscribedMethod.MessageType);
+
+                        return Task.Run(
+                            async () =>
+                            {
+                                try
+                                {
+                                    await lazyStream.WaitUntilCreated().ConfigureAwait(false);
+
+                                    arguments[0] = lazyStream.Value;
+                                }
+                                catch (OperationCanceledException)
+                                {
+                                    return;
+                                }
+
+                                await InvokeWithoutBlockingAsync(target, subscribedMethod.MethodInfo, arguments)
+                                    .ConfigureAwait(false);
+                            });
                     });
 
             return (messages, resultTasks.ToArray());

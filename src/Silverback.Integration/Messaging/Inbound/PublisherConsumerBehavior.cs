@@ -102,7 +102,8 @@ namespace Silverback.Messaging.Inbound
         {
             const string sequenceIdPrefix = "unbounded|";
 
-            var sequence = await context.SequenceStore.GetAsync<UnboundedSequence>(sequenceIdPrefix, true).ConfigureAwait(false);
+            var sequence = await context.SequenceStore.GetAsync<UnboundedSequence>(sequenceIdPrefix, true)
+                .ConfigureAwait(false);
             if (sequence != null && sequence.IsPending)
                 return sequence;
 
@@ -126,30 +127,40 @@ namespace Silverback.Messaging.Inbound
 
             var processingTasks = await publisher.PublishAsync(sequence.StreamProvider).ConfigureAwait(false);
 
+            if (processingTasks.Count == 0)
+            {
+                _logger.LogTraceWithMessageInfo(
+                    IntegrationEventIds.LowLevelTracing,
+                    $"No subscribers for {sequence.GetType().Name} '{sequence.SequenceId}'.",
+                    context);
+                return Task.CompletedTask;
+            }
+
             return Task.Run(
                 async () =>
                 {
                     try
                     {
+                        if (processingTasks.Count == 1)
+                        {
+                            await processingTasks.First().ConfigureAwait(false);
+                            return;
+                        }
+
                         using var cancellationTokenSource = new CancellationTokenSource();
                         var tasks = processingTasks.Select(task => task.CancelOnExceptionAsync(cancellationTokenSource))
                             .ToList();
 
-                        // TODO: Test whether an exception really cancels all tasks
-                        await Task.WhenAny(
-                                Task.WhenAll(tasks),
-                                cancellationTokenSource.Token.AsTask())
-                            .ConfigureAwait(false);
+                        await Task.WhenAny(tasks).ConfigureAwait(false);
 
-                        var exception = tasks.Where(task => task.IsFaulted).Select(task => task.Exception)
-                            .FirstOrDefault();
-                        if (exception != null)
+                        if (!sequence.IsComplete && tasks.All(task => !task.IsFaulted))
                         {
-                            await sequence.AbortAsync(SequenceAbortReason.Error).ConfigureAwait(false);
-                            sequence.Dispose();
+                            // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
+                            // The reason behind this call here may be counterintuitive but with
+                            // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
+                            await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
                         }
 
-                        // TODO: Test abort at first exception
                         await Task.WhenAll(processingTasks).ConfigureAwait(false);
                     }
                     catch (Exception exception)

@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Chunking;
 
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
 
@@ -44,15 +46,25 @@ namespace Silverback.Messaging
         public KafkaConsumerConfig Configuration { get; set; } = new KafkaConsumerConfig();
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the messages from different partitions can be processed
-        ///     concurrently. The default is <c>true</c>.
+        ///     Gets or sets a value indicating whether the partitions must be processed independently.
+        ///     When <c>true</c> a stream will published per each partition and the sequences (
+        ///     <see cref="ChunkSequence" />, <see cref="BatchSequence" />, ...) cannot span across the partitions.
+        ///     The default is <c>true</c>.
         /// </summary>
         public bool ProcessPartitionsIndependently { get; set; } = true;
 
         /// <summary>
+        ///     Gets or sets the maximum number of incoming message that can be processed concurrently. Up to a
+        ///     message per each subscribed partition can be processed in parallel.
+        ///     The default is 10.
+        /// </summary>
+        public int MaxDegreeOfParallelism { get; set; } = 10;
+
+        /// <summary>
         ///     Gets or sets the maximum amount of messages to be buffered in the consumer before being processed.
         ///     when <see cref="ProcessPartitionsIndependently" /> is set to <c>true</c> (default) the limit will be
-        ///     applied per each partition independently. The default is 1.
+        ///     applied per partition.
+        ///     The default is 1.
         /// </summary>
         public int BackpressureLimit { get; set; } = 1;
 
@@ -66,6 +78,9 @@ namespace Silverback.Messaging
 
             if (BackpressureLimit < 1)
                 throw new EndpointConfigurationException("BackpressureLimit must be greater or equal to 1.");
+
+            if (MaxDegreeOfParallelism < 1)
+                throw new EndpointConfigurationException("MaxDegreeOfParallelism must be greater or equal to 1.");
 
             Configuration.Validate();
         }
