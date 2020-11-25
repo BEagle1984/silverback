@@ -17,6 +17,7 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Gets the <see cref="Guid"/> uniquely identifying the consumer instance.
         /// </summary>
+        // TODO: Log this?
         Guid Id { get; }
 
         /// <summary>

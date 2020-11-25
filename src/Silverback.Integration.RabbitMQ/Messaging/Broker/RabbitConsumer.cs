@@ -102,8 +102,6 @@ namespace Silverback.Messaging.Broker
             _queueName = null;
             _consumer = null;
 
-            _disconnecting = false;
-
             return Task.CompletedTask;
         }
 
@@ -129,6 +127,8 @@ namespace Silverback.Messaging.Broker
                 _channel?.BasicCancel(_consumerTag);
                 _consumerTag = null;
             }
+
+            _disconnecting = false;
         }
 
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />
@@ -171,6 +171,7 @@ namespace Silverback.Messaging.Broker
                     offset.Value,
                     Endpoint.Name);
 
+                // TODO: Test this!
                 if (_disconnecting)
                     return;
 

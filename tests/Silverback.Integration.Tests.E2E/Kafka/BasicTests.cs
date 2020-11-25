@@ -686,5 +686,70 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
         }
+
+        [Fact]
+        public async Task StopAndStart_DefaultSettings_MessagesConsumedAfterRestart()
+        {
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint(DefaultTopicName))
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            AutoCommitIntervalMs = 100
+                                        }
+                                    }))
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var publisher = serviceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 5; i++)
+            {
+                await publisher.PublishAsync(
+                    new TestEventOne
+                    {
+                        Content = $"{i}"
+                    });
+            }
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.OutboundEnvelopes.Should().HaveCount(5);
+            Subscriber.InboundEnvelopes.Should().HaveCount(5);
+
+            Broker.Consumers[0].Stop();
+
+            for (int i = 1; i <= 5; i++)
+            {
+                await publisher.PublishAsync(
+                    new TestEventOne
+                    {
+                        Content = $"{i}"
+                    });
+            }
+
+            await Task.Delay(200);
+
+            Subscriber.OutboundEnvelopes.Should().HaveCount(10);
+            Subscriber.InboundEnvelopes.Should().HaveCount(5);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
+
+            Broker.Consumers[0].Start();
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Should().HaveCount(10);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
+        }
     }
 }
