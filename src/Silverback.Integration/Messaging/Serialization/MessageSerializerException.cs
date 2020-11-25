@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Silverback.Messaging.Serialization
@@ -13,6 +14,7 @@ namespace Silverback.Messaging.Serialization
     ///     wrapped.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class MessageSerializerException : SilverbackException
     {
         /// <summary>

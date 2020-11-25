@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Silverback.Domain
@@ -10,6 +11,7 @@ namespace Silverback.Domain
     ///     The exception that is thrown when the stored events cannot be applied back to the domain entity.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class EventSourcingException : SilverbackException
     {
         /// <summary>

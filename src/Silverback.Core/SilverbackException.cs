@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Silverback
@@ -10,6 +11,7 @@ namespace Silverback
     ///     The base class for all the custom exceptions thrown by Silverback.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public abstract class SilverbackException : Exception
     {
         /// <summary>

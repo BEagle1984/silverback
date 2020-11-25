@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Silverback.Messaging
@@ -10,6 +11,7 @@ namespace Silverback.Messaging
     ///     The exception that is thrown when the endpoint configuration is not valid.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class EndpointConfigurationException : SilverbackException
     {
         /// <summary>

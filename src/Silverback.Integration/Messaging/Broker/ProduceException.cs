@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Silverback.Messaging.Broker
@@ -11,6 +12,7 @@ namespace Silverback.Messaging.Broker
     ///     the message broker didn't acknowledge it.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class ProduceException : SilverbackException
     {
         /// <summary>

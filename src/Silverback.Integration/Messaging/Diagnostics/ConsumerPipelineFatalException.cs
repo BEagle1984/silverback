@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Silverback.Messaging.Diagnostics
@@ -11,6 +12,7 @@ namespace Silverback.Messaging.Diagnostics
     ///     exception occurs down the consumer pipeline.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class ConsumerPipelineFatalException : SilverbackException
     {
         /// <summary>

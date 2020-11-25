@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Serialization;
 
@@ -12,6 +13,7 @@ namespace Silverback.Messaging.Subscribers
     ///     because no value can be resolved for one or more arguments.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class SubscribedMethodInvocationException : SilverbackException
     {
         /// <summary>

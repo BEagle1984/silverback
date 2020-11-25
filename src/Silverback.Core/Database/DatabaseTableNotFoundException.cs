@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Silverback.Database
@@ -11,6 +12,7 @@ namespace Silverback.Database
     ///     layer (e.g. Entity Framework Core).
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public class DatabaseTableNotFoundException : SilverbackException
     {
         /// <summary>

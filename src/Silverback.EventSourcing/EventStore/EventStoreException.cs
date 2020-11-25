@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Silverback.EventStore
@@ -10,6 +11,7 @@ namespace Silverback.EventStore
     ///     The base class for the exceptions related to the event store.
     /// </summary>
     [Serializable]
+    [ExcludeFromCodeCoverage]
     public abstract class EventStoreException : SilverbackException
     {
         /// <summary>
