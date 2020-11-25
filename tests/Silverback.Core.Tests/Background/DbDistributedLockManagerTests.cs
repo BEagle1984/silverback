@@ -48,7 +48,7 @@ namespace Silverback.Tests.Core.Background
         {
             var distributedLockSettings = new DistributedLockSettings("test.resource");
             var distributedLock = await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(distributedLockSettings);
+                .AcquireAsync(distributedLockSettings);
 
             distributedLock.Should().NotBeNull();
         }
@@ -58,7 +58,7 @@ namespace Silverback.Tests.Core.Background
         {
             var distributedLockSettings = new DistributedLockSettings("test.resource");
             await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(distributedLockSettings);
+                .AcquireAsync(distributedLockSettings);
 
             var dbContext = GetDbContext();
             dbContext.Locks.Count().Should().Be(1);
@@ -69,7 +69,7 @@ namespace Silverback.Tests.Core.Background
         public async Task Acquire_NullLockSettings_NoLockIsAcquired()
         {
             var distributedLock = await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(DistributedLockSettings.NoLock);
+                .AcquireAsync(DistributedLockSettings.NoLock);
 
             distributedLock.Should().BeNull();
         }
@@ -78,7 +78,7 @@ namespace Silverback.Tests.Core.Background
         public async Task Acquire_NullLockSettings_LockIsNotWrittenToDb()
         {
             await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(DistributedLockSettings.NoLock);
+                .AcquireAsync(DistributedLockSettings.NoLock);
 
             var dbContext = GetDbContext();
             dbContext.Locks.Count().Should().Be(0);
@@ -99,7 +99,7 @@ namespace Silverback.Tests.Core.Background
             db.SaveChanges();
 
             var distributedLock = await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(new DistributedLockSettings("test.resource", "unique"));
+                .AcquireAsync(new DistributedLockSettings("test.resource", "unique"));
 
             distributedLock.Should().NotBeNull();
         }
@@ -119,7 +119,7 @@ namespace Silverback.Tests.Core.Background
             db.SaveChanges();
 
             var distributedLock = await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(new DistributedLockSettings("test.resource", "unique"));
+                .AcquireAsync(new DistributedLockSettings("test.resource", "unique"));
 
             distributedLock.Should().NotBeNull();
         }
@@ -138,7 +138,7 @@ namespace Silverback.Tests.Core.Background
             db.SaveChanges();
 
             await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(new DistributedLockSettings("test.resource", "unique"));
+                .AcquireAsync(new DistributedLockSettings("test.resource", "unique"));
 
             var dbContext = GetDbContext();
             dbContext.Locks.Count().Should().Be(1);
@@ -150,7 +150,7 @@ namespace Silverback.Tests.Core.Background
         public async Task Acquire_ResourceAlreadyLocked_TimeoutExceptionIsThrown()
         {
             await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(
+                .AcquireAsync(
                     new DistributedLockSettings(
                         "test.resource",
                         "unique",
@@ -158,7 +158,7 @@ namespace Silverback.Tests.Core.Background
                         TimeSpan.FromMilliseconds(100)));
 
             Func<Task> act = () => _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(
+                .AcquireAsync(
                     new DistributedLockSettings(
                         "test.resource",
                         "unique",
@@ -172,10 +172,10 @@ namespace Silverback.Tests.Core.Background
         public async Task Acquire_NullLockSettings_LockIgnoredButNoLockAcquired()
         {
             await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(new DistributedLockSettings("test.resource", "unique", TimeSpan.FromMilliseconds(100)));
+                .AcquireAsync(new DistributedLockSettings("test.resource", "unique", TimeSpan.FromMilliseconds(100)));
 
             var distributedLock = await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(DistributedLockSettings.NoLock);
+                .AcquireAsync(DistributedLockSettings.NoLock);
 
             distributedLock.Should().BeNull();
         }
@@ -190,7 +190,7 @@ namespace Silverback.Tests.Core.Background
                         try
                         {
                             return await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                                .Acquire(
+                                .AcquireAsync(
                                     new DistributedLockSettings(
                                         "test.resource",
                                         "unique",
@@ -213,9 +213,9 @@ namespace Silverback.Tests.Core.Background
         {
             var settings = new DistributedLockSettings("test.resource", "unique");
             await _serviceProvider.GetRequiredService<DbDistributedLockManager>()
-                .Acquire(settings);
+                .AcquireAsync(settings);
 
-            await _serviceProvider.GetRequiredService<DbDistributedLockManager>().Release(settings);
+            await _serviceProvider.GetRequiredService<DbDistributedLockManager>().ReleaseAsync(settings);
 
             var dbContext = GetDbContext();
             dbContext.Locks.Count().Should().Be(0);

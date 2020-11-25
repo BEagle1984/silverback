@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
@@ -21,9 +22,10 @@ namespace Silverback.Messaging.BinaryFiles
         /// </summary>
         public static BinaryFileMessageSerializer Default { get; } = new BinaryFileMessageSerializer();
 
-        /// <inheritdoc cref="IMessageSerializer.Serialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public virtual byte[]? Serialize(
+        /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
+        [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
+        public ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
@@ -31,10 +33,13 @@ namespace Silverback.Messaging.BinaryFiles
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
             if (message == null)
-                return null;
+                return ValueTaskFactory.FromResult<Stream?>(null);
 
-            if (message is byte[] bytes)
-                return bytes;
+            if (message is Stream inputStream)
+                return ValueTaskFactory.FromResult<Stream?>(inputStream);
+
+            if (message is byte[] inputBytes)
+                return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(inputBytes));
 
             var binaryFileMessage = message as IBinaryFileMessage;
             if (binaryFileMessage == null)
@@ -48,40 +53,24 @@ namespace Silverback.Messaging.BinaryFiles
                 DefaultMessageHeaders.MessageType,
                 message.GetType().AssemblyQualifiedName);
 
-            return binaryFileMessage.Content;
+            return ValueTaskFactory.FromResult(binaryFileMessage.Content);
         }
 
-        /// <inheritdoc cref="IMessageSerializer.Deserialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public virtual (object?, Type) Deserialize(
-            byte[]? message,
+        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
+        public ValueTask<(object?, Type)> DeserializeAsync(
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
-            var type = SerializationHelper.GetTypeFromHeaders<BinaryFileMessage>(messageHeaders);
+            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders, false) ?? typeof(BinaryFileMessage);
 
             var messageModel = (IBinaryFileMessage)Activator.CreateInstance(type);
-            messageModel.Content = message;
+            messageModel.Content = messageStream;
 
-            return (messageModel, type);
+            return ValueTaskFactory.FromResult<(object?, Type)>((messageModel, type));
         }
-
-        /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public Task<byte[]?> SerializeAsync(
-            object? message,
-            MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            Task.FromResult(Serialize(message, messageHeaders, context));
-
-        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public Task<(object?, Type)> DeserializeAsync(
-            byte[]? message,
-            MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            Task.FromResult(Deserialize(message, messageHeaders, context));
     }
 }

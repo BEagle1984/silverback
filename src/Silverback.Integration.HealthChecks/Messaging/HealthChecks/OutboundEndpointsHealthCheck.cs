@@ -36,7 +36,7 @@ namespace Silverback.Messaging.HealthChecks
         {
             Check.NotNull(context, nameof(context));
 
-            var results = await _service.PingAllEndpoints().ConfigureAwait(false);
+            var results = await _service.PingAllEndpointsAsync().ConfigureAwait(false);
 
             return results.All(r => r.IsSuccessful)
                 ? new HealthCheckResult(HealthStatus.Healthy)

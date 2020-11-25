@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         /// <inheritdoc cref="IReturnValueHandler.CanHandle" />
         public bool CanHandle(object returnValue) =>
             returnValue != null &&
-            _busOptions.MessageTypes.Any(t => t.IsInstanceOfType(returnValue));
+            _busOptions.MessageTypes.Any(type => type.IsInstanceOfType(returnValue));
 
         /// <inheritdoc cref="IReturnValueHandler.Handle" />
         public void Handle(object returnValue) =>

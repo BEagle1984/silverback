@@ -2,16 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using RabbitMQ.Client;
-using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Xunit;
 
@@ -19,21 +14,16 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
 {
     public sealed class RabbitBrokerTests : IDisposable
     {
-        private static readonly MessagesReceivedAsyncCallback VoidCallback = args => Task.CompletedTask;
-
         private readonly RabbitBroker _broker;
 
         public RabbitBrokerTests()
         {
-            var serviceCollection = new ServiceCollection();
-            serviceCollection
-                .AddSingleton<EndpointsConfiguratorsInvoker>()
-                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddRabbit()));
 
-            _broker = new RabbitBroker(
-                Enumerable.Empty<IBrokerBehavior>(),
-                Substitute.For<IRabbitConnectionFactory>(),
-                serviceCollection.BuildServiceProvider());
+            _broker = serviceProvider.GetRequiredService<RabbitBroker>();
         }
 
         [Fact]
@@ -233,8 +223,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
                 new RabbitExchangeConsumerEndpoint("test-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
-                },
-                VoidCallback);
+                });
 
             consumer.Should().NotBeNull();
         }
@@ -242,7 +231,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [Fact]
         public void AddConsumer_QueueEndpoint_ConsumerIsReturned()
         {
-            var consumer = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"));
 
             consumer.Should().NotBeNull();
         }
@@ -254,14 +243,12 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
                 new RabbitExchangeConsumerEndpoint("test-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
-                },
-                VoidCallback);
+                });
             var consumer2 = _broker.AddConsumer(
                 new RabbitExchangeConsumerEndpoint("test-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
-                },
-                VoidCallback);
+                });
 
             consumer2.Should().NotBeSameAs(consumer);
         }
@@ -269,8 +256,8 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [Fact]
         public void AddConsumer_SameQueueEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
-            var consumer2 = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"));
+            var consumer2 = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }
@@ -282,14 +269,12 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
                 new RabbitExchangeConsumerEndpoint("test-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
-                },
-                VoidCallback);
+                });
             var consumer2 = _broker.AddConsumer(
                 new RabbitExchangeConsumerEndpoint("other-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
-                },
-                VoidCallback);
+                });
 
             consumer2.Should().NotBeSameAs(consumer);
         }
@@ -297,8 +282,8 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         [Fact]
         public void AddConsumer_DifferentQueueEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
-            var consumer2 = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("other-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"));
+            var consumer2 = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("other-endpoint"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }
@@ -310,9 +295,8 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
                 new RabbitExchangeConsumerEndpoint("test-endpoint")
                 {
                     Exchange = new RabbitExchangeConfig { ExchangeType = ExchangeType.Fanout }
-                },
-                VoidCallback);
-            var consumer2 = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"), VoidCallback);
+                });
+            var consumer2 = _broker.AddConsumer(new RabbitQueueConsumerEndpoint("test-endpoint"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
@@ -13,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.ConfluentWrappers;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -23,13 +23,11 @@ namespace Silverback.Messaging.Broker
     public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        private static readonly
-            ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>>
-            ProducersCache =
-                new ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>>(
-                    new ConfigurationDictionaryComparer<string, string>());
+        private static readonly ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>> ProducersCache =
+            new ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>>(
+                new ConfigurationDictionaryComparer<string, string>());
 
-        private readonly KafkaEventsHandler _kafkaEventsHandler;
+        private readonly IConfluentProducerBuilder _confluentProducerBuilder;
 
         private readonly ISilverbackLogger _logger;
 
@@ -45,8 +43,8 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to produce to.
         /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
@@ -57,14 +55,21 @@ namespace Silverback.Messaging.Broker
         public KafkaProducer(
             KafkaBroker broker,
             KafkaProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<KafkaProducer> logger)
-            : base(broker, endpoint, behaviors, logger)
+            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
-            _logger = logger;
+            Check.NotNull(endpoint, nameof(endpoint));
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
 
-            _kafkaEventsHandler = serviceProvider.GetRequiredService<KafkaEventsHandler>();
+            _confluentProducerBuilder = serviceProvider.GetRequiredService<IConfluentProducerBuilder>();
+            _confluentProducerBuilder.SetConfig(endpoint.Configuration.ConfluentConfig);
+
+            serviceProvider.GetRequiredService<KafkaEventsHandler>()
+                .SetProducerEventsHandlers(_confluentProducerBuilder);
+
+            _logger = logger;
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -75,11 +80,11 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="Producer.ProduceCore" />
         protected override IOffset? ProduceCore(IOutboundEnvelope envelope) =>
-            AsyncHelper.RunSynchronously(() => ProduceAsyncCore(envelope));
+            AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
 
-        /// <inheritdoc cref="Producer.ProduceAsyncCore" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync" />
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        protected override async Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope)
+        protected override async Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -88,10 +93,10 @@ namespace Silverback.Messaging.Broker
                 var kafkaMessage = new Message<byte[]?, byte[]?>
                 {
                     Key = GetKafkaKeyAndRemoveHeader(envelope.Headers),
-                    Value = envelope.RawMessage
+                    Value = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false)
                 };
 
-                if (envelope.Headers != null && envelope.Headers.Any())
+                if (envelope.Headers.Count >= 1)
                 {
                     kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
                 }
@@ -151,13 +156,7 @@ namespace Silverback.Messaging.Broker
         private IProducer<byte[]?, byte[]?> CreateInnerProducer()
         {
             _logger.LogDebug(KafkaEventIds.CreatingConfluentProducer, "Creating Confluent.Kafka.Producer...");
-
-            var producerBuilder =
-                new ProducerBuilder<byte[]?, byte[]?>(Endpoint.Configuration.ConfluentConfig);
-
-            _kafkaEventsHandler.SetProducerEventsHandlers(producerBuilder);
-
-            return producerBuilder.Build();
+            return _confluentProducerBuilder.Build();
         }
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
@@ -187,6 +186,10 @@ namespace Silverback.Messaging.Broker
                         "or failed with an error indicating it was not written " +
                         "to the log.'");
                 }
+
+                case PersistenceStatus.Persisted:
+                default:
+                    break;
             }
         }
 

@@ -18,7 +18,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
     public class RabbitRoutingKeyInitializerProducerBehaviorTests
     {
         [Fact]
-        public void Handle_NoRoutingKeyAttribute_KeyHeaderIsNotSet()
+        public void HandleAsync_NoRoutingKeyAttribute_KeyHeaderIsNotSet()
         {
             var envelope = new OutboundEnvelope<NoRoutingKeyMessage>(
                 new NoRoutingKeyMessage
@@ -31,15 +31,15 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
                 null,
                 new RabbitExchangeProducerEndpoint("test-endpoint"));
 
-            new RabbitRoutingKeyInitializerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+            new RabbitRoutingKeyInitializerProducerBehavior().HandleAsync(
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().NotContain(h => h.Name == "x-rabbit-routing-key");
         }
 
         [Fact]
-        public void Handle_SingleRoutingKeyAttribute_KeyHeaderIsSet()
+        public void HandleAsync_SingleRoutingKeyAttribute_KeyHeaderIsSet()
         {
             var envelope = new OutboundEnvelope<RoutingKeyMessage>(
                 new RoutingKeyMessage
@@ -52,15 +52,15 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
                 null,
                 new RabbitExchangeProducerEndpoint("test-endpoint"));
 
-            new RabbitRoutingKeyInitializerProducerBehavior().Handle(
-                new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+            new RabbitRoutingKeyInitializerProducerBehavior().HandleAsync(
+                new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
             envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("x-rabbit-routing-key", "1"));
         }
 
         [Fact]
-        public void Handle_MultipleRoutingKeyAttributes_KeyHeaderIsSet()
+        public void HandleAsync_MultipleRoutingKeyAttributes_KeyHeaderIsSet()
         {
             var envelope = new OutboundEnvelope<MultipleRoutingKeyAttributesMessage>(
                 new MultipleRoutingKeyAttributesMessage
@@ -74,8 +74,8 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
                 new RabbitExchangeProducerEndpoint("test-endpoint"));
 
             Func<Task> act = () =>
-                new RabbitRoutingKeyInitializerProducerBehavior().Handle(
-                    new ProducerPipelineContext(envelope, Substitute.For<IProducer>()),
+                new RabbitRoutingKeyInitializerProducerBehavior().HandleAsync(
+                    new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                     _ => Task.CompletedTask);
 
             act.Should().Throw<InvalidOperationException>();

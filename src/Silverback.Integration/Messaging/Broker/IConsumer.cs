@@ -3,7 +3,8 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
 {
@@ -21,11 +22,6 @@ namespace Silverback.Messaging.Broker
         ///     Gets the <see cref="IConsumerEndpoint" /> representing the endpoint that is being consumed.
         /// </summary>
         IConsumerEndpoint Endpoint { get; }
-
-        /// <summary>
-        ///     Gets the collection of <see cref="IConsumerBehavior" /> configured for this <see cref="IConsumer" />.
-        /// </summary>
-        IReadOnlyList<IConsumerBehavior> Behaviors { get; }
 
         /// <summary>
         ///     Gets a value indicating whether this consumer is connected to the message broker and ready to consume
@@ -54,7 +50,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Commit(IOffset offset);
+        Task CommitAsync(IOffset offset);
 
         /// <summary>
         ///     <param>
@@ -71,7 +67,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Commit(IReadOnlyCollection<IOffset> offsets);
+        Task CommitAsync(IReadOnlyCollection<IOffset> offsets);
 
         /// <summary>
         ///     <param>
@@ -88,7 +84,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Rollback(IOffset offset);
+        Task RollbackAsync(IOffset offset);
 
         /// <summary>
         ///     <param>
@@ -105,7 +101,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Rollback(IReadOnlyCollection<IOffset> offsets);
+        Task RollbackAsync(IReadOnlyCollection<IOffset> offsets);
 
         /// <summary>
         ///     Connects and starts consuming.
@@ -116,5 +112,36 @@ namespace Silverback.Messaging.Broker
         ///     Disconnects and stops consuming.
         /// </summary>
         void Disconnect();
+
+        /// <summary>
+        ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.
+        /// </summary>
+        /// <param name="offset">
+        ///     The offset may determine which store is being used. For example a dedicated sequence store is used per
+        ///     each Kafka partition, since they may be processed concurrently.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISequenceStore" />.
+        /// </returns>
+        ISequenceStore GetSequenceStore(IOffset offset);
+
+        /// <summary>
+        ///     Increments the stored failed attempts count for the specified envelope.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The envelope.
+        /// </param>
+        /// <returns>
+        ///     The current failed attempts count after the increment.
+        /// </returns>
+        int IncrementFailedAttempts(IRawInboundEnvelope envelope);
+
+        /// <summary>
+        ///     Removes the stored failed attempts counter for the specified envelope.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The offset.
+        /// </param>
+        void ClearFailedAttempts(IRawInboundEnvelope envelope);
     }
 }

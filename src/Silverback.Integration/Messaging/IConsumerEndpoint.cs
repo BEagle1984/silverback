@@ -1,6 +1,11 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Inbound.ExactlyOnce;
+using Silverback.Messaging.Sequences;
+using Silverback.Messaging.Sequences.Batch;
+
 namespace Silverback.Messaging
 {
     /// <summary>
@@ -10,11 +15,33 @@ namespace Silverback.Messaging
     public interface IConsumerEndpoint : IEndpoint
     {
         /// <summary>
-        ///     Gets or sets a value indicating whether an exception must be thrown if no subscriber is handling the
+        ///     Gets the batch settings. Can be used to enable and setup batch processing.
+        /// </summary>
+        BatchSettings? Batch { get; }
+
+        /// <summary>
+        ///     Gets the sequence settings. A sequence is a set of related messages, like the chunks belonging to the
+        ///     same message or the messages in a dataset.
+        /// </summary>
+        SequenceSettings Sequence { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether an exception must be thrown if no subscriber is handling the
         ///     received message. The default is <c>false</c> and it means that the unhandled messages are silently
         ///     discarded.
         /// </summary>
-        bool ThrowIfUnhandled { get; set; }
+        bool ThrowIfUnhandled { get; } // TODO: Reimplement!
+
+        /// <summary>
+        ///     Gets the error policy to be applied when an exception occurs during the processing of the
+        ///     consumed messages.
+        /// </summary>
+        IErrorPolicy ErrorPolicy { get; }
+
+        /// <summary>
+        ///     Gets the strategy to be used to guarantee that each message is consumed only once.
+        /// </summary>
+        IExactlyOnceStrategy? ExactlyOnceStrategy { get; }
 
         /// <summary>
         ///     Gets a unique name for the consumer group (e.g. Kafka's consumer group id). This value (joint with

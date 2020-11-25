@@ -23,6 +23,6 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task Handle(ProducerPipelineContext context, ProducerBehaviorHandler next);
+        Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next);
     }
 }

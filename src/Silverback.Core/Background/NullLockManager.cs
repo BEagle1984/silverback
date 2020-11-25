@@ -13,22 +13,22 @@ namespace Silverback.Background
     /// </summary>
     public class NullLockManager : IDistributedLockManager
     {
-        /// <inheritdoc cref="IDistributedLockManager.Acquire" />
-        public Task<DistributedLock?> Acquire(
+        /// <inheritdoc cref="IDistributedLockManager.AcquireAsync" />
+        public Task<DistributedLock?> AcquireAsync(
             DistributedLockSettings settings,
             CancellationToken cancellationToken = default) =>
             Task.FromResult<DistributedLock?>(null);
 
-        /// <inheritdoc cref="IDistributedLockManager.CheckIsStillLocked" />
-        public Task<bool> CheckIsStillLocked(DistributedLockSettings settings) =>
+        /// <inheritdoc cref="IDistributedLockManager.CheckIsStillLockedAsync" />
+        public Task<bool> CheckIsStillLockedAsync(DistributedLockSettings settings) =>
             Task.FromResult(true);
 
-        /// <inheritdoc cref="IDistributedLockManager.SendHeartbeat" />
-        public Task<bool> SendHeartbeat(DistributedLockSettings settings) =>
+        /// <inheritdoc cref="IDistributedLockManager.SendHeartbeatAsync" />
+        public Task<bool> SendHeartbeatAsync(DistributedLockSettings settings) =>
             Task.FromResult(true);
 
-        /// <inheritdoc cref="IDistributedLockManager.Release" />
-        public Task Release(DistributedLockSettings settings) =>
+        /// <inheritdoc cref="IDistributedLockManager.ReleaseAsync" />
+        public Task ReleaseAsync(DistributedLockSettings settings) =>
             Task.CompletedTask;
     }
 }

@@ -20,7 +20,7 @@ namespace Silverback.Tests.Core.TestTypes.Behaviors
 
         public int SortIndex { get; }
 
-        public Task<IReadOnlyCollection<object>> Handle(IReadOnlyCollection<object> messages, MessagesHandler next)
+        public Task<IReadOnlyCollection<object>> HandleAsync(IReadOnlyCollection<object> messages, MessagesHandler next)
         {
             _calls.Add(SortIndex.ToString(CultureInfo.InvariantCulture));
 

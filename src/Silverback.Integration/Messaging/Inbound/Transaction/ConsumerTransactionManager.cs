@@ -1,0 +1,154 @@
+﻿// Copyright (c) 2020 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Silverback.Diagnostics;
+using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Util;
+
+namespace Silverback.Messaging.Inbound.Transaction
+{
+    /// <inheritdoc cref="IConsumerTransactionManager" />
+    public sealed class ConsumerTransactionManager : IConsumerTransactionManager
+    {
+        private readonly ConsumerPipelineContext _context;
+
+        private readonly ISilverbackIntegrationLogger<ConsumerTransactionManager> _logger;
+
+        private readonly List<ITransactional> _transactionalServices = new List<ITransactional>();
+
+        private bool _isAborted;
+
+        private bool _isCommitted;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ConsumerTransactionManager" /> class.
+        /// </summary>
+        /// <param name="context">
+        ///     The current <see cref="ConsumerPipelineContext" />.
+        /// </param>
+        /// <param name="logger">
+        ///     The <see cref="ISilverbackLogger" />.
+        /// </param>
+        public ConsumerTransactionManager(
+            ConsumerPipelineContext context,
+            ISilverbackIntegrationLogger<ConsumerTransactionManager> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
+
+        /// <inheritdoc cref="IConsumerTransactionManager.IsCompleted" />
+        public bool IsCompleted => _isAborted || _isCommitted;
+
+        /// <inheritdoc cref="IConsumerTransactionManager.Enlist" />
+        public void Enlist(ITransactional transactionalService)
+        {
+            Check.NotNull(transactionalService, nameof(transactionalService));
+            EnsureNotCompleted();
+
+            // ReSharper disable once InconsistentlySynchronizedField
+            if (_transactionalServices.Contains(transactionalService))
+                return;
+
+            lock (_transactionalServices)
+            {
+                if (_transactionalServices.Contains(transactionalService))
+                    return;
+
+                _transactionalServices.Add(transactionalService);
+            }
+        }
+
+        /// <inheritdoc cref="IConsumerTransactionManager.CommitAsync" />
+        public async Task CommitAsync()
+        {
+            if (_isCommitted)
+            {
+                _logger.LogTraceWithMessageInfo(
+                    IntegrationEventIds.LowLevelTracing,
+                    "Not committing consumer transaction because it was already committed.",
+                    _context);
+
+                return;
+            }
+
+            EnsureNotCompleted();
+            _isCommitted = true;
+
+            _logger.LogTraceWithMessageInfo(
+                IntegrationEventIds.LowLevelTracing,
+                "Committing consumer transaction...",
+                _context);
+
+            // TODO: At least once is ok? (Consider that the DbContext might have been committed already.
+            await _transactionalServices.ForEachAsync(service => service.CommitAsync()).ConfigureAwait(false);
+            await _context.Consumer.CommitAsync(_context.Offsets).ConfigureAwait(false);
+
+            _logger.LogTraceWithMessageInfo(
+                IntegrationEventIds.LowLevelTracing,
+                "Consumer transaction committed.",
+                _context);
+        }
+
+        /// <inheritdoc cref="IConsumerTransactionManager.RollbackAsync" />
+        public async Task<bool> RollbackAsync(
+            Exception? exception,
+            bool commitOffsets = false,
+            bool throwIfAlreadyCommitted = true)
+        {
+            if (_isAborted)
+            {
+                _logger.LogTraceWithMessageInfo(
+                    IntegrationEventIds.LowLevelTracing,
+                    "Not aborting consumer transaction because it was already aborted.",
+                    _context);
+
+                return false;
+            }
+
+            if (_isCommitted)
+            {
+                if (throwIfAlreadyCommitted)
+                    throw new InvalidOperationException("The transaction already completed.");
+
+                return false;
+            }
+
+            _isAborted = true;
+
+            _logger.LogTraceWithMessageInfo(
+                IntegrationEventIds.LowLevelTracing,
+                "Aborting consumer transaction...",
+                _context);
+
+            try
+            {
+                await _transactionalServices.ForEachAsync(service => service.RollbackAsync())
+                    .ConfigureAwait(false);
+            }
+            finally
+            {
+                if (commitOffsets)
+                    await _context.Consumer.CommitAsync(_context.Offsets).ConfigureAwait(false);
+                else
+                    await _context.Consumer.RollbackAsync(_context.Offsets).ConfigureAwait(false);
+            }
+
+            _logger.LogTraceWithMessageInfo(
+                IntegrationEventIds.LowLevelTracing,
+                "Consumer transaction aborted.",
+                _context);
+
+            return true;
+        }
+
+        private void EnsureNotCompleted()
+        {
+            if (IsCompleted)
+                throw new InvalidOperationException("The transaction already completed.");
+        }
+    }
+}

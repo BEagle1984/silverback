@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using JetBrains.Annotations;
 
@@ -92,18 +91,27 @@ namespace Silverback.Util
             {
                 NotEmpty(parameterName, nameof(parameterName));
 
-                throw new ArgumentException("The collection cannot contain null values", parameterName);
+                throw new ArgumentException("The collection cannot contain null values.", parameterName);
             }
 
             return value;
         }
 
-        // TODO: Needed? Used?
-        [Conditional("DEBUG")]
-        public static void DebugAssert([DoesNotReturnIf(false)] bool condition, string message)
+        public static IReadOnlyCollection<string> HasNoNullsOrEmpties(
+            IReadOnlyCollection<string>? value,
+            [InvokerParameterName] [System.Diagnostics.CodeAnalysis.NotNull]
+            string parameterName)
         {
-            if (!condition)
-                throw new InvalidOperationException($"Check.DebugAssert failed: {message}");
+            value = NotNull(value, parameterName);
+
+            if (value.Any(string.IsNullOrEmpty))
+            {
+                NotEmpty(parameterName, nameof(parameterName));
+
+                throw new ArgumentException("The collection cannot contain null or empty values.", parameterName);
+            }
+
+            return value;
         }
 
         [AttributeUsage(AttributeTargets.Parameter)]

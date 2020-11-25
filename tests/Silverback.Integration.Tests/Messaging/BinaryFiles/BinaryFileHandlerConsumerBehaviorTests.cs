@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
@@ -10,7 +9,9 @@ using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
-using Silverback.Tests.Integration.TestTypes;
+using Silverback.Messaging.Sequences;
+using Silverback.Tests.Types;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.BinaryFiles
@@ -18,7 +19,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
     public class BinaryFileHandlerConsumerBehaviorTests
     {
         [Fact]
-        public async Task Handle_BinaryFileMessage_BinaryFileMessageReturned()
+        public async Task HandleAsync_BinaryFileMessage_BinaryFileMessageReturned()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new[]
@@ -29,40 +30,48 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 rawContent,
                 headers,
                 TestConsumerEndpoint.GetDefault(),
-                "test");
+                "test",
+                new TestOffset());
 
             IRawInboundEnvelope? result = null;
-            await new BinaryFileHandlerConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
-                Substitute.For<IServiceProvider>(),
-                (context, _) =>
+            await new BinaryFileHandlerConsumerBehavior().HandleAsync(
+                new ConsumerPipelineContext(
+                    envelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
+                    Substitute.For<IServiceProvider>()),
+                context =>
                 {
-                    result = context.Envelopes.First();
+                    result = context.Envelope;
                     return Task.CompletedTask;
                 });
 
             result.Should().BeAssignableTo<IInboundEnvelope<BinaryFileMessage>>();
             var binaryFileMessage = result.As<IInboundEnvelope<BinaryFileMessage>>().Message!;
-            binaryFileMessage.Content.Should().BeEquivalentTo(rawContent);
+            binaryFileMessage.Content.ReadAll().Should().BeEquivalentTo(rawContent);
         }
 
         [Fact]
-        public async Task Handle_NoBinaryFileHeaders_EnvelopeUntouched()
+        public async Task HandleAsync_NoBinaryFileHeaders_EnvelopeUntouched()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var envelope = new RawInboundEnvelope(
                 rawContent,
                 null,
                 TestConsumerEndpoint.GetDefault(),
-                "test");
+                "test",
+                new TestOffset());
 
             IRawInboundEnvelope? result = null;
-            await new BinaryFileHandlerConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
-                Substitute.For<IServiceProvider>(),
-                (context, _) =>
+            await new BinaryFileHandlerConsumerBehavior().HandleAsync(
+                new ConsumerPipelineContext(
+                    envelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
+                    Substitute.For<IServiceProvider>()),
+                context =>
                 {
-                    result = context.Envelopes.First();
+                    result = context.Envelope;
                     return Task.CompletedTask;
                 });
 
@@ -70,7 +79,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         }
 
         [Fact]
-        public async Task Handle_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
+        public async Task HandleAsync_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
         {
             var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var headers = new[]
@@ -83,15 +92,19 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 rawContent,
                 headers,
                 endpoint,
-                "test");
+                "test",
+                new TestOffset());
 
             IRawInboundEnvelope? result = null;
-            await new BinaryFileHandlerConsumerBehavior().Handle(
-                new ConsumerPipelineContext(new[] { envelope }, Substitute.For<IConsumer>()),
-                Substitute.For<IServiceProvider>(),
-                (context, _) =>
+            await new BinaryFileHandlerConsumerBehavior().HandleAsync(
+                new ConsumerPipelineContext(
+                    envelope,
+                    Substitute.For<IConsumer>(),
+                    Substitute.For<ISequenceStore>(),
+                    Substitute.For<IServiceProvider>()),
+                context =>
                 {
-                    result = context.Envelopes.First();
+                    result = context.Envelope;
                     return Task.CompletedTask;
                 });
 

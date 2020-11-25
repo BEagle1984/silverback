@@ -3,7 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -15,6 +16,10 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IProducer" />
     public abstract class Producer : IProducer
     {
+        private readonly IReadOnlyList<IProducerBehavior> _behaviors;
+
+        private readonly IServiceProvider _serviceProvider;
+
         private readonly ISilverbackIntegrationLogger<Producer> _logger;
 
         /// <summary>
@@ -26,8 +31,11 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint to produce to.
         /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be added to the pipeline.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
         ///     The <see cref="ISilverbackIntegrationLogger" />.
@@ -35,14 +43,15 @@ namespace Silverback.Messaging.Broker
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
+            IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<Producer> logger)
         {
-            Behaviors = behaviors ?? Array.Empty<IProducerBehavior>();
-            _logger = Check.NotNull(logger, nameof(logger));
-
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
+            _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+            _logger = Check.NotNull(logger, nameof(logger));
 
             Endpoint.Validate();
         }
@@ -53,23 +62,16 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer.Endpoint" />
         public IProducerEndpoint Endpoint { get; }
 
-        /// <inheritdoc cref="IProducer.Behaviors" />
-        public IReadOnlyList<IProducerBehavior> Behaviors { get; }
+        /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?)" />
+        public void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
+            Produce(new OutboundEnvelope(message, headers, Endpoint));
 
-        /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?,bool)" />
-        public void Produce(
-            object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null,
-            bool disableBehaviors = false) =>
-            Produce(new OutboundEnvelope(message, headers, Endpoint), disableBehaviors);
-
-        /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope,bool)" />
-        public void Produce(IOutboundEnvelope envelope, bool disableBehaviors = false) =>
+        /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
+        public void Produce(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(
                 () =>
-                    ExecutePipeline(
-                        disableBehaviors ? Array.Empty<IProducerBehavior>() : Behaviors,
-                        new ProducerPipelineContext(envelope, this),
+                    ExecutePipelineIfNeededAsync(
+                        new ProducerPipelineContext(envelope, this, _serviceProvider),
                         finalContext =>
                         {
                             ((RawOutboundEnvelope)finalContext.Envelope).Offset =
@@ -78,23 +80,37 @@ namespace Silverback.Messaging.Broker
                             return Task.CompletedTask;
                         }));
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,bool)" />
-        public Task ProduceAsync(
-            object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null,
-            bool disableBehaviors = false) =>
-            ProduceAsync(new OutboundEnvelope(message, headers, Endpoint), disableBehaviors);
+        /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?)" />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
+            => Produce(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint));
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,bool)" />
-        public async Task ProduceAsync(IOutboundEnvelope envelope, bool disableBehaviors = false) =>
-            await ExecutePipeline(
-                disableBehaviors ? Array.Empty<IProducerBehavior>() : Behaviors,
-                new ProducerPipelineContext(envelope, this),
+        /// <inheritdoc cref="IProducer.RawProduce(Stream?,IReadOnlyCollection{MessageHeader}?)" />
+        public void RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null)
+            => Produce(new ProcessedOutboundEnvelope(messageStream, headers, Endpoint));
+
+        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?)" />
+        public Task ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
+            ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
+
+        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
+        public async Task ProduceAsync(IOutboundEnvelope envelope) =>
+            await ExecutePipelineIfNeededAsync(
+                new ProducerPipelineContext(envelope, this, _serviceProvider),
                 async finalContext =>
                 {
                     ((RawOutboundEnvelope)finalContext.Envelope).Offset =
-                        await ProduceAsyncCore(finalContext.Envelope).ConfigureAwait(false);
+                        await ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
                 }).ConfigureAwait(false);
+
+        /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        public Task RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
+            => ProduceAsync(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint));
+
+        /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?)" />
+        public Task RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null)
+            => ProduceAsync(new ProcessedOutboundEnvelope(messageStream, headers, Endpoint));
 
         /// <summary>
         ///     Publishes the specified message and returns its offset.
@@ -114,28 +130,37 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="RawBrokerEnvelope" /> containing body, headers, endpoint, etc.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the message
-        ///     offset.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     message offset.
         /// </returns>
-        protected abstract Task<IOffset?> ProduceAsyncCore(IOutboundEnvelope envelope);
+        protected abstract Task<IOffset?> ProduceCoreAsync(IOutboundEnvelope envelope);
 
-        private async Task ExecutePipeline(
-            IReadOnlyList<IProducerBehavior> behaviors,
+        private Task ExecutePipelineIfNeededAsync(
             ProducerPipelineContext context,
             ProducerBehaviorHandler finalAction)
         {
-            if (behaviors.Count > 0)
+            if (context.Envelope is ProcessedOutboundEnvelope)
+                return finalAction(context);
+
+            return ExecutePipelineAsync(context, finalAction);
+        }
+
+        private async Task ExecutePipelineAsync(
+            ProducerPipelineContext context,
+            ProducerBehaviorHandler finalAction,
+            int stepIndex = 0)
+        {
+            if (_behaviors.Count > 0 && stepIndex < _behaviors.Count)
             {
-                await behaviors[0]
-                    .Handle(
+                await _behaviors[stepIndex].HandleAsync(
                         context,
-                        nextContext =>
-                            ExecutePipeline(behaviors.Skip(1).ToList(), nextContext, finalAction))
+                        nextContext => ExecutePipelineAsync(nextContext, finalAction, stepIndex + 1))
                     .ConfigureAwait(false);
             }
             else
             {
                 await finalAction(context).ConfigureAwait(false);
+
                 _logger.LogInformationWithMessageInfo(
                     IntegrationEventIds.MessageProduced,
                     "Message produced.",

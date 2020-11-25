@@ -2,8 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using Silverback.Messaging.Broker;
+using System.IO;
 
 namespace Silverback.Messaging.Messages
 {
@@ -16,11 +15,6 @@ namespace Silverback.Messaging.Messages
         ///     Gets the optional message headers.
         /// </summary>
         MessageHeaderCollection Headers { get; }
-
-        /// <summary>
-        ///     Gets the message offset (or similar construct if using a message broker other than Kafka).
-        /// </summary>
-        IOffset? Offset { get; }
 
         /// <summary>
         ///     Gets the source or destination endpoint.
@@ -37,8 +31,6 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Gets or sets the serialized message body.
         /// </summary>
-        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        byte[]? RawMessage { get; set; }
+        Stream? RawMessage { get; set; } // TODO: Should this be get only? Or all the rest should be get/set as well?
     }
 }

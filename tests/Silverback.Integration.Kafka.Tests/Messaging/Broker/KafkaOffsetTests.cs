@@ -154,19 +154,126 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             result.Should().Be(expectedResult);
         }
 
-        [Theory]
-        [InlineData(10, 5, false)]
-        [InlineData(1, 3, false)]
-        [InlineData(5, 5, true)]
-        [InlineData(5, null, false)]
-        public void Equals_AnotherKafkaOffset_ProperlyCompared(int valueA, int? valueB, bool expectedResult)
+        [Fact]
+        public void EqualsOffset_SameInstance_TrueReturned()
         {
-            var offsetA = new KafkaOffset("test-topic", 2, valueA);
-            var offsetB = valueB != null ? new KafkaOffset("test-topic", 2, valueB.Value) : null;
+            var offset = new KafkaOffset("test-topic", 0, 42);
 
-            var result = offsetA.Equals(offsetB);
+            var result = offset.Equals(offset);
 
-            result.Should().Be(expectedResult);
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void EqualsObject_SameInstance_TrueReturned()
+        {
+            var offset = new KafkaOffset("test-topic", 0, 42);
+
+            var result = offset.Equals((object)offset);
+
+            result.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData("abc", 0, 1, "abc", 0, 1, true)]
+        [InlineData("abc", 0, 1, "abc", 1, 1, false)]
+        [InlineData("abc", 0, 1, "abc", 0, 2, false)]
+        [InlineData("abc", 0, 1, "def", 0, 1, false)]
+        public void EqualsOffset_AnotherKafkaOffset_ProperlyCompared(
+            string topic1,
+            int partition1,
+            long offset1,
+            string topic2,
+            int partition2,
+            long offset2,
+            bool expected)
+        {
+            var kafkaOffset1 = new KafkaOffset(topic1, partition1, offset1);
+            var kafkaOffset2 = new KafkaOffset(topic2, partition2, offset2);
+
+            var result = kafkaOffset1.Equals(kafkaOffset2);
+
+            result.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("abc", 0, 1, "abc", 0, 1, true)]
+        [InlineData("abc", 0, 1, "abc", 1, 1, false)]
+        [InlineData("abc", 0, 1, "abc", 0, 2, false)]
+        [InlineData("abc", 0, 1, "def", 0, 1, false)]
+        public void EqualsObject_AnotherKafkaOffset_ProperlyCompared(
+            string topic1,
+            int partition1,
+            long offset1,
+            string topic2,
+            int partition2,
+            long offset2,
+            bool expected)
+        {
+            var kafkaOffset1 = new KafkaOffset(topic1, partition1, offset1);
+            var kafkaOffset2 = new KafkaOffset(topic2, partition2, offset2);
+
+            var result = kafkaOffset1.Equals((object)kafkaOffset2);
+
+            result.Should().Be(expected);
+        }
+
+        [Fact]
+        public void EqualsOffset_Null_FalseReturned()
+        {
+            var offset1 = new KafkaOffset("test-topic", 0, 42);
+
+            var result = offset1.Equals(null);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void EqualsObject_Null_FalseReturned()
+        {
+            var offset1 = new KafkaOffset("test-topic", 0, 42);
+
+            var result = offset1.Equals((object?)null);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void EqualsOffset_DifferentOffsetType_FalseReturned()
+        {
+            var offset1 = new KafkaOffset("test-topic", 0, 42);
+            var offset2 = new TestOtherOffset("test-topic", "42");
+
+            var result = offset1.Equals(offset2);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void EqualsObject_DifferentOffsetType_FalseReturned()
+        {
+            var offset1 = new KafkaOffset("test-topic", 0, 42);
+            var offset2 = new TestOtherOffset("test-queue", "42");
+
+            // ReSharper disable once SuspiciousTypeConversion.Global
+            var result = offset1.Equals((object)offset2);
+
+            result.Should().BeFalse();
+        }
+
+        private class TestOtherOffset : IOffset
+        {
+            public TestOtherOffset(string key, string value)
+            {
+                Key = key;
+                Value = value;
+            }
+
+            public string Key { get; }
+
+            public string Value { get; }
+
+            public bool Equals(IOffset? other) => false;
         }
     }
 }

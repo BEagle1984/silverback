@@ -4,68 +4,92 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
+    // TODO: Customizable back pressure?
+
     /// <inheritdoc cref="IMessageStreamEnumerable{TMessage}" />
+    /// <remarks>
+    ///     This implementation is not thread-safe.
+    /// </remarks>
     internal class MessageStreamEnumerable<TMessage>
         : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
     {
-        private readonly IMessageStreamProvider _ownerStreamProvider;
+        private readonly SemaphoreSlim _writeSemaphore = new SemaphoreSlim(1, 1);
 
-        private readonly Channel<PushedMessage> _channel;
+        private readonly SemaphoreSlim _readSemaphore = new SemaphoreSlim(0, 1);
 
-        private int _enumeratorsCount;
+        private readonly SemaphoreSlim _processedSemaphore = new SemaphoreSlim(0, 1);
+
+        private readonly CancellationTokenSource _abortCancellationTokenSource = new CancellationTokenSource();
 
         private PushedMessage? _current;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="MessageStreamEnumerable{TMessage}" /> class.
-        /// </summary>
-        /// <param name="ownerStreamProvider">
-        ///     The owner of the linked stream.
-        /// </param>
-        /// <param name="bufferCapacity">
-        ///     The maximum number of messages that will be stored before blocking the <c>PushAsync</c>
-        ///     operations.
-        /// </param>
-        public MessageStreamEnumerable(IMessageStreamProvider ownerStreamProvider, int bufferCapacity = 1)
-        {
-            _ownerStreamProvider = ownerStreamProvider;
+        private bool _isFirstMessage = true;
 
-            _channel = bufferCapacity > 0
-                ? Channel.CreateBounded<PushedMessage>(bufferCapacity)
-                : Channel.CreateUnbounded<PushedMessage>();
-        }
+        private bool _isComplete;
 
         /// <inheritdoc cref="IMessageStreamEnumerable.MessageType" />
         public Type MessageType => typeof(TMessage);
 
         /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(PushedMessage,System.Threading.CancellationToken)" />
+        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public async Task PushAsync(PushedMessage pushedMessage, CancellationToken cancellationToken = default)
         {
             Check.NotNull(pushedMessage, nameof(pushedMessage));
 
-            await _channel
-                .Writer.WriteAsync(pushedMessage, cancellationToken)
-                .ConfigureAwait(false);
+            using var linkedTokenSource = LinkWithAbortCancellationTokenSource(cancellationToken);
+
+            await _writeSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
+
+            if (_isComplete)
+                throw new InvalidOperationException("The stream has been marked as complete.");
+
+            _current = pushedMessage;
+            SafelyRelease(_readSemaphore);
+
+            await _processedSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
+            _writeSemaphore.Release();
         }
 
-        /// <inheritdoc cref="IMessageStreamEnumerable.Complete" />
-        public void Complete() => _channel.Writer.Complete();
+        /// <inheritdoc cref="IMessageStreamEnumerable.Abort" />
+        public void Abort()
+        {
+            if (_isComplete)
+                return;
+
+            _isComplete = true;
+            _abortCancellationTokenSource.Cancel();
+        }
+
+        /// <inheritdoc cref="IMessageStreamEnumerable.CompleteAsync" />
+        public async Task CompleteAsync(CancellationToken cancellationToken = default)
+        {
+            if (_isComplete)
+                return;
+
+            _isComplete = true;
+
+            await _writeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+
+            SafelyRelease(_readSemaphore);
+
+            _writeSemaphore.Release();
+        }
 
         /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
         public IEnumerator<TMessage> GetEnumerator() =>
-            EnumerateExclusively(() => GetEnumerable().GetEnumerator());
+            GetEnumerable().GetEnumerator();
 
         /// <inheritdoc cref="IAsyncEnumerable{T}.GetAsyncEnumerator" />
         public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
-            EnumerateExclusively(() => GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken));
+            GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken);
 
         /// <inheritdoc cref="IEnumerable.GetEnumerator" />
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
@@ -88,75 +112,72 @@ namespace Silverback.Messaging.Messages
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-                Complete();
+            {
+                AsyncHelper.RunSynchronously(() => CompleteAsync());
+
+                _readSemaphore.Dispose();
+                _writeSemaphore.Dispose();
+                _processedSemaphore.Dispose();
+                _abortCancellationTokenSource.Dispose();
+            }
+        }
+
+        private static void SafelyRelease(SemaphoreSlim semaphore)
+        {
+            lock (semaphore)
+            {
+                if (semaphore.CurrentCount == 0)
+                    semaphore.Release();
+            }
         }
 
         private IEnumerable<TMessage> GetEnumerable()
         {
-            // TODO: Check this pattern!
-            while (AsyncHelper.RunSynchronously(() => TryReadAsync(CancellationToken.None)))
+            while (AsyncHelper.RunSynchronously(() => WaitForNextAsync(CancellationToken.None)))
             {
                 if (_current == null)
                     continue;
 
                 var currentMessage = (TMessage)_current.Message;
                 yield return currentMessage;
-
-                AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyLinkedStreamProcessed(_current));
             }
-
-            AsyncHelper.RunSynchronously(() => _ownerStreamProvider.NotifyLinkedStreamEnumerationCompleted(this));
         }
 
+        [SuppressMessage("ReSharper", "ASYNC0001", Justification = "Matches with GetAsyncEnumerator")]
         private async IAsyncEnumerable<TMessage> GetAsyncEnumerable(
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {
-            while (await TryReadAsync(cancellationToken).ConfigureAwait(false))
+            while (await WaitForNextAsync(cancellationToken).ConfigureAwait(false))
             {
                 if (_current == null)
                     continue;
 
                 var currentMessage = (TMessage)_current.Message;
                 yield return currentMessage;
-
-                await _ownerStreamProvider.NotifyLinkedStreamProcessed(_current).ConfigureAwait(false);
             }
-
-            await _ownerStreamProvider.NotifyLinkedStreamEnumerationCompleted(this).ConfigureAwait(false);
         }
 
-        private TReturn EnumerateExclusively<TReturn>(Func<TReturn> action)
+        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
+        private async Task<bool> WaitForNextAsync(CancellationToken cancellationToken)
         {
-            if (_enumeratorsCount > 0)
-                throw new InvalidOperationException("Only one concurrent enumeration is allowed.");
+            if (!_isFirstMessage)
+            {
+                _current = null;
+                SafelyRelease(_processedSemaphore);
+            }
 
-            Interlocked.Increment(ref _enumeratorsCount);
+            using var linkedTokenSource = LinkWithAbortCancellationTokenSource(cancellationToken);
 
-            if (_enumeratorsCount > 1)
-                throw new InvalidOperationException("Only one concurrent enumeration is allowed.");
+            await _readSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
 
-            return action.Invoke();
+            _isFirstMessage = false;
+
+            return _current != null;
         }
 
-        private async Task<bool> TryReadAsync(CancellationToken cancellationToken)
-        {
-            CancellationTokenSource? linkedTokenSource = null;
-
-            try
-            {
-                await _channel.Reader.WaitToReadAsync(cancellationToken)
-                    .ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                // Ignore
-            }
-            finally
-            {
-                linkedTokenSource?.Dispose();
-            }
-
-            return _channel.Reader.TryRead(out _current);
-        }
+        private CancellationTokenSource LinkWithAbortCancellationTokenSource(CancellationToken cancellationToken) =>
+            CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken,
+                _abortCancellationTokenSource.Token);
     }
 }

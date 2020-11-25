@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Publishing
     ///     The messages being published.
     /// </param>
     /// <returns>
-    ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the actual
+    ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the actual
     ///     messages to be published.
     /// </returns>
     public delegate Task<IReadOnlyCollection<object>> MessagesHandler(IReadOnlyCollection<object> messages);

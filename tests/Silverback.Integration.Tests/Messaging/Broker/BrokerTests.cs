@@ -2,21 +2,19 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Broker
 {
     public class BrokerTests
     {
-        private static readonly MessagesReceivedAsyncCallback VoidCallback = args => Task.CompletedTask;
-
         [Fact]
         public void GetProducer_SomeEndpoint_ProducerIsReturned()
         {
@@ -78,7 +76,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
                             .AddBroker<TestBroker>()));
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
+            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault());
 
             consumer.Should().NotBeNull();
         }
@@ -94,8 +92,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
                             .AddBroker<TestBroker>()));
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
-            var consumer2 = broker.AddConsumer(new TestConsumerEndpoint("test2"), VoidCallback);
+            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault());
+            var consumer2 = broker.AddConsumer(new TestConsumerEndpoint("test2"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }
@@ -111,8 +109,8 @@ namespace Silverback.Tests.Integration.Messaging.Broker
                             .AddBroker<TestBroker>()));
 
             var broker = serviceProvider.GetRequiredService<IBroker>();
-            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault(), VoidCallback);
-            var consumer2 = broker.AddConsumer(new TestConsumerEndpoint("test2"), VoidCallback);
+            var consumer = broker.AddConsumer(TestConsumerEndpoint.GetDefault());
+            var consumer2 = broker.AddConsumer(new TestConsumerEndpoint("test2"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }
@@ -169,7 +167,10 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         }
 
         [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage(
+            "ReSharper",
+            "ClassNeverInstantiated.Local",
+            Justification = Justifications.CalledBySilverback)]
         private class TestConfiguratorOne : IEndpointsConfigurator
         {
             public void Configure(IEndpointsConfigurationBuilder builder)
@@ -179,7 +180,10 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         }
 
         [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage(
+            "ReSharper",
+            "ClassNeverInstantiated.Local",
+            Justification = Justifications.CalledBySilverback)]
         private class TestConfiguratorTwo : IEndpointsConfigurator
         {
             public void Configure(IEndpointsConfigurationBuilder builder)

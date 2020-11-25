@@ -3,10 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Tests.Types;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
@@ -15,11 +18,14 @@ namespace Silverback.Tests.Integration.TestTypes
         public TestOtherConsumer(
             TestOtherBroker broker,
             TestOtherConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback callback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
-            IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<TestOtherConsumer> logger)
-            : base(broker, endpoint, callback, behaviors, serviceProvider, logger)
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            IServiceProvider serviceProvider)
+            : base(
+                broker,
+                endpoint,
+                behaviorsProvider,
+                serviceProvider,
+                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<TestOtherConsumer>>())
         {
         }
 
@@ -29,17 +35,25 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
+        protected override void StopConsuming()
+        {
+        }
+
+        protected override void WaitUntilConsumingStopped(CancellationToken cancellationToken)
+        {
+        }
+
         protected override void DisconnectCore()
         {
         }
 
-        protected override Task CommitCore(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> offsets)
         {
             AcknowledgeCount += offsets.Count;
             return Task.CompletedTask;
         }
 
-        protected override Task RollbackCore(IReadOnlyCollection<TestOffset> offsets)
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<TestOffset> offsets)
         {
             // Nothing to do
             return Task.CompletedTask;

@@ -3,6 +3,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -16,14 +18,15 @@ namespace Silverback.Messaging.BinaryFiles
     /// <typeparam name="TModel">
     ///     The type of the <see cref="IBinaryFileMessage" /> implementation.
     /// </typeparam>
-    public class BinaryFileMessageSerializer<TModel> : BinaryFileMessageSerializer
+    public class BinaryFileMessageSerializer<TModel> : IMessageSerializer
         where TModel : IBinaryFileMessage, new()
     {
         private readonly Type _type = typeof(TModel);
 
-        /// <inheritdoc cref="BinaryFileMessageSerializer.Serialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public override byte[]? Serialize(
+        /// <inheritdoc cref="BinaryFileMessageSerializer.SerializeAsync" />
+        [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
+        public ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
@@ -31,10 +34,13 @@ namespace Silverback.Messaging.BinaryFiles
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
             if (message == null)
-                return null;
+                return ValueTaskFactory.FromResult<Stream?>(null);
 
-            if (message is byte[] bytes)
-                return bytes;
+            if (message is Stream inputStream)
+                return ValueTaskFactory.FromResult<Stream?>(inputStream);
+
+            if (message is byte[] inputBytes)
+                return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(inputBytes));
 
             var binaryFileMessage = message as IBinaryFileMessage;
             if (binaryFileMessage == null)
@@ -44,19 +50,19 @@ namespace Silverback.Messaging.BinaryFiles
                     nameof(message));
             }
 
-            return binaryFileMessage.Content;
+            return ValueTaskFactory.FromResult(binaryFileMessage.Content);
         }
 
-        /// <inheritdoc cref="BinaryFileMessageSerializer.Deserialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public override (object?, Type) Deserialize(
-            byte[]? message,
+        /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
+        public ValueTask<(object?, Type)> DeserializeAsync(
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            var binaryFileMessage = new TModel { Content = message };
+            var binaryFileMessage = new TModel { Content = messageStream };
 
-            return (binaryFileMessage, _type);
+            return ValueTaskFactory.FromResult<(object?, Type)>((binaryFileMessage, _type));
         }
     }
 }

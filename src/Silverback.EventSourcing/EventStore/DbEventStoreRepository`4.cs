@@ -98,8 +98,8 @@ namespace Silverback.EventStore
         ///     its state back in that moment.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the domain
-        ///     entity or <c>null</c> if not found.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     domain entity or <c>null</c> if not found.
         /// </returns>
         public async Task<TDomainEntity?> FindAsync(
             Expression<Func<TEventStoreEntity, bool>> predicate,

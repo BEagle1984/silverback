@@ -3,8 +3,9 @@
 
 using System.Diagnostics;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Connectors;
-using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Chunking;
 
 namespace Silverback.Diagnostics
 {
@@ -19,8 +20,7 @@ namespace Silverback.Diagnostics
         private const int Offset = 1000;
 
         /// <summary>
-        ///     Gets the <see cref="EventId" /> of the log that is written when an inbound message (or a batch of
-        ///     messages) is being processed.
+        ///     Gets the <see cref="EventId" /> of the log that is written when an inbound message is being processed.
         /// </summary>
         /// <remarks>
         ///     Default log level: Information.
@@ -30,7 +30,7 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while processing an
-        ///     inbound message (or a batch of messages).
+        ///     inbound message.
         /// </summary>
         /// <remarks>
         ///     Default log level: Warning.
@@ -40,13 +40,56 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an inbound message is added to a
-        ///     batch.
+        ///     sequence (e.g. a <see cref="ChunkSequence" /> or a <see cref="BatchSequence" />).
         /// </summary>
         /// <remarks>
-        ///     Default log level: Information.
+        ///     Default log level: Debug.
         /// </remarks>
-        public static EventId MessageAddedToBatch { get; } =
-            new EventId(Offset + 3, Prefix + nameof(MessageAddedToBatch));
+        public static EventId MessageAddedToSequence { get; } =
+            new EventId(Offset + 3, Prefix + nameof(MessageAddedToSequence));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when the first message of a new sequence is
+        ///     consumed.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Debug.
+        /// </remarks>
+        public static EventId SequenceStarted { get; } =
+            new EventId(Offset + 4, Prefix + nameof(SequenceStarted));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when all messages belonging to the sequence
+        ///     have been consumed and published to the internal bus.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Debug.
+        /// </remarks>
+        public static EventId SequenceCompleted { get; } =
+            new EventId(Offset + 5, Prefix + nameof(SequenceCompleted));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when the processing of a sequence of
+        ///     messages is aborted, but not because of an error (an <see cref="ErrorProcessingInboundMessage" /> is
+        ///     logged instead) or an incomplete sequence that gets discarded (an
+        ///     <see cref="IncompleteSequenceDiscarded" /> is logged instead).
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Debug.
+        /// </remarks>
+        public static EventId SequenceProcessingAborted { get; } =
+            new EventId(Offset + 6, Prefix + nameof(SequenceProcessingAborted));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when an incomplete sequence is discarded
+        ///     (e.g. the consumer started in the middle of sequence or a new sequence starts before the current one is
+        ///     completed or the timeout elapses before the sequence can be completed).
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Warning.
+        /// </remarks>
+        public static EventId IncompleteSequenceDiscarded { get; } =
+            new EventId(Offset + 7, Prefix + nameof(IncompleteSequenceDiscarded));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when connecting to the message broker.
@@ -110,7 +153,7 @@ namespace Silverback.Diagnostics
         ///     Default log level: Error.
         /// </remarks>
         public static EventId BrokerConnectionError { get; } =
-            new EventId(Offset + 17, Prefix + nameof(BrokerConnecting));
+            new EventId(Offset + 17, Prefix + nameof(BrokerConnectionError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the consumer is connected to the
@@ -152,6 +195,26 @@ namespace Silverback.Diagnostics
         /// </remarks>
         public static EventId ConsumerDisposingError { get; } =
             new EventId(Offset + 24, Prefix + nameof(ConsumerDisposingError));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs in the consumer during
+        ///     the commit operation.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Error.
+        /// </remarks>
+        public static EventId ConsumerCommitError { get; } =
+            new EventId(Offset + 25, Prefix + nameof(ConsumerCommitError));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs in the consumer during
+        ///     the rollback operation.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Error.
+        /// </remarks>
+        public static EventId ConsumerRollbackError { get; } =
+            new EventId(Offset + 26, Prefix + nameof(ConsumerRollbackError));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a message is produced.
@@ -255,6 +318,17 @@ namespace Silverback.Diagnostics
             new EventId(Offset + 49, Prefix + nameof(MessageSkipped));
 
         /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when the <c>MoveMessageErrorPolicy</c>
+        ///     cannot be applied because the failing message belongs to a sequences (it's either chunked, being
+        ///     processed in batch, etc.).
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Warning.
+        /// </remarks>
+        public static EventId CannotMoveSequences { get; } =
+            new EventId(Offset + 50, Prefix + nameof(MessageMoved));
+
+        /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while trying to
         ///     initialize the <see cref="Activity" /> from the message headers (distributed tracing).
         /// </summary>
@@ -263,16 +337,6 @@ namespace Silverback.Diagnostics
         /// </remarks>
         public static EventId ErrorInitializingActivity { get; } =
             new EventId(Offset + 61, Prefix + nameof(ErrorInitializingActivity));
-
-        /// <summary>
-        ///     Gets the <see cref="EventId" /> of the log that is written when the inbound connector is creating the
-        ///     consumer to connect to the inbound endpoint.
-        /// </summary>
-        /// <remarks>
-        ///     Default log level: Trace.
-        /// </remarks>
-        public static EventId InboundConnectorConnecting { get; } =
-            new EventId(Offset + 71, Prefix + nameof(InboundConnectorConnecting));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the message is being skipped since
@@ -285,58 +349,58 @@ namespace Silverback.Diagnostics
             new EventId(Offset + 72, Prefix + nameof(MessageAlreadyProcessed));
 
         /// <summary>
-        ///     Gets the <see cref="EventId" /> of the log that is written when the message is being enqueued to be
-        ///     asynchronously produced by the <see cref="IOutboundQueueWorker" />.
+        ///     Gets the <see cref="EventId" /> of the log that is written when the message is being written to the
+        ///     outbox.
         /// </summary>
         /// <remarks>
         ///     Default log level: Debug.
         /// </remarks>
-        public static EventId OutboundMessageEnqueued { get; } =
-            new EventId(Offset + 73, Prefix + nameof(OutboundMessageEnqueued));
+        public static EventId OutboundMessageWrittenToOutbox { get; } =
+            new EventId(Offset + 73, Prefix + nameof(OutboundMessageWrittenToOutbox));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
-        ///     <see cref="IOutboundQueueWorker" /> loads a batch of enqueued messages.
+        ///     <see cref="IOutboxWorker" /> loads a batch of enqueued messages.
         /// </summary>
         /// <remarks>
         ///     Default log level: Trace.
         /// </remarks>
-        public static EventId ReadingEnqueuedOutboundMessages { get; } =
-            new EventId(Offset + 74, Prefix + nameof(ReadingEnqueuedOutboundMessages));
+        public static EventId ReadingMessagesFromOutbox { get; } =
+            new EventId(Offset + 74, Prefix + nameof(ReadingMessagesFromOutbox));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when the
-        ///     <see cref="IOutboundQueueWorker" /> doesn't find any enqueued message to be produced.
+        ///     <see cref="IOutboxWorker" /> doesn't find any message in the outbox.
         /// </summary>
         /// <remarks>
         ///     Default log level: Trace.
         /// </remarks>
-        public static EventId OutboundQueueEmpty { get; } =
-            new EventId(Offset + 75, Prefix + nameof(OutboundQueueEmpty));
+        public static EventId OutboxEmpty { get; } =
+            new EventId(Offset + 75, Prefix + nameof(OutboxEmpty));
 
         /// <summary>
-        ///     Gets the <see cref="EventId" /> of the log that is written when the enqueued outbound message is being
-        ///     processed.
+        ///     Gets the <see cref="EventId" /> of the log that is written when the message stored in the outbox is
+        ///     being processed.
         /// </summary>
         /// <remarks>
         ///     Default log level: Debug.
         /// </remarks>
-        public static EventId ProcessingEnqueuedOutboundMessage { get; } =
-            new EventId(Offset + 76, Prefix + nameof(ProcessingEnqueuedOutboundMessage));
+        public static EventId ProcessingOutboxStoredMessage { get; } =
+            new EventId(Offset + 76, Prefix + nameof(ProcessingOutboxStoredMessage));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while producing the
-        ///     enqueued outbound message.
+        ///     message stored in the outbox.
         /// </summary>
         /// <remarks>
         ///     Default log level: Error.
         /// </remarks>
-        public static EventId ErrorProducingEnqueuedMessage { get; } =
-            new EventId(Offset + 77, Prefix + nameof(ErrorProducingEnqueuedMessage));
+        public static EventId ErrorProducingOutboxStoredMessage { get; } =
+            new EventId(Offset + 77, Prefix + nameof(ErrorProducingOutboxStoredMessage));
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while the
-        ///     <see cref="IOutboundQueueWorker" /> processes the outbound queue.
+        ///     <see cref="IOutboxWorker" /> processes the outbound queue.
         /// </summary>
         /// <remarks>
         ///     Default log level: Error.
@@ -345,13 +409,12 @@ namespace Silverback.Diagnostics
             new EventId(Offset + 78, Prefix + nameof(ErrorProcessingOutboundQueue));
 
         /// <summary>
-        ///     Gets the <see cref="EventId" /> of the log that is written when an error occurs while cleaning up the
-        ///     temporary chunks from the <see cref="IChunkStore" />.
+        ///     Gets the <see cref="EventId" /> of the low level tracing logs.
         /// </summary>
         /// <remarks>
-        ///     Default log level: Error.
+        ///     Default log level: Trace.
         /// </remarks>
-        public static EventId ErrorCleaningChunkStore { get; } =
-            new EventId(Offset + 91, Prefix + nameof(ErrorCleaningChunkStore));
+        public static EventId LowLevelTracing { get; } =
+            new EventId(Offset + 999, Prefix + nameof(LowLevelTracing));
     }
 }

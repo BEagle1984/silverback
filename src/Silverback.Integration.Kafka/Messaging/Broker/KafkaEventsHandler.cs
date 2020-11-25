@@ -8,12 +8,14 @@ using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker.ConfluentWrappers;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 
 namespace Silverback.Messaging.Broker
 {
     // TODO: Test
+    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     internal class KafkaEventsHandler
     {
         private readonly IServiceProvider? _serviceProvider;
@@ -29,12 +31,12 @@ namespace Silverback.Messaging.Broker
         }
 
         [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public void SetProducerEventsHandlers(ProducerBuilder<byte[]?, byte[]?> producerBuilder) =>
+        public void SetProducerEventsHandlers(IConfluentProducerBuilder producerBuilder) =>
             producerBuilder.SetStatisticsHandler(OnProducerStatistics);
 
         public void SetConsumerEventsHandlers(
             KafkaConsumer ownerConsumer,
-            ConsumerBuilder<byte[], byte[]> consumerBuilder) =>
+            IConfluentConsumerBuilder consumerBuilder) =>
             consumerBuilder
                 .SetStatisticsHandler(OnConsumerStatistics)
                 .SetPartitionsAssignedHandler(OnPartitionsAssigned)
@@ -66,14 +68,14 @@ namespace Silverback.Messaging.Broker
             CreateScopeAndPublishEvent(new KafkaStatisticsEvent(statistics));
         }
 
-        private void OnConsumerStatistics(IConsumer<byte[], byte[]> consumer, string statistics)
+        private void OnConsumerStatistics(IConsumer<byte[]?, byte[]?> consumer, string statistics)
         {
             _logger.LogDebug(KafkaEventIds.ConsumerStatisticsReceived, $"Statistics: {statistics}");
             CreateScopeAndPublishEvent(new KafkaStatisticsEvent(statistics));
         }
 
         private IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
-            IConsumer<byte[], byte[]> consumer,
+            IConsumer<byte[]?, byte[]?> consumer,
             List<TopicPartition> partitions)
         {
             partitions.ForEach(
@@ -107,7 +109,7 @@ namespace Silverback.Messaging.Broker
             return partitionsAssignedEvent.Partitions;
         }
 
-        private void OnPartitionsRevoked(IConsumer<byte[], byte[]> consumer, List<TopicPartitionOffset> partitions)
+        private void OnPartitionsRevoked(IConsumer<byte[]?, byte[]?> consumer, List<TopicPartitionOffset> partitions)
         {
             partitions.ForEach(
                 partition =>
@@ -123,7 +125,7 @@ namespace Silverback.Messaging.Broker
             CreateScopeAndPublishEvent(new KafkaPartitionsRevokedEvent(partitions, consumer.MemberId));
         }
 
-        private void OnOffsetsCommitted(IConsumer<byte[], byte[]> consumer, CommittedOffsets offsets)
+        private void OnOffsetsCommitted(IConsumer<byte[]?, byte[]?> consumer, CommittedOffsets offsets)
         {
             foreach (var offset in offsets.Offsets)
             {

@@ -100,8 +100,8 @@ namespace Silverback.Messaging.Publishing
         ///     The query to be executed.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the query
-        ///     result.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     query result.
         /// </returns>
         Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage);
 
@@ -121,8 +121,8 @@ namespace Silverback.Messaging.Publishing
         ///     message.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the query
-        ///     result.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     query result.
         /// </returns>
         Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> queryMessage, bool throwIfUnhandled);
 

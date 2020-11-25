@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Silverback.Messaging.Broker;
 
 namespace Silverback.Messaging.Messages
@@ -16,17 +17,35 @@ namespace Silverback.Messaging.Messages
             IEnumerable<MessageHeader>? headers,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
-            IOffset? offset = null,
+            IOffset offset,
             IDictionary<string, string>? additionalLogData = null)
-            : base(rawMessage, headers, endpoint, offset, additionalLogData)
+            : this(
+                rawMessage != null ? new MemoryStream(rawMessage) : null,
+                headers,
+                endpoint,
+                actualEndpointName,
+                offset,
+                additionalLogData)
         {
-            ActualEndpointName = actualEndpointName;
         }
 
-        /// <inheritdoc cref="IRawInboundEnvelope.Endpoint" />
+        public RawInboundEnvelope(
+            Stream? rawMessage,
+            IEnumerable<MessageHeader>? headers,
+            IConsumerEndpoint endpoint,
+            string actualEndpointName,
+            IOffset offset,
+            IDictionary<string, string>? additionalLogData = null)
+            : base(rawMessage, headers, endpoint, additionalLogData)
+        {
+            ActualEndpointName = actualEndpointName;
+            Offset = offset;
+        }
+
         public new IConsumerEndpoint Endpoint => (IConsumerEndpoint)base.Endpoint;
 
-        /// <inheritdoc cref="IRawInboundEnvelope.ActualEndpointName" />
         public string ActualEndpointName { get; }
+
+        public IOffset Offset { get; }
     }
 }

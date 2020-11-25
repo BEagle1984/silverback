@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
@@ -39,8 +38,6 @@ namespace Silverback.Messaging.Broker
 
         private const int MaxDisconnectParallelism = 4;
 
-        private readonly List<IBrokerBehavior> _behaviors;
-
         private readonly EndpointsConfiguratorsInvoker _endpointsConfiguratorsInvoker;
 
         private readonly ISilverbackIntegrationLogger _logger;
@@ -54,20 +51,12 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Initializes a new instance of the <see cref="Broker{TProducerEndpoint, TConsumerEndpoint}" /> class.
         /// </summary>
-        /// <param name="behaviors">
-        ///     The <see cref="IEnumerable{T}" /> containing the <see cref="IBrokerBehavior" /> to be passed to the
-        ///     producers and consumers.
-        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
-        protected Broker(
-            IEnumerable<IBrokerBehavior> behaviors,
-            IServiceProvider serviceProvider)
+        protected Broker(IServiceProvider serviceProvider)
         {
             _producers = new ConcurrentDictionary<IEndpoint, IProducer>();
-
-            _behaviors = behaviors?.ToList() ?? new List<IBrokerBehavior>();
 
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _endpointsConfiguratorsInvoker = _serviceProvider.GetRequiredService<EndpointsConfiguratorsInvoker>();
@@ -131,27 +120,13 @@ namespace Silverback.Messaging.Broker
 
                     return InstantiateProducer(
                         (TProducerEndpoint)endpoint,
-                        GetBehaviors<IProducerBehavior>(),
+                        _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IProducerBehavior>>(),
                         _serviceProvider);
                 });
         }
 
-        /// <inheritdoc cref="IBroker.AddConsumer(IConsumerEndpoint,MessagesReceivedCallback)" />
-        public virtual IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedCallback callback)
-        {
-            Check.NotNull(callback, nameof(callback));
-
-            return AddConsumer(
-                endpoint,
-                args =>
-                {
-                    callback(args);
-                    return Task.CompletedTask;
-                });
-        }
-
-        /// <inheritdoc cref="IBroker.AddConsumer(IConsumerEndpoint,MessagesReceivedAsyncCallback)" />
-        public virtual IConsumer AddConsumer(IConsumerEndpoint endpoint, MessagesReceivedAsyncCallback callback)
+        /// <inheritdoc cref="IBroker.AddConsumer" />
+        public virtual IConsumer AddConsumer(IConsumerEndpoint endpoint)
         {
             Check.NotNull(endpoint, nameof(endpoint));
 
@@ -168,8 +143,7 @@ namespace Silverback.Messaging.Broker
 
             var consumer = InstantiateConsumer(
                 (TConsumerEndpoint)endpoint,
-                callback,
-                GetBehaviors<IConsumerBehavior>(),
+                _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
                 _serviceProvider);
 
             _consumers.Add(consumer);
@@ -239,8 +213,8 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint.
         /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be plugged-in.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
@@ -251,7 +225,7 @@ namespace Silverback.Messaging.Broker
         /// </returns>
         protected abstract IProducer InstantiateProducer(
             TProducerEndpoint endpoint,
-            IReadOnlyList<IProducerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider);
 
         /// <summary>
@@ -260,11 +234,8 @@ namespace Silverback.Messaging.Broker
         /// <param name="endpoint">
         ///     The endpoint.
         /// </param>
-        /// <param name="callback">
-        ///     The delegate to be invoked when a message is received.
-        /// </param>
-        /// <param name="behaviors">
-        ///     The behaviors to be plugged-in.
+        /// <param name="behaviorsProvider">
+        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
@@ -275,8 +246,7 @@ namespace Silverback.Messaging.Broker
         /// </returns>
         protected abstract IConsumer InstantiateConsumer(
             TConsumerEndpoint endpoint,
-            MessagesReceivedAsyncCallback callback,
-            IReadOnlyList<IConsumerBehavior>? behaviors,
+            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider);
 
         /// <summary>
@@ -318,29 +288,6 @@ namespace Silverback.Messaging.Broker
             // ReSharper disable once SuspiciousTypeConversion.Global
             _producers?.Values.OfType<IDisposable>().ForEach(o => o.Dispose());
             _producers = null;
-        }
-
-        private IReadOnlyList<TBehavior> GetBehaviors<TBehavior>()
-            where TBehavior : IBrokerBehavior =>
-            GetBehaviorsEnumerable<TBehavior>()
-                .SortBySortIndex()
-                .ToList();
-
-        private IEnumerable<TBehavior> GetBehaviorsEnumerable<TBehavior>()
-            where TBehavior : IBrokerBehavior
-        {
-            foreach (var behavior in _behaviors)
-            {
-                switch (behavior)
-                {
-                    case TBehavior targetTypeBehavior:
-                        yield return targetTypeBehavior;
-                        break;
-                    case IBrokerBehaviorFactory<TBehavior> behaviorFactory:
-                        yield return behaviorFactory.Create();
-                        break;
-                }
-            }
         }
     }
 }

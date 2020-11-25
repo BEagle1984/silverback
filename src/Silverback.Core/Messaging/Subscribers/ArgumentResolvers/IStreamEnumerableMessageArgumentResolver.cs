@@ -20,8 +20,8 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         /// <summary>
         ///     Returns the messages stream in a shape that is compatible with the subscribed method.
         /// </summary>
-        /// <param name="message">
-        ///     The message being published.
+        /// <param name="streamProvider">
+        ///     The <see cref="IMessageStreamProvider" /> being published.
         /// </param>
         /// <param name="targetMessageType">
         ///     The actual message type being declared by the subscribed method (e.g. <c>TMessage</c> for an
@@ -30,6 +30,6 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         /// <returns>
         ///     The actual value to be forwarded to the subscribed method.
         /// </returns>
-        object GetValue(object message, Type targetMessageType);
+        object GetValue(IMessageStreamProvider streamProvider, Type targetMessageType);
     }
 }

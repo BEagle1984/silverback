@@ -2,36 +2,35 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
     public class RetryErrorPolicyTests
     {
-        private readonly IErrorPolicyBuilder _errorPolicyBuilder;
+        private readonly ServiceProvider _serviceProvider;
 
         public RetryErrorPolicyTests()
         {
             var services = new ServiceCollection();
 
-            services.AddNullLogger();
+            services
+                .AddNullLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
 
-            services.AddSilverback().WithConnectionToMessageBroker(
-                options => options
-                    .AddBroker<TestBroker>());
+            _serviceProvider = services.BuildServiceProvider();
 
-            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
-
-            _errorPolicyBuilder = new ErrorPolicyBuilder(serviceProvider);
-
-            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var broker = _serviceProvider.GetRequiredService<IBroker>();
             broker.Connect();
         }
 
@@ -40,35 +39,48 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(3, true)]
         [InlineData(4, false)]
         [InlineData(7, false)]
-        public void CanHandle_InboundMessageWithDifferentFailedAttemptsCount_ReturnReflectsMaxFailedAttempts(
+        public void CanHandle_WithDifferentFailedAttemptsCount_ReturnReflectsMaxFailedAttempts(
             int failedAttempts,
             bool expectedResult)
         {
-            var policy = _errorPolicyBuilder.Retry().MaxFailedAttempts(3);
+            var policy = ErrorPolicy.Retry().MaxFailedAttempts(3).Build(_serviceProvider);
 
-            var rawMessage = new byte[1];
+            var rawMessage = new MemoryStream();
             var headers = new[]
             {
-                new MessageHeader(
-                    DefaultMessageHeaders.FailedAttempts,
-                    failedAttempts.ToString(CultureInfo.InvariantCulture))
+                new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts)
             };
 
             var inboundEnvelope = new InboundEnvelope(
                 rawMessage,
                 headers,
-                null,
+                new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);
 
             var canHandle = policy.CanHandle(
-                new[]
-                {
-                    inboundEnvelope,
-                },
+                ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
                 new InvalidOperationException("test"));
 
             canHandle.Should().Be(expectedResult);
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task HandleError_Whatever_TrueReturned()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task HandleError_Whatever_OffsetRolledBack()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Fact(Skip = "Not yet implemented")]
+        public Task HandleError_Whatever_TransactionAborted()
+        {
+            throw new NotImplementedException();
         }
     }
 }

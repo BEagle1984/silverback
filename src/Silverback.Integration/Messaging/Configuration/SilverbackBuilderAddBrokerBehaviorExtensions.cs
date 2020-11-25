@@ -10,10 +10,79 @@ using Silverback.Util;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Adds the <c>AddSingletonBrokerBehavior</c> method to the <see cref="ISilverbackBuilder" />.
+    ///     Adds the <c>AddBrokerBehavior</c> methods to the <see cref="ISilverbackBuilder" />.
     /// </summary>
     public static class SilverbackBuilderAddBrokerBehaviorExtensions
     {
+        /// <summary>
+        ///     Adds a transient behavior of the type specified in <paramref name="behaviorType" /> to the
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the services to.
+        /// </param>
+        /// <param name="behaviorType">
+        ///     The type of the behavior to register and the implementation to use.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddTransientBrokerBehavior(
+            this ISilverbackBuilder silverbackBuilder,
+            Type behaviorType)
+        {
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+
+            silverbackBuilder.Services.AddTransient(typeof(IBrokerBehavior), behaviorType);
+
+            return silverbackBuilder;
+        }
+
+        /// <summary>
+        ///     Adds a transient behavior of the type specified in <typeparamref name="TBehavior" /> to the
+        ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <typeparam name="TBehavior">
+        ///     The type of the behavior to add.
+        /// </typeparam>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the services to.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddTransientBrokerBehavior<TBehavior>(
+            this ISilverbackBuilder silverbackBuilder)
+            where TBehavior : class, IBrokerBehavior =>
+            AddTransientBrokerBehavior(silverbackBuilder, typeof(TBehavior));
+
+        /// <summary>
+        ///     Adds a transient behavior with a factory specified in <paramref name="implementationFactory" /> to
+        ///     the <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.
+        /// </summary>
+        /// <param name="silverbackBuilder">
+        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
+        ///     the services to.
+        /// </param>
+        /// <param name="implementationFactory">
+        ///     The factory that creates the service.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static ISilverbackBuilder AddTransientBrokerBehavior(
+            this ISilverbackBuilder silverbackBuilder,
+            Func<IServiceProvider, IBrokerBehavior> implementationFactory)
+        {
+            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+
+            silverbackBuilder.Services.AddTransient(typeof(IBrokerBehavior), implementationFactory);
+
+            return silverbackBuilder;
+        }
+
         /// <summary>
         ///     Adds a singleton behavior of the type specified in <paramref name="behaviorType" /> to the
         ///     <see cref="Microsoft.Extensions.DependencyInjection.IServiceCollection" />.

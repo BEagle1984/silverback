@@ -86,7 +86,7 @@ namespace Silverback.Background
                 {
                     try
                     {
-                        Lock = await _distributedLockManager.Acquire(_distributedLockSettings, stoppingToken)
+                        Lock = await _distributedLockManager.AcquireAsync(_distributedLockSettings, stoppingToken)
                             .ConfigureAwait(false);
 
                         if (Lock != null)
@@ -114,7 +114,7 @@ namespace Silverback.Background
                     finally
                     {
                         if (Lock != null)
-                            await Lock.Release().ConfigureAwait(false);
+                            await Lock.ReleaseAsync().ConfigureAwait(false);
                     }
                 },
                 stoppingToken,

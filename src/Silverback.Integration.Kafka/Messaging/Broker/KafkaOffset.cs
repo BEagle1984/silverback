@@ -153,7 +153,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="right">
         ///     Right-hand operand.
         /// </param>
-        public static bool operator ==(KafkaOffset left, KafkaOffset right)
+        public static bool operator ==(KafkaOffset? left, KafkaOffset? right)
         {
             if (ReferenceEquals(left, null))
                 return ReferenceEquals(right, null);
@@ -209,19 +209,34 @@ namespace Silverback.Messaging.Broker
                 : throw new ArgumentException($"Object must be of type {nameof(KafkaOffset)}");
         }
 
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
+        public bool Equals(IOffset? other)
+        {
+            if (ReferenceEquals(this, other))
+                return true;
+            if (ReferenceEquals(other, null))
+                return false;
+
+            if (!(other is KafkaOffset otherKafkaOffset))
+                return false;
+
+            return Topic == otherKafkaOffset.Topic &&
+                   Partition == otherKafkaOffset.Partition &&
+                   Offset == otherKafkaOffset.Offset;
+        }
+
         /// <inheritdoc cref="object.Equals(object)" />
         public override bool Equals(object? obj)
         {
+            if (ReferenceEquals(null, obj))
+                return false;
             if (ReferenceEquals(this, obj))
                 return true;
 
-            if (ReferenceEquals(obj, null))
+            if (obj.GetType() != GetType())
                 return false;
 
-            if (!(obj is KafkaOffset other))
-                return false;
-
-            return CompareTo(other) == 0;
+            return Equals((IOffset)obj);
         }
 
         /// <inheritdoc cref="object.GetHashCode" />

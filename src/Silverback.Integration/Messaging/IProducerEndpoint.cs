@@ -1,7 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Silverback.Messaging.LargeMessages;
+using Silverback.Messaging.Outbound;
+using Silverback.Messaging.Sequences.Chunking;
 
 namespace Silverback.Messaging
 {
@@ -15,6 +16,12 @@ namespace Silverback.Messaging
         ///     Gets the message chunking settings. This option can be used to split large messages into smaller
         ///     chunks.
         /// </summary>
-        ChunkSettings Chunk { get; }
+        ChunkSettings? Chunk { get; }
+
+        /// <summary>
+        ///     Gets the strategy to be used to produce the messages. If no strategy is specified, the
+        ///     messages will be sent to the message broker directly.
+        /// </summary>
+        IProduceStrategy Strategy { get; }
     }
 }

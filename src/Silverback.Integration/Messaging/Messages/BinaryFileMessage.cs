@@ -1,7 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
+using System.IO;
 
 namespace Silverback.Messaging.Messages
 {
@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Messages
         ///     Initializes a new instance of the <see cref="BinaryFileMessage" /> class.
         /// </summary>
         public BinaryFileMessage()
-            : this(null)
+            : this((Stream?)null)
         {
         }
 
@@ -25,8 +25,21 @@ namespace Silverback.Messaging.Messages
         /// <param name="contentType">
         ///     The optional MIME type.
         /// </param>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public BinaryFileMessage(byte[]? content, string contentType = "application/octet-stream")
+        public BinaryFileMessage(byte[] content, string contentType = "application/octet-stream")
+            : this(new MemoryStream(content), contentType)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="BinaryFileMessage" /> class with the specified content.
+        /// </summary>
+        /// <param name="content">
+        ///     The binary content.
+        /// </param>
+        /// <param name="contentType">
+        ///     The optional MIME type.
+        /// </param>
+        public BinaryFileMessage(Stream? content, string contentType = "application/octet-stream")
         {
             Content = content;
             ContentType = contentType;
@@ -39,8 +52,6 @@ namespace Silverback.Messaging.Messages
         public string ContentType { get; set; }
 
         /// <inheritdoc cref="IBinaryFileMessage.Content" />
-        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public byte[]? Content { get; set; }
+        public Stream? Content { get; set; }
     }
 }

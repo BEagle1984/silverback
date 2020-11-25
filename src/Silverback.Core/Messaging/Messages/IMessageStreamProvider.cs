@@ -2,14 +2,14 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Relays the streamed messages to all the linked <see cref="MessageStreamEnumerable{TMessage}"/>.
+    ///     Relays the streamed messages to all the linked <see cref="MessageStreamEnumerable{TMessage}" />.
     /// </summary>
-    internal interface IMessageStreamProvider
+    public interface IMessageStreamProvider
     {
         /// <summary>
         ///     Gets the type of the messages being streamed.
@@ -17,11 +17,23 @@ namespace Silverback.Messaging.Messages
         Type MessageType { get; }
 
         /// <summary>
+        ///     Gets a value indicating whether the stream can be forwarded to the subscribers declare a parameter of
+        ///     type <see cref="IEnumerable{T}" />.
+        /// </summary>
+        bool AllowSubscribeAsEnumerable { get; }
+
+        /// <summary>
+        ///     Gets the number of <see cref="IMessageStreamEnumerable{TMessage}" /> that have been created via
+        ///     <see cref="CreateStream" /> or <see cref="CreateStream{TMessage}" />.
+        /// </summary>
+        int StreamsCount { get; }
+
+        /// <summary>
         ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> of that will be linked with this
-        ///     provider and will be pushed with the messages matching the type <paramref name="messageType"/>.
+        ///     provider and will be pushed with the messages matching the type <paramref name="messageType" />.
         /// </summary>
         /// <param name="messageType">
-        ///     The type of the messages being streamed to the linked stream.
+        ///     The type of the messages to be streamed to the linked stream.
         /// </param>
         /// <returns>
         ///     The linked <see cref="IMessageStreamEnumerable{TMessage}" />.
@@ -30,36 +42,14 @@ namespace Silverback.Messaging.Messages
 
         /// <summary>
         ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> of that will be linked with this
-        ///     provider and will be pushed with the messages matching the type <typeparamref name="TMessage"/>.
+        ///     provider and will be pushed with the messages matching the type <typeparamref name="TMessage" />.
         /// </summary>
         /// <typeparam name="TMessage">
-        ///     The type of the messages being streamed to the linked stream.
+        ///     The type of the messages to be streamed to the linked stream.
         /// </typeparam>
         /// <returns>
         ///     The linked <see cref="IMessageStreamEnumerable{TMessage}" />.
         /// </returns>
         IMessageStreamEnumerable<TMessage> CreateStream<TMessage>();
-
-        /// <summary>
-        ///     Used by the linked stream to notify the main stream that the message has been processed.
-        /// </summary>
-        /// <param name="pushedMessage">
-        ///     The processed message.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task NotifyLinkedStreamProcessed(PushedMessage pushedMessage);
-
-        /// <summary>
-        ///     Used by the linked stream to notify the main stream that the enumeration completed.
-        /// </summary>
-        /// <param name="linkedStream">
-        ///     The linked stream.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task NotifyLinkedStreamEnumerationCompleted(IMessageStreamEnumerable linkedStream);
     }
 }

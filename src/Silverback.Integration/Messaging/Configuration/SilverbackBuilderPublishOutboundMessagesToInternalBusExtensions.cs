@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Connectors;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration

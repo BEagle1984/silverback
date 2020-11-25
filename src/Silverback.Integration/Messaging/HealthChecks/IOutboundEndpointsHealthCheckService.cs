@@ -15,9 +15,9 @@ namespace Silverback.Messaging.HealthChecks
         ///     Produces a <see cref="PingMessage" /> to all configured outbound endpoints.
         /// </summary>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains an
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains an
         ///     <see cref="EndpointCheckResult" /> for each endpoint.
         /// </returns>
-        Task<IReadOnlyCollection<EndpointCheckResult>> PingAllEndpoints();
+        Task<IReadOnlyCollection<EndpointCheckResult>> PingAllEndpointsAsync();
     }
 }

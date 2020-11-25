@@ -11,13 +11,13 @@ namespace Silverback.Util
         public static IEnumerable<T> SortBySortIndex<T>(this IEnumerable<T> items)
         {
             var list = items.ToList();
-            var sorted = list.OfType<ISorted>().OrderBy(b => b.SortIndex).ToList();
-            var unsortable = list.Where(b => !(b is ISorted)).ToList();
 
-            return sorted
-                .Where(b => b.SortIndex <= 0).Cast<T>()
-                .Union(unsortable)
-                .Union(sorted.Where(b => b.SortIndex > 0).Cast<T>())
+            var sortables = list.OfType<ISorted>().OrderBy(sorted => sorted.SortIndex).ToList();
+            var notSortables = list.Where(item => !(item is ISorted)).ToList();
+
+            return sortables.Where(sorted => sorted.SortIndex <= 0).Cast<T>()
+                .Union(notSortables)
+                .Union(sortables.Where(b => b.SortIndex > 0).Cast<T>())
                 .ToList();
         }
     }

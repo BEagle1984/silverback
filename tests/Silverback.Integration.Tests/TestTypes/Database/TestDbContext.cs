@@ -13,7 +13,7 @@ namespace Silverback.Tests.Integration.TestTypes.Database
         {
         }
 
-        public DbSet<OutboundMessage> OutboundMessages { get; set; } = null!;
+        public DbSet<OutboxMessage> Outbox { get; set; } = null!;
 
         public DbSet<InboundLogEntry> InboundMessages { get; set; } = null!;
 

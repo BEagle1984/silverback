@@ -2,8 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading.Tasks;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
@@ -24,11 +25,6 @@ namespace Silverback.Messaging.Broker
         IProducerEndpoint Endpoint { get; }
 
         /// <summary>
-        ///     Gets the collection of <see cref="IProducerBehavior" /> configured for this <see cref="IProducer" />.
-        /// </summary>
-        IReadOnlyList<IProducerBehavior> Behaviors { get; }
-
-        /// <summary>
         ///     Publishes the specified message.
         /// </summary>
         /// <param name="message">
@@ -37,13 +33,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
-        /// <param name="disableBehaviors">
-        ///     When set to <c>true</c> the behaviors are not triggered and the message is just produced as-is.
-        /// </param>
-        void Produce(
-            object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null,
-            bool disableBehaviors = false);
+        void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -51,10 +41,30 @@ namespace Silverback.Messaging.Broker
         /// <param name="envelope">
         ///     The envelope containing the message to be delivered.
         /// </param>
-        /// <param name="disableBehaviors">
-        ///     When set to <c>true</c> the behaviors are not triggered and the message is just produced as-is.
+        void Produce(IOutboundEnvelope envelope);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <param name="messageContent">
+        ///     The message to be delivered.
         /// </param>
-        void Produce(IOutboundEnvelope envelope, bool disableBehaviors = false);
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <param name="messageStream">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        void RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -64,17 +74,13 @@ namespace Silverback.Messaging.Broker
         /// </param>
         /// <param name="headers">
         ///     The optional message headers.
-        /// </param>
-        /// <param name="disableBehaviors">
-        ///     When set to <c>true</c> the behaviors are not triggered and the message is just produced as-is.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         Task ProduceAsync(
             object? message,
-            IReadOnlyCollection<MessageHeader>? headers = null,
-            bool disableBehaviors = false);
+            IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -82,12 +88,38 @@ namespace Silverback.Messaging.Broker
         /// <param name="envelope">
         ///     The envelope containing the message to be delivered.
         /// </param>
-        /// <param name="disableBehaviors">
-        ///     When set to <c>true</c> the behaviors are not triggered and the message is just produced as-is.
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task ProduceAsync(IOutboundEnvelope envelope);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <param name="messageContent">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task ProduceAsync(IOutboundEnvelope envelope, bool disableBehaviors = false);
+        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
+        Task RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <param name="messageStream">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null);
     }
 }

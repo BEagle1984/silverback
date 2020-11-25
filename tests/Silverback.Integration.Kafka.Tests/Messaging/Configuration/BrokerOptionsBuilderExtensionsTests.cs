@@ -27,7 +27,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
                     options =>
                         options.AddKafka());
 
-            servicesGeneric.Count.Should().Be(servicesSpecific.Count);
+            servicesGeneric.Should().HaveCount(servicesSpecific.Count);
         }
     }
 }

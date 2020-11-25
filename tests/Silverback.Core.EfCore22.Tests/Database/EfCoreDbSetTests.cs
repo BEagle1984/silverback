@@ -33,7 +33,7 @@ namespace Silverback.Tests.Core.EFCore22.Database
         {
             _efCoreDbContext.GetDbSet<Person>().Add(new Person());
 
-            _dbContext.Persons.Local.Count.Should().Be(1);
+            _dbContext.Persons.Local.Should().HaveCount(1);
             _dbContext.Entry(_dbContext.Persons.Local.First()).State.Should().Be(EntityState.Added);
         }
 
@@ -105,7 +105,7 @@ namespace Silverback.Tests.Core.EFCore22.Database
             var local = _efCoreDbContext.GetDbSet<Person>().GetLocalCache().ToList();
 
             local.Should().NotBeNull();
-            local.Count.Should().Be(2);
+            local.Should().HaveCount(2);
         }
 
         public async ValueTask DisposeAsync()

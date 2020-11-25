@@ -44,8 +44,8 @@ namespace Silverback.Background
             _logger = Check.NotNull(logger, nameof(logger));
         }
 
-        /// <inheritdoc cref="IDistributedLockManager.Acquire" />
-        public async Task<DistributedLock?> Acquire(
+        /// <inheritdoc cref="IDistributedLockManager.AcquireAsync" />
+        public async Task<DistributedLock?> AcquireAsync(
             DistributedLockSettings settings,
             CancellationToken cancellationToken = default)
         {
@@ -58,7 +58,7 @@ namespace Silverback.Background
             }
 
             if (settings is NullLockSettings)
-                return await NullLockManager.Acquire(settings, cancellationToken).ConfigureAwait(false);
+                return await NullLockManager.AcquireAsync(settings, cancellationToken).ConfigureAwait(false);
 
             _logger.LogInformation(
                 CoreEventIds.AcquiringDistributedLock,
@@ -69,7 +69,7 @@ namespace Silverback.Background
             var stopwatch = Stopwatch.StartNew();
             while (settings.AcquireTimeout == null || stopwatch.Elapsed < settings.AcquireTimeout)
             {
-                if (await TryAcquireLock(settings).ConfigureAwait(false))
+                if (await TryAcquireLockAsync(settings).ConfigureAwait(false))
                 {
                     _logger.LogInformation(
                         CoreEventIds.DistributedLockAcquired,
@@ -88,19 +88,19 @@ namespace Silverback.Background
             throw new TimeoutException($"Timeout waiting to get the required lock '{settings.ResourceName}'.");
         }
 
-        /// <inheritdoc cref="IDistributedLockManager.CheckIsStillLocked" />
+        /// <inheritdoc cref="IDistributedLockManager.CheckIsStillLockedAsync" />
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        public async Task<bool> CheckIsStillLocked(DistributedLockSettings settings)
+        public async Task<bool> CheckIsStillLockedAsync(DistributedLockSettings settings)
         {
             Check.NotNull(settings, nameof(settings));
 
             if (settings is NullLockSettings)
-                return await NullLockManager.CheckIsStillLocked(settings).ConfigureAwait(false);
+                return await NullLockManager.CheckIsStillLockedAsync(settings).ConfigureAwait(false);
 
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                return await CheckIsStillLocked(
+                return await CheckIsStillLockedAsync(
                         settings.ResourceName,
                         settings.UniqueId,
                         settings.HeartbeatTimeout,
@@ -120,19 +120,19 @@ namespace Silverback.Background
             }
         }
 
-        /// <inheritdoc cref="IDistributedLockManager.SendHeartbeat" />
+        /// <inheritdoc cref="IDistributedLockManager.SendHeartbeatAsync" />
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        public async Task<bool> SendHeartbeat(DistributedLockSettings settings)
+        public async Task<bool> SendHeartbeatAsync(DistributedLockSettings settings)
         {
             Check.NotNull(settings, nameof(settings));
 
             if (settings is NullLockSettings)
-                return await NullLockManager.SendHeartbeat(settings).ConfigureAwait(false);
+                return await NullLockManager.SendHeartbeatAsync(settings).ConfigureAwait(false);
 
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                return await SendHeartbeat(settings.ResourceName, settings.UniqueId, scope.ServiceProvider)
+                return await SendHeartbeatAsync(settings.ResourceName, settings.UniqueId, scope.ServiceProvider)
                     .ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -148,14 +148,14 @@ namespace Silverback.Background
             }
         }
 
-        /// <inheritdoc cref="IDistributedLockManager.Release" />
+        /// <inheritdoc cref="IDistributedLockManager.ReleaseAsync" />
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        public async Task Release(DistributedLockSettings settings)
+        public async Task ReleaseAsync(DistributedLockSettings settings)
         {
             Check.NotNull(settings, nameof(settings));
 
             if (settings is NullLockSettings)
-                await NullLockManager.Release(settings).ConfigureAwait(false);
+                await NullLockManager.ReleaseAsync(settings).ConfigureAwait(false);
 
             var tryCount = 1;
             while (tryCount <= 3)
@@ -163,7 +163,7 @@ namespace Silverback.Background
                 try
                 {
                     using var scope = _serviceScopeFactory.CreateScope();
-                    await Release(settings.ResourceName, settings.UniqueId, scope.ServiceProvider)
+                    await ReleaseAsync(settings.ResourceName, settings.UniqueId, scope.ServiceProvider)
                         .ConfigureAwait(false);
 
                     _logger.LogInformation(
@@ -188,7 +188,7 @@ namespace Silverback.Background
             }
         }
 
-        private static async Task<bool> AcquireLock(DistributedLockSettings settings, IServiceProvider serviceProvider)
+        private static async Task<bool> AcquireLockAsync(DistributedLockSettings settings, IServiceProvider serviceProvider)
         {
             var heartbeatThreshold = GetHeartbeatThreshold(settings.HeartbeatTimeout);
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
@@ -198,11 +198,11 @@ namespace Silverback.Background
                 .ConfigureAwait(false))
                 return false;
 
-            return await WriteLock(settings.ResourceName, settings.UniqueId, heartbeatThreshold, dbSet, dbContext)
+            return await WriteLockAsync(settings.ResourceName, settings.UniqueId, heartbeatThreshold, dbSet, dbContext)
                 .ConfigureAwait(false);
         }
 
-        private static async Task<bool> WriteLock(
+        private static async Task<bool> WriteLockAsync(
             string resourceName,
             string uniqueId,
             DateTime heartbeatThreshold,
@@ -226,7 +226,7 @@ namespace Silverback.Background
             return true;
         }
 
-        private static async Task<bool> CheckIsStillLocked(
+        private static async Task<bool> CheckIsStillLockedAsync(
             string resourceName,
             string uniqueId,
             TimeSpan heartbeatTimeout,
@@ -242,7 +242,7 @@ namespace Silverback.Background
                 .ConfigureAwait(false);
         }
 
-        private static async Task<bool> SendHeartbeat(
+        private static async Task<bool> SendHeartbeatAsync(
             string resourceName,
             string uniqueId,
             IServiceProvider serviceProvider)
@@ -274,7 +274,7 @@ namespace Silverback.Background
         private static DateTime GetHeartbeatThreshold(TimeSpan heartbeatTimeout) =>
             DateTime.UtcNow.Subtract(heartbeatTimeout);
 
-        private static async Task Release(string resourceName, string uniqueId, IServiceProvider serviceProvider)
+        private static async Task ReleaseAsync(string resourceName, string uniqueId, IServiceProvider serviceProvider)
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
@@ -291,12 +291,12 @@ namespace Silverback.Background
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task<bool> TryAcquireLock(DistributedLockSettings settings)
+        private async Task<bool> TryAcquireLockAsync(DistributedLockSettings settings)
         {
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                return await AcquireLock(settings, scope.ServiceProvider).ConfigureAwait(false);
+                return await AcquireLockAsync(settings, scope.ServiceProvider).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

@@ -23,8 +23,8 @@ namespace Silverback.Messaging.HealthChecks
             _brokerCollection = brokerCollection;
         }
 
-        /// <inheritdoc cref="IConsumersHealthCheckService.CheckConsumersConnected" />
-        public Task<bool> CheckConsumersConnected() =>
+        /// <inheritdoc cref="IConsumersHealthCheckService.CheckConsumersConnectedAsync" />
+        public Task<bool> CheckConsumersConnectedAsync() =>
             Task.FromResult(_brokerCollection.All(broker => broker.Consumers.All(consumer => consumer.IsConnected)));
     }
 }

@@ -2,13 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Globalization;
 using System.Threading.Tasks;
-using FluentAssertions;
-using NSubstitute;
-using Silverback.Diagnostics;
-using Silverback.Messaging.ErrorHandling;
-using Silverback.Messaging.Messages;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Tests.Integration.TestTypes;
 using Xunit;
 
@@ -16,40 +11,37 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 {
     public class SkipMessageErrorPolicyTests
     {
-        private readonly SkipMessageErrorPolicy _policy;
+        // ReSharper disable once NotAccessedField.Local
+        private readonly ServiceProvider _serviceProvider;
 
         public SkipMessageErrorPolicyTests()
         {
-            _policy = new SkipMessageErrorPolicy(
-                Substitute.For<IServiceProvider>(),
-                Substitute.For<ISilverbackIntegrationLogger<SkipMessageErrorPolicy>>());
+            var services = new ServiceCollection();
+
+            services
+                .AddNullLogger()
+                .AddSilverback()
+                .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
+
+            _serviceProvider = services.BuildServiceProvider();
         }
 
-        [Theory]
-        [InlineData(1, ErrorAction.Skip)]
-        [InlineData(333, ErrorAction.Skip)]
-        public async Task SkipTest(int failedAttempts, ErrorAction expectedAction)
+        [Fact(Skip = "Not yet implemented")]
+        public Task HandleError_Whatever_TrueReturned()
         {
-            var rawMessage = new byte[1];
-            var headers = new[]
-            {
-                new MessageHeader(
-                    DefaultMessageHeaders.FailedAttempts,
-                    failedAttempts.ToString(CultureInfo.InvariantCulture))
-            };
-            var rawInboundEnvelopes = new[]
-            {
-                new InboundEnvelope(
-                    rawMessage,
-                    headers,
-                    null,
-                    TestConsumerEndpoint.GetDefault(),
-                    TestConsumerEndpoint.GetDefault().Name),
-            };
+            throw new NotImplementedException();
+        }
 
-            var action = await _policy.HandleError(rawInboundEnvelopes, new InvalidOperationException("test"));
+        [Fact(Skip = "Not yet implemented")]
+        public Task HandleError_Whatever_OffsetCommitted()
+        {
+            throw new NotImplementedException();
+        }
 
-            action.Should().Be(expectedAction);
+        [Fact(Skip = "Not yet implemented")]
+        public Task HandleError_Whatever_TransactionAborted()
+        {
+            throw new NotImplementedException();
         }
     }
 }

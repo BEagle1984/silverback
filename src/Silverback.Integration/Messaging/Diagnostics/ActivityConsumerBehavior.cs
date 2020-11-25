@@ -4,7 +4,6 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -22,14 +21,12 @@ namespace Silverback.Messaging.Diagnostics
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Activity;
 
-        /// <inheritdoc cref="IConsumerBehavior.Handle" />
-        public async Task Handle(
+        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+        public async Task HandleAsync(
             ConsumerPipelineContext context,
-            IServiceProvider serviceProvider,
             ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
-            Check.NotNull(serviceProvider, nameof(serviceProvider));
             Check.NotNull(next, nameof(next));
 
             var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
@@ -38,9 +35,9 @@ namespace Silverback.Messaging.Diagnostics
                 TryInitActivity(
                     context,
                     activity,
-                    serviceProvider.GetService<ISilverbackLogger<ActivityConsumerBehavior>>());
+                    context.ServiceProvider.GetService<ISilverbackLogger<ActivityConsumerBehavior>>());
 
-                await next(context, serviceProvider).ConfigureAwait(false);
+                await next(context).ConfigureAwait(false);
             }
             finally
             {
@@ -56,7 +53,7 @@ namespace Silverback.Messaging.Diagnostics
         {
             try
             {
-                activity.InitFromMessageHeaders(context.Envelopes.Single().Headers);
+                activity.InitFromMessageHeaders(context.Envelope.Headers);
             }
             catch (Exception ex)
             {

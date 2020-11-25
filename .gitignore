@@ -364,3 +364,6 @@ healthchecksdb
 
 # Visual Studio Code
 /.vscode/
+
+# Custom
+samples/temp/

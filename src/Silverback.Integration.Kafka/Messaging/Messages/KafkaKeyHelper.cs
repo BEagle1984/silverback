@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Messages
                         propertyInfo => new
                         {
                             propertyInfo.Name,
-                            Value = propertyInfo.GetValue(message, null).ToString()
+                            Value = propertyInfo.GetValue(message, null)?.ToString()
                         })
                     .ToList();
 

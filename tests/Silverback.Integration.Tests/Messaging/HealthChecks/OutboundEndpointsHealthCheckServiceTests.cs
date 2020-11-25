@@ -9,10 +9,10 @@ using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Connectors;
 using Silverback.Messaging.HealthChecks;
-using Silverback.Tests.Integration.TestTypes;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
 
@@ -39,16 +39,13 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 {
                     new OutboundRoute(
                         typeof(TestEventOne),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1"))),
                     new OutboundRoute(
                         typeof(TestEventTwo),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2"))),
                     new OutboundRoute(
                         typeof(TestEventThree),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
-                        typeof(OutboundConnector))
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")))
                 });
 
             var service = new OutboundEndpointsHealthCheckService(
@@ -56,7 +53,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 new BrokerCollection(new[] { broker }),
                 Substitute.For<IServiceProvider>());
 
-            await service.PingAllEndpoints();
+            await service.PingAllEndpointsAsync();
 
             await producer1.ReceivedWithAnyArgs(1).ProduceAsync((PingMessage?)null);
             await producer2.ReceivedWithAnyArgs(1).ProduceAsync((PingMessage?)null);
@@ -82,16 +79,13 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 {
                     new OutboundRoute(
                         typeof(TestEventOne),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1"))),
                     new OutboundRoute(
                         typeof(TestEventTwo),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2"))),
                     new OutboundRoute(
                         typeof(TestEventThree),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
-                        typeof(OutboundConnector))
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")))
                 });
 
             var service = new OutboundEndpointsHealthCheckService(
@@ -99,7 +93,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 new BrokerCollection(new[] { broker }),
                 Substitute.For<IServiceProvider>());
 
-            var results = await service.PingAllEndpoints();
+            var results = await service.PingAllEndpointsAsync();
 
             results.ForEach(r => r.IsSuccessful.Should().BeTrue());
         }
@@ -124,16 +118,13 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 {
                     new OutboundRoute(
                         typeof(TestEventOne),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint1"))),
                     new OutboundRoute(
                         typeof(TestEventTwo),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2")),
-                        typeof(OutboundConnector)),
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint2"))),
                     new OutboundRoute(
                         typeof(TestEventThree),
-                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")),
-                        typeof(OutboundConnector))
+                        _ => new StaticOutboundRouter(new TestProducerEndpoint("endpoint3")))
                 });
 
             var service = new OutboundEndpointsHealthCheckService(
@@ -141,7 +132,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 new BrokerCollection(new[] { broker }),
                 Substitute.For<IServiceProvider>());
 
-            var results = (await service.PingAllEndpoints()).ToList();
+            var results = (await service.PingAllEndpointsAsync()).ToList();
 
             results[0].EndpointName.Should().Be("endpoint1");
             results[0].IsSuccessful.Should().BeTrue();

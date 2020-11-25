@@ -30,8 +30,12 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             return parameterType.GetGenericArguments()[0];
         }
 
-        /// <inheritdoc cref="IEnumerableMessageArgumentResolver.GetValue" />
-        public object GetValue(IReadOnlyCollection<object> messages, Type targetMessageType) =>
-            messages.OfType(targetMessageType).ToList(targetMessageType);
+        /// <inheritdoc cref="IEnumerableMessageArgumentResolver.GetValue(IReadOnlyCollection{object},Type)" />
+        public object GetValue(IReadOnlyCollection<object> messages, Type targetMessageType)
+        {
+            Check.NotNull(messages, nameof(messages));
+
+            return messages.OfType(targetMessageType).ToList(targetMessageType);
+        }
     }
 }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -28,37 +29,21 @@ namespace Silverback.Messaging.Serialization
             _serializer = serializer;
         }
 
-        /// <inheritdoc cref="IMessageSerializer.Serialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public byte[]? Serialize(
-            object? message,
-            MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            _serializer.Serialize(message, messageHeaders, context);
-
-        /// <inheritdoc cref="IMessageSerializer.Deserialize" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public (object?, Type) Deserialize(
-            byte[]? message,
-            MessageHeaderCollection messageHeaders,
-            MessageSerializationContext context) =>
-            _serializer.Deserialize(message, messageHeaders, context);
-
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public Task<byte[]?> SerializeAsync(
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
+        public ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
             _serializer.SerializeAsync(message, messageHeaders, context);
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        public Task<(object?, Type)> DeserializeAsync(
-            byte[]? message,
+        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
+        public ValueTask<(object?, Type)> DeserializeAsync(
+            Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context) =>
-            _serializer.DeserializeAsync(message, messageHeaders, context);
+            _serializer.DeserializeAsync(messageStream, messageHeaders, context);
 
         /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
         public byte[] SerializeKey(

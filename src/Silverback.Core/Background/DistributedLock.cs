@@ -35,7 +35,7 @@ namespace Silverback.Background
             Status = DistributedLockStatus.Acquired;
 
             Task.Factory.StartNew(
-                SendHeartbeats,
+                SendHeartbeatsAsync,
                 CancellationToken.None,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
@@ -55,20 +55,20 @@ namespace Silverback.Background
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        public async Task Renew(CancellationToken cancellationToken = default)
+        public async Task RenewAsync(CancellationToken cancellationToken = default)
         {
             if (Status == DistributedLockStatus.Released)
                 throw new InvalidOperationException("This lock was explicitly released and cannot be renewed.");
 
-            await CheckIsStillLocked().ConfigureAwait(false);
+            await CheckIsStillLockedAsync().ConfigureAwait(false);
 
             if (Status == DistributedLockStatus.Acquired)
             {
-                await _lockManager.SendHeartbeat(_settings).ConfigureAwait(false);
+                await _lockManager.SendHeartbeatAsync(_settings).ConfigureAwait(false);
             }
             else
             {
-                await _lockManager.Acquire(_settings, cancellationToken).ConfigureAwait(false);
+                await _lockManager.AcquireAsync(_settings, cancellationToken).ConfigureAwait(false);
                 Status = DistributedLockStatus.Acquired;
             }
         }
@@ -79,22 +79,22 @@ namespace Silverback.Background
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        public async Task Release()
+        public async Task ReleaseAsync()
         {
             Status = DistributedLockStatus.Released;
-            await _lockManager.Release(_settings).ConfigureAwait(false);
+            await _lockManager.ReleaseAsync(_settings).ConfigureAwait(false);
         }
 
-        private async Task CheckIsStillLocked()
+        private async Task CheckIsStillLockedAsync()
         {
             if (Status != DistributedLockStatus.Acquired)
                 return;
 
-            if (!await _lockManager.CheckIsStillLocked(_settings).ConfigureAwait(false))
+            if (!await _lockManager.CheckIsStillLockedAsync(_settings).ConfigureAwait(false))
                 Status = DistributedLockStatus.Lost;
         }
 
-        private async Task SendHeartbeats()
+        private async Task SendHeartbeatsAsync()
         {
             var failedHeartbeats = 0;
 
@@ -103,12 +103,12 @@ namespace Silverback.Background
                 if (Status == DistributedLockStatus.Acquired)
                 {
                     failedHeartbeats =
-                        !await _lockManager.SendHeartbeat(_settings).ConfigureAwait(false)
+                        !await _lockManager.SendHeartbeatAsync(_settings).ConfigureAwait(false)
                             ? failedHeartbeats + 1
                             : 0;
 
                     if (failedHeartbeats >= _settings.FailedHeartbeatsThreshold)
-                        await CheckIsStillLocked().ConfigureAwait(false);
+                        await CheckIsStillLockedAsync().ConfigureAwait(false);
                 }
 
                 await Task.Delay(_settings.HeartbeatInterval).ConfigureAwait(false);

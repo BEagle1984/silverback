@@ -183,8 +183,8 @@ namespace Silverback.Messaging.Publishing
         ///     The command to be executed.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the command
-        ///     result.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     command result.
         /// </returns>
         Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage);
 
@@ -205,8 +205,8 @@ namespace Silverback.Messaging.Publishing
         ///     message.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the command
-        ///     result.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     command result.
         /// </returns>
         Task<TResult> ExecuteAsync<TResult>(ICommand<TResult> commandMessage, bool throwIfUnhandled);
 
@@ -255,8 +255,8 @@ namespace Silverback.Messaging.Publishing
         ///     The commands to be executed.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the commands
-        ///     result.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     commands result.
         /// </returns>
         Task<IReadOnlyCollection<TResult>> ExecuteAsync<TResult>(IEnumerable<ICommand<TResult>> commandMessages);
 
@@ -277,8 +277,8 @@ namespace Silverback.Messaging.Publishing
         ///     message.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation. The task result contains the commands
-        ///     result.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     commands result.
         /// </returns>
         Task<IReadOnlyCollection<TResult>> ExecuteAsync<TResult>(
             IEnumerable<ICommand<TResult>> commandMessages,

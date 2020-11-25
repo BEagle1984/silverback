@@ -2,14 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Xunit;
 
@@ -17,20 +13,16 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 {
     public sealed class KafkaBrokerTests : IDisposable
     {
-        private static readonly MessagesReceivedAsyncCallback VoidCallback = args => Task.CompletedTask;
-
         private readonly KafkaBroker _broker;
 
         public KafkaBrokerTests()
         {
-            var services = new ServiceCollection()
-                .AddSingleton<KafkaEventsHandler>()
-                .AddSingleton<EndpointsConfiguratorsInvoker>()
-                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddKafka()));
 
-            _broker = new KafkaBroker(
-                Enumerable.Empty<IBrokerBehavior>(),
-                services.BuildServiceProvider());
+            _broker = serviceProvider.GetRequiredService<KafkaBroker>();
         }
 
         [Fact]
@@ -111,7 +103,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void AddConsumer_SomeEndpoint_ConsumerIsReturned()
         {
-            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
 
             consumer.Should().NotBeNull();
         }
@@ -119,8 +111,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void AddConsumer_SameEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"), VoidCallback);
-            var consumer2 = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
+            var consumer2 = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }
@@ -128,8 +120,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         [Fact]
         public void AddConsumer_DifferentEndpoint_DifferentInstanceIsReturned()
         {
-            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"), VoidCallback);
-            var consumer2 = _broker.AddConsumer(new KafkaConsumerEndpoint("other-endpoint"), VoidCallback);
+            var consumer = _broker.AddConsumer(new KafkaConsumerEndpoint("test-endpoint"));
+            var consumer2 = _broker.AddConsumer(new KafkaConsumerEndpoint("other-endpoint"));
 
             consumer2.Should().NotBeSameAs(consumer);
         }
