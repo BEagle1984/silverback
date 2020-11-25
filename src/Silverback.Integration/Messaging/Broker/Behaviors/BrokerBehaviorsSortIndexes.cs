@@ -21,8 +21,6 @@ namespace Silverback.Messaging.Broker.Behaviors
     [SuppressMessage("", "CA1034", Justification = Justifications.AllowedForConstants)]
     public static class BrokerBehaviorsSortIndexes
     {
-        // TODO: Review comments and indexes
-
         /// <summary>
         ///     Contains the sort index constants of the producer behaviors added by Silverback.Integration.
         /// </summary>
@@ -47,7 +45,7 @@ namespace Silverback.Messaging.Broker.Behaviors
             ///     The <c>KafkaMessageKeyInitializerProducerBehavior</c>,
             ///     <c>RabbitRoutingKeyInitializerProducerBehavior</c> or similar sort index.
             /// </summary>
-            public const int BrokerKeyHeaderInitializer = 310;
+            public const int BrokerKeyHeaderInitializer = 400;
 
             /// <summary>
             ///     The <see cref="BinaryFileHandlerProducerBehavior" /> sort index.
@@ -57,22 +55,22 @@ namespace Silverback.Messaging.Broker.Behaviors
             /// <summary>
             ///     The <see cref="SerializerProducerBehavior" /> sort index.
             /// </summary>
-            public const int Serializer = 900;
+            public const int Serializer = 600;
 
             /// <summary>
             ///     The <see cref="EncryptorProducerBehavior" /> sort index.
             /// </summary>
-            public const int Encryptor = 950;
+            public const int Encryptor = 700;
 
             /// <summary>
             ///     The <see cref="SequencerProducerBehavior" /> sort index.
             /// </summary>
-            public const int Sequencer = 1000;
+            public const int Sequencer = 800;
 
             /// <summary>
             ///     The <see cref="CustomHeadersMapperProducerBehavior" /> sort index.
             /// </summary>
-            public const int CustomHeadersMapper = 1100;
+            public const int CustomHeadersMapper = 1000;
         }
 
         /// <summary>
@@ -88,57 +86,57 @@ namespace Silverback.Messaging.Broker.Behaviors
             /// <summary>
             ///     The <see cref="FatalExceptionLoggerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int FatalExceptionLogger = 110;
+            public const int FatalExceptionLogger = 200;
 
             /// <summary>
             ///     The <see cref="CustomHeadersMapperConsumerBehavior" /> sort index.
             /// </summary>
-            public const int CustomHeadersMapper = 120;
+            public const int CustomHeadersMapper = 300;
 
             /// <summary>
             ///     The <see cref="TransactionHandlerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int TransactionHandler = 250;
+            public const int TransactionHandler = 400;
 
             /// <summary>
             ///     The <see cref="RawSequencerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int RawSequencer = 260;
+            public const int RawSequencer = 500;
 
             /// <summary>
             ///     The <see cref="ExactlyOnceGuardConsumerBehavior" /> sort index.
             /// </summary>
-            public const int ExactlyOnceGuard = 350;
+            public const int ExactlyOnceGuard = 600;
 
             /// <summary>
             ///     The <see cref="DecryptorConsumerBehavior" /> sort index.
             /// </summary>
-            public const int Decryptor = 550;
+            public const int Decryptor = 700;
 
             /// <summary>
             ///     The <see cref="BinaryFileHandlerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int BinaryFileHandler = 600;
+            public const int BinaryFileHandler = 800;
 
             /// <summary>
             ///     The <see cref="DeserializerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int Deserializer = 700;
+            public const int Deserializer = 900;
 
             /// <summary>
             ///     The <see cref="HeadersReaderConsumerBehavior" /> sort index.
             /// </summary>
-            public const int HeadersReader = 800;
+            public const int HeadersReader = 1000;
 
             /// <summary>
             ///     The <see cref="SequencerConsumerBehavior" /> sort index.
             /// </summary>
-            public const int Sequencer = 900;
+            public const int Sequencer = 1100;
 
             /// <summary>
             ///     The <see cref="PublisherConsumerBehavior" /> sort index.
             /// </summary>
-            public const int Publisher = 2100;
+            public const int Publisher = 2000;
         }
     }
 }
