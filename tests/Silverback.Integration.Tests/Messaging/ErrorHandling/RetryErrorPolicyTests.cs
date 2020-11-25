@@ -6,8 +6,10 @@ using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
@@ -51,7 +53,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts)
             };
 
-            var inboundEnvelope = new InboundEnvelope(
+            var envelope = new InboundEnvelope(
                 rawMessage,
                 headers,
                 new TestOffset(),
@@ -59,28 +61,54 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 TestConsumerEndpoint.GetDefault().Name);
 
             var canHandle = policy.CanHandle(
-                ConsumerPipelineContextHelper.CreateSubstitute(inboundEnvelope, _serviceProvider),
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
                 new InvalidOperationException("test"));
 
             canHandle.Should().Be(expectedResult);
         }
 
-        [Fact(Skip = "Not yet implemented")]
-        public Task HandleError_Whatever_TrueReturned()
+        [Fact]
+        public async Task HandleErrorAsync_Whatever_TrueReturned()
         {
-            throw new NotImplementedException();
+            var policy = ErrorPolicy.Retry().MaxFailedAttempts(3).Build(_serviceProvider);
+            var envelope = new InboundEnvelope(
+                "hey oh!",
+                new MemoryStream(),
+                null,
+                new TestOffset(),
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
+
+            var result = await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+                new InvalidOperationException("test"));
+
+            result.Should().BeTrue();
         }
 
-        [Fact(Skip = "Not yet implemented")]
-        public Task HandleError_Whatever_OffsetRolledBack()
+        [Fact]
+        public async Task HandleErrorAsync_Whatever_ConsumerRolledBackAndTransactionAborted()
         {
-            throw new NotImplementedException();
-        }
+            var policy = ErrorPolicy.Retry().MaxFailedAttempts(3).Build(_serviceProvider);
+            var envelope = new InboundEnvelope(
+                "hey oh!",
+                new MemoryStream(),
+                null,
+                new TestOffset(),
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
 
-        [Fact(Skip = "Not yet implemented")]
-        public Task HandleError_Whatever_TransactionAborted()
-        {
-            throw new NotImplementedException();
+            var transactionManager = Substitute.For<IConsumerTransactionManager>();
+
+            await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, transactionManager),
+                new InvalidOperationException("test"));
+
+            await transactionManager.Received(1).RollbackAsync(
+                Arg.Any<InvalidOperationException>(),
+                false,
+                true,
+                false);
         }
     }
 }

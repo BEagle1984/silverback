@@ -105,7 +105,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(3, 1)]
         [InlineData(4, 1)]
         [InlineData(5, 2)]
-        public void HandleError_MultiplePoliciesWithMaxFailedAttempts_CorrectPolicyApplied(
+        public void HandleErrorAsync_MultiplePoliciesWithMaxFailedAttempts_CorrectPolicyApplied(
             int failedAttempts,
             int expectedAppliedPolicy)
         {
@@ -142,7 +142,5 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 policies[i].As<TestErrorPolicy>().Applied.Should().Be(i == expectedAppliedPolicy);
             }
         }
-
-        // TODO: Test with multiple messages (batch) --> TODO 2: Still necesary?
     }
 }

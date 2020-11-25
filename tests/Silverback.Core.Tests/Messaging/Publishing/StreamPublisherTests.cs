@@ -11,6 +11,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Core.TestTypes.Behaviors;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
 using Silverback.Tests.Types;
@@ -476,7 +477,38 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             receivedEvents[0].Should().BeOfType<TestEventTwo>();
         }
 
-        // TODO
-        // * Test behaviors?
+        [Fact]
+        public async Task Publish_MessageStreamProvidePlusBehavior_StreamedMessagesReceived()
+        {
+            var receivedStreams = 0;
+            var receivedEvents = 0;
+
+            var testBehavior = new TestBehavior();
+            var streamPublisher = new StreamPublisher(
+                PublisherTestsHelper.GetPublisher(
+                    builder => builder
+                        .AddDelegateSubscriber(
+                            (IMessageStreamEnumerable<IEvent> enumerable) =>
+                            {
+                                Interlocked.Increment(ref receivedStreams);
+                                foreach (var dummy in enumerable)
+                                {
+                                    Interlocked.Increment(ref receivedEvents);
+                                }
+                            }),
+                    new IBehavior[] { testBehavior }));
+
+            var streamProvider = new MessageStreamProvider<IEvent>();
+
+            await streamPublisher.PublishAsync(streamProvider);
+
+            await streamProvider.PushAsync(new TestEventOne());
+            await streamProvider.PushAsync(new TestEventTwo());
+
+            await AsyncTestingUtil.WaitAsync(() => receivedEvents >= 2);
+
+            receivedStreams.Should().Be(1);
+            receivedEvents.Should().Be(2);
+        }
     }
 }

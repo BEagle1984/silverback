@@ -208,7 +208,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact]
-        public async Task HandleError_WithPublish_MessagePublished()
+        public async Task HandleErrorAsync_WithPublish_MessagePublished()
         {
             var publisher = Substitute.For<IPublisher>();
             var serviceProvider = new ServiceCollection().AddScoped(_ => publisher)

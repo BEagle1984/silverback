@@ -384,6 +384,10 @@ namespace Silverback.Messaging.Sequences
                 _addingSemaphoreSlim.Dispose();
 
                 Context.Dispose();
+
+                // If necessary cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)
+                if (!SequencerBehaviorsTask.IsCompleted)
+                    _sequencerBehaviorsTaskCompletionSource.TrySetCanceled();
             }
         }
 

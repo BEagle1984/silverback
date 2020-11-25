@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -526,16 +528,130 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
         }
 
-        [Fact(Skip = "Not yet implemented")]
-        public Task SkipPolicy_JsonDeserializationError_SequenceSkipped()
+        [Fact]
+        public async Task SkipPolicy_JsonDeserializationError_MessageSkipped()
         {
-            throw new NotImplementedException();
+            var message = new TestEventOne { Content = "Hello E2E!" };
+            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty)).ReadAll() ??
+                                throw new InvalidOperationException("Serializer returned null");
+
+            byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!>");
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        ErrorPolicy = ErrorPolicy.Skip()
+                                    }))
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.RawProduceAsync(
+                invalidRawMessage,
+                new MessageHeaderCollection
+                {
+                    { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
+                });
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Should().BeEmpty();
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
+
+            await producer.RawProduceAsync(
+                rawMessage,
+                new MessageHeaderCollection
+                {
+                    { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
+                });
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
         }
 
-        [Fact(Skip = "Not yet implemented")]
-        public Task SkipPolicy_ChunkedJsonDeserializationError_SequenceSkipped()
+        [Fact]
+        public async Task SkipPolicy_ChunkedJsonDeserializationError_SequenceSkipped()
         {
-            throw new NotImplementedException();
+            var message = new TestEventOne { Content = "Hello E2E!" };
+            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty)).ReadAll() ??
+                                throw new InvalidOperationException("Serializer returned null");
+
+            byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!><what?!><what?!>");
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        ErrorPolicy = ErrorPolicy.Skip()
+                                    }))
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            var producer = Broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+            await producer.RawProduceAsync(
+                invalidRawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 0, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                invalidRawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                invalidRawMessage.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Should().BeEmpty();
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+
+            await producer.RawProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("2", 0, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("2", 1, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(20).ToArray(),
+                HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
         }
 
         [Fact]

@@ -20,7 +20,7 @@ namespace Silverback.Tests.Integration.TestTypes
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public ValueTask<(object?, Type)> DeserializeAsync(

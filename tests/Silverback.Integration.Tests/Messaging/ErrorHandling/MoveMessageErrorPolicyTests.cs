@@ -8,9 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Integration.TestTypes.Domain;
@@ -40,20 +44,77 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             _broker.ConnectAsync().Wait();
         }
 
-        [Fact(Skip = "Not yet implemented")]
+        [Fact]
         public void CanHandle_SingleMessage_TrueReturned()
         {
-            throw new NotImplementedException();
-        }
+            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var envelope = new InboundEnvelope(
+                "hey oh!",
+                new MemoryStream(),
+                null,
+                new TestOffset(),
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
 
-        [Fact(Skip = "Not yet implemented")]
-        public void CanHandle_Sequence_FalseReturned()
-        {
-            throw new NotImplementedException();
+            var result = policy.CanHandle(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+                new InvalidOperationException("test"));
+
+            result.Should().BeTrue();
         }
 
         [Fact]
-        public async Task HandleError_InboundMessage_MessageMoved()
+        public void CanHandle_Sequence_FalseReturned()
+        {
+            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var envelope = new InboundEnvelope(
+                "hey oh!",
+                new MemoryStream(),
+                null,
+                new TestOffset(),
+                new TestConsumerEndpoint("test")
+                {
+                    Batch = new BatchSettings
+                    {
+                        Size = 10
+                    }
+                },
+                TestConsumerEndpoint.GetDefault().Name);
+
+            var context = ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider);
+            context.SetSequence(new BatchSequence("batch", context), false);
+
+            var result = policy.CanHandle(
+                context,
+                new InvalidOperationException("test"));
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void CanHandle_RawSequence_FalseReturned()
+        {
+            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var envelope = new InboundEnvelope(
+                "hey oh!",
+                new MemoryStream(),
+                null,
+                new TestOffset(),
+                TestConsumerEndpoint.GetDefault(),
+                TestConsumerEndpoint.GetDefault().Name);
+
+            var context = ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider);
+            context.SetSequence(new ChunkSequence("123", 5, context), false);
+
+            var result = policy.CanHandle(
+                context,
+                new InvalidOperationException("test"));
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async Task HandleErrorAsync_InboundMessage_MessageMoved()
         {
             var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
@@ -73,7 +134,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact]
-        public async Task HandleError_InboundMessage_MessagePreserved()
+        public async Task HandleErrorAsync_InboundMessage_MessagePreserved()
         {
             var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
 
@@ -109,7 +170,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact]
-        public async Task HandleError_NotDeserializedInboundMessage_MessagePreserved()
+        public async Task HandleErrorAsync_NotDeserializedInboundMessage_MessagePreserved()
         {
             var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
@@ -130,7 +191,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact]
-        public async Task HandleError_InboundMessage_HeadersPreserved()
+        public async Task HandleErrorAsync_InboundMessage_HeadersPreserved()
         {
             var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var headers = new MessageHeaderCollection
@@ -156,7 +217,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact]
-        public async Task HandleError_WithTransform_MessageTranslated()
+        public async Task HandleErrorAsync_WithTransform_MessageTranslated()
         {
             var policy = ErrorPolicy
                 .Move(TestProducerEndpoint.GetDefault())
@@ -215,7 +276,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         }
 
         [Fact]
-        public async Task HandleError_SingleMessage_SourceEndpointHeaderIsSet()
+        public async Task HandleErrorAsync_SingleMessage_SourceEndpointHeaderIsSet()
         {
             var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
             var envelope = new InboundEnvelope(
@@ -240,22 +301,44 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                         "source-endpoint"));
         }
 
-        [Fact(Skip = "Not yet implemented")]
-        public Task HandleError_Whatever_TrueReturned()
+        [Fact]
+        public async Task HandleErrorAsync_SingleMessage_TrueReturned()
         {
-            throw new NotImplementedException();
+            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var envelope = new InboundEnvelope(
+                "hey oh!",
+                new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
+                null,
+                new TestOffset(),
+                new TestConsumerEndpoint("source-endpoint"),
+                "source-endpoint");
+
+            var result = await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
+                new InvalidOperationException("test"));
+
+            result.Should().BeTrue();
         }
 
-        [Fact(Skip = "Not yet implemented")]
-        public Task HandleError_SingleMessage_OffsetCommitted()
+        [Fact]
+        public async Task HandleErrorAsync_Whatever_ConsumerCommittedButTransactionAborted()
         {
-            throw new NotImplementedException();
-        }
+            var policy = ErrorPolicy.Move(TestProducerEndpoint.GetDefault()).Build(_serviceProvider);
+            var envelope = new InboundEnvelope(
+                "hey oh!",
+                new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
+                null,
+                new TestOffset(),
+                new TestConsumerEndpoint("source-endpoint"),
+                "source-endpoint");
 
-        [Fact(Skip = "Not yet implemented")]
-        public Task HandleError_SingleMessage_TransactionAborted()
-        {
-            throw new NotImplementedException();
+            var transactionManager = Substitute.For<IConsumerTransactionManager>();
+
+            await policy.HandleErrorAsync(
+                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, transactionManager),
+                new InvalidOperationException("test"));
+
+            await transactionManager.Received(1).RollbackAsync(Arg.Any<InvalidOperationException>(), true);
         }
     }
 }
