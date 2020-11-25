@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Sequences;
 using Silverback.Util;
 
@@ -209,11 +210,13 @@ namespace Silverback.Messaging.Broker
             }
             catch (Exception ex)
             {
-                // TODO: Prevent duplicate log (FatalExceptionLoggerConsumerBehavior)
-                _logger.LogCritical(
-                    IntegrationEventIds.ConsumerFatalError,
-                    ex,
-                    "Fatal error occurred processing the consumed message. The consumer will be stopped.");
+                if (!(ex is ConsumerPipelineFatalException))
+                {
+                    _logger.LogCritical(
+                        IntegrationEventIds.ConsumerFatalError,
+                        ex,
+                        "Fatal error occurred processing the consumed message. The consumer will be stopped.");
+                }
 
                 IsReading[index] = false;
                 _readTaskCompletionSources[index].TrySetResult(false);

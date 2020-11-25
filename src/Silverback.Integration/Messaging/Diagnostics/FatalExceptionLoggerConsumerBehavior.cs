@@ -21,7 +21,8 @@ namespace Silverback.Messaging.Diagnostics
         ///     Initializes a new instance of the <see cref="FatalExceptionLoggerConsumerBehavior" /> class.
         /// </summary>
         /// <param name="logger">The <see cref="ISilverbackIntegrationLogger" />.</param>
-        public FatalExceptionLoggerConsumerBehavior(ISilverbackIntegrationLogger<FatalExceptionLoggerConsumerBehavior> logger)
+        public FatalExceptionLoggerConsumerBehavior(
+            ISilverbackIntegrationLogger<FatalExceptionLoggerConsumerBehavior> logger)
         {
             _logger = logger;
         }
@@ -49,7 +50,7 @@ namespace Silverback.Messaging.Diagnostics
                     "Fatal error occurred processing the consumed message. The consumer will be stopped.",
                     context);
 
-                throw;
+                throw new ConsumerPipelineFatalException("Fatal error occurred processing the consumed message.", ex);
             }
         }
     }
