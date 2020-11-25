@@ -117,7 +117,7 @@ namespace Silverback.Messaging.Broker
             IConsumer<byte[]?, byte[]?> consumer,
             List<TopicPartitionOffset> partitions)
         {
-            ownerConsumer.OnPartitionsRevoked(partitions);
+            ownerConsumer.OnPartitionsRevoked();
 
             partitions.ForEach(
                 partition =>

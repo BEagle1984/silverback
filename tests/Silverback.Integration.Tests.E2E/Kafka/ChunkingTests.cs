@@ -1777,6 +1777,152 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
+        public async Task Chunking_RebalanceWithIncompleteJson_AbortedAndNotCommitted()
+        {
+            var message = new TestEventOne { Content = "Hello E2E!" };
+            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty)).ReadAll() ??
+                                throw new InvalidOperationException("Serializer returned null");
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            Timeout = TimeSpan.FromMilliseconds(500)
+                                        }
+                                    }))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var sequenceStore = broker.Consumers[0].GetCurrentSequenceStores()[0];
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+
+            await producer.RawProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 0, typeof(TestEventOne)));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1, typeof(TestEventOne)));
+
+            await AsyncTestingUtil.WaitAsync(
+                async () => sequenceStore.Count == 1 &&
+                            (await sequenceStore.GetAsync<ChunkSequence>("1"))?.Length == 2);
+
+            var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
+            sequence.Should().NotBeNull();
+            sequence!.Length.Should().Be(2);
+            sequence!.IsAborted.Should().BeFalse();
+
+            DefaultTopic.Rebalance();
+
+            sequence.IsAborted.Should().BeTrue();
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+        }
+
+        [Fact]
+        public async Task Chunking_RebalanceWithIncompleteBinaryFile_AbortedAndNotCommitted()
+        {
+            var rawMessage = new byte[]
+            {
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10,
+                0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x20,
+                0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x30
+            };
+
+            bool enumerationAborted = false;
+
+            var serviceProvider = Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddEndpoints(
+                            endpoints => endpoints
+                                .AddInbound(
+                                    new KafkaConsumerEndpoint(DefaultTopicName)
+                                    {
+                                        Configuration = new KafkaConsumerConfig
+                                        {
+                                            GroupId = "consumer1",
+                                            EnableAutoCommit = false,
+                                            CommitOffsetEach = 1
+                                        },
+                                        Sequence = new SequenceSettings
+                                        {
+                                            Timeout = TimeSpan.FromMilliseconds(500)
+                                        },
+                                        Serializer = BinaryFileMessageSerializer.Default
+                                    }))
+                        .AddDelegateSubscriber(
+                            async (BinaryFileMessage binaryFile) =>
+                            {
+                                try
+                                {
+                                    await binaryFile.Content.ReadAllAsync();
+                                }
+                                catch (OperationCanceledException)
+                                {
+                                    enumerationAborted = true;
+                                    throw;
+                                }
+                            })
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                .Run();
+
+            var broker = serviceProvider.GetRequiredService<IBroker>();
+            var sequenceStore = broker.Consumers[0].GetCurrentSequenceStores()[0];
+            var producer = broker.GetProducer(new KafkaProducerEndpoint(DefaultTopicName));
+
+            await producer.RawProduceAsync(
+                rawMessage.Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 0, 3));
+            await producer.RawProduceAsync(
+                rawMessage.Skip(10).Take(10).ToArray(),
+                HeadersHelper.GetChunkHeaders("1", 1, 3));
+
+            await AsyncTestingUtil.WaitAsync(
+                async () => sequenceStore.Count == 1 &&
+                            (await sequenceStore.GetAsync<ChunkSequence>("1"))?.Length == 2);
+
+            var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
+            sequence.Should().NotBeNull();
+            sequence!.Length.Should().Be(2);
+            sequence!.IsAborted.Should().BeFalse();
+
+            DefaultTopic.Rebalance();
+
+            sequence.IsAborted.Should().BeTrue();
+            sequenceStore.HasPendingSequences.Should().BeFalse();
+            enumerationAborted.Should().BeTrue();
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+        }
+
+        [Fact]
         public async Task Chunking_JsonFromMultiplePartitions_ConcurrentlyConsumed()
         {
             const int chunksPerMessage = 3;
