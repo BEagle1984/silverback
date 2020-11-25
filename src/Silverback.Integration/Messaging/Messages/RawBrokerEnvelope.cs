@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Silverback.Util;
 
@@ -10,7 +9,6 @@ namespace Silverback.Messaging.Messages
 {
     internal abstract class RawBrokerEnvelope : IRawBrokerEnvelope
     {
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         protected RawBrokerEnvelope(
             Stream? rawMessage,
             IEnumerable<MessageHeader>? headers,

@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Serialization
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
         [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
-        public abstract ValueTask<(object?, Type)> DeserializeAsync(
+        public abstract ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context);

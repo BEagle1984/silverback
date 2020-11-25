@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
@@ -15,7 +14,6 @@ namespace Silverback.Messaging.Encryption
     ///     The implementation of <see cref="SilverbackCryptoStream" /> based on a
     ///     <see cref="SymmetricAlgorithm" /> used to encrypt the messages.
     /// </summary>
-    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public class SymmetricEncryptStream : SilverbackCryptoStream
     {
         private readonly ICryptoTransform _cryptoTransform;
@@ -100,7 +98,6 @@ namespace Silverback.Messaging.Encryption
             return length;
         }
 
-        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         private ICryptoTransform CreateCryptoTransform(SymmetricEncryptionSettings settings)
         {
             using var algorithm = SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings);

@@ -11,13 +11,6 @@ namespace Silverback
         public const string BaseInterface =
             "Implemented by other interfaces to group them";
 
-        public const string NullableTypesSpacingFalsePositive =
-            "[]?, []!, ()? and ()! are recognized as wrongly spaced (bug in the analyzer, " +
-            "fixed with StyleCop.Analyzers 1.2.0)";
-
-        public const string NewUsingSyntaxFalsePositive =
-            "The new using syntax is not properly analyzed after upgrading to FxCopAnalyzers 3.3.0.";
-
         public const string ExceptionLogged =
             "The exception is logged, it is not swallowed";
 

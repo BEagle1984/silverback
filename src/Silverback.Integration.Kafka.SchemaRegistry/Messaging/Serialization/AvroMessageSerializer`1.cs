@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -45,7 +44,7 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-        public async ValueTask<(object?, Type)> DeserializeAsync(
+        public async ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
@@ -60,7 +59,6 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[] SerializeKey(
             string key,
             MessageHeaderCollection messageHeaders,
@@ -75,7 +73,6 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc cref="IKafkaMessageSerializer.DeserializeKey" />
-        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public string DeserializeKey(
             byte[] key,
             MessageHeaderCollection messageHeaders,
@@ -92,7 +89,6 @@ namespace Silverback.Messaging.Serialization
             MessageSerializationContext context) =>
             new SerializationContext(componentType, context.ActualEndpointName);
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private async ValueTask<byte[]?> SerializeAsync<TValue>(
             object? message,
             MessageComponentType componentType,
@@ -116,7 +112,6 @@ namespace Silverback.Messaging.Serialization
                 .ConfigureAwait(false);
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private async Task<TValue?> DeserializeAsync<TValue>(
             byte[]? message,
             MessageComponentType componentType,

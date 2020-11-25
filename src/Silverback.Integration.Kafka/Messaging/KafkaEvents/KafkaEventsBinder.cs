@@ -16,7 +16,6 @@ namespace Silverback.Messaging.KafkaEvents
 {
     internal static class KafkaEventsBinder
     {
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public static void SetEventsHandlers(
             this IConfluentProducerBuilder producerBuilder,
             KafkaProducer producer,

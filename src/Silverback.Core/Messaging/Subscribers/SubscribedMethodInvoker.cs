@@ -108,7 +108,7 @@ namespace Silverback.Messaging.Subscribers
             return values;
         }
 
-        private async Task<(IReadOnlyCollection<object> messages, IReadOnlyCollection<object?>? returnValues)>
+        private async Task<(IReadOnlyCollection<object> Messages, IReadOnlyCollection<object?>? ReturnValues)>
             InvokeForEachMessageAsync(
                 IReadOnlyCollection<object> messages,
                 SubscribedMethod subscribedMethod,
@@ -135,7 +135,7 @@ namespace Silverback.Messaging.Subscribers
             return (messages, returnValues.ToList());
         }
 
-        private async Task<(IReadOnlyCollection<object> messages, IReadOnlyCollection<object?>? returnValues)>
+        private async Task<(IReadOnlyCollection<object> Messages, IReadOnlyCollection<object?>? ReturnValues)>
             InvokeWithCollectionAsync(
                 IReadOnlyCollection<object> messages,
                 SubscribedMethod subscribedMethod,
@@ -169,7 +169,7 @@ namespace Silverback.Messaging.Subscribers
             return (messages, new[] { returnValue });
         }
 
-        private (IReadOnlyCollection<object> messages, IReadOnlyCollection<object?>? returnValues)
+        private (IReadOnlyCollection<object> Messages, IReadOnlyCollection<object?>? ReturnValues)
             InvokeWithStreamEnumerable(
                 IReadOnlyCollection<object> messages,
                 SubscribedMethod subscribedMethod,

@@ -52,8 +52,6 @@ namespace Silverback.Testing
         Task IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(string[] topicNames, TimeSpan? timeout) =>
             WaitUntilAllMessagesAreConsumedAsync(topicNames, timeout);
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The tasks are awaited")]
         private async Task WaitUntilAllMessagesAreConsumedAsync(string[]? topicNames, TimeSpan? timeout = null)
         {

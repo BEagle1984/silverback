@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-        public override async ValueTask<(object?, Type)> DeserializeAsync(
+        public override async ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)

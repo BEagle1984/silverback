@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -65,12 +64,10 @@ namespace Silverback.Messaging.Broker.Topics
         public int PartitionsCount => _partitions.Count;
 
         /// <inheritdoc cref="IInMemoryTopic.Push" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Offset Push(int partition, Message<byte[]?, byte[]?> message) =>
             _partitions[partition].Add(message);
 
         /// <inheritdoc cref="IInMemoryTopic.TryPull" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public bool TryPull(
             string groupId,
             IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
@@ -189,7 +186,6 @@ namespace Silverback.Messaging.Broker.Topics
             => _partitions[partition].LastOffset;
 
         /// <inheritdoc cref="IInMemoryTopic.WaitUntilAllMessagesAreConsumedAsync" />
-        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         public async Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default)
         {
             while (!cancellationToken.IsCancellationRequested)

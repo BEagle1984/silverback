@@ -33,6 +33,6 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     The <see cref="IModel" /> representing the channel.
         /// </returns>
-        (IModel channel, string queueName) GetChannel(RabbitConsumerEndpoint endpoint);
+        (IModel Channel, string QueueName) GetChannel(RabbitConsumerEndpoint endpoint);
     }
 }

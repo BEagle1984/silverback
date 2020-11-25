@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model
@@ -32,7 +31,6 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model
         /// <param name="endpointName">
         ///     The name of the target endpoint.
         /// </param>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public DbOutboxStoredMessage(
             int id,
             Type? messageType,

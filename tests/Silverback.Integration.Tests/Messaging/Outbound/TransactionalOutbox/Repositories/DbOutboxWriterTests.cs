@@ -115,6 +115,8 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
             await _dbContext.DisposeAsync();
             await _connection.DisposeAsync();
             _scope.Dispose();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

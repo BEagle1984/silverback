@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,7 +41,6 @@ namespace Silverback.Tests.Integration.TestTypes
             IMessageSerializer? serializer = null) =>
             TestHandleMessage(message, new MessageHeaderCollection(headers), offset, serializer);
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task TestConsume(
             byte[]? rawMessage,
             IEnumerable<MessageHeader>? headers = null,
@@ -66,7 +64,6 @@ namespace Silverback.Tests.Integration.TestTypes
             await TestHandleMessage(buffer, headers, offset);
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task TestHandleMessage(byte[]? rawMessage, MessageHeaderCollection headers, TestOffset? offset = null)
         {
             if (!Broker.IsConnected)

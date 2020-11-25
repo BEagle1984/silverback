@@ -18,7 +18,6 @@ namespace Silverback.Messaging.Broker
     ///     A mocked implementation of <see cref="IConsumer{TKey,TValue}" /> from Confluent.Kafka that consumes
     ///     from an <see cref="InMemoryTopic" />.
     /// </summary>
-    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public sealed class MockedKafkaConsumer : IConsumer<byte[]?, byte[]?>
     {
         private readonly ConsumerConfig _config;

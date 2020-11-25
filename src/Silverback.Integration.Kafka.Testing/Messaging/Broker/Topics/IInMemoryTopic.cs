@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
@@ -38,7 +37,6 @@ namespace Silverback.Messaging.Broker.Topics
         /// <returns>
         ///     The <see cref="Offset" /> at which the message was written.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         Offset Push(int partition, Message<byte[]?, byte[]?> message);
 
         /// <summary>
@@ -56,7 +54,6 @@ namespace Silverback.Messaging.Broker.Topics
         /// <returns>
         ///     A value indicating whether a message was available for pulling.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         bool TryPull(
             string groupId,
             IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,

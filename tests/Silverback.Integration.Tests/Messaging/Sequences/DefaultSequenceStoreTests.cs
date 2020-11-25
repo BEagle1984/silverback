@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -99,7 +98,6 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         }
 
         [Fact]
-        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task AddAsyncAndGetAsync_Sequence_IsNewFlagAutomaticallyHandled()
         {
             var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());

@@ -52,9 +52,8 @@ namespace Silverback.Messaging.Serialization
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     deserialized message (or <c>null</c> when the input is null or empty) and the type of the message.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
-        ValueTask<(object?, Type)> DeserializeAsync(
+        ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context);

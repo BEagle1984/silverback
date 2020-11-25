@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 
 namespace Silverback.Messaging.Broker.ConfluentWrappers
@@ -10,7 +9,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
     /// <summary>
     ///     The <see cref="IProducer{TKey,TValue}" /> builder used by the <see cref="KafkaProducer" />.
     /// </summary>
-    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public interface IConfluentProducerBuilder
     {
         /// <summary>

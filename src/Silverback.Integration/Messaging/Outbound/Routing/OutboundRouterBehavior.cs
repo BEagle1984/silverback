@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,7 +58,6 @@ namespace Silverback.Messaging.Outbound.Routing
             return await next(messages).ConfigureAwait(false);
         }
 
-        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private async Task<IReadOnlyCollection<object>> WrapAndRepublishRoutedMessagesAsync(IEnumerable<object> messages)
         {
             var envelopesToRepublish = messages

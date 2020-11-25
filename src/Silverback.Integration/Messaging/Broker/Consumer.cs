@@ -380,7 +380,6 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         [SuppressMessage("", "CA2000", Justification = "Context is disposed by the TransactionHandler")]
         protected virtual async Task HandleMessageAsync(
             byte[]? message,

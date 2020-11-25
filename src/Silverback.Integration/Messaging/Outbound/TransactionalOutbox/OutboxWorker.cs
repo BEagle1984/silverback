@@ -106,7 +106,6 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         protected virtual Task ProduceMessageAsync(
             byte[]? content,
             IReadOnlyCollection<MessageHeader>? headers,

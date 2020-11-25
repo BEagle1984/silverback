@@ -226,6 +226,8 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
             await _dbContext.DisposeAsync();
             await _connection.DisposeAsync();
             _scope.Dispose();
+
+            GC.SuppressFinalize(this);
         }
     }
 }

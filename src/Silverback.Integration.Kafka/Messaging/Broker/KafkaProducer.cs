@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +22,6 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
     public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private static readonly ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>> ProducersCache =
             new ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>>(
                 new ConfigurationDictionaryComparer<string, string>());
@@ -32,7 +30,6 @@ namespace Silverback.Messaging.Broker
 
         private readonly ISilverbackLogger _logger;
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private IProducer<byte[]?, byte[]?>? _confluentProducer;
 
         /// <summary>
@@ -82,7 +79,6 @@ namespace Silverback.Messaging.Broker
             AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
 
         /// <inheritdoc cref="Producer.ProduceCoreAsync" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
@@ -125,7 +121,6 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private byte[]? GetKafkaKeyAndRemoveHeader(MessageHeaderCollection headers)
         {
             var kafkaKeyHeader = headers.FirstOrDefault(header => header.Name == KafkaMessageHeaders.KafkaMessageKey);
@@ -146,19 +141,16 @@ namespace Silverback.Messaging.Broker
                 : Encoding.UTF8.GetBytes(kafkaKeyHeader.Value);
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private IProducer<byte[]?, byte[]?> GetConfluentProducer() =>
             _confluentProducer ??=
                 ProducersCache.GetOrAdd(Endpoint.Configuration.ConfluentConfig, _ => CreateConfluentProducer());
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private IProducer<byte[]?, byte[]?> CreateConfluentProducer()
         {
             _logger.LogDebug(KafkaEventIds.CreatingConfluentProducer, "Creating Confluent.Kafka.Producer...");
             return _confluentProducerBuilder.Build();
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private void CheckPersistenceStatus(DeliveryResult<byte[]?, byte[]?> deliveryReport)
         {
             switch (deliveryReport.Status)

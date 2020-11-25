@@ -10,7 +10,6 @@ namespace Silverback.Tests.Integration.TestTypes.Domain
     {
         public Guid MessageId { get; set; }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
         public byte[]? Content { get; set; }
     }

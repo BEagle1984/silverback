@@ -17,7 +17,6 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     internal sealed class ChannelsManager : IDisposable
     {
         private readonly IList<TopicPartition> _partitions;
@@ -27,7 +26,6 @@ namespace Silverback.Messaging.Broker
 
         private readonly IList<ISequenceStore> _sequenceStores;
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private readonly ISilverbackIntegrationLogger _logger;
 
         private readonly Channel<ConsumeResult<byte[]?, byte[]?>>[] _channels;
@@ -38,7 +36,6 @@ namespace Silverback.Messaging.Broker
 
         private readonly SemaphoreSlim? _messagesLimiterSemaphoreSlim;
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public ChannelsManager(
             IReadOnlyList<TopicPartition> partitions,
             KafkaConsumer consumer,

@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -237,7 +236,6 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
         }
 
         [Fact(Skip = "Deprecated")]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task EncryptionAndChunking_EncryptedAndChunkedThenAggregatedAndDecrypted()
         {
             var message = new TestEventOne

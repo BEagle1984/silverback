@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
@@ -81,7 +80,6 @@ namespace Silverback.Messaging.Broker
                         }));
 
         /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?)" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
             => Produce(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint));
 
@@ -104,7 +102,6 @@ namespace Silverback.Messaging.Broker
                 }).ConfigureAwait(false);
 
         /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
             => ProduceAsync(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint));
 

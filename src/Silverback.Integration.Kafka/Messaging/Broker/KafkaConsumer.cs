@@ -32,9 +32,9 @@ namespace Silverback.Messaging.Broker
 
         private readonly ISilverbackIntegrationLogger<KafkaConsumer> _logger;
 
-        private readonly object _messagesSinceCommitLock = new object();
+        private readonly object _messagesSinceCommitLock = new();
 
-        private readonly object _channelsLock = new object();
+        private readonly object _channelsLock = new();
 
         private IKafkaMessageSerializer? _serializer;
 
@@ -44,7 +44,6 @@ namespace Silverback.Messaging.Broker
 
         private int _messagesSinceCommit;
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private IConsumer<byte[]?, byte[]?>? _confluentConsumer;
 
         /// <summary>
@@ -120,12 +119,11 @@ namespace Silverback.Messaging.Broker
             SequenceStores.Clear();
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         internal async Task HandleMessageAsync(
             Message<byte[]?, byte[]?> message,
             TopicPartitionOffset topicPartitionOffset)
         {
-            Dictionary<string, string> logData = new Dictionary<string, string>();
+            Dictionary<string, string> logData = new();
 
             var offset = new KafkaOffset(topicPartitionOffset);
             logData["offset"] = $"{offset.Partition}@{offset.Offset}";

@@ -263,7 +263,7 @@ namespace Silverback.Background
             return true;
         }
 
-        private static (IDbSet<Lock> dbSet, IDbContext dbContext) GetDbSet(IServiceProvider serviceProvider)
+        private static (IDbSet<Lock> DbSet, IDbContext DbContext) GetDbSet(IServiceProvider serviceProvider)
         {
             var dbContext = serviceProvider.GetRequiredService<IDbContext>();
             var dbSet = dbContext.GetDbSet<Lock>();

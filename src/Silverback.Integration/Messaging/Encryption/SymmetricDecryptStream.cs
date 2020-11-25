@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using Silverback.Util;
@@ -52,7 +51,6 @@ namespace Silverback.Messaging.Encryption
             base.Dispose(disposing);
         }
 
-        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         private static ICryptoTransform CreateCryptoTransform(SymmetricEncryptionSettings settings, Stream stream)
         {
             Check.NotNull(settings, nameof(settings));

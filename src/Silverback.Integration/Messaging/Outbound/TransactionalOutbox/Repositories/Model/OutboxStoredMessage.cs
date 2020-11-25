@@ -29,7 +29,6 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model
         /// <param name="endpointName">
         ///     The name of the target endpoint.
         /// </param>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public OutboxStoredMessage(
             Type? messageType,
             byte[]? content,
@@ -46,7 +45,6 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model
         ///     Gets the message raw binary content (body).
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Content { get; }
 
         /// <summary>

@@ -53,14 +53,12 @@ namespace Silverback.Messaging.Encryption
         ///     </para>
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? InitializationVector { get; set; }
 
         /// <summary>
         ///     Gets or sets the secret key for the symmetric algorithm.
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Key { get; set; }
 
         /// <summary>

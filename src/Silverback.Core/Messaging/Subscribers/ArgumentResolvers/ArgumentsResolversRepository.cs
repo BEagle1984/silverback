@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
             _argumentResolvers = argumentResolvers.Reverse();
         }
 
-        public (IMessageArgumentResolver resolver, Type messageArgumentType, Type messageType) GetMessageArgumentResolver(SubscribedMethod method)
+        public (IMessageArgumentResolver Resolver, Type MessageArgumentType, Type MessageType) GetMessageArgumentResolver(SubscribedMethod method)
         {
             var parameterInfo = method.Parameters[0];
             var resolver = GetMessageArgumentResolver(parameterInfo, method.MethodInfo);

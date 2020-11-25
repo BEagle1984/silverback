@@ -41,7 +41,6 @@ namespace Silverback.Database.Model
         /// </summary>
         [Timestamp]
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Timestamp { get; set; }
     }
 }

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -186,7 +185,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task RetryPolicy_JsonChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
         {
             var tryCount = 0;
@@ -263,8 +261,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
-        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task RetryPolicy_BinaryFileChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
         {
             var message1 = new BinaryFileMessage
@@ -655,7 +651,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task RetryPolicy_EncryptedMessage_RetriedMultipleTimes()
         {
             var message = new TestEventOne
@@ -722,7 +717,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public async Task RetryPolicy_EncryptedAndChunkedMessage_RetriedMultipleTimes()
         {
             var message = new TestEventOne

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Silverback.Database;
@@ -62,7 +61,6 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
             return Task.CompletedTask;
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private static async ValueTask<byte[]?> GetContentAsync(IOutboundEnvelope envelope)
         {
             var stream =

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +24,6 @@ namespace Silverback.Messaging.Sequences.Chunking
 
         private IAsyncEnumerator<IRawInboundEnvelope>? _asyncEnumerator;
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private byte[]? _currentChunk;
 
         private int _position;
@@ -153,6 +151,8 @@ namespace Silverback.Messaging.Sequences.Chunking
                 await _asyncEnumerator.DisposeAsync().ConfigureAwait(false);
 
             await base.DisposeAsync().ConfigureAwait(false);
+
+            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc cref="Stream.Dispose(bool)" />

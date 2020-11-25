@@ -36,7 +36,6 @@ namespace Silverback.Messaging.Messages
         private bool _isComplete;
 
         /// <inheritdoc cref="IMessageStreamEnumerable.PushAsync(PushedMessage,System.Threading.CancellationToken)" />
-        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         [SuppressMessage(
             "ReSharper",
             "InconsistentlySynchronizedField",
@@ -165,7 +164,6 @@ namespace Silverback.Messaging.Messages
             }
         }
 
-        [SuppressMessage("", "CA2000", Justification = Justifications.NewUsingSyntaxFalsePositive)]
         private async Task<bool> WaitForNextAsync(CancellationToken cancellationToken)
         {
             if (!_isFirstMessage)

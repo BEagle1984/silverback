@@ -51,7 +51,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IRabbitConnectionFactory.GetChannel(RabbitConsumerEndpoint)" />
-        public (IModel channel, string queueName) GetChannel(RabbitConsumerEndpoint endpoint)
+        public (IModel Channel, string QueueName) GetChannel(RabbitConsumerEndpoint endpoint)
         {
             Check.NotNull(endpoint, nameof(endpoint));
 

@@ -18,7 +18,6 @@ namespace Silverback.Messaging.Broker
         [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
         private readonly KafkaConsumer _consumer;
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
         private readonly IConsumer<byte[]?, byte[]?> _confluenceConsumer;
 
@@ -31,7 +30,6 @@ namespace Silverback.Messaging.Broker
 
         private TaskCompletionSource<bool> _consumeTaskCompletionSource = new TaskCompletionSource<bool>();
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public ConsumeLoopHandler(
             KafkaConsumer consumer,
             IConsumer<byte[]?, byte[]?> confluenceConsumer,

@@ -23,7 +23,7 @@ namespace Silverback.Tests.Integration.TestTypes
             throw new NotSupportedException();
         }
 
-        public ValueTask<(object?, Type)> DeserializeAsync(
+        public ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)

@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -10,7 +9,6 @@ namespace Silverback.Util
 {
     internal static class StreamExtensions
     {
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public static async ValueTask<byte[]?> ReadAllAsync(this Stream? stream)
         {
             if (stream == null)
@@ -26,7 +24,6 @@ namespace Silverback.Util
             }
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public static byte[]? ReadAll(this Stream? stream)
         {
             if (stream == null)
@@ -42,7 +39,6 @@ namespace Silverback.Util
             }
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public static async ValueTask<byte[]?> ReadAsync(this Stream? stream, int count)
         {
             if (stream == null)
@@ -55,7 +51,6 @@ namespace Silverback.Util
             return buffer;
         }
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public static byte[]? Read(this Stream? stream, int count)
         {
             if (stream == null)

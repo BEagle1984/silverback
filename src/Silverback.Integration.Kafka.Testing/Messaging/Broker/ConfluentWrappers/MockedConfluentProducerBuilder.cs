@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 using Silverback.Messaging.Broker.Topics;
 
@@ -11,7 +10,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
     /// <summary>
     ///     The builder for the <see cref="MockedKafkaProducer" />.
     /// </summary>
-    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public class MockedConfluentProducerBuilder : IConfluentProducerBuilder
     {
         private readonly IInMemoryTopicCollection _topics;

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 
 namespace Silverback.Messaging.Broker.Topics
@@ -15,7 +14,6 @@ namespace Silverback.Messaging.Broker.Topics
     {
         private const int MaxRetainedMessages = 100;
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         private readonly List<Message<byte[]?, byte[]?>> _messages = new List<Message<byte[]?, byte[]?>>();
 
         /// <summary>
@@ -62,7 +60,6 @@ namespace Silverback.Messaging.Broker.Topics
         /// <returns>
         ///     The <see cref="Offset" /> at which the message was written.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Offset Add(Message<byte[]?, byte[]?> message)
         {
             lock (_messages)
@@ -96,7 +93,6 @@ namespace Silverback.Messaging.Broker.Topics
         /// <returns>
         ///     <c>true</c> if the message was found at the specified offset; otherwise, <c>false</c>.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public bool TryPull(Offset offset, out ConsumeResult<byte[]?, byte[]?>? result)
         {
             lock (_messages)

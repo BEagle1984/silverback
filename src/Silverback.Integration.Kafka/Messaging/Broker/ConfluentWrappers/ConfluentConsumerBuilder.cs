@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Confluent.Kafka;
 
@@ -12,7 +11,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
     /// <summary>
     ///     Wraps the <see cref="Confluent.Kafka.ConsumerBuilder{TKey,TValue}" />.
     /// </summary>
-    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public class ConfluentConsumerBuilder : IConfluentConsumerBuilder
     {
         private ConsumerConfig? _config;

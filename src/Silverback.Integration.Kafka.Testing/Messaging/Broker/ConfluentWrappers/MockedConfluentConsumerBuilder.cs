@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Confluent.Kafka;
 using Silverback.Messaging.Broker.Topics;
@@ -13,7 +12,6 @@ namespace Silverback.Messaging.Broker.ConfluentWrappers
     /// <summary>
     ///     The builder for the <see cref="MockedKafkaConsumer"/>.
     /// </summary>
-    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public class MockedConfluentConsumerBuilder : IConfluentConsumerBuilder
     {
         private readonly IInMemoryTopicCollection _topics;

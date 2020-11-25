@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Database.Model;
@@ -33,7 +32,6 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
         }
 
         /// <inheritdoc cref="IInboundLog.AddAsync" />
-        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task AddAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
@@ -52,7 +50,6 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
         }
 
         /// <inheritdoc cref="IInboundLog.ExistsAsync" />
-        [SuppressMessage("", "SA1009", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public Task<bool> ExistsAsync(IRawInboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));

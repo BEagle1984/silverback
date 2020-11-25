@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +14,6 @@ namespace Silverback.Messaging.Subscribers
     /// <summary>
     ///     A subscribed method that can process certain messages.
     /// </summary>
-    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public class SubscribedMethod
     {
         private readonly Func<IServiceProvider, object> _targetTypeFactory;

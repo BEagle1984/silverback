@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
@@ -19,7 +18,6 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             params object[] subscribers) =>
             GetPublisher(buildAction, null, subscribers);
 
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public static IPublisher GetPublisher(
             Action<ISilverbackBuilder>? buildAction,
             IBehavior[]? behaviors,

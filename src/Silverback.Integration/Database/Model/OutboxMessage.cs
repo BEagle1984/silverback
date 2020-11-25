@@ -29,7 +29,6 @@ namespace Silverback.Database.Model
         ///     Gets or sets the message content (body).
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? Content { get; set; } = null!;
 
         /// <summary>
@@ -46,7 +45,6 @@ namespace Silverback.Database.Model
         ///     Gets or sets the serialized message headers.
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         public byte[]? SerializedHeaders { get; set; }
 
         /// <summary>

@@ -17,6 +17,10 @@ namespace Silverback.Messaging.Broker
     ///         The <see cref="IBrokerMessageOffset" /> interface should be implemented whenever possible
     ///         to allow the exactly-one delivery using the <see cref="OffsetStoreExactlyOnceStrategy" />.
     ///     </para>
+    ///     <para>
+    ///         If the message broker doesn't provide any message identifier, a local one can be created (e.g.
+    ///         <c>Guid.NewGuid()</c>) but this will prevent some features to work properly.
+    ///     </para>
     /// </summary>
     /// <remarks>
     ///     The classes implementing this interface should also implement a public constructor accepting key and

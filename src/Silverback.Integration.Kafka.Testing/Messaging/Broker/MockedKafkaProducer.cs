@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +16,6 @@ namespace Silverback.Messaging.Broker
     ///     A mocked implementation of <see cref="IProducer{TKey,TValue}" /> from Confluent.Kafka that produces
     ///     to an <see cref="InMemoryTopic" />.
     /// </summary>
-    [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
     public sealed class MockedKafkaProducer : IProducer<byte[]?, byte[]?>
     {
         private readonly IInMemoryTopicCollection _topics;

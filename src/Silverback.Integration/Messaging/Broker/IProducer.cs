@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -52,7 +51,6 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
@@ -105,7 +103,6 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        [SuppressMessage("", "SA1011", Justification = Justifications.NullableTypesSpacingFalsePositive)]
         Task RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
