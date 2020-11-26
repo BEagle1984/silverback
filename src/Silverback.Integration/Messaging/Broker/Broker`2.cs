@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -45,9 +44,11 @@ namespace Silverback.Messaging.Broker
 
         private readonly IServiceProvider _serviceProvider;
 
-        private ConcurrentBag<IConsumer>? _consumers = new();
+        private readonly List<IConsumer> _consumers = new();
 
-        private ConcurrentDictionary<IEndpoint, IProducer>? _producers;
+        private readonly List<IProducer> _producers = new();
+
+        private readonly Dictionary<IEndpoint, IProducer> _endpointToProducerDictionary = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Broker{TProducerEndpoint, TConsumerEndpoint}" /> class.
@@ -57,8 +58,6 @@ namespace Silverback.Messaging.Broker
         /// </param>
         protected Broker(IServiceProvider serviceProvider)
         {
-            _producers = new ConcurrentDictionary<IEndpoint, IProducer>();
-
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _endpointsConfiguratorsInvoker = _serviceProvider.GetRequiredService<EndpointsConfiguratorsInvoker>();
             _logger = _serviceProvider
@@ -82,7 +81,7 @@ namespace Silverback.Messaging.Broker
                 if (_producers == null)
                     throw new ObjectDisposedException(GetType().FullName);
 
-                return _producers.Values.ToList().AsReadOnly();
+                return _producers;
             }
         }
 
@@ -94,7 +93,7 @@ namespace Silverback.Messaging.Broker
                 if (_consumers == null)
                     throw new ObjectDisposedException(GetType().FullName);
 
-                return _consumers.ToList().AsReadOnly();
+                return _consumers;
             }
         }
 
@@ -109,21 +108,30 @@ namespace Silverback.Messaging.Broker
             if (_producers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            return _producers.GetOrAdd(
-                endpoint,
-                _ =>
-                {
-                    _logger.LogInformation(
-                        IntegrationEventIds.CreatingNewProducer,
-                        "Creating new producer for endpoint {endpointName}. (Total producers: {ProducerCount})",
-                        endpoint.Name,
-                        _producers.Count + 1);
+            if (_endpointToProducerDictionary.TryGetValue(endpoint, out var producer))
+                return producer;
 
-                    return InstantiateProducer(
-                        (TProducerEndpoint)endpoint,
-                        _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IProducerBehavior>>(),
-                        _serviceProvider);
-                });
+            lock (_producers)
+            {
+                if (_endpointToProducerDictionary.TryGetValue(endpoint, out producer))
+                    return producer;
+
+                _logger.LogInformation(
+                    IntegrationEventIds.CreatingNewProducer,
+                    "Creating new producer for endpoint {endpointName}. (Total producers: {ProducerCount})",
+                    endpoint.Name,
+                    _producers.Count + 1);
+
+                producer = InstantiateProducer(
+                    (TProducerEndpoint)endpoint,
+                    _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IProducerBehavior>>(),
+                    _serviceProvider);
+
+                _producers.Add(producer);
+                _endpointToProducerDictionary.Add(endpoint, producer);
+
+                return producer;
+            }
         }
 
         /// <inheritdoc cref="IBroker.AddConsumer" />
@@ -147,7 +155,10 @@ namespace Silverback.Messaging.Broker
                 _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
                 _serviceProvider);
 
-            _consumers.Add(consumer);
+            lock (_consumers)
+            {
+                _consumers.Add(consumer);
+            }
 
             return consumer;
         }
@@ -158,7 +169,7 @@ namespace Silverback.Messaging.Broker
             if (IsConnected)
                 return;
 
-            if (_consumers == null)
+            if (_producers == null || _consumers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
             _endpointsConfiguratorsInvoker.Invoke();
@@ -168,7 +179,7 @@ namespace Silverback.Messaging.Broker
                 "Connecting to message broker ({broker})...",
                 GetType().Name);
 
-            await ConnectAsync(_consumers).ConfigureAwait(false);
+            await ConnectAsync(_producers, _consumers).ConfigureAwait(false);
             IsConnected = true;
 
             _logger.LogInformation(
@@ -183,7 +194,7 @@ namespace Silverback.Messaging.Broker
             if (!IsConnected)
                 return;
 
-            if (_consumers == null)
+            if (_producers == null || _consumers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
             _logger.LogDebug(
@@ -191,7 +202,7 @@ namespace Silverback.Messaging.Broker
                 "Disconnecting from message broker ({broker})...",
                 GetType().Name);
 
-            await DisconnectAsync(_consumers).ConfigureAwait(false);
+            await DisconnectAsync(_producers, _consumers).ConfigureAwait(false);
             IsConnected = false;
 
             _logger.LogInformation(
@@ -253,26 +264,46 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Connects all the consumers and starts consuming.
         /// </summary>
+        /// <param name="producers">
+        ///     The producers to be connected.
+        /// </param>
         /// <param name="consumers">
-        ///     The consumers to be started.
+        ///     The consumers to be connected and started.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected virtual Task ConnectAsync(IEnumerable<IConsumer> consumers) =>
-            consumers.ParallelForEachAsync(consumer => consumer.ConnectAsync(), MaxConnectParallelism);
+        protected virtual async Task ConnectAsync(
+            IReadOnlyCollection<IProducer> producers,
+            IReadOnlyCollection<IConsumer> consumers)
+        {
+            await producers.ParallelForEachAsync(producer => producer.ConnectAsync(), MaxConnectParallelism)
+                .ConfigureAwait(false);
+            await consumers.ParallelForEachAsync(consumer => consumer.ConnectAsync(), MaxConnectParallelism)
+                .ConfigureAwait(false);
+        }
 
         /// <summary>
         ///     Disconnects all the consumers and stops consuming.
         /// </summary>
+        /// <param name="producers">
+        ///     The producers to be disconnected.
+        /// </param>
         /// <param name="consumers">
-        ///     The consumers to be stopped.
+        ///     The consumers to be stopped and disconnected.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected virtual Task DisconnectAsync(IEnumerable<IConsumer> consumers) =>
-            consumers.ParallelForEachAsync(consumer => consumer.DisconnectAsync(), MaxDisconnectParallelism);
+        protected virtual async Task DisconnectAsync(
+            IReadOnlyCollection<IProducer> producers,
+            IReadOnlyCollection<IConsumer> consumers)
+        {
+            await producers.ParallelForEachAsync(producer => producer.DisconnectAsync(), MaxDisconnectParallelism)
+                .ConfigureAwait(false);
+            await consumers.ParallelForEachAsync(consumer => consumer.DisconnectAsync(), MaxDisconnectParallelism)
+                .ConfigureAwait(false);
+        }
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
@@ -289,12 +320,8 @@ namespace Silverback.Messaging.Broker
 
             AsyncHelper.RunSynchronously(DisconnectAsync);
 
-            _consumers?.OfType<IDisposable>().ForEach(o => o.Dispose());
-            _consumers = null;
-
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            _producers?.Values.OfType<IDisposable>().ForEach(o => o.Dispose());
-            _producers = null;
+            _consumers.OfType<IDisposable>().ForEach(disposable => disposable.Dispose());
+            _producers.OfType<IDisposable>().ForEach(disposable => disposable.Dispose());
         }
     }
 }

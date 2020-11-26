@@ -106,20 +106,22 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer.StopCore" />
-        protected override void StartCore()
+        /// <inheritdoc cref="Consumer.StopCoreAsync" />
+        protected override Task StartCoreAsync()
         {
             _consumerTag = _channel.BasicConsume(
                 _queueName,
                 false,
                 _consumer);
+
+            return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer.StopCore" />
-        protected override void StopCore()
+        /// <inheritdoc cref="Consumer.StopCoreAsync" />
+        protected override Task StopCoreAsync()
         {
             if (_consumer == null)
-                return;
+                return Task.CompletedTask;
 
             _disconnecting = true;
 
@@ -130,6 +132,8 @@ namespace Silverback.Messaging.Broker
             }
 
             _disconnecting = false;
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />

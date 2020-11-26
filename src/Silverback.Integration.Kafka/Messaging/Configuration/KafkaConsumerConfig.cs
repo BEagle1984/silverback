@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Configuration
         ///     Initializes a new instance of the <see cref="KafkaConsumerConfig" /> class.
         /// </summary>
         /// <param name="clientConfig">
-        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaConsumerConfig" />.
         /// </param>
         public KafkaConsumerConfig(KafkaClientConfig? clientConfig = null)
@@ -90,7 +90,7 @@ namespace Silverback.Messaging.Configuration
                 return true;
 
             return CommitOffsetEach == other.CommitOffsetEach &&
-                   ConfluentConfigComparer.Equals(ConfluentConfig, other.ConfluentConfig);
+                   ConfluentConfigEqualityComparer.Equals(ConfluentConfig, other.ConfluentConfig);
         }
 
         /// <inheritdoc cref="object.Equals(object)" />

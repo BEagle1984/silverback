@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Broker.ConfluentWrappers;
-using Silverback.Messaging.KafkaEvents;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
@@ -22,10 +19,7 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
     public sealed class KafkaProducer : Producer<KafkaBroker, KafkaProducerEndpoint>, IDisposable
     {
-        private static readonly ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>> ProducersCache =
-            new(new ConfigurationDictionaryComparer<string, string>());
-
-        private readonly IConfluentProducerBuilder _confluentProducerBuilder;
+        private readonly IConfluentProducersCache _confluentClientsCache;
 
         private readonly ISilverbackLogger _logger;
 
@@ -60,11 +54,8 @@ namespace Silverback.Messaging.Broker
             Check.NotNull(endpoint, nameof(endpoint));
             Check.NotNull(serviceProvider, nameof(serviceProvider));
 
+            _confluentClientsCache = serviceProvider.GetRequiredService<IConfluentProducersCache>();
             _logger = logger;
-
-            _confluentProducerBuilder = serviceProvider.GetRequiredService<IConfluentProducerBuilder>();
-            _confluentProducerBuilder.SetConfig(endpoint.Configuration.GetConfluentConfig());
-            _confluentProducerBuilder.SetEventsHandlers(this, logger);
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -141,14 +132,7 @@ namespace Silverback.Messaging.Broker
         }
 
         private IProducer<byte[]?, byte[]?> GetConfluentProducer() =>
-            _confluentProducer ??=
-                ProducersCache.GetOrAdd(Endpoint.Configuration.GetConfluentConfig(), _ => CreateConfluentProducer());
-
-        private IProducer<byte[]?, byte[]?> CreateConfluentProducer()
-        {
-            _logger.LogDebug(KafkaEventIds.CreatingConfluentProducer, "Creating Confluent.Kafka.Producer...");
-            return _confluentProducerBuilder.Build();
-        }
+            _confluentProducer ??= _confluentClientsCache.GetProducer(Endpoint.Configuration, this);
 
         private void CheckPersistenceStatus(DeliveryResult<byte[]?, byte[]?> deliveryReport)
         {
@@ -156,41 +140,26 @@ namespace Silverback.Messaging.Broker
             {
                 case PersistenceStatus.PossiblyPersisted
                     when Endpoint.Configuration.ThrowIfNotAcknowledged:
-                {
                     throw new ProduceException(
                         "The message was transmitted to broker, but no acknowledgement was received.");
-                }
 
                 case PersistenceStatus.PossiblyPersisted:
-                {
                     _logger.LogWarning(
                         KafkaEventIds.ProduceNotAcknowledged,
                         "The message was transmitted to broker, but no acknowledgement was received.");
                     break;
-                }
 
                 case PersistenceStatus.NotPersisted:
-                {
                     throw new ProduceException(
                         "The message was never transmitted to the broker, " +
                         "or failed with an error indicating it was not written " +
                         "to the log.'");
-                }
-
-                case PersistenceStatus.Persisted:
-                default:
-                    break;
             }
         }
 
         private void DisposeConfluentProducer()
         {
-            // Dispose only if still in cache to avoid ObjectDisposedException
-            if (!ProducersCache.TryRemove(Endpoint.Configuration.GetConfluentConfig(), out _))
-                return;
-
-            _confluentProducer?.Flush(TimeSpan.FromSeconds(10));
-            _confluentProducer?.Dispose();
+            _confluentClientsCache.DisposeProducer(Endpoint.Configuration);
             _confluentProducer = null;
         }
     }

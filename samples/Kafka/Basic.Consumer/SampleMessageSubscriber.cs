@@ -12,10 +12,7 @@ namespace Silverback.Samples.Kafka.Basic.Consumer
             _logger = logger;
         }
 
-        public void OnMessageReceived(SampleMessage message)
-        {
-            _logger.LogInformation(
-                $"Received SomeRandomNumber -> {message.SomeRandomNumber}");
-        }
+        public void OnMessageReceived(SampleMessage message) =>
+            _logger.LogInformation($"Received {message.Number}");
     }
 }

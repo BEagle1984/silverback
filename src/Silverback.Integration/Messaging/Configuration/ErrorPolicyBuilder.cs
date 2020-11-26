@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Configuration
     /// </summary>
     public class ErrorPolicyBuilder : IErrorPolicyBuilder
     {
-        private readonly ErrorPolicyChainBuilder _chainBuilder = new();
+        private readonly ErrorPolicyChainBuilder _chainBuilder;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ErrorPolicyBuilder" /> class.
@@ -24,6 +24,7 @@ namespace Silverback.Messaging.Configuration
         public ErrorPolicyBuilder(IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
         {
             EndpointsConfigurationBuilder = endpointsConfigurationBuilder;
+            _chainBuilder = new ErrorPolicyChainBuilder(endpointsConfigurationBuilder);
         }
 
         /// <summary>

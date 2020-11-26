@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,6 +15,11 @@ namespace Silverback.Messaging.Broker
     public interface IProducer
     {
         /// <summary>
+        ///     Gets the <see cref="Guid" /> uniquely identifying the producer instance.
+        /// </summary>
+        Guid Id { get; }
+
+        /// <summary>
         ///     Gets the <see cref="IBroker" /> instance that owns this .
         /// </summary>
         IBroker Broker { get; }
@@ -22,6 +28,28 @@ namespace Silverback.Messaging.Broker
         ///     Gets the <see cref="IProducerEndpoint" /> this instance is connected to.
         /// </summary>
         IProducerEndpoint Endpoint { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether this producer is connected to the message broker and ready to produce
+        ///     messages.
+        /// </summary>
+        bool IsConnected { get; }
+
+        /// <summary>
+        ///     Initializes the connection to the message broker (if needed).
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task ConnectAsync();
+
+        /// <summary>
+        ///     Disconnects from the message broker (if needed).
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task DisconnectAsync();
 
         /// <summary>
         ///     Publishes the specified message.

@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Configuration
         ///     Configures the Kafka client properties that are shared between the producers and consumers.
         /// </summary>
         /// <param name="configAction">
-        ///     The configuration action.
+        ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaClientConfig" /> and configures it.
         /// </param>
         /// <returns>
         ///     The <see cref="IKafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
@@ -30,7 +30,8 @@ namespace Silverback.Messaging.Configuration
         ///     The type of the messages to be published to this endpoint.
         /// </typeparam>
         /// <param name="endpointBuilderAction">
-        ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaProducerEndpointBuilder" /> and configures it.
+        ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaProducerEndpointBuilder" /> and configures
+        ///     it.
         /// </param>
         /// <returns>
         ///     The <see cref="IKafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
@@ -127,7 +128,8 @@ namespace Silverback.Messaging.Configuration
         ///     The type of the messages to be published to this endpoint.
         /// </param>
         /// <param name="endpointBuilderAction">
-        ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaProducerEndpointBuilder" /> and configures it.
+        ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaProducerEndpointBuilder" /> and configures
+        ///     it.
         /// </param>
         /// <returns>
         ///     The <see cref="IKafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
@@ -140,7 +142,8 @@ namespace Silverback.Messaging.Configuration
         ///     Adds an inbound endpoint to consume from a Kafka topic.
         /// </summary>
         /// <param name="endpointBuilderAction">
-        ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaConsumerEndpointBuilder" /> and configures it.
+        ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaConsumerEndpointBuilder" /> and configures
+        ///     it.
         /// </param>
         /// <param name="consumersCount">
         ///     The number of consumers to be instantiated. The default is 1.

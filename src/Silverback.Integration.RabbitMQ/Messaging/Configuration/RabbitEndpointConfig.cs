@@ -12,7 +12,8 @@ namespace Silverback.Messaging.Configuration
     /// </summary>
     public abstract class RabbitEndpointConfig : IValidatableEndpointSettings
     {
-        private static readonly ConfigurationDictionaryComparer<string, object> ArgumentsComparer = new();
+        private static readonly ConfigurationDictionaryEqualityComparer<string, object> ArgumentsEqualityComparer =
+            new();
 
         /// <summary>
         ///     Gets or sets a value indicating whether the queue or the exchange will survive a broker restart.
@@ -57,7 +58,7 @@ namespace Silverback.Messaging.Configuration
 
             return IsDurable == other.IsDurable &&
                    IsAutoDeleteEnabled == other.IsAutoDeleteEnabled &&
-                   ArgumentsComparer.Equals(Arguments, other.Arguments);
+                   ArgumentsEqualityComparer.Equals(Arguments, other.Arguments);
         }
     }
 }

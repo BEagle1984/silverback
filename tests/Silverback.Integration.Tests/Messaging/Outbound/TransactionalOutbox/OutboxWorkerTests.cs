@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
                 null,
                 new TestProducerEndpoint("topic1"));
             _sampleOutboundEnvelope.RawMessage =
-                AsyncHelper.RunSynchronously(
+                AsyncHelper.RunValueTaskSynchronously(
                     () => new JsonMessageSerializer().SerializeAsync(
                         _sampleOutboundEnvelope.Message,
                         _sampleOutboundEnvelope.Headers,

@@ -43,6 +43,8 @@ namespace Silverback.Messaging.Serialization
                         new MessageSerializationContext(envelope.Endpoint, envelope.ActualEndpointName))
                     .ConfigureAwait(false);
 
+            envelope.Headers.AddIfNotExists(DefaultMessageHeaders.MessageType, deserializedType.AssemblyQualifiedName);
+
             // Create typed message for easier specific subscription
             return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);
         }

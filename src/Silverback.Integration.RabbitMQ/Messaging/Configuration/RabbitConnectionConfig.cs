@@ -14,7 +14,8 @@ namespace Silverback.Messaging.Configuration
     /// </summary>
     public sealed class RabbitConnectionConfig : IEquatable<RabbitConnectionConfig>, IValidatableEndpointSettings
     {
-        private static readonly ConfigurationDictionaryComparer<string, object> ClientPropertiesComparer = new();
+        private static readonly ConfigurationDictionaryEqualityComparer<string, object>
+            ClientPropertiesEqualityComparer = new();
 
         /// <summary>
         ///     Gets or sets the AMQP URI SSL protocols.
@@ -153,7 +154,7 @@ namespace Silverback.Messaging.Configuration
                    Equals(SocketWriteTimeout, other.SocketWriteTimeout) &&
                    Equals(Ssl, other.Ssl) &&
                    Equals(TopologyRecoveryEnabled, other.TopologyRecoveryEnabled) &&
-                   ClientPropertiesComparer.Equals(ClientProperties, other.ClientProperties) &&
+                   ClientPropertiesEqualityComparer.Equals(ClientProperties, other.ClientProperties) &&
                    string.Equals(Password, other.Password, StringComparison.Ordinal) &&
                    Equals(RequestedChannelMax, other.RequestedChannelMax) &&
                    Equals(RequestedFrameMax, other.RequestedFrameMax) &&

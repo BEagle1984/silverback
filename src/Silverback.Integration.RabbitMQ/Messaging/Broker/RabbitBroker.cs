@@ -5,6 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
@@ -30,7 +31,7 @@ namespace Silverback.Messaging.Broker
             IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
-            _connectionFactory = connectionFactory;
+            _connectionFactory = Check.NotNull(connectionFactory, nameof(connectionFactory));
         }
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
@@ -67,7 +68,7 @@ namespace Silverback.Messaging.Broker
             if (!disposing)
                 return;
 
-            _connectionFactory?.Dispose();
+            _connectionFactory.Dispose();
         }
     }
 }

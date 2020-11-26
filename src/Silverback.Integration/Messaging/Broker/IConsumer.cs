@@ -47,6 +47,38 @@ namespace Silverback.Messaging.Broker
         IConsumerStatusInfo StatusInfo { get; }
 
         /// <summary>
+        ///     Connects and starts consuming.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task ConnectAsync();
+
+        /// <summary>
+        ///     Disconnects and stops consuming.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task DisconnectAsync();
+
+        /// <summary>
+        ///     Starts consuming. Used after <see cref="StopAsync" /> has been called to resume consuming.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task StartAsync();
+
+        /// <summary>
+        ///     Stops the consumer without disconnecting. Can be used to pause and resume consuming.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task StopAsync();
+
+        /// <summary>
         ///     <param>
         ///         Confirms that the specified message has been successfully processed.
         ///     </param>
@@ -113,32 +145,6 @@ namespace Silverback.Messaging.Broker
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         Task RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
-
-        /// <summary>
-        ///     Connects and starts consuming.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task ConnectAsync();
-
-        /// <summary>
-        ///     Disconnects and stops consuming.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task DisconnectAsync();
-
-        /// <summary>
-        ///     Starts consuming. Used after <see cref="Stop" /> has been called to resume consuming.
-        /// </summary>
-        void Start();
-
-        /// <summary>
-        ///     Stops the consumer without disconnecting. Can be used to pause and resume consuming.
-        /// </summary>
-        void Stop();
 
         /// <summary>
         ///     Increments the stored failed attempts count for the specified envelope.

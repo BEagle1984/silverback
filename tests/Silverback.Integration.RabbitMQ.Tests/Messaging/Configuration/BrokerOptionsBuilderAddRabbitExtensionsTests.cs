@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Configuration
 {
-    public class BrokerOptionsBuilderExtensionsTests
+    public class BrokerOptionsBuilderAddRabbitExtensionsTests
     {
         [Fact]
         public void AddBroker_GenericAndSpecificVersions_BehavesTheSame()

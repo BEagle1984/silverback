@@ -70,10 +70,10 @@ namespace Silverback.Util
                 .GetResult();
         }
 
-        public static TResult RunSynchronously<TResult>(Func<ValueTask<TResult>> func) =>
+        public static TResult RunValueTaskSynchronously<TResult>(Func<ValueTask<TResult>> func) =>
             RunSynchronously(() => func().AsTask());
 
-        public static void RunSynchronously(Func<ValueTask> func) =>
+        public static void RunValueTaskSynchronously(Func<ValueTask> func) =>
             RunSynchronously(() => func().AsTask());
     }
 }

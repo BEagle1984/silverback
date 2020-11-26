@@ -114,6 +114,21 @@ namespace Silverback.Util
             return value;
         }
 
+        public static T Range<T>(T value, string parameterName, T min, T max)
+            where T : struct, IComparable
+        {
+            if (value.CompareTo(min) < 0 || value.CompareTo(max) > 0)
+            {
+                NotEmpty(parameterName, nameof(parameterName));
+
+                throw new ArgumentOutOfRangeException(
+                    parameterName,
+                    $"The value must be between {min} and {max}.");
+            }
+
+            return value;
+        }
+
         [AttributeUsage(AttributeTargets.Parameter)]
         private sealed class ValidatedNotNullAttribute : Attribute
         {

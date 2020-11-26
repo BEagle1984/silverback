@@ -218,6 +218,26 @@ namespace Silverback.Diagnostics
             new(Offset + 26, Prefix + nameof(ConsumerRollbackError));
 
         /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when the producer is connected to the
+        ///     endpoint and ready to produce.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Debug.
+        /// </remarks>
+        public static EventId ProducerConnected { get; } =
+            new(Offset + 27, Prefix + nameof(ProducerConnected));
+
+        /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when the producer is disconnected from the
+        ///     endpoint.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Debug.
+        /// </remarks>
+        public static EventId ProducerDisconnected { get; } =
+            new(Offset + 28, Prefix + nameof(ProducerDisconnected));
+
+        /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when a message is produced.
         /// </summary>
         /// <remarks>

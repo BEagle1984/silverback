@@ -36,7 +36,7 @@ namespace Silverback.Messaging
         ///     The name of the topic.
         /// </param>
         /// <param name="clientConfig">
-        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaConsumerConfig" />.
         /// </param>
         public KafkaConsumerEndpoint(string topicName, KafkaClientConfig? clientConfig = null)
@@ -51,7 +51,7 @@ namespace Silverback.Messaging
         ///     The name of the topics.
         /// </param>
         /// <param name="clientConfig">
-        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaConsumerConfig" />.
         /// </param>
         public KafkaConsumerEndpoint(string[] topicNames, KafkaClientConfig? clientConfig = null)
@@ -68,7 +68,7 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
-        ///     Gets the names of the topics.
+        ///     Gets the name of the topics.
         /// </summary>
         public IReadOnlyCollection<string> Names { get; }
 

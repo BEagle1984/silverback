@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Silverback.Tests.Core.Util
 {
-    public class ConfigurationDictionaryComparerTests
+    public class ConfigurationDictionaryEqualityComparerTests
     {
         [Fact]
         public void Equals_SameDictionary_TrueIsReturned()
@@ -21,13 +21,13 @@ namespace Silverback.Tests.Core.Util
                 { "three", "tre" }
             };
 
-            var result = new ConfigurationDictionaryComparer<string, string>().Equals(dictionary, dictionary);
+            var result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionary, dictionary);
 
             result.Should().BeTrue();
         }
 
         [Fact]
-        public void Equals_SameContent_TrueIsReturned()
+        public void Equals_SameItems_TrueIsReturned()
         {
             var dictionaryX = new Dictionary<string, string>
             {
@@ -42,7 +42,28 @@ namespace Silverback.Tests.Core.Util
                 { "three", "tre" }
             };
 
-            var result = new ConfigurationDictionaryComparer<string, string>().Equals(dictionaryX, dictionaryY);
+            var result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
+
+            result.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Equals_SameItemsDifferentOrder_TrueIsReturned()
+        {
+            var dictionaryX = new Dictionary<string, string>
+            {
+                { "one", "uno" },
+                { "two", "due" },
+                { "three", "tre" }
+            };
+            var dictionaryY = new Dictionary<string, string>
+            {
+                { "two", "due" },
+                { "three", "tre" },
+                { "one", "uno" }
+            };
+
+            var result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
 
             result.Should().BeTrue();
         }
@@ -63,7 +84,7 @@ namespace Silverback.Tests.Core.Util
                 { "three", "3" }
             };
 
-            var result = new ConfigurationDictionaryComparer<string, string>().Equals(dictionaryX, dictionaryY);
+            var result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
 
             result.Should().BeFalse();
         }
@@ -84,7 +105,7 @@ namespace Silverback.Tests.Core.Util
                 { "four", "quattro" }
             };
 
-            var result = new ConfigurationDictionaryComparer<string, string>().Equals(dictionaryX, dictionaryY);
+            var result = new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
 
             result.Should().BeFalse();
         }
@@ -105,7 +126,8 @@ namespace Silverback.Tests.Core.Util
                 { "three", null }
             };
 
-            var result = new ConfigurationDictionaryComparer<string, string?>().Equals(dictionaryX, dictionaryY);
+            var result =
+                new ConfigurationDictionaryEqualityComparer<string, string?>().Equals(dictionaryX, dictionaryY);
 
             result.Should().BeFalse();
         }
@@ -125,7 +147,8 @@ namespace Silverback.Tests.Core.Util
                 { "two", "due" }
             };
 
-            var result = new ConfigurationDictionaryComparer<string, string?>().Equals(dictionaryX, dictionaryY);
+            var result =
+                new ConfigurationDictionaryEqualityComparer<string, string?>().Equals(dictionaryX, dictionaryY);
 
             result.Should().BeFalse();
         }
@@ -138,9 +161,13 @@ namespace Silverback.Tests.Core.Util
             Dictionary<string, string> dictionaryX = new();
             Dictionary<string, string>? dictionaryY = null;
 
-            var result = new ConfigurationDictionaryComparer<string, string>().Equals(dictionaryX, dictionaryY);
+            var result1 =
+                new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryX, dictionaryY);
+            var result2 =
+                new ConfigurationDictionaryEqualityComparer<string, string>().Equals(dictionaryY, dictionaryX);
 
-            result.Should().BeTrue();
+            result1.Should().BeTrue();
+            result2.Should().BeTrue();
         }
     }
 }

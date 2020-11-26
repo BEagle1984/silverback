@@ -144,7 +144,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                 else
                 {
                     if (stopConsuming)
-                        _context.Consumer.Stop();
+                        await _context.Consumer.StopAsync().ConfigureAwait(false);
 
                     await _context.Consumer.RollbackAsync(_context.GetBrokerMessageIdentifiers()).ConfigureAwait(false);
                 }

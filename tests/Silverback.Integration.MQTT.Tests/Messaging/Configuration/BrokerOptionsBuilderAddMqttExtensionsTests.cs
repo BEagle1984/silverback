@@ -6,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
+namespace Silverback.Tests.Integration.MQTT.Messaging.Configuration
 {
-    public class BrokerOptionsBuilderExtensionsTests
+    public class BrokerOptionsBuilderAddMqttExtensionsTests
     {
         [Fact]
         public void AddBroker_GenericAndSpecificVersions_BehavesTheSame()
@@ -20,12 +20,12 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options =>
-                        options.AddBroker<KafkaBroker>());
+                        options.AddBroker<MqttBroker>());
             servicesSpecific
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options =>
-                        options.AddKafka());
+                        options.AddMqtt());
 
             servicesGeneric.Should().HaveCount(servicesSpecific.Count);
         }

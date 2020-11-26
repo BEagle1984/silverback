@@ -1,9 +1,9 @@
 version: "3.3"
 services:
 
-  ### DATABASE ###
+  ### Database ###
   mssql:
-    container_name: mssql
+    container_name: s8k-mssql
     image: microsoft/mssql-server-linux:2017-latest
     environment:
       ACCEPT_EULA: Y
@@ -12,9 +12,9 @@ services:
     ports:
       - "1433:1433"
 
-  ### KAFKA ###
+  ### Apache Kafka ###
   zookeeper:
-    container_name: zookeeper
+    container_name: s8k-zookeeper
     image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -22,7 +22,7 @@ services:
     ports:
       - "2181:2181"
   kafka:
-    container_name: kafka
+    container_name: s8k-kafka
     depends_on:
       - zookeeper
     image: confluentinc/cp-kafka:latest
@@ -38,26 +38,34 @@ services:
     ports:
       - "9092:9092"
   schema-registry:
-    image: confluentinc/cp-schema-registry:latest
-    hostname: schema-registry
-    container_name: schema-registry
+    container_name: s8k-schema-registry
     depends_on:
       - zookeeper
       - kafka
+    image: confluentinc/cp-schema-registry:latest
+    hostname: schema-registry
     ports:
       - "8081:8081"
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
-      
-  ### RABBIT ###
+
+  ### RabbitMQ ###
   # management console http://localhost:15672/#/ (login guest/guest)
   rabbit:
-    container_name: rabbit
+    container_name: s8k-rabbit
     image: rabbitmq:3-management
     ports:
       - "15672:15672"
       - "5672:5672"
+
+  ### MQTT (mosquitto)
+  mqtt:
+    container_name: s8k-mqtt-mosquitto
+    image: eclipse-mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
 
 networks:
   default:

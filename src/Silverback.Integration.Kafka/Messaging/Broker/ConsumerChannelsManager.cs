@@ -17,7 +17,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
-    internal sealed class ChannelsManager : IDisposable
+    internal sealed class ConsumerChannelsManager : IDisposable
     {
         private readonly IList<TopicPartition> _partitions;
 
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly SemaphoreSlim? _messagesLimiterSemaphoreSlim;
 
-        public ChannelsManager(
+        public ConsumerChannelsManager(
             IReadOnlyList<TopicPartition> partitions,
             KafkaConsumer consumer,
             IList<ISequenceStore> sequenceStores,
@@ -109,15 +109,15 @@ namespace Silverback.Messaging.Broker
         {
             int channelIndex = GetChannelIndex(consumeResult.TopicPartition);
 
-            _logger.LogDebug(
-                KafkaEventIds.ConsumingMessage,
+            _logger.LogTrace(
+                IntegrationEventIds.LowLevelTracing,
                 "Writing message ({topic}[{partition}]@{offset}) to channel {channelIndex}.",
                 consumeResult.Topic,
                 consumeResult.Partition.Value,
                 consumeResult.Offset,
                 channelIndex);
 
-            AsyncHelper.RunSynchronously(
+            AsyncHelper.RunValueTaskSynchronously(
                 () => _channels[channelIndex].Writer.WriteAsync(consumeResult, cancellationToken));
         }
 
@@ -262,13 +262,6 @@ namespace Silverback.Messaging.Broker
                     _consumer.Id);
                 return;
             }
-
-            // Checking if the message was sent to the subscribed topic is necessary
-            // when reusing the same consumer for multiple topics.
-            if (!_consumer.Endpoint.Names.Any(
-                endpointName =>
-                    consumeResult.Topic.Equals(endpointName, StringComparison.OrdinalIgnoreCase)))
-                return;
 
             if (_messagesLimiterSemaphoreSlim != null)
                 await _messagesLimiterSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);

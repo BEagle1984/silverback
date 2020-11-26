@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
+        <RootNamespace>$(RootNamespace)</RootNamespace>
+        <Version>$(BaseVersion)</Version>
+        <Authors>$(Authors)</Authors>
+        <Company>$(Company)</Company>
+        <PackageLicenseExpression>$(License)</PackageLicenseExpression>
+        <Copyright>$(Copyright)</Copyright>
+        <PackageProjectUrl>$(ProjectUrl)</PackageProjectUrl>
+        <RepositoryUrl>$(RepositoryUrl)</RepositoryUrl>
+        <RepositoryType>$(RepositoryType)</RepositoryType>
+        <GeneratePackageOnBuild>${GeneratePackageOnBuild}</GeneratePackageOnBuild>
+        <Description>$(Description)
+This package adds a mocked implementation of the MQTT broker, suitable for in-memory testing.</Description>
+        <PackageIconUrl>$(IconUrl)</PackageIconUrl>
+        <PackageTags>$(Tags)</PackageTags>
+        <LangVersion>$(LangVersion)</LangVersion>
+        <NoWarn>$(NoWarn)</NoWarn>
+        <PackageId>Silverback.Integration.MQTT.Testing</PackageId>
+        <Product>Silverback.Integration.MQTT.Testing</Product>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DocumentationFile>bin\Debug\netstandard2.1\Silverback.Integration.MQTT.Testing.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DocumentationFile>bin\Release\netstandard2.1\Silverback.Integration.MQTT.Testing.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Silverback.Integration.MQTT\Silverback.Integration.MQTT.csproj" />
+    </ItemGroup>
+
+</Project>

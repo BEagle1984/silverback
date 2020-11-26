@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Broker
         private readonly ISilverbackIntegrationLogger _logger;
 
         [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
-        private ChannelsManager? _channelsManager;
+        private ConsumerChannelsManager? _channelsManager;
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Broker
         public ConsumeLoopHandler(
             KafkaConsumer consumer,
             IConsumer<byte[]?, byte[]?> confluenceConsumer,
-            ChannelsManager? channelsManager,
+            ConsumerChannelsManager? channelsManager,
             ISilverbackIntegrationLogger logger)
         {
             _consumer = Check.NotNull(consumer, nameof(consumer));
@@ -84,7 +84,7 @@ namespace Silverback.Messaging.Broker
             return Stopping;
         }
 
-        public void SetChannelsManager(ChannelsManager channelsManager) => _channelsManager = channelsManager;
+        public void SetChannelsManager(ConsumerChannelsManager channelsManager) => _channelsManager = channelsManager;
 
         public void Dispose()
         {
@@ -130,8 +130,8 @@ namespace Silverback.Messaging.Broker
 
                 if (_channelsManager == null)
                 {
-                    _logger.LogDebug(
-                        KafkaEventIds.ConsumingMessage,
+                    _logger.LogTrace(
+                        IntegrationEventIds.LowLevelTracing,
                         "Waiting for channels manager to be initialized... (consumerId: {consumerId})",
                         _consumer.Id);
 

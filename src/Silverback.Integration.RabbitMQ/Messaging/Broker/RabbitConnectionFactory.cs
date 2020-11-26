@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using RabbitMQ.Client;
 using Silverback.Messaging.Configuration;
 using Silverback.Util;
@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IRabbitConnectionFactory" />
     public sealed class RabbitConnectionFactory : IRabbitConnectionFactory
     {
-        private readonly ConcurrentDictionary<RabbitConnectionConfig, IConnection> _connections = new();
+        private Dictionary<RabbitConnectionConfig, IConnection>? _connections = new();
 
         /// <inheritdoc cref="IRabbitConnectionFactory.GetChannel(RabbitProducerEndpoint)" />
         public IModel GetChannel(RabbitProducerEndpoint endpoint)
@@ -101,8 +101,8 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
-            _connections.ForEach(c => c.Value?.Dispose());
-            _connections.Clear();
+            _connections?.Values.ForEach(connection => connection.Dispose());
+            _connections = null;
         }
 
         private static IConnection CreateConnection(RabbitConnectionConfig connectionConfig)
@@ -124,7 +124,16 @@ namespace Silverback.Messaging.Broker
             if (_connections == null)
                 throw new ObjectDisposedException(null);
 
-            return _connections.GetOrAdd(connectionConfig, _ => CreateConnection(connectionConfig));
+            lock (_connections)
+            {
+                if (_connections.TryGetValue(connectionConfig, out IConnection connection))
+                    return connection;
+
+                connection = CreateConnection(connectionConfig);
+                _connections.Add(connectionConfig, connection);
+
+                return connection;
+            }
         }
     }
 }

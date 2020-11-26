@@ -9,10 +9,11 @@ namespace Silverback.Messaging.Serialization
 {
     internal static class SchemaRegistryClientFactory
     {
-        private static readonly ConfigurationDictionaryComparer<string, string> ConfluentConfigComparer = new();
+        private static readonly ConfigurationDictionaryEqualityComparer<string, string>
+            ConfluentConfigEqualityComparer = new();
 
         private static readonly ConcurrentDictionary<SchemaRegistryConfig, ISchemaRegistryClient> Clients =
-            new(ConfluentConfigComparer);
+            new(ConfluentConfigEqualityComparer);
 
         public static ISchemaRegistryClient GetClient(SchemaRegistryConfig config) =>
             Clients.GetOrAdd(config, _ => new CachedSchemaRegistryClient(config));

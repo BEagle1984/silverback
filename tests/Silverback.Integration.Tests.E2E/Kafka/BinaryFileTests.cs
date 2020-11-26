@@ -244,11 +244,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
 
-            SpyBehavior.InboundEnvelopes.ForEach(
+            SpyBehavior.OutboundEnvelopes.ForEach(
                 envelope =>
                     envelope.Headers.GetValue(DefaultMessageHeaders.MessageType).Should().BeNull());
-
-            SpyBehavior.InboundEnvelopes
+            SpyBehavior.OutboundEnvelopes
                 .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
@@ -500,15 +499,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
+            SpyBehavior.OutboundEnvelopes.ForEach(
+                envelope => envelope.Headers.GetValue(DefaultMessageHeaders.MessageType).Should().BeNull());
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.ForEach(
-                envelope =>
-                {
-                    envelope.Message.Should().BeOfType<CustomBinaryFileMessage>();
-                    envelope.Headers.GetValue(DefaultMessageHeaders.MessageType).Should().BeNull();
-                });
+                envelope => envelope.Message.Should().BeOfType<CustomBinaryFileMessage>());
             SpyBehavior.InboundEnvelopes
                 .Select(envelope => envelope.Headers.GetValue("x-custom-header"))
                 .Should().BeEquivalentTo("one", "two");

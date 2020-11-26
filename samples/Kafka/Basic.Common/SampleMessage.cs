@@ -2,6 +2,6 @@
 {
     public class SampleMessage
     {
-        public int SomeRandomNumber { get; set; }
+        public int Number { get; set; }
     }
 }

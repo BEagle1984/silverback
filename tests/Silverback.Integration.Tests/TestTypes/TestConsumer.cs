@@ -87,13 +87,9 @@ namespace Silverback.Tests.Integration.TestTypes
 
         protected override Task DisconnectCoreAsync() => Task.CompletedTask;
 
-        protected override void StartCore()
-        {
-        }
+        protected override Task StartCoreAsync() => Task.CompletedTask;
 
-        protected override void StopCore()
-        {
-        }
+        protected override Task StopCoreAsync() => Task.CompletedTask;
 
         protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) =>
             Task.CompletedTask;

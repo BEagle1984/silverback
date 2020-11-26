@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -55,11 +56,49 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
+        /// <inheritdoc cref="IProducer.Id" />
+        public Guid Id { get; } = Guid.NewGuid();
+
         /// <inheritdoc cref="IProducer.Broker" />
         public IBroker Broker { get; }
 
         /// <inheritdoc cref="IProducer.Endpoint" />
         public IProducerEndpoint Endpoint { get; }
+
+        /// <inheritdoc cref="IProducer.IsConnected" />
+        public bool IsConnected { get; private set; }
+
+        /// <inheritdoc cref="IProducer.ConnectAsync" />
+        public async Task ConnectAsync()
+        {
+            if (IsConnected)
+                return;
+
+            await ConnectCoreAsync().ConfigureAwait(false);
+
+            IsConnected = true;
+            _logger.LogDebug(
+                IntegrationEventIds.ProducerConnected,
+                "Connected producer to endpoint {endpoint}. (producerId: {producerId})",
+                Endpoint.Name,
+                Id);
+        }
+
+        /// <inheritdoc cref="IProducer.DisconnectAsync" />
+        public async Task DisconnectAsync()
+        {
+            if (!IsConnected)
+                return;
+
+            await DisconnectCoreAsync().ConfigureAwait(false);
+
+            IsConnected = false;
+            _logger.LogDebug(
+                IntegrationEventIds.ConsumerDisconnected,
+                "Disconnected producer from endpoint {endpoint}. (producerId: {producerId})",
+                Endpoint.Name,
+                Id);
+        }
 
         /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?)" />
         public void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
@@ -68,8 +107,11 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
         public void Produce(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(
-                () =>
-                    ExecutePipelineIfNeededAsync(
+                async () =>
+                {
+                    await ConnectAsync().ConfigureAwait(false);
+
+                    await ExecutePipelineIfNeededAsync(
                         new ProducerPipelineContext(envelope, this, _serviceProvider),
                         finalContext =>
                         {
@@ -77,7 +119,8 @@ namespace Silverback.Messaging.Broker
                                 ProduceCore(finalContext.Envelope);
 
                             return Task.CompletedTask;
-                        }));
+                        }).ConfigureAwait(false);
+                });
 
         /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?)" />
         public void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
@@ -92,7 +135,10 @@ namespace Silverback.Messaging.Broker
             ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
 
         /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
-        public async Task ProduceAsync(IOutboundEnvelope envelope) =>
+        public async Task ProduceAsync(IOutboundEnvelope envelope)
+        {
+            await ConnectAsync().ConfigureAwait(false);
+
             await ExecutePipelineIfNeededAsync(
                 new ProducerPipelineContext(envelope, this, _serviceProvider),
                 async finalContext =>
@@ -100,6 +146,7 @@ namespace Silverback.Messaging.Broker
                     ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
                         await ProduceCoreAsync(finalContext.Envelope).ConfigureAwait(false);
                 }).ConfigureAwait(false);
+        }
 
         /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
         public Task RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
@@ -108,6 +155,22 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?)" />
         public Task RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null)
             => ProduceAsync(new ProcessedOutboundEnvelope(messageStream, headers, Endpoint));
+
+        /// <summary>
+        ///     Connects to the message broker.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected virtual Task ConnectCoreAsync() => Task.CompletedTask;
+
+        /// <summary>
+        ///     Disconnects from the message broker.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected virtual Task DisconnectCoreAsync() => Task.CompletedTask;
 
         /// <summary>
         ///     Publishes the specified message and returns its identifier.

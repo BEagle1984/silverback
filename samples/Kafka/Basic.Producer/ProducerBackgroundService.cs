@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Publishing;
 using Silverback.Samples.Kafka.Basic.Common;
 
@@ -10,13 +11,16 @@ namespace Silverback.Samples.Kafka.Basic.Producer
 {
     public class ProducerBackgroundService : BackgroundService
     {
-        private readonly Random _random = new Random((int)DateTime.Now.Ticks);
-
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public ProducerBackgroundService(IServiceScopeFactory serviceScopeFactory)
+        private readonly ILogger<ProducerBackgroundService> _logger;
+
+        public ProducerBackgroundService(
+            IServiceScopeFactory serviceScopeFactory,
+            ILogger<ProducerBackgroundService> logger)
         {
             _serviceScopeFactory = serviceScopeFactory;
+            _logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -27,13 +31,17 @@ namespace Silverback.Samples.Kafka.Basic.Producer
             using var scope = _serviceScopeFactory.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
 
+            int number = 0;
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 await publisher.PublishAsync(
                     new SampleMessage
                     {
-                        SomeRandomNumber = _random.Next(int.MaxValue)
+                        Number = ++number
                     });
+
+                _logger.LogInformation($"Produced {number}");
 
                 await Task.Delay(100, stoppingToken);
             }

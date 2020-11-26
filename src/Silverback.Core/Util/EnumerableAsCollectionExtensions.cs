@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Silverback.Util
 {
-    internal static class EnumerableAsReadOnlyCollectionExtensions
+    internal static class EnumerableAsCollectionExtensions
     {
         public static IReadOnlyCollection<T> AsReadOnlyCollection<T>(this IEnumerable<T> enumerable) =>
             enumerable.AsReadOnlyList();
@@ -15,6 +15,14 @@ namespace Silverback.Util
         {
             if (enumerable is IReadOnlyList<T> collection)
                 return collection;
+
+            return enumerable.ToList();
+        }
+
+        public static List<T> AsList<T>(this IEnumerable<T> enumerable)
+        {
+            if (enumerable is List<T> list)
+                return list;
 
             return enumerable.ToList();
         }

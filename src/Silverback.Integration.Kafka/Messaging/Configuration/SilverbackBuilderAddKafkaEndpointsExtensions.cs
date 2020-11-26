@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class SilverbackBuilderAddKafkaEndpointsExtensions
     {
         /// <summary>
-        ///     Adds an <see cref="IEndpointsConfigurator" /> to be used to setup the broker endpoints.
+        ///     Adds the Kafka endpoints.
         /// </summary>
         /// <param name="silverbackBuilder">
         ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add

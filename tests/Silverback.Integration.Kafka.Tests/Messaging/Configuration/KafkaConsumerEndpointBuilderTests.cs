@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
         }
 
         [Fact]
-        public void ConsumeFrom_SingleTopicName_TopicNameSet()
+        public void ConsumeFrom_SingleTopic_TopicNameSet()
         {
             var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
             {
@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
         }
 
         [Fact]
-        public void ConsumeFrom_TopicNames_TopicNameSet()
+        public void ConsumeFrom_MultipleTopicsTopicNameSet()
         {
             var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
             {
@@ -95,12 +95,12 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
         [Fact]
         public void Configure_WithBaseConfig_ConfigurationMerged()
         {
-            var builder = new KafkaConsumerEndpointBuilder(
-                new KafkaClientConfig
-                {
-                    BootstrapServers = "PLAINTEXT://tests",
-                    MessageMaxBytes = 42
-                });
+            var baseConfig = new KafkaClientConfig
+            {
+                BootstrapServers = "PLAINTEXT://tests",
+                MessageMaxBytes = 42
+            };
+            var builder = new KafkaConsumerEndpointBuilder(baseConfig);
 
             builder
                 .ConsumeFrom("some-topic")
@@ -119,6 +119,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
             endpoint.Configuration.CommitOffsetEach.Should().Be(42);
             endpoint.Configuration.GroupId.Should().Be("group1");
             endpoint.Configuration.MessageMaxBytes.Should().Be(4242);
+            baseConfig.MessageMaxBytes.Should().Be(42);
         }
 
         [Fact]

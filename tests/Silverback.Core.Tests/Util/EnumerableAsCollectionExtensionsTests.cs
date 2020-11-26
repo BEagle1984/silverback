@@ -11,7 +11,7 @@ using Xunit;
 namespace Silverback.Tests.Core.Util
 {
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration", Justification = "Test methods")]
-    public class EnumerableAsReadOnlyCollectionExtensionsTests
+    public class EnumerableAsCollectionExtensionsTests
     {
         [Fact]
         public void AsReadOnlyCollection_Enumerable_NewInstanceReturned()
@@ -49,6 +49,26 @@ namespace Silverback.Tests.Core.Util
             var enumerable = new[] { 1, 2, 3, 4 };
 
             var collection = enumerable.AsReadOnlyList();
+
+            collection.Should().BeSameAs(enumerable);
+        }
+
+        [Fact]
+        public void AsList_Enumerable_NewInstanceReturned()
+        {
+            var enumerable = Enumerable.Range(1, 10);
+
+            var collection = enumerable.AsList();
+
+            collection.Should().NotBeSameAs(enumerable);
+        }
+
+        [Fact]
+        public void AsList_List_SameInstanceReturned()
+        {
+            var enumerable = new List<int> { 1, 2, 3, 4 };
+
+            var collection = enumerable.AsList();
 
             collection.Should().BeSameAs(enumerable);
         }

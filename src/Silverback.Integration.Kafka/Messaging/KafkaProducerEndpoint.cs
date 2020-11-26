@@ -20,7 +20,7 @@ namespace Silverback.Messaging
         ///     The name of the topic.
         /// </param>
         /// <param name="clientConfig">
-        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
         public KafkaProducerEndpoint(string name, KafkaClientConfig? clientConfig = null)

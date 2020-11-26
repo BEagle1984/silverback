@@ -28,11 +28,11 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void RunSynchronously_ReturningValueTask_Executed()
+        public void RunValueTaskSynchronously_ReturningValueTask_Executed()
         {
             var done = false;
 
-            AsyncHelper.RunSynchronously(AsyncMethod);
+            AsyncHelper.RunValueTaskSynchronously(AsyncMethod);
 
             done.Should().BeTrue();
 
@@ -58,9 +58,9 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void RunSynchronously_ReturningValueTaskWithResult_Executed()
+        public void RunValueTaskSynchronously_ReturningValueTaskWithResult_Executed()
         {
-            var result = AsyncHelper.RunSynchronously(AsyncMethod);
+            var result = AsyncHelper.RunValueTaskSynchronously(AsyncMethod);
 
             result.Should().Be(3);
 
@@ -87,10 +87,10 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void RunSynchronously_WithArgumentReturningValueTask_Executed()
+        public void RunValueTaskSynchronously_WithArgumentReturningValueTask_Executed()
         {
             int result = 1;
-            AsyncHelper.RunSynchronously(() => AsyncMethod(2));
+            AsyncHelper.RunValueTaskSynchronously(() => AsyncMethod(2));
 
             result.Should().Be(3);
 
@@ -116,9 +116,9 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void RunSynchronously_ReturningValueTaskButThrowingException_ExceptionRethrown()
+        public void RunValueTaskSynchronously_ReturningValueTaskButThrowingException_ExceptionRethrown()
         {
-            Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+            Action act = () => AsyncHelper.RunValueTaskSynchronously(AsyncMethod);
 
             act.Should().Throw<NotSupportedException>();
 
@@ -144,9 +144,9 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void RunSynchronously_ReturningValueTaskWithResultButThrowingException_ExceptionRethrown()
+        public void RunValueTaskSynchronously_ReturningValueTaskWithResultButThrowingException_ExceptionRethrown()
         {
-            Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
+            Action act = () => AsyncHelper.RunValueTaskSynchronously(AsyncMethod);
 
             act.Should().Throw<NotSupportedException>();
 

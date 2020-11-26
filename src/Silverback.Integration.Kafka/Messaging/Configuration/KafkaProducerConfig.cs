@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Configuration
         ///     Initializes a new instance of the <see cref="KafkaProducerConfig" /> class.
         /// </summary>
         /// <param name="clientConfig">
-        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
         public KafkaProducerConfig(KafkaClientConfig? clientConfig = null)
@@ -86,7 +86,7 @@ namespace Silverback.Messaging.Configuration
             if (ReferenceEquals(this, other))
                 return true;
 
-            return ConfluentConfigComparer.Equals(ConfluentConfig, other.ConfluentConfig);
+            return ConfluentConfigEqualityComparer.Equals(ConfluentConfig, other.ConfluentConfig);
         }
 
         /// <inheritdoc cref="object.Equals(object)" />

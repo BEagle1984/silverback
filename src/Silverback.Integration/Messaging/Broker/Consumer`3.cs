@@ -89,12 +89,12 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        protected override async Task RollbackCoreAsync(
+        protected override Task RollbackCoreAsync(
             IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
         {
             try
             {
-                await RollbackCoreAsync(brokerMessageIdentifiers.Cast<TIdentifier>().ToList()).ConfigureAwait(false);
+                return RollbackCoreAsync(brokerMessageIdentifiers.Cast<TIdentifier>().ToList());
             }
             catch (Exception exception)
             {

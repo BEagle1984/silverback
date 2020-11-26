@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Outbound.Routing
         ///     <see cref="Action{T}" /> to be invoked to build them.
         /// </param>
         /// <param name="clientConfig">
-        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
         public KafkaOutboundEndpointRouter(
@@ -58,7 +58,7 @@ namespace Silverback.Messaging.Outbound.Routing
         ///     <see cref="Action{T}" /> to be invoked to build them.
         /// </param>
         /// <param name="clientConfig">
-        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
         public KafkaOutboundEndpointRouter(

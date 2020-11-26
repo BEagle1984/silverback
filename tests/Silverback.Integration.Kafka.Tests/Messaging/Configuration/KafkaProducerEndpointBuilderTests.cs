@@ -82,12 +82,12 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
         [Fact]
         public void Configure_WithBaseConfig_ConfigurationMerged()
         {
-            var builder = new KafkaProducerEndpointBuilder(
-                new KafkaClientConfig
-                {
-                    BootstrapServers = "PLAINTEXT://tests",
-                    MessageMaxBytes = 42
-                });
+            var baseConfig = new KafkaClientConfig
+            {
+                BootstrapServers = "PLAINTEXT://tests",
+                MessageMaxBytes = 42
+            };
+            var builder = new KafkaProducerEndpointBuilder(baseConfig);
 
             builder
                 .ProduceTo("some-topic")
@@ -104,6 +104,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration
             endpoint.Configuration.ThrowIfNotAcknowledged.Should().BeFalse();
             endpoint.Configuration.MessageTimeoutMs.Should().Be(42);
             endpoint.Configuration.MessageMaxBytes.Should().Be(4242);
+            baseConfig.MessageMaxBytes.Should().Be(42);
         }
 
         [Fact]

@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Configuration
         ///     Configures the Kafka client properties.
         /// </summary>
         /// <param name="configAction">
-        ///     The configuration action.
+        ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaProducerConfig" /> and configures it.
         /// </param>
         /// <returns>
         ///     The <see cref="IKafkaProducerEndpointBuilder" /> so that additional calls can be chained.

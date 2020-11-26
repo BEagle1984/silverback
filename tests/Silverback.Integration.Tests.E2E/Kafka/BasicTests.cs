@@ -1,15 +1,12 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
@@ -846,7 +843,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task StopAndStart_DefaultSettings_MessagesConsumedAfterRestart()
+        public async Task StopAsyncAndStartAsync_DefaultSettings_MessagesConsumedAfterRestart()
         {
             Host.ConfigureServices(
                     services => services
@@ -886,7 +883,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Subscriber.OutboundEnvelopes.Should().HaveCount(5);
             Subscriber.InboundEnvelopes.Should().HaveCount(5);
 
-            Broker.Consumers[0].Stop();
+            await Broker.Consumers[0].StopAsync();
 
             for (int i = 1; i <= 5; i++)
             {
@@ -903,7 +900,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Subscriber.InboundEnvelopes.Should().HaveCount(5);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
 
-            Broker.Consumers[0].Start();
+            await Broker.Consumers[0].StartAsync();
 
             await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 

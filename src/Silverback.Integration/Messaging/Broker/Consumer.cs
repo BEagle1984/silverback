@@ -100,47 +100,6 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         protected bool IsDisconnecting { get; private set; }
 
-        /// <inheritdoc cref="IConsumer.CommitAsync(IBrokerMessageIdentifier)" />
-        public Task CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier)
-        {
-            Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
-
-            return CommitAsync(new[] { brokerMessageIdentifier });
-        }
-
-        /// <inheritdoc cref="IConsumer.CommitAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        public async Task CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
-        {
-            Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
-
-            await CommitCoreAsync(brokerMessageIdentifiers).ConfigureAwait(false);
-
-            if (_failedAttemptsDictionary.IsEmpty)
-                return;
-
-            // TODO: Is this the most efficient way to remove a bunch of items?
-            foreach (var messageIdentifier in brokerMessageIdentifiers)
-            {
-                _failedAttemptsDictionary.TryRemove(messageIdentifier, out _);
-            }
-        }
-
-        /// <inheritdoc cref="IConsumer.RollbackAsync(IBrokerMessageIdentifier)" />
-        public Task RollbackAsync(IBrokerMessageIdentifier brokerMessageIdentifier)
-        {
-            Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
-
-            return RollbackAsync(new[] { brokerMessageIdentifier });
-        }
-
-        /// <inheritdoc cref="IConsumer.RollbackAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        public Task RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
-        {
-            Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
-
-            return RollbackCoreAsync(brokerMessageIdentifiers);
-        }
-
         /// <inheritdoc cref="IConsumer.ConnectAsync" />
         public async Task ConnectAsync()
         {
@@ -157,7 +116,7 @@ namespace Silverback.Messaging.Broker
                 Endpoint.Name,
                 Id);
 
-            Start();
+            await StartAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IConsumer.DisconnectAsync" />
@@ -171,9 +130,9 @@ namespace Silverback.Messaging.Broker
             // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
             // but not started)
             if (IsConsuming)
-                Stop();
+                await StopAsync().ConfigureAwait(false);
             else
-                StopCore();
+                await StopCoreAsync().ConfigureAwait(false);
 
             if (SequenceStores.Count > 0)
             {
@@ -224,26 +183,70 @@ namespace Silverback.Messaging.Broker
             IsDisconnecting = false;
         }
 
-        /// <inheritdoc cref="IConsumer.Start" />
-        public void Start()
+        /// <inheritdoc cref="IConsumer.StartAsync" />
+        public async Task StartAsync()
         {
+            if (!IsConnected)
+                throw new InvalidOperationException("The consumer is not connected.");
+
             if (IsConsuming)
                 return;
 
-            StartCore();
+            await StartCoreAsync().ConfigureAwait(false);
 
             IsConsuming = true;
         }
 
-        /// <inheritdoc cref="IConsumer.Stop" />
-        public void Stop()
+        /// <inheritdoc cref="IConsumer.StopAsync" />
+        public async Task StopAsync()
         {
             if (!IsConsuming)
                 return;
 
-            StopCore();
+            await StopCoreAsync().ConfigureAwait(false);
 
             IsConsuming = false;
+        }
+
+        /// <inheritdoc cref="IConsumer.CommitAsync(IBrokerMessageIdentifier)" />
+        public Task CommitAsync(IBrokerMessageIdentifier brokerMessageIdentifier)
+        {
+            Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
+
+            return CommitAsync(new[] { brokerMessageIdentifier });
+        }
+
+        /// <inheritdoc cref="IConsumer.CommitAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        public async Task CommitAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
+        {
+            Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
+
+            await CommitCoreAsync(brokerMessageIdentifiers).ConfigureAwait(false);
+
+            if (_failedAttemptsDictionary.IsEmpty)
+                return;
+
+            // TODO: Is this the most efficient way to remove a bunch of items?
+            foreach (var messageIdentifier in brokerMessageIdentifiers)
+            {
+                _failedAttemptsDictionary.TryRemove(messageIdentifier, out _);
+            }
+        }
+
+        /// <inheritdoc cref="IConsumer.RollbackAsync(IBrokerMessageIdentifier)" />
+        public Task RollbackAsync(IBrokerMessageIdentifier brokerMessageIdentifier)
+        {
+            Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
+
+            return RollbackAsync(new[] { brokerMessageIdentifier });
+        }
+
+        /// <inheritdoc cref="IConsumer.RollbackAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
+        public Task RollbackAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
+        {
+            Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
+
+            return RollbackCoreAsync(brokerMessageIdentifiers);
         }
 
         /// <inheritdoc cref="IConsumer.IncrementFailedAttempts" />
@@ -290,14 +293,20 @@ namespace Silverback.Messaging.Broker
         protected abstract Task DisconnectCoreAsync();
 
         /// <summary>
-        ///     Starts consuming. Called to resume consuming after <see cref="Stop" /> has been called.
+        ///     Starts consuming. Called to resume consuming after <see cref="StopAsync" /> has been called.
         /// </summary>
-        protected abstract void StartCore();
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected abstract Task StartCoreAsync();
 
         /// <summary>
         ///     Stops consuming while staying connected to the message broker.
         /// </summary>
-        protected abstract void StopCore();
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected abstract Task StopCoreAsync();
 
         /// <summary>
         ///     Commits the specified messages sending the acknowledgement to the message broker.

@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Configuration
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpointBuilder" /> class.
         /// </summary>
         /// <param name="clientConfig">
-        ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
         /// <param name="endpointsConfigurationBuilder">

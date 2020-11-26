@@ -120,7 +120,7 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
                 _builder.AppendLine($"        ///     Initializes a new instance of the <see cref=\"{_generatedClassName}\" /> class.");
                 _builder.AppendLine("        /// </summary>");
                 _builder.AppendLine("        /// <param name=\"clientConfig\">");
-                _builder.AppendLine($"        ///     The existing <see cref=\"Confluent.Kafka.ClientConfig\" /> to be used to initialize the <see cref=\"{_clientConfigType}\" />.");
+                _builder.AppendLine($"        ///     The <see cref=\"Confluent.Kafka.ClientConfig\" /> to be used to initialize the <see cref=\"{_clientConfigType}\" />.");
                 _builder.AppendLine("        /// </param>");
                 _builder.AppendLine($"        protected {_generatedClassName}(Confluent.Kafka.ClientConfig? clientConfig = null)");
                 _builder.AppendLine($"            : base(clientConfig != null ? new {_clientConfigType}(clientConfig.Clone()) : new {_clientConfigType}())");

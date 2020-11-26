@@ -206,7 +206,6 @@ namespace Silverback.Messaging.Broker.Topics
         {
             lock (_consumersLock)
             {
-                // ReSharper disable once InconsistentlySynchronizedField
                 _consumers
                     .Select(consumer => consumer.GroupId)
                     .Distinct()

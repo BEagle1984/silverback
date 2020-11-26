@@ -31,7 +31,8 @@ namespace Silverback.Messaging.Configuration
         ///     Configures the Kafka client properties.
         /// </summary>
         /// <param name="configAction">
-        ///     The configuration action.
+        ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaConsumerEndpointBuilder" /> and configures
+        ///     it.
         /// </param>
         /// <returns>
         ///     The <see cref="IKafkaConsumerEndpointBuilder" /> so that additional calls can be chained.
@@ -68,7 +69,7 @@ namespace Silverback.Messaging.Configuration
         ///     The maximum number of incoming message that can be processed concurrently.
         /// </param>
         /// <returns>
-        ///     The <see cref="KafkaConsumerEndpoint" /> so that additional calls can be chained.
+        ///     The <see cref="IKafkaConsumerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IKafkaConsumerEndpointBuilder LimitParallelism(int maxDegreeOfParallelism);
 
@@ -81,7 +82,7 @@ namespace Silverback.Messaging.Configuration
         ///     The maximum number of messages to be enqueued.
         /// </param>
         /// <returns>
-        ///     The <see cref="KafkaConsumerEndpoint" /> so that additional calls can be chained.
+        ///     The <see cref="IKafkaConsumerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IKafkaConsumerEndpointBuilder LimitBackpressure(int backpressureLimit);
 
