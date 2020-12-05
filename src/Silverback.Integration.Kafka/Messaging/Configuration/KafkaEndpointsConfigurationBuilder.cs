@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
@@ -17,6 +19,8 @@ namespace Silverback.Messaging.Configuration
             _endpointsConfigurationBuilder = endpointsConfigurationBuilder;
         }
 
+        public IServiceProvider ServiceProvider => _endpointsConfigurationBuilder.ServiceProvider;
+
         public IKafkaEndpointsConfigurationBuilder Configure(Action<KafkaClientConfig> configAction)
         {
             Check.NotNull(configAction, nameof(configAction));
@@ -29,6 +33,50 @@ namespace Silverback.Messaging.Configuration
         public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
             Action<IKafkaProducerEndpointBuilder> endpointBuilderAction) =>
             AddOutbound(typeof(TMessage), endpointBuilderAction);
+
+        public IKafkaEndpointsConfigurationBuilder AddOutbound(
+            Type messageType,
+            KafkaOutboundEndpointRouter<object>.RouterFunction routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions)
+        {
+            this.AddOutbound(
+                messageType,
+                new KafkaOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, _config));
+
+            return this;
+        }
+
+        public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
+            KafkaOutboundEndpointRouter<TMessage>.RouterFunction routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions)
+        {
+            this.AddOutbound(
+                new KafkaOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, _config));
+
+            return this;
+        }
+
+        public IKafkaEndpointsConfigurationBuilder AddOutbound(
+            Type messageType,
+            KafkaOutboundEndpointRouter<object>.SingleEndpointRouterFunction routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions)
+        {
+            this.AddOutbound(
+                messageType,
+                new KafkaOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, _config));
+
+            return this;
+        }
+
+        public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
+            KafkaOutboundEndpointRouter<TMessage>.SingleEndpointRouterFunction routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions)
+        {
+            this.AddOutbound(
+                new KafkaOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, _config));
+
+            return this;
+        }
 
         public IKafkaEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
