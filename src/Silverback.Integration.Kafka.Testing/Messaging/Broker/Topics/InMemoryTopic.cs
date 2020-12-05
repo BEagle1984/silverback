@@ -63,6 +63,9 @@ namespace Silverback.Messaging.Broker.Topics
         /// <inheritdoc cref="IInMemoryTopic.PartitionsCount" />
         public int PartitionsCount => _partitions.Count;
 
+        /// <inheritdoc cref="IInMemoryTopic.TotalMessagesCount" />
+        public int TotalMessagesCount => _partitions.Sum(partition => partition.TotalMessagesCount);
+
         /// <inheritdoc cref="IInMemoryTopic.Push" />
         public Offset Push(int partition, Message<byte[]?, byte[]?> message) =>
             _partitions[partition].Add(message);

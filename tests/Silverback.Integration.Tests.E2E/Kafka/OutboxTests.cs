@@ -82,5 +82,58 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Select(envelope => ((TestEventOne)envelope.Message!).Content)
                 .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
         }
+
+        [Fact]
+        public async Task OutboxProduceStrategy_TransactionAborted_MessageNotProduced()
+        {
+            Host
+                .WithTestDbContext()
+                .ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .UseDbContext<TestDbContext>()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddMockedKafka()
+                                .AddOutboxDatabaseTable()
+                                .AddOutboxWorker(TimeSpan.FromMilliseconds(100)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .ProduceToOutbox())
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
+                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                .Run();
+
+            using (var scope = Host.ServiceProvider.CreateScope())
+            {
+                var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+                await publisher.PublishAsync(new TestEventOne());
+
+                /* Just avoid call to SaveChanges */
+            }
+
+            var dbContext = Host.ScopedServiceProvider.GetRequiredService<TestDbContext>();
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Subscriber.OutboundEnvelopes.Should().HaveCount(1);
+            Subscriber.InboundEnvelopes.Should().BeEmpty();
+
+            dbContext.Outbox.Should().BeEmpty();
+            DefaultTopic.TotalMessagesCount.Should().Be(0);
+        }
     }
 }

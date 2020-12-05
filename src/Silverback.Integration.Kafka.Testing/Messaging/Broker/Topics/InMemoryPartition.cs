@@ -52,6 +52,11 @@ namespace Silverback.Messaging.Broker.Topics
         public Offset LastOffset { get; private set; } = Offset.Unset;
 
         /// <summary>
+        ///     Gets the number of messages written into this topic.
+        /// </summary>
+        public int TotalMessagesCount { get; private set; }
+
+        /// <summary>
         ///     Writes the specified message to the partition.
         /// </summary>
         /// <param name="message">
@@ -76,6 +81,8 @@ namespace Silverback.Messaging.Broker.Topics
                     _messages.RemoveAt(0);
                     FirstOffset++;
                 }
+
+                TotalMessagesCount++;
 
                 return new Offset(LastOffset);
             }

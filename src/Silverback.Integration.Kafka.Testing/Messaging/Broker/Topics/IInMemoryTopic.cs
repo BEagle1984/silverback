@@ -26,6 +26,11 @@ namespace Silverback.Messaging.Broker.Topics
         int PartitionsCount { get; }
 
         /// <summary>
+        ///     Gets the number of messages written into this topic.
+        /// </summary>
+        int TotalMessagesCount { get; }
+
+        /// <summary>
         ///     Writes a message to the topic.
         /// </summary>
         /// <param name="partition">
