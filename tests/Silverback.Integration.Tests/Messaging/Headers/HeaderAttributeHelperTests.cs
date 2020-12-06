@@ -5,7 +5,7 @@ using System.Linq;
 using FluentAssertions;
 using Silverback.Messaging.Headers;
 using Silverback.Messaging.Messages;
-using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Headers

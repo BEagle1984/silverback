@@ -5,7 +5,6 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using Confluent.SchemaRegistry;
 using Confluent.SchemaRegistry.Serdes;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -18,21 +17,11 @@ namespace Silverback.Messaging.Serialization
     /// <typeparam name="TMessage">
     ///     The type of the messages to be serialized and/or deserialized.
     /// </typeparam>
-    public class AvroMessageSerializer<TMessage> : IKafkaMessageSerializer
+    public class AvroMessageSerializer<TMessage> : AvroMessageSerializerBase
         where TMessage : class
     {
-        /// <summary>
-        ///     Gets or sets the schema registry configuration.
-        /// </summary>
-        public SchemaRegistryConfig SchemaRegistryConfig { get; set; } = new();
-
-        /// <summary>
-        ///     Gets or sets the Avro serializer configuration.
-        /// </summary>
-        public AvroSerializerConfig AvroSerializerConfig { get; set; } = new();
-
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
-        public async ValueTask<Stream?> SerializeAsync(
+        public override async ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
@@ -44,7 +33,7 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-        public async ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
+        public override async ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
@@ -59,7 +48,7 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
-        public byte[] SerializeKey(
+        public override byte[] SerializeKey(
             string key,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)
@@ -73,7 +62,7 @@ namespace Silverback.Messaging.Serialization
         }
 
         /// <inheritdoc cref="IKafkaMessageSerializer.DeserializeKey" />
-        public string DeserializeKey(
+        public override string DeserializeKey(
             byte[] key,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context)

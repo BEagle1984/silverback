@@ -94,9 +94,7 @@ namespace Silverback.Tests.Performance
                         new("Test", "Test"),
                         new(DefaultMessageHeaders.FailedAttempts, 1),
                         new(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                        new(DefaultMessageHeaders.MessageId, "5678"),
-                        new(DefaultMessageHeaders.BatchId, "1234"),
-                        new(DefaultMessageHeaders.BatchSize, "11")
+                        new(DefaultMessageHeaders.MessageId, "5678")
                     },
                     new TestConsumerEndpoint("Test"),
                     "Test",

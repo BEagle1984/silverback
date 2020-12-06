@@ -150,7 +150,6 @@ namespace Silverback.Messaging.Messages
             }
         }
 
-        [SuppressMessage("ReSharper", "ASYNC0001", Justification = "Matches with GetAsyncEnumerator")]
         private async IAsyncEnumerable<TMessage> GetAsyncEnumerable(
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {

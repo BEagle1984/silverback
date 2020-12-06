@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Broker
     ///         meaning and is comparable.
     ///     </para>
     ///     <para>
-    ///         It can represent a Kafka offset or other similar constructs.
+    ///         It can represent a Kafka offset or another similar construct.
     ///     </para>
     ///     <para>
     ///         Being able to compare the identifiers (offsets) allows the exactly-one delivery using the

@@ -9,7 +9,7 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
-using Silverback.Tests.Integration.Newtonsoft.TestTypes.Domain;
+using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 
@@ -21,7 +21,7 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
         {
             {
                 "x-message-type",
-                "Silverback.Tests.Integration.Newtonsoft.TestTypes.Domain.TestEventOne, Silverback.Integration.Newtonsoft.Tests"
+                "Silverback.Tests.Types.Domain.TestEventOne, Silverback.Tests.Common.Integration"
             }
         };
 

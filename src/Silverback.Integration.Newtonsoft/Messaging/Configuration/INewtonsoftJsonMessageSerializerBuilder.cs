@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Newtonsoft.Json;
 using Silverback.Messaging.Serialization;
 
@@ -24,15 +25,15 @@ namespace Silverback.Messaging.Configuration
         INewtonsoftJsonMessageSerializerBuilder UseFixedType<TMessage>();
 
         /// <summary>
-        ///     Specifies the <see cref="JsonSerializerSettings" />.
+        ///     Configures the <see cref="JsonSerializerSettings" />.
         /// </summary>
-        /// <param name="settings">
-        ///     The <see cref="JsonSerializerSettings" />.
+        /// <param name="configureAction">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="JsonSerializerSettings" /> and configures it.
         /// </param>
         /// <returns>
         ///     The <see cref="JsonMessageSerializerBuilder" /> so that additional calls can be chained.
         /// </returns>
-        INewtonsoftJsonMessageSerializerBuilder WithSettings(JsonSerializerSettings settings);
+        INewtonsoftJsonMessageSerializerBuilder Configure(Action<JsonSerializerSettings> configureAction);
 
         /// <summary>
         ///     Specifies the encoding to be used.

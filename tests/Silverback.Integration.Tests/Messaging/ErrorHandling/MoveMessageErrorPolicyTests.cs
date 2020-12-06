@@ -17,8 +17,8 @@ using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.TestTypes;
-using Silverback.Tests.Integration.TestTypes.Domain;
 using Silverback.Tests.Types;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.ErrorHandling

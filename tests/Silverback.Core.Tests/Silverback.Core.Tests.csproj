@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\SilverbackBuilderExtensions.cs" Link="TestTypes\Database\SilverbackBuilderExtensions.cs" />
+    <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\SilverbackBuilderUseDbContextExtensions.cs" Link="TestTypes\Database\SilverbackBuilderUseDbContextExtensions.cs" />
     <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreDbContext`1.cs" Link="TestTypes\Database\EfCoreDbContext`1.cs" />
     <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreDbSet`1.cs" Link="TestTypes\Database\EfCoreDbSet`1.cs" />
     <Compile Include="..\..\src\Silverback.Core.EFCore30\Database\EfCoreQueryableExtensions.cs" Link="TestTypes\Database\EfCoreQueryableExtensions.cs" />

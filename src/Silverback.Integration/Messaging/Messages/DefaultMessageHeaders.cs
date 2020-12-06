@@ -45,47 +45,41 @@ namespace Silverback.Messaging.Messages
         public const string ChunksCount = "x-chunk-count";
 
         /// <summary>
-        ///     A boolean value indicating whether the message is the last one of a chunks sequence.
+        ///     A boolean value indicating whether the message is the last one of a chunks sequence, used when
+        ///     chunking is enabled.
         /// </summary>
         public const string IsLastChunk = "x-chunk-last";
 
         /// <summary>
-        ///     The <see cref="IBrokerMessageOffset" /> value of the first chunk of the same message.
+        ///     The <see cref="IBrokerMessageOffset" /> value of the first chunk of the same message, used when
+        ///     chunking is enabled.
         /// </summary>
         public const string FirstChunkOffset = "x-chunk-first-offset";
 
         /// <summary>
-        ///     The unique id assigned to the messages batch, used mostly for tracing, when batch processing is
-        ///     enabled.
-        /// </summary>
-        public const string BatchId = "x-batch-id";
-
-        /// <summary>
-        ///     The total number of messages in the batch, used mostly for tracing, when batch processing is
-        ///     enabled.
-        /// </summary>
-        public const string BatchSize = "x-batch-size";
-
-        /// <summary>
-        ///     The current <c>Activity.Id</c>, used by the <see cref="IConsumer" /> implementation to set the
-        ///     <c>Activity.ParentId</c> and enabling distributed tracing across the message broker. Note that an
-        ///     <c>Activity</c> is automatically started by the default <see cref="IProducer" /> implementation.
+        ///     Used for distributed tracing. It is set by the <see cref="IProducer" /> using the current
+        ///     <c>Activity.Id</c>. The <see cref="IConsumer" /> uses it's value to set the
+        ///     <c>Activity.ParentId</c>. Note that an <c>Activity</c> is automatically started by the default
+        ///     <see cref="IProducer" /> implementation.
         /// </summary>
         /// <remarks>
-        ///     The header is implemented according to https://www.w3.org/TR/trace-context-1/#traceparent-header.
+        ///     The header is implemented according to the W3C Trace Context proposal
+        ///     (https://www.w3.org/TR/trace-context-1/#traceparent-header).
         /// </remarks>
         public const string TraceId = "traceparent";
 
         /// <summary>
-        ///     The <c>Activity.TraceStateString</c>.
+        ///     Used for distributed tracing. It corresponds to the <c>Activity.TraceStateString</c>.
         /// </summary>
         /// <remarks>
-        ///     The header is implemented according to https://www.w3.org/TR/trace-context-1/#traceparent-header.
+        ///     The header is implemented according to the W3C Trace Context proposal
+        ///     (https://www.w3.org/TR/trace-context-1/#tracestate-header).
         /// </remarks>
         public const string TraceState = "tracestate";
 
         /// <summary>
-        ///     The string representation of the <c>Activity.Baggage</c> dictionary.
+        ///     Used for distributed tracing. It corresponds to the string representation of the
+        ///     <c>Activity.Baggage</c> dictionary.
         /// </summary>
         /// <remarks>
         ///     This is not part of the w3c standard.
@@ -96,12 +90,6 @@ namespace Silverback.Messaging.Messages
         ///     The MIME type of a binary file. See <see cref="IBinaryFileMessage" />.
         /// </summary>
         public const string ContentType = "content-type";
-
-        /// <summary>
-        ///     Used internally by the consumer pipeline to signal that the content of that chunk was replaced with
-        ///     the full message.
-        /// </summary>
-        internal const string ChunksAggregated = "x-internal-chunks-aggregated";
 
         /// <summary>
         ///     Used internally by the consumer pipeline to signal that the message has been decrypted already.

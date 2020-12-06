@@ -6,11 +6,7 @@ uid: overview
 
 ## What's Silverback?
 
-Silverback is basically two things:
-* a message bus (actually a mediator) that can be used to decouple layers or components inside an application
-* an abstraction over a message broker like Apache Kafka or RabbitMQ.
-
-Combining those two fundamental pieces allows to build reactive and resilient microservices, using a very simple and familiar programming model.
+Silverback is essentially a bus that can be either used internally to an application or connected to a message broker to integrate different applications or microservices.
 
 <figure>
 	<a href="~/images/diagrams/overview.png"><img src="~/images/diagrams/overview.png"></a>
@@ -57,37 +53,43 @@ Contains the message broker and connectors abstraction. Inbound and outbound con
 
 #### Silverback.Integration.Kafka
 
-An implementation of `Silverback.Integration` for the popular Apache Kafka message broker. It internally uses the `Confluent.Kafka` client library.
+An implementation of [Silverback.Integration](https://www.nuget.org/packages/Silverback.Integration) for the popular Apache Kafka message broker. It internally uses the `Confluent.Kafka` client library.
 
 [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka)
 
 #### Silverback.Integration.Kafka.SchemaRegistry
 
-Adds the support for Apache Avro and the schema registry on top of `Silverback.Integration.Kafka`.
+Adds the support for Apache Avro and the schema registry on top of [Silverback.Integration.Kafka](https://www.nuget.org/packages/Silverback.Integration.Kafka).
 
 [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka.SchemaRegistry?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry)
 
+#### Silverback.Integration.Kafka.Testing
+
+Includes a mock for the Kafka message broker to be used for in-memory testing.
+
+[![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka.Testing?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing)
+
 #### Silverback.Integration.RabbitMQ
 
-An implementation of `Silverback.Integration` for the popular RabbitMQ message broker. It internally uses the `RabbitMQ.Client` library.
+An implementation of [Silverback.Integration](https://www.nuget.org/packages/Silverback.Integration) for the popular RabbitMQ message broker. It internally uses the `RabbitMQ.Client` library.
 
 [![NuGet](https://buildstats.info/nuget/Silverback.Integration.RabbitMQ?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ)
 
-#### Silverback.Integration.InMemory
+#### Silverback.Integration.RabbitMQ.Testing _(coming soon)_
 
-Includes a mocked message broker to be used for testing only.
+Includes a mock for the RabbitMQ message broker to be used for in-memory testing.
 
-[![NuGet](https://buildstats.info/nuget/Silverback.Integration.InMemory?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.InMemory)
+[![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka.Testing?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing)
 
 #### Silverback.Integration.HealthChecks
 
-Contains the extensions for `Microsoft.Extensions.Diagnostics.HealthChecks` to monitor the connection to the message broker.
+Contains the extensions for [Microsoft.Extensions.Diagnostics.HealthChecks](https://www.nuget.org/packages/Microsoft.Extensions.Diagnostics.HealthChecks) to monitor the connection to the message broker.
 
 [![NuGet](https://buildstats.info/nuget/Silverback.Integration.HealthChecks?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.HealthChecks)
 
 #### Silverback.Integration.Newtonsoft
 
-Contains the legacy implementations of `IMessageSerializer`, based on Newtonsoft.Json.
+Contains the legacy implementations of <xref:Silverback.Messaging.Serialization.IMessageSerializer>, based on Newtonsoft.Json.
 
 [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Newtonsoft?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft)
 
@@ -99,7 +101,33 @@ Contains an implementation of an event store that perfectly integrates within th
 
 [![NuGet](https://buildstats.info/nuget/Silverback.EventSourcing?includePreReleases=true)](https://www.nuget.org/packages/Silverback.EventSourcing)
 
+## Glossary
 
-## Read more
+The following list serves as introduction to the terminology and types used in Silverback.
 
-Have a look at the <xref:quickstart-introduction> to see how simple it is to start working with it and how much you can achieve with very few lines of code.
+### Publisher
+An object that can be used to publish messages to the internal in-memory bus. It is represented by the <xref:Silverback.Messaging.Publishing.IPublisher> or (better) the more specific <xref:Silverback.Messaging.Publishing.IEventPublisher> and <xref:Silverback.Messaging.Publishing.ICommandPublisher> interfaces, that can be resolved via dependency injection.
+
+### Subscriber
+A method (or delegate) that is subscribed to the bus and will process some (or all) of the messages that will be published or consumed from a message broker (since those messages are automatically pushed to the internal bus).
+
+### Broker
+A message broker, like Apache Kafka or RabbitMQ. It is represented by the <xref:Silverback.Messaging.Broker.IBroker> interface and is used internally by Silverback to bind the internal bus with a message broker. It can be resolved and used directly but that shouldn't be necessary for most of the use cases.
+
+### Producer
+An object used to publish messages to the broker. It is represented by the <xref:Silverback.Messaging.Broker.IProducer> interface.
+
+### Consumer
+An object used to receive messages from the broker. It is represented by the <xref:Silverback.Messaging.Broker.IConsumer> interface.
+
+### Endpoint
+Identifies a specific topic or queue. It also contains all the settings to bind to that endpoint and is therefore specific to the message broker implementation. It is represented by an implementation of the <xref:Silverback.Messaging.IEndpoint> interface.
+
+#### Inbound Endpoint / Consumer Endpoint
+An endpoint that is consumed and whose messages are relayed into the internal bus, where they can be consumed by one or more subscribers. It is represented by an implementation of the <xref:Silverback.Messaging.IConsumerEndpoint> interface such as the <xref:Silverback.Messaging.KafkaConsumerEndpoint>.
+
+#### Outbound Endpoint / Producer Endpoint
+Silverback can be configured to automatically publish some messages to the message broker, observing the internal bus and relaying the messages matching with the configure type. The outbound/producer endpoint specifies the topic or queue where those message have to be produced. It is represented by an implementation of the <xref:Silverback.Messaging.IProducerEndpoint> interface such as the <xref:Silverback.Messaging.KafkaProducerEndpoint>.
+
+### Behavior
+Multiple behaviors are chained to build a sort of pipeline to process the messages transiting across the internal bus, the consumer or the producer. They are used to implement cross-cutting concerns, isolate responsibilities and allow for greater flexibility. Some built-in behaviors are responsible for serialization, error policies enforcement, batching, chunking, encryption, etc.

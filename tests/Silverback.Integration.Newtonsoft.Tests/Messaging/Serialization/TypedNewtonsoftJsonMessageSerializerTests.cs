@@ -8,7 +8,7 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
-using Silverback.Tests.Integration.Newtonsoft.TestTypes.Domain;
+using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 

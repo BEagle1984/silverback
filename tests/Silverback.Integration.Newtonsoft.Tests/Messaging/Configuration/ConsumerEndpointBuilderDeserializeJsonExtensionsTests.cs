@@ -2,11 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using FluentAssertions;
-using Newtonsoft.Json;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
-using Silverback.Tests.Integration.Newtonsoft.TestTypes.Domain;
 using Silverback.Tests.Types;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Configuration
@@ -36,16 +35,12 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Configuration
         }
 
         [Fact]
-        public void DeserializeJsonUsingNewtonsoft_WithSettings_SerializerAndOptionsSet()
+        public void DeserializeJsonUsingNewtonsoft_Configure_SerializerAndOptionsSet()
         {
             var builder = new TestConsumerEndpointBuilder();
 
             var endpoint = builder.DeserializeJsonUsingNewtonsoft(
-                serializer => serializer.WithSettings(
-                    new JsonSerializerSettings
-                    {
-                        MaxDepth = 42
-                    })).Build();
+                serializer => serializer.Configure(settings => { settings.MaxDepth = 42; })).Build();
 
             endpoint.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer>();
             endpoint.Serializer.As<NewtonsoftJsonMessageSerializer>().Settings.MaxDepth.Should().Be(42);
@@ -64,18 +59,14 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Configuration
         }
 
         [Fact]
-        public void DeserializeJsonUsingNewtonsoft_UseFixedTypeWithSettings_SerializerAndOptionsSet()
+        public void DeserializeJsonUsingNewtonsoft_UseFixedTypeAndConfigure_SerializerAndOptionsSet()
         {
             var builder = new TestConsumerEndpointBuilder();
 
             var endpoint = builder.DeserializeJsonUsingNewtonsoft(
                 serializer => serializer
                     .UseFixedType<TestEventOne>()
-                    .WithSettings(
-                        new JsonSerializerSettings
-                        {
-                            MaxDepth = 42
-                        })).Build();
+                    .Configure(settings => { settings.MaxDepth = 42; })).Build();
 
             endpoint.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<TestEventOne>>();
             endpoint.Serializer.As<NewtonsoftJsonMessageSerializer<TestEventOne>>().Settings.MaxDepth.Should().Be(42);

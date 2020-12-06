@@ -16,6 +16,10 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     /// <summary>
     ///     This policy moves the message that failed to be processed to the configured endpoint.
     /// </summary>
+    /// <remarks>
+    ///     This policy can be used also to move the message at the end of the current topic to retry it later on.
+    ///     The number of retries can be limited using `MaxFailedAttempts`.
+    /// </remarks>
     public class MoveMessageErrorPolicy : ErrorPolicyBase
     {
         private Action<IOutboundEnvelope, Exception>? _transformationAction;

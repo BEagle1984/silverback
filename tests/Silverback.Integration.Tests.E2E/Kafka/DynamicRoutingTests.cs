@@ -78,7 +78,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonOutboundRouter<TestOutboundRouter>()
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://tests"; })
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<TestEventOne>(
                                     (message, _, endpointsDictionary) => message.Content switch
                                     {
@@ -151,7 +151,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonOutboundRouter<TestOutboundRouter>()
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://tests"; })
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<TestEventOne>(
                                     (message, _, endpointsDictionary) => message.Content switch
                                     {

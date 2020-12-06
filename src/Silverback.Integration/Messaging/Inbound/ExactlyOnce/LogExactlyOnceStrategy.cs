@@ -11,8 +11,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.Inbound.ExactlyOnce
 {
     /// <summary>
-    ///     Uses an <see cref="IInboundLog" /> to keep track of each processed message and guarantee that each
-    ///     one is processed only once.
+    ///     Uses an <see cref="IInboundLog" /> to keep track of the processed message identifiers and guarantee
+    ///     that each message is processed only once.
     /// </summary>
     public class LogExactlyOnceStrategy : IExactlyOnceStrategy
     {

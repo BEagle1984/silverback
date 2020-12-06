@@ -7,8 +7,8 @@ using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model;
-using Silverback.Tests.Integration.TestTypes.Domain;
 using Silverback.Tests.Types;
+using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 

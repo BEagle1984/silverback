@@ -5,7 +5,7 @@ using System;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
-using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Serialization
@@ -36,7 +36,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             {
                 {
                     "x-message-type",
-                    "Silverback.Tests.Integration.TestTypes.Domain.TestEventOne, Silverback.Integration.Tests, Version=123.123.123.123"
+                    "Silverback.Tests.Types.Domain.TestEventOne, Silverback.Tests.Common.Integration, Version=123.123.123.123"
                 }
             };
 
@@ -85,7 +85,7 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             {
                 {
                     "x-message-type",
-                    "Silverback.Tests.Integration.TestTypes.Domain.TestEventOne, Silverback.Integration.Tests"
+                    "Silverback.Tests.Types.Domain.TestEventOne, Silverback.Tests.Common.Integration"
                 }
             };
 

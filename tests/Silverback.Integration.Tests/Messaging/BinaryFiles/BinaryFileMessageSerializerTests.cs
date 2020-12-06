@@ -9,7 +9,7 @@ using FluentAssertions;
 using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
-using Silverback.Tests.Integration.TestTypes.Domain;
+using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 

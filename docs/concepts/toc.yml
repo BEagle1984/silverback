@@ -1,87 +1,66 @@
 - name: Overview
   href: overview.md
-- name: Quickstart
+- name: Bus
   items:
-  - name: Introduction
-    href: 01-quickstart/01-introduction.md
-  - name: Using the Bus
-    items:
-    - name: Enabling the Bus
-      href: 01-quickstart/02-bus/01-bus.md
-    - name: Creating the Message model
-      href: 01-quickstart/02-bus/02-model.md
-    - name: Publish
-      href: 01-quickstart/02-bus/03-publish.md
-    - name: Subscribe
-      href: 01-quickstart/02-bus/04-subscribe.md
-  - name: DDD and Domain Events
-    href: 01-quickstart/03-domain-events.md
-  - name: Integration using a Message Broker
-    items:
-    - name: Connecting to a Message Broker
-      href: 01-quickstart/04-message-broker/01-message-broker.md
-    - name: Translating Messages
-      href: 01-quickstart/04-message-broker/02-translating.md
-    - name: Message Headers
-      href: 01-quickstart/04-message-broker/03-headers.md
+  - name: Enabling the Bus
+    href: bus/enabling.md
+  - name: Creating the Message model
+    href: bus/model.md
+  - name: Publish
+    href: bus/publish.md
+  - name: Subscribe
+    href: bus/subscribe.md
   - name: Behaviors
-    href: 01-quickstart/05-behaviors.md
-  - name: Testing
-    href: 01-quickstart/06-testing.md
-  - name: Event Sourcing
-    href: 01-quickstart/07-event-sourcing.md
-  - name: Logging
-    href: 01-quickstart/08-logging.md
-- name: Broker Configuration
+    href: bus/behaviors.md
+- name: Message Broker
   items:
-    - name: Endpoint
-      href: 02-configuration/01-endpoint.md
-    - name: Outbound Connector
-      href: 02-configuration/02-outbound.md
-    - name: Inbound Connector
-      href: 02-configuration/03-inbound.md
-    - name: Mixed Configurations
-      href: 02-configuration/04-mixed.md
-- name: Advanced
-  items:
+    - name: Connecting
+      href: broker/connecting.md
+    - name: Outbound Endpoint
+      href: broker/outbound.md
+    - name: Inbound Endpoint
+      href: broker/inbound.md
+    - name: Translating Messages
+      href: broker/translating-messages.md
+    - name: Message Headers
+      href: broker/headers.md
     - name: Serialization
-      href: 03-advanced/01-serialization.md
+      href: broker/serialization.md
     - name: Chunking
-      href: 03-advanced/02-chunking.md
+      href: broker/chunking.md
     - name: Encryption
-      href: 03-advanced/03-encryption.md
+      href: broker/encryption.md
     - name: Binary Files
-      href: 03-advanced/04-binary-files.md
-    - name: Observable Bus
-      href: 03-advanced/05-rx.md
-    - name: Using IBroker
-      href: 03-advanced/06-broker.md
+      href: broker/binary-files.md
+    - name: Streaming
+      href: broker/streaming.md
     - name: Message Identifier
-      href: 03-advanced/07-message-id.md
+      href: broker/message-id.md
     - name: IInboundEnvelope
-      href: 03-advanced/08-iinboundenvelope.md
-- name: Kafka Specific
-  items:
-    - name: Message Key (partitioning)
-      href: 04-kafka/01-kafka-message-key.md
-    - name: Multiple Consumer Groups (in same process)
-      href: 04-kafka/02-multiple-consumer-groups.md
-    - name: Kafka Events
-      href: 04-kafka/03-kafka-events.md
-- name: RabbitMQ Specific
-  items:
-    - name: Routing Key
-      href: 05-rabbit/01-routing-key.md
-- name: Extras
-  items:
-    - name: Sample DbContext (EF Core)
-      href: 06-extras/01-dbcontext.md
-    - name: Distributed Background Services
-      href: 06-extras/02-background-services.md
-- name: Source Code
-  items:
-    - name: Contributing
-      href: 09-source/01-contributing.md
-    - name: Samples
-      href: 09-source/02-samples.md
-
+      href: broker/inboundenvelope.md
+    - name: Behaviors pipeline
+      href: broker/behaviors.md
+    - name: Testing
+      href: broker/testing.md
+    - name: Kafka Specific
+      items:
+        - name: Partitioning and Key
+          href: broker/kafka/kafka-partitioning.md
+        - name: Multiple Consumer Groups (in same process)
+          href: broker/kafka/multiple-consumer-groups.md
+        - name: Kafka Events
+          href: broker/kafka/kafka-events.md
+    - name: RabbitMQ Specific
+      items:
+        - name: Routing Key
+          href: broker/rabbit/routing-key.md
+- name: DDD and Domain Events
+  href: domain-events.md
+- name: Event Sourcing
+  href: event-sourcing.md
+- name: Logging
+  href: logging.md
+- name: Sample DbContext (EF Core)
+  href: dbcontext.md
+- name: Distributed Background Services
+  href: background-services.md

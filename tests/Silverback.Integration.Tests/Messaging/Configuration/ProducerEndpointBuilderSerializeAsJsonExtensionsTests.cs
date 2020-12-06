@@ -5,8 +5,8 @@ using System.Text.Json;
 using FluentAssertions;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
-using Silverback.Tests.Integration.TestTypes.Domain;
 using Silverback.Tests.Types;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Configuration

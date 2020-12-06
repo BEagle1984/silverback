@@ -1,12 +1,14 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Newtonsoft.Json;
 using Silverback.Messaging.Serialization;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
-    /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder"/>
+    /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder" />
     public class NewtonsoftJsonMessageSerializerBuilder : INewtonsoftJsonMessageSerializerBuilder
     {
         private NewtonsoftJsonMessageSerializerBase? _serializer;
@@ -15,21 +17,26 @@ namespace Silverback.Messaging.Configuration
 
         private MessageEncoding? _encoding;
 
-        /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.UseFixedType{TMessage}"/>
+        /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.UseFixedType{TMessage}" />
         public INewtonsoftJsonMessageSerializerBuilder UseFixedType<TMessage>()
         {
             _serializer = new NewtonsoftJsonMessageSerializer<TMessage>();
             return this;
         }
 
-        /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.WithSettings"/>
-        public INewtonsoftJsonMessageSerializerBuilder WithSettings(JsonSerializerSettings settings)
+        /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.Configure" />
+        public INewtonsoftJsonMessageSerializerBuilder Configure(Action<JsonSerializerSettings> configureAction)
         {
+            Check.NotNull(configureAction, nameof(configureAction));
+
+            var settings = new JsonSerializerSettings();
+            configureAction.Invoke(settings);
             _settings = settings;
+
             return this;
         }
 
-        /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.WithEncoding"/>
+        /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.WithEncoding" />
         public INewtonsoftJsonMessageSerializerBuilder WithEncoding(MessageEncoding encoding)
         {
             _encoding = encoding;

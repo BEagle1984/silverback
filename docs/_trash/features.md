@@ -26,7 +26,7 @@ The message broker integration happens configuratively at startup and it is then
 
 Silverback provides a package to connect with the very popular [Apache Kafka](https://kafka.apache.org/) message broker or the equally popular [RabbitMQ](https://www.rabbitmq.com/).
 
-Integrating other message brokers wouldn't be a big deal and some may be added in the future...or feel free to create your own `IBroker` implementation.
+Integrating other message brokers wouldn't be a big deal and some may be added in the future...or feel free to create your own <xref:Silverback.Messaging.Broker.IBroker> implementation.
 
 ## DDD and transactional messaging
 
@@ -37,11 +37,11 @@ Silverback integrates of seemlessly with EntityFramework Core (but could be exte
 ## Error handling policies
 
 Sooner or later you will run into an issue with a message that cannot be processed and you therefore have to handle the exception and decide what to do with the message.
-With Silverback you can configuratively specify the error handling policies for each inbound connector. The built-in policies are:
-* Skip: simply ingnore the message
+With Silverback you can configure some error handling policies for each inbound endpoint. The built-in policies are:
+* Skip: simply ignore the message
 * Retry: retry the same message (delays can be specified)
 * Move: move the message to another topic/queue (or re-enqueue it at the end of the same one)
-We believe that combining this three policies you will be able to implement pretty much all use cases.
+We believe that combining this three policies you will be able to implement pretty much any use case.
 
 ## Distributed tracing
 

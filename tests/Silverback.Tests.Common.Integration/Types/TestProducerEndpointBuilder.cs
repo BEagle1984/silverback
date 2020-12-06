@@ -8,8 +8,16 @@ namespace Silverback.Tests.Types
     public class TestProducerEndpointBuilder
         : ProducerEndpointBuilder<TestProducerEndpoint, TestProducerEndpointBuilder>
     {
+        private string _topicName = "test";
+
         protected override TestProducerEndpointBuilder This => this;
 
-        protected override TestProducerEndpoint CreateEndpoint() => new("test");
+        public TestProducerEndpointBuilder ProduceTo(string topicName)
+        {
+            _topicName = topicName;
+            return this;
+        }
+
+        protected override TestProducerEndpoint CreateEndpoint() => new(_topicName);
     }
 }

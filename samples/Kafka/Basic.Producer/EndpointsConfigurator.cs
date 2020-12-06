@@ -1,7 +1,4 @@
-﻿using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
-using Silverback.Messaging.Messages;
-using Silverback.Messaging.Sequences.Chunking;
+﻿using Silverback.Messaging.Configuration;
 using Silverback.Samples.Kafka.Basic.Common;
 
 namespace Silverback.Samples.Kafka.Basic.Producer

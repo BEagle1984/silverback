@@ -31,8 +31,8 @@ This package It contains the storage implementation to integrate Silverback with
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Silverback.Core.EFCore30\Database\SilverbackBuilderExtensions.cs">
-      <Link>Database\DependencyInjectionExtensions.cs</Link>
+    <Compile Include="..\Silverback.Core.EFCore30\Database\SilverbackBuilderUseDbContextExtensions.cs">
+      <Link>Database\SilverbackBuilderUseDbContextExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Silverback.Core.EFCore30\Database\EfCoreDbContext`1.cs">
       <Link>Database\EfCoreDbContext`1.cs</Link>

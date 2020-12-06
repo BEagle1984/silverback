@@ -8,8 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
-using Silverback.Tests.Integration.TestTypes.Domain;
 using Silverback.Tests.Types;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Configuration

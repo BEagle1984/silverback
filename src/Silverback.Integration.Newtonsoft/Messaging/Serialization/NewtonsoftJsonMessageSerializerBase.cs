@@ -3,7 +3,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,14 +36,12 @@ namespace Silverback.Messaging.Serialization
         };
 
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
-        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
         public abstract ValueTask<Stream?> SerializeAsync(
             object? message,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context);
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
-        [SuppressMessage("", "ASYNC0002", Justification = "Async suffix is correct for ValueTask")]
         public abstract ValueTask<(object? Message, Type MessageType)> DeserializeAsync(
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,

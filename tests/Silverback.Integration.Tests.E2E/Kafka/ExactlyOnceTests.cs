@@ -38,7 +38,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInMemoryInboundLog())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
@@ -108,7 +108,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInboundLogDatabaseTable())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
@@ -180,7 +180,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInMemoryOffsetStore())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
@@ -250,7 +250,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddOffsetStoreDatabaseTable())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint

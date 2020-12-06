@@ -42,7 +42,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddOutboxWorker(TimeSpan.FromMilliseconds(100)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
@@ -101,7 +101,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddOutboxWorker(TimeSpan.FromMilliseconds(100)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(clientConfig => { clientConfig.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)

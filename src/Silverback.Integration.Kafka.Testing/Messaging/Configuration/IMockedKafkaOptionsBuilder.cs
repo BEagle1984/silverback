@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Configuration
     public interface IMockedKafkaOptionsBuilder
     {
         /// <summary>
-        ///     Specifies the default number of partitions to be created per each topic.
+        ///     Specifies the default number of partitions to be created per each topic. The default is 5.
         /// </summary>
         /// <param name="partitionsCount">
         ///     The number of partitions.

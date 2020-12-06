@@ -11,8 +11,8 @@ using NSubstitute.ExceptionExtensions;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.HealthChecks;
 using Silverback.Messaging.Outbound.Routing;
-using Silverback.Tests.Integration.TestTypes.Domain;
 using Silverback.Tests.Types;
+using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 

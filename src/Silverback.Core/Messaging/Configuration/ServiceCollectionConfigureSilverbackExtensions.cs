@@ -12,9 +12,8 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class ServiceCollectionConfigureSilverbackExtensions
     {
         /// <summary>
-        ///     Adds the minimum essential Silverback services to the <see cref="IServiceCollection" />. Additional
-        ///     services including broker support, inbound/outbound connectors and database bindings must be added
-        ///     separately using the returned <see cref="ISilverbackBuilder" />.
+        ///     Returns an <see cref="ISilverbackBuilder" /> instance that can be used to configure the additional
+        ///     services.
         /// </summary>
         /// <param name="services">
         ///     The <see cref="IServiceCollection" /> to add the services to.

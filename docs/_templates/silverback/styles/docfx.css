@@ -190,7 +190,7 @@ h6,
 #wrapper {
   min-height: 100%;
   position: relative;
-  background: #ddd;
+  background: #fff;
 }
 .body-content {
   background: #fff;
@@ -1141,6 +1141,7 @@ div.embeddedvideo iframe {
 }
 .tabGroup a[role="tab"] {
   color: #6e6e6e;
+  font-size: 0.8em;
   box-sizing: border-box;
   display: inline-block;
   padding: 5px 7.5px;

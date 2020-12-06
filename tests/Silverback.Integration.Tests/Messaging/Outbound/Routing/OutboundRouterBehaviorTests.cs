@@ -12,8 +12,8 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
-using Silverback.Tests.Integration.TestTypes.Domain;
 using Silverback.Tests.Types;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Outbound.Routing

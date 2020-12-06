@@ -80,8 +80,8 @@ namespace Silverback.Messaging
 
         /// <summary>
         ///     Gets or sets a value indicating whether the partitions must be processed independently.
-        ///     When <c>true</c> a stream will published per each partition and the sequences (
-        ///     <see cref="ChunkSequence" />, <see cref="BatchSequence" />, ...) cannot span across the partitions.
+        ///     When <c>true</c> a stream will published per each partition and the sequences
+        ///     (<see cref="ChunkSequence" />, <see cref="BatchSequence" />, ...) cannot span across the partitions.
         ///     The default is <c>true</c>.
         /// </summary>
         public bool ProcessPartitionsIndependently { get; set; } = true;

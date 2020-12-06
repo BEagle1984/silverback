@@ -83,7 +83,8 @@ title: "Home"
                 <i class="icon fas fa-exclamation-triangle"></i>
                 <h2>Error handling policies</h2>
                 <p>
-                    Sooner or later you will run into an issue with a message that cannot be processed and you therefore have to handle the exception and decide what to do with the message. With Silverback you can configuratively specify the error handling policies for each inbound connector. The built-in policies are:
+                    Sooner or later you will run into an issue with a message that cannot be processed and you therefore have to handle the exception and decide what to do with the message.
+With Silverback you can configure some error handling policies for each inbound endpoint. The built-in policies are:
                     <ul>
                         <li><b>Skip</b>: simply ignore the message</li>
                         <li><b>Retry</b>: retry the same message (delays can be specified)</li>
@@ -91,7 +92,7 @@ title: "Home"
                     </ul>
                 </p>
                 <p>
-                    Combining this three policies you will be able to implement pretty much all use cases.
+                    Combining this three policies you will be able to implement pretty much any use case.
                 </p>
             </div>
         </div>

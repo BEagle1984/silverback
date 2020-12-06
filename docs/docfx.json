@@ -76,11 +76,18 @@
     "template": [
       "_templates/silverback"
     ],
-    "postProcessors": [ "ExtractSearchIndex" ],
+    "postProcessors": [
+      "ExtractSearchIndex"
+    ],
     "markdownEngineName": "markdig",
     "noLangKeyword": false,
     "keepFileLink": false,
     "cleanupCacheHistory": false,
-    "disableGitFeatures": false
+    "disableGitFeatures": false,
+    "sitemap": {
+      "baseUrl": "https://www.silverback-messaging.net/docfx",
+      "priority": 0.5,
+      "changefreq": "weekly"
+    }
   }
 }

@@ -61,9 +61,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     {
                         new(DefaultMessageHeaders.FailedAttempts, 1),
                         new(DefaultMessageHeaders.MessageType, "Something.Xy"),
-                        new(DefaultMessageHeaders.MessageId, "1234"),
-                        new(DefaultMessageHeaders.BatchId, "3"),
-                        new(DefaultMessageHeaders.BatchSize, "10")
+                        new(DefaultMessageHeaders.MessageId, "1234")
                     },
                     new TestOffset(),
                     new TestConsumerEndpoint("Test")

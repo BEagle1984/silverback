@@ -56,8 +56,8 @@ Silverback is split into multiple nuget packages available on nuget.org.
 [Silverback.Integration][Nuget-Integration] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration)
 [Silverback.Integration.Kafka][Nuget-Integration.Kafka] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka)
 [Silverback.Integration.Kafka.SchemaRegistry][Nuget-Integration.Kafka.SchemaRegistry] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka.SchemaRegistry?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry)
+[Silverback.Integration.Kafka.Testing][Nuget-Integration.Kafka.Testing] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka.Testing?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing)
 [Silverback.Integration.RabbitMQ][Nuget-Integration.RabbitMQ] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.RabbitMQ?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ)
-[Silverback.Integration.InMemory][Nuget-Integration.InMemory] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.InMemory?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.InMemory)
 [Silverback.Integration.HealthChecks][Nuget-Integration.HealthChecks] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.HealthChecks?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.HealthChecks)
 [Silverback.Integration.Newtonsoft][Nuget-Integration.Newtonsoft] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Newtonsoft?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft)
 
@@ -81,7 +81,7 @@ This code is licensed under MIT license (see [LICENSE](https://github.com/BEagle
 [Nuget-Integration]: https://www.nuget.org/packages/Silverback.Integration/
 [Nuget-Integration.Kafka]: https://www.nuget.org/packages/Silverback.Integration.Kafka/
 [Nuget-Integration.Kafka.SchemaRegistry]: https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/
+[Nuget-Integration.Kafka.Testing]: https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing/
 [Nuget-Integration.RabbitMQ]: https://www.nuget.org/packages/Silverback.Integration.RabbitMQ/
-[Nuget-Integration.InMemory]: https://www.nuget.org/packages/Silverback.Integration.InMemory/
 [Nuget-Integration.HealthChecks]: https://www.nuget.org/packages/Silverback.Integration.HealthChecks/
 [Nuget-Integration.Newtonsoft]: https://www.nuget.org/packages/Silverback.Integration.Newtonsoft/

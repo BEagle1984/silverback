@@ -1,3 +1,5 @@
+- name: Samples
+  href: samples.md
 - name: Kafka
   items:
   - name: Basic
