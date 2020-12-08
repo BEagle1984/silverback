@@ -20,7 +20,8 @@ namespace Silverback.Messaging.Configuration
     /// <typeparam name="TBuilder">
     ///     The actual builder type.
     /// </typeparam>
-    public abstract class ProducerEndpointBuilder<TEndpoint, TBuilder> : EndpointBuilder<TEndpoint, TBuilder>, IProducerEndpointBuilder<TBuilder>
+    public abstract class ProducerEndpointBuilder<TEndpoint, TBuilder>
+        : EndpointBuilder<TEndpoint, TBuilder>, IProducerEndpointBuilder<TBuilder>
         where TEndpoint : ProducerEndpoint
         where TBuilder : IProducerEndpointBuilder<TBuilder>
     {
@@ -29,6 +30,18 @@ namespace Silverback.Messaging.Configuration
         private int? _chunkSize;
 
         private bool? _alwaysAddChunkHeaders;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ProducerEndpointBuilder{TEndpoint,TBuilder}" /> class.
+        /// </summary>
+        /// <param name="endpointsConfigurationBuilder">
+        ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the
+        ///     builder.
+        /// </param>
+        protected ProducerEndpointBuilder(IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
+            : base(endpointsConfigurationBuilder)
+        {
+        }
 
         /// <inheritdoc cref="IProducerEndpointBuilder{TBuilder}.SerializeUsing" />
         public TBuilder SerializeUsing(IMessageSerializer serializer) => UseSerializer(serializer);

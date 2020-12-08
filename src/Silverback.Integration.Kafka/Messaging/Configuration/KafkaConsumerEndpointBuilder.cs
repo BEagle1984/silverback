@@ -45,7 +45,14 @@ namespace Silverback.Messaging.Configuration
         ///     The existing <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaConsumerConfig" />.
         /// </param>
-        public KafkaConsumerEndpointBuilder(KafkaClientConfig? clientConfig = null)
+        /// <param name="endpointsConfigurationBuilder">
+        ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the
+        ///     builder.
+        /// </param>
+        public KafkaConsumerEndpointBuilder(
+            KafkaClientConfig? clientConfig = null,
+            IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
+            : base(endpointsConfigurationBuilder)
         {
             _clientConfig = clientConfig;
         }

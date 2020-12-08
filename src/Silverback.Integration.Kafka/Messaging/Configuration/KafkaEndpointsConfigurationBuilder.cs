@@ -12,8 +12,6 @@ namespace Silverback.Messaging.Configuration
     {
         private readonly IEndpointsConfigurationBuilder _endpointsConfigurationBuilder;
 
-        private readonly KafkaClientConfig _config = new();
-
         public KafkaEndpointsConfigurationBuilder(IEndpointsConfigurationBuilder endpointsConfigurationBuilder)
         {
             _endpointsConfigurationBuilder = endpointsConfigurationBuilder;
@@ -21,11 +19,13 @@ namespace Silverback.Messaging.Configuration
 
         public IServiceProvider ServiceProvider => _endpointsConfigurationBuilder.ServiceProvider;
 
+        internal KafkaClientConfig ClientConfig { get; } = new();
+
         public IKafkaEndpointsConfigurationBuilder Configure(Action<KafkaClientConfig> configAction)
         {
             Check.NotNull(configAction, nameof(configAction));
 
-            configAction.Invoke(_config);
+            configAction.Invoke(ClientConfig);
 
             return this;
         }
@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Configuration
         {
             this.AddOutbound(
                 messageType,
-                new KafkaOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, _config));
+                new KafkaOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, ClientConfig));
 
             return this;
         }
@@ -51,7 +51,7 @@ namespace Silverback.Messaging.Configuration
             IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions)
         {
             this.AddOutbound(
-                new KafkaOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, _config));
+                new KafkaOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, ClientConfig));
 
             return this;
         }
@@ -63,7 +63,7 @@ namespace Silverback.Messaging.Configuration
         {
             this.AddOutbound(
                 messageType,
-                new KafkaOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, _config));
+                new KafkaOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, ClientConfig));
 
             return this;
         }
@@ -73,7 +73,7 @@ namespace Silverback.Messaging.Configuration
             IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions)
         {
             this.AddOutbound(
-                new KafkaOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, _config));
+                new KafkaOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, ClientConfig));
 
             return this;
         }
@@ -85,7 +85,7 @@ namespace Silverback.Messaging.Configuration
             Check.NotNull(messageType, nameof(messageType));
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
 
-            var builder = new KafkaProducerEndpointBuilder(_config);
+            var builder = new KafkaProducerEndpointBuilder(ClientConfig, this);
             endpointBuilderAction.Invoke(builder);
 
             _endpointsConfigurationBuilder.AddOutbound(messageType, builder.Build());
@@ -99,7 +99,7 @@ namespace Silverback.Messaging.Configuration
         {
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
 
-            var builder = new KafkaConsumerEndpointBuilder(_config);
+            var builder = new KafkaConsumerEndpointBuilder(ClientConfig, this);
             endpointBuilderAction.Invoke(builder);
 
             _endpointsConfigurationBuilder.AddInbound(builder.Build(), consumersCount);

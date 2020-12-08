@@ -25,6 +25,23 @@ namespace Silverback.Messaging.Configuration
         private EncryptionSettings? _encryptionSettings;
 
         /// <summary>
+        ///     Initializes a new instance of the <see cref="EndpointBuilder{TEndpoint,TBuilder}" /> class.
+        /// </summary>
+        /// <param name="endpointsConfigurationBuilder">
+        ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the
+        ///     builder.
+        /// </param>
+        protected EndpointBuilder(IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
+        {
+            EndpointsConfigurationBuilder = endpointsConfigurationBuilder;
+        }
+
+        /// <summary>
+        ///     Gets the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the builder.
+        /// </summary>
+        public IEndpointsConfigurationBuilder? EndpointsConfigurationBuilder { get; }
+
+        /// <summary>
         ///     Gets this instance.
         /// </summary>
         /// <remarks>

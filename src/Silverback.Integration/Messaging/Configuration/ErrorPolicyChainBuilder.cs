@@ -18,11 +18,21 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         ///     Initializes a new instance of the <see cref="ErrorPolicyChainBuilder" /> class.
         /// </summary>
-        internal ErrorPolicyChainBuilder()
+        /// <param name="endpointsConfigurationBuilder">
+        ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the
+        ///     builder.
+        /// </param>
+        public ErrorPolicyChainBuilder(IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
         {
+            EndpointsConfigurationBuilder = endpointsConfigurationBuilder;
         }
 
-        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenStop"/>>
+        /// <summary>
+        ///     Gets the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the builder.
+        /// </summary>
+        public IEndpointsConfigurationBuilder? EndpointsConfigurationBuilder { get; }
+
+        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenStop" />
         public IErrorPolicyChainBuilder ThenStop(Action<StopConsumerErrorPolicy>? policyConfigurationAction = null)
         {
             var policy = new StopConsumerErrorPolicy();
@@ -31,7 +41,7 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenSkip"/>>
+        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenSkip" />
         public IErrorPolicyChainBuilder ThenSkip(Action<SkipMessageErrorPolicy>? policyConfigurationAction = null)
         {
             var policy = new SkipMessageErrorPolicy();
@@ -40,24 +50,24 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenRetry(Action{RetryErrorPolicy})"/>>
+        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenRetry(Action{RetryErrorPolicy})" />
         public IErrorPolicyChainBuilder ThenRetry(Action<RetryErrorPolicy> policyConfigurationAction) =>
             ThenRetry(null, null, null, policyConfigurationAction);
 
-        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenRetry(int, Action{RetryErrorPolicy})"/>>
+        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenRetry(int, Action{RetryErrorPolicy})" />
         public IErrorPolicyChainBuilder ThenRetry(
             int retriesCount,
             Action<RetryErrorPolicy> policyConfigurationAction)
             => ThenRetry(retriesCount, null, null, policyConfigurationAction);
 
-        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenRetry(int, TimeSpan, Action{RetryErrorPolicy})"/>>
+        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenRetry(int, TimeSpan, Action{RetryErrorPolicy})" />
         public IErrorPolicyChainBuilder ThenRetry(
             int retriesCount,
             TimeSpan initialDelay,
             Action<RetryErrorPolicy> policyConfigurationAction)
             => ThenRetry(retriesCount, initialDelay, null, policyConfigurationAction);
 
-        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenRetry(int?, TimeSpan?, TimeSpan?, Action{RetryErrorPolicy}?)"/>>
+        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenRetry(int?, TimeSpan?, TimeSpan?, Action{RetryErrorPolicy}?)" />
         public IErrorPolicyChainBuilder ThenRetry(
             int? retriesCount = null,
             TimeSpan? initialDelay = null,
@@ -75,7 +85,7 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenMove(IProducerEndpoint, Action{MoveMessageErrorPolicy}?)"/>>
+        /// <inheritdoc cref="IErrorPolicyChainBuilder.ThenMove(IProducerEndpoint, Action{MoveMessageErrorPolicy}?)" />
         public IErrorPolicyChainBuilder ThenMove(
             IProducerEndpoint endpoint,
             Action<MoveMessageErrorPolicy>? policyConfigurationAction = null)

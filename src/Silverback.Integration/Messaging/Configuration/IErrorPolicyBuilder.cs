@@ -110,7 +110,7 @@ namespace Silverback.Messaging.Configuration
             Action<RetryErrorPolicy>? policyConfigurationAction = null);
 
         /// <summary>
-        ///     Adds a <see cref="MoveMessageErrorPolicy" /> that moves the messages that fail to  be processed to the
+        ///     Adds a <see cref="MoveMessageErrorPolicy" /> that moves the messages that fail to be processed to the
         ///     configured endpoint.
         /// </summary>
         /// <param name="endpoint">

@@ -37,6 +37,18 @@ namespace Silverback.Messaging.Configuration
 
         private bool? _throwIfUnhandled;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ConsumerEndpointBuilder{TEndpoint,TBuilder}" /> class.
+        /// </summary>
+        /// <param name="endpointsConfigurationBuilder">
+        ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the
+        ///     builder.
+        /// </param>
+        protected ConsumerEndpointBuilder(IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
+            : base(endpointsConfigurationBuilder)
+        {
+        }
+
         /// <inheritdoc cref="IConsumerEndpointBuilder{TBuilder}.DeserializeUsing" />
         public TBuilder DeserializeUsing(IMessageSerializer serializer) =>
             UseSerializer(Check.NotNull(serializer, nameof(serializer)));
@@ -57,7 +69,7 @@ namespace Silverback.Messaging.Configuration
         {
             Check.NotNull(errorPolicyBuilderAction, nameof(errorPolicyBuilderAction));
 
-            var errorPolicyBuilder = new ErrorPolicyBuilder();
+            var errorPolicyBuilder = new ErrorPolicyBuilder(EndpointsConfigurationBuilder);
             errorPolicyBuilderAction.Invoke(errorPolicyBuilder);
 
             return OnError(errorPolicyBuilder.Build());

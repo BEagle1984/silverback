@@ -781,5 +781,105 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
             SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
+
+        [Fact]
+        public async Task MovePolicy_DifferentEndpoint_MessageMoved()
+        {
+            var message = new TestEventOne
+            {
+                Content = "Hello E2E!"
+            };
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(
+                                            policy => policy.MoveToKafkaTopic(
+                                                moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber((IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(message);
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+
+            SpyBehavior.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(SpyBehavior.OutboundEnvelopes[0].Message);
+            SpyBehavior.OutboundEnvelopes[1].Endpoint.Name.Should().Be("other-topic");
+
+            GetTopic("other-topic").TotalMessagesCount.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task MovePolicy_SameTopic_MessageMovedAndRetried()
+        {
+            var message = new TestEventOne
+            {
+                Content = "Hello E2E!"
+            };
+            var tryCount = 0;
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(
+                                            policy => policy.MoveToKafkaTopic(
+                                                moveEndpoint => moveEndpoint.ProduceTo(DefaultTopicName),
+                                                movePolicy => movePolicy.MaxFailedAttempts(10)))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
+                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddDelegateSubscriber(
+                            (IIntegrationEvent _) =>
+                            {
+                                tryCount++;
+                                throw new InvalidOperationException("Retry!");
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(message);
+
+            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+
+            SpyBehavior.OutboundEnvelopes.Should().HaveCount(11);
+            tryCount.Should().Be(11);
+            SpyBehavior.InboundEnvelopes.Should().HaveCount(11);
+            SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+        }
     }
 }
