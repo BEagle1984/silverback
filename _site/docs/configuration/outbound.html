@@ -1,0 +1,1186 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.17.0 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Outbound Connector - Silverback - Page </title>
+<meta name="description" content="The outbound connector is used to automatically relay the integration messages (published to the internal bus) to the message broker. Multiple outbound endpoints can be configured and Silverback will route the messages according to their type (based on the TMessage parameter passed to the AddOutbound&lt;TMessage&gt; method.">
+
+
+  <meta name="author" content="Sergio Aquilini">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Silverback">
+<meta property="og:title" content="Outbound Connector">
+<meta property="og:url" content="http://localhost:4000/silverback/docs/configuration/outbound">
+
+
+  <meta property="og:description" content="The outbound connector is used to automatically relay the integration messages (published to the internal bus) to the message broker. Multiple outbound endpoints can be configured and Silverback will route the messages according to their type (based on the TMessage parameter passed to the AddOutbound&lt;TMessage&gt; method.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-12-13T12:38:35+01:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/silverback/docs/configuration/outbound">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sergio Aquilini",
+      "url": "http://localhost:4000/silverback/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/silverback/feed.xml" type="application/atom+xml" rel="alternate" title="Silverback Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/silverback/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="180x180" href="/silverback/assets/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/silverback/assets/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/silverback/assets/icons/favicon-16x16.png">
+<link rel="manifest" href="/silverback/assets/icons/site.webmanifest">
+<link rel="mask-icon" href="/silverback/assets/icons/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/silverback/"><img src="/silverback/assets/images/logo.png" alt=""></a>
+        
+        
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/silverback/docs/introduction" >Documentation</a>
+            </li><li class="masthead__menu-item">
+              <a href="/silverback/docs/releases" >Releases</a>
+            </li><li class="masthead__menu-item">
+              <a href="/silverback/about" >About</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://github.com/BEagle1984/silverback/" >GitHub</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle Menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/introduction" class="">Introduction</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/features" class="">Features</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/releases" class="">Releases</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <span>Quickstart</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart" class="">Introduction and Glossary</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                <span>Using the Bus</span>
+              
+
+              
+              <ul>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/bus" class="">Enabling the Bus</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/model" class="">Creating the Message model</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/publish" class="">Publishing</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/subscribe" class="">Subscribing</a></li>
+                
+              </ul>
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/ddd" class="">DDD and Domain Events</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                <span>Integration using a Message Broker</span>
+              
+
+              
+              <ul>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/message-broker" class="">Connecting a Message Broker</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/translating" class="">Translating Messages</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/headers" class="">Message Headers</a></li>
+                
+              </ul>
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/behaviors" class="">Behaviors</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/testing" class="">Testing</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/event-sourcing" class="">Event Sourcing</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Broker Configuration</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/endpoint" class="">Endpoint</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/outbound" class="active">Outbound Connector</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/inbound" class="">Inbound Connector</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/mixed" class="">Mixed Configurations</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/external" class="">External Configuration</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Advanced</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/serialization" class="">Serialization</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/chunking" class="">Chunking</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/encryption" class="">Encryption</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/binary-files" class="">Binary Files</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/rx" class="">Observable Bus</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/broker" class="">Using IBroker</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/message-id" class="">Message Identifier</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/iinboundenvelope" class="">IInboundEnvelope</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Kafka Specific</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/message-key" class="">Message Key (partitioning)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/multiple-consumer-groups" class="">Multiple Consumer Groups (in same process)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/events" class="">Kafka Events</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>RabbitMQ Specific</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/rabbit/routing-key" class="">Routing Key</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Extras</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/extra/dbcontext" class="">Sample DbContext (EF Core)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/extras/background-services" class="">Distributed Background Services</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Source Code</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/source/contributing" class="">Contributing</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/source/samples" class="">Samples</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+    
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Outbound Connector">
+    <meta itemprop="description" content="The outbound connector is used to automatically relay the integration messages (published to the internal bus) to the message broker. Multiple outbound endpoints can be configured and Silverback will route the messages according to their type (based on the TMessage parameter passed to the AddOutbound&lt;TMessage&gt; method.">
+    
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Outbound Connector
+</h1>
+          
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title">In this page:</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#implementations">Implementations</a>
+    <ul>
+      <li><a href="#basic">Basic</a></li>
+      <li><a href="#deferred">Deferred</a>
+        <ul>
+          <li><a href="#database-outbox-table">Database outbox table</a></li>
+          <li><a href="#custom-outbound-queue">Custom outbound queue</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#subscribing-locally">Subscribing locally</a></li>
+  <li><a href="#producing-the-same-message-to-multiple-endpoints">Producing the same message to multiple endpoints</a></li>
+  <li><a href="#dynamic-custom-routing">Dynamic custom routing</a></li>
+</ul>
+            </nav>
+          </aside>
+        
+        <p>The outbound connector is used to automatically relay the integration messages (published to the internal bus) to the message broker. Multiple outbound endpoints can be configured and Silverback will route the messages according to their type (based on the <code class="highlighter-rouge">TMessage</code> parameter passed to the <code class="highlighter-rouge">AddOutbound&lt;TMessage&gt;</code> method.</p>
+
+<h2 id="implementations">Implementations</h2>
+
+<p>Multiple implementations of the connector are available, offering a variable degree of reliability.</p>
+
+<h3 id="basic">Basic</h3>
+
+<p>The basic <code class="highlighter-rouge">OutboundConnector</code> is very simple and relays the messages synchronously. This is the easiest, better performing and most lightweight option but it doesn’t allow for any transactionality (once the message is fired, is fired) nor resiliency to the message broker failure.</p>
+
+<figure>
+	<a href="/silverback/assets/images/diagrams/outbound-basic.png"><img src="/silverback/assets/images/diagrams/outbound-basic.png" /></a>
+    <figcaption>Messages 1, 2 and 3 are directly produced to the message broker.</figcaption>
+</figure>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ConfigureServices</span><span class="p">(</span><span class="n">IServiceCollection</span> <span class="n">services</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">services</span>
+            <span class="p">.</span><span class="nf">AddSilverback</span><span class="p">()</span>
+            <span class="p">.</span><span class="nf">WithConnectionToMessageBroker</span><span class="p">(</span><span class="n">options</span> <span class="p">=&gt;</span> <span class="n">options</span>
+                <span class="p">.</span><span class="nf">AddKafka</span><span class="p">()</span>
+                <span class="p">.</span><span class="nf">AddOutboundConnector</span><span class="p">());</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">(</span><span class="n">BusConfigurator</span> <span class="n">busConfigurator</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">busConfigurator</span>
+            <span class="p">.</span><span class="nf">Connect</span><span class="p">(</span><span class="n">endpoints</span> <span class="p">=&gt;</span> <span class="n">endpoints</span>
+                <span class="p">.</span><span class="n">AddOutbound</span><span class="p">&lt;</span><span class="n">IIntegrationEvent</span><span class="p">&gt;(</span>
+                    <span class="k">new</span> <span class="nf">KafkaProducerEndpoint</span><span class="p">(</span><span class="s">"basket-events"</span><span class="p">)</span>
+                    <span class="p">{</span>
+                        <span class="p">...</span>
+                    <span class="p">}));</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+<h3 id="deferred">Deferred</h3>
+
+<p>The <code class="highlighter-rouge">DeferredOutboundConnector</code> stores the messages into a local queue to be forwarded to the message broker in a separate step.</p>
+
+<p>This approach has two main advantages:</p>
+<ol>
+  <li>Fault tollerance: you depend on the database only and if the message broker is unavailable the produce will be automatically retried later on</li>
+  <li>Transactionality: when using the database a storage you can commit the changes to the local database and the outbound messages inside a single atomic transaction (this pattern is called <a href="https://microservices.io/patterns/data/transactional-outbox.html">transactional outbox</a>)</li>
+</ol>
+
+<figure>
+	<a href="/silverback/assets/images/diagrams/outbound-outboxtable.png"><img src="/silverback/assets/images/diagrams/outbound-outboxtable.png" /></a>
+    <figcaption>Messages 1, 2 and 3 are stored in the outbox table and produced by a separate thread or process.</figcaption>
+</figure>
+
+<h4 id="database-outbox-table">Database outbox table</h4>
+
+<p>The <code class="highlighter-rouge">DbOutboundConnector</code> will store the outbound messages into a database table.</p>
+
+<p>When using entity framework (<code class="highlighter-rouge">UseDbContext&lt;TDbContext&gt;</code> contained in the <code class="highlighter-rouge">Silverback.EntityFrameworkCore</code> package) the outbound messages are stored into a <code class="highlighter-rouge">DbSet</code> and are therefore implicitly saved in the same transaction used to save all other changes.</p>
+
+<p class="notice--note">The <code class="highlighter-rouge">DbContext</code> must include a <code class="highlighter-rouge">DbSet&lt;OutboundMessage&gt;</code> and an <code class="highlighter-rouge">OutboundWorker</code> is to be started to process the outbound queue. See also the <a href="/silverback/docs/extra/dbcontext">sample DbContext</a>.</p>
+
+<p class="notice--important">The current <code class="highlighter-rouge">OutboundWorker</code> cannot be horizontally scaled and starting multiple instances will cause the messages to be produced multiple times. In the following example a distributed lock in the database is used to ensure that only one instance is running and another one will <em>immediatly</em> take over when it stops (the <code class="highlighter-rouge">DbContext</code> must include a <code class="highlighter-rouge">DbSet&lt;Lock&gt;</code> as well, see also the <a href="/silverback/docs/extra/dbcontext">sample DbContext</a>).</p>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ConfigureServices</span><span class="p">(</span><span class="n">IServiceCollection</span> <span class="n">services</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">services</span>
+            <span class="p">.</span><span class="nf">AddSilverback</span><span class="p">()</span>
+
+            <span class="c1">// Initialize Silverback to use MyDbContext as database storage.</span>
+            <span class="p">.</span><span class="n">UseDbContext</span><span class="p">&lt;</span><span class="n">MyDbContext</span><span class="p">&gt;()</span>
+
+            <span class="c1">// Setup the lock manager using the database</span>
+            <span class="c1">// to handle the distributed locks.</span>
+            <span class="c1">// If this line is omitted the OutboundWorker will still</span>
+            <span class="c1">// work without locking. </span>
+            <span class="p">.</span><span class="nf">AddDbDistributedLockManager</span><span class="p">()</span>
+
+            <span class="p">.</span><span class="nf">WithConnectionToMessageBroker</span><span class="p">(</span><span class="n">options</span> <span class="p">=&gt;</span> <span class="n">options</span>
+                <span class="p">.</span><span class="nf">AddKafka</span><span class="p">()</span>
+                <span class="c1">// Use a deferred outbound connector</span>
+                <span class="p">.</span><span class="nf">AddDbOutboundConnector</span><span class="p">()</span>
+
+                <span class="c1">// Add the IHostedService processing the outbound queue</span>
+                <span class="c1">// (overloads are available to specify custom interval,</span>
+                <span class="c1">// lock timeout, etc.)</span>
+                <span class="p">.</span><span class="nf">AddDbOutboundWorker</span><span class="p">();</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+<h4 id="custom-outbound-queue">Custom outbound queue</h4>
+
+<p>You can easily create another implementation targeting another kind of storage, simply creating your own <code class="highlighter-rouge">IOutboundQueueProducer</code> and <code class="highlighter-rouge">IOutboundQueueConsumer</code> and plug them in.</p>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ConfigureServices</span><span class="p">(</span><span class="n">IServiceCollection</span> <span class="n">services</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">services</span>
+            <span class="p">.</span><span class="nf">AddSilverback</span><span class="p">()</span>
+            <span class="p">.</span><span class="nf">AddDbDistributedLockManager</span><span class="p">()</span>
+
+            <span class="p">.</span><span class="nf">WithConnectionToMessageBroker</span><span class="p">(</span><span class="n">options</span> <span class="p">=&gt;</span> <span class="n">options</span>
+                <span class="p">.</span><span class="nf">AddKafka</span><span class="p">()</span>
+                <span class="p">.</span><span class="n">AddOutboundConnector</span><span class="p">&lt;</span><span class="n">SomeCustomQueueProducer</span><span class="p">&gt;()</span>
+                <span class="p">.</span><span class="n">AddOutboundWorker</span><span class="p">&lt;</span><span class="n">SomeCustomQueueConsumer</span><span class="p">&gt;();</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+<h2 id="subscribing-locally">Subscribing locally</h2>
+
+<p>The published messages that are routed to an outbound endpoint cannot be subscribed locally (within the same process), unless explicitely desired.</p>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">(</span><span class="n">BusConfigurator</span> <span class="n">busConfigurator</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">busConfigurator</span>
+            <span class="p">.</span><span class="nf">Connect</span><span class="p">(</span><span class="n">endpoints</span> <span class="p">=&gt;</span> <span class="n">endpoints</span>
+                <span class="p">.</span><span class="n">AddOutbound</span><span class="p">&lt;</span><span class="n">IIntegrationEvent</span><span class="p">&gt;(...)</span>
+                <span class="p">.</span><span class="nf">PublishOutboundMessagesToInternalBus</span><span class="p">()</span>
+            <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+<p class="notice--note">What said above is only partially true, as you can subscribe to the wrapped message (<code class="highlighter-rouge">IOutboundEnvelope&lt;TMessage&gt;</code>) even without calling <code class="highlighter-rouge">PublishOutboundMessagesToInternalBus</code>.</p>
+
+<h2 id="producing-the-same-message-to-multiple-endpoints">Producing the same message to multiple endpoints</h2>
+
+<p>An outbound route can point to multiple endpoints resulting in every message being broadcasted to all endpoints.</p>
+
+<figure>
+	<a href="/silverback/assets/images/diagrams/outbound-broadcast.png"><img src="/silverback/assets/images/diagrams/outbound-broadcast.png" /></a>
+    <figcaption>Messages 1, 2 and 3 are published to both topics simultaneously.</figcaption>
+</figure>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">(</span><span class="n">BusConfigurator</span> <span class="n">busConfigurator</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">busConfigurator</span>
+            <span class="p">.</span><span class="nf">Connect</span><span class="p">(</span><span class="n">endpoints</span> <span class="p">=&gt;</span> <span class="n">endpoints</span>
+                <span class="p">.</span><span class="n">AddOutbound</span><span class="p">&lt;</span><span class="n">IIntegrationCommand</span><span class="p">&gt;(</span>
+                    <span class="k">new</span> <span class="nf">KafkaProducerEndpoint</span><span class="p">(</span><span class="s">"topic-1"</span><span class="p">)</span>
+                    <span class="p">{</span>
+                        <span class="p">...</span>
+                    <span class="p">},</span>
+                    <span class="k">new</span> <span class="nf">KafkaProducerEndpoint</span><span class="p">(</span><span class="s">"topic-2"</span><span class="p">)</span>
+                    <span class="p">{</span>
+                        <span class="p">...</span>
+                    <span class="p">}));</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+<p>A message will also be routed to all outbound endpoint mapped to a type that matches the message type. In the example below an <code class="highlighter-rouge">OrderCreatedMessage</code> (that inherits from <code class="highlighter-rouge">OrderMessage</code>) would be sent to both endpoints.</p>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">(</span><span class="n">BusConfigurator</span> <span class="n">busConfigurator</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">busConfigurator</span>
+            <span class="p">.</span><span class="nf">Connect</span><span class="p">(</span><span class="n">endpoints</span> <span class="p">=&gt;</span> <span class="n">endpoints</span>
+                <span class="p">.</span><span class="n">AddOutbound</span><span class="p">&lt;</span><span class="n">OrderMessage</span><span class="p">&gt;(</span>
+                    <span class="k">new</span> <span class="nf">KafkaProducerEndpoint</span><span class="p">(</span><span class="s">"topic-1"</span><span class="p">)</span>
+                    <span class="p">{</span>
+                        <span class="p">...</span>
+                    <span class="p">})</span>
+                <span class="p">.</span><span class="n">AddOutbound</span><span class="p">&lt;</span><span class="n">OrderCreatedMessage</span><span class="p">&gt;(</span>
+                    <span class="k">new</span> <span class="nf">KafkaProducerEndpoint</span><span class="p">(</span><span class="s">"topic-1"</span><span class="p">)</span>
+                    <span class="p">{</span>
+                        <span class="p">...</span>
+                    <span class="p">}));</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+<h2 id="dynamic-custom-routing">Dynamic custom routing</h2>
+
+<p>By default Silverback routes the messages according to their type and the static configuration defined at startup. In some cases you may need more flexibility, being able to apply your own routing rules. In such cases it is possible to implement a fully customized router.</p>
+
+<figure>
+	<a href="/silverback/assets/images/diagrams/outbound-customrouting.png"><img src="/silverback/assets/images/diagrams/outbound-customrouting.png" /></a>
+    <figcaption>The messages are dynamically routed to the appropriate endpoint.</figcaption>
+</figure>
+
+<p>In the following example a custom router is used to route the messages according to their priority (a copy is also sent to a catch-all topic).</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">PrioritizedRouter</span> <span class="p">:</span> <span class="n">OutboundRouter</span><span class="p">&lt;</span><span class="n">IPrioritizedCommand</span><span class="p">&gt;</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">IProducerEndpoint</span> <span class="n">HighPriorityEndpoint</span> <span class="p">=</span>
+        <span class="k">new</span> <span class="nf">KafkaProducerEndpoint</span><span class="p">(</span><span class="s">"high-priority"</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="p">...</span>
+        <span class="p">};</span>
+    <span class="k">private</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">IProducerEndpoint</span> <span class="n">NormalPriorityEndpoint</span> <span class="p">=</span>
+        <span class="k">new</span> <span class="nf">KafkaProducerEndpoint</span><span class="p">(</span><span class="s">"normal-priority"</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="p">...</span>
+        <span class="p">};</span>
+    <span class="k">private</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">IProducerEndpoint</span> <span class="n">LowPriorityEndpoint</span> <span class="p">=</span>
+        <span class="k">new</span> <span class="nf">KafkaProducerEndpoint</span><span class="p">(</span><span class="s">"low-priority"</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="p">...</span>
+        <span class="p">};</span>
+    <span class="k">private</span> <span class="k">static</span> <span class="k">readonly</span> <span class="n">IProducerEndpoint</span> <span class="n">AllMessagesEndpoint</span> <span class="p">=</span>
+        <span class="k">new</span> <span class="nf">KafkaProducerEndpoint</span><span class="p">(</span><span class="s">"all"</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="p">...</span>
+        <span class="p">};</span>
+
+    <span class="k">public</span> <span class="k">override</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">IProducerEndpoint</span><span class="p">&gt;</span> <span class="n">Endpoints</span>
+    <span class="p">{</span>
+        <span class="k">get</span>
+        <span class="p">{</span>
+            <span class="k">yield</span> <span class="k">return</span> <span class="n">AllMessagesEndpoint</span><span class="p">;</span>
+            <span class="k">yield</span> <span class="k">return</span> <span class="n">LowPriorityEndpoint</span><span class="p">;</span>
+            <span class="k">yield</span> <span class="k">return</span> <span class="n">NormalPriorityEndpoint</span><span class="p">;</span>
+            <span class="k">yield</span> <span class="k">return</span> <span class="n">HighPriorityEndpoint</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">override</span> <span class="n">IEnumerable</span><span class="p">&lt;</span><span class="n">IProducerEndpoint</span><span class="p">&gt;</span> <span class="nf">GetDestinationEndpoints</span><span class="p">(</span>
+        <span class="n">IPrioritizedCommand</span> <span class="n">message</span><span class="p">,</span>
+        <span class="n">MessageHeaderCollection</span> <span class="n">headers</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">yield</span> <span class="k">return</span> <span class="n">AllMessagesEndpoint</span><span class="p">;</span>
+        
+        <span class="k">switch</span> <span class="p">(</span><span class="n">message</span><span class="p">.</span><span class="n">Priority</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">case</span> <span class="n">MessagePriority</span><span class="p">.</span><span class="n">Low</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="k">return</span> <span class="n">LowPriorityEndpoint</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="n">MessagePriority</span><span class="p">.</span><span class="n">High</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="k">return</span> <span class="n">HighPriorityEndpoint</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">default</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="k">return</span> <span class="n">NormalPriorityEndpoint</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ConfigureServices</span><span class="p">(</span><span class="n">IServiceCollection</span> <span class="n">services</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">services</span>
+            <span class="p">.</span><span class="nf">AddSilverback</span><span class="p">()</span>
+            <span class="p">.</span><span class="nf">WithConnectionToMessageBroker</span><span class="p">(</span><span class="n">options</span> <span class="p">=&gt;</span> <span class="n">options</span><span class="p">.</span><span class="nf">AddKafka</span><span class="p">())</span>
+            <span class="p">.</span><span class="n">AddSingletonOutboundRouter</span><span class="p">&lt;</span><span class="n">PrioritizedRouter</span><span class="p">&gt;();</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">(</span><span class="n">BusConfigurator</span> <span class="n">busConfigurator</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">busConfigurator</span>
+            <span class="p">.</span><span class="nf">Connect</span><span class="p">(</span><span class="n">endpoints</span> <span class="p">=&gt;</span> <span class="n">endpoints</span>
+                <span class="p">.</span><span class="n">AddOutbound</span><span class="p">&lt;</span><span class="n">IPrioritizedCommand</span><span class="p">,</span> <span class="n">PrioritizedRouter</span><span class="p">&gt;());</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+        
+      </section>
+
+      
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/silverback/docs/configuration/endpoint" class="pagination--pager" title="Endpoint
+">Previous</a>
+    
+    
+      <a href="/silverback/docs/configuration/inbound" class="pagination--pager" title="Inbound Connector
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+    <ul class="social-icons">
+        
+
+        
+        
+            
+            <li><a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+            
+        
+            
+            <li><a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope" aria-hidden="true"></i> Email</a></li>
+            
+        
+        
+    </ul>
+</div>
+  
+<div class="page__footer-copyright">&copy; 2020 Sergio Aquilini. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; based on <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+      </footer>
+    </div>
+
+    
+  <script src="/silverback/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+<script src="/silverback/assets/js/lunr/lunr.min.js"></script>
+<script src="/silverback/assets/js/lunr/lunr-store.js"></script>
+<script src="/silverback/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

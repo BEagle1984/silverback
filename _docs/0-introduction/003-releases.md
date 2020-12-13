@@ -4,6 +4,10 @@ permalink: /docs/releases
 toc: true
 ---
 
+## 3.0.0 (beta)
+
+[See the new (beta) website]({{ site.baseurl }}/assets/beta/)
+
 ## [2.2.0](https://github.com/BEagle1984/silverback/releases/tag/v2.2.0)
 
 ### What's new

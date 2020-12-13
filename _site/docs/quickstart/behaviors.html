@@ -1,0 +1,1241 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.17.0 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Behaviors - Silverback - Page </title>
+<meta name="description" content="The behaviors can be used to build a custom pipeline (similar to the asp.net pipeline), easily adding your cross-cutting functionalities such as logging, validation, etc.">
+
+
+  <meta name="author" content="Sergio Aquilini">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Silverback">
+<meta property="og:title" content="Behaviors">
+<meta property="og:url" content="http://localhost:4000/silverback/docs/quickstart/behaviors">
+
+
+  <meta property="og:description" content="The behaviors can be used to build a custom pipeline (similar to the asp.net pipeline), easily adding your cross-cutting functionalities such as logging, validation, etc.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-12-13T12:38:35+01:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/silverback/docs/quickstart/behaviors">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sergio Aquilini",
+      "url": "http://localhost:4000/silverback/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/silverback/feed.xml" type="application/atom+xml" rel="alternate" title="Silverback Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/silverback/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="180x180" href="/silverback/assets/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/silverback/assets/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/silverback/assets/icons/favicon-16x16.png">
+<link rel="manifest" href="/silverback/assets/icons/site.webmanifest">
+<link rel="mask-icon" href="/silverback/assets/icons/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/silverback/"><img src="/silverback/assets/images/logo.png" alt=""></a>
+        
+        
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/silverback/docs/introduction" >Documentation</a>
+            </li><li class="masthead__menu-item">
+              <a href="/silverback/docs/releases" >Releases</a>
+            </li><li class="masthead__menu-item">
+              <a href="/silverback/about" >About</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://github.com/BEagle1984/silverback/" >GitHub</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle Menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/introduction" class="">Introduction</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/features" class="">Features</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/releases" class="">Releases</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <span>Quickstart</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart" class="">Introduction and Glossary</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                <span>Using the Bus</span>
+              
+
+              
+              <ul>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/bus" class="">Enabling the Bus</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/model" class="">Creating the Message model</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/publish" class="">Publishing</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/subscribe" class="">Subscribing</a></li>
+                
+              </ul>
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/ddd" class="">DDD and Domain Events</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                <span>Integration using a Message Broker</span>
+              
+
+              
+              <ul>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/message-broker" class="">Connecting a Message Broker</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/translating" class="">Translating Messages</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/headers" class="">Message Headers</a></li>
+                
+              </ul>
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/behaviors" class="active">Behaviors</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/testing" class="">Testing</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/event-sourcing" class="">Event Sourcing</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Broker Configuration</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/endpoint" class="">Endpoint</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/outbound" class="">Outbound Connector</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/inbound" class="">Inbound Connector</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/mixed" class="">Mixed Configurations</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/external" class="">External Configuration</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Advanced</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/serialization" class="">Serialization</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/chunking" class="">Chunking</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/encryption" class="">Encryption</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/binary-files" class="">Binary Files</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/rx" class="">Observable Bus</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/broker" class="">Using IBroker</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/message-id" class="">Message Identifier</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/iinboundenvelope" class="">IInboundEnvelope</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Kafka Specific</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/message-key" class="">Message Key (partitioning)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/multiple-consumer-groups" class="">Multiple Consumer Groups (in same process)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/events" class="">Kafka Events</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>RabbitMQ Specific</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/rabbit/routing-key" class="">Routing Key</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Extras</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/extra/dbcontext" class="">Sample DbContext (EF Core)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/extras/background-services" class="">Distributed Background Services</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Source Code</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/source/contributing" class="">Contributing</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/source/samples" class="">Samples</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+    
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Behaviors">
+    <meta itemprop="description" content="The behaviors can be used to build a custom pipeline (similar to the asp.net pipeline), easily adding your cross-cutting functionalities such as logging, validation, etc.">
+    
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Behaviors
+</h1>
+          
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title">In this page:</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#ibehavior">IBehavior</a>
+    <ul>
+      <li><a href="#ibehavior-example">IBehavior example</a></li>
+    </ul>
+  </li>
+  <li><a href="#iproducerbehavior-and-iconsumerbehavior">IProducerBehavior and IConsumerBehavior</a>
+    <ul>
+      <li><a href="#iproducerbehavior-example">IProducerBehavior example</a></li>
+      <li><a href="#iconsumerbehavior-example">IConsumerBehavior example</a></li>
+      <li><a href="#limitations">Limitations</a></li>
+    </ul>
+  </li>
+  <li><a href="#ordering">Ordering</a></li>
+  <li><a href="#built-in-behaviors">Built-in behaviors</a>
+    <ul>
+      <li><a href="#ibehavior-1">IBehavior</a></li>
+      <li><a href="#iproducerbehavior">IProducerBehavior</a></li>
+      <li><a href="#iconsumerbehavior">IConsumerBehavior</a></li>
+    </ul>
+  </li>
+</ul>
+            </nav>
+          </aside>
+        
+        <p>The behaviors can be used to build a custom pipeline (similar to the asp.net pipeline), easily adding your cross-cutting functionalities such as logging, validation, etc.</p>
+
+<h2 id="ibehavior">IBehavior</h2>
+
+<p>The behaviors implementing the <code class="highlighter-rouge">IBehavior</code> interface will be invoked by the <code class="highlighter-rouge">IPublisher</code> internals every time a message is published to the internal bus (this includes the inbound/outbound messages, but they will be wrapped into an <code class="highlighter-rouge">IInboundEvelope</code> or <code class="highlighter-rouge">IOutboundEnvelope</code>).</p>
+
+<p>At every call to <code class="highlighter-rouge">IPublisher.Publish</code> the <code class="highlighter-rouge">Handle</code> method of each registered behavior is called, passing in the collection of messages and the delegate to the next step in the pipeline. This gives you the flexibility to execute any sort of code before and after the messages have been actually published (before or after calling the <code class="highlighter-rouge">next()</code> step). You can for example modify the messages before publishing them, validate them (like in the above example), add some logging / tracing, etc.</p>
+
+<h3 id="ibehavior-example">IBehavior example</h3>
+
+<p>The following example demonstrates how to use a behavior to trace the messages.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">Silverback.Messaging.Publishing</span><span class="p">;</span>
+
+<span class="k">public</span> <span class="k">class</span> <span class="nc">TracingBehavior</span> <span class="p">:</span> <span class="n">IBehavior</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="n">ITracer</span> <span class="n">_tracer</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">TracingBehavior</span><span class="p">(</span><span class="n">ITracer</span> <span class="n">tracer</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_tracer</span> <span class="p">=</span> <span class="n">tracer</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">IReadOnlyCollection</span><span class="p">&lt;</span><span class="kt">object</span><span class="p">&gt;&gt;</span> <span class="nf">Handle</span><span class="p">(</span>
+        <span class="n">IReadOnlyCollection</span><span class="p">&lt;</span><span class="kt">object</span><span class="p">&gt;</span> <span class="n">messages</span><span class="p">,</span> 
+        <span class="n">MessagesHandler</span> <span class="n">next</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">tracer</span><span class="p">.</span><span class="nf">TraceProcessing</span><span class="p">(</span><span class="n">messages</span><span class="p">);</span>
+        <span class="kt">var</span> <span class="n">result</span> <span class="p">=</span> <span class="k">await</span> <span class="nf">next</span><span class="p">(</span><span class="n">messages</span><span class="p">);</span>
+        <span class="n">tracer</span><span class="p">.</span><span class="nf">TraceProcessed</span><span class="p">(</span><span class="n">messages</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p class="notice--note">The <code class="highlighter-rouge">Handle</code> receives a collection of <code class="highlighter-rouge">object</code> because a bunch of messages can be published at once via <code class="highlighter-rouge">IPublisher</code> or the consumer can be configured to process the messages in batch.</p>
+
+<p class="notice--note"><code class="highlighter-rouge">IInboundEnvelope</code> and <code class="highlighter-rouge">IOutboundEnvelope</code> are internally used by Silverback to wrap the messages being sent to or received from the message broker and will be received by the <code class="highlighter-rouge">IBroker</code>. Those interfaces contains the message plus the additional data like endpoint, headers, offset, etc.</p>
+
+<p>The <code class="highlighter-rouge">IBehavior</code> implementation have simply to be registered for DI.</p>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ConfigureServices</span><span class="p">(</span><span class="n">IServiceCollection</span> <span class="n">services</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">services</span>
+            <span class="p">.</span><span class="nf">AddSilverback</span><span class="p">()</span>
+            <span class="p">.</span><span class="n">AddScopedBehavior</span><span class="p">&lt;</span><span class="n">TracingBehavior</span><span class="p">&gt;();</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+<p class="notice--note">All <code class="highlighter-rouge">Add*Behavior</code> methods are available also as extensions to the <code class="highlighter-rouge">IServiceCollection</code> and it isn’t therefore mandatory to call them immediately after <code class="highlighter-rouge">AddSilverback</code>.</p>
+
+<h2 id="iproducerbehavior-and-iconsumerbehavior">IProducerBehavior and IConsumerBehavior</h2>
+
+<p>The <code class="highlighter-rouge">IProducerBehavior</code> and <code class="highlighter-rouge">IConsumerBehavior</code> are similar to the <code class="highlighter-rouge">IBehavior</code> but work at a lower level, much closer to the message broker.</p>
+
+<h3 id="iproducerbehavior-example">IProducerBehavior example</h3>
+
+<p>The following example demonstrate how to set a custom message header on each outbound message.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">CustomHeadersBehavior</span> <span class="p">:</span> <span class="n">IProducerBehavior</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">Handle</span><span class="p">(</span>
+        <span class="n">ProducerPipelineContext</span> <span class="n">context</span><span class="p">,</span> 
+        <span class="n">RawOutboundEnvelopeHandler</span> <span class="n">next</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">context</span><span class="p">.</span><span class="n">Envelope</span><span class="p">.</span><span class="n">Message</span><span class="p">.</span><span class="n">Headers</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="s">"generated-by"</span><span class="p">,</span> <span class="s">"silverback"</span><span class="p">);</span>
+
+        <span class="k">await</span> <span class="nf">next</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ConfigureServices</span><span class="p">(</span><span class="n">IServiceCollection</span> <span class="n">services</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">services</span>
+            <span class="p">.</span><span class="nf">AddSilverback</span><span class="p">()</span>
+            <span class="p">.</span><span class="nf">WithConnectionToKafka</span><span class="p">(</span><span class="n">options</span> <span class="p">=&gt;</span> <span class="n">options</span>
+                <span class="p">.</span><span class="n">AddSingletonBrokerBehavior</span><span class="p">&lt;</span><span class="n">CustomHeadersBehavior</span><span class="p">&gt;()</span>
+            <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+<h3 id="iconsumerbehavior-example">IConsumerBehavior example</h3>
+
+<p>The following example demonstrate how to log the headers received with each inbound message.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">LogHeadersBehavior</span> <span class="p">:</span> <span class="n">IConsumerBehavior</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="n">ILogger</span><span class="p">&lt;</span><span class="n">LogHeadersBehavior</span><span class="p">&gt;</span> <span class="n">_logger</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">LogHeadersBehavior</span><span class="p">(</span><span class="n">ILogger</span><span class="p">&lt;</span><span class="n">LogHeadersBehavior</span><span class="p">&gt;</span> <span class="n">logger</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_logger</span> <span class="p">=</span> <span class="n">logger</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">Handle</span><span class="p">(</span>
+        <span class="n">ConsumerPipelineContext</span> <span class="n">context</span><span class="p">,</span> 
+        <span class="n">IServiceProvider</span> <span class="n">serviceProvider</span><span class="p">,</span>
+        <span class="n">RawInboundEnvelopeHandler</span> <span class="n">next</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">envelope</span> <span class="k">in</span> <span class="n">context</span><span class="p">.</span><span class="n">Envelopes</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">header</span> <span class="k">in</span> <span class="n">envelope</span><span class="p">.</span><span class="n">Headers</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="n">_logger</span><span class="p">.</span><span class="nf">LogTrace</span><span class="p">(</span>
+                    <span class="s">"{key}={value}"</span><span class="p">,</span>
+                    <span class="n">header</span><span class="p">.</span><span class="n">Key</span><span class="p">,</span>
+                    <span class="n">header</span><span class="p">.</span><span class="n">Value</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">await</span> <span class="nf">next</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">serviceProvider</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">ConfigureServices</span><span class="p">(</span><span class="n">IServiceCollection</span> <span class="n">services</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">services</span>
+            <span class="p">.</span><span class="nf">AddSilverback</span><span class="p">()</span>
+            <span class="p">.</span><span class="nf">WithConnectionToKafka</span><span class="p">(</span><span class="n">options</span> <span class="p">=&gt;</span> <span class="n">options</span>
+                <span class="p">.</span><span class="n">AddSingletonBrokerBehavior</span><span class="p">&lt;</span><span class="n">LogHeadersBehavior</span><span class="p">&gt;()</span>
+            <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+<p class="notice--note">The <code class="highlighter-rouge">Handle</code> method reaceives an instance of <code class="highlighter-rouge">IServiceProvider</code> that can be either the root service provider or the scoped service provider for the processing of the consumed message (depending on the position of the behavior in the pipeline).</p>
+
+<h3 id="limitations">Limitations</h3>
+
+<p>Because of the way the Silverback’s broker integration works <code class="highlighter-rouge">IProducerBehavior</code> and <code class="highlighter-rouge">IConsumerBehavior</code> implementations can only be registered as singleton. An <code class="highlighter-rouge">IProducerBehaviorFactory</code> or <code class="highlighter-rouge">IConsumerBehaviorFactory</code> can be used to create an instance per each <code class="highlighter-rouge">IConsumer</code> or <code class="highlighter-rouge">IProducer</code> that gets intantiated.</p>
+
+<p>If a scoped instance is needed you have to either inject the <code class="highlighter-rouge">IServiceScopeFactory</code> (or <code class="highlighter-rouge">IServiceProvider</code>) or use an <code class="highlighter-rouge">IBehavior</code> (that can still be used to accomplish most of the tasks, as shown in the next examples).</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">TracingBehavior</span> <span class="p">:</span> <span class="n">IBehavior</span>
+<span class="p">{</span>
+    <span class="k">private</span> <span class="k">readonly</span> <span class="n">IDbLogger</span> <span class="n">_dbLogger</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="nf">TracingBehavior</span><span class="p">(</span><span class="n">IDbLogger</span> <span class="n">_dbLogger</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">_dbLogger</span> <span class="p">=</span> <span class="n">dbLogger</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">IReadOnlyCollection</span><span class="p">&lt;</span><span class="kt">object</span><span class="p">&gt;&gt;</span> <span class="nf">Handle</span><span class="p">(</span>
+        <span class="n">IReadOnlyCollection</span><span class="p">&lt;</span><span class="kt">object</span><span class="p">&gt;</span> <span class="n">messages</span><span class="p">,</span> 
+        <span class="n">MessagesHandler</span> <span class="n">next</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="kt">var</span> <span class="n">envelope</span> <span class="k">in</span> <span class="n">messages</span><span class="p">.</span><span class="n">OfType</span><span class="p">&lt;</span><span class="n">IInboundEnvelope</span><span class="p">&gt;())</span>
+        <span class="p">{</span>
+            <span class="n">_dbLogger</span><span class="p">.</span><span class="nf">LogInboundMessage</span><span class="p">(</span>
+                <span class="n">envelope</span><span class="p">.</span><span class="n">Message</span><span class="p">.</span><span class="nf">GetType</span><span class="p">(),</span> 
+                <span class="n">envelope</span><span class="p">.</span><span class="n">Headers</span><span class="p">,</span>
+                <span class="n">envelope</span><span class="p">.</span><span class="n">Endpoint</span><span class="p">,</span>
+                <span class="n">envelope</span><span class="p">.</span><span class="n">Offset</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">await</span> <span class="n">_dbLogger</span><span class="p">.</span><span class="nf">SaveChangesAsync</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="k">await</span> <span class="nf">next</span><span class="p">(</span><span class="n">messages</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="ordering">Ordering</h2>
+
+<p>The order in which the behaviors are executed does obviously matter and it is possible to precisely define it implementing the <code class="highlighter-rouge">ISorted</code> interface.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">SortedBehavior</span> <span class="p">:</span> <span class="n">IBehavior</span><span class="p">,</span> <span class="n">ISorted</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">int</span> <span class="n">SortIndex</span> <span class="p">=&gt;</span> <span class="m">120</span><span class="p">;</span>
+
+    <span class="k">public</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">IReadOnlyCollection</span><span class="p">&lt;</span><span class="kt">object</span><span class="p">&gt;&gt;</span> <span class="nf">Handle</span><span class="p">(</span>
+        <span class="n">IReadOnlyCollection</span><span class="p">&lt;</span><span class="kt">object</span><span class="p">&gt;</span> <span class="n">messages</span><span class="p">,</span> 
+        <span class="n">MessagesHandler</span> <span class="n">next</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// ...your logic...</span>
+
+        <span class="k">return</span> <span class="nf">next</span><span class="p">(</span><span class="n">messages</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The sort index of the built-in behaviors is described in the next chapter.</p>
+
+<h2 id="built-in-behaviors">Built-in behaviors</h2>
+
+<p>Silverback itself strongly relies on the behaviors to implement its features and combine them all together. In this chapter you find the list of the existing behaviorS and their respective sort index.</p>
+
+<h3 id="ibehavior-1">IBehavior</h3>
+
+<p>This behaviors act in the internal bus pipeline.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Name</th>
+      <th style="text-align: right">Index</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">OutboundProducerBehavior</code></td>
+      <td style="text-align: right">200</td>
+      <td style="text-align: left">Produces the <code class="highlighter-rouge">IOutboundEnvelope&lt;TMessage&gt;</code> through the correct <code class="highlighter-rouge">IOutboundConnector</code> instance.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">OutboundRouterBehavior</code></td>
+      <td style="text-align: right">300</td>
+      <td style="text-align: left">Routes the messages to the outbound endpoint by wrapping them in an <code class="highlighter-rouge">IOutboundEnvelope&lt;TMessage&gt;</code> that is republished to the bus.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="notice--note">The sort index is counterintoutive, as the <code class="highlighter-rouge">OutboundRouterBehavior</code> is actually needed <strong>before</strong> the <code class="highlighter-rouge">OutboundProducerBehavior</code>, but that happen in two separate and consecutive pipelines to give you the chance to subscribe to the <code class="highlighter-rouge">IOutboundEnvelope</code> if needed. So the <code class="highlighter-rouge">OutboundRouterBehavior</code> creates the <code class="highlighter-rouge">IOutboundEnvelope</code> and publishes it to the internal bus for the next <code class="highlighter-rouge">OutboundProducerBehavior</code> to catch it and forward it to the configured <code class="highlighter-rouge">IOutboundConnector</code> (at this point the message is not forwaded anymore to the next behavior in the pipeline).</p>
+
+<h3 id="iproducerbehavior">IProducerBehavior</h3>
+
+<p>This behaviors build the producer pipeline and contain the actual logic to properly serialize the messages according to the applied configuration.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Name</th>
+      <th style="text-align: right">Index</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">ActivityProducerBehavior</code></td>
+      <td style="text-align: right">100</td>
+      <td style="text-align: left">Starts an <code class="highlighter-rouge">Activity</code> and adds the tracing information to the message headers.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">HeadersWriterProducerBehavior</code></td>
+      <td style="text-align: right">200</td>
+      <td style="text-align: left">Maps the properties decorated with the <code class="highlighter-rouge">HeaderAttribute</code> to the message headers.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">MessageIdInitializerProducerBehavior</code></td>
+      <td style="text-align: right">300</td>
+      <td style="text-align: left">It ensures that an x-message-id header is always produced.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">BrokerKeyHeaderInitializer</code></td>
+      <td style="text-align: right">310</td>
+      <td style="text-align: left">Provided by the message broker implementation (e.g. <code class="highlighter-rouge">KafkaMessageKeyInitializerProducerBehavior</code> or <code class="highlighter-rouge">RabbitRoutingKeyInitializerProducerBehavior</code>), sets the message key header that will be used by the <code class="highlighter-rouge">IProducer</code> implementation to set the actual message key.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">BinaryFileHandlerProducerBehavior</code></td>
+      <td style="text-align: right">500</td>
+      <td style="text-align: left">Switches to the <code class="highlighter-rouge">BinaryFileMessageSerializer</code> if the message being produced implements the <code class="highlighter-rouge">IBinaryFileMessage</code> interface.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">SerializerProducerBehavior</code></td>
+      <td style="text-align: right">900</td>
+      <td style="text-align: left">Serializes the message being produced using the configured <code class="highlighter-rouge">IMessageSerializer</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">EncryptorProducerBehavior</code></td>
+      <td style="text-align: right">950</td>
+      <td style="text-align: left">Encrypts the message according to the <code class="highlighter-rouge">EncryptionSettings</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">ChunkSplitterProducerBehavior</code></td>
+      <td style="text-align: right">1000</td>
+      <td style="text-align: left">Splits the messages into chunks according to the <code class="highlighter-rouge">ChunkSettings</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="iconsumerbehavior">IConsumerBehavior</h3>
+
+<p>This behaviors are the foundation of the consumer pipeline and contain the actual logic to deserialize the incoming messages.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Name</th>
+      <th style="text-align: right">Index</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">ActivityConsumerBehavior</code></td>
+      <td style="text-align: right">100</td>
+      <td style="text-align: left">Starts an <code class="highlighter-rouge">Activity</code> with the tracing information from the message headers.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">InboundProcessorConsumerBehavior</code></td>
+      <td style="text-align: right">200</td>
+      <td style="text-align: left">Handles the retry policies, batch consuming and scope management of the messages that are consumed via an inbound connector.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">ChunkAggregatorConsumerBehavior</code></td>
+      <td style="text-align: right">300</td>
+      <td style="text-align: left">Temporary stores and aggregates the message chunks to rebuild the original message.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">DecryptorConsumerBehavior</code></td>
+      <td style="text-align: right">400</td>
+      <td style="text-align: left">Decrypts the message according to the <code class="highlighter-rouge">EncryptionSettings</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">BinaryFileHandlerProducerBehavior</code></td>
+      <td style="text-align: right">500</td>
+      <td style="text-align: left">Switches to the <code class="highlighter-rouge">BinaryFileMessageSerializer</code> if the message being consumed is a binary message (according to the <code class="highlighter-rouge">x-message-type</code> header.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">DeserializerConsumerBehavior</code></td>
+      <td style="text-align: right">600</td>
+      <td style="text-align: left">Deserializes the messages being consumed using the configured <code class="highlighter-rouge">IMessageSerializer</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">HeadersReaderConsumerBehavior</code></td>
+      <td style="text-align: right">700</td>
+      <td style="text-align: left">Maps the headers with the properties decorated with the <code class="highlighter-rouge">HeaderAttribute</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+        
+      </section>
+
+      
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/silverback/docs/quickstart/headers" class="pagination--pager" title="Message Headers
+">Previous</a>
+    
+    
+      <a href="/silverback/docs/quickstart/testing" class="pagination--pager" title="Testing
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+    <ul class="social-icons">
+        
+
+        
+        
+            
+            <li><a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+            
+        
+            
+            <li><a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope" aria-hidden="true"></i> Email</a></li>
+            
+        
+        
+    </ul>
+</div>
+  
+<div class="page__footer-copyright">&copy; 2020 Sergio Aquilini. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; based on <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+      </footer>
+    </div>
+
+    
+  <script src="/silverback/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+<script src="/silverback/assets/js/lunr/lunr.min.js"></script>
+<script src="/silverback/assets/js/lunr/lunr-store.js"></script>
+<script src="/silverback/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

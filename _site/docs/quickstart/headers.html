@@ -1,0 +1,1065 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.17.0 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Message Headers - Silverback - Page </title>
+<meta name="description" content="Custom headers">
+
+
+  <meta name="author" content="Sergio Aquilini">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Silverback">
+<meta property="og:title" content="Message Headers">
+<meta property="og:url" content="http://localhost:4000/silverback/docs/quickstart/headers">
+
+
+  <meta property="og:description" content="Custom headers">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-12-13T12:38:35+01:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/silverback/docs/quickstart/headers">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sergio Aquilini",
+      "url": "http://localhost:4000/silverback/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/silverback/feed.xml" type="application/atom+xml" rel="alternate" title="Silverback Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/silverback/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="180x180" href="/silverback/assets/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/silverback/assets/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/silverback/assets/icons/favicon-16x16.png">
+<link rel="manifest" href="/silverback/assets/icons/site.webmanifest">
+<link rel="mask-icon" href="/silverback/assets/icons/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/silverback/"><img src="/silverback/assets/images/logo.png" alt=""></a>
+        
+        
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/silverback/docs/introduction" >Documentation</a>
+            </li><li class="masthead__menu-item">
+              <a href="/silverback/docs/releases" >Releases</a>
+            </li><li class="masthead__menu-item">
+              <a href="/silverback/about" >About</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://github.com/BEagle1984/silverback/" >GitHub</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle Menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/introduction" class="">Introduction</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/features" class="">Features</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/releases" class="">Releases</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <span>Quickstart</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart" class="">Introduction and Glossary</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                <span>Using the Bus</span>
+              
+
+              
+              <ul>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/bus" class="">Enabling the Bus</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/model" class="">Creating the Message model</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/publish" class="">Publishing</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/subscribe" class="">Subscribing</a></li>
+                
+              </ul>
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/ddd" class="">DDD and Domain Events</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                <span>Integration using a Message Broker</span>
+              
+
+              
+              <ul>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/message-broker" class="">Connecting a Message Broker</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/translating" class="">Translating Messages</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/headers" class="active">Message Headers</a></li>
+                
+              </ul>
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/behaviors" class="">Behaviors</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/testing" class="">Testing</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/event-sourcing" class="">Event Sourcing</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Broker Configuration</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/endpoint" class="">Endpoint</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/outbound" class="">Outbound Connector</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/inbound" class="">Inbound Connector</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/mixed" class="">Mixed Configurations</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/external" class="">External Configuration</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Advanced</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/serialization" class="">Serialization</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/chunking" class="">Chunking</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/encryption" class="">Encryption</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/binary-files" class="">Binary Files</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/rx" class="">Observable Bus</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/broker" class="">Using IBroker</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/message-id" class="">Message Identifier</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/iinboundenvelope" class="">IInboundEnvelope</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Kafka Specific</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/message-key" class="">Message Key (partitioning)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/multiple-consumer-groups" class="">Multiple Consumer Groups (in same process)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/events" class="">Kafka Events</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>RabbitMQ Specific</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/rabbit/routing-key" class="">Routing Key</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Extras</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/extra/dbcontext" class="">Sample DbContext (EF Core)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/extras/background-services" class="">Distributed Background Services</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Source Code</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/source/contributing" class="">Contributing</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/source/samples" class="">Samples</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+    
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Message Headers">
+    <meta itemprop="description" content="Custom headers">
+    
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Message Headers
+</h1>
+          
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title">In this page:</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#custom-headers">Custom headers</a>
+    <ul>
+      <li><a href="#using-headerattribute">Using HeaderAttribute</a></li>
+    </ul>
+  </li>
+  <li><a href="#default-headers">Default headers</a></li>
+</ul>
+            </nav>
+          </aside>
+        
+        <h2 id="custom-headers">Custom headers</h2>
+
+<p>There are multiple options to add custom headers to a message:</p>
+<ul>
+  <li>using an <code class="highlighter-rouge">IBehavior</code> or <code class="highlighter-rouge">IProducerBehavior</code>, as shown in the <a href="/silverback/docs/quickstart/behaviors">Behaviors</a> chapter of the quickstart</li>
+  <li>annotating some properties with the <code class="highlighter-rouge">HeaderAttribute</code> (see next chapter)</li>
+  <li>or you could use the <code class="highlighter-rouge">IBroker</code> / <code class="highlighter-rouge">IProducer</code> directly, as explained in the <a href="/silverback/docs/advanced/broker">Using IBroker</a> section</li>
+</ul>
+
+<h3 id="using-headerattribute">Using HeaderAttribute</h3>
+
+<p>The <code class="highlighter-rouge">HeaderAttribute</code> usage is very simple: you just have to decorate the properties you want to publish as headers and specify a name for the header.</p>
+
+<p>The headers value will also automatically be mapped back to the property upon consuming if the property declares a setter.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">using</span> <span class="nn">Silverback.Messaging.Messages</span><span class="p">;</span>
+
+<span class="k">namespace</span> <span class="nn">Sample</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">class</span> <span class="nc">OrderCreatedEvent</span>
+    <span class="p">{</span>
+        <span class="k">public</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">LineItems</span><span class="p">&gt;</span> <span class="n">Items</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+        <span class="p">[</span><span class="nf">Header</span><span class="p">(</span><span class="s">"x-order-type"</span><span class="p">,</span> <span class="n">PublishDefaultValue</span> <span class="p">=</span> <span class="k">true</span><span class="p">)]</span>
+        <span class="p">[</span><span class="n">JsonIgnore</span><span class="p">]</span>
+        <span class="k">public</span> <span class="n">OrderType</span> <span class="n">OrderType</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+
+        <span class="p">[</span><span class="nf">Header</span><span class="p">(</span><span class="s">"x-books-order"</span><span class="p">)]</span>
+        <span class="k">public</span> <span class="kt">bool</span> <span class="n">ContainsBooks</span> <span class="p">=&gt;</span> <span class="n">Items</span><span class="p">.</span><span class="nf">Any</span><span class="p">(</span><span class="n">item</span> <span class="p">=&gt;</span> <span class="n">item</span><span class="p">.</span><span class="n">Type</span> <span class="p">==</span> <span class="s">"book"</span><span class="p">)</span>
+
+        <span class="p">[</span><span class="nf">Header</span><span class="p">(</span><span class="s">"x-dvd-order"</span><span class="p">)]</span>
+        <span class="k">public</span> <span class="kt">bool</span> <span class="n">ContainsDvd</span> <span class="p">=&gt;</span> <span class="n">Items</span><span class="p">.</span><span class="nf">Any</span><span class="p">(</span><span class="n">item</span> <span class="p">=&gt;</span> <span class="n">item</span><span class="p">.</span><span class="n">Type</span> <span class="p">==</span> <span class="s">"dvd"</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">PublishDefaultValue</code> boolean property defines whether the header has to be published even if the property is set to the default value for its data type. The default is <code class="highlighter-rouge">false</code>.</p>
+
+<p>Note that the <code class="highlighter-rouge">JsonIgnoreAttribute</code> can be used to prevent the same properties to be serialized in the JSON body, when using the <code class="highlighter-rouge">JsonMessageSerializer</code>.</p>
+
+<p>Only the message type will be scanned, therefore the properties decorated with the <code class="highlighter-rouge">HeaderAttribute</code> must be in the root of the message object.</p>
+
+<h2 id="default-headers">Default headers</h2>
+
+<p>Silverback will add some headers to the produced messages. They may vary depending on the scenario.
+Here is the list of the default headers that may be sent.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Header Key</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-message-id</code></td>
+      <td style="text-align: left">The message <a href="/silverback/docs/advanced/message-id">unique identifier</a>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-message-type</code></td>
+      <td style="text-align: left">The assembly qualified name of the message type. Used by the default <code class="highlighter-rouge">JsonMessageSerializer</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-failed-attempts</code></td>
+      <td style="text-align: left">If an exception if thrown the failed attempts will be incremented and stored as header. This is necessary for the <a href="/silverback/docs/configuration/inbound#error-handling">error policies</a> to work.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-source-endpoint</code></td>
+      <td style="text-align: left">This will be set by the <code class="highlighter-rouge">Move</code> is being moved from.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-chunk-id</code></td>
+      <td style="text-align: left">The unique id of the message chunk, used when <a href="/silverback/docs/advanced/chunking">chunking</a> is enabled.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-chunks-count</code></td>
+      <td style="text-align: left">The total number of chunks the message was split into, used when <a href="/silverback/docs/advanced/chunking">chunking</a> is enabled.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-first-chunk-offset</code></td>
+      <td style="text-align: left">The <code class="highlighter-rouge">IOffset</code> value of the first chunk of the same message, used when <a href="/silverback/docs/advanced/chunking">chunking</a> is enabled.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-batch-id</code></td>
+      <td style="text-align: left">The unique id assigned to the messages batch, used mostly for tracing, when <a href="/silverback/docs/configuration/inbound#batch-processing">batch processing</a> is enabled.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-batch-size</code></td>
+      <td style="text-align: left">The total number of messages in the batch, used mostly for tracing, when <a href="/silverback/docs/configuration/inbound#batch-processing">batch processing</a> is enabled.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">traceparent</code></td>
+      <td style="text-align: left">The current <code class="highlighter-rouge">Activity.Id</code>, used by the <code class="highlighter-rouge">IConsumer</code> implementation to set the <code class="highlighter-rouge">Activity.ParentId</code>, thus enabling distributed tracing across the message broker. Note that an <code class="highlighter-rouge">Activity</code> is automatically started by the default <code class="highlighter-rouge">IProducer</code> implementation. See <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=netcore-3.1">System.Diagnostics documentation</a> for details about <code class="highlighter-rouge">Activity</code> and distributed tracing in asp.net core and <a href="https://www.w3.org/TR/trace-context-1">W3C Trace Context proposal</a> for details about the headers.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">tracestate</code></td>
+      <td style="text-align: left">The <code class="highlighter-rouge">Activity.TraceStateString</code>. See also the <a href="https://www.w3.org/TR/trace-context-1">W3C Trace Context proposal</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">tracebaggage</code></td>
+      <td style="text-align: left">The string representation of the <code class="highlighter-rouge">Activity.Baggage</code> dictionary. See <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=netcore-3.1">System.Diagnostics documentation</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">content-type</code></td>
+      <td style="text-align: left">The content type of the <a href="/silverback/docs/advanced/binary-files">binary file</a>, used when producing or consuming an <code class="highlighter-rouge">IBinaryFileMessage</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-kafka-message-key</code></td>
+      <td style="text-align: left">When using Kafka, the <a href="/silverback/docs/kafka/message-key">kafka message key</a> will also be submitted as header (see <a href="/silverback/docs/kafka/message-key">Kafka Message Key (Partitioning)</a> to know how to define a message key)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Some constants for the headers name are also provided as reported in the following table.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Header Key</th>
+      <th style="text-align: left">Constant</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-message-id</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.MessageId</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-message-type</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.MessageType</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-failed-attempts</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.FailedAttempts</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-source-endpoint</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.SourceEndpoint</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-chunk-id</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.ChunkId</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-chunks-count</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.ChunksCount</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-first-chunk-offset</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.FirstChunkOffset</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-batch-id</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.BatchId</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-batch-size</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.BatchSize</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">traceparent</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.TraceId</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">tracestate</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.TraceState</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">tracebaggage</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.TraceBaggage</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">content-type</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">DefaultMessageHeaders.ContentType</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">x-kafka-message-key</code></td>
+      <td style="text-align: left"><code class="highlighter-rouge">KafkaMessageHeaders.KafkaKey</code></td>
+    </tr>
+  </tbody>
+</table>
+
+        
+      </section>
+
+      
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/silverback/docs/quickstart/translating" class="pagination--pager" title="Translating Messages
+">Previous</a>
+    
+    
+      <a href="/silverback/docs/quickstart/behaviors" class="pagination--pager" title="Behaviors
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+    <ul class="social-icons">
+        
+
+        
+        
+            
+            <li><a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+            
+        
+            
+            <li><a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope" aria-hidden="true"></i> Email</a></li>
+            
+        
+        
+    </ul>
+</div>
+  
+<div class="page__footer-copyright">&copy; 2020 Sergio Aquilini. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; based on <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+      </footer>
+    </div>
+
+    
+  <script src="/silverback/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+<script src="/silverback/assets/js/lunr/lunr.min.js"></script>
+<script src="/silverback/assets/js/lunr/lunr-store.js"></script>
+<script src="/silverback/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

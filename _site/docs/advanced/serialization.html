@@ -1,0 +1,1015 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.17.0 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Serialization - Silverback - Page </title>
+<meta name="description" content="Being flexible when serializing and deserializing the messages sent over the message broker is crucial for interoperability and these mechanisms are therfore completely customizable.">
+
+
+  <meta name="author" content="Sergio Aquilini">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Silverback">
+<meta property="og:title" content="Serialization">
+<meta property="og:url" content="http://localhost:4000/silverback/docs/advanced/serialization">
+
+
+  <meta property="og:description" content="Being flexible when serializing and deserializing the messages sent over the message broker is crucial for interoperability and these mechanisms are therfore completely customizable.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-12-13T12:38:35+01:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/silverback/docs/advanced/serialization">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sergio Aquilini",
+      "url": "http://localhost:4000/silverback/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/silverback/feed.xml" type="application/atom+xml" rel="alternate" title="Silverback Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/silverback/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="180x180" href="/silverback/assets/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/silverback/assets/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/silverback/assets/icons/favicon-16x16.png">
+<link rel="manifest" href="/silverback/assets/icons/site.webmanifest">
+<link rel="mask-icon" href="/silverback/assets/icons/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/silverback/"><img src="/silverback/assets/images/logo.png" alt=""></a>
+        
+        
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/silverback/docs/introduction" >Documentation</a>
+            </li><li class="masthead__menu-item">
+              <a href="/silverback/docs/releases" >Releases</a>
+            </li><li class="masthead__menu-item">
+              <a href="/silverback/about" >About</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://github.com/BEagle1984/silverback/" >GitHub</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle Menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/introduction" class="">Introduction</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/features" class="">Features</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/releases" class="">Releases</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <span>Quickstart</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart" class="">Introduction and Glossary</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                <span>Using the Bus</span>
+              
+
+              
+              <ul>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/bus" class="">Enabling the Bus</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/model" class="">Creating the Message model</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/publish" class="">Publishing</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/subscribe" class="">Subscribing</a></li>
+                
+              </ul>
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/ddd" class="">DDD and Domain Events</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                <span>Integration using a Message Broker</span>
+              
+
+              
+              <ul>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/message-broker" class="">Connecting a Message Broker</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/translating" class="">Translating Messages</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/headers" class="">Message Headers</a></li>
+                
+              </ul>
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/behaviors" class="">Behaviors</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/testing" class="">Testing</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/event-sourcing" class="">Event Sourcing</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Broker Configuration</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/endpoint" class="">Endpoint</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/outbound" class="">Outbound Connector</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/inbound" class="">Inbound Connector</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/mixed" class="">Mixed Configurations</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/external" class="">External Configuration</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Advanced</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/serialization" class="active">Serialization</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/chunking" class="">Chunking</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/encryption" class="">Encryption</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/binary-files" class="">Binary Files</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/rx" class="">Observable Bus</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/broker" class="">Using IBroker</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/message-id" class="">Message Identifier</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/iinboundenvelope" class="">IInboundEnvelope</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Kafka Specific</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/message-key" class="">Message Key (partitioning)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/multiple-consumer-groups" class="">Multiple Consumer Groups (in same process)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/events" class="">Kafka Events</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>RabbitMQ Specific</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/rabbit/routing-key" class="">Routing Key</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Extras</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/extra/dbcontext" class="">Sample DbContext (EF Core)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/extras/background-services" class="">Distributed Background Services</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Source Code</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/source/contributing" class="">Contributing</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/source/samples" class="">Samples</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+    
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Serialization">
+    <meta itemprop="description" content="Being flexible when serializing and deserializing the messages sent over the message broker is crucial for interoperability and these mechanisms are therfore completely customizable.">
+    
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Serialization
+</h1>
+          
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title">In this page:</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#default-json-serialization">Default JSON serialization</a></li>
+  <li><a href="#fixed-type-json-for-interoperability">Fixed-type JSON for interoperability</a></li>
+  <li><a href="#apache-avro">Apache Avro</a></li>
+  <li><a href="#custom-serializer">Custom serializer</a></li>
+  <li><a href="#binary-files">Binary Files</a></li>
+</ul>
+            </nav>
+          </aside>
+        
+        <p>Being flexible when serializing and deserializing the messages sent over the message broker is crucial for interoperability and these mechanisms are therfore completely customizable.</p>
+
+<h2 id="default-json-serialization">Default JSON serialization</h2>
+
+<p>The default <code class="highlighter-rouge">JsonMessageSerializer</code> internally uses <code class="highlighter-rouge">Newtonsoft.Json</code> to serialize the messages as json. The messages are then transformed in a byte array using the UTF8 encoder.</p>
+
+<p>A few headers are added to the message, in particular <code class="highlighter-rouge">x-message-type</code> is used by the <code class="highlighter-rouge">JsonMessageSerializer</code> to know the message type when deserializing. It also leverages the Newtonsoft’s <a href="https://www.newtonsoft.com/json/help/html/SerializeTypeNameHandling.htm">automatic type handling</a> to automatically resolve the actual type of the nested properties.</p>
+
+<p>The deserializer function provided by <code class="highlighter-rouge">JsonMessageSerializer</code> will obviously try to map the message to a type with the exact assembly qualified name found in the <code class="highlighter-rouge">x-message-type</code> header. It is therefore a good practice to share the message models among the services, maybe through nuget.</p>
+
+<p>This is the suggested serialization strategy when both producer and consumer are based on Silverback but may not be ideal for interoperability.</p>
+
+<p>Have a look at the <a href="/silverback/docs/quickstart/headers">Message Headers</a> section for an overview on the headers that are appended to the messages.</p>
+
+<h2 id="fixed-type-json-for-interoperability">Fixed-type JSON for interoperability</h2>
+
+<p>If you are consuming a message coming from another system (not based on Silverback), chances are that the type name is not being delivered as header.</p>
+
+<p>In that case you can resort to the typed <code class="highlighter-rouge">JsonMessageSerializer&lt;TMessage&gt;</code>. This serializer works like the default one but the message type is hard-coded, instead of being expected in the header.</p>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">(</span><span class="n">BusConfigurator</span> <span class="n">busConfigurator</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">busConfigurator</span>
+            <span class="p">.</span><span class="nf">Connect</span><span class="p">(</span><span class="n">endpoints</span> <span class="p">=&gt;</span> <span class="n">endpoints</span>
+                <span class="p">.</span><span class="nf">AddInbound</span><span class="p">(</span>
+                    <span class="k">new</span> <span class="nf">KafkaConsumerEndpoint</span><span class="p">(</span><span class="s">"order-events"</span><span class="p">)</span>
+                    <span class="p">{</span>
+                        <span class="n">Serializer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">JsonMessageSerializer</span><span class="p">&lt;</span><span class="n">OrderEvent</span><span class="p">&gt;</span>
+                    <span class="p">}));</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+<p class="notice--note">The <code class="highlighter-rouge">JsonMessageSerializer</code> can be also be tweaked modifying its <code class="highlighter-rouge">Settings</code> and <code class="highlighter-rouge">Encoding</code>.</p>
+
+<h2 id="apache-avro">Apache Avro</h2>
+
+<p>The <code class="highlighter-rouge">AvroSerializer</code> contained in the <code class="highlighter-rouge">Silverback.Integration.Kafka.SchemaRegistry</code> package can be used to connect with a schema registry and exchange messages in <a href="https://avro.apache.org/">Apache Avro</a> format.</p>
+
+<figure class="csharp">
+<figcaption>Startup.cs</figcaption>
+
+<figure class="highlight"><pre><code class="language-csharp" data-lang="csharp"><span class="k">public</span> <span class="k">class</span> <span class="nc">Startup</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="k">void</span> <span class="nf">Configure</span><span class="p">(</span><span class="n">BusConfigurator</span> <span class="n">busConfigurator</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">busConfigurator</span>
+            <span class="p">.</span><span class="nf">Connect</span><span class="p">(</span><span class="n">endpoints</span> <span class="p">=&gt;</span> <span class="n">endpoints</span>
+                <span class="p">.</span><span class="n">AddOutbound</span><span class="p">&lt;</span><span class="n">OrderEvent</span><span class="p">&gt;(</span>
+                    <span class="k">new</span> <span class="nf">KafkaConsumerEndpoint</span><span class="p">(</span><span class="s">"order-events"</span><span class="p">)</span>
+                    <span class="p">{</span>
+                        <span class="n">Serializer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">AvroMessageSerializer</span><span class="p">&lt;</span><span class="n">OrderEvent</span><span class="p">&gt;</span>
+                        <span class="p">{</span>
+                            <span class="n">SchemaRegistryConfig</span> <span class="p">=</span> <span class="k">new</span> <span class="n">SchemaRegistryConfig</span>
+                            <span class="p">{</span>
+                                <span class="n">Url</span> <span class="p">=</span> <span class="s">"schema-registry:8081"</span>
+                            <span class="p">},</span>
+                            <span class="n">AvroSerializerConfig</span> <span class="p">=</span> <span class="k">new</span> <span class="n">AvroSerializerConfig</span>
+                            <span class="p">{</span>
+                                <span class="n">AutoRegisterSchemas</span> <span class="p">=</span> <span class="k">true</span>
+                            <span class="p">}</span>
+                        <span class="p">},</span>
+                    <span class="p">}));</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+</figure>
+
+<p class="notice--note">The C# message models can be generated from an Avro schema using <a href="https://www.nuget.org/packages/Confluent.Apache.Avro.AvroGen/">AvroGen</a>.</p>
+
+<p class="notice--note">This serializer is built for Kafka but it could work with other brokers, as long as a schema registry is available.</p>
+
+<h2 id="custom-serializer">Custom serializer</h2>
+
+<p>In some cases you may want to build your very own custom serializer implementing <code class="highlighter-rouge">IMessageSerializer</code> directly.</p>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">public</span> <span class="k">class</span> <span class="nc">MyCustomSerializer</span> <span class="p">:</span> <span class="n">IMessageSerializer</span>
+<span class="p">{</span>
+    <span class="k">public</span> <span class="kt">byte</span><span class="p">[]</span> <span class="nf">Serialize</span><span class="p">(</span><span class="kt">object</span> <span class="n">message</span><span class="p">,</span> <span class="n">MessageHeaderCollection</span> <span class="n">messageHeaders</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">object</span> <span class="nf">Deserialize</span><span class="p">(</span><span class="kt">byte</span><span class="p">[]</span> <span class="n">message</span><span class="p">,</span> <span class="n">MessageHeaderCollection</span> <span class="n">messageHeaders</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">byte</span><span class="p">[]</span> <span class="nf">Serialize</span><span class="p">(</span>
+        <span class="kt">object</span> <span class="n">message</span><span class="p">,</span>
+        <span class="n">MessageHeaderCollection</span> <span class="n">messageHeaders</span><span class="p">,</span>
+        <span class="n">MessageSerializationContext</span> <span class="n">context</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="kt">object</span> <span class="nf">Deserialize</span><span class="p">(</span>
+        <span class="kt">byte</span><span class="p">[]</span> <span class="n">message</span><span class="p">,</span>
+        <span class="n">MessageHeaderCollection</span> <span class="n">messageHeaders</span><span class="p">,</span>
+        <span class="n">MessageSerializationContext</span> <span class="n">context</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">Task</span><span class="p">&lt;</span><span class="kt">byte</span><span class="p">[</span><span class="k">]&gt;</span> <span class="nf">SerializeAsync</span><span class="p">(</span>
+        <span class="kt">object</span> <span class="n">message</span><span class="p">,</span>
+        <span class="n">MessageHeaderCollection</span> <span class="n">messageHeaders</span><span class="p">,</span>
+        <span class="n">MessageSerializationContext</span> <span class="n">context</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+
+    <span class="k">public</span> <span class="n">Task</span><span class="p">&lt;</span><span class="kt">object</span><span class="p">&gt;</span> <span class="nf">DeserializeAsync</span><span class="p">(</span>
+        <span class="kt">byte</span><span class="p">[]</span> <span class="n">message</span><span class="p">,</span>
+        <span class="n">MessageHeaderCollection</span> <span class="n">messageHeaders</span><span class="p">,</span>
+        <span class="n">MessageSerializationContext</span> <span class="n">context</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="p">...</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p class="notice--note">You may need to implement <code class="highlighter-rouge">IKafkaMessageSerializer</code> if you want to have full control over the serialization of the Kafka key as well.</p>
+
+<h2 id="binary-files">Binary Files</h2>
+
+<p>Please refer to the <a href="/silverback/docs/quickstart/headers">Binary Files</a> page if you need to prduce or consume raw binary files.</p>
+
+        
+      </section>
+
+      
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/silverback/docs/configuration/external" class="pagination--pager" title="External Configuration
+">Previous</a>
+    
+    
+      <a href="/silverback/docs/advanced/chunking" class="pagination--pager" title="Chunking
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+    <ul class="social-icons">
+        
+
+        
+        
+            
+            <li><a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+            
+        
+            
+            <li><a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope" aria-hidden="true"></i> Email</a></li>
+            
+        
+        
+    </ul>
+</div>
+  
+<div class="page__footer-copyright">&copy; 2020 Sergio Aquilini. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; based on <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+      </footer>
+    </div>
+
+    
+  <script src="/silverback/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+<script src="/silverback/assets/js/lunr/lunr.min.js"></script>
+<script src="/silverback/assets/js/lunr/lunr-store.js"></script>
+<script src="/silverback/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>

@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>IInboundEnvelope | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="IInboundEnvelope | Silverback ">
+    <meta name="generator" content="docfx 2.56.5.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h1 id="iinboundenvelope">IInboundEnvelope</h1>
+
+<p>When a message is consumed Silverback wraps it into an <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> and pushes it to the message bus. Both the <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> or the contained message in its pure form can be subscribed.</p>
+<p>You can take advantage of this mechanism to gain access to the transport information of the message, since the <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> holds all the information like endpoint, offset and headers data.</p>
+<p>Subscribing to the <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope-1.html">IInboundEnvelope&lt;TMessage&gt;</a> works exactly the same as subscribing to any other message.</p>
+<pre><code class="lang-csharp">public class SubscribingService
+{
+    public async Task OnWrappedMessageReceived(IInboundEnvelope&lt;SampleMessage&gt; envelope)
+    {
+        // ...your message handling logic...
+    }
+
+    public async Task OnPureMessageReceived(SampleMessage message)
+    {
+        // ...your message handling logic...
+    }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Subscribing to the non-generic <a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> or <a class="xref" href="../../api/Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a> it is possible to subscribe even the messages with an empty body.</p>
+</div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/concepts/broker/inboundenvelope.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

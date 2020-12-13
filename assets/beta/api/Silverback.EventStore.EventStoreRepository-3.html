@@ -1,0 +1,895 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class EventStoreRepository&lt;TDomainEntity, TEventStoreEntity, TEventEntity&gt;
+   | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class EventStoreRepository&lt;TDomainEntity, TEventStoreEntity, TEventEntity&gt;
+   | Silverback ">
+    <meta name="generator" content="docfx 2.56.5.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.EventStore.EventStoreRepository`3">
+  
+  
+  <h1 id="Silverback_EventStore_EventStoreRepository_3" data-uid="Silverback.EventStore.EventStoreRepository`3" class="text-break">Class EventStoreRepository&lt;TDomainEntity, TEventStoreEntity, TEventEntity&gt;
+  </h1>
+  <div class="markdown level0 summary"><p>The base class for the event store repositories.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">EventStoreRepository&lt;TDomainEntity, TEventStoreEntity, TEventEntity&gt;</span></div>
+      <div class="level2"><a class="xref" href="Silverback.EventStore.DbEventStoreRepository-4.html">DbEventStoreRepository&lt;TDomainEntity, TKey, TEventStoreEntity, TEventEntity&gt;</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.EventStore.html">Silverback.EventStore</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.EventSourcing.dll</h6>
+  <h5 id="Silverback_EventStore_EventStoreRepository_3_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class EventStoreRepository&lt;TDomainEntity, TEventStoreEntity, TEventEntity&gt;
+    where TDomainEntity : class, IEventSourcingDomainEntity where TEventStoreEntity : class, IEventStoreEntity&lt;TEventEntity&gt;, new()
+    where TEventEntity : class, IEventEntity, new()</code></pre>
+  </div>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TDomainEntity</span></td>
+        <td><p>The type of the domain entity whose events are stored in this repository.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TEventStoreEntity</span></td>
+        <td><p>The type of event store entity being persisted to the underlying storage.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TEventEntity</span></td>
+        <td><p>The base type of the events that will be associated to the event store entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_AddEventStoreEntity__1_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.AddEventStoreEntity(%601)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L158">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_AddEventStoreEntity_" data-uid="Silverback.EventStore.EventStoreRepository`3.AddEventStoreEntity*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_AddEventStoreEntity__1_" data-uid="Silverback.EventStore.EventStoreRepository`3.AddEventStoreEntity(`1)">AddEventStoreEntity(TEventStoreEntity)</h4>
+  <div class="markdown level1 summary"><p>Adds the new event store entity to the storage, without committing yet.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract void AddEventStoreEntity(TEventStoreEntity eventStoreEntity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TEventStoreEntity</span></td>
+        <td><span class="parametername">eventStoreEntity</span></td>
+        <td><p>The event store entity to be added.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_EventStore_EventStoreRepository_3_AddEventStoreEntity__1__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>In EF Core this equals to adding the entity to the <code>DbSet</code> without calling <code>SaveChanges</code>
+(that will be called later by the framework).</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_GetDomainEntity__1_System_Nullable_System_DateTime__.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.GetDomainEntity(%601%2CSystem.Nullable%7BSystem.DateTime%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L216">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_GetDomainEntity_" data-uid="Silverback.EventStore.EventStoreRepository`3.GetDomainEntity*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_GetDomainEntity__1_System_Nullable_System_DateTime__" data-uid="Silverback.EventStore.EventStoreRepository`3.GetDomainEntity(`1,System.Nullable{System.DateTime})">GetDomainEntity(TEventStoreEntity, Nullable&lt;DateTime&gt;)</h4>
+  <div class="markdown level1 summary"><p>Rebuilds the domain entity applying the stored events.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual TDomainEntity GetDomainEntity(TEventStoreEntity eventStoreEntity, DateTime? snapshot = default(DateTime? ))</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TEventStoreEntity</span></td>
+        <td><span class="parametername">eventStoreEntity</span></td>
+        <td><p>The event store entity referencing the events to be applied.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
+        <td><span class="parametername">snapshot</span></td>
+        <td><p>The optional datetime of the snapshot to build. Specifying it will cause only the events up to this
+datetime to be applied.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TDomainEntity</span></td>
+        <td><p>The domain entity rebuilt from the stored events.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntity__0_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.GetEventStoreEntity(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L169">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntity_" data-uid="Silverback.EventStore.EventStoreRepository`3.GetEventStoreEntity*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntity__0_" data-uid="Silverback.EventStore.EventStoreRepository`3.GetEventStoreEntity(`0)">GetEventStoreEntity(TDomainEntity)</h4>
+  <div class="markdown level1 summary"><p>Returns the event store entity related to the specified domain entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract TEventStoreEntity GetEventStoreEntity(TDomainEntity domainEntity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TDomainEntity</span></td>
+        <td><span class="parametername">domainEntity</span></td>
+        <td><p>The domain entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TEventStoreEntity</span></td>
+        <td><p>The event store entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntity__0_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.GetEventStoreEntity(%600%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L119">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntity_" data-uid="Silverback.EventStore.EventStoreRepository`3.GetEventStoreEntity*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntity__0_System_Boolean_" data-uid="Silverback.EventStore.EventStoreRepository`3.GetEventStoreEntity(`0,System.Boolean)">GetEventStoreEntity(TDomainEntity, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Returns the event store entity related to the specified domain entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual TEventStoreEntity GetEventStoreEntity(TDomainEntity domainEntity, bool addIfNotFound)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TDomainEntity</span></td>
+        <td><span class="parametername">domainEntity</span></td>
+        <td><p>The domain entity.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">addIfNotFound</span></td>
+        <td><p>Specifies whether the entity must be created when not found.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TEventStoreEntity</span></td>
+        <td><p>The event store entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntityAsync__0_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.GetEventStoreEntityAsync(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L181">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntityAsync_" data-uid="Silverback.EventStore.EventStoreRepository`3.GetEventStoreEntityAsync*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntityAsync__0_" data-uid="Silverback.EventStore.EventStoreRepository`3.GetEventStoreEntityAsync(`0)">GetEventStoreEntityAsync(TDomainEntity)</h4>
+  <div class="markdown level1 summary"><p>Returns the event store entity related to the specified domain entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract Task&lt;TEventStoreEntity&gt; GetEventStoreEntityAsync(TDomainEntity domainEntity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TDomainEntity</span></td>
+        <td><span class="parametername">domainEntity</span></td>
+        <td><p>The domain entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TEventStoreEntity&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+event store entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntityAsync__0_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.GetEventStoreEntityAsync(%600%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L139">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntityAsync_" data-uid="Silverback.EventStore.EventStoreRepository`3.GetEventStoreEntityAsync*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_GetEventStoreEntityAsync__0_System_Boolean_" data-uid="Silverback.EventStore.EventStoreRepository`3.GetEventStoreEntityAsync(`0,System.Boolean)">GetEventStoreEntityAsync(TDomainEntity, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Returns the event store entity related to the specified domain entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual Task&lt;TEventStoreEntity&gt; GetEventStoreEntityAsync(TDomainEntity domainEntity, bool addIfNotFound)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TDomainEntity</span></td>
+        <td><span class="parametername">domainEntity</span></td>
+        <td><p>The domain entity.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">addIfNotFound</span></td>
+        <td><p>Specifies whether the entity must be created when not found.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TEventStoreEntity&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+event store entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_MapEvent__2_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.MapEvent(%602)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L266">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_MapEvent_" data-uid="Silverback.EventStore.EventStoreRepository`3.MapEvent*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_MapEvent__2_" data-uid="Silverback.EventStore.EventStoreRepository`3.MapEvent(`2)">MapEvent(TEventEntity)</h4>
+  <div class="markdown level1 summary"><p>Maps the persisted entity back to the <a class="xref" href="Silverback.Domain.IEntityEvent.html">IEntityEvent</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual IEntityEvent MapEvent(TEventEntity eventEntity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TEventEntity</span></td>
+        <td><span class="parametername">eventEntity</span></td>
+        <td><p>The stored event entity to be mapped.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Domain.IEntityEvent.html">IEntityEvent</a></td>
+        <td><p>The <a class="xref" href="Silverback.Domain.IEntityEvent.html">IEntityEvent</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_MapEventEntity_Silverback_Domain_IEntityEvent_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.MapEventEntity(Silverback.Domain.IEntityEvent)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L244">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_MapEventEntity_" data-uid="Silverback.EventStore.EventStoreRepository`3.MapEventEntity*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_MapEventEntity_Silverback_Domain_IEntityEvent_" data-uid="Silverback.EventStore.EventStoreRepository`3.MapEventEntity(Silverback.Domain.IEntityEvent)">MapEventEntity(IEntityEvent)</h4>
+  <div class="markdown level1 summary"><p>Maps the <a class="xref" href="Silverback.Domain.IEntityEvent.html">IEntityEvent</a> to the related entity being persisted into the underlying
+storage.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual TEventEntity MapEventEntity(IEntityEvent entityEvent)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Domain.IEntityEvent.html">IEntityEvent</a></td>
+        <td><span class="parametername">entityEvent</span></td>
+        <td><p>The entity event to be mapped.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TEventEntity</span></td>
+        <td><p>The entity representing the <a class="xref" href="Silverback.Domain.IEntityEvent.html">IEntityEvent</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_MapEventStoreEntity__0__1_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.MapEventStoreEntity(%600%2C%601)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L195">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_MapEventStoreEntity_" data-uid="Silverback.EventStore.EventStoreRepository`3.MapEventStoreEntity*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_MapEventStoreEntity__0__1_" data-uid="Silverback.EventStore.EventStoreRepository`3.MapEventStoreEntity(`0,`1)">MapEventStoreEntity(TDomainEntity, TEventStoreEntity)</h4>
+  <div class="markdown level1 summary"><p>Maps the domain entity to the event store entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void MapEventStoreEntity(TDomainEntity domainEntity, TEventStoreEntity eventStoreEntity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TDomainEntity</span></td>
+        <td><span class="parametername">domainEntity</span></td>
+        <td><p>The domain entity to be mapped.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">TEventStoreEntity</span></td>
+        <td><span class="parametername">eventStoreEntity</span></td>
+        <td><p>The event store entity to be initialized after the domain entity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_EventStore_EventStoreRepository_3_MapEventStoreEntity__0__1__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method should map the entity keys only. The events are handled automatically.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_Remove__0_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.Remove(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L79">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_Remove_" data-uid="Silverback.EventStore.EventStoreRepository`3.Remove*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_Remove__0_" data-uid="Silverback.EventStore.EventStoreRepository`3.Remove(`0)">Remove(TDomainEntity)</h4>
+  <div class="markdown level1 summary"><p>Removes the specified domain entity from the event store.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TEventStoreEntity Remove(TDomainEntity domainEntity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TDomainEntity</span></td>
+        <td><span class="parametername">domainEntity</span></td>
+        <td><p>The domain entity to be removed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TEventStoreEntity</span></td>
+        <td><p>The event store entity that was removed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_RemoveAsync__0_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.RemoveAsync(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L98">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_RemoveAsync_" data-uid="Silverback.EventStore.EventStoreRepository`3.RemoveAsync*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_RemoveAsync__0_" data-uid="Silverback.EventStore.EventStoreRepository`3.RemoveAsync(`0)">RemoveAsync(TDomainEntity)</h4>
+  <div class="markdown level1 summary"><p>Removes the specified domain entity from the event store.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;TEventStoreEntity&gt; RemoveAsync(TDomainEntity domainEntity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TDomainEntity</span></td>
+        <td><span class="parametername">domainEntity</span></td>
+        <td><p>The domain entity to be removed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TEventStoreEntity&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+event store entity that was removed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_RemoveCore__1_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.RemoveCore(%601)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L294">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_RemoveCore_" data-uid="Silverback.EventStore.EventStoreRepository`3.RemoveCore*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_RemoveCore__1_" data-uid="Silverback.EventStore.EventStoreRepository`3.RemoveCore(`1)">RemoveCore(TEventStoreEntity)</h4>
+  <div class="markdown level1 summary"><p>Removes the event store entity and all related events from the store.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract void RemoveCore(TEventStoreEntity eventStore)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TEventStoreEntity</span></td>
+        <td><span class="parametername">eventStore</span></td>
+        <td><p>The entity to be removed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_Store__0_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.Store(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L44">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_Store_" data-uid="Silverback.EventStore.EventStoreRepository`3.Store*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_Store__0_" data-uid="Silverback.EventStore.EventStoreRepository`3.Store(`0)">Store(TDomainEntity)</h4>
+  <div class="markdown level1 summary"><p>Stores the specified domain entity into the event store.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TEventStoreEntity Store(TDomainEntity domainEntity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TDomainEntity</span></td>
+        <td><span class="parametername">domainEntity</span></td>
+        <td><p>The domain entity to be stored.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TEventStoreEntity</span></td>
+        <td><p>The event store entity that was persisted.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3_StoreAsync__0_.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603.StoreAsync(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L61">View source</a>
+  </span>
+  <a id="Silverback_EventStore_EventStoreRepository_3_StoreAsync_" data-uid="Silverback.EventStore.EventStoreRepository`3.StoreAsync*"></a>
+  <h4 id="Silverback_EventStore_EventStoreRepository_3_StoreAsync__0_" data-uid="Silverback.EventStore.EventStoreRepository`3.StoreAsync(`0)">StoreAsync(TDomainEntity)</h4>
+  <div class="markdown level1 summary"><p>Stores the specified domain entity into the event store.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;TEventStoreEntity&gt; StoreAsync(TDomainEntity domainEntity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TDomainEntity</span></td>
+        <td><span class="parametername">domainEntity</span></td>
+        <td><p>The domain entity to be stored.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TEventStoreEntity&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+event store entity that was persisted.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventStoreRepository_3.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventStoreRepository%603%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.EventSourcing/EventStore/EventStoreRepository`3.cs/#L29" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

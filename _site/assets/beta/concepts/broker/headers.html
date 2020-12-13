@@ -1,0 +1,258 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Message Headers | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Message Headers | Silverback ">
+    <meta name="generator" content="docfx 2.56.5.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="headers">
+<h1 id="message-headers">Message Headers</h1>
+
+<h2 id="custom-headers">Custom headers</h2>
+<p>There are basically two ways to add custom headers to an outbound message:</p>
+<ul>
+<li>The easiest and usually preferred approach is to annotate some properties with the <a class="xref" href="../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a>, as shown in the next chapter.</li>
+<li>Otherwise a custom <a class="xref" href="../../api/Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a> or <a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a> can be implemented, as shown in the <a class="xref" href="../bus/behaviors.html">Behaviors</a> and <a class="xref" href="behaviors.html">Broker behaviors pipeline</a> sections.</li>
+</ul>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>Some message broker implementations might not support headers and Silverback doesn't currently provide any workaround, thus the headers will simply be ignored.</p>
+</div>
+<h3 id="using-headerattribute">Using HeaderAttribute</h3>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> usage is very simple: you just have to decorate the properties you want to publish as headers and specify a name for the header.</p>
+<p>The headers value will also automatically be mapped back to the property upon consuming if the property declares a setter.</p>
+<pre><code class="lang-csharp">using Silverback.Messaging.Messages;
+
+namespace Sample
+{
+    public class OrderCreatedEvent
+    {
+        public List&lt;LineItems&gt; Items { get; set; }
+
+        [Header(&quot;x-order-type&quot;, PublishDefaultValue = true)]
+        [JsonIgnore]
+        public OrderType OrderType { get; set; }
+
+        [Header(&quot;x-books-order&quot;)]
+        public bool ContainsBooks =&gt; Items.Any(item =&gt; item.Type == &quot;book&quot;)
+
+        [Header(&quot;x-dvd-order&quot;)]
+        public bool ContainsDvd =&gt; Items.Any(item =&gt; item.Type == &quot;dvd&quot;)
+    }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The <code>PublishDefaultValue</code> boolean property defines whether the header has to be published even if the property is set to the default value for its data type. The default is <code>false</code>.</p>
+<p>Note that the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.text.json.serialization.jsonignoreattribute">JsonIgnoreAttribute</a> can be used to prevent the same properties to be serialized in the JSON body, when using the <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a>.</p>
+</div>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>Only the message type will be scanned, therefore the properties decorated with the <a class="xref" href="../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> must be in the root of the message object.</p>
+</div>
+<h2 id="default-headers">Default headers</h2>
+<p>Silverback will add some headers to the produced messages. They may vary depending on the scenario.
+Here is the list of the default headers that may be sent.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Header Key</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>x-message-id</code></td>
+<td style="text-align: left;">The <a class="xref" href="message-id.html">message identifier</a>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>x-message-type</code></td>
+<td style="text-align: left;">The assembly qualified name of the message type. Used by the default <a class="xref" href="../../api/Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>x-failed-attempts</code></td>
+<td style="text-align: left;">If an exception if thrown the failed attempts will be incremented and stored as header. This is necessary for the <a class="xref" href="inbound.html#error-handling">error policies</a> to work.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>x-source-endpoint</code></td>
+<td style="text-align: left;">This will be set by the <code>Move</code> error policy and will contain the name of the endpoint the failed message is being moved from.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>x-chunk-index</code></td>
+<td style="text-align: left;">The message chunk index, used when <a class="xref" href="chunking.html">chunking</a> is enabled.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>x-chunk-count</code></td>
+<td style="text-align: left;">The total number of chunks the message was split into, used when <a class="xref" href="chunking.html">chunking</a> is enabled.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>x-chunk-last</code></td>
+<td style="text-align: left;">A boolean value indicating whether the message is the last one of a chunks sequence, used when <a class="xref" href="chunking.html">chunking</a> is enabled.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>x-first-chunk-offset</code></td>
+<td style="text-align: left;">The <a class="xref" href="../../api/Silverback.Messaging.Broker.IBrokerMessageOffset.html">IBrokerMessageOffset</a> value of the first chunk of the same message, used when <a class="xref" href="chunking.html">chunking</a> is enabled.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>traceparent</code></td>
+<td style="text-align: left;">Used for distributed tracing. It is set by the <a class="xref" href="../../api/Silverback.Messaging.Broker.IProducer.html">IProducer</a> using the current <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity.Id</a>. The <a class="xref" href="../../api/Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> uses it's value to set the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity.ParentId</a>. Note that an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity</a> is automatically started by the default <a class="xref" href="../../api/Silverback.Messaging.Broker.IProducer.html">IProducer</a> implementation. The header is implemented according to the <a href="https://www.w3.org/TR/trace-context-1/#traceparent-header">W3C Trace Context proposal</a>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tracestate</code></td>
+<td style="text-align: left;">Used for distributed tracing. It corresponds to the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity.TraceStateString</a>. The header is implemented according to the <a href="https://www.w3.org/TR/trace-context-1/#tracestate-header">W3C Trace Context proposal</a>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tracebaggage</code></td>
+<td style="text-align: left;">Used for distributed tracing. It corresponds to the string representation of the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity">Activity.Baggage</a> dictionary. This is not part of the w3c standard.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>content-type</code></td>
+<td style="text-align: left;">The content type of the <a class="xref" href="binary-files.html">binary file</a>, used when producing or consuming an <a class="xref" href="../../api/Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a>.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>x-kafka-message-key</code></td>
+<td style="text-align: left;">The header that will be filled with the <a class="xref" href="kafka/kafka-partitioning.html">key</a> of the message consumed from Kafka.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>x-kafka-message-timestamp</code></td>
+<td style="text-align: left;">The header that will be filled with the timestamp of the message consumed from Kafka.</td>
+</tr>
+</tbody>
+</table>
+<p>The static classes <a class="xref" href="../../api/Silverback.Messaging.Messages.DefaultMessageHeaders.html">DefaultMessageHeaders</a> and <a class="xref" href="../../api/Silverback.Messaging.Messages.KafkaMessageHeaders.html">KafkaMessageHeaders</a> contain all default header names constants.</p>
+<h2 id="customizing-header-names">Customizing header names</h2>
+<p>The default header names can be overridden using the <code>WithCustomHeaderName</code> configuration method.</p>
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka())
+            .AddEndpointsConfigurator&lt;MyEndpointsConfigurator&gt;()
+            .WithCustomHeaderName(DefaultMessageHeaders.ChunkId, &quot;x-ch-id&quot;)
+            .WithCustomHeaderName(DefaultMessageHeaders.ChunksCount, &quot;x-ch-cnt&quot;));
+    }
+}
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/concepts/broker/headers.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

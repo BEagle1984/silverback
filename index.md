@@ -7,6 +7,8 @@ header:
   overlay_color: "#5e616c"
   overlay_image: /assets/images/splash.jpg
   actions:
+    - label: "<i class='fas fa-star'></i> View new (beta) website"
+      url: "/assets/beta/"
     - label: "<i class='fab fa-github'></i> View on GitHub"
       url: "https://github.com/BEagle1984/silverback/"
     - label: "<i class='fas fa-arrow-alt-circle-down'></i> Get from NuGet"

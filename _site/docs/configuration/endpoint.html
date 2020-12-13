@@ -1,0 +1,1382 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.17.0 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Endpoint - Silverback - Page </title>
+<meta name="description" content="The endpoint object contains all information that identify the topic/queue that is being connected and all the configurations. The endpoint object is therefore very specific and every broker type will define it’s own implementation of IEndpoint.">
+
+
+  <meta name="author" content="Sergio Aquilini">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Silverback">
+<meta property="og:title" content="Endpoint">
+<meta property="og:url" content="http://localhost:4000/silverback/docs/configuration/endpoint">
+
+
+  <meta property="og:description" content="The endpoint object contains all information that identify the topic/queue that is being connected and all the configurations. The endpoint object is therefore very specific and every broker type will define it’s own implementation of IEndpoint.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-12-13T12:38:35+01:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/silverback/docs/configuration/endpoint">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Sergio Aquilini",
+      "url": "http://localhost:4000/silverback/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/silverback/feed.xml" type="application/atom+xml" rel="alternate" title="Silverback Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/silverback/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<link rel="apple-touch-icon" sizes="180x180" href="/silverback/assets/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/silverback/assets/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/silverback/assets/icons/favicon-16x16.png">
+<link rel="manifest" href="/silverback/assets/icons/site.webmanifest">
+<link rel="mask-icon" href="/silverback/assets/icons/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="#ffffff">
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+          <a class="site-logo" href="/silverback/"><img src="/silverback/assets/images/logo.png" alt=""></a>
+        
+        
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/silverback/docs/introduction" >Documentation</a>
+            </li><li class="masthead__menu-item">
+              <a href="/silverback/docs/releases" >Releases</a>
+            </li><li class="masthead__menu-item">
+              <a href="/silverback/about" >About</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://github.com/BEagle1984/silverback/" >GitHub</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle Menu</label>
+  <ul class="nav__items">
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/introduction" class="">Introduction</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/features" class="">Features</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          
+          
+          
+          
+          
+
+          <a href="/silverback/docs/releases" class="">Releases</a>
+        
+
+        
+      </li>
+    
+      <li>
+        
+          <span>Quickstart</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart" class="">Introduction and Glossary</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                <span>Using the Bus</span>
+              
+
+              
+              <ul>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/bus" class="">Enabling the Bus</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/model" class="">Creating the Message model</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/publish" class="">Publishing</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/subscribe" class="">Subscribing</a></li>
+                
+              </ul>
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/ddd" class="">DDD and Domain Events</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                <span>Integration using a Message Broker</span>
+              
+
+              
+              <ul>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/message-broker" class="">Connecting a Message Broker</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/translating" class="">Translating Messages</a></li>
+                
+                  
+                  
+
+                  
+                  
+
+                  <li><a href="/silverback/docs/quickstart/headers" class="">Message Headers</a></li>
+                
+              </ul>
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/behaviors" class="">Behaviors</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/testing" class="">Testing</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/quickstart/event-sourcing" class="">Event Sourcing</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Broker Configuration</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/endpoint" class="active">Endpoint</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/outbound" class="">Outbound Connector</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/inbound" class="">Inbound Connector</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/mixed" class="">Mixed Configurations</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/configuration/external" class="">External Configuration</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Advanced</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/serialization" class="">Serialization</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/chunking" class="">Chunking</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/encryption" class="">Encryption</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/binary-files" class="">Binary Files</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/rx" class="">Observable Bus</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/broker" class="">Using IBroker</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/message-id" class="">Message Identifier</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/advanced/iinboundenvelope" class="">IInboundEnvelope</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Kafka Specific</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/message-key" class="">Message Key (partitioning)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/multiple-consumer-groups" class="">Multiple Consumer Groups (in same process)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/kafka/events" class="">Kafka Events</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>RabbitMQ Specific</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/rabbit/routing-key" class="">Routing Key</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Extras</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/extra/dbcontext" class="">Sample DbContext (EF Core)</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/extras/background-services" class="">Distributed Background Services</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+      <li>
+        
+          <span>Source Code</span>
+        
+
+        
+        <ul>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/source/contributing" class="">Contributing</a>
+              
+
+              
+            </li>
+          
+            <li>
+              
+                
+                
+
+                
+                
+
+                <a href="/silverback/docs/source/samples" class="">Samples</a>
+              
+
+              
+            </li>
+          
+        </ul>
+        
+      </li>
+    
+  </ul>
+</nav>
+    
+  
+  </div>
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Endpoint">
+    <meta itemprop="description" content="The endpoint object contains all information that identify the topic/queue that is being connected and all the configurations. The endpoint object is therefore very specific and every broker type will define it’s own implementation of IEndpoint.">
+    
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Endpoint
+</h1>
+          
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title">In this page:</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#kafka">Kafka</a>
+    <ul>
+      <li><a href="#kafkaproducerendpoint">KafkaProducerEndpoint</a></li>
+      <li><a href="#kafkaconsumerendpoint">KafkaConsumerEndpoint</a></li>
+    </ul>
+  </li>
+  <li><a href="#rabbitmq">RabbitMQ</a>
+    <ul>
+      <li><a href="#rabbitqueueproducerendpoint">RabbitQueueProducerEndpoint</a></li>
+      <li><a href="#rabbitexchangeproducerendpoint">RabbitExchangeProducerEndpoint</a></li>
+      <li><a href="#rabbitqueueconsumerendpoint">RabbitQueueConsumerEndpoint</a></li>
+      <li><a href="#rabbitexchangeconsumerendpoint">RabbitExchangeConsumerEndpoint</a></li>
+    </ul>
+  </li>
+</ul>
+            </nav>
+          </aside>
+        
+        <p>The endpoint object contains all information that identify the topic/queue that is being connected and all the configurations. The endpoint object is therefore very specific and every broker type will define it’s own implementation of <code class="highlighter-rouge">IEndpoint</code>.</p>
+
+<h2 id="kafka">Kafka</h2>
+
+<p><code class="highlighter-rouge">Silverback.Integration.Kafka</code> uses 2 different classes to specify inbound and outbound endpoints configuration.</p>
+
+<p>For a more in-depth documentation about the Kafka configuration refer to the <a href="https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html">confluent-kafka-dotnet documentation</a>.</p>
+
+<h3 id="kafkaproducerendpoint">KafkaProducerEndpoint</h3>
+
+<p>Used for outbound endpoints, exposes the following properties:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Property</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Name</code></td>
+      <td style="text-align: left">The name of the topic. This is set in the constructor.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Serializer</code></td>
+      <td style="text-align: left">The <code class="highlighter-rouge">IMessageSerializer</code> to be used to deserialize the messages. The default is a <code class="highlighter-rouge">JsonMessageSerializer</code> using UTF-8 encoding. See <a href="/silverback/docs/advanced/serialization">Serialization</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Encryption</code></td>
+      <td style="text-align: left">Enable end-to-end message encryption. See <a href="/silverback/docs/advanced/encryption">Encryption</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Chunk</code></td>
+      <td style="text-align: left">Enable chunking to efficiently deal with large messages. See <a href="/silverback/docs/advanced/chunking">Chunking</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Configuration</code></td>
+      <td style="text-align: left">An instance of <code class="highlighter-rouge">KafkaProducerConfig</code>, that’s just an extension of <code class="highlighter-rouge">Confluent.Kafka.ProducerConfig</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Configuration.BootstrapServers</code>, …</td>
+      <td style="text-align: left">All properties inherited from <code class="highlighter-rouge">Confluent.Kafka.ProducerConfig</code>. See <a href="https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.ProducerConfig.html">confluent-kafka-dotnet documentation</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Configuration.ThrowIfNotAcknowledged</code></td>
+      <td style="text-align: left">When set to <code class="highlighter-rouge">true</code> an exception will be thrown in the producer if no acknowledge is received by the broker (<code class="highlighter-rouge">PersistenceStatus.PossiblyPersisted</code>). The default is <code class="highlighter-rouge">true</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nf">KafkaProducerEndpoint</span><span class="p">(</span><span class="s">"basket-events"</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Configuration</span> <span class="p">=</span> <span class="k">new</span> <span class="n">KafkaProducerConfig</span>
+    <span class="p">{</span>
+        <span class="n">BootstrapServers</span> <span class="p">=</span> <span class="s">"PLAINTEXT://kafka:9092"</span>
+    <span class="p">},</span>
+    <span class="n">Chunk</span> <span class="p">=</span> <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="kafkaconsumerendpoint">KafkaConsumerEndpoint</h3>
+
+<p>Used for inbound endpoints, exposes the following properties:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Property</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Names</code></td>
+      <td style="text-align: left">The name of the topics to be consumed (yes, you can subscribe multiple topics at once). This is set in the constructor.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Serializer</code></td>
+      <td style="text-align: left">The <code class="highlighter-rouge">IMessageSerializer</code> to be used to serialize the messages. The default is a <code class="highlighter-rouge">JsonMessageSerializer</code> using UTF-8 encoding.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Encryption</code></td>
+      <td style="text-align: left">Enable end-to-end message encryption. See <a href="/silverback/docs/advanced/encryption">Encryption</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Configuration</code></td>
+      <td style="text-align: left">An instance of <code class="highlighter-rouge">KafkaConsumerConfig</code>, that’s just an extension of <code class="highlighter-rouge">Confluent.Kafka.ConsumerConfig</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Configuration.BootstrapServers</code>, <code class="highlighter-rouge">Configuration.GroupId</code>, …</td>
+      <td style="text-align: left">All properties inherited from <code class="highlighter-rouge">Confluent.Kafka.ConsumerConfig</code>. See <a href="https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.ConsumerConfig.html">confluent-kafka-dotnet documentation</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Configuration.CommitOffsetEach</code></td>
+      <td style="text-align: left">When auto-commit is disable, defines the number of message processed before committing the offset to the server. The most reliable level is 1 but it reduces throughput.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">EnableAutoRecovery</code></td>
+      <td style="text-align: left">When set to <code class="highlighter-rouge">true</code> the consumer will be automatically restarted if a <code class="highlighter-rouge">KafkaException</code> is thrown while polling/consuming. The default is <code class="highlighter-rouge">true</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nf">KafkaConsumerEndpoint</span><span class="p">(</span>
+    <span class="s">"order-events"</span><span class="p">,</span> 
+    <span class="s">"inventory-events"</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Configuration</span> <span class="p">=</span> <span class="k">new</span> <span class="n">KafkaConsumerConfig</span>
+    <span class="p">{</span>
+        <span class="n">BootstrapServers</span> <span class="p">=</span> <span class="s">"PLAINTEXT://kafka:9092"</span><span class="p">,</span>
+        <span class="n">GroupId</span> <span class="p">=</span> <span class="s">"my-consumer"</span><span class="p">,</span>
+        <span class="n">AutoOffsetReset</span> <span class="p">=</span> <span class="n">AutoOffsetResetType</span><span class="p">.</span><span class="n">Earliest</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p class="notice--note">You can decide whether to use one consumer per topic or subscribe multiple topics with the same consumer (passing multiple topic names in the endpoint constructor, as shown in the example above). There are advantages and disadvantages of both solutions and the best choice really depends on your specific requirements, the amount of messages being produced, etc. Anyway the main difference is that when subscribing multiple topics you will still consume one message after the other but they will simply be interleaved (this may or may not be an issue, it depends) and on the other hand each consumer will use some resources, so creating multiple consumers will result in a bigger overhead.</p>
+
+<h2 id="rabbitmq">RabbitMQ</h2>
+
+<p><code class="highlighter-rouge">Silverback.Integration.RabbitMQ</code> is a bit more intricated and uses 4 different classes to specify inbound and outbound endpoints configuration.</p>
+
+<p>For a more in-depth documentation about the RabbitMQ configuration refer to the <a href="https://www.rabbitmq.com/getstarted.html">RabbitMQ tutorials and documentation</a>.</p>
+
+<h3 id="rabbitqueueproducerendpoint">RabbitQueueProducerEndpoint</h3>
+
+<p>Used for outbound endpoints that produce directly to a queue, exposes the following properties:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Property</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Name</code></td>
+      <td style="text-align: left">The name of the queue. This is set in the constructor.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Serializer</code></td>
+      <td style="text-align: left">The <code class="highlighter-rouge">IMessageSerializer</code> to be used to deserialize the messages. The default is a <code class="highlighter-rouge">JsonMessageSerializer</code> using UTF-8 encoding. See <a href="/silverback/docs/advanced/serialization">Serialization</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Encryption</code></td>
+      <td style="text-align: left">Enable end-to-end message encryption. See <a href="/silverback/docs/advanced/encryption">Encryption</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Chunk</code></td>
+      <td style="text-align: left">Enable chunking to efficiently deal with large messages. See <a href="/silverback/docs/advanced/chunking">Chunking</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Connection</code></td>
+      <td style="text-align: left">An instance of <code class="highlighter-rouge">RabbitConnectionConfig</code>. It exposes the properties necessary to setup the connection with RabbitMQ.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Connection.HostName</code>, …</td>
+      <td style="text-align: left">All properties exposed by the <code class="highlighter-rouge">RabbitMQ.Client.ConnectionFactory</code>. See <a href="https://www.rabbitmq.com/dotnet-api-guide.html">RabbitMQ .NET/C# Client API Guide</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue</code></td>
+      <td style="text-align: left">An instance of <code class="highlighter-rouge">RabbitQueueConfig</code> that specifies the queue configuration.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.IsDurable</code></td>
+      <td style="text-align: left">Specifies whether the queue will survive a broker restart. The default is <code class="highlighter-rouge">true</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.IsAutoDeleteEnabled</code></td>
+      <td style="text-align: left">Specifies whether the queue will be automatically deleted when the last consumer unsubscribes. The default is <code class="highlighter-rouge">false</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.IsExclusive</code></td>
+      <td style="text-align: left">Specifies whether the queue is used by only one connection and will be deleted when that connection closes. The default is <code class="highlighter-rouge">false</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.Arguments</code></td>
+      <td style="text-align: left">The optional arguments dictionary used by plugins and broker-specific features to configure values such as message TTL, queue length limit, etc.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">ConfirmationTimeout</code></td>
+      <td style="text-align: left">The maximum amount of time to wait for the message produce to be acknowledge before considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative acknowledgment. The default is a quite conservative <code class="highlighter-rouge">5 seconds</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nf">RabbitQueueProducerEndpoint</span><span class="p">(</span><span class="s">"inventory-commands-queue"</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Connection</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RabbitConnectionConfig</span>
+    <span class="p">{</span>
+        <span class="n">HostName</span> <span class="p">=</span> <span class="s">"localhost"</span><span class="p">,</span>
+        <span class="n">UserName</span> <span class="p">=</span> <span class="s">"guest"</span><span class="p">,</span>
+        <span class="n">Password</span> <span class="p">=</span> <span class="s">"guest"</span>
+    <span class="p">},</span>
+    <span class="n">Queue</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RabbitQueueConfig</span>
+    <span class="p">{</span>
+        <span class="n">IsDurable</span> <span class="p">=</span> <span class="k">true</span><span class="p">,</span>
+        <span class="n">IsExclusive</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>
+        <span class="n">IsAutoDeleteEnabled</span> <span class="p">=</span> <span class="k">false</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="rabbitexchangeproducerendpoint">RabbitExchangeProducerEndpoint</h3>
+
+<p>Used for outbound endpoints that produce to an exchange, exposes the following properties:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Property</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Name</code></td>
+      <td style="text-align: left">The name of the exchange. This is set in the constructor.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Serializer</code></td>
+      <td style="text-align: left">The <code class="highlighter-rouge">IMessageSerializer</code> to be used to deserialize the messages. The default is a <code class="highlighter-rouge">JsonMessageSerializer</code> using UTF-8 encoding. See <a href="/silverback/docs/advanced/serialization">Serialization</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Encryption</code></td>
+      <td style="text-align: left">Enable end-to-end message encryption. See <a href="/silverback/docs/advanced/encryption">Encryption</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Chunk</code></td>
+      <td style="text-align: left">Enable chunking to efficiently deal with large messages. See <a href="/silverback/docs/advanced/chunking">Chunking</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Connection</code></td>
+      <td style="text-align: left">An instance of <code class="highlighter-rouge">RabbitConnectionConfig</code>. It exposes the properties necessary to setup the connection with RabbitMQ.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Connection.HostName</code>, …</td>
+      <td style="text-align: left">All properties exposed by the <code class="highlighter-rouge">RabbitMQ.Client.ConnectionFactory</code>. See <a href="https://www.rabbitmq.com/dotnet-api-guide.html">RabbitMQ .NET/C# Client API Guide</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Exchange</code></td>
+      <td style="text-align: left">An instance of <code class="highlighter-rouge">RabbitExchangeConfig</code> that specifies the exchange configuration.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Exchange.ExchangeType</code></td>
+      <td style="text-align: left">The exchange type. It should match with one of the constants declared in the <code class="highlighter-rouge">RabbitMQ.Client.ExchangeType</code> static class.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Exchange.IsDurable</code></td>
+      <td style="text-align: left">Specifies whether the queue will survive a broker restart. The default is <code class="highlighter-rouge">true</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Exchange.IsAutoDeleteEnabled</code></td>
+      <td style="text-align: left">Specifies whether the queue will be automatically deleted when the last consumer unsubscribes. The default is <code class="highlighter-rouge">false</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Exchange.Arguments</code></td>
+      <td style="text-align: left">The optional arguments dictionary used by plugins and broker-specific features to configure values such as message TTL, queue length limit, etc.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">ConfirmationTimeout</code></td>
+      <td style="text-align: left">The maximum amount of time to wait for the message produce to be acknowledge before considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative acknowledgment. The default is a quite conservative <code class="highlighter-rouge">5 seconds</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nf">RabbitExchangeProducerEndpoint</span><span class="p">(</span><span class="s">"order-events"</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Connection</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RabbitConnectionConfig</span>
+    <span class="p">{</span>
+        <span class="n">HostName</span> <span class="p">=</span> <span class="s">"localhost"</span><span class="p">,</span>
+        <span class="n">UserName</span> <span class="p">=</span> <span class="s">"guest"</span><span class="p">,</span>
+        <span class="n">Password</span> <span class="p">=</span> <span class="s">"guest"</span>
+    <span class="p">},</span>
+    <span class="n">Exchange</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RabbitExchangeConfig</span>
+    <span class="p">{</span>
+        <span class="n">IsDurable</span> <span class="p">=</span> <span class="k">true</span><span class="p">,</span>
+        <span class="n">IsAutoDeleteEnabled</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>
+        <span class="n">ExchangeType</span> <span class="p">=</span> <span class="n">ExchangeType</span><span class="p">.</span><span class="n">Fanout</span>
+    <span class="p">}</span>
+<span class="p">}</span>   
+</code></pre></div></div>
+
+<h3 id="rabbitqueueconsumerendpoint">RabbitQueueConsumerEndpoint</h3>
+
+<p>Used for inbound endpoints that consume directly from a queue, exposes the following properties:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Property</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Name</code></td>
+      <td style="text-align: left">The name of the queue. This is set in the constructor.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Serializer</code></td>
+      <td style="text-align: left">The <code class="highlighter-rouge">IMessageSerializer</code> to be used to deserialize the messages. The default is a <code class="highlighter-rouge">JsonMessageSerializer</code> using UTF-8 encoding. See <a href="/silverback/docs/advanced/serialization">Serialization</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Encryption</code></td>
+      <td style="text-align: left">Enable end-to-end message encryption. See <a href="/silverback/docs/advanced/encryption">Encryption</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Connection</code></td>
+      <td style="text-align: left">An instance of <code class="highlighter-rouge">RabbitConnectionConfig</code>. It exposes the properties necessary to setup the connection with RabbitMQ.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Connection.HostName</code>, …</td>
+      <td style="text-align: left">All properties exposed by the <code class="highlighter-rouge">RabbitMQ.Client.ConnectionFactory</code>. See <a href="https://www.rabbitmq.com/dotnet-api-guide.html">RabbitMQ .NET/C# Client API Guide</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue</code></td>
+      <td style="text-align: left">An instance of <code class="highlighter-rouge">RabbitQueueConfig</code> that specifies the queue configuration.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.IsDurable</code></td>
+      <td style="text-align: left">Specifies whether the queue will survive a broker restart. The default is <code class="highlighter-rouge">true</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.IsAutoDeleteEnabled</code></td>
+      <td style="text-align: left">Specifies whether the queue will be automatically deleted when the last consumer unsubscribes. The default is <code class="highlighter-rouge">false</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.IsExclusive</code></td>
+      <td style="text-align: left">Specifies whether the queue is used by only one connection and will be deleted when that connection closes. The default is <code class="highlighter-rouge">false</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.Arguments</code></td>
+      <td style="text-align: left">The optional arguments dictionary used by plugins and broker-specific features to configure values such as message TTL, queue length limit, etc.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">AcknowledgeEach</code></td>
+      <td style="text-align: left">Defines the number of message processed before sending the acknowledgment to the server. The most reliable level is 1 but it reduces throughput.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">PrefetchSize</code></td>
+      <td style="text-align: left">Defines the QoS prefetch size parameter for the consumer. See <a href="https://www.rabbitmq.com/consumer-prefetch.html">RabbitMQ Consumer Prefetch</a> documentation for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">PrefetchCount</code></td>
+      <td style="text-align: left">Defines the QoS prefetch count parameter for the consumer. See <a href="https://www.rabbitmq.com/consumer-prefetch.html">RabbitMQ Consumer Prefetch</a> documentation for details.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nf">RabbitQueueConsumerEndpoint</span><span class="p">(</span><span class="s">"inventory-commands-queue"</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Connection</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RabbitConnectionConfig</span>
+    <span class="p">{</span>
+        <span class="n">HostName</span> <span class="p">=</span> <span class="s">"localhost"</span><span class="p">,</span>
+        <span class="n">UserName</span> <span class="p">=</span> <span class="s">"guest"</span><span class="p">,</span>
+        <span class="n">Password</span> <span class="p">=</span> <span class="s">"guest"</span>
+    <span class="p">},</span>
+    <span class="n">Queue</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RabbitQueueConfig</span>
+    <span class="p">{</span>
+        <span class="n">IsDurable</span> <span class="p">=</span> <span class="k">true</span><span class="p">,</span>
+        <span class="n">IsExclusive</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>
+        <span class="n">IsAutoDeleteEnabled</span> <span class="p">=</span> <span class="k">false</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="rabbitexchangeconsumerendpoint">RabbitExchangeConsumerEndpoint</h3>
+
+<p>Used for inbound endpoints that consume from an exchange, exposes the following properties:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Property</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Name</code></td>
+      <td style="text-align: left">The name of the exchange. This is set in the constructor.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Serializer</code></td>
+      <td style="text-align: left">The <code class="highlighter-rouge">IMessageSerializer</code> to be used to deserialize the messages. The default is a <code class="highlighter-rouge">JsonMessageSerializer</code> using UTF-8 encoding. See <a href="/silverback/docs/advanced/serialization">Serialization</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Encryption</code></td>
+      <td style="text-align: left">Enable end-to-end message encryption. See <a href="/silverback/docs/advanced/encryption">Encryption</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Connection</code></td>
+      <td style="text-align: left">An instance of <code class="highlighter-rouge">RabbitConnectionConfig</code>. It exposes the properties necessary to setup the connection with RabbitMQ.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Connection.HostName</code>, …</td>
+      <td style="text-align: left">All properties exposed by the <code class="highlighter-rouge">RabbitMQ.Client.ConnectionFactory</code>. See <a href="https://www.rabbitmq.com/dotnet-api-guide.html">RabbitMQ .NET/C# Client API Guide</a> for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Exchange</code></td>
+      <td style="text-align: left">An instance of <code class="highlighter-rouge">RabbitExchangeConfig</code> that specifies the exchange configuration.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Exchange.ExchangeType</code></td>
+      <td style="text-align: left">The exchange type. It should match with one of the constants declared in the <code class="highlighter-rouge">RabbitMQ.Client.ExchangeType</code> static class.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Exchange.IsDurable</code></td>
+      <td style="text-align: left">Specifies whether the queue will survive a broker restart. The default is <code class="highlighter-rouge">true</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Exchange.IsAutoDeleteEnabled</code></td>
+      <td style="text-align: left">Specifies whether the queue will be automatically deleted when the last consumer unsubscribes. The default is <code class="highlighter-rouge">false</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Exchange.Arguments</code></td>
+      <td style="text-align: left">The optional arguments dictionary used by plugins and broker-specific features to configure values such as message TTL, queue length limit, etc.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">QueueName</code></td>
+      <td style="text-align: left">The desired queue name. If null or empty a random name will be generated by RabbitMQ. (A queue is always necessary to consume.)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue</code></td>
+      <td style="text-align: left">An instance of <code class="highlighter-rouge">RabbitQueueConfig</code> that specifies the queue configuration.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.IsDurable</code></td>
+      <td style="text-align: left">Specifies whether the queue will survive a broker restart. The default is <code class="highlighter-rouge">true</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.IsAutoDeleteEnabled</code></td>
+      <td style="text-align: left">Specifies whether the queue will be automatically deleted when the last consumer unsubscribes. The default is <code class="highlighter-rouge">false</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.IsExclusive</code></td>
+      <td style="text-align: left">Specifies whether the queue is used by only one connection and will be deleted when that connection closes. The default is <code class="highlighter-rouge">false</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Queue.Arguments</code></td>
+      <td style="text-align: left">The optional arguments dictionary used by plugins and broker-specific features to configure values such as message TTL, queue length limit, etc.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">RoutingKey</code></td>
+      <td style="text-align: left">The routing key (aka binding key) to be used to bind with the exchange.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">ConfirmationTimeout</code></td>
+      <td style="text-align: left">The maximum amount of time to wait for the message produce to be acknowledge before considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative acknowledgment. The default is a quite conservative <code class="highlighter-rouge">5 seconds</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">AcknowledgeEach</code></td>
+      <td style="text-align: left">Defines the number of message processed before sending the acknowledgment to the server. The most reliable level is 1 but it reduces throughput.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">PrefetchSize</code></td>
+      <td style="text-align: left">Defines the QoS prefetch size parameter for the consumer. See <a href="https://www.rabbitmq.com/consumer-prefetch.html">RabbitMQ Consumer Prefetch</a> documentation for details.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">PrefetchCount</code></td>
+      <td style="text-align: left">Defines the QoS prefetch count parameter for the consumer. See <a href="https://www.rabbitmq.com/consumer-prefetch.html">RabbitMQ Consumer Prefetch</a> documentation for details.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-csharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">new</span> <span class="nf">RabbitExchangeConsumerEndpoint</span><span class="p">(</span><span class="s">"order-events"</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Connection</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RabbitConnectionConfig</span>
+    <span class="p">{</span>
+        <span class="n">HostName</span> <span class="p">=</span> <span class="s">"localhost"</span><span class="p">,</span>
+        <span class="n">UserName</span> <span class="p">=</span> <span class="s">"guest"</span><span class="p">,</span>
+        <span class="n">Password</span> <span class="p">=</span> <span class="s">"guest"</span>
+    <span class="p">},</span>
+    <span class="n">Exchange</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RabbitExchangeConfig</span>
+    <span class="p">{</span>
+        <span class="n">IsDurable</span> <span class="p">=</span> <span class="k">true</span><span class="p">,</span>
+        <span class="n">IsAutoDeleteEnabled</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>
+        <span class="n">ExchangeType</span> <span class="p">=</span> <span class="n">ExchangeType</span><span class="p">.</span><span class="n">Fanout</span>
+    <span class="p">},</span>
+    <span class="n">QueueName</span> <span class="p">=</span> <span class="s">"my-consumer-group"</span><span class="p">,</span>
+    <span class="n">Queue</span> <span class="p">=</span> <span class="k">new</span> <span class="n">RabbitQueueConfig</span>
+    <span class="p">{</span>
+        <span class="n">IsDurable</span> <span class="p">=</span> <span class="k">true</span><span class="p">,</span>
+        <span class="n">IsExclusive</span> <span class="p">=</span> <span class="k">false</span><span class="p">,</span>
+        <span class="n">IsAutoDeleteEnabled</span> <span class="p">=</span> <span class="k">false</span>
+    <span class="p">}</span>
+<span class="p">}</span>   
+</code></pre></div></div>
+
+        
+      </section>
+
+      
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/silverback/docs/quickstart/event-sourcing" class="pagination--pager" title="Event Sourcing
+">Previous</a>
+    
+    
+      <a href="/silverback/docs/configuration/outbound" class="pagination--pager" title="Outbound Connector
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+    <ul class="social-icons">
+        
+
+        
+        
+            
+            <li><a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+            
+        
+            
+            <li><a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope" aria-hidden="true"></i> Email</a></li>
+            
+        
+        
+    </ul>
+</div>
+  
+<div class="page__footer-copyright">&copy; 2020 Sergio Aquilini. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; based on <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+      </footer>
+    </div>
+
+    
+  <script src="/silverback/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+<script src="/silverback/assets/js/lunr/lunr.min.js"></script>
+<script src="/silverback/assets/js/lunr/lunr-store.js"></script>
+<script src="/silverback/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+
+
+
+  </body>
+</html>
