@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace

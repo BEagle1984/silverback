@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.KafkaEvents;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
@@ -73,6 +73,12 @@ namespace Silverback.Messaging
         public IReadOnlyCollection<string> Names { get; }
 
         /// <summary>
+        ///     Gets the event handlers configuration. Can be used to bind some handlers to the Kafka events
+        ///     such as partitions revoked/assigned, error, statistics and offsets committed.
+        /// </summary>
+        public KafkaConsumerEventsHandlers Events { get; } = new();
+
+        /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
         ///     dictionary provided by the Confluent.Kafka library.
         /// </summary>
@@ -100,12 +106,6 @@ namespace Silverback.Messaging
         ///     The default is 1.
         /// </summary>
         public int BackpressureLimit { get; set; } = 1;
-
-        /// <summary>
-        ///     Gets the event handlers configuration. Can be used to bind some handlers to the Kafka events
-        ///     such as partitions revoked/assigned, error, statistics and offsets committed.
-        /// </summary>
-        public KafkaConsumerEventsHandlers Events { get; } = new();
 
         /// <inheritdoc cref="Endpoint.Validate" />
         public override void Validate()

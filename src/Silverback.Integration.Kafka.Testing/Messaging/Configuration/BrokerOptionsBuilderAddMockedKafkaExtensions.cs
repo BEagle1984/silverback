@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
@@ -34,7 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.AddKafka();
-            brokerOptionsBuilder.SilverbackBuilder.Services.UseMockedKafka(optionsAction);
+            brokerOptionsBuilder.SilverbackBuilder.UseMockedKafka(optionsAction);
 
             return brokerOptionsBuilder;
         }

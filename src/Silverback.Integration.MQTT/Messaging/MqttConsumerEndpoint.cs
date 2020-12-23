@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using MQTTnet.Client.Options;
 using MQTTnet.Protocol;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Mqtt;
 
 namespace Silverback.Messaging
 {
@@ -18,24 +18,24 @@ namespace Silverback.Messaging
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttConsumerEndpoint" /> class.
         /// </summary>
-        /// <param name="names">
+        /// <param name="topics">
         ///     The name of the topics or the topic filter strings.
         /// </param>
-        public MqttConsumerEndpoint(params string[] names)
+        public MqttConsumerEndpoint(params string[] topics)
             : base(string.Empty)
         {
-            Names = names;
+            Topics = topics;
 
-            if (names == null)
+            if (topics == null)
                 return;
 
-            Name = names.Length > 1 ? "[" + string.Join(",", names) + "]" : names[0];
+            Name = topics.Length > 1 ? "[" + string.Join(",", topics) + "]" : topics[0];
         }
 
         /// <summary>
-        ///     Gets the name of the topics (or the topic filter strings).
+        ///     Gets the name of the topics or the topic filter strings.
         /// </summary>
-        public IReadOnlyCollection<string> Names { get; }
+        public IReadOnlyCollection<string> Topics { get; }
 
         /// <summary>
         ///     Gets or sets the MQTT client configuration. This is actually a wrapper around the

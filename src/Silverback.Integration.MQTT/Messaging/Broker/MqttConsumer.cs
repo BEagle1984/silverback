@@ -11,6 +11,7 @@ using MQTTnet;
 using MQTTnet.Client;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -87,7 +88,7 @@ namespace Silverback.Messaging.Broker
             await _clientWrapper.ConnectAsync(this).ConfigureAwait(false);
 
             await _clientWrapper.MqttClient.SubscribeAsync(
-                    Endpoint.Names.Select(
+                    Endpoint.Topics.Select(
                             topic =>
                                 new MqttTopicFilterBuilder()
                                     .WithTopic(topic)

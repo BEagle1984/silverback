@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.0.0-beta.8](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.8)
+## [3.0.0-beta.9](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.9)
 
 ### What's new
 
@@ -51,6 +51,7 @@ uid: releases
     * _BusConfigurator.ScanSubscribers_ is not needed anymore since it gets called automatically at startup (from an [IHostedService](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.ihostedservice))
 * Removed _IServiceCollection.Add*Subscriber_, _IServiceCollection.Add*Behavior_, _IServiceCollection.Add*BrokerBehavior_, _IServiceCollection.AddEndpointsConfigurator_, _IServiceCollection.Add*OutboundRouter_ extension methods, use the same methods on the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> (using [IServiceCollection.ConfigureSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions) to get an instance if the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> if necessary, as shown in  <xref:enabling-silverback>)
 * Removed _IBrokerOptionsBuilder.Add*BrokerBehavior_, _IBrokerOptionsBuilder.RegisterConfigurator_, _IBrokerOptionsBuilder.Add*OutboundRouter_ extension methods, use the same methods on the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> (using [IServiceCollection.ConfigureSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions) to get an instance if the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> if necessary, as shown in  <xref:enabling-silverback>)
+* Reorganized the `Silverback.Messaging.Configuration` namespace moving some broker specific types under `Silverback.Messaging.Configuration.Kafka`, `Silverback.Messaging.Configuration.Rabbit` or `Silverback.Messaging.Configuration.Mqtt`
 * The visibility of some types has been changed to internal to favor a cleaner and clearer API where the public types are well documented and their backward compatibility is valued
 * Removed _Silverback_ prefix from exceptions name
 * Removed the _IRequest<TResponse>_ interface (it was implemented by both <xref:Silverback.Messaging.Messages.IQuery`1> and <xref:Silverback.Messaging.Messages.ICommand`1>)

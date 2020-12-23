@@ -3,9 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Silverback.Messaging.Configuration;
-
-#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
+using Silverback.Messaging.Configuration.Rabbit;
 
 namespace Silverback.Messaging
 {

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Silverback.Messaging.Configuration.Kafka;
 
 namespace Silverback.Messaging.Configuration
 {

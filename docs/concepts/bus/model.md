@@ -9,8 +9,6 @@ uid: model
 First of all we need to create a message class. The message class can be any POCO class, it just need to be serializable.
 
 ```csharp
-using Silverback.Messaging.Messages;
-
 public class SampleMessage
 {
     public string Content { get; set; }

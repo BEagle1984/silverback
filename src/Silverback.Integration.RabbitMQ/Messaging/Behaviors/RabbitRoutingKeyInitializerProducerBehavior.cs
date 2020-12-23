@@ -26,7 +26,7 @@ namespace Silverback.Messaging.Behaviors
 
             if (context.Envelope.Message != null)
             {
-                var key = RoutingKeyHelper.GetRoutingKey(context.Envelope.Message);
+                var key = RabbitRoutingKeyHelper.GetRoutingKey(context.Envelope.Message);
 
                 if (key != null)
                 {

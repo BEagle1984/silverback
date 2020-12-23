@@ -4,7 +4,7 @@
 using FluentAssertions;
 using RabbitMQ.Client;
 using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Rabbit;
 using Xunit;
 
 namespace Silverback.Tests.Integration.RabbitMQ.Messaging

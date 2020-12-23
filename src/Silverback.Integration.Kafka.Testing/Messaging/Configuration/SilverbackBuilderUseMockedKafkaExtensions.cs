@@ -3,9 +3,10 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Silverback.Messaging.Broker.ConfluentWrappers;
-using Silverback.Messaging.Broker.Topics;
+using Silverback.Messaging.Broker.Kafka;
+using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Testing;
 using Silverback.Util;
 

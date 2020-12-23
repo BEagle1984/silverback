@@ -4,7 +4,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Behaviors;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.ConfluentWrappers;
+using Silverback.Messaging.Broker.Kafka;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration

@@ -18,8 +18,6 @@ The following example demonstrates how to use a behavior to trace the messages.
 
 # [Behavior](#tab/ibehavior)
 ```csharp
-using Silverback.Messaging.Publishing;
-
 public class TracingBehavior : IBehavior
 {
     private readonly ITracer _tracer;

@@ -3,7 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.KafkaEvents;
 
 namespace Silverback.Messaging
@@ -30,15 +30,15 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
+        ///     Gets the Kafka event handlers configuration.
+        /// </summary>
+        public KafkaProducerEventsHandlers Events { get; } = new();
+
+        /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
         ///     dictionary provided by the Confluent.Kafka library.
         /// </summary>
         public KafkaProducerConfig Configuration { get; set; }
-
-        /// <summary>
-        ///     Gets the Kafka event handlers configuration.
-        /// </summary>
-        public KafkaProducerEventsHandlers Events { get; } = new();
 
         /// <inheritdoc cref="ProducerEndpoint.Validate" />
         public override void Validate()

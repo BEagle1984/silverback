@@ -3,7 +3,7 @@
 
 using FluentAssertions;
 using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Rabbit;
 using Silverback.Messaging.Serialization;
 using Xunit;
 

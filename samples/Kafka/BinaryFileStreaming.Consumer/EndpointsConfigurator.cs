@@ -28,35 +28,42 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer
                                 .Configure(
                                     config =>
                                     {
-                                        // The consumer needs at least the bootstrap server address
-                                        // and a group id to be able to connect
+                                        // The consumer needs at least the bootstrap
+                                        // server address and a group id to be able
+                                        // to connect
                                         config.GroupId = "sample-consumer";
 
-                                        // AutoOffsetReset.Earliest means that the consumer must start
-                                        // consuming from the beginning of the topic, if no offset was
+                                        // AutoOffsetReset.Earliest means that the
+                                        // consumer must start consuming from the
+                                        // beginning of the topic, if no offset was
                                         // stored for this consumer group
                                         config.AutoOffsetReset =
                                             AutoOffsetReset.Earliest;
                                     })
 
-                                // Force the consumer to use the BinaryFileMessageSerializer: this
-                                // is not strictly necessary when the messages are produced by
-                                // Silverback but it increases the interoperability, since it
-                                // doesn't have to rely on the 'x-message-type' header value to
-                                // switch to the BinaryFileMessageSerializer.
+                                // Force the consumer to use the
+                                // BinaryFileMessageSerializer: this is not strictly
+                                // necessary when the messages are produced by
+                                // Silverback but it increases the interoperability,
+                                // since it doesn't have to rely on the
+                                // 'x-message-type' header value to switch to the
+                                // BinaryFileMessageSerializer.
                                 //
-                                // In this example the BinaryFileMessageSerializer is also set to
-                                // return a CustomBinaryFileMessage instead of the normal
-                                // BinaryFileMessage. This is only needed because we want to read
-                                // the custom 'x-message-filename' header, otherwise
-                                // 'ConsumeBinaryFiles()' would work perfectly fine (returning a basic BinaryFileMessage, without
-                                // the extra properties).
+                                // In this example the BinaryFileMessageSerializer is
+                                // also set to return a CustomBinaryFileMessage
+                                // instead of the normal BinaryFileMessage. This is
+                                // only needed because we want to read the custom
+                                // 'x-message-filename' header, otherwise
+                                // 'ConsumeBinaryFiles()' would work perfectly fine
+                                // (returning a basic BinaryFileMessage, without the
+                                // extra properties).
                                 .ConsumeBinaryFiles(
                                     serializer =>
                                         serializer
                                             .UseModel<CustomBinaryFileMessage>())
 
-                                // Retry each chunks sequence 5 times in case of an exception
+                                // Retry each chunks sequence 5 times in case of an
+                                // exception
                                 .OnError(policy => policy.Retry(5))));
         }
     }

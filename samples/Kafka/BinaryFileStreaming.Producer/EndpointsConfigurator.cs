@@ -1,7 +1,5 @@
-﻿using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
+﻿using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Sequences.Chunking;
 
 namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer
 {
@@ -10,24 +8,26 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer
         public void Configure(IEndpointsConfigurationBuilder builder)
         {
             builder
+                .AddKafkaEndpoints(
+                    endpoints => endpoints
 
-                // Produce the binary files to the samples-binary-file-streaming topic
-                .AddOutbound<BinaryFileMessage>(
-                    new KafkaProducerEndpoint("samples-binary-file-streaming")
-                    {
-                        // The producer only needs the bootstrap server address to be
-                        // able to connect
-                        Configuration = new KafkaProducerConfig
-                        {
-                            BootstrapServers = "PLAINTEXT://localhost:9092"
-                        },
+                        // Configure the properties needed by all consumers/producers
+                        .Configure(
+                            config =>
+                            {
+                                // The bootstrap server address is needed to connect
+                                config.BootstrapServers =
+                                    "PLAINTEXT://localhost:9092";
+                            })
 
-                        // Split the binary files into chunks of 512 kB
-                        Chunk = new ChunkSettings
-                        {
-                            Size = 524288
-                        }
-                    });
+                        // Produce the binary files to the
+                        // samples-binary-file-streaming topic
+                        .AddOutbound<BinaryFileMessage>(
+                            endpoint => endpoint
+                                .ProduceTo("samples-binary-file-streaming")
+
+                                // Split the binary files into chunks of 512 kB
+                                .EnableChunking(524288)));
         }
     }
 }

@@ -9,8 +9,6 @@ uid: streaming
 The <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> can be used to consume the entire topic in a streaming fashion and it's the only way to consume sequences (see for example [batch consuming](xref:inbound#batch-processing)).
 
 ```csharp
-using Silverback.Messaging.Messages;
-
 public class StreamSubscriber
 {
     public async Task OnOrderStreamReceived(
@@ -42,8 +40,6 @@ public class Startup
 ```
 # [Subscriber](#tab/rx-subscriber)
 ```csharp
-using Silverback.Messaging.Messages;
-
 public class StreamSubscriber
 {
     public async Task OnOrderStreamReceived(

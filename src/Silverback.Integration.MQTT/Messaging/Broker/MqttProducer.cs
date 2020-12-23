@@ -9,6 +9,7 @@ using MQTTnet;
 using MQTTnet.Client.Publishing;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 

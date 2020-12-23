@@ -6,6 +6,7 @@ using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Xunit;
 

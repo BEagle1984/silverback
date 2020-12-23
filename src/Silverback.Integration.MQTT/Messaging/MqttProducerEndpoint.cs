@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using MQTTnet.Client.Options;
 using MQTTnet.Protocol;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Mqtt;
 
 namespace Silverback.Messaging
 {
@@ -43,9 +43,11 @@ namespace Silverback.Messaging
         public bool Retain { get; set; }
 
         /// <summary>
-        ///     Gets or sets the message expiry interval in seconds. This interval defines the period of time that the broker stores
+        ///     Gets or sets the message expiry interval in seconds. This interval defines the period of time that the
+        ///     broker stores
         ///     the <i>PUBLISH</i> message for any matching subscribers that are not currently connected. When no
-        ///     message expiry interval is set, the broker must store the message for matching subscribers indefinitely.
+        ///     message expiry interval is set, the broker must store the message for matching subscribers
+        ///     indefinitely.
         /// </summary>
         public uint? MessageExpiryInterval { get; set; }
 

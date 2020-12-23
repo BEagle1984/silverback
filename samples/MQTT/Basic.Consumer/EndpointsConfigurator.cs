@@ -23,15 +23,19 @@ namespace Silverback.Samples.Mqtt.Basic.Consumer
                                         .Message(new TestamentMessage())
                                         .ProduceTo("samples/testaments")))
 
-                        // Consume the SampleMessage from the samples-basic topic
-                        // Note: It is mandatory to specify the message type, since
-                        //       MQTT doesn't support message headers
+                        // Consume the samples/basic topic
                         .AddInbound(
                             endpoint => endpoint
                                 .ConsumeFrom("samples/basic")
+
+                                // It is mandatory to specify the message type, since
+                                // MQTT doesn't support message headers
                                 .DeserializeJson(
                                     serializer => serializer
-                                        .UseFixedType<SampleMessage>())));
+                                        .UseFixedType<SampleMessage>())
+
+                                // Silently skip the messages in case of exception
+                                .OnError(policy => policy.Skip())));
         }
     }
 }

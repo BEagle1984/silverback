@@ -7,6 +7,7 @@ using MQTTnet.Client.Options;
 using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Xunit;
 

@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace

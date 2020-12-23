@@ -9,8 +9,8 @@ using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
 using NSubstitute;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Broker.Mqtt;
+using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
 
 namespace Silverback.Tests.Integration.MQTT.Messaging.Broker

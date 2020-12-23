@@ -4,6 +4,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Behaviors;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Rabbit;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration

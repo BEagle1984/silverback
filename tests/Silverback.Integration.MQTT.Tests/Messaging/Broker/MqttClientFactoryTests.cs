@@ -6,8 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Client.Options;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.MqttNetWrappers;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Broker.Mqtt;
+using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
 
 namespace Silverback.Tests.Integration.MQTT.Messaging.Broker

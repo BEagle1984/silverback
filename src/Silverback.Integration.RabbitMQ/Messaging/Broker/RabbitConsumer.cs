@@ -13,6 +13,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.Rabbit;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 

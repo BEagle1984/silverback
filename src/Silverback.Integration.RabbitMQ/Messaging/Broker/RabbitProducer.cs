@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.Rabbit;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 

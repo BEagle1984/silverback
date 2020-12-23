@@ -6,7 +6,7 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Broker.Topics;
+using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Testing;
 using Silverback.Tests.Integration.E2E.TestTypes;
 using Xunit;

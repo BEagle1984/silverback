@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
-using Silverback.Messaging.Broker.Topics;
+using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 
 namespace Silverback.Testing

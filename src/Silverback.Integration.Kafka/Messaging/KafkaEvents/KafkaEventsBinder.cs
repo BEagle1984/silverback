@@ -9,7 +9,7 @@ using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.ConfluentWrappers;
+using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.KafkaEvents.Statistics;
 
 namespace Silverback.Messaging.KafkaEvents

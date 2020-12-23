@@ -79,6 +79,8 @@ function Remove-ProjectReferences([string]$projectFilePath)
     Remove-ProjectReference $projectFilePath "Silverback.Core" "Silverback.Core" '$(BaseVersion)'
     Remove-ProjectReference $projectFilePath "Silverback.Integration" "Silverback.Integration" '$(BaseVersion)'
     Remove-ProjectReference $projectFilePath "Silverback.Integration.Kafka" "Silverback.Integration.Kafka" '$(BaseVersion)'
+    Remove-ProjectReference $projectFilePath "Silverback.Integration.MQTT" "Silverback.Integration.MQTT" '$(BaseVersion)'
+    Remove-ProjectReference $projectFilePath "Silverback.Integration.RabbitMQ" "Silverback.Integration.RabbitMQ" '$(BaseVersion)'
 
     Test-ProjectReferenceReplaced $projectFilePath
 }
