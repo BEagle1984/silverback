@@ -18,7 +18,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Old.Broker.Kafka
 {
-    public class KafkaBrokerBehaviorsPipelineTests : E2ETestFixture
+    public class KafkaBrokerBehaviorsPipelineTests : KafkaTestFixture
     {
         public KafkaBrokerBehaviorsPipelineTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)

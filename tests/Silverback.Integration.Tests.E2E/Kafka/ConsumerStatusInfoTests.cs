@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class ConsumerStatusInfoTests : E2ETestFixture
+    public class ConsumerStatusInfoTests : KafkaTestFixture
     {
         public ConsumerStatusInfoTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             broker.Consumers[0].IsConnected.Should().BeTrue();
             broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
@@ -103,7 +103,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             broker.Consumers[0].StatusInfo.History.Should().HaveCount(2);
             broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Consuming);
@@ -148,7 +148,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventOne());
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
             broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.Should().BeOfType<KafkaOffset>();

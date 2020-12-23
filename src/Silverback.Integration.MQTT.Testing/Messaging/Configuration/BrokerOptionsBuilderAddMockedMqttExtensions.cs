@@ -1,8 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using Silverback.Messaging.Configuration;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace

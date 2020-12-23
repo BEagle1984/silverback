@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class RawProducerTests : E2ETestFixture
+    public class RawProducerTests : KafkaTestFixture
     {
         public RawProducerTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -71,7 +71,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     }));
             await producer.ProduceAsync(rawMessageStream, headers);
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
@@ -125,7 +125,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     }));
             await producer.ProduceAsync(rawMessage, headers);
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);

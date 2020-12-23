@@ -34,6 +34,8 @@
     <ProjectReference Include="..\..\src\Silverback.Core.EFCore30\Silverback.Core.EFCore30.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.Testing\Silverback.Integration.Kafka.Testing.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.MQTT\Silverback.Integration.MQTT.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.MQTT.Testing\Silverback.Integration.MQTT.Testing.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj" />
   </ItemGroup>
 

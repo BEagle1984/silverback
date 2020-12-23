@@ -1,10 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Silverback.Messaging.Broker.Mqtt;
-
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {

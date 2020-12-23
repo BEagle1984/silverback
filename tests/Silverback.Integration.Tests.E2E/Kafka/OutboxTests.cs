@@ -17,7 +17,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class OutboxTests : E2ETestFixture
+    public class OutboxTests : KafkaTestFixture
     {
         public OutboxTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -70,7 +70,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await dbContext.SaveChangesAsync();
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(15);
             Subscriber.InboundEnvelopes.Should().HaveCount(15);
@@ -127,7 +127,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             }
 
             var dbContext = Host.ScopedServiceProvider.GetRequiredService<TestDbContext>();
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(1);
             Subscriber.InboundEnvelopes.Should().BeEmpty();

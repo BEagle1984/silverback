@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Old.Broker
 {
-    public class OutboundRoutingTests : E2ETestFixture
+    public class OutboundRoutingTests : KafkaTestFixture
     {
         public OutboundRoutingTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)

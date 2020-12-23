@@ -108,30 +108,12 @@ namespace Silverback.Messaging.Broker
             if (_producers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            if (_endpointToProducerDictionary.TryGetValue(endpoint, out var producer))
-                return producer;
+            var producer = GetOrInstantiateProducer(endpoint);
 
-            lock (_producers)
-            {
-                if (_endpointToProducerDictionary.TryGetValue(endpoint, out producer))
-                    return producer;
+            if (!producer.IsConnected && IsConnected)
+                AsyncHelper.RunSynchronously(() => producer.ConnectAsync());
 
-                _logger.LogInformation(
-                    IntegrationEventIds.CreatingNewProducer,
-                    "Creating new producer for endpoint {endpointName}. (Total producers: {ProducerCount})",
-                    endpoint.Name,
-                    _producers.Count + 1);
-
-                producer = InstantiateProducer(
-                    (TProducerEndpoint)endpoint,
-                    _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IProducerBehavior>>(),
-                    _serviceProvider);
-
-                _producers.Add(producer);
-                _endpointToProducerDictionary.Add(endpoint, producer);
-
-                return producer;
-            }
+            return producer;
         }
 
         /// <inheritdoc cref="IBroker.AddConsumer" />
@@ -322,6 +304,34 @@ namespace Silverback.Messaging.Broker
 
             _consumers.OfType<IDisposable>().ForEach(disposable => disposable.Dispose());
             _producers.OfType<IDisposable>().ForEach(disposable => disposable.Dispose());
+        }
+
+        private IProducer GetOrInstantiateProducer(IProducerEndpoint endpoint)
+        {
+            if (_endpointToProducerDictionary.TryGetValue(endpoint, out var producer))
+                return producer;
+
+            lock (_producers)
+            {
+                if (_endpointToProducerDictionary.TryGetValue(endpoint, out producer))
+                    return producer;
+
+                _logger.LogInformation(
+                    IntegrationEventIds.CreatingNewProducer,
+                    "Creating new producer for endpoint {endpointName}. (Total producers: {ProducerCount})",
+                    endpoint.Name,
+                    _producers.Count + 1);
+
+                producer = InstantiateProducer(
+                    (TProducerEndpoint)endpoint,
+                    _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IProducerBehavior>>(),
+                    _serviceProvider);
+
+                _producers.Add(producer);
+                _endpointToProducerDictionary.Add(endpoint, producer);
+
+                return producer;
+            }
         }
     }
 }

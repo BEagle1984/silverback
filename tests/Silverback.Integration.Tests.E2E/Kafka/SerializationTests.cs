@@ -21,7 +21,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class SerializationTests : E2ETestFixture
+    public class SerializationTests : KafkaTestFixture
     {
         public SerializationTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -59,7 +59,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(1);
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
@@ -116,7 +116,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { DefaultMessageHeaders.MessageType, "Silverback.Bad.TestEventOne, Silverback.Bad" }
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             Subscriber.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
@@ -158,7 +158,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Hello E2E!"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(1);
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
@@ -199,7 +199,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(1);
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
@@ -257,7 +257,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { DefaultMessageHeaders.MessageType, "Silverback.Bad.TestEventOne, Silverback.Bad" }
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(1);
             Subscriber.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();

@@ -15,7 +15,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class MockedKafkaTests : E2ETestFixture
+    public class MockedKafkaTests : KafkaTestFixture
     {
         public MockedKafkaTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne());
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(100);
             DefaultTopic.GetFirstOffset(new Partition(0)).Should().Be(new Offset(0));
@@ -68,7 +68,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne());
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(110);
             DefaultTopic.GetFirstOffset(new Partition(0)).Should().Be(new Offset(10));

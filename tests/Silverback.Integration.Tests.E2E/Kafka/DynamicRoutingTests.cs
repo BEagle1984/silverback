@@ -22,7 +22,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class DynamicRoutingTests : E2ETestFixture
+    public class DynamicRoutingTests : KafkaTestFixture
     {
         public DynamicRoutingTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)

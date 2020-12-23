@@ -20,7 +20,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class BinaryFileTests : E2ETestFixture
+    public class BinaryFileTests : KafkaTestFixture
     {
         public BinaryFileTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -86,7 +86,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -158,7 +158,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -239,7 +239,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -323,7 +323,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -409,7 +409,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
@@ -496,7 +496,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
             SpyBehavior.OutboundEnvelopes.ForEach(

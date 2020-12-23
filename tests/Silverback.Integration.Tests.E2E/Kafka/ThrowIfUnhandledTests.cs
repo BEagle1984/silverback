@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class ThrowIfUnhandledTests : E2ETestFixture
+    public class ThrowIfUnhandledTests : KafkaTestFixture
     {
         public ThrowIfUnhandledTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -72,7 +72,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
 
@@ -139,7 +139,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
 
@@ -149,7 +149,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await publisher.PublishAsync(new TestEventFour());
             await publisher.PublishAsync(new TestEventThree());
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(5);
             receivedMessages.Should().HaveCount(4);
@@ -206,7 +206,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventOne());
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
 
@@ -215,7 +215,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             await AsyncTestingUtil.WaitAsync(() => !consumer.IsConnected);
 

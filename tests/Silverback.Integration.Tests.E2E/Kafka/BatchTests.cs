@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class BatchTests : E2ETestFixture
+    public class BatchTests : KafkaTestFixture
     {
         public BatchTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -88,7 +88,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
             receivedBatches[0].Should().HaveCount(10);
@@ -305,7 +305,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
             receivedBatches[0].Should().HaveCount(10);
@@ -375,7 +375,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
             receivedBatches[0].Should().HaveCount(10);
@@ -507,7 +507,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 3"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(2);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
@@ -657,7 +657,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 taskCompletionSource.SetResult(true);
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(16);
         }

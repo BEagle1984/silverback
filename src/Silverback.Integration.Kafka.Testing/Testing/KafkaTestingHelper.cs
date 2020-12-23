@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -48,12 +49,16 @@ namespace Silverback.Testing
         public Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null) =>
             WaitUntilAllMessagesAreConsumedAsync(null, timeout);
 
-        /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(string[], TimeSpan?)" />
-        Task IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(string[] topicNames, TimeSpan? timeout) =>
+        /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection{string}, TimeSpan?)" />
+        Task IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(
+            IReadOnlyCollection<string> topicNames,
+            TimeSpan? timeout) =>
             WaitUntilAllMessagesAreConsumedAsync(topicNames, timeout);
 
         [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The tasks are awaited")]
-        private async Task WaitUntilAllMessagesAreConsumedAsync(string[]? topicNames, TimeSpan? timeout = null)
+        private async Task WaitUntilAllMessagesAreConsumedAsync(
+            IReadOnlyCollection<string>? topicNames,
+            TimeSpan? timeout = null)
         {
             using var cancellationTokenSource = new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
 

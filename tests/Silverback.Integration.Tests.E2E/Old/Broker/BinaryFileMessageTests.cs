@@ -23,7 +23,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Old.Broker
 {
-    public sealed class BinaryFileMessageTests : E2ETestFixture
+    public sealed class BinaryFileMessageTests : KafkaTestFixture
     {
         private static readonly byte[] AesEncryptionKey =
         {

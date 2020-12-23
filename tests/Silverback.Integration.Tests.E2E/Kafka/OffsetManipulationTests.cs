@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class OffsetManipulationTests : E2ETestFixture
+    public class OffsetManipulationTests : KafkaTestFixture
     {
         public OffsetManipulationTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -72,7 +72,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 3"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             Subscriber.InboundEnvelopes.Should().HaveCount(3);
 
             await Broker.DisconnectAsync();
@@ -84,7 +84,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 4"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             Subscriber.InboundEnvelopes.Should().HaveCount(7);
         }
     }

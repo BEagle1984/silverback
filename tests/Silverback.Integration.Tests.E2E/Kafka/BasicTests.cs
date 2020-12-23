@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class BasicTests : E2ETestFixture
+    public class BasicTests : KafkaTestFixture
     {
         public BasicTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -98,7 +98,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(15);
             Subscriber.InboundEnvelopes.Should().HaveCount(15);
@@ -193,7 +193,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedEvents.Should().HaveCount(10);
             receivedTestEventOnes.Should().HaveCount(5);
@@ -246,7 +246,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(10);
             Subscriber.InboundEnvelopes.Should().HaveCount(10);
@@ -304,7 +304,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(10);
             Subscriber.InboundEnvelopes.Should().HaveCount(10);
@@ -370,7 +370,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(10);
             Subscriber.InboundEnvelopes.Should().HaveCount(10);
@@ -426,7 +426,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(10);
             Subscriber.InboundEnvelopes.Should().HaveCount(20);
@@ -469,7 +469,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(10);
             Subscriber.InboundEnvelopes.Should().HaveCount(10);
@@ -530,7 +530,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "three"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
         }
@@ -571,7 +571,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
             SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
@@ -617,7 +617,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Handled message"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             received.Should().Be(1);
 
             await publisher.PublishAsync(
@@ -666,7 +666,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Handled message"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             received.Should().Be(1);
 
             await publisher.PublishAsync(
@@ -675,7 +675,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Unhandled message"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             received.Should().Be(1);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
         }
@@ -818,7 +818,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(5);
             Subscriber.InboundEnvelopes.Should().HaveCount(5);
@@ -834,7 +834,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(10);
             Subscriber.InboundEnvelopes.Should().HaveCount(10);
@@ -878,7 +878,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.OutboundEnvelopes.Should().HaveCount(5);
             Subscriber.InboundEnvelopes.Should().HaveCount(5);
@@ -902,7 +902,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await Broker.Consumers[0].StartAsync();
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(10);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
@@ -990,7 +990,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 taskCompletionSource.SetResult(true);
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(12);
         }

@@ -17,7 +17,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class ChunkingInBatchTests : E2ETestFixture
+    public class ChunkingInBatchTests : KafkaTestFixture
     {
         public ChunkingInBatchTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -92,7 +92,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne { Content = $"Long message {i}" });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             failedCommit.Should().BeNull();
             enumerationAborted.Should().BeNull();
@@ -186,7 +186,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             failedCommit.Should().BeNull();
             enumerationAborted.Should().BeNull();
@@ -285,7 +285,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne { Content = $"Long message {i}" });
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             failedCommit.Should().BeNull();
             enumerationAborted.Should().BeNull();
@@ -379,7 +379,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
             }
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             failedCommit.Should().BeNull();
             enumerationAborted.Should().BeNull();

@@ -17,7 +17,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class ExactlyOnceTests : E2ETestFixture
+    public class ExactlyOnceTests : KafkaTestFixture
     {
         public ExactlyOnceTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -79,7 +79,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 });
             await publisher.PublishAsync(new TestEventOne());
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(4);
 
@@ -151,7 +151,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 });
             await publisher.PublishAsync(new TestEventOne());
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             Subscriber.InboundEnvelopes.Should().HaveCount(4);
 
@@ -219,7 +219,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 3"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             Subscriber.InboundEnvelopes.Should().HaveCount(3);
 
             await Broker.DisconnectAsync();
@@ -231,7 +231,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 4"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             Subscriber.InboundEnvelopes.Should().HaveCount(4);
         }
 
@@ -290,7 +290,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 3"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             Subscriber.InboundEnvelopes.Should().HaveCount(3);
 
             await Broker.DisconnectAsync();
@@ -302,7 +302,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 4"
                 });
 
-            await KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
             Subscriber.InboundEnvelopes.Should().HaveCount(4);
         }
     }

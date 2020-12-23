@@ -3,7 +3,9 @@
 
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Silverback.Messaging.Broker.Mqtt;
+using Silverback.Messaging.Broker.Mqtt.Mocks;
 using Silverback.Messaging.Configuration;
+using Silverback.Testing;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
@@ -30,7 +32,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
             builder.Services
                 .RemoveAll<IMqttNetClientFactory>()
-                .AddSingleton<IMqttNetClientFactory, MockedMqttNetClientFactory>();
+                .AddSingleton<IMqttNetClientFactory, MockedMqttNetClientFactory>()
+                .AddSingleton<IInMemoryMqttBroker, InMemoryMqttBroker>()
+                .AddSingleton<IMqttTestingHelper, MqttTestingHelper>();
 
             return builder;
         }
