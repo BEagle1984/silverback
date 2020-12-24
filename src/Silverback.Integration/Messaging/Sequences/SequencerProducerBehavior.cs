@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Sequences
                 if (!sequenceWriter.CanHandle(context.Envelope))
                     continue;
 
-                var envelopesEnumerable = sequenceWriter.ProcessMessage(context.Envelope);
+                var envelopesEnumerable = sequenceWriter.ProcessMessageAsync(context.Envelope);
 
                 await foreach (var envelope in envelopesEnumerable.ConfigureAwait(false))
                 {

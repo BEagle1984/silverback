@@ -31,6 +31,6 @@ namespace Silverback.Messaging.Subscribers
             }
         }
 
-        public Task WaitUntilCreated() => _lazyStream.WaitUntilCreated();
+        public Task WaitUntilCreatedAsync() => _lazyStream.WaitUntilCreatedAsync();
     }
 }

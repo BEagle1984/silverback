@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -57,50 +58,51 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
             _dbContext = _scope.ServiceProvider.GetRequiredService<TestDbContext>();
             _dbContext.Database.EnsureCreated();
 
-            _queueWriter = new DbOutboxWriter(_scope.ServiceProvider.GetRequiredService<IDbContext>());
+            _queueWriter =
+                new DbOutboxWriter(_scope.ServiceProvider.GetRequiredService<IDbContext>());
         }
 
         [Fact]
-        public void Enqueue_SomeMessages_TableStillEmpty()
+        public async Task WriteAsync_SomeMessages_TableStillEmpty()
         {
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
 
             _dbContext.Outbox.Should().HaveCount(0);
         }
 
         [Fact]
-        public void EnqueueCommitAndSaveChanges_SomeMessages_MessagesAddedToQueue()
+        public async Task WriteAsyncAndSaveChanges_SomeMessages_MessagesAddedToQueue()
         {
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            _queueWriter.CommitAsync();
-            _dbContext.SaveChanges();
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.CommitAsync();
+            await _dbContext.SaveChangesAsync();
 
             _dbContext.Outbox.Should().HaveCount(3);
         }
 
         [Fact]
-        public void EnqueueAndRollback_SomeMessages_TableStillEmpty()
+        public async Task WriteAsyncAndRollbackAsync_SomeMessages_TableStillEmpty()
         {
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            _queueWriter.RollbackAsync();
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.RollbackAsync();
 
             _dbContext.Outbox.Should().HaveCount(0);
         }
 
         [Fact]
-        public void EnqueueCommitAndSaveChanges_Message_MessageCorrectlyAddedToQueue()
+        public async Task WriteAsyncCommitAndSaveChanges_Message_MessageCorrectlyAddedToQueue()
         {
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            _queueWriter.CommitAsync();
-            _dbContext.SaveChanges();
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.CommitAsync();
+            await _dbContext.SaveChangesAsync();
 
             var outboundMessage = _dbContext.Outbox.First();
             outboundMessage.EndpointName.Should().Be("test");

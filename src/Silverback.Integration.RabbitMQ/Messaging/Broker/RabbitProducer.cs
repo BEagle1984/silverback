@@ -53,6 +53,7 @@ namespace Silverback.Messaging.Broker
         /// <param name="logger">
         ///     The <see cref="ISilverbackLogger" />.
         /// </param>
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public RabbitProducer(
             RabbitBroker broker,
             RabbitProducerEndpoint endpoint,

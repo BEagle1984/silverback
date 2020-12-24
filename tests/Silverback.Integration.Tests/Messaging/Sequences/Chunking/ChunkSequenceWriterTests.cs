@@ -96,7 +96,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                 true);
 
             var writer = new ChunkSequenceWriter();
-            var envelopes = await writer.ProcessMessage(sourceEnvelope).ToListAsync();
+            var envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
 
             envelopes.Should().HaveCount(4);
             envelopes.ForEach(envelope => envelope.Endpoint.Should().BeSameAs(sourceEnvelope.Endpoint));

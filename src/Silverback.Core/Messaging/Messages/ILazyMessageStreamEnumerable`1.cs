@@ -25,8 +25,8 @@ namespace Silverback.Messaging.Messages
         ///     the <see cref="Stream" /> property.
         /// </summary>
         /// <returns>
-        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation.
+        ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task WaitUntilCreated();
+        Task WaitUntilCreatedAsync();
     }
 }

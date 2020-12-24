@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -132,6 +133,7 @@ namespace Silverback.EntityFrameworkCore
             }
         }
 
+        [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
         private async Task PublishDomainEventsAsync(bool executeAsync)
         {
             var events = GetDomainEvents();
@@ -160,6 +162,7 @@ namespace Silverback.EntityFrameworkCore
                     return selected ?? Enumerable.Empty<object>();
                 }).ToList();
 
+        [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
         private async Task PublishEventAsync<TEvent>(bool executeAsync)
             where TEvent : new()
         {

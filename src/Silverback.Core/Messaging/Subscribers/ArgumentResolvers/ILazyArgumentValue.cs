@@ -19,8 +19,8 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         ///     Gets an awaitable <see cref="Task" /> that completes when the argument value is available.
         /// </summary>
         /// <returns>
-        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation.
+        ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task WaitUntilCreated();
+        Task WaitUntilCreatedAsync();
     }
 }

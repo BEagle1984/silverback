@@ -1,7 +1,4 @@
-﻿// Copyright (c) 2020 Sergio Aquilini
-// This code is licensed under MIT license (see LICENSE file for details)
-
-using Silverback.Messaging.Configuration;
+﻿using Silverback.Messaging.Configuration;
 using Silverback.Samples.Mqtt.Basic.Common;
 
 namespace Silverback.Samples.Mqtt.Basic.Producer

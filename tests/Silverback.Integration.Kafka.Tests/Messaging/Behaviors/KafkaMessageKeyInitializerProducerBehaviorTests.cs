@@ -18,7 +18,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
     public class KafkaMessageKeyInitializerProducerBehaviorTests
     {
         [Fact]
-        public void HandleAsync_NoKeyMemberAttributeAndNoMessageId_RandomKafkaKeyIsGenerated()
+        public async Task HandleAsync_NoKeyMemberAttributeAndNoMessageId_RandomKafkaKeyIsGenerated()
         {
             var envelope = new OutboundEnvelope<NoKeyMembersMessage>(
                 new NoKeyMembersMessage
@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
+            await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
         }
 
         [Fact]
-        public void HandleAsync_NoKeyMemberAttribute_MessageIdUsedAsKey()
+        public async Task HandleAsync_NoKeyMemberAttribute_MessageIdUsedAsKey()
         {
             var envelope = new OutboundEnvelope<NoKeyMembersMessage>(
                 new NoKeyMembersMessage
@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 },
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
+            await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
@@ -65,7 +65,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
         }
 
         [Fact]
-        public void HandleAsync_SingleKeyMemberAttribute_KeyHeaderIsSet()
+        public async Task HandleAsync_SingleKeyMemberAttribute_KeyHeaderIsSet()
         {
             var envelope = new OutboundEnvelope<SingleKeyMemberMessage>(
                 new SingleKeyMemberMessage
@@ -78,7 +78,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
+            await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
@@ -86,7 +86,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
         }
 
         [Fact]
-        public void HandleAsync_MultipleKeyMemberAttributes_KeyHeaderIsSet()
+        public async Task HandleAsync_MultipleKeyMemberAttributes_KeyHeaderIsSet()
         {
             var envelope = new OutboundEnvelope<MultipleKeyMembersMessage>(
                 new MultipleKeyMembersMessage
@@ -99,7 +99,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
                 null,
                 new KafkaProducerEndpoint("test-endpoint"));
 
-            new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
+            await new KafkaMessageKeyInitializerProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 

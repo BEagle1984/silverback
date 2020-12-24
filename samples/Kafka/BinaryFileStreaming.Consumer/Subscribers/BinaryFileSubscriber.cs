@@ -20,7 +20,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Subscribers
             _logger = logger;
         }
 
-        public async Task OnBinaryFileMessageReceived(
+        public async Task OnBinaryFileMessageReceivedAsync(
             CustomBinaryFileMessage binaryFileMessage)
         {
             EnsureTargetFolderExists();

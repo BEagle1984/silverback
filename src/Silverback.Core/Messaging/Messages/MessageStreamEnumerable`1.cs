@@ -150,6 +150,7 @@ namespace Silverback.Messaging.Messages
             }
         }
 
+        [SuppressMessage("", "VSTHRD200", Justification = "The name is fine")]
         private async IAsyncEnumerable<TMessage> GetAsyncEnumerable(
             [EnumeratorCancellation] CancellationToken cancellationToken)
         {

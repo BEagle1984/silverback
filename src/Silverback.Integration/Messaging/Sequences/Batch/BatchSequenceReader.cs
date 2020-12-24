@@ -29,12 +29,12 @@ namespace Silverback.Messaging.Sequences.Batch
             return Task.FromResult(isBatchEnabled);
         }
 
-        /// <inheritdoc cref="SequenceReaderBase.GetSequenceId" />
-        protected override Task<string> GetSequenceId(ConsumerPipelineContext context) =>
+        /// <inheritdoc cref="SequenceReaderBase.GetSequenceIdAsync" />
+        protected override Task<string> GetSequenceIdAsync(ConsumerPipelineContext context) =>
             Task.FromResult(SequenceIdPrefix);
 
-        /// <inheritdoc cref="SequenceReaderBase.IsNewSequence" />
-        protected override async Task<bool> IsNewSequence(string sequenceId, ConsumerPipelineContext context)
+        /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />
+        protected override async Task<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 

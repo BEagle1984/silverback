@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Represent a future <see cref="IMessageStreamEnumerable{TMessage}" />, that will created as soon as the
-    ///     first message is pushed.
+    ///     Represent a future <see cref="IMessageStreamEnumerable{TMessage}" />, that will created as soon
+    ///     as the first message is pushed.
     /// </summary>
     internal interface ILazyMessageStreamEnumerable
     {
@@ -28,10 +28,10 @@ namespace Silverback.Messaging.Messages
         ///     the <see cref="Stream" /> property.
         /// </summary>
         /// <returns>
-        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
-        ///     <see cref="IMessageStreamEnumerable" />.
+        ///     A <see cref="Task" /> representing the asynchronous operation. The task result
+        ///     contains the <see cref="IMessageStreamEnumerable" />.
         /// </returns>
-        Task WaitUntilCreated();
+        Task WaitUntilCreatedAsync();
 
         /// <summary>
         ///     Gets the already created <see cref="IMessageStreamEnumerable" /> or creates it on the fly.

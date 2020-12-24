@@ -31,7 +31,9 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task Enqueue_MultipleTimesInParallelNoCommit_QueueLooksEmpty()
         {
-            Parallel.For(0, 3, _ => { _queue.WriteAsync(_sampleOutboundEnvelope); });
+            await Task.WhenAll(
+                Enumerable.Range(0, 3)
+                    .Select(_ => _queue.WriteAsync(_sampleOutboundEnvelope)));
 
             (await _queue.GetLengthAsync()).Should().Be(0);
         }
@@ -39,7 +41,9 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task Enqueue_MultipleTimesInParallelAndCommit_QueueFilled()
         {
-            Parallel.For(0, 3, _ => { _queue.WriteAsync(_sampleOutboundEnvelope); });
+            await Task.WhenAll(
+                Enumerable.Range(0, 3)
+                    .Select(_ => _queue.WriteAsync(_sampleOutboundEnvelope)));
 
             await _queue.CommitAsync();
 
@@ -49,7 +53,9 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task Enqueue_MultipleTimesInParallelAndRollback_QueueIsEmpty()
         {
-            Parallel.For(0, 3, _ => { _queue.WriteAsync(_sampleOutboundEnvelope); });
+            await Task.WhenAll(
+                Enumerable.Range(0, 3)
+                    .Select(_ => _queue.WriteAsync(_sampleOutboundEnvelope)));
 
             await _queue.RollbackAsync();
 
@@ -73,7 +79,9 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [InlineData(3, 3)]
         [InlineData(5, 5)]
         [InlineData(10, 5)]
-        public async Task Dequeue_WithCommittedEnvelopes_ExpectedEnvelopesReturned(int count, int expected)
+        public async Task Dequeue_WithCommittedEnvelopes_ExpectedEnvelopesReturned(
+            int count,
+            int expected)
         {
             for (var i = 0; i < 5; i++)
             {

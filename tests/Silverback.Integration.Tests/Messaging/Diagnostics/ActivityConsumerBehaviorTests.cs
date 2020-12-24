@@ -59,7 +59,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         }
 
         [Fact]
-        public void HandleAsync_WithoutActivityHeaders_NewActivityIsStarted()
+        public async Task HandleAsync_WithoutActivityHeaders_NewActivityIsStarted()
         {
             var rawEnvelope = new RawInboundEnvelope(
                 new byte[5],
@@ -72,7 +72,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new TestOffset());
 
             var entered = false;
-            new ActivityConsumerBehavior().HandleAsync(
+            await new ActivityConsumerBehavior().HandleAsync(
                 new ConsumerPipelineContext(
                     rawEnvelope,
                     Substitute.For<IConsumer>(),

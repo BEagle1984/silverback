@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Util;
@@ -27,6 +28,7 @@ namespace Silverback.Background
         ///     The <see cref="IDistributedLockManager" /> that generated the lock and can be used to keep it alive
         ///     and finally release it.
         /// </param>
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public DistributedLock(DistributedLockSettings settings, IDistributedLockManager lockManager)
         {
             _settings = Check.NotNull(settings, nameof(settings));

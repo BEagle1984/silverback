@@ -6,8 +6,6 @@ using System.Globalization;
 using System.Linq;
 using Silverback.Messaging.HealthChecks;
 
-#pragma warning disable 618 // Obsolete PartitioningKeyMemberAttribute
-
 namespace Silverback.Messaging.Messages
 {
     internal static class KafkaKeyHelper

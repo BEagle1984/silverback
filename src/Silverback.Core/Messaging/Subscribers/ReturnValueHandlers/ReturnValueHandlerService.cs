@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,6 +22,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
             _returnValueHandlers = returnValueHandlers.Reverse().ToList();
         }
 
+        [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
         public async Task<IReadOnlyCollection<object>> HandleReturnValuesAsync(
             IReadOnlyCollection<object?> returnValues,
             bool executeAsync)

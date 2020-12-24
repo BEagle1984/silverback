@@ -26,8 +26,8 @@ namespace Silverback.Messaging.Messages
 
         object? ILazyArgumentValue.Value => Stream;
 
-        /// <inheritdoc cref="ILazyMessageStreamEnumerable{TMessage}.WaitUntilCreated" />
-        public Task WaitUntilCreated() => _taskCompletionSource.Task;
+        /// <inheritdoc cref="ILazyMessageStreamEnumerable{TMessage}.WaitUntilCreatedAsync" />
+        public Task WaitUntilCreatedAsync() => _taskCompletionSource.Task;
 
         /// <inheritdoc cref="ILazyMessageStreamEnumerable.GetOrCreateStream" />
         public IMessageStreamEnumerable GetOrCreateStream()

@@ -27,7 +27,8 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
 
         public Type SubscribedType { get; }
 
-        public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
+        public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(
+            IServiceProvider serviceProvider) =>
             _subscribedMethods ??= serviceProvider
                 .GetServices(SubscribedType)
                 .SelectMany(subscriber => GetSubscribedMethods(subscriber, serviceProvider))
@@ -43,12 +44,16 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
                 subscribeAttribute?.Exclusive);
         }
 
-        private IEnumerable<SubscribedMethod> GetSubscribedMethods(object subscriber, IServiceProvider serviceProvider)
+        private IEnumerable<SubscribedMethod> GetSubscribedMethods(
+            object subscriber,
+            IServiceProvider serviceProvider)
         {
             var targetType = subscriber.GetType();
 
             return GetMethods(targetType)
-                .Select(methodInfo => GetSubscribedMethod(targetType, methodInfo).EnsureInitialized(serviceProvider))
+                .Select(
+                    methodInfo => GetSubscribedMethod(targetType, methodInfo)
+                        .EnsureInitialized(serviceProvider))
                 .ToList();
         }
 
@@ -61,7 +66,8 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
                 .Where(
                     methodInfo =>
                         methodInfo.GetCustomAttribute<SubscribeAttribute>(true) != null ||
-                        _autoSubscribeAllPublicMethods && methodInfo.IsPublic && !methodInfo.IsSpecialName &&
+                        _autoSubscribeAllPublicMethods && methodInfo.IsPublic &&
+                        !methodInfo.IsSpecialName &&
                         methodInfo.DeclaringType == type && methodInfo.GetParameters().Any());
     }
 }

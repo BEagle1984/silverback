@@ -38,9 +38,9 @@ namespace Silverback.Messaging.Sequences.Chunking
             return envelope.RawMessage != null && envelope.RawMessage.Length > chunkSettings.Size;
         }
 
-        /// <inheritdoc cref="ISequenceWriter.ProcessMessage" />
+        /// <inheritdoc cref="ISequenceWriter.ProcessMessageAsync" />
         [SuppressMessage("ReSharper", "ASYNC0001", Justification = "False positive")]
-        public async IAsyncEnumerable<IOutboundEnvelope> ProcessMessage(IOutboundEnvelope envelope)
+        public async IAsyncEnumerable<IOutboundEnvelope> ProcessMessageAsync(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
 

@@ -6,18 +6,6 @@ namespace System.Threading.Tasks
 {
     public static class TaskExtensions
     {
-        public static Task RunWithTimeout(this ValueTask task, int timeoutInMilliseconds = 2000) =>
-            RunWithTimeout(task.AsTask(), timeoutInMilliseconds);
-
-        public static Task RunWithTimeout(this Task task, int timeoutInMilliseconds = 2000) =>
-            Task.WhenAny(task, Task.Delay(timeoutInMilliseconds));
-
-        public static Task RunWithTimeout<T>(this ValueTask<T> task, int timeoutInMilliseconds = 2000) =>
-            RunWithTimeout(task.AsTask(), timeoutInMilliseconds);
-
-        public static Task RunWithTimeout<T>(this Task<T> task, int timeoutInMilliseconds = 2000) =>
-            Task.WhenAny(task, Task.Delay(timeoutInMilliseconds));
-
         public static void RunWithoutBlocking(this ValueTask task)
         {
             // This method is used just to trick the compiler and avoid CS4014

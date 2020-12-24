@@ -128,6 +128,7 @@ namespace Silverback.Messaging.Broker.Kafka
             _messagesLimiterSemaphoreSlim?.Dispose();
         }
 
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         private void StartReading(int channelIndex)
         {
             if (_readCancellationTokenSource[channelIndex].IsCancellationRequested &&

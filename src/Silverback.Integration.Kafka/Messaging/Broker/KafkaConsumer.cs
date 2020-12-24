@@ -308,7 +308,7 @@ namespace Silverback.Messaging.Broker
         protected override async Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
             if (IsConsuming && _consumeLoopHandler != null)
-                await _consumeLoopHandler.Stop().ConfigureAwait(false);
+                await _consumeLoopHandler.StopAsync().ConfigureAwait(false);
 
             brokerMessageIdentifiers
                 .GroupBy(offset => offset.Key)
@@ -329,7 +329,7 @@ namespace Silverback.Messaging.Broker
         {
             lock (_channelsLock)
             {
-                _consumeLoopHandler?.Stop();
+                _consumeLoopHandler?.StopAsync();
                 _channelsManager?.StopReading();
             }
         }

@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Subscribers
         /// <inheritdoc cref="BackgroundService.ExecuteAsync" />
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            using var scope = _serviceScopeFactory.CreateScope();
+            var scope = _serviceScopeFactory.CreateScope();
             scope.ServiceProvider.GetRequiredService<SubscribedMethodsLoader>().GetSubscribedMethods();
 
             return Task.CompletedTask;

@@ -63,6 +63,8 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="BackgroundService.ExecuteAsync" />
+        [SuppressMessage("", "VSTHRD101", Justification = "All exceptions are catched")]
+        [SuppressMessage("", "CA1031", Justification = "Catch all to avoid crashes")]
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             using var scope = _serviceScopeFactory.CreateScope();
@@ -76,9 +78,18 @@ namespace Silverback.Messaging.Broker
                     return ConnectAsync(stoppingToken);
                 case BrokerConnectionMode.AfterStartup:
                     _applicationLifetime.ApplicationStarted.Register(
-                        async () => await ConnectAsync(stoppingToken).ConfigureAwait(false));
+                        async () =>
+                        {
+                            try
+                            {
+                                await ConnectAsync(stoppingToken).ConfigureAwait(false);
+                            }
+                            catch
+                            {
+                                // Swallow everything to avoid crashing the process
+                            }
+                        });
                     return Task.CompletedTask;
-                case BrokerConnectionMode.Manual:
                 default:
                     return Task.CompletedTask;
             }

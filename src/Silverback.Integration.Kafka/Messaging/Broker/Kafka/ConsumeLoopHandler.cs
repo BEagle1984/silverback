@@ -46,6 +46,7 @@ namespace Silverback.Messaging.Broker.Kafka
 
         public bool IsConsuming { get; private set; }
 
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void Start()
         {
             if (IsConsuming)
@@ -72,7 +73,7 @@ namespace Silverback.Messaging.Broker.Kafka
                 TaskScheduler.Default);
         }
 
-        public Task Stop()
+        public Task StopAsync()
         {
             _cancellationTokenSource.Cancel();
 
@@ -88,7 +89,7 @@ namespace Silverback.Messaging.Broker.Kafka
 
         public void Dispose()
         {
-            Stop();
+            AsyncHelper.RunSynchronously(StopAsync);
             _cancellationTokenSource.Dispose();
         }
 

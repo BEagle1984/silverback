@@ -32,8 +32,8 @@ namespace Silverback.Messaging.Sequences.Chunking
             return Task.FromResult(canHandle);
         }
 
-        /// <inheritdoc cref="SequenceReaderBase.IsNewSequence" />
-        protected override Task<bool> IsNewSequence(string sequenceId, ConsumerPipelineContext context)
+        /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />
+        protected override Task<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 

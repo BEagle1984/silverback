@@ -67,7 +67,7 @@ namespace Silverback.Messaging.Inbound
 
                 if (IsMessageStreamEnabled(context) && context.Envelope is IInboundEnvelope envelope)
                 {
-                    var unboundedSequence = await GetUnboundedSequence(context).ConfigureAwait(false);
+                    var unboundedSequence = await GetUnboundedSequenceAsync(context).ConfigureAwait(false);
 
                     int pushedStreamsCount =
                         await unboundedSequence!.AddAsync(envelope, null, false).ConfigureAwait(false);
@@ -100,7 +100,7 @@ namespace Silverback.Messaging.Inbound
                 context);
         }
 
-        private async Task<UnboundedSequence> GetUnboundedSequence(ConsumerPipelineContext context)
+        private async Task<UnboundedSequence> GetUnboundedSequenceAsync(ConsumerPipelineContext context)
         {
             const string sequenceIdPrefix = "unbounded|";
 

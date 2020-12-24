@@ -25,6 +25,7 @@ namespace Silverback.Messaging.Subscribers
         private bool _disposed;
 
         [SuppressMessage("", "CA1031", Justification = "Exception rethrown by the Subscribe method")]
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public MessageStreamObservable(IMessageStreamEnumerable<TMessage> messageStreamEnumerable)
         {
             Task.Run(

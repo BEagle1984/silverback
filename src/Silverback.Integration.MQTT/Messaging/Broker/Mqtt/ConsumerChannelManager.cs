@@ -45,6 +45,7 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         public bool IsReading { get; private set; }
 
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void StartReading()
         {
             if (IsReading)

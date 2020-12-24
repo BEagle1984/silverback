@@ -271,7 +271,7 @@ namespace Silverback.Messaging.Subscribers
                             {
                                 try
                                 {
-                                    await lazyStream.WaitUntilCreated().ConfigureAwait(false);
+                                    await lazyStream.WaitUntilCreatedAsync().ConfigureAwait(false);
 
                                     arguments[0] = lazyStream.Value;
                                 }

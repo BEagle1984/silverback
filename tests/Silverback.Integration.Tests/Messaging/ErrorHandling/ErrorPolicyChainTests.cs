@@ -4,6 +4,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Inbound.ErrorHandling;
@@ -69,7 +70,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(1)]
         [InlineData(3)]
         [InlineData(4)]
-        public void HandleError_RetryWithMaxFailedAttempts_AppliedAccordingToMaxFailedAttempts(int failedAttempts)
+        public async Task HandleErrorAsync_RetryWithMaxFailedAttempts_AppliedAccordingToMaxFailedAttempts(int failedAttempts)
         {
             var rawMessage = new MemoryStream();
             var headers = new[]
@@ -89,7 +90,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                     })
                 .Build(_serviceProvider);
 
-            chain.HandleErrorAsync(
+            await chain.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(
                     new InboundEnvelope(
                         rawMessage,
@@ -108,7 +109,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(3, 1)]
         [InlineData(4, 1)]
         [InlineData(5, 2)]
-        public void HandleErrorAsync_MultiplePoliciesWithMaxFailedAttempts_CorrectPolicyApplied(
+        public async Task HandleErrorAsync_MultiplePoliciesWithMaxFailedAttempts_CorrectPolicyApplied(
             int failedAttempts,
             int expectedAppliedPolicy)
         {
@@ -130,7 +131,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var chain = new ErrorPolicyChain(policies)
                 .Build(_serviceProvider);
 
-            chain.HandleErrorAsync(
+            await chain.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(
                     new InboundEnvelope(
                         rawMessage,

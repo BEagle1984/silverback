@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -105,6 +106,7 @@ namespace Silverback.Messaging.Broker
             Produce(new OutboundEnvelope(message, headers, Endpoint));
 
         /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
+        [SuppressMessage("", "VSTHRD103", Justification = "Method executes synchronously")]
         public void Produce(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(
                 async () =>

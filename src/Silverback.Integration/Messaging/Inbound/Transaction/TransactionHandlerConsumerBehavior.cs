@@ -36,7 +36,10 @@ namespace Silverback.Messaging.Inbound.Transaction
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.TransactionHandler;
 
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-        [SuppressMessage("", "CA2000", Justification = "ServiceScope is disposed while disposing the Context")]
+        [SuppressMessage(
+            "",
+            "CA2000",
+            Justification = "ServiceScope is disposed while disposing the Context")]
         public async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));
@@ -51,7 +54,8 @@ namespace Silverback.Messaging.Inbound.Transaction
                 context.TransactionManager = new ConsumerTransactionManager(
                     context,
                     context.ServiceProvider
-                        .GetRequiredService<ISilverbackIntegrationLogger<ConsumerTransactionManager>>());
+                        .GetRequiredService<ISilverbackIntegrationLogger<ConsumerTransactionManager>
+                        >());
 
                 await next(context).ConfigureAwait(false);
 
@@ -73,9 +77,11 @@ namespace Silverback.Messaging.Inbound.Transaction
                 // Sequence errors are handled in AwaitSequenceProcessingAsync, just await the rollback and rethrow
                 if (context.Sequence != null)
                 {
-                    await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
+                    await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception)
+                        .ConfigureAwait(false);
 
-                    if (context.Sequence.Length > 0 && context.Sequence is ISequenceImplementation sequenceImpl)
+                    if (context.Sequence.Length > 0 &&
+                        context.Sequence is ISequenceImplementation sequenceImpl)
                     {
                         _logger.LogTraceWithMessageInfo(
                             IntegrationEventIds.LowLevelTracing,
@@ -121,20 +127,15 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        private void StartSequenceProcessingAwaiter(ConsumerPipelineContext context)
-        {
-#pragma warning disable 4014
-            // ReSharper disable AccessToDisposedClosure
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
+        private void StartSequenceProcessingAwaiter(ConsumerPipelineContext context) =>
             Task.Run(() => AwaitSequenceProcessingAsync(context));
 
-            // ReSharper restore AccessToDisposedClosure
-#pragma warning restore 4014
-        }
-
-        [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
+        [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync")]
         private async Task AwaitSequenceProcessingAsync(ConsumerPipelineContext context)
         {
-            var sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
+            var sequence = context.Sequence ??
+                           throw new InvalidOperationException("Sequence is null.");
             context = sequence.Context;
 
             try
@@ -162,10 +163,13 @@ namespace Silverback.Messaging.Inbound.Transaction
                         return;
                     }
 
-                    sequence = context.Sequence ?? throw new InvalidOperationException("Sequence is null.");
+                    sequence = context.Sequence ??
+                               throw new InvalidOperationException("Sequence is null.");
                     context = sequence.Context;
 
-                    processingTask = context.ProcessingTask != processingTask ? context.ProcessingTask : null;
+                    processingTask = context.ProcessingTask != processingTask
+                        ? context.ProcessingTask
+                        : null;
                 }
 
                 string logMessage = sequence.IsPending
@@ -189,7 +193,8 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
             catch (Exception exception)
             {
-                await sequence.AbortAsync(SequenceAbortReason.Error, exception).ConfigureAwait(false);
+                await sequence.AbortAsync(SequenceAbortReason.Error, exception)
+                    .ConfigureAwait(false);
             }
             finally
             {
@@ -197,7 +202,9 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        private async Task<bool> HandleExceptionAsync(ConsumerPipelineContext context, Exception exception)
+        private async Task<bool> HandleExceptionAsync(
+            ConsumerPipelineContext context,
+            Exception exception)
         {
             _logger.LogProcessingError(context, exception);
 
@@ -208,14 +215,16 @@ namespace Silverback.Messaging.Inbound.Transaction
 
                 if (!handled)
                 {
-                    if (context.Sequence != null && (context.Sequence.Context.ProcessingTask?.IsCompleted ?? true))
+                    if (context.Sequence != null &&
+                        (context.Sequence.Context.ProcessingTask?.IsCompleted ?? true))
                     {
                         await context.Sequence.Context.TransactionManager.RollbackAsync(exception)
                             .ConfigureAwait(false);
                     }
                     else
                     {
-                        await context.TransactionManager.RollbackAsync(exception).ConfigureAwait(false);
+                        await context.TransactionManager.RollbackAsync(exception)
+                            .ConfigureAwait(false);
                     }
                 }
 

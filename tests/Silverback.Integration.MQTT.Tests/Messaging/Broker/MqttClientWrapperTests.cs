@@ -18,7 +18,7 @@ namespace Silverback.Tests.Integration.MQTT.Messaging.Broker
     public class MqttClientWrapperTests
     {
         [Fact]
-        public void ConnectAsync_CalledFromMultipleSenders_ClientConnectedOnce()
+        public async Task ConnectAsync_CalledFromMultipleSenders_ClientConnectedOnce()
         {
             var sender1 = new object();
             var sender2 = new object();
@@ -34,8 +34,8 @@ namespace Silverback.Tests.Integration.MQTT.Messaging.Broker
             var task2 = clientWrapper.ConnectAsync(sender2);
 
             task2.Should().BeSameAs(task1);
-            mqttClient.Received(1).ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>());
-            mqttClient.Received(1).ConnectAsync(mqttClientConfig.GetMqttClientOptions(), Arg.Any<CancellationToken>());
+            await mqttClient.Received(1).ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>());
+            await mqttClient.Received(1).ConnectAsync(mqttClientConfig.GetMqttClientOptions(), Arg.Any<CancellationToken>());
         }
 
         [Fact]

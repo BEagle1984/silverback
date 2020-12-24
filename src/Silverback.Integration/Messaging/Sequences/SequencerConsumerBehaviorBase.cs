@@ -149,6 +149,7 @@ namespace Silverback.Messaging.Sequences
         protected virtual Task AwaitOtherBehaviorIfNeededAsync(ISequence sequence) => Task.CompletedTask;
 
         [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         private static void MonitorProcessingTaskPrematureCompletion(Task processingTask, ISequence sequence)
         {
             if (sequence.ParentSequence != null)

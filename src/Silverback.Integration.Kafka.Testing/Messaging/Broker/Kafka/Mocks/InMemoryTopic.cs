@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -82,6 +83,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             }
         }
 
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void Subscribe(IMockedConfluentConsumer consumer)
         {
             Check.NotNull(consumer, nameof(consumer));

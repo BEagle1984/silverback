@@ -135,13 +135,13 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="Consumer.CommitCoreAsync" />
         protected override Task CommitCoreAsync(IReadOnlyCollection<MqttClientMessageId> brokerMessageIdentifiers) =>
-            SetProcessingCompleted(brokerMessageIdentifiers, true);
+            SetProcessingCompletedAsync(brokerMessageIdentifiers, true);
 
         /// <inheritdoc cref="Consumer.RollbackCoreAsync" />
         protected override Task RollbackCoreAsync(IReadOnlyCollection<MqttClientMessageId> brokerMessageIdentifiers) =>
-            SetProcessingCompleted(brokerMessageIdentifiers, false);
+            SetProcessingCompletedAsync(brokerMessageIdentifiers, false);
 
-        private Task SetProcessingCompleted(
+        private Task SetProcessingCompletedAsync(
             IReadOnlyCollection<MqttClientMessageId> brokerMessageIdentifiers,
             bool isSuccess)
         {

@@ -48,12 +48,12 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void ForEachAsync_AsyncEnumerableWithAction_Enumerated()
+        public async Task ForEachAsync_AsyncEnumerableWithAction_Enumerated()
         {
             var enumerable = AsyncEnumerable.Range(1, 5);
 
             var total = 0;
-            enumerable.ForEachAsync(i => total += i);
+            await enumerable.ForEachAsync(i => total += i);
 
             total.Should().Be(15);
         }

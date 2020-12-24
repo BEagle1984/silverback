@@ -401,14 +401,14 @@ namespace Silverback.Tests.Core.Messaging.Messages
             Task.Run(
                 async () =>
                 {
-                    await lazyStream.WaitUntilCreated();
+                    await lazyStream.WaitUntilCreatedAsync();
                     foreach (var message in lazyStream.Stream!)
                     {
                         receivedTwos.Add(message);
                     }
                 }).RunWithoutBlocking();
 
-            var createStreamTask = lazyStream.WaitUntilCreated();
+            var createStreamTask = lazyStream.WaitUntilCreatedAsync();
 
             await provider.PushAsync(new TestEventOne(), false);
             await provider.PushAsync(new TestEventOne(), false);

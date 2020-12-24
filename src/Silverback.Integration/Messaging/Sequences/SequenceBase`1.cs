@@ -399,6 +399,7 @@ namespace Silverback.Messaging.Sequences
         protected virtual Task OnTimeoutElapsedAsync() => AbortAsync(SequenceAbortReason.IncompleteSequence);
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         private void ResetTimeout()
         {
             if (!_enforceTimeout)

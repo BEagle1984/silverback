@@ -10,6 +10,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Tests.Types;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Diagnostics
@@ -77,7 +78,8 @@ namespace Silverback.Tests.Integration.Diagnostics
                         ["offset-in"] = "9"
                     }));
             var sequence = new BatchSequence("123", _inboundSequenceContext);
-            sequence.AddAsync(_inboundSequenceContext.Envelope, null, false);
+            AsyncHelper.RunSynchronously(
+                () => sequence.AddAsync(_inboundSequenceContext.Envelope, null, false));
             _inboundSequenceContext.SetSequence(sequence, true);
 
             _outboundEnvelope = new RawOutboundEnvelope(

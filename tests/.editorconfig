@@ -1,0 +1,13 @@
+[*]
+
+# StyleCop.Analyzers
+# SA0001: All diagnostics of XML documentation comments has been disabled due to the current project configuration
+dotnet_diagnostic.SA0001.severity = none
+# SA1600: A C# code element is missing a documentation header
+dotnet_diagnostic.SA1600.severity = none
+
+# Microsoft.VisualStudio.Threading.Analyzers
+# VSTHRD200: Naming styles (Async suffix)
+dotnet_diagnostic.VSTHRD200.severity = none
+# VSTHRD103: Call async methods when in an async method
+dotnet_diagnostic.VSTHRD103.severity = none

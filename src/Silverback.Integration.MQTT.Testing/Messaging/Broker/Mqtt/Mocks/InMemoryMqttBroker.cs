@@ -14,6 +14,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks
 {
+    [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
     internal sealed class InMemoryMqttBroker : IInMemoryMqttBroker, IDisposable
     {
         private readonly Dictionary<string, ClientSession> _sessions = new();

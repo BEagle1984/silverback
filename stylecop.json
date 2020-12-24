@@ -8,12 +8,7 @@
     },
     "documentationRules": {
       "xmlHeader": false,
-      "copyrightText": "Copyright (c) 2020 {author}\nThis code is licensed under {licenseName} license (see {licenseFile} file for details)",
-      "variables": {
-        "author": "Sergio Aquilini",
-        "licenseName": "MIT",
-        "licenseFile": "LICENSE"
-      },
+      "copyrightText": "Copyright (c) 2020 Sergio Aquilini\nThis code is licensed under MIT license (see LICENSE file for details)",
       "documentInterfaces": true,
       "documentExposedElements": true,
       "documentInternalElements": false,

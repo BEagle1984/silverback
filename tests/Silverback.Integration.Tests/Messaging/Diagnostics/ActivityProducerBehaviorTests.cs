@@ -26,14 +26,14 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         }
 
         [Fact]
-        public void HandleAsync_StartedActivity_TraceIdHeaderIsSet()
+        public async Task HandleAsync_StartedActivity_TraceIdHeaderIsSet()
         {
             var activity = new Activity("test");
             activity.SetParentId("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
             activity.Start();
             var envelope = new OutboundEnvelope(null, null, TestProducerEndpoint.GetDefault());
 
-            new ActivityProducerBehavior().HandleAsync(
+            await new ActivityProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
@@ -45,11 +45,11 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         }
 
         [Fact]
-        public void HandleAsync_NoStartedActivity_ActivityStartedAndTraceIdHeaderIsSet()
+        public async Task HandleAsync_NoStartedActivity_ActivityStartedAndTraceIdHeaderIsSet()
         {
             var envelope = new OutboundEnvelope(null, null, TestProducerEndpoint.GetDefault());
 
-            new ActivityProducerBehavior().HandleAsync(
+            await new ActivityProducerBehavior().HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 

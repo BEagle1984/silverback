@@ -1,0 +1,5 @@
+[*]
+
+# StyleCop.Analyzers
+# SA0001: All diagnostics of XML documentation comments has been disabled due to the current project configuration
+dotnet_diagnostic.SA0001.severity = none

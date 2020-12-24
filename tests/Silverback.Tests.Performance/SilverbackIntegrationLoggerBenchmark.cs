@@ -11,6 +11,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Tests.Performance.TestTypes;
 using Silverback.Tests.Types;
+using Silverback.Util;
 
 namespace Silverback.Tests.Performance
 {
@@ -104,7 +105,8 @@ namespace Silverback.Tests.Performance
                         ["offset"] = "1@43"
                     }));
             var sequence = new BatchSequence("123", _sequenceContext);
-            sequence.AddAsync(_sequenceContext.Envelope, null, false);
+            AsyncHelper.RunSynchronously(
+                () => sequence.AddAsync(_sequenceContext.Envelope, null, false));
             _sequenceContext.SetSequence(sequence, true);
         }
 

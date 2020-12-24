@@ -38,8 +38,8 @@ namespace Silverback.Messaging.Sequences
         {
             Check.NotNull(context, nameof(context));
 
-            string sequenceId = await GetSequenceId(context).ConfigureAwait(false);
-            bool isNewSequence = await IsNewSequence(sequenceId, context).ConfigureAwait(false);
+            string sequenceId = await GetSequenceIdAsync(context).ConfigureAwait(false);
+            bool isNewSequence = await IsNewSequenceAsync(sequenceId, context).ConfigureAwait(false);
 
             if (string.IsNullOrEmpty(sequenceId))
                 throw new InvalidOperationException("Sequence identifier not found or invalid.");
@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Sequences
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
         ///     the recognized sequence identifier, or <c>null</c>.
         /// </returns>
-        protected virtual Task<string> GetSequenceId(ConsumerPipelineContext context)
+        protected virtual Task<string> GetSequenceIdAsync(ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 
@@ -81,7 +81,7 @@ namespace Silverback.Messaging.Sequences
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
         ///     <c>true</c> if a new sequence is starting; otherwise <c>false</c>.
         /// </returns>
-        protected abstract Task<bool> IsNewSequence(string sequenceId, ConsumerPipelineContext context);
+        protected abstract Task<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context);
 
         /// <summary>
         ///     Creates the new sequence and adds it to the store.

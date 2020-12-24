@@ -12,8 +12,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.BinaryFiles
 {
     /// <summary>
-    ///     Handles the <see cref="IBinaryFileMessage" />. It's not really a serializer, since the raw binary
-    ///     content is transmitted as-is.
+    ///     Handles the <see cref="IBinaryFileMessage" />. It's not really a serializer, since the raw
+    ///     binary content is transmitted as-is.
     /// </summary>
     /// <typeparam name="TModel">
     ///     The type of the <see cref="IBinaryFileMessage" /> implementation.

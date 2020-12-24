@@ -19,7 +19,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer.Controllers
         }
 
         [HttpPost("binary-file")]
-        public async Task<IActionResult> ProduceBinaryFile(
+        public async Task<IActionResult> ProduceBinaryFileAsync(
             string filePath,
             string? contentType)
         {
@@ -41,7 +41,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer.Controllers
         }
 
         [HttpPost("custom-binary-file")]
-        public async Task<IActionResult> ProduceBinaryFileWithCustomHeaders(
+        public async Task<IActionResult> ProduceBinaryFileWithCustomHeadersAsync(
             string filePath,
             string? contentType)
         {

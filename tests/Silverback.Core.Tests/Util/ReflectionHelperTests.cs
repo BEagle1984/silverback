@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -62,6 +63,7 @@ namespace Silverback.Tests.Core.Util
         {
         }
 
+        [SuppressMessage("", "VSTHRD100", Justification = "Test case")]
         private static async void AsyncWithoutTask()
         {
         }

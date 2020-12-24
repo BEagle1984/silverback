@@ -29,6 +29,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         private readonly List<string> _topicAssignments = new();
 
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public MockedConfluentConsumer(ConsumerConfig config, IInMemoryTopicCollection topics)
         {
             _config = Check.NotNull(config, nameof(config));

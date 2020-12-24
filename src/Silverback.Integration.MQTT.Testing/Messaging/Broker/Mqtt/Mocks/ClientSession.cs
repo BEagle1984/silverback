@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -19,7 +20,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
     {
         private readonly IMqttApplicationMessageReceivedHandler _messageHandler;
 
-        private readonly Channel<MqttApplicationMessage> _channel = Channel.CreateUnbounded<MqttApplicationMessage>();
+        private readonly Channel<MqttApplicationMessage> _channel =
+            Channel.CreateUnbounded<MqttApplicationMessage>();
 
         private readonly List<Subscription> _subscriptions = new();
 
@@ -27,7 +29,9 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
         private int _pendingMessagesCount;
 
-        public ClientSession(IMqttClientOptions clientOptions, IMqttApplicationMessageReceivedHandler messageHandler)
+        public ClientSession(
+            IMqttClientOptions clientOptions,
+            IMqttApplicationMessageReceivedHandler messageHandler)
         {
             ClientOptions = Check.NotNull(clientOptions, nameof(clientOptions));
             _messageHandler = Check.NotNull(messageHandler, nameof(messageHandler));
@@ -39,6 +43,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
         public bool IsConnected { get; private set; }
 
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void Connect()
         {
             if (IsConnected)
@@ -115,13 +120,17 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                var message = await _channel.Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
+                var message = await _channel.Reader.ReadAsync(cancellationToken)
+                    .ConfigureAwait(false);
 
-                var eventArgs = new MqttApplicationMessageReceivedEventArgs(ClientOptions.ClientId, message);
+                var eventArgs = new MqttApplicationMessageReceivedEventArgs(
+                    ClientOptions.ClientId,
+                    message);
 
                 do
                 {
-                    await _messageHandler.HandleApplicationMessageReceivedAsync(eventArgs).ConfigureAwait(false);
+                    await _messageHandler.HandleApplicationMessageReceivedAsync(eventArgs)
+                        .ConfigureAwait(false);
                 }
                 while (eventArgs.ProcessingFailed || cancellationToken.IsCancellationRequested);
 
@@ -129,6 +138,20 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             }
         }
 
-        private record Subscription(string Topic, Regex Regex);
+        // TODO: Convert to short record declaration as soon as the StyleCop.Analyzers is updated,
+        //       see https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3181
+        // private record Subscription(string Topic, Regex Regex);
+        private record Subscription
+        {
+            public Subscription(string topic, Regex regex)
+            {
+                Topic = topic;
+                Regex = regex;
+            }
+
+            public string Topic { get; }
+
+            public Regex Regex { get; }
+        }
     }
 }
