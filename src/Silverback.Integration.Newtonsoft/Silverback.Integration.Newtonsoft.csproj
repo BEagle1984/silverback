@@ -17,8 +17,8 @@ This package contains the legacy IMessageSerializer based on Newtonsoft.Json.</D
         <PackageIconUrl>$(IconUrl)</PackageIconUrl>
         <PackageTags>$(Tags)</PackageTags>
         <LangVersion>$(LangVersion)</LangVersion>
-        <NoWarn>$(NoWarn)</NoWarn>
-        <PackageId>Silverback.Integration.Newtonsoft</PackageId>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+            <PackageId>Silverback.Integration.Newtonsoft</PackageId>
         <Product>Silverback.Integration.Newtonsoft</Product>
     </PropertyGroup>
 

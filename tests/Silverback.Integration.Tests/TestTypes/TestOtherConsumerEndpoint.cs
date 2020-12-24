@@ -14,6 +14,7 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
+        [SuppressMessage("", "CA1024", Justification = "Method is appropriate (new instance)")]
         public static TestOtherConsumerEndpoint GetDefault() => new("test");
 
         public override string GetUniqueConsumerGroupName() => Name;

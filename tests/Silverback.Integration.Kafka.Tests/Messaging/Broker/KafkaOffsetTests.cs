@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Silverback.Messaging.Broker;
 using Xunit;
@@ -220,6 +221,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         }
 
         [Fact]
+        [SuppressMessage("", "CA1508", Justification = "Test code")]
         public void EqualsOffset_Null_FalseReturned()
         {
             var offset1 = new KafkaOffset("test-topic", 0, 42);
@@ -230,6 +232,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         }
 
         [Fact]
+        [SuppressMessage("", "CA1508", Justification = "Test code")]
         public void EqualsObject_Null_FalseReturned()
         {
             var offset1 = new KafkaOffset("test-topic", 0, 42);

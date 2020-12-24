@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Serialization
 
             messageHeaders.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
-            return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(GetSystemEncoding().GetBytes(jsonString)));
+            return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(SystemEncoding.GetBytes(jsonString)));
         }
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />
@@ -65,7 +65,7 @@ namespace Silverback.Messaging.Serialization
                 return (null, type);
 
             var buffer = await messageStream.ReadAllAsync().ConfigureAwait(false);
-            var jsonString = GetSystemEncoding().GetString(buffer!);
+            var jsonString = SystemEncoding.GetString(buffer!);
 
             var deserializedObject = JsonConvert.DeserializeObject(jsonString, type, Settings);
 

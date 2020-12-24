@@ -85,7 +85,8 @@ namespace Silverback.Messaging.Broker.Kafka
             return Stopping;
         }
 
-        public void SetChannelsManager(ConsumerChannelsManager channelsManager) => _channelsManager = channelsManager;
+        public void SetChannelsManager(ConsumerChannelsManager channelsManager) =>
+            _channelsManager = channelsManager;
 
         public void Dispose()
         {
@@ -112,6 +113,7 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+        [SuppressMessage("", "CA1508", Justification = "_channelsManager is set on partitions assignment")]
         private bool ConsumeOnce(CancellationToken cancellationToken)
         {
             try

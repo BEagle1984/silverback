@@ -4,6 +4,7 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <RootNamespace>Silverback.Tests.Performance</RootNamespace>
         <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <OutputType>exe</OutputType>
     </PropertyGroup>
 

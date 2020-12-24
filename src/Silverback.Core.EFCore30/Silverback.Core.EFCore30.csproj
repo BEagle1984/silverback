@@ -17,7 +17,7 @@ This package It contains the storage implementation to integrate Silverback with
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
-    <NoWarn>$(NoWarn)</NoWarn>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PackageId>Silverback.Core.EntityFrameworkCore</PackageId>
     <Product>Silverback.Core.EntityFrameworkCore</Product>
   </PropertyGroup>

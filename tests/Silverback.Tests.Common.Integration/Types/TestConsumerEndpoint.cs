@@ -16,6 +16,7 @@ namespace Silverback.Tests.Types
 
         public string GroupId { get; set; } = "default-group";
 
+        [SuppressMessage("", "CA1024", Justification = "Method is appropriate (new instance)")]
         public static TestConsumerEndpoint GetDefault() => new("test");
 
         public override string GetUniqueConsumerGroupName() => $"{Name}|{GroupId}";

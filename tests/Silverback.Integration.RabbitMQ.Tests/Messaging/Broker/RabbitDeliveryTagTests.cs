@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Silverback.Messaging.Broker;
 using Xunit;
@@ -94,6 +95,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         }
 
         [Fact]
+        [SuppressMessage("", "CA1508", Justification = "Test code")]
         public void EqualsOffset_Null_FalseReturned()
         {
             var offset1 = new RabbitDeliveryTag("test-queue", 42);
@@ -104,6 +106,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         }
 
         [Fact]
+        [SuppressMessage("", "CA1508", Justification = "Test code")]
         public void EqualsObject_Null_FalseReturned()
         {
             var offset1 = new RabbitDeliveryTag("test-queue", 42);

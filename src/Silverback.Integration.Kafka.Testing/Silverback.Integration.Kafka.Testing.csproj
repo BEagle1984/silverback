@@ -17,7 +17,7 @@ This package adds a mocked implementation of the Kafka broker, suitable for in-m
     <PackageIconUrl>$(IconUrl)</PackageIconUrl>
     <PackageTags>$(Tags)</PackageTags>
     <LangVersion>$(LangVersion)</LangVersion>
-    <NoWarn>$(NoWarn)</NoWarn>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PackageId>Silverback.Integration.Kafka.Testing</PackageId>
     <Product>Silverback.Integration.Kafka.Testing</Product>
   </PropertyGroup>

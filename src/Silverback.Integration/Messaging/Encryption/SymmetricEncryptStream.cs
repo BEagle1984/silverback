@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
@@ -98,6 +99,7 @@ namespace Silverback.Messaging.Encryption
             return length;
         }
 
+        [SuppressMessage("", "CA5401", Justification = "User choice to use a fix IV")]
         private ICryptoTransform CreateCryptoTransform(SymmetricEncryptionSettings settings)
         {
             using var algorithm = SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings);

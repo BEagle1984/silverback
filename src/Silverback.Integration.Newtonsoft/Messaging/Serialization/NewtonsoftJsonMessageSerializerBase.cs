@@ -3,6 +3,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,8 @@ namespace Silverback.Messaging.Serialization
         /// <summary>
         ///     Gets or sets the settings to be applied to the Json.NET serializer.
         /// </summary>
+        [SuppressMessage("", "CA2326", Justification = "TypeNameHandling.Auto for backward compatibility")]
+        [SuppressMessage("", "CA2327", Justification = "TypeNameHandling.Auto for backward compatibility")]
         public JsonSerializerSettings Settings { get; set; } = new()
         {
             Formatting = Formatting.None,
@@ -34,6 +37,23 @@ namespace Silverback.Messaging.Serialization
             DefaultValueHandling = DefaultValueHandling.Ignore,
             TypeNameHandling = TypeNameHandling.Auto
         };
+
+        /// <summary>
+        ///     Gets the <see cref="System.Text.Encoding" /> corresponding to the <see cref="MessageEncoding" />.
+        /// </summary>
+        /// <value>
+        ///     A <see cref="System.Text.Encoding" /> that matches the current <see cref="MessageEncoding" />.
+        /// </value>
+        protected Encoding SystemEncoding =>
+            Encoding switch
+            {
+                MessageEncoding.Default => System.Text.Encoding.Default,
+                MessageEncoding.ASCII => System.Text.Encoding.ASCII,
+                MessageEncoding.UTF8 => System.Text.Encoding.UTF8,
+                MessageEncoding.UTF32 => System.Text.Encoding.UTF32,
+                MessageEncoding.Unicode => System.Text.Encoding.Unicode,
+                _ => throw new InvalidOperationException("Unhandled encoding.")
+            };
 
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         public abstract ValueTask<Stream?> SerializeAsync(
@@ -46,22 +66,5 @@ namespace Silverback.Messaging.Serialization
             Stream? messageStream,
             MessageHeaderCollection messageHeaders,
             MessageSerializationContext context);
-
-        /// <summary>
-        ///     Maps the <see cref="MessageEncoding" /> to the <see cref="System.Text.Encoding" />.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="System.Text.Encoding" /> that matches the current <see cref="MessageEncoding" />.
-        /// </returns>
-        protected Encoding GetSystemEncoding() =>
-            Encoding switch
-            {
-                MessageEncoding.Default => System.Text.Encoding.Default,
-                MessageEncoding.ASCII => System.Text.Encoding.ASCII,
-                MessageEncoding.UTF8 => System.Text.Encoding.UTF8,
-                MessageEncoding.UTF32 => System.Text.Encoding.UTF32,
-                MessageEncoding.Unicode => System.Text.Encoding.Unicode,
-                _ => throw new InvalidOperationException("Unhandled encoding.")
-            };
     }
 }

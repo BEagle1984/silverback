@@ -25,14 +25,9 @@ namespace Silverback.Messaging.Serialization
             ReferenceEquals(objA, objB) ||
             objA != null &&
             objB != null &&
-            string.Equals(GetJsonString(objA), GetJsonString(objB), StringComparison.Ordinal);
-
-        private static string GetJsonString(object obj) =>
-            JsonConvert.SerializeObject(
-                obj,
-                new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.Auto
-                });
+            string.Equals(
+                JsonConvert.SerializeObject(objA),
+                JsonConvert.SerializeObject(objB),
+                StringComparison.Ordinal);
     }
 }

@@ -14,6 +14,7 @@ namespace Silverback.Tests.Types
         {
         }
 
+        [SuppressMessage("", "CA1024", Justification = "Method is appropriate (new instance)")]
         public static TestProducerEndpoint GetDefault() => new("test");
 
         public bool Equals(TestProducerEndpoint? other)

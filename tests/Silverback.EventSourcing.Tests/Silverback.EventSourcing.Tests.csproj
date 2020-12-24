@@ -4,6 +4,7 @@
     <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
     <RootNamespace>Silverback.Tests.EventSourcing</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     </PropertyGroup>
 
   <ItemGroup>

@@ -17,8 +17,8 @@ This package adds a mocked implementation of the MQTT broker, suitable for in-me
         <PackageIconUrl>$(IconUrl)</PackageIconUrl>
         <PackageTags>$(Tags)</PackageTags>
         <LangVersion>$(LangVersion)</LangVersion>
-        <NoWarn>$(NoWarn)</NoWarn>
-        <PackageId>Silverback.Integration.MQTT.Testing</PackageId>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+            <PackageId>Silverback.Integration.MQTT.Testing</PackageId>
         <Product>Silverback.Integration.MQTT.Testing</Product>
     </PropertyGroup>
 

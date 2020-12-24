@@ -1,9 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
-        <RootNamespace>Silverback.Samples.Kafka.Basic.Common</RootNamespace>
-        <LangVersion>$(LangVersion)</LangVersion>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>$(NetStandardTargetVersion)</TargetFramework>
+    <RootNamespace>Silverback.Samples.Kafka.Basic.Common</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
 
 </Project>
