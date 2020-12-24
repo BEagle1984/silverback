@@ -8,8 +8,6 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1506 // Excessive coupling -> this approach is anyway to be deprecated
-
 namespace Silverback.Database
 {
     internal static class SilverbackQueryableExtensions
@@ -415,21 +413,24 @@ namespace Silverback.Database
         public static Task<Dictionary<TKey, TSource>> ToDictionaryAsync<TSource, TKey>(
             this IQueryable<TSource> source,
             Func<TSource, TKey> keySelector,
-            CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+            where TKey : notnull =>
             CheckedImplementation.ToDictionaryAsync(source, keySelector, cancellationToken);
 
         public static Task<Dictionary<TKey, TSource>> ToDictionaryAsync<TSource, TKey>(
             this IQueryable<TSource> source,
             Func<TSource, TKey> keySelector,
             IEqualityComparer<TKey> comparer,
-            CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+            where TKey : notnull =>
             CheckedImplementation.ToDictionaryAsync(source, keySelector, comparer, cancellationToken);
 
         public static Task<Dictionary<TKey, TElement>> ToDictionaryAsync<TSource, TKey, TElement>(
             this IQueryable<TSource> source,
             Func<TSource, TKey> keySelector,
             Func<TSource, TElement> elementSelector,
-            CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+            where TKey : notnull =>
             CheckedImplementation.ToDictionaryAsync(source, keySelector, elementSelector, cancellationToken);
 
         public static Task<Dictionary<TKey, TElement>> ToDictionaryAsync<TSource, TKey, TElement>(
@@ -437,7 +438,8 @@ namespace Silverback.Database
             Func<TSource, TKey> keySelector,
             Func<TSource, TElement> elementSelector,
             IEqualityComparer<TKey> comparer,
-            CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+            where TKey : notnull =>
             CheckedImplementation.ToDictionaryAsync(source, keySelector, elementSelector, comparer, cancellationToken);
 
         public static Task ForEachAsync<T>(

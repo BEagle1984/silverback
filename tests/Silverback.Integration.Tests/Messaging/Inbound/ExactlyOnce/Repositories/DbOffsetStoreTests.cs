@@ -198,10 +198,10 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                 new StoredOffset
                 {
                     Key = "topic1|group1|topic1",
-#pragma warning disable 618
+#pragma warning disable CS0618 // Obsolete
                     Offset = $"{{\"$type\":\"{typeof(TestOffset).AssemblyQualifiedName}\"," +
                              "\"Key\":\"topic1|group1\",\"Value\":\"42\"}"
-#pragma warning restore 618
+#pragma warning restore CS0618 // Obsolete
                 });
             await _dbContext.SaveChangesAsync();
 

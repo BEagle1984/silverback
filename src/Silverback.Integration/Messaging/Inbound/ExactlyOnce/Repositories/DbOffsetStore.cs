@@ -53,9 +53,9 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
 
             storedOffsetEntity.Value = offset.Value;
 
-#pragma warning disable 618
+#pragma warning disable CS0618 // Obsolete
             storedOffsetEntity.Offset = null;
-#pragma warning restore 618
+#pragma warning restore CS0618 // Obsolete
         }
 
         /// <inheritdoc cref="ITransactional.CommitAsync" />
@@ -94,7 +94,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
                 return InstantiateOffset(storedOffsetEntity.ClrType, storedOffsetEntity.Key, storedOffsetEntity.Value);
             }
 
-#pragma warning disable 618
+#pragma warning disable CS0618 // Obsolete
             if (storedOffsetEntity.Offset != null)
             {
                 var legacyOffset = JsonSerializer.Deserialize<LegacyOffsetModel>(storedOffsetEntity.Offset);
@@ -104,7 +104,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
 
                 return InstantiateOffset(legacyOffset.TypeName, storedOffsetEntity.Key, legacyOffset.Value);
             }
-#pragma warning restore 618
+#pragma warning restore CS0618 // Obsolete
 
             throw new InvalidOperationException(
                 "The offset cannot be deserialized. Both ClrType/Value and Offset are null.");

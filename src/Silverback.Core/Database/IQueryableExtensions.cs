@@ -9,8 +9,6 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1506 // Excessive coupling -> this approach is anyway to be deprecated
-
 namespace Silverback.Database
 {
     [SuppressMessage("", "SA1600", Justification = "Internal and about to be deprecated")]
@@ -281,26 +279,30 @@ namespace Silverback.Database
         Task<Dictionary<TKey, TSource>> ToDictionaryAsync<TSource, TKey>(
             IQueryable<TSource> source,
             Func<TSource, TKey> keySelector,
-            CancellationToken cancellationToken = default);
+            CancellationToken cancellationToken = default)
+            where TKey : notnull;
 
         Task<Dictionary<TKey, TSource>> ToDictionaryAsync<TSource, TKey>(
             IQueryable<TSource> source,
             Func<TSource, TKey> keySelector,
             IEqualityComparer<TKey> comparer,
-            CancellationToken cancellationToken = default);
+            CancellationToken cancellationToken = default)
+            where TKey : notnull;
 
         Task<Dictionary<TKey, TElement>> ToDictionaryAsync<TSource, TKey, TElement>(
             IQueryable<TSource> source,
             Func<TSource, TKey> keySelector,
             Func<TSource, TElement> elementSelector,
-            CancellationToken cancellationToken = default);
+            CancellationToken cancellationToken = default)
+            where TKey : notnull;
 
         Task<Dictionary<TKey, TElement>> ToDictionaryAsync<TSource, TKey, TElement>(
             IQueryable<TSource> source,
             Func<TSource, TKey> keySelector,
             Func<TSource, TElement> elementSelector,
             IEqualityComparer<TKey> comparer,
-            CancellationToken cancellationToken = default);
+            CancellationToken cancellationToken = default)
+            where TKey : notnull;
 
         Task ForEachAsync<T>(IQueryable<T> source, Action<T> action, CancellationToken cancellationToken = default);
     }

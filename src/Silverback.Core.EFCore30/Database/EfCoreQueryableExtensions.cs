@@ -9,9 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-#pragma warning disable 8714 // Nullability mismatch -> false positive
-#pragma warning disable CA1506 // Excessive coupling -> this approach is anyway to be deprecated
-
 // ReSharper disable once CheckNamespace
 namespace Silverback.Database
 {
@@ -373,21 +370,24 @@ namespace Silverback.Database
         public Task<Dictionary<TKey, TSource>> ToDictionaryAsync<TSource, TKey>(
             IQueryable<TSource> source,
             Func<TSource, TKey> keySelector,
-            CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+            where TKey : notnull =>
             EntityFrameworkQueryableExtensions.ToDictionaryAsync(source, keySelector, cancellationToken);
 
         public Task<Dictionary<TKey, TSource>> ToDictionaryAsync<TSource, TKey>(
             IQueryable<TSource> source,
             Func<TSource, TKey> keySelector,
             IEqualityComparer<TKey> comparer,
-            CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+            where TKey : notnull =>
             EntityFrameworkQueryableExtensions.ToDictionaryAsync(source, keySelector, comparer, cancellationToken);
 
         public Task<Dictionary<TKey, TElement>> ToDictionaryAsync<TSource, TKey, TElement>(
             IQueryable<TSource> source,
             Func<TSource, TKey> keySelector,
             Func<TSource, TElement> elementSelector,
-            CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+            where TKey : notnull =>
             EntityFrameworkQueryableExtensions.ToDictionaryAsync(
                 source,
                 keySelector,
@@ -399,7 +399,8 @@ namespace Silverback.Database
             Func<TSource, TKey> keySelector,
             Func<TSource, TElement> elementSelector,
             IEqualityComparer<TKey> comparer,
-            CancellationToken cancellationToken = default) =>
+            CancellationToken cancellationToken = default)
+            where TKey : notnull =>
             EntityFrameworkQueryableExtensions.ToDictionaryAsync(
                 source,
                 keySelector,

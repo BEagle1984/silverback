@@ -9,8 +9,6 @@ using Silverback.Messaging.KafkaEvents;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 
-#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-
 namespace Silverback.Messaging
 {
     /// <summary>

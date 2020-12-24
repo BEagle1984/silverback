@@ -4,8 +4,6 @@
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Sequences.Chunking;
 
-#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
-
 namespace Silverback.Messaging
 {
     /// <inheritdoc cref="IProducerEndpoint" />

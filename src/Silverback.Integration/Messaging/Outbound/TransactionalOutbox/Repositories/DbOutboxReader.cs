@@ -109,12 +109,12 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
                 return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(outboxMessage.SerializedHeaders);
             }
 
-#pragma warning disable 618
+#pragma warning disable CS0618 // Obsolete
             if (outboxMessage.Headers != null)
             {
                 return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(outboxMessage.Headers);
             }
-#pragma warning restore 618
+#pragma warning restore CS0618 // Obsolete
 
             throw new InvalidOperationException("Both SerializedHeaders and Headers are null.");
         }

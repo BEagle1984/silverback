@@ -169,9 +169,9 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
                 {
                     Created = DateTime.UtcNow.AddSeconds(-30),
                     Content = SampleContent,
-#pragma warning disable 618
+#pragma warning disable CS0618 // Obsolete
                     Headers = "[{\"Name\":\"one\",\"Value\":\"1\"},{\"Name\":\"two\",\"Value\":\"2\"}]",
-#pragma warning restore 618
+#pragma warning restore CS0618 // Obsolete
                     EndpointName = "test-topic"
                 });
             await _dbContext.SaveChangesAsync();

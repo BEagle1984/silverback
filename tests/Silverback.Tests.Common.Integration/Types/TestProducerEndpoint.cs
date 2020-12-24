@@ -5,8 +5,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging;
 
-#pragma warning disable 659
-
 namespace Silverback.Tests.Types
 {
     public sealed class TestProducerEndpoint : ProducerEndpoint, IEquatable<TestProducerEndpoint>
