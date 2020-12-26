@@ -33,6 +33,7 @@ uid: releases
   * Increase automated tests coverage
   * Enable nullable reference types and adjust all API
   * Document the entire public API (see [API Documentation](~/api/Microsoft.Extensions.DependencyInjection.html))
+* Released some utilities to help writing automated tests involving Silverback.Integration (see <xref:testing>) 
 * Upgrade to [Confluent.Kafka 1.5.1](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.5.1)
 * Upgrade to [RabbitMQ.Client 6.2.1](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.2.1)
 

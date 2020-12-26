@@ -51,6 +51,12 @@ Contains the message broker and connectors abstraction. Inbound and outbound con
 
 [![NuGet](https://buildstats.info/nuget/Silverback.Integration?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration)
 
+#### Silverback.Integration.Testing
+
+Includes some utilities to help writing automated tests involving Silverback.Integration.
+
+[![NuGet](https://buildstats.info/nuget/Silverback.Integration.Testing?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Testing)
+
 #### Silverback.Integration.Kafka
 
 An implementation of [Silverback.Integration](https://www.nuget.org/packages/Silverback.Integration) for the popular Apache Kafka message broker. It internally uses the `Confluent.Kafka` client library.

@@ -9,7 +9,6 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 using Xunit.Abstractions;
@@ -44,8 +43,7 @@ namespace Silverback.Tests.Integration.E2E.MQTT
                                         .ConsumeFrom(DefaultTopicName)
                                         .DeserializeJson(serializer => serializer
                                             .UseFixedType<TestEventOne>())))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -59,14 +57,11 @@ namespace Silverback.Tests.Integration.E2E.MQTT
                     });
             }
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Should().HaveCount(15);
-            Subscriber.InboundEnvelopes.Should().HaveCount(15);
-
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(15);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(15);
-            SpyBehavior.InboundEnvelopes
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+            Helper.Spy.InboundEnvelopes
                 .Select(envelope => ((TestEventOne)envelope.Message!).Content)
                 .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
         }

@@ -14,7 +14,6 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
@@ -66,23 +65,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = "consumer1";
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-            SpyBehavior.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
+            Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
-            SpyBehavior.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
+            Helper.Spy.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
         }
@@ -129,37 +127,36 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(12);
+            Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(12);
 
             for (int i = 0; i < 6; i++)
             {
-                SpyBehavior.OutboundEnvelopes[i].RawMessage.Should().NotBeNull();
-                SpyBehavior.OutboundEnvelopes[i].RawMessage!.Length.Should().BeLessOrEqualTo(10);
-                SpyBehavior.OutboundEnvelopes[i].RawMessage.ReReadAll().Should()
+                Helper.Spy.RawOutboundEnvelopes[i].RawMessage.Should().NotBeNull();
+                Helper.Spy.RawOutboundEnvelopes[i].RawMessage!.Length.Should().BeLessOrEqualTo(10);
+                Helper.Spy.RawOutboundEnvelopes[i].RawMessage.ReReadAll().Should()
                     .NotBeEquivalentTo(rawMessageStream1.ReReadAll()!.Skip(i * 10).Take(10));
             }
 
             for (int i = 0; i < 6; i++)
             {
-                SpyBehavior.OutboundEnvelopes[i + 6].RawMessage.Should().NotBeNull();
-                SpyBehavior.OutboundEnvelopes[i + 6].RawMessage!.Length.Should().BeLessOrEqualTo(10);
-                SpyBehavior.OutboundEnvelopes[i + 6].RawMessage.ReReadAll().Should()
+                Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.Should().NotBeNull();
+                Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage!.Length.Should().BeLessOrEqualTo(10);
+                Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.ReReadAll().Should()
                     .NotBeEquivalentTo(rawMessageStream2.ReReadAll()!.Skip(i * 10).Take(10));
             }
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
-            SpyBehavior.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
+            Helper.Spy.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(12);
         }
@@ -222,18 +219,18 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 })))
                             .AddDelegateSubscriber(
                                 (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
-                            .AddSingletonBrokerBehavior<SpyBrokerBehavior>();
+                            .AddIntegrationSpy();
                     })
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
-            SpyBehavior.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
+            Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
 
             receivedFiles.Should().HaveCount(2);
             receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
@@ -298,30 +295,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 })))
                             .AddDelegateSubscriber(
                                 (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
-                            .AddSingletonBrokerBehavior<SpyBrokerBehavior>();
+                            .AddIntegrationSpy();
                     })
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(12);
+            Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(12);
 
             for (int i = 0; i < 6; i++)
             {
-                SpyBehavior.OutboundEnvelopes[i].RawMessage.Should().NotBeNull();
-                SpyBehavior.OutboundEnvelopes[i].RawMessage!.Length.Should().BeLessOrEqualTo(10);
-                SpyBehavior.OutboundEnvelopes[i].RawMessage.ReReadAll().Should()
+                Helper.Spy.RawOutboundEnvelopes[i].RawMessage.Should().NotBeNull();
+                Helper.Spy.RawOutboundEnvelopes[i].RawMessage!.Length.Should().BeLessOrEqualTo(10);
+                Helper.Spy.RawOutboundEnvelopes[i].RawMessage.ReReadAll().Should()
                     .NotBeEquivalentTo(message1.Content.ReReadAll()!.Skip(i * 10).Take(10));
             }
 
             for (int i = 0; i < 6; i++)
             {
-                SpyBehavior.OutboundEnvelopes[i + 6].RawMessage.Should().NotBeNull();
-                SpyBehavior.OutboundEnvelopes[i + 6].RawMessage!.Length.Should().BeLessOrEqualTo(10);
-                SpyBehavior.OutboundEnvelopes[i + 6].RawMessage.ReReadAll().Should()
+                Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.Should().NotBeNull();
+                Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage!.Length.Should().BeLessOrEqualTo(10);
+                Helper.Spy.RawOutboundEnvelopes[i + 6].RawMessage.ReReadAll().Should()
                     .NotBeEquivalentTo(message2.Content.ReReadAll()!.Skip(i * 10).Take(10));
             }
 

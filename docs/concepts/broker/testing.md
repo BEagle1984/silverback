@@ -6,13 +6,13 @@ uid: testing
 
 Silverback ships a mocked version of the message broker implementations on a different nuget package:
 * [Silverback.Integration.Kafka.Testing](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing)
-* [Silverback.Integration.RabbitMQ.Testing](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ.Testing)
+* _(coming soon)_ [Silverback.Integration.RabbitMQ.Testing](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ.Testing)
 
 These packages allow to perform end-to-end tests without having to integrate with a real message broker.
 
 ## Unit Tests
 
-Here an example of an xUnit test build using [Silverback.Integration.Kafka.Testing](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing).
+Here an example of an xUnit test built using [Silverback.Integration.Kafka.Testing](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing).
 
 ```csharp
 public class KafkaTests
@@ -82,7 +82,7 @@ public class KafkaTests
 
 Mocking the message broker is especially interesting for the integration tests, where you probably leverage the [ASP.NET Core integration tests](https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests) to perform a full test based on the real configuration applied in the application's startup class.
 
-The following code shows the most simple integration test possible, in which an object is published to the broker and e.g. a subscriber is called.
+The following code shows the simplest integration test possible, in which an object is published to the broker and e.g. a subscriber is called.
 
 ```csharp
 public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
@@ -146,14 +146,13 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
     {
         // Arrange
 
-        // Resolve a producer to push to test-topic
-        var producer = _factory.Server.Host.Services
-            .GetRequiredService<IBroker>()
-            .GetProducer(new KafkaProducerEndpoint("tst-topic"));
-            
         // Resolve the IKafkaTestingHelper (used below)
         var testingHelper = _factory.Server.Host.Services
             .GetRequiredService<IKafkaTestingHelper>();
+
+        // Resolve a producer to push to test-topic
+        var producer = testingHelper.Broker
+            .GetProducer(new KafkaProducerEndpoint("tst-topic"));
 
         // Act
         await producer.ProduceAsync(new TestMessage { Content = "abc" });
@@ -168,9 +167,9 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
 }
 ```
 
-## Spy Behavior
+## IntegrationSpy
 
-The <xref:Silverback.Testing.SpyBehavior> ships with the testing packages and can be used to inspect all produced and consumed messages.
+The <xref:Silverback.Testing.IIntegrationSpy> ships with the [Silverback.Integration.Testing](https://www.nuget.org/packages/Silverback.Integration.Testing) package (referenced by the other Integration.Testing.* packages) and can be used to inspect all outbound and inbound messages.
 
 ```csharp
 public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
@@ -185,12 +184,11 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
             {
                 // Replace the usual broker (KafkaBroker)
                 // with the mocked version and add the
-                // BrokerTestingSubscriber (shipped with 
-                // the Testing packages)
+                // IIntegrationSpy
                 services
                     .ConfigureSilverback()
                     .UseMockedKafka()
-                    .AddSpyBehavior();
+                    .AddIntegrationSpy();
             });
         };
     }
@@ -199,15 +197,11 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
     public async Task SampleTest()
     {
         // Arrange
-        var producer = _factory.Server.Host.Services
-            .GetRequiredService<IBroker>()
-            .GetProducer(new KafkaProducerEndpoint("tst-topic"));
-
         var testingHelper = _factory.Server.Host.Services
             .GetRequiredService<IKafkaTestingHelper>();
 
-        var spyBehavior = _factory.Server.Host.Services
-            .GetRequiredService<SpyBehavior>();
+        var producer = testingHelper.Broker
+            .GetProducer(new KafkaProducerEndpoint("tst-topic"));
 
         // Act
         await producer.ProduceAsync(new TestMessage { Content = "abc" });
@@ -215,9 +209,9 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
         await testingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
         // Assert
-        spyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-        spyBehavior.InboundEnvelopes.Should().HaveCount(1);
-        spyBehavior.InboundEnvelopes[0].Message.As<TestMessage>
+        testingHelper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+        testingHelper.Spy.InboundEnvelopes.Should().HaveCount(1);
+        testingHelper.Spy.InboundEnvelopes[0].Message.As<TestMessage>
             .Content.Should().Be("abc");
     }
 }

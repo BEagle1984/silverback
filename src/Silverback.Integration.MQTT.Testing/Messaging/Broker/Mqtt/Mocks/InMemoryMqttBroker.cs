@@ -72,7 +72,10 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             }
         }
 
-        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only.")]
+        [SuppressMessage(
+            "ReSharper",
+            "InconsistentlySynchronizedField",
+            Justification = "Lock (dis-)connect only.")]
         public Task PublishAsync(string clientId, MqttApplicationMessage message)
         {
             if (!_sessions.TryGetValue(clientId, out var publisherSession) || !publisherSession.IsConnected)
@@ -81,12 +84,18 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             return _sessions.Values.ForEachAsync(session => session.PushAsync(message).AsTask());
         }
 
-        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock (dis-)connect only.")]
+        [SuppressMessage(
+            "ReSharper",
+            "InconsistentlySynchronizedField",
+            Justification = "Lock (dis-)connect only.")]
         public async Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (_sessions.Values.All(session => session.PendingMessagesCount == 0 || !session.IsConnected))
+                if (_sessions.Values.All(
+                    session => session.PendingMessagesCount == 0 ||
+                               session.IsConsumerDisconnected ||
+                               !session.IsConnected))
                     return;
 
                 await Task.Delay(50, cancellationToken).ConfigureAwait(false);

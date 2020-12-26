@@ -38,7 +38,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                 .AddOutbound<TestEventTwo>(new KafkaProducerEndpoint("test-e2e-two"))
                                 .AddOutbound<TestEventThree>(new KafkaProducerEndpoint("test-e2e-three")))
                         .AddSingletonOutboundRouter<TestPrioritizedOutboundRouter>()
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -47,10 +47,10 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await publisher.PublishAsync(new TestEventThree());
             await publisher.PublishAsync(new TestEventFour());
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(3);
-            SpyBehavior.OutboundEnvelopes[0].Endpoint.Name.Should().Be("test-e2e-one");
-            SpyBehavior.OutboundEnvelopes[1].Endpoint.Name.Should().Be("test-e2e-two");
-            SpyBehavior.OutboundEnvelopes[2].Endpoint.Name.Should().Be("test-e2e-three");
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            Helper.Spy.OutboundEnvelopes[0].Endpoint.Name.Should().Be("test-e2e-one");
+            Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("test-e2e-two");
+            Helper.Spy.OutboundEnvelopes[2].Endpoint.Name.Should().Be("test-e2e-three");
         }
 
         [Fact(Skip = "Deprecated")]
@@ -68,7 +68,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                     new KafkaProducerEndpoint("test-e2e-one"),
                                     new KafkaProducerEndpoint("test-e2e-two"),
                                     new KafkaProducerEndpoint("test-e2e-three")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -76,10 +76,10 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(3);
-            SpyBehavior.OutboundEnvelopes[0].Endpoint.Name.Should().Be("test-e2e-one");
-            SpyBehavior.OutboundEnvelopes[1].Endpoint.Name.Should().Be("test-e2e-two");
-            SpyBehavior.OutboundEnvelopes[2].Endpoint.Name.Should().Be("test-e2e-three");
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            Helper.Spy.OutboundEnvelopes[0].Endpoint.Name.Should().Be("test-e2e-one");
+            Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("test-e2e-two");
+            Helper.Spy.OutboundEnvelopes[2].Endpoint.Name.Should().Be("test-e2e-three");
         }
 
         [Fact(Skip = "Deprecated")]
@@ -95,7 +95,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                             endpoints => endpoints
                                 .AddOutbound<TestPrioritizedCommand, TestPrioritizedOutboundRouter>())
                         .AddSingletonOutboundRouter<TestPrioritizedOutboundRouter>()
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<ICommandPublisher>();
@@ -103,14 +103,14 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await publisher.ExecuteAsync(new TestPrioritizedCommand { Priority = Priority.Low });
             await publisher.ExecuteAsync(new TestPrioritizedCommand { Priority = Priority.High });
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
-            SpyBehavior.OutboundEnvelopes.Count(envelope => envelope.Endpoint.Name == "test-e2e-all")
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(6);
+            Helper.Spy.OutboundEnvelopes.Count(envelope => envelope.Endpoint.Name == "test-e2e-all")
                 .Should().Be(3);
-            SpyBehavior.OutboundEnvelopes.Count(envelope => envelope.Endpoint.Name == "test-e2e-low")
+            Helper.Spy.OutboundEnvelopes.Count(envelope => envelope.Endpoint.Name == "test-e2e-low")
                 .Should().Be(2);
-            SpyBehavior.OutboundEnvelopes.Count(envelope => envelope.Endpoint.Name == "test-e2e-normal")
+            Helper.Spy.OutboundEnvelopes.Count(envelope => envelope.Endpoint.Name == "test-e2e-normal")
                 .Should().Be(0);
-            SpyBehavior.OutboundEnvelopes.Count(envelope => envelope.Endpoint.Name == "test-e2e-high")
+            Helper.Spy.OutboundEnvelopes.Count(envelope => envelope.Endpoint.Name == "test-e2e-high")
                 .Should().Be(1);
         }
     }

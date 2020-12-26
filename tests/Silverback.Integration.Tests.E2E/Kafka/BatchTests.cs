@@ -88,7 +88,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
             }
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
             receivedBatches[0].Should().HaveCount(10);
@@ -305,7 +305,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
             }
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
             receivedBatches[0].Should().HaveCount(10);
@@ -375,7 +375,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedBatches.Should().HaveCount(2);
             receivedBatches[0].Should().HaveCount(10);
@@ -441,7 +441,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             receivedMessages.Should().HaveCountGreaterThan(3);
 
-            await Broker.DisconnectAsync();
+            await Helper.Broker.DisconnectAsync();
 
             await AsyncTestingUtil.WaitAsync(() => aborted);
 
@@ -507,11 +507,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Message 3"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(2);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
-            Broker.Consumers[0].IsConnected.Should().BeFalse();
+            Helper.Broker.Consumers[0].IsConnected.Should().BeFalse();
         }
 
         [Fact]
@@ -657,7 +657,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 taskCompletionSource.SetResult(true);
             }
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             receivedMessages.Should().HaveCount(16);
         }

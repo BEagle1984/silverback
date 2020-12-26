@@ -4,74 +4,65 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Mqtt.Mocks;
-using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 
 namespace Silverback.Testing
 {
     /// <inheritdoc cref="IMqttTestingHelper" />
-    public class MqttTestingHelper : IMqttTestingHelper
+    public class MqttTestingHelper : TestingHelper<MqttBroker>, IMqttTestingHelper
     {
-        private readonly IInMemoryMqttBroker _broker;
-
-        private readonly IOutboxReader _outboxReader;
+        private readonly IInMemoryMqttBroker? _inMemoryMqttBroker;
 
         private readonly ISilverbackIntegrationLogger<MqttTestingHelper> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttTestingHelper" /> class.
         /// </summary>
-        /// <param name="broker">
-        ///     The <see cref="IInMemoryMqttBroker" />.
-        /// </param>
-        /// <param name="outboxReader">
-        ///     The <see cref="IOutboxReader" />.
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
         ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public MqttTestingHelper(
-            IInMemoryMqttBroker broker,
-            IOutboxReader outboxReader,
+            IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<MqttTestingHelper> logger)
+            : base(serviceProvider)
         {
-            _broker = broker;
-            _outboxReader = outboxReader;
+            _inMemoryMqttBroker = serviceProvider.GetService<IInMemoryMqttBroker>();
             _logger = logger;
         }
 
-        /// <inheritdoc cref="IMqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
-        public async Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null)
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
+        public override async Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null)
         {
-            using var cancellationTokenSource = new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
+            if (_inMemoryMqttBroker == null)
+                return;
+
+            using var cancellationTokenSource =
+                new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
 
             try
             {
+                // Loop until the outbox is empty since the consumers may produce new messages
                 do
                 {
                     await WaitUntilOutboxIsEmptyAsync(cancellationTokenSource.Token).ConfigureAwait(false);
 
-                    await _broker.WaitUntilAllMessagesAreConsumedAsync(cancellationTokenSource.Token)
+                    await _inMemoryMqttBroker
+                        .WaitUntilAllMessagesAreConsumedAsync(cancellationTokenSource.Token)
                         .ConfigureAwait(false);
                 }
-                while (await _outboxReader.GetLengthAsync().ConfigureAwait(false) > 0); // Loop until the outbox is empty since the consumers may produce new messages
+                while (await OutboxReader.GetLengthAsync().ConfigureAwait(false) > 0);
             }
             catch (OperationCanceledException)
             {
-                _logger.LogWarning("The timeout elapsed before all messages could be consumed and processed.");
-            }
-        }
-
-        private async Task WaitUntilOutboxIsEmptyAsync(CancellationToken cancellationToken)
-        {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                if (await _outboxReader.GetLengthAsync().ConfigureAwait(false) == 0)
-                    return;
-
-                await Task.Delay(50, cancellationToken).ConfigureAwait(false);
+                _logger.LogWarning(
+                    "The timeout elapsed before all messages could be consumed and processed.");
             }
         }
     }

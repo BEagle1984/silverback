@@ -13,7 +13,6 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
@@ -54,18 +53,18 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.AutoCommitIntervalMs = 50;
                                             })
                                         .DeserializeJson(serializer => serializer.UseFixedType<TestEventOne>())))
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Should().HaveCount(1);
-            Subscriber.InboundEnvelopes.Should().HaveCount(1);
-            Subscriber.OutboundEnvelopes[0].Headers.Should()
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes[0].Headers.Should()
                 .NotContain(header => header.Name == DefaultMessageHeaders.MessageType);
-            Subscriber.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
         }
 
         [Fact]
@@ -97,7 +96,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.AutoCommitIntervalMs = 50;
                                             })
                                         .DeserializeJson(serializer => serializer.UseFixedType<TestEventOne>())))
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
@@ -116,10 +115,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { DefaultMessageHeaders.MessageType, "Silverback.Bad.TestEventOne, Silverback.Bad" }
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Should().HaveCount(1);
-            Subscriber.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
         }
 
         [Fact]
@@ -148,7 +147,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = "consumer1";
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -158,12 +157,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Hello E2E!"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Should().HaveCount(1);
-            Subscriber.InboundEnvelopes.Should().HaveCount(1);
-            Subscriber.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-            Subscriber.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
+            Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
         }
 
         [Fact]
@@ -194,18 +193,18 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .DeserializeJsonUsingNewtonsoft(
                                             serializer => serializer.UseFixedType<TestEventOne>())))
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Should().HaveCount(1);
-            Subscriber.InboundEnvelopes.Should().HaveCount(1);
-            Subscriber.OutboundEnvelopes[0].Headers.Should()
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes[0].Headers.Should()
                 .NotContain(header => header.Name == DefaultMessageHeaders.MessageType);
-            Subscriber.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
         }
 
         [Fact]
@@ -238,7 +237,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .DeserializeJsonUsingNewtonsoft(
                                             serializer => serializer.UseFixedType<TestEventOne>())))
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
@@ -257,10 +256,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { DefaultMessageHeaders.MessageType, "Silverback.Bad.TestEventOne, Silverback.Bad" }
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Should().HaveCount(1);
-            Subscriber.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
         }
     }
 }

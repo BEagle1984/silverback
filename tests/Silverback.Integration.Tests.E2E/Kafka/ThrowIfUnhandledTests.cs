@@ -9,7 +9,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 using Xunit.Abstractions;
@@ -48,7 +47,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber((TestEventOne message) => { receivedMessages.Add(message); })
                         .AddDelegateSubscriber(
                             (IEnumerable<TestEventTwo> messages) =>
@@ -72,18 +71,18 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
             receivedMessages.Should().HaveCount(3);
             consumer.IsConnected.Should().BeTrue();
 
             await publisher.PublishAsync(new TestEventFour());
             await AsyncTestingUtil.WaitAsync(() => !consumer.IsConnected);
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(4);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
             receivedMessages.Should().HaveCount(3);
             consumer.IsConnected.Should().BeFalse();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
@@ -115,7 +114,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber((TestEventOne message) => { receivedMessages.Add(message); })
                         .AddDelegateSubscriber(
                             (IEnumerable<TestEventTwo> messages) =>
@@ -139,19 +138,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
             receivedMessages.Should().HaveCount(3);
             consumer.IsConnected.Should().BeTrue();
 
             await publisher.PublishAsync(new TestEventFour());
             await publisher.PublishAsync(new TestEventThree());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(5);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(5);
             receivedMessages.Should().HaveCount(4);
             consumer.IsConnected.Should().BeTrue();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
@@ -206,7 +205,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventOne());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
 
@@ -215,7 +214,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await publisher.PublishAsync(new TestEventTwo());
             await publisher.PublishAsync(new TestEventThree());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             await AsyncTestingUtil.WaitAsync(() => !consumer.IsConnected);
 

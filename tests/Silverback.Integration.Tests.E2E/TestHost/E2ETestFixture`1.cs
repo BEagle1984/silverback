@@ -2,24 +2,19 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Tests.Integration.E2E.TestTypes;
+using Silverback.Testing;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
 {
     [Trait("Category", "E2E")]
-    public abstract class E2ETestFixture : IDisposable
+    public abstract class E2ETestFixture<THelper> : IDisposable
+    where THelper : ITestingHelper<IBroker>
     {
-        private SpyBrokerBehavior? _spyBrokerBehavior;
-
-        private OutboundInboundSubscriber? _outboundInboundSubscriber;
-
-        private IBroker? _broker;
+        private THelper? _testingHelper;
 
         protected E2ETestFixture(ITestOutputHelper testOutputHelper)
         {
@@ -28,13 +23,8 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         protected TestApplicationHost Host { get; }
 
-        protected SpyBrokerBehavior SpyBehavior => _spyBrokerBehavior ??=
-            Host.ScopedServiceProvider.GetServices<IBrokerBehavior>().OfType<SpyBrokerBehavior>().First();
-
-        protected OutboundInboundSubscriber Subscriber => _outboundInboundSubscriber ??=
-            Host.ScopedServiceProvider.GetRequiredService<OutboundInboundSubscriber>();
-
-        protected IBroker Broker => _broker ??= Host.ScopedServiceProvider.GetRequiredService<IBroker>();
+        protected THelper Helper =>
+            _testingHelper ??= Host.ScopedServiceProvider.GetRequiredService<THelper>();
 
         public void Dispose()
         {

@@ -79,18 +79,18 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 })))
                             .AddDelegateSubscriber(
                                 (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
-                            .AddSingletonBrokerBehavior<SpyBrokerBehavior>();
+                            .AddIntegrationSpy();
                     })
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes
                 .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
@@ -152,17 +152,17 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .ConsumeBinaryFiles()))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes
                 .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
@@ -233,21 +233,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 }
                             })
                         .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
 
-            SpyBehavior.OutboundEnvelopes.ForEach(
+            Helper.Spy.OutboundEnvelopes.ForEach(
                 envelope =>
                     envelope.Headers.GetValue(DefaultMessageHeaders.MessageType).Should().BeNull());
-            SpyBehavior.OutboundEnvelopes
+            Helper.Spy.OutboundEnvelopes
                 .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
@@ -317,24 +317,24 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     receivedFiles.Add(binaryFile.Content.ReadAll());
                                 }
                             })
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.ForEach(
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.ForEach(
                 envelope =>
                 {
                     envelope.Headers.GetValue(DefaultMessageHeaders.MessageType).Should().NotBeNull();
                     envelope.Message.Should().BeOfType<CustomBinaryFileMessage>();
                     envelope.Headers.GetValue("x-custom-header").Should().BeNull();
                 });
-            SpyBehavior.InboundEnvelopes
+            Helper.Spy.InboundEnvelopes
                 .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
@@ -403,25 +403,25 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     receivedFiles.Add(binaryFile.Content.ReadAll());
                                 }
                             })
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.ForEach(
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.ForEach(
                 envelope => envelope.Message.Should().BeOfType<CustomBinaryFileMessage>());
-            SpyBehavior.InboundEnvelopes
+            Helper.Spy.InboundEnvelopes
                 .Select(envelope => envelope.Headers.GetValue("x-custom-header"))
                 .Should().BeEquivalentTo("one", "two");
-            SpyBehavior.InboundEnvelopes
+            Helper.Spy.InboundEnvelopes
                 .Select(envelope => envelope.Message.As<CustomBinaryFileMessage>().CustomHeader)
                 .Should().BeEquivalentTo("one", "two");
-            SpyBehavior.InboundEnvelopes
+            Helper.Spy.InboundEnvelopes
                 .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
@@ -490,27 +490,27 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 }
                             })
                         .AddSingletonBrokerBehavior<RemoveMessageTypeHeaderProducerBehavior>()
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.OutboundEnvelopes.ForEach(
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.OutboundEnvelopes.ForEach(
                 envelope => envelope.Headers.GetValue(DefaultMessageHeaders.MessageType).Should().BeNull());
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.ForEach(
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.ForEach(
                 envelope => envelope.Message.Should().BeOfType<CustomBinaryFileMessage>());
-            SpyBehavior.InboundEnvelopes
+            Helper.Spy.InboundEnvelopes
                 .Select(envelope => envelope.Headers.GetValue("x-custom-header"))
                 .Should().BeEquivalentTo("one", "two");
-            SpyBehavior.InboundEnvelopes
+            Helper.Spy.InboundEnvelopes
                 .Select(envelope => envelope.Message.As<CustomBinaryFileMessage>().CustomHeader)
                 .Should().BeEquivalentTo("one", "two");
-            SpyBehavior.InboundEnvelopes
+            Helper.Spy.InboundEnvelopes
                 .Select(envelope => envelope.Message.As<BinaryFileMessage>().ContentType)
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 

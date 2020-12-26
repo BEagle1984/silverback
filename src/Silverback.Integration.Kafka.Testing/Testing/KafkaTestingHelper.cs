@@ -7,46 +7,41 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka.Mocks;
-using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 
 namespace Silverback.Testing
 {
     /// <inheritdoc cref="IKafkaTestingHelper" />
-    public class KafkaTestingHelper : IKafkaTestingHelper
+    public class KafkaTestingHelper : TestingHelper<KafkaBroker>, IKafkaTestingHelper
     {
-        private readonly IInMemoryTopicCollection _topics;
-
-        private readonly IOutboxReader _outboxReader;
+        private readonly IInMemoryTopicCollection? _topics;
 
         private readonly ISilverbackIntegrationLogger<KafkaTestingHelper> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaTestingHelper" /> class.
         /// </summary>
-        /// <param name="topics">
-        ///     The <see cref="IInMemoryTopicCollection" />.
-        /// </param>
-        /// <param name="outboxReader">
-        ///     The <see cref="IOutboxReader" />.
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
         ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public KafkaTestingHelper(
-            IInMemoryTopicCollection topics,
-            IOutboxReader outboxReader,
+            IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<KafkaTestingHelper> logger)
+            : base(serviceProvider)
         {
-            _topics = topics;
-            _outboxReader = outboxReader;
+            _topics = serviceProvider.GetService<IInMemoryTopicCollection>();
             _logger = logger;
         }
 
-        /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
-        public Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null) =>
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
+        public override Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null) =>
             WaitUntilAllMessagesAreConsumedAsync(null, timeout);
 
         /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection{string}, TimeSpan?)" />
@@ -60,7 +55,11 @@ namespace Silverback.Testing
             IReadOnlyCollection<string>? topicNames,
             TimeSpan? timeout = null)
         {
-            using var cancellationTokenSource = new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
+            if (_topics == null)
+                return;
+
+            using var cancellationTokenSource =
+                new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
 
             var topics = topicNames == null
                 ? _topics.ToList()
@@ -68,6 +67,7 @@ namespace Silverback.Testing
 
             try
             {
+                // Loop until the outbox is empty since the consumers may produce new messages
                 do
                 {
                     await WaitUntilOutboxIsEmptyAsync(cancellationTokenSource.Token).ConfigureAwait(false);
@@ -75,25 +75,16 @@ namespace Silverback.Testing
                     await Task.WhenAll(
                             topics.Select(
                                 topic =>
-                                    topic.WaitUntilAllMessagesAreConsumedAsync(cancellationTokenSource.Token)))
+                                    topic.WaitUntilAllMessagesAreConsumedAsync(
+                                        cancellationTokenSource.Token)))
                         .ConfigureAwait(false);
                 }
-                while (await _outboxReader.GetLengthAsync().ConfigureAwait(false) > 0); // Loop until the outbox is empty since the consumers may produce new messages
+                while (await OutboxReader.GetLengthAsync().ConfigureAwait(false) > 0);
             }
             catch (OperationCanceledException)
             {
-                _logger.LogWarning("The timeout elapsed before all messages could be consumed and processed.");
-            }
-        }
-
-        private async Task WaitUntilOutboxIsEmptyAsync(CancellationToken cancellationToken)
-        {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                if (await _outboxReader.GetLengthAsync().ConfigureAwait(false) == 0)
-                    return;
-
-                await Task.Delay(50, cancellationToken).ConfigureAwait(false);
+                _logger.LogWarning(
+                    "The timeout elapsed before all messages could be consumed and processed.");
             }
         }
     }

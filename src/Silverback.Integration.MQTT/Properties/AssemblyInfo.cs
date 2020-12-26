@@ -3,4 +3,5 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Silverback.Integration.Mqtt.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Integration.MQTT.Testing")]
+[assembly: InternalsVisibleTo("Silverback.Integration.MQTT.Tests")]

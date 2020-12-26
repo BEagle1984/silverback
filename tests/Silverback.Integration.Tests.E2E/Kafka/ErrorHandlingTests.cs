@@ -69,7 +69,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = "consumer1";
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -81,12 +81,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
             tryCount.Should().Be(11);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(11);
-            SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
+            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -115,7 +115,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -132,7 +132,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Hello E2E!"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             tryCount.Should().Be(3);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
@@ -164,7 +164,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -180,7 +180,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Hello E2E!"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             tryCount.Should().Be(11);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
@@ -217,7 +217,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -239,10 +239,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Long message two"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
-            SpyBehavior.OutboundEnvelopes.ForEach(
+            Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(6);
+            Helper.Spy.RawOutboundEnvelopes.ForEach(
                 envelope =>
                 {
                     envelope.RawMessage.Should().NotBeNull();
@@ -250,11 +250,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 });
 
             tryCount.Should().Be(4);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(4);
-            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Long message one");
-            SpyBehavior.InboundEnvelopes[1].Message.As<TestEventOne>().Content.Should().Be("Long message one");
-            SpyBehavior.InboundEnvelopes[2].Message.As<TestEventOne>().Content.Should().Be("Long message two");
-            SpyBehavior.InboundEnvelopes[3].Message.As<TestEventOne>().Content.Should().Be("Long message two");
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
+            Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Long message one");
+            Helper.Spy.InboundEnvelopes[1].Message.As<TestEventOne>().Content.Should().Be("Long message one");
+            Helper.Spy.InboundEnvelopes[2].Message.As<TestEventOne>().Content.Should().Be("Long message two");
+            Helper.Spy.InboundEnvelopes[3].Message.As<TestEventOne>().Content.Should().Be("Long message two");
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
         }
@@ -336,24 +336,24 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     receivedFiles.Add(binaryFile.Content.ReadAll());
                                 }
                             })
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message1);
             await publisher.PublishAsync(message2);
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             tryCount.Should().Be(2);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
-            SpyBehavior.OutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
+            Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(6);
+            Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
 
-            SpyBehavior.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
-            SpyBehavior.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
-            SpyBehavior.InboundEnvelopes[2].Message.As<BinaryFileMessage>().ContentType.Should().Be("text/plain");
+            Helper.Spy.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
+            Helper.Spy.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
+            Helper.Spy.InboundEnvelopes[2].Message.As<BinaryFileMessage>().ContentType.Should().Be("text/plain");
 
             receivedFiles.Should().HaveCount(2);
             receivedFiles[0].Should().BeEquivalentTo(message1.Content.ReReadAll());
@@ -388,7 +388,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -404,12 +404,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Hello E2E!"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            await AsyncTestingUtil.WaitAsync(() => !Broker.Consumers[0].IsConnected);
+            await AsyncTestingUtil.WaitAsync(() => !Helper.Broker.Consumers[0].IsConnected);
 
             tryCount.Should().Be(11);
-            Broker.Consumers[0].IsConnected.Should().BeFalse();
+            Helper.Broker.Consumers[0].IsConnected.Should().BeFalse();
         }
 
         [Fact]
@@ -438,7 +438,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -454,7 +454,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Hello E2E!"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             tryCount.Should().Be(11);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
@@ -491,7 +491,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _, IServiceProvider sp) =>
                             {
@@ -509,7 +509,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     Content = "Hello E2E!"
                 });
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             tryCount.Should().Be(11);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
@@ -549,10 +549,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
-            var producer = Broker.GetProducer(
+            var producer = Helper.Broker.GetProducer(
                 new KafkaProducerEndpoint(
                     DefaultTopicName,
                     new KafkaClientConfig
@@ -565,9 +565,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
                 });
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Should().BeEmpty();
+            Helper.Spy.InboundEnvelopes.Should().BeEmpty();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
 
             await producer.RawProduceAsync(
@@ -576,9 +576,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
                 });
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
         }
 
@@ -616,10 +616,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
-            var producer = Broker.GetProducer(
+            var producer = Helper.Broker.GetProducer(
                 new KafkaProducerEndpoint(
                     DefaultTopicName,
                     new KafkaClientConfig
@@ -635,9 +635,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await producer.RawProduceAsync(
                 invalidRawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("1", 2, true, typeof(TestEventOne)));
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Should().BeEmpty();
+            Helper.Spy.InboundEnvelopes.Should().BeEmpty();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
 
             await producer.RawProduceAsync(
@@ -649,9 +649,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await producer.RawProduceAsync(
                 rawMessage.Skip(20).ToArray(),
                 HeadersHelper.GetChunkHeaders("2", 2, true, typeof(TestEventOne)));
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
         }
 
@@ -693,7 +693,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -706,13 +706,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReadAll().Should()
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes[0].RawMessage.ReadAll().Should()
                 .NotBeEquivalentTo(rawMessageStream.ReReadAll());
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
-            SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -756,7 +756,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -769,18 +769,18 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().NotBeEquivalentTo(rawMessage.Read(10));
-            SpyBehavior.OutboundEnvelopes.ForEach(
+            Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(6);
+            Helper.Spy.RawOutboundEnvelopes[0].RawMessage.ReReadAll().Should().NotBeEquivalentTo(rawMessage.Read(10));
+            Helper.Spy.RawOutboundEnvelopes.ForEach(
                 envelope =>
                 {
                     envelope.RawMessage.Should().NotBeNull();
                     envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
                 });
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(3);
-            SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -813,20 +813,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = "consumer1";
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber((IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
 
-            SpyBehavior.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(SpyBehavior.OutboundEnvelopes[0].Message);
-            SpyBehavior.OutboundEnvelopes[1].Endpoint.Name.Should().Be("other-topic");
+            Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
+            Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("other-topic");
 
             GetTopic("other-topic").TotalMessagesCount.Should().Be(1);
         }
@@ -863,7 +863,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = "consumer1";
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -875,12 +875,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(11);
+            Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(11);
             tryCount.Should().Be(11);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(11);
-            SpyBehavior.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
+            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -916,7 +916,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = "consumer1";
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
+                        .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
                             {
@@ -928,15 +928,15 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
 
             tryCount.Should().Be(2);
 
-            SpyBehavior.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(SpyBehavior.OutboundEnvelopes[0].Message);
-            SpyBehavior.OutboundEnvelopes[1].Endpoint.Name.Should().Be("other-topic");
+            Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
+            Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("other-topic");
 
             GetTopic("other-topic").TotalMessagesCount.Should().Be(1);
         }

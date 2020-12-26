@@ -15,7 +15,6 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
@@ -54,20 +53,20 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                             endpoints => endpoints
                                 .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.ReReadAll().Should()
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes[0].RawMessage.ReReadAll().Should()
                 .BeEquivalentTo(message.Content.ReReadAll());
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Should().BeAssignableTo<IInboundEnvelope<BinaryFileMessage>>();
-            SpyBehavior.InboundEnvelopes[0].Headers.Should()
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Should().BeAssignableTo<IInboundEnvelope<BinaryFileMessage>>();
+            Helper.Spy.InboundEnvelopes[0].Headers.Should()
                 .ContainEquivalentOf(new MessageHeader("content-type", "application/pdf"));
-            var inboundBinaryFile = (IInboundEnvelope<BinaryFileMessage>)SpyBehavior.InboundEnvelopes[0];
+            var inboundBinaryFile = (IInboundEnvelope<BinaryFileMessage>)Helper.Spy.InboundEnvelopes[0];
             inboundBinaryFile.Message.Should().NotBeNull();
             inboundBinaryFile.Message!.ContentType.Should().BeEquivalentTo(message.ContentType);
             inboundBinaryFile.Message!.Content.ReReadAll().Should().BeEquivalentTo(message.Content.ReReadAll());
@@ -92,19 +91,19 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                             endpoints => endpoints
                                 .AddOutbound<IBinaryFileMessage>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().BeEquivalentTo(message.Content);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-            SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeEquivalentTo(message.Content);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
+            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
                 new MessageHeader("content-type", "application/pdf"));
-            SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
+            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-custom-header", "hello!"));
         }
 
@@ -130,18 +129,18 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                     {
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().BeEquivalentTo(message.Content);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-            SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeEquivalentTo(message.Content);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
+            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
                 new MessageHeader("content-type", "application/pdf"));
         }
 
@@ -171,18 +170,18 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                     {
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().BeEquivalentTo(message.Content);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-            SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeEquivalentTo(message.Content);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
+            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
                 new MessageHeader("content-type", "application/pdf"));
         }
 
@@ -203,7 +202,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                     {
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
@@ -211,12 +210,12 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
 
             await producer.ProduceAsync(rawContent);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
                 .BeEquivalentTo(rawContent);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeAssignableTo<IBinaryFileMessage>();
-            SpyBehavior.InboundEnvelopes[0].Message.As<IBinaryFileMessage>().Content.Should()
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeAssignableTo<IBinaryFileMessage>();
+            Helper.Spy.InboundEnvelopes[0].Message.As<IBinaryFileMessage>().Content.Should()
                 .BeEquivalentTo(rawContent);
         }
 
@@ -237,7 +236,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                     {
                                         Serializer = BinaryFileMessageSerializer.Default
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
@@ -245,12 +244,12 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
 
             await producer.ProduceAsync(rawContent);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
                 .BeEquivalentTo(rawContent);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeAssignableTo<IBinaryFileMessage>();
-            SpyBehavior.InboundEnvelopes[0].Message.As<IBinaryFileMessage>().Content.Should()
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeAssignableTo<IBinaryFileMessage>();
+            Helper.Spy.InboundEnvelopes[0].Message.As<IBinaryFileMessage>().Content.Should()
                 .BeEquivalentTo(rawContent);
         }
 
@@ -275,7 +274,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                     {
                                         Serializer = new BinaryFileMessageSerializer<CustomBinaryFileMessage>()
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
@@ -283,14 +282,14 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
 
             await producer.ProduceAsync(rawContent, headers);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
                 .BeEquivalentTo(rawContent);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeOfType<CustomBinaryFileMessage>();
-            SpyBehavior.InboundEnvelopes[0].Message.As<CustomBinaryFileMessage>().Content.Should()
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<CustomBinaryFileMessage>();
+            Helper.Spy.InboundEnvelopes[0].Message.As<CustomBinaryFileMessage>().Content.Should()
                 .BeEquivalentTo(rawContent);
-            SpyBehavior.InboundEnvelopes[0].Message.As<CustomBinaryFileMessage>().CustomHeader.Should()
+            Helper.Spy.InboundEnvelopes[0].Message.As<CustomBinaryFileMessage>().CustomHeader.Should()
                 .Be("hello!");
         }
 
@@ -336,24 +335,24 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                             Key = AesEncryptionKey
                                         }
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             await publisher.PublishAsync(message);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(5);
-            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(5);
+            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
                 .NotBeEquivalentTo(message.Content.ReadAll());
-            SpyBehavior.OutboundEnvelopes.ForEach(
+            Helper.Spy.OutboundEnvelopes.ForEach(
                 envelope =>
                 {
                     envelope.RawMessage.Should().NotBeNull();
                     envelope.RawMessage!.Length.Should().BeLessOrEqualTo(30);
                 });
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
 
         [Fact(Skip = "Deprecated")]
@@ -399,26 +398,26 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                             Key = AesEncryptionKey
                                         }
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(5);
-            SpyBehavior.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(5);
+            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
                 .NotBeEquivalentTo(message.Content.ReadAll());
-            SpyBehavior.OutboundEnvelopes.ForEach(
+            Helper.Spy.OutboundEnvelopes.ForEach(
                 envelope =>
                 {
                     envelope.RawMessage.Should().NotBeNull();
                     envelope.RawMessage!.Length.Should().BeLessOrEqualTo(30);
                 });
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeOfType<CustomBinaryFileMessage>();
-            SpyBehavior.InboundEnvelopes[0].Message.As<CustomBinaryFileMessage>().Content.Should()
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<CustomBinaryFileMessage>();
+            Helper.Spy.InboundEnvelopes[0].Message.As<CustomBinaryFileMessage>().Content.Should()
                 .BeEquivalentTo(message.Content);
-            SpyBehavior.InboundEnvelopes[0].Message.As<CustomBinaryFileMessage>().CustomHeader.Should()
+            Helper.Spy.InboundEnvelopes[0].Message.As<CustomBinaryFileMessage>().CustomHeader.Should()
                 .Be("hello!");
         }
     }

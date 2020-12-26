@@ -14,7 +14,6 @@ using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
@@ -64,23 +63,23 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                             Size = 2
                                         }
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes.Should().BeEmpty();
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes.Should().BeEmpty();
 
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(2);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
         }
 
         [Fact(Skip = "Deprecated")]
@@ -119,29 +118,29 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                             Size = 2
                                         }
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message1);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(3);
-            SpyBehavior.InboundEnvelopes.Should().BeEmpty();
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            Helper.Spy.InboundEnvelopes.Should().BeEmpty();
 
             await publisher.PublishAsync(message2);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(6);
-            SpyBehavior.OutboundEnvelopes.ForEach(
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(6);
+            Helper.Spy.OutboundEnvelopes.ForEach(
                 envelope =>
                 {
                     envelope.RawMessage.Should().NotBeNull();
                     envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
                 });
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
         }
 
         [Fact(Skip = "Deprecated")]
@@ -171,19 +170,19 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                         }
                                     })
                                 .AddInbound(new KafkaConsumerEndpoint(DefaultTopicName)))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-            SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
+            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-custom-header", "Hello header!"));
-            SpyBehavior.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
+            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-custom-header2", "False"));
         }
 
@@ -214,15 +213,15 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                 .AddInbound(new KafkaConsumerEndpoint(DefaultTopicName)))
                         .WithCustomHeaderName(DefaultMessageHeaders.ChunkIndex, "x-ch-id")
                         .WithCustomHeaderName(DefaultMessageHeaders.ChunksCount, "x-ch-cnt")
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.ForEach(
+            Helper.Spy.OutboundEnvelopes.ForEach(
                 envelope =>
                 {
                     envelope.Headers.GetValue("x-ch-id").Should().NotBeNullOrEmpty();
@@ -231,8 +230,8 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                     envelope.Headers.GetValue(DefaultMessageHeaders.ChunksCount).Should().BeNull();
                 });
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
 
         [Fact(Skip = "Deprecated")]
@@ -276,24 +275,24 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                                             Key = AesEncryptionKey
                                         }
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(5);
-            SpyBehavior.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Read(10));
-            SpyBehavior.OutboundEnvelopes.ForEach(
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(5);
+            Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().NotBeEquivalentTo(rawMessage.Read(10));
+            Helper.Spy.OutboundEnvelopes.ForEach(
                 envelope =>
                 {
                     envelope.RawMessage.Should().NotBeNull();
                     envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
                 });
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
         }
     }
 }

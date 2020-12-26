@@ -1,7 +1,27 @@
-﻿$repositoryLocation = "."
+﻿$global:repositoryLocation = "."
 [bool]$global:clearCache = $FALSE
 [bool]$global:warnAsError = $TRUE
 $global:buildConfiguration = "Release"
+
+function Run()
+{
+    $stopwatch = [system.diagnostics.stopwatch]::StartNew()
+
+    Check-Args $args
+    Check-Location
+
+    $global:sourceProjectNames = Get-SourceProjectNames
+
+    Delete-All
+    Delete-Cache
+    Pack-All
+    Show-Summary
+
+    $stopwatch.Stop()
+
+    Write-Host "Elapsed time $( $stopwatch.Elapsed ), finished at $((get-date).ToString("T") )"
+    Write-Host ""
+}
 
 function Check-Location()
 {
@@ -34,9 +54,14 @@ function Check-Args([string[]]$argsArray)
     }
 }
 
+function Get-SourceProjectNames()
+{
+    return Get-ChildItem -Path ../src -Directory | Select-Object -ExpandProperty Name
+}
+
 function Pack-All()
 {
-    foreach ($sourceProjectName in Get-SourceProjectNames)
+    foreach ($sourceProjectName in $global:sourceProjectNames)
     {
         Write-Host "Packing $sourceProjectName ($global:buildConfiguration)...`n" -ForegroundColor Yellow
 
@@ -69,18 +94,12 @@ function Pack-All()
     }
 }
 
-function Get-SourceProjectNames()
-{
-    return Get-ChildItem -Path ../src -Directory | Select-Object -ExpandProperty Name
-}
-
 function Remove-ProjectReferences([string]$projectFilePath)
 {
-    Remove-ProjectReference $projectFilePath "Silverback.Core" "Silverback.Core" '$(BaseVersion)'
-    Remove-ProjectReference $projectFilePath "Silverback.Integration" "Silverback.Integration" '$(BaseVersion)'
-    Remove-ProjectReference $projectFilePath "Silverback.Integration.Kafka" "Silverback.Integration.Kafka" '$(BaseVersion)'
-    Remove-ProjectReference $projectFilePath "Silverback.Integration.MQTT" "Silverback.Integration.MQTT" '$(BaseVersion)'
-    Remove-ProjectReference $projectFilePath "Silverback.Integration.RabbitMQ" "Silverback.Integration.RabbitMQ" '$(BaseVersion)'
+    foreach ($sourceProjectName in $global:sourceProjectNames)
+    {
+        Remove-ProjectReference $projectFilePath $sourceProjectName $sourceProjectName '$(BaseVersion)'
+    }
 
     Test-ProjectReferenceReplaced $projectFilePath
 }
@@ -139,7 +158,7 @@ function Show-Summary()
 
     $hashtable = @{ }
 
-    $files = Get-ChildItem $repositoryLocation -Recurse -Filter *.nupkg
+    $files = Get-ChildItem $global:repositoryLocation -Recurse -Filter *.nupkg
 
     foreach ($file in $files)
     {
@@ -147,7 +166,7 @@ function Show-Summary()
         Add-Version $file $hashtable
     }
 
-    foreach ($key in Get-SourceProjectNames)
+    foreach ($key in $global:sourceProjectNames)
     {
         if ($key -eq "Silverback.Core.EFCore22")
         {
@@ -263,16 +282,4 @@ function Write-Separator()
     Write-Host "`n##################################################################`n" -ForegroundColor Yellow
 }
 
-$stopwatch = [system.diagnostics.stopwatch]::StartNew()
-
-Check-Args $args
-Check-Location
-Delete-All
-Delete-Cache
-Pack-All
-Show-Summary
-
-$stopwatch.Stop()
-
-Write-Host "Elapsed time $( $stopwatch.Elapsed ), finished at $((get-date).ToString("T") )"
-Write-Host ""
+Run

@@ -54,6 +54,7 @@ Silverback is split into multiple nuget packages available on nuget.org.
 [Silverback.Core.EntityFrameworkCore][Nuget-Core.EntityFrameworkCore] | [![NuGet](https://buildstats.info/nuget/Silverback.Core.EntityFrameworkCore?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore)
 [Silverback.Core.Rx][Nuget-Core.Rx] | [![NuGet](https://buildstats.info/nuget/Silverback.Core.Rx?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Core.Rx)
 [Silverback.Integration][Nuget-Integration] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration)
+[Silverback.Integration.Testing][Nuget-Integration.Testing] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Testing?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Testing)
 [Silverback.Integration.Kafka][Nuget-Integration.Kafka] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka)
 [Silverback.Integration.Kafka.SchemaRegistry][Nuget-Integration.Kafka.SchemaRegistry] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka.SchemaRegistry?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry)
 [Silverback.Integration.Kafka.Testing][Nuget-Integration.Kafka.Testing] | [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka.Testing?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing)
@@ -79,6 +80,7 @@ This code is licensed under MIT license (see [LICENSE](https://github.com/BEagle
 [Nuget-Core.EntityFrameworkCore]: https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore/
 [Nuget-Core.Rx]: https://www.nuget.org/packages/Silverback.Core.Rx/
 [Nuget-Integration]: https://www.nuget.org/packages/Silverback.Integration/
+[Nuget-Integration.Testing]: https://www.nuget.org/packages/Silverback.Integration.Testing/
 [Nuget-Integration.Kafka]: https://www.nuget.org/packages/Silverback.Integration.Kafka/
 [Nuget-Integration.Kafka.SchemaRegistry]: https://www.nuget.org/packages/Silverback.Integration.Kafka.SchemaRegistry/
 [Nuget-Integration.Kafka.Testing]: https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing/

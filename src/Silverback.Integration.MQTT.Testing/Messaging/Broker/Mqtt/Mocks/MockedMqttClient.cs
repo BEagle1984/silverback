@@ -54,6 +54,9 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         /// <inheritdoc cref="IMqttClient.DisconnectedHandler" />
         public IMqttClientDisconnectedHandler? DisconnectedHandler { get; set; }
 
+        internal IConsumer? Consumer =>
+            (ApplicationMessageReceivedHandler as ConsumerChannelManager)?.Consumer;
+
         private string ClientId => Options?.ClientId ?? "(none)";
 
         /// <inheritdoc cref="IMqttClient.ConnectAsync" />
@@ -140,8 +143,10 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         }
 
         /// <inheritdoc cref="IMqttApplicationMessageReceivedHandler.HandleApplicationMessageReceivedAsync" />
-        public Task HandleApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs) =>
-            ApplicationMessageReceivedHandler?.HandleApplicationMessageReceivedAsync(eventArgs) ?? Task.CompletedTask;
+        public Task HandleApplicationMessageReceivedAsync(
+            MqttApplicationMessageReceivedEventArgs eventArgs) =>
+            ApplicationMessageReceivedHandler?.HandleApplicationMessageReceivedAsync(eventArgs) ??
+            Task.CompletedTask;
 
         private static MqttClientSubscribeResultItem MapSubscribeResultItem(MqttTopicFilter topicFilter)
         {
@@ -165,9 +170,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             return new MqttClientSubscribeResultItem(topicFilter, resultCode);
         }
 
-        private static MqttClientUnsubscribeResultItem MapUnsubscribeResultItem(string topicFilter)
-        {
-            return new MqttClientUnsubscribeResultItem(topicFilter, MqttClientUnsubscribeResultCode.Success);
-        }
+        private static MqttClientUnsubscribeResultItem MapUnsubscribeResultItem(string topicFilter) =>
+            new(topicFilter, MqttClientUnsubscribeResultCode.Success);
     }
 }

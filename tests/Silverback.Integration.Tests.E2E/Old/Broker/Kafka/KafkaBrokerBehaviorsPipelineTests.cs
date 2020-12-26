@@ -10,7 +10,6 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
@@ -43,14 +42,14 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker.Kafka
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey]
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey]
                 .Should().NotBeNullOrEmpty();
         }
 
@@ -72,15 +71,15 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker.Kafka
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            var inboundMessageId = SpyBehavior.InboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageId];
-            var inboundKafkaKey = SpyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey];
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            var inboundMessageId = Helper.Spy.InboundEnvelopes[0].Headers[DefaultMessageHeaders.MessageId];
+            var inboundKafkaKey = Helper.Spy.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey];
             inboundKafkaKey.Should().Be(inboundMessageId);
         }
 
@@ -103,14 +102,14 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker.Kafka
                             endpoints => endpoints
                                 .AddOutbound<IIntegrationEvent>(new KafkaProducerEndpoint("test-e2e"))
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey].Should().Be("my-key");
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Headers[KafkaMessageHeaders.KafkaMessageKey].Should().Be("my-key");
         }
 
         [Fact(Skip = "Deprecated")]
@@ -141,14 +140,14 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker.Kafka
                                         }
                                     })
                                 .AddInbound(new KafkaConsumerEndpoint("test-e2e")))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes.ForEach(
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes.ForEach(
                 envelope =>
                     envelope.Headers[KafkaMessageHeaders.KafkaMessageKey].Should().Be("my-key"));
         }

@@ -28,7 +28,9 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         private TaskCompletionSource<bool> _readTaskCompletionSource;
 
-        public ConsumerChannelManager(MqttClientWrapper mqttClientWrapper, ISilverbackIntegrationLogger logger)
+        public ConsumerChannelManager(
+            MqttClientWrapper mqttClientWrapper,
+            ISilverbackIntegrationLogger logger)
         {
             _mqttClientWrapper = Check.NotNull(mqttClientWrapper, nameof(mqttClientWrapper));
             _logger = Check.NotNull(logger, nameof(logger));
@@ -40,6 +42,8 @@ namespace Silverback.Messaging.Broker.Mqtt
 
             mqttClientWrapper.MqttClient.ApplicationMessageReceivedHandler = this;
         }
+
+        public MqttConsumer? Consumer => _mqttClientWrapper.Consumer;
 
         public Task Stopping => _readTaskCompletionSource.Task;
 
@@ -76,7 +80,8 @@ namespace Silverback.Messaging.Broker.Mqtt
                 _readTaskCompletionSource.TrySetResult(true);
         }
 
-        public async Task HandleApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs eventArgs)
+        public async Task HandleApplicationMessageReceivedAsync(
+            MqttApplicationMessageReceivedEventArgs eventArgs)
         {
             var receivedMessage = new ConsumedApplicationMessage(eventArgs.ApplicationMessage);
 
@@ -88,7 +93,8 @@ namespace Silverback.Messaging.Broker.Mqtt
 
             await _channel.Writer.WriteAsync(receivedMessage).ConfigureAwait(false);
 
-            eventArgs.ProcessingFailed = !await receivedMessage.TaskCompletionSource.Task.ConfigureAwait(false);
+            eventArgs.ProcessingFailed =
+                !await receivedMessage.TaskCompletionSource.Task.ConfigureAwait(false);
         }
 
         public void Dispose()
@@ -138,7 +144,7 @@ namespace Silverback.Messaging.Broker.Mqtt
                 IsReading = false;
                 _readTaskCompletionSource.TrySetResult(false);
 
-                await _mqttClientWrapper.DisconnectAsync(_mqttClientWrapper.Consumer!).ConfigureAwait(false);
+                await _mqttClientWrapper.Consumer!.DisconnectAsync().ConfigureAwait(false);
             }
 
             IsReading = false;

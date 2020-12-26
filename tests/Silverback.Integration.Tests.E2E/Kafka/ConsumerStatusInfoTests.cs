@@ -9,7 +9,6 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 using Xunit.Abstractions;
@@ -46,8 +45,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
@@ -57,12 +55,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             broker.Consumers[0].IsConnected.Should().BeTrue();
             broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
 
-            await Broker.DisconnectAsync();
+            await Helper.Broker.DisconnectAsync();
 
             broker.Consumers[0].IsConnected.Should().BeFalse();
             broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Disconnected);
@@ -91,8 +89,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
@@ -103,13 +100,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             broker.Consumers[0].StatusInfo.History.Should().HaveCount(2);
             broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Consuming);
             broker.Consumers[0].StatusInfo.History.Last().Timestamp.Should().NotBeNull();
 
-            await Broker.DisconnectAsync();
+            await Helper.Broker.DisconnectAsync();
 
             broker.Consumers[0].StatusInfo.History.Should().HaveCount(3);
             broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Disconnected);
@@ -141,14 +138,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventOne());
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
             broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.Should().BeOfType<KafkaOffset>();

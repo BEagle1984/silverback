@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 using Xunit.Abstractions;
@@ -46,8 +45,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = "consumer1";
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -57,9 +55,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne());
             }
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Should().HaveCount(100);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(100);
             DefaultTopic.GetFirstOffset(new Partition(0)).Should().Be(new Offset(0));
             DefaultTopic.GetLastOffset(new Partition(0)).Should().Be(new Offset(99));
 
@@ -68,9 +66,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await publisher.PublishAsync(new TestEventOne());
             }
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Should().HaveCount(110);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(110);
             DefaultTopic.GetFirstOffset(new Partition(0)).Should().Be(new Offset(10));
             DefaultTopic.GetLastOffset(new Partition(0)).Should().Be(new Offset(109));
         }

@@ -9,7 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
@@ -56,8 +55,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = "consumer1";
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpyAndSubscriber())
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -70,15 +68,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await dbContext.SaveChangesAsync();
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Should().HaveCount(15);
-            Subscriber.InboundEnvelopes.Should().HaveCount(15);
-
-            SpyBehavior.OutboundEnvelopes.Should().HaveCount(15);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(15);
-
-            SpyBehavior.InboundEnvelopes
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+            Helper.Spy.InboundEnvelopes
                 .Select(envelope => ((TestEventOne)envelope.Message!).Content)
                 .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
         }
@@ -115,7 +109,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = "consumer1";
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
             using (var scope = Host.ServiceProvider.CreateScope())
@@ -127,10 +121,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             }
 
             var dbContext = Host.ScopedServiceProvider.GetRequiredService<TestDbContext>();
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.OutboundEnvelopes.Should().HaveCount(1);
-            Subscriber.InboundEnvelopes.Should().BeEmpty();
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes.Should().BeEmpty();
 
             dbContext.Outbox.Should().BeEmpty();
             DefaultTopic.TotalMessagesCount.Should().Be(0);

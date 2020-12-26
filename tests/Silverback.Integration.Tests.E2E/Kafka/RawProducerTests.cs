@@ -11,7 +11,6 @@ using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Silverback.Util;
 using Xunit;
@@ -58,11 +57,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = "consumer1";
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
-            var producer = Broker.GetProducer(
+            var producer = Helper.Broker.GetProducer(
                 new KafkaProducerEndpoint(
                     DefaultTopicName,
                     new KafkaClientConfig
@@ -71,13 +69,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     }));
             await producer.ProduceAsync(rawMessageStream, headers);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().BeEquivalentTo("Hello E2E!");
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
+            Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().BeEquivalentTo("Hello E2E!");
         }
 
         [Fact]
@@ -112,11 +108,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = "consumer1";
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
-            var producer = Broker.GetProducer(
+            var producer = Helper.Broker.GetProducer(
                 new KafkaProducerEndpoint(
                     DefaultTopicName,
                     new KafkaClientConfig
@@ -125,13 +120,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     }));
             await producer.ProduceAsync(rawMessage, headers);
 
-            await TestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Subscriber.InboundEnvelopes.Should().HaveCount(1);
-            SpyBehavior.InboundEnvelopes.Should().HaveCount(1);
-
-            SpyBehavior.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
-            SpyBehavior.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().BeEquivalentTo("Hello E2E!");
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<TestEventOne>();
+            Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().BeEquivalentTo("Hello E2E!");
         }
     }
 }

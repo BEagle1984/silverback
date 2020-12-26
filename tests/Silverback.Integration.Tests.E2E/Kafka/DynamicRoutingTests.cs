@@ -15,7 +15,6 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
-using Silverback.Tests.Integration.E2E.TestTypes;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 using Xunit.Abstractions;
@@ -42,8 +41,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .AddOutbound<TestEventOne, TestOutboundRouter>())
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var topic1 = GetTopic("topic1");
@@ -107,8 +105,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         { "two", endpoint => endpoint.ProduceTo("topicB") },
                                         { "three", endpoint => endpoint.ProduceTo("topicC") }
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var topic1 = GetTopic("topic1");
@@ -180,8 +177,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         { "two", endpoint => endpoint.ProduceTo("topicB") },
                                         { "three", endpoint => endpoint.ProduceTo("topicC") }
                                     }))
-                        .AddSingletonBrokerBehavior<SpyBrokerBehavior>()
-                        .AddSingletonSubscriber<OutboundInboundSubscriber>())
+                        .AddIntegrationSpy())
                 .Run();
 
             var topic1 = GetTopic("topic1");

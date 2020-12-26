@@ -80,7 +80,7 @@ namespace Silverback.Util
         }
 
         public static IReadOnlyCollection<T> HasNoNulls<T>(
-            IReadOnlyCollection<T>? value,
+            IReadOnlyCollection<T?>? value,
             [InvokerParameterName] [System.Diagnostics.CodeAnalysis.NotNull]
             string parameterName)
             where T : class
@@ -94,10 +94,10 @@ namespace Silverback.Util
                 throw new ArgumentException("The collection cannot contain null values.", parameterName);
             }
 
-            return value;
+            return (IReadOnlyCollection<T>)value;
         }
 
-        public static IReadOnlyCollection<string> HasNoEmpties(
+        public static IReadOnlyCollection<string?> HasNoEmpties(
             IReadOnlyCollection<string?>? value,
             [InvokerParameterName] [System.Diagnostics.CodeAnalysis.NotNull]
             string parameterName)
