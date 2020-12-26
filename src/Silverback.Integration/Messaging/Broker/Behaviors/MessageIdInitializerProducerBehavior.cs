@@ -21,7 +21,6 @@ namespace Silverback.Messaging.Broker.Behaviors
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            // TODO: Could avoid? Or make it optional (for interop with legacy versions)?
             MessageIdProvider.EnsureMessageIdIsInitialized(context.Envelope.Headers);
 
             await next(context).ConfigureAwait(false);

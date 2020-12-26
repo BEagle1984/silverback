@@ -11,7 +11,6 @@ using Silverback.Util;
 
 namespace Silverback.Diagnostics
 {
-    // TODO: Review and remove obsolete overloads (replace enumerable with sequence / base info on pipeline context)
     internal class SilverbackIntegrationLogger : ISilverbackIntegrationLogger
     {
         private readonly ISilverbackLogger _logger;

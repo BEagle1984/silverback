@@ -359,7 +359,6 @@ namespace Silverback.Messaging.Sequences
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
-            // TODO: Ensure Dispose is actually called
             _logger.LogTrace(
                 IntegrationEventIds.LowLevelTracing,
                 "Disposing {sequenceType} '{sequenceId}'...",

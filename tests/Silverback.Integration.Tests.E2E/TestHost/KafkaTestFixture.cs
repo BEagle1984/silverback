@@ -9,7 +9,7 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
 {
-    [Trait("Category", "Kafka")]
+    [Trait("Category", "E2E:Kafka")]
     public abstract class KafkaTestFixture : E2ETestFixture
     {
         protected const string DefaultTopicName = "default-e2e-topic";

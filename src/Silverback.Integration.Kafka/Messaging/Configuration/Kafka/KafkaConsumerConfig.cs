@@ -46,7 +46,6 @@ namespace Silverback.Messaging.Configuration.Kafka
         public bool EnableAutoRecovery { get; set; } = true;
 
         /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
-        // TODO: Test validation
         public override void Validate()
         {
             if (string.IsNullOrEmpty(BootstrapServers))

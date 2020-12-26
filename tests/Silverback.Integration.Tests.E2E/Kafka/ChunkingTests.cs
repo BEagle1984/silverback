@@ -1416,12 +1416,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
         }
 
-        [Fact(Skip = "Always enforcing consecutive sequences at the moment.")]
-        public Task Chunking_NotEnforcingConsecutiveJsonChunks_ProcessingErrorAbortsAllSequences()
-        {
-            throw new NotImplementedException();
-        }
-
         [Fact]
         public async Task Chunking_IncompleteJsonResent_SecondMessageConsumedAndCommitted()
         {

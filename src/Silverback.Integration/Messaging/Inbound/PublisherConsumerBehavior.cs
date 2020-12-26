@@ -73,7 +73,7 @@ namespace Silverback.Messaging.Inbound
                         await unboundedSequence!.AddAsync(envelope, null, false).ConfigureAwait(false);
 
                     if (unboundedSequence.IsAborted && unboundedSequence.AbortException != null)
-                        throw unboundedSequence.AbortException; // TODO: Wrap into another exception?
+                        throw unboundedSequence.AbortException;
 
                     throwIfUnhandled &= pushedStreamsCount == 0;
                 }

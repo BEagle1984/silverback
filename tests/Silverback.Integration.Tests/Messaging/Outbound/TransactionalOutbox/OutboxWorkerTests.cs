@@ -136,7 +136,5 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
 
             _broker.ProducedMessages.Should().HaveCount(3);
         }
-
-        // TODO: Test retry and error handling?
     }
 }

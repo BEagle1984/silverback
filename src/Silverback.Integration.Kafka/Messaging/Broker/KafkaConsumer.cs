@@ -24,9 +24,9 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
     public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint, KafkaOffset>
     {
-        private static readonly TimeSpan RecoveryDelay = TimeSpan.FromSeconds(5); // TODO: Could be configurable
+        private static readonly TimeSpan RecoveryDelay = TimeSpan.FromSeconds(5);
 
-        private static readonly TimeSpan CloseTimeout = TimeSpan.FromSeconds(30); // TODO: Should be configurable
+        private static readonly TimeSpan CloseTimeout = TimeSpan.FromSeconds(30);
 
         private readonly IConfluentConsumerBuilder _confluentConsumerBuilder;
 

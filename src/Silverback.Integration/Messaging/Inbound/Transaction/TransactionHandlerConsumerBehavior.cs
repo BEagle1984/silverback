@@ -45,15 +45,13 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             try
             {
-                // TODO: Ensure always disposed (TEST IT!)
                 var scope = context.ServiceProvider.CreateScope();
 
                 context.ReplaceServiceScope(scope);
                 context.TransactionManager = new ConsumerTransactionManager(
                     context,
                     context.ServiceProvider
-                        .GetRequiredService<ISilverbackIntegrationLogger<ConsumerTransactionManager>
-                        >());
+                        .GetRequiredService<ISilverbackIntegrationLogger<ConsumerTransactionManager>>());
 
                 await next(context).ConfigureAwait(false);
 

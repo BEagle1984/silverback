@@ -184,7 +184,6 @@ namespace Silverback.Messaging.Messages
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
-            // TODO: Prevent complete being called after abort (or being called twice)
             if (disposing)
                 AsyncHelper.RunSynchronously(() => CompleteAsync());
         }

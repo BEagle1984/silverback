@@ -98,7 +98,7 @@ namespace Silverback.Util
         }
 
         public static IReadOnlyCollection<string> HasNoEmpties(
-            IReadOnlyCollection<string>? value,
+            IReadOnlyCollection<string?>? value,
             [InvokerParameterName] [System.Diagnostics.CodeAnalysis.NotNull]
             string parameterName)
         {

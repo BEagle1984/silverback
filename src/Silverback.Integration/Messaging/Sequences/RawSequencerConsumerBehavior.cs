@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace Silverback.Messaging.Sequences
             }
             catch
             {
-                // TODO: Ok to Swallow?
+                // Ignore (handled monitoring the processing task)
             }
         }
     }

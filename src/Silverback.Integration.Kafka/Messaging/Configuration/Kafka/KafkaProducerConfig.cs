@@ -56,7 +56,6 @@ namespace Silverback.Messaging.Configuration.Kafka
              DeliveryReportFields.Contains("status", StringComparison.Ordinal));
 
         /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
-        // TODO: Test validation
         public override void Validate()
         {
             if (string.IsNullOrEmpty(BootstrapServers))
@@ -68,8 +67,8 @@ namespace Silverback.Messaging.Configuration.Kafka
             if (ThrowIfNotAcknowledged && !ArePersistenceStatusReportsEnabled)
             {
                 throw new EndpointConfigurationException(
-                    "Configuration.ThrowIfNotAcknowledged cannot be set to true delivery reports are not " +
-                    "enabled and the status field isn't included. " +
+                    "Configuration.ThrowIfNotAcknowledged cannot be set to true if delivery reports " +
+                    "are not enabled and the status field isn't included. " +
                     "Set Configuration.EnableDeliveryReports and Configuration.DeliveryReportFields" +
                     "accordingly or set Configuration.ThrowIfNotAcknowledged to false.");
             }
