@@ -1,4 +1,4 @@
-# <img src="https://github.com/BEagle1984/silverback/raw/master/graphics/Exports/1x/Logo-Full.png" width="400" alt="Silverback"> 
+# <img src="https://github.com/BEagle1984/silverback/raw/master/docs/images/logo.png" alt="Silverback"> 
 
 A simple but feature-rich framework to build reactive/event-driven applications or microservices.
 
