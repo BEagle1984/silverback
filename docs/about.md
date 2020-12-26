@@ -23,7 +23,7 @@ Silverback uses the following libraries under the hood:
 
 ## Special Thanks
 
-A very big thank you to my friends and colleagues:
+A very big thank you to all the [contributors](xref:contributing#contributors) and especially to my friends and colleagues:
 * [Fabio](https://github.com/ppx80) for the help with Kafka
 * [Laurent](https://github.com/lbovet) for constantly challenging, pushing and bringing new ideas and feedbacks
 * [Marc](https://github.com/msallin) for its contributions and the valuable constant feedbacks
