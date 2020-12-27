@@ -52,7 +52,7 @@ namespace Silverback.Testing
         /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection{string}, TimeSpan?)" />
         public Task WaitUntilAllMessagesAreConsumedAsync(
             IReadOnlyCollection<string> topicNames,
-            TimeSpan? timeout) =>
+            TimeSpan? timeout = null) =>
             WaitUntilAllMessagesAreConsumedCoreAsync(topicNames, timeout);
 
         [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The tasks are awaited")]
