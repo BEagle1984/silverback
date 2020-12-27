@@ -8,7 +8,7 @@ Its main features are:
 * Simple yet powerful message bus
 * Abstracted integration with a message broker
 * Apache Kafka and RabbitMQ integration
-* DDD, Domain Events and Transactional Messaging
+* DDD, domain events and transactional messaging
 * Built-in error handling policies for consumers
 
 Discover more in the [project's website][docs-site].
@@ -64,7 +64,7 @@ Silverback is split into multiple nuget packages available on nuget.org.
 
 ## Usage
 
-Have a look at the [project's website][docs-site] for usage details, snippets and examples.
+Have a look at the [project's website][docs-site] for usage details, API documentation and samples.
 
 ## Contributing
 
