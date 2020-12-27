@@ -5,12 +5,24 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Kafka.Mocks;
 
 namespace Silverback.Testing
 {
-    /// <inheritdoc cref="ITestingHelper{TBroker}"/>
+    /// <inheritdoc cref="ITestingHelper{TBroker}" />
     public interface IKafkaTestingHelper : ITestingHelper<KafkaBroker>
     {
+        /// <summary>
+        ///     Returns the <see cref="IInMemoryTopic" /> with the specified name.
+        /// </summary>
+        /// <param name="name">
+        ///     The name of the topic.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IInMemoryTopic" />.
+        /// </returns>
+        IInMemoryTopic GetTopic(string name);
+
         /// <summary>
         ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
         ///     processed and committed.
@@ -25,6 +37,8 @@ namespace Silverback.Testing
         /// <returns>
         ///     A <see cref="Task" /> that completes when all messages have been processed.
         /// </returns>
-        Task WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection<string> topicNames, TimeSpan? timeout = null);
+        Task WaitUntilAllMessagesAreConsumedAsync(
+            IReadOnlyCollection<string> topicNames,
+            TimeSpan? timeout = null);
     }
 }

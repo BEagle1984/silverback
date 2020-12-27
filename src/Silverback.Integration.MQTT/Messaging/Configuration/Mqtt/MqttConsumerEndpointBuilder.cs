@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Linq;
+using System;
 using MQTTnet.Protocol;
 using Silverback.Util;
 
@@ -79,10 +79,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.CreateEndpoint" />
         protected override MqttConsumerEndpoint CreateEndpoint()
         {
-            if (_topicNames == null || _topicNames.Any(string.IsNullOrEmpty))
-                throw new EndpointConfigurationException("Topic name not set.");
-
-            var endpoint = new MqttConsumerEndpoint(_topicNames)
+            var endpoint = new MqttConsumerEndpoint(_topicNames ?? Array.Empty<string>())
             {
                 Configuration = _clientConfig
             };

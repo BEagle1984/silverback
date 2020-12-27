@@ -18,7 +18,10 @@ uid: releases
     * Create <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> (see <xref:streaming>)
     * Improve chunking support in conjunction with streaming, requiring only one chunk at a time to be loaded into memory
     * Redesign sequences handling to support chunking, batch consuming and future sequences as well
-* Process Kafka partitions independently and concurrently (see <xref:kafka-partitioning>)
+* Improve Kafka partitions handling (see <xref:kafka-partitioning>)
+  * Process partitions independently and concurrently
+  * Add setting to produce to a specific partition 
+  * Add setting to manually assign the consumer partitions
 * Add option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see `throwIfUnhandled` argument in the <xref:Silverback.Messaging.Publishing.IPublisher> methods and [ThrowIfUnhandled](xref:Silverback.Messaging.IConsumerEndpoint#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled) property in the <xref:Silverback.Messaging.IConsumerEndpoint>)
 * Replace [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json) with [System.Text.Json](https://www.nuget.org/packages/System.Text.Json) to improve serialization and deserialization performance (the old serializers have been moved into the [Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft) package, see <xref:serialization>)
 * Add log levels configuration (see <xref:logging>)

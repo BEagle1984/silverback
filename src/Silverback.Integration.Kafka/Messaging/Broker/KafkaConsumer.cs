@@ -231,11 +231,24 @@ namespace Silverback.Messaging.Broker
         {
             lock (_channelsLock)
             {
-                // The consume loop must start immediately because the Confluent consumer connects for real only when
-                // Consume is called
-                _consumeLoopHandler ??= new ConsumeLoopHandler(this, _confluentConsumer!, _channelsManager, _logger);
+                if (Endpoint.TopicPartitions != null)
+                {
+                    // In case of static partitions assignment start consuming right away without waiting
+                    // for the assignment event
+                    InitConsumeLoopHandlerAndChannelsManager(_confluentConsumer!.Assignment);
+                }
+                else
+                {
+                    // The consume loop must start immediately because the Confluent consumer connects for
+                    // real only when Consume is called
+                    _consumeLoopHandler ??= new ConsumeLoopHandler(
+                        this,
+                        _confluentConsumer!,
+                        _channelsManager,
+                        _logger);
+                }
 
-                _consumeLoopHandler.Start();
+                _consumeLoopHandler!.Start();
                 _channelsManager?.StartReading();
 
                 // Set IsConsuming inside the lock because it is checked in OnPartitionsAssigned to decide to start the
@@ -348,7 +361,26 @@ namespace Silverback.Messaging.Broker
         private void InitConfluentConsumer()
         {
             _confluentConsumer = _confluentConsumerBuilder.Build();
-            Subscribe();
+
+            if (Endpoint.TopicPartitions == null)
+            {
+                _confluentConsumer.Subscribe(Endpoint.Names);
+            }
+            else
+            {
+                _confluentConsumer.Assign(Endpoint.TopicPartitions);
+
+                Endpoint.TopicPartitions.ForEach(
+                    partition =>
+                    {
+                        _logger.LogInformation(
+                            KafkaEventIds.PartitionsManuallyAssigned,
+                            "Assigned partition {topic}[{partition}]. (consumerId: {consumerId})",
+                            partition.Topic,
+                            partition.Partition.Value,
+                            Id);
+                    });
+            }
         }
 
         private void InitConsumeLoopHandlerAndChannelsManager(IReadOnlyList<TopicPartition> partitions)
@@ -399,8 +431,6 @@ namespace Silverback.Messaging.Broker
 
             _confluentConsumer = null;
         }
-
-        private void Subscribe() => _confluentConsumer!.Subscribe(Endpoint.Names);
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private void ResetConfluentConsumer(CancellationToken cancellationToken)

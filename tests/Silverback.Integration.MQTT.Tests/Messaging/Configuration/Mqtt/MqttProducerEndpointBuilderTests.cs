@@ -46,7 +46,7 @@ namespace Silverback.Tests.Integration.MQTT.Messaging.Configuration.Mqtt
         }
 
         [Fact]
-        public void ProduceTo_TopicName_TopicNameSet()
+        public void ProduceTo_TopicName_TopicSet()
         {
             var builder = new MqttProducerEndpointBuilder(_clientConfig);
             builder.ProduceTo("some-topic");

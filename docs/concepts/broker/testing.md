@@ -222,6 +222,7 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
 Many aspects of the Kafka broker have been mocked to replicated as much as possible the behavior you have when connected with the real broker. This new implementation supports commits, kafka events, offset reset, partitioning, rebalance, etc.
 
 The implementation revolves around the <xref:Silverback.Messaging.Broker.Topics.IInMemoryTopicCollection>. This type is registered as singleton and can be resolved in the tests to gain access to the <xref:Silverback.Messaging.Broker.Topics.IInMemoryTopic> instances directly and inspect their partitions, offsets, etc.
+Alternatively the <xref:Silverback.Messaging.Broker.Topics.IInMemoryTopic> can be retrieved via the `GetTopic` method of the <xref:Silverback.Testing.IKafkaTestingHelper>.
 
 ### Partitioning
 

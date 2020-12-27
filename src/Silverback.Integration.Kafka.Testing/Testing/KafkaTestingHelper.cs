@@ -40,18 +40,23 @@ namespace Silverback.Testing
             _logger = logger;
         }
 
+        /// <inheritdoc cref="IKafkaTestingHelper.GetTopic" />
+        public IInMemoryTopic GetTopic(string name) =>
+            _topics?[name] ??
+            throw new InvalidOperationException("The IInMemoryTopicCollection is not initialized.");
+
         /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
         public override Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null) =>
-            WaitUntilAllMessagesAreConsumedAsync(null, timeout);
+            WaitUntilAllMessagesAreConsumedCoreAsync(null, timeout);
 
         /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection{string}, TimeSpan?)" />
-        Task IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(
+        public Task WaitUntilAllMessagesAreConsumedAsync(
             IReadOnlyCollection<string> topicNames,
             TimeSpan? timeout) =>
-            WaitUntilAllMessagesAreConsumedAsync(topicNames, timeout);
+            WaitUntilAllMessagesAreConsumedCoreAsync(topicNames, timeout);
 
         [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The tasks are awaited")]
-        private async Task WaitUntilAllMessagesAreConsumedAsync(
+        private async Task WaitUntilAllMessagesAreConsumedCoreAsync(
             IReadOnlyCollection<string>? topicNames,
             TimeSpan? timeout = null)
         {

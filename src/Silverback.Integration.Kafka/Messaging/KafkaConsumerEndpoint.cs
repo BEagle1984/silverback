@@ -4,6 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.KafkaEvents;
 using Silverback.Messaging.Sequences.Batch;
@@ -55,26 +57,103 @@ namespace Silverback.Messaging
         public KafkaConsumerEndpoint(string[] topicNames, KafkaClientConfig? clientConfig = null)
             : base(string.Empty)
         {
-            Names = topicNames;
-
             if (topicNames == null || topicNames.Length == 0)
                 return;
 
-            Name = topicNames.Length > 1 ? "[" + string.Join(",", topicNames) + "]" : topicNames[0];
-
-            Configuration = new KafkaConsumerConfig(clientConfig);
+            Init(topicNames, clientConfig);
         }
 
         /// <summary>
-        ///     Gets the name of the topics.
+        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
         /// </summary>
-        public IReadOnlyCollection<string> Names { get; }
+        /// <param name="topicPartitions">
+        ///     The topics and partitions to be consumed.
+        /// </param>
+        public KafkaConsumerEndpoint(params TopicPartition[] topicPartitions)
+            : this(topicPartitions, null)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
+        /// </summary>
+        /// <param name="topicPartitions">
+        ///     The topics and partitions to be consumed.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaConsumerConfig" />.
+        /// </param>
+        public KafkaConsumerEndpoint(
+            IEnumerable<TopicPartition> topicPartitions,
+            KafkaClientConfig? clientConfig = null)
+            : this(
+                topicPartitions?.Select(
+                    topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))!,
+                clientConfig)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
+        /// </summary>
+        /// <param name="topicPartitions">
+        ///     The topics and partitions to be consumed and the starting offset.
+        /// </param>
+        public KafkaConsumerEndpoint(params TopicPartitionOffset[] topicPartitions)
+            : this(topicPartitions, null)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
+        /// </summary>
+        /// <param name="topicPartitions">
+        ///     The topics and partitions to be assigned.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaConsumerConfig" />.
+        /// </param>
+        public KafkaConsumerEndpoint(
+            IEnumerable<TopicPartitionOffset> topicPartitions,
+            KafkaClientConfig? clientConfig = null)
+            : base(string.Empty)
+        {
+            if (topicPartitions == null)
+                return;
+
+            TopicPartitions = topicPartitions.ToArray();
+
+            var topicNames = TopicPartitions
+                .Select(
+                    topicPartitionOffset =>
+                        $"{topicPartitionOffset.Topic}[{topicPartitionOffset.Partition.Value}]")
+                .ToArray();
+
+            if (topicNames.Length == 0)
+                return;
+
+            Init(topicNames, clientConfig);
+        }
 
         /// <summary>
         ///     Gets the event handlers configuration. Can be used to bind some handlers to the Kafka events
         ///     such as partitions revoked/assigned, error, statistics and offsets committed.
         /// </summary>
         public KafkaConsumerEventsHandlers Events { get; } = new();
+
+        /// <summary>
+        ///     Gets the topic and partitions to be consumed. If the collection is <c>null</c> the topics from the
+        ///     <see cref="Names" /> property will be subscribed and the partitions will be automatically assigned by the
+        ///     broker. If the collection is empty no partition will be consumed.
+        /// </summary>
+        public IReadOnlyCollection<TopicPartitionOffset>? TopicPartitions { get; }
+
+        /// <summary>
+        ///     Gets the name of the topics.
+        /// </summary>
+        public IReadOnlyCollection<string> Names { get; private set; } = Array.Empty<string>();
 
         /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration
@@ -114,7 +193,10 @@ namespace Silverback.Messaging
                 throw new EndpointConfigurationException("Configuration cannot be null.");
 
             if (MaxDegreeOfParallelism < 1)
-                throw new EndpointConfigurationException("MaxDegreeOfParallelism must be greater or equal to 1.");
+            {
+                throw new EndpointConfigurationException(
+                    "MaxDegreeOfParallelism must be greater or equal to 1.");
+            }
 
             if (BackpressureLimit < 1)
                 throw new EndpointConfigurationException("BackpressureLimit must be greater or equal to 1.");
@@ -156,7 +238,18 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
+        [SuppressMessage(
+            "ReSharper",
+            "NonReadonlyMemberInGetHashCode",
+            Justification = "Protected set is not abused")]
         public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
+
+        private void Init(string[] topicNames, KafkaClientConfig? clientConfig)
+        {
+            Name = topicNames.Length > 1 ? "[" + string.Join(",", topicNames) + "]" : topicNames[0];
+            Names = topicNames;
+
+            Configuration = new KafkaConsumerConfig(clientConfig);
+        }
     }
 }

@@ -81,6 +81,17 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         void Unsubscribe(IMockedConfluentConsumer consumer);
 
         /// <summary>
+        ///     Assigns the specified partition to the consumer.
+        /// </summary>
+        /// <param name="consumer">
+        ///     The <see cref="IMockedConfluentConsumer" /> instance.
+        /// </param>
+        /// <param name="partition">
+        ///     The partition.
+        /// </param>
+        void Assign(IMockedConfluentConsumer consumer, Partition partition);
+
+        /// <summary>
         ///     Commits the offsets of the specified consumer group.
         /// </summary>
         /// <param name="groupId">

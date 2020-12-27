@@ -19,10 +19,12 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         private readonly object _consumersLock;
 
-        private readonly List<MockedConfluentConsumer> _consumers = new();
+        private readonly List<MockedConfluentConsumer> _subscribedConsumers = new();
 
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _committedOffsets =
-            new();
+        private readonly List<MockedConfluentConsumer> _assignedConsumers = new();
+
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>
+            _committedOffsets = new();
 
         private readonly List<string> _groupsPendingRebalance = new();
 
@@ -83,30 +85,16 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             }
         }
 
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void Subscribe(IMockedConfluentConsumer consumer)
         {
             Check.NotNull(consumer, nameof(consumer));
 
             lock (_consumersLock)
             {
-                _consumers.Add((MockedConfluentConsumer)consumer);
+                _subscribedConsumers.Add((MockedConfluentConsumer)consumer);
 
-                if (!_committedOffsets.ContainsKey(consumer.GroupId))
-                {
-                    _committedOffsets[consumer.GroupId] = new ConcurrentDictionary<Partition, Offset>(
-                        _partitions.Select(
-                            partition =>
-                                new KeyValuePair<Partition, Offset>(partition.Partition.Value, Offset.Unset)));
-                }
-
-                if (!_groupsPendingRebalance.Contains(consumer.GroupId))
-                {
-                    _groupsPendingRebalance.Add(consumer.GroupId);
-
-                    // Rebalance asynchronously to mimic the real Kafka
-                    Task.Run(() => Rebalance(consumer.GroupId));
-                }
+                InitCommittedOffsetsDictionary(consumer);
+                ScheduleRebalance(consumer.GroupId);
             }
         }
 
@@ -116,9 +104,23 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
             lock (_consumersLock)
             {
-                _consumers.Remove((MockedConfluentConsumer)consumer);
+                _subscribedConsumers.Remove((MockedConfluentConsumer)consumer);
 
                 Rebalance(consumer.GroupId);
+            }
+        }
+
+        public void Assign(IMockedConfluentConsumer consumer, Partition partition)
+        {
+            Check.NotNull(consumer, nameof(consumer));
+
+            lock (_consumersLock)
+            {
+                if (!_assignedConsumers.Contains(consumer))
+                    _assignedConsumers.Add((MockedConfluentConsumer)consumer);
+
+                InitCommittedOffsetsDictionary(consumer);
+                ScheduleRebalance(consumer.GroupId);
             }
         }
 
@@ -151,12 +153,17 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public IReadOnlyCollection<TopicPartitionOffset> GetCommittedOffsets(string groupId) =>
             _committedOffsets.ContainsKey(groupId)
                 ? _committedOffsets[groupId]
-                    .Select(partitionPair => new TopicPartitionOffset(Name, partitionPair.Key, partitionPair.Value))
+                    .Select(
+                        partitionPair => new TopicPartitionOffset(
+                            Name,
+                            partitionPair.Key,
+                            partitionPair.Value))
                     .ToArray()
                 : Array.Empty<TopicPartitionOffset>();
 
         public long GetCommittedOffsetsCount(string groupId) =>
-            GetCommittedOffsets(groupId).Sum(topicPartitionOffset => Math.Max(0, topicPartitionOffset.Offset));
+            GetCommittedOffsets(groupId)
+                .Sum(topicPartitionOffset => Math.Max(0, topicPartitionOffset.Offset));
 
         public Offset GetFirstOffset(Partition partition)
             => _partitions[partition].FirstOffset;
@@ -164,12 +171,12 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public Offset GetLastOffset(Partition partition)
             => _partitions[partition].LastOffset;
 
+        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Sync writes only")]
         public async Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                // ReSharper disable once InconsistentlySynchronizedField
-                if (_consumers.All(HasFinishedConsuming))
+                if (_subscribedConsumers.Union(_assignedConsumers).All(HasFinishedConsuming))
                     return;
 
                 await Task.Delay(50, cancellationToken).ConfigureAwait(false);
@@ -180,10 +187,35 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         {
             lock (_consumersLock)
             {
-                _consumers
+                _subscribedConsumers
                     .Select(consumer => consumer.GroupId)
                     .Distinct()
                     .ForEach(Rebalance);
+            }
+        }
+
+        private void InitCommittedOffsetsDictionary(IMockedConfluentConsumer consumer)
+        {
+            if (!_committedOffsets.ContainsKey(consumer.GroupId))
+            {
+                _committedOffsets[consumer.GroupId] = new ConcurrentDictionary<Partition, Offset>(
+                    _partitions.Select(
+                        partition =>
+                            new KeyValuePair<Partition, Offset>(
+                                partition.Partition.Value,
+                                Offset.Unset)));
+            }
+        }
+
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
+        private void ScheduleRebalance(string groupId)
+        {
+            if (!_groupsPendingRebalance.Contains(groupId))
+            {
+                _groupsPendingRebalance.Add(groupId);
+
+                // Rebalance asynchronously to mimic the real Kafka
+                Task.Run(() => Rebalance(groupId));
             }
         }
 
@@ -193,12 +225,19 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             {
                 _groupsPendingRebalance.Remove(groupId);
 
-                _consumers
+                _subscribedConsumers
                     .Where(consumer => consumer.Disposed)
                     .ToList()
-                    .ForEach(consumer => _consumers.Remove(consumer));
+                    .ForEach(consumer => _subscribedConsumers.Remove(consumer));
+                _assignedConsumers
+                    .Where(consumer => consumer.Disposed)
+                    .ToList()
+                    .ForEach(consumer => _assignedConsumers.Remove(consumer));
 
-                var groupConsumers = _consumers.Where(consumer => consumer.GroupId == groupId).ToList();
+                var groupConsumers = _subscribedConsumers.Where(consumer => consumer.GroupId == groupId)
+                    .ToList();
+                var groupAssignedConsumers =
+                    _assignedConsumers.Where(consumer => consumer.GroupId == groupId).ToList();
 
                 groupConsumers.ForEach(consumer => consumer.OnRebalancing());
 
@@ -211,6 +250,11 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
                 for (int partitionIndex = 0; partitionIndex < _partitions.Count; partitionIndex++)
                 {
+                    // Skip manually assigned partitions
+                    if (groupAssignedConsumers.Any(
+                        consumer => consumer.Assignment.Contains(new TopicPartition(Name, partitionIndex))))
+                        continue;
+
                     assignments[partitionIndex % groupConsumers.Count].Add(new Partition(partitionIndex));
                 }
 

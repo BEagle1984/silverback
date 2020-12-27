@@ -44,8 +44,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
-                        .AddIntegrationSpy())
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -77,8 +76,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
-                                        .ProduceTo(DefaultTopicName, 3)))
-                        .AddIntegrationSpy())
+                                        .ProduceTo(DefaultTopicName, 3))))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -111,8 +109,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
-                        .AddIntegrationSpy())
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -146,8 +143,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName, 3)))
-                        .AddIntegrationSpy())
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName, 3))))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -177,13 +173,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonOutboundRouter<TestOutboundRouter>()
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .AddOutbound<TestEventOne, TestOutboundRouter>())
-                        .AddIntegrationSpy())
+                                .AddOutbound<TestEventOne, TestOutboundRouter>()))
                 .Run();
 
-            var topic1 = GetTopic("topic1");
-            var topic2 = GetTopic("topic2");
-            var topic3 = GetTopic("topic3");
+            var topic1 = Helper.GetTopic("topic1");
+            var topic2 = Helper.GetTopic("topic2");
+            var topic3 = Helper.GetTopic("topic3");
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(new TestEventOne { Content = "1" });
@@ -242,16 +237,15 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         { "one", endpoint => endpoint.ProduceTo("topicA") },
                                         { "two", endpoint => endpoint.ProduceTo("topicB") },
                                         { "three", endpoint => endpoint.ProduceTo("topicC") }
-                                    }))
-                        .AddIntegrationSpy())
+                                    })))
                 .Run();
 
-            var topic1 = GetTopic("topic1");
-            var topic2 = GetTopic("topic2");
-            var topic3 = GetTopic("topic3");
-            var topicA = GetTopic("topicA");
-            var topicB = GetTopic("topicB");
-            var topicC = GetTopic("topicC");
+            var topic1 = Helper.GetTopic("topic1");
+            var topic2 = Helper.GetTopic("topic2");
+            var topic3 = Helper.GetTopic("topic3");
+            var topicA = Helper.GetTopic("topicA");
+            var topicB = Helper.GetTopic("topicB");
+            var topicC = Helper.GetTopic("topicC");
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(new TestEventOne { Content = "one" });
@@ -317,12 +311,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         { "one", endpoint => endpoint.ProduceTo("topicA", 1) },
                                         { "two", endpoint => endpoint.ProduceTo("topicA", 2) },
                                         { "three", endpoint => endpoint.ProduceTo("topicA", 3) }
-                                    }))
-                        .AddIntegrationSpy())
+                                    })))
                 .Run();
 
-            var topic1 = GetTopic("topic1");
-            var topicA = GetTopic("topicA");
+            var topic1 = Helper.GetTopic("topic1");
+            var topicA = Helper.GetTopic("topicA");
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(new TestEventOne { Content = "one" });
@@ -406,16 +399,15 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         { "one", endpoint => endpoint.ProduceTo("topicA") },
                                         { "two", endpoint => endpoint.ProduceTo("topicB") },
                                         { "three", endpoint => endpoint.ProduceTo("topicC") }
-                                    }))
-                        .AddIntegrationSpy())
+                                    })))
                 .Run();
 
-            var topic1 = GetTopic("topic1");
-            var topic2 = GetTopic("topic2");
-            var topic3 = GetTopic("topic3");
-            var topicA = GetTopic("topicA");
-            var topicB = GetTopic("topicB");
-            var topicC = GetTopic("topicC");
+            var topic1 = Helper.GetTopic("topic1");
+            var topic2 = Helper.GetTopic("topic2");
+            var topic3 = Helper.GetTopic("topic3");
+            var topicA = Helper.GetTopic("topicA");
+            var topicB = Helper.GetTopic("topicB");
+            var topicC = Helper.GetTopic("topicC");
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(new TestEventOne { Content = "one" });

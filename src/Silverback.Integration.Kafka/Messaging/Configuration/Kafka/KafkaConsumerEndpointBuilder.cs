@@ -13,11 +13,14 @@ namespace Silverback.Messaging.Configuration.Kafka
 {
     /// <inheritdoc cref="IKafkaConsumerEndpointBuilder" />
     public class KafkaConsumerEndpointBuilder
-        : ConsumerEndpointBuilder<KafkaConsumerEndpoint, IKafkaConsumerEndpointBuilder>, IKafkaConsumerEndpointBuilder
+        : ConsumerEndpointBuilder<KafkaConsumerEndpoint, IKafkaConsumerEndpointBuilder>,
+            IKafkaConsumerEndpointBuilder
     {
         private readonly KafkaClientConfig? _clientConfig;
 
         private string[]? _topicNames;
+
+        private TopicPartitionOffset[]? _topicPartitionOffsets;
 
         private Action<KafkaConsumerConfig>? _configAction;
 
@@ -60,12 +63,36 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.This" />
         protected override IKafkaConsumerEndpointBuilder This => this;
 
-        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.ConsumeFrom" />
+        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.ConsumeFrom(string[])" />
         public IKafkaConsumerEndpointBuilder ConsumeFrom(params string[] topicNames)
         {
             Check.HasNoEmpties(topicNames, nameof(topicNames));
 
             _topicNames = topicNames;
+            _topicPartitionOffsets = null;
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.ConsumeFrom(TopicPartition[])" />
+        public IKafkaConsumerEndpointBuilder ConsumeFrom(params TopicPartition[] topicPartitions)
+        {
+            Check.HasNoNulls(topicPartitions, nameof(topicPartitions));
+
+            _topicNames = null;
+            _topicPartitionOffsets = topicPartitions
+                .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset)).ToArray();
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.ConsumeFrom(TopicPartitionOffset[])" />
+        public IKafkaConsumerEndpointBuilder ConsumeFrom(params TopicPartitionOffset[] topicPartitions)
+        {
+            Check.HasNoNulls(topicPartitions, nameof(topicPartitions));
+
+            _topicNames = null;
+            _topicPartitionOffsets = topicPartitions;
 
             return this;
         }
@@ -123,7 +150,8 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.OnOffsetsCommitted" />
-        public IKafkaConsumerEndpointBuilder OnOffsetsCommitted(Action<CommittedOffsets, KafkaConsumer> handler)
+        public IKafkaConsumerEndpointBuilder OnOffsetsCommitted(
+            Action<CommittedOffsets, KafkaConsumer> handler)
         {
             Check.NotNull(handler, nameof(handler));
 
@@ -134,7 +162,8 @@ namespace Silverback.Messaging.Configuration.Kafka
 
         /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.OnPartitionsAssigned" />
         public IKafkaConsumerEndpointBuilder OnPartitionsAssigned(
-            Func<IReadOnlyCollection<TopicPartition>, KafkaConsumer, IEnumerable<TopicPartitionOffset>> handler)
+            Func<IReadOnlyCollection<TopicPartition>, KafkaConsumer, IEnumerable<TopicPartitionOffset>>
+                handler)
         {
             Check.NotNull(handler, nameof(handler));
 
@@ -168,10 +197,9 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.CreateEndpoint" />
         protected override KafkaConsumerEndpoint CreateEndpoint()
         {
-            if (_topicNames == null || _topicNames.Any(string.IsNullOrEmpty))
-                throw new EndpointConfigurationException("Topic name not set.");
-
-            var endpoint = new KafkaConsumerEndpoint(_topicNames, _clientConfig);
+            var endpoint = _topicPartitionOffsets != null
+                ? new KafkaConsumerEndpoint(_topicPartitionOffsets, _clientConfig)
+                : new KafkaConsumerEndpoint(_topicNames ?? Array.Empty<string>(), _clientConfig);
 
             _configAction?.Invoke(endpoint.Configuration);
 

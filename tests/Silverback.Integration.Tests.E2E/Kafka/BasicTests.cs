@@ -193,8 +193,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedTestEventOnes.Should().HaveCount(5);
             receivedTestEventTwos.Should().HaveCount(5);
 
-            GetTopic("topic1").GetCommittedOffsetsCount("consumer1").Should().Be(5);
-            GetTopic("topic2").GetCommittedOffsetsCount("consumer1").Should().Be(5);
+            Helper.GetTopic("topic1").GetCommittedOffsetsCount("consumer1").Should().Be(5);
+            Helper.GetTopic("topic2").GetCommittedOffsetsCount("consumer1").Should().Be(5);
         }
 
         [Fact]

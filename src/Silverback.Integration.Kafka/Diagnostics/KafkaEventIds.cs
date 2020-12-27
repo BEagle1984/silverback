@@ -195,6 +195,16 @@ namespace Silverback.Diagnostics
             new(Offset + 40, Prefix + nameof(StatisticsDeserializationError));
 
         /// <summary>
+        ///     Gets the <see cref="EventId" /> of the log that is written when the partitions are manually
+        ///     assigned.
+        /// </summary>
+        /// <remarks>
+        ///     Default log level: Information.
+        /// </remarks>
+        public static EventId PartitionsManuallyAssigned { get; } =
+            new(Offset + 41, Prefix + nameof(PartitionsManuallyAssigned));
+
+        /// <summary>
         ///     Gets the <see cref="EventId" /> of the log that is written when an exception is thrown disconnecting
         ///     the consumer.
         /// </summary>

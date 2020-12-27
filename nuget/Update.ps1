@@ -3,11 +3,11 @@
 [bool]$global:warnAsError = $TRUE
 $global:buildConfiguration = "Release"
 
-function Run()
+function Run([string[]]$argsArray)
 {
     $stopwatch = [system.diagnostics.stopwatch]::StartNew()
 
-    Check-Args $args
+    Check-Args $argsArrays
     Check-Location
 
     $global:sourceProjectNames = Get-SourceProjectNames
@@ -282,4 +282,4 @@ function Write-Separator()
     Write-Host "`n##################################################################`n" -ForegroundColor Yellow
 }
 
-Run
+Run $args

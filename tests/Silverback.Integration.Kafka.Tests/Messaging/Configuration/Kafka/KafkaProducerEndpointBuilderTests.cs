@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         }
 
         [Fact]
-        public void ProduceTo_TopicName_TopicNameSet()
+        public void ProduceTo_TopicName_TopicSet()
         {
             var builder = new KafkaProducerEndpointBuilder(
                 new KafkaClientConfig
@@ -59,7 +59,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         }
 
         [Fact]
-        public void ProduceTo_TopicNameAndPartition_TopicNameSet()
+        public void ProduceTo_TopicNameAndPartition_TopicAndPartitionSet()
         {
             var builder = new KafkaProducerEndpointBuilder(
                 new KafkaClientConfig

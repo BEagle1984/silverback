@@ -12,7 +12,7 @@ If the destination topic contains multiple partitions, the destination partition
 
 You can override this default behavior explicitly setting the target partition in the endpoint. The endpoint can be statically defined like in the following snippet or resolved via [dynamic routing](xref:outbound#dynamic-custom-routing).
 
-# [Fluent (preferred)](#tab/kafka-producer-fluent)
+# [Fluent (preferred)](#tab/destination-partition-fluent)
 ```csharp
 public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -27,7 +27,7 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                     .ProduceTo("order-events", 2))); // <- partition 2
 }
 ```
-# [Legacy](#tab/kafka-producer-legacy)
+# [Legacy](#tab/destination-partition-legacy)
 ```csharp
 public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -87,7 +87,7 @@ While using a single poll loop, Silverback processes the messages consumed from 
 
 By default up to 10 messages/partitions are processed concurrently (per topic). This value can be tweaked in the endpoint configuration or disabled completely.
 
-# [Fluent](#tab/kafka-consumer-fluent)
+# [Fluent](#tab/concurrency-fluent)
 ```csharp
 public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -114,7 +114,7 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                         })));
 }
 ```
-# [Legacy](#tab/kafka-consumer-legacy)
+# [Legacy](#tab/concurrency-legacy)
 ```csharp
 public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -144,6 +144,52 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 ```
 ***
 
-### Static partitions assignment
+### Manual partitions assignment
 
-_(coming soon)_
+In some cases you don't want to let the broker randomly distribute the partitions among the consumers. This is especially useful when dealing with large sequences (e.g. large messages/files being [chunked](xref:chunking)), to prevent that a rebalance occurs in the middle of a sequence, forcing the consumer to abort and restart from the beginning.
+
+# [Fluent](#tab/assignment-fluent)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddKafkaEndpoints(endpoints => endpoints
+                .Configure(config => 
+                    {
+                        config.BootstrapServers = "PLAINTEXT://kafka:9092"; 
+                    })
+                .AddInbound(endpoint => endpoint
+                    .ConsumeFrom(
+                        new TopicPartition("order-events", 0),
+                        new TopicPartition("order-events", 1))
+                    .Configure(config =>
+                        {
+                            config.GroupId = "my-consumer";
+                        })));
+}
+```
+# [Legacy](#tab/assignment-legacy)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddInbound(
+                new KafkaConsumerEndpoint(
+                    new TopicPartition("order-events", 0),
+                    new TopicPartition("order-events", 1))
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                        GroupId = "my-consumer",
+                    } 
+                });
+}
+```
+***
+
+## Samples
+
+* <xref:sample-kafka-binaryfile>

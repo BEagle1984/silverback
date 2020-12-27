@@ -18,10 +18,11 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         [Fact]
         public void Build_WithoutTopicName_ExceptionThrown()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
 
             Action act = () => builder.Build();
 
@@ -35,7 +36,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
 
             Action act = () =>
             {
-                builder.ConsumeFrom("some-topic");
+                builder.ConsumeFrom("topic");
                 builder.Build();
             };
 
@@ -43,31 +44,105 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         }
 
         [Fact]
-        public void ConsumeFrom_SingleTopic_TopicNameSet()
+        public void ConsumeFrom_SingleTopicName_TopicSet()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
 
-            builder.ConsumeFrom("some-topic");
+            builder.ConsumeFrom("topic");
             var endpoint = builder.Build();
 
-            endpoint.Name.Should().Be("some-topic");
+            endpoint.Name.Should().Be("topic");
+            endpoint.Names.Should().BeEquivalentTo("topic");
+            endpoint.TopicPartitions.Should().BeNull();
         }
 
         [Fact]
-        public void ConsumeFrom_MultipleTopicsTopicNameSet()
+        public void ConsumeFrom_MultipleTopicNames_TopicsSet()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
 
-            builder.ConsumeFrom("some-topic", "some-other-topic");
+            builder.ConsumeFrom("topic1", "topic2");
             var endpoint = builder.Build();
 
-            endpoint.Names.Should().BeEquivalentTo("some-topic", "some-other-topic");
+            endpoint.Name.Should().Be("[topic1,topic2]");
+            endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
+            endpoint.TopicPartitions.Should().BeNull();
+        }
+
+        [Fact]
+        public void ConsumeFrom_SingleTopicPartition_TopicSet()
+        {
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ConsumeFrom(new TopicPartition("topic", 2));
+            var endpoint = builder.Build();
+
+            endpoint.Name.Should().Be("topic[2]");
+            endpoint.Names.Should().BeEquivalentTo("topic[2]");
+            endpoint.TopicPartitions.Should().BeEquivalentTo(
+                new TopicPartitionOffset("topic", 2, Offset.Unset));
+        }
+
+        [Fact]
+        public void ConsumeFrom_MultipleTopicPartitions_TopicsSet()
+        {
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ConsumeFrom(
+                new TopicPartition("topic1", 0),
+                new TopicPartition("topic1", 1),
+                new TopicPartition("topic2", 2),
+                new TopicPartition("topic2", 3));
+            var endpoint = builder.Build();
+
+            endpoint.Name.Should().Be("[topic1[0],topic1[1],topic2[2],topic2[3]]");
+            endpoint.Names.Should().BeEquivalentTo("topic1[0]", "topic1[1]", "topic2[2]", "topic2[3]");
+            endpoint.TopicPartitions.Should().BeEquivalentTo(
+                new TopicPartitionOffset("topic1", 0, Offset.Unset),
+                new TopicPartitionOffset("topic1", 1, Offset.Unset),
+                new TopicPartitionOffset("topic2", 2, Offset.Unset),
+                new TopicPartitionOffset("topic2", 3, Offset.Unset));
+        }
+
+        [Fact]
+        public void ConsumeFrom_MultipleTopicPartitionOffsets_TopicsSet()
+        {
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ConsumeFrom(
+                new TopicPartitionOffset("topic1", 0, Offset.Beginning),
+                new TopicPartitionOffset("topic1", 1, Offset.End),
+                new TopicPartitionOffset("topic2", 2, 42),
+                new TopicPartitionOffset("topic2", 3, Offset.Unset));
+            var endpoint = builder.Build();
+
+            endpoint.Name.Should().Be("[topic1[0],topic1[1],topic2[2],topic2[3]]");
+            endpoint.Names.Should().BeEquivalentTo("topic1[0]", "topic1[1]", "topic2[2]", "topic2[3]");
+            endpoint.TopicPartitions.Should().BeEquivalentTo(
+                new TopicPartitionOffset("topic1", 0, Offset.Beginning),
+                new TopicPartitionOffset("topic1", 1, Offset.End),
+                new TopicPartitionOffset("topic2", 2, 42),
+                new TopicPartitionOffset("topic2", 3, Offset.Unset));
         }
 
         [Fact]
@@ -76,15 +151,15 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             var builder = new KafkaConsumerEndpointBuilder();
 
             builder
-                .ConsumeFrom("some-topic")
+                .ConsumeFrom("topic")
                 .Configure(
-                config =>
-                {
-                    config.BootstrapServers = "PLAINTEXT://tests";
-                    config.EnableAutoCommit = false;
-                    config.CommitOffsetEach = 42;
-                    config.GroupId = "group1";
-                });
+                    config =>
+                    {
+                        config.BootstrapServers = "PLAINTEXT://tests";
+                        config.EnableAutoCommit = false;
+                        config.CommitOffsetEach = 42;
+                        config.GroupId = "group1";
+                    });
             var endpoint = builder.Build();
 
             endpoint.Configuration.EnableAutoCommit.Should().Be(false);
@@ -103,15 +178,15 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             var builder = new KafkaConsumerEndpointBuilder(baseConfig);
 
             builder
-                .ConsumeFrom("some-topic")
+                .ConsumeFrom("topic")
                 .Configure(
-                config =>
-                {
-                    config.EnableAutoCommit = false;
-                    config.CommitOffsetEach = 42;
-                    config.GroupId = "group1";
-                    config.MessageMaxBytes = 4242;
-                });
+                    config =>
+                    {
+                        config.EnableAutoCommit = false;
+                        config.CommitOffsetEach = 42;
+                        config.GroupId = "group1";
+                        config.MessageMaxBytes = 4242;
+                    });
             var endpoint = builder.Build();
 
             endpoint.Configuration.BootstrapServers.Should().Be("PLAINTEXT://tests");
@@ -125,13 +200,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         [Fact]
         public void ProcessPartitionsIndependently_ProcessPartitionsIndependentlySet()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
 
             builder
-                .ConsumeFrom("some-topic")
+                .ConsumeFrom("topic")
                 .ProcessPartitionsIndependently();
             var endpoint = builder.Build();
 
@@ -141,13 +217,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         [Fact]
         public void ProcessAllPartitionsTogether_ProcessPartitionsIndependentlySet()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
 
             builder
-                .ConsumeFrom("some-topic")
+                .ConsumeFrom("topic")
                 .ProcessAllPartitionsTogether();
             var endpoint = builder.Build();
 
@@ -157,13 +234,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         [Fact]
         public void LimitParallelism_MaxDegreeOfParallelismSet()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
 
             builder
-                .ConsumeFrom("some-topic")
+                .ConsumeFrom("topic")
                 .LimitParallelism(42);
             var endpoint = builder.Build();
 
@@ -173,13 +251,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         [Fact]
         public void LimitBackpressure_BackpressureLimitSet()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
 
             builder
-                .ConsumeFrom("some-topic")
+                .ConsumeFrom("topic")
                 .LimitBackpressure(42);
             var endpoint = builder.Build();
 
@@ -189,14 +268,15 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         [Fact]
         public void OnKafkaError_Handler_HandlerSet()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
             Func<Error, KafkaConsumer, bool> handler = (_, _) => true;
 
             builder
-                .ConsumeFrom("some-topic")
+                .ConsumeFrom("topic")
                 .OnKafkaError(handler);
             var endpoint = builder.Build();
 
@@ -206,14 +286,15 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         [Fact]
         public void OnOffsetsCommitted_Handler_HandlerSet()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
             Action<CommittedOffsets, KafkaConsumer> handler = (_, _) => { };
 
             builder
-                .ConsumeFrom("some-topic")
+                .ConsumeFrom("topic")
                 .OnOffsetsCommitted(handler);
             var endpoint = builder.Build();
 
@@ -223,15 +304,17 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         [Fact]
         public void OnPartitionsAssigned_Handler_HandlerSet()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
-            Func<IReadOnlyCollection<TopicPartition>, KafkaConsumer, IEnumerable<TopicPartitionOffset>> handler =
-                (_, _) => null!;
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+            Func<IReadOnlyCollection<TopicPartition>, KafkaConsumer, IEnumerable<TopicPartitionOffset>>
+                handler =
+                    (_, _) => null!;
 
             builder
-                .ConsumeFrom("some-topic")
+                .ConsumeFrom("topic")
                 .OnPartitionsAssigned(handler);
             var endpoint = builder.Build();
 
@@ -241,14 +324,15 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         [Fact]
         public void OnPartitionsRevoked_Handler_HandlerSet()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
             Action<IReadOnlyCollection<TopicPartitionOffset>, KafkaConsumer> handler = (_, _) => { };
 
             builder
-                .ConsumeFrom("some-topic")
+                .ConsumeFrom("topic")
                 .OnPartitionsRevoked(handler);
             var endpoint = builder.Build();
 
@@ -258,14 +342,15 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         [Fact]
         public void OnStatisticsReceived_Handler_HandlerSet()
         {
-            var builder = new KafkaConsumerEndpointBuilder(new KafkaClientConfig
-            {
-                BootstrapServers = "PLAINTEXT://tests"
-            });
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
             Action<KafkaStatistics, string, KafkaConsumer> handler = (_, _, _) => { };
 
             builder
-                .ConsumeFrom("some-topic")
+                .ConsumeFrom("topic")
                 .OnStatisticsReceived(handler);
             var endpoint = builder.Build();
 

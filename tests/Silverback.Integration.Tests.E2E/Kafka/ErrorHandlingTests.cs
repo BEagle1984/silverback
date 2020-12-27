@@ -828,7 +828,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
             Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("other-topic");
 
-            GetTopic("other-topic").TotalMessagesCount.Should().Be(1);
+            Helper.GetTopic("other-topic").TotalMessagesCount.Should().Be(1);
         }
 
         [Fact]
@@ -938,7 +938,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
             Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("other-topic");
 
-            GetTopic("other-topic").TotalMessagesCount.Should().Be(1);
+            Helper.GetTopic("other-topic").TotalMessagesCount.Should().Be(1);
         }
     }
 }

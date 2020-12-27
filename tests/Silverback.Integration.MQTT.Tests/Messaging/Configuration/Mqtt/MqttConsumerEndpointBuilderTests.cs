@@ -46,7 +46,7 @@ namespace Silverback.Tests.Integration.MQTT.Messaging.Configuration.Mqtt
         }
 
         [Fact]
-        public void ConsumeFrom_SingleTopic_TopicNameSet()
+        public void ConsumeFrom_SingleTopic_TopicSet()
         {
             var builder = new MqttConsumerEndpointBuilder(_clientConfig);
             builder.ConsumeFrom("some-topic");
@@ -56,7 +56,7 @@ namespace Silverback.Tests.Integration.MQTT.Messaging.Configuration.Mqtt
         }
 
         [Fact]
-        public void ConsumeFrom_MultipleTopicsTopicNameSet()
+        public void ConsumeFrom_MultipleTopics_TopicsSet()
         {
             var builder = new MqttConsumerEndpointBuilder(_clientConfig);
             builder.ConsumeFrom("some-topic", "some-other-topic");

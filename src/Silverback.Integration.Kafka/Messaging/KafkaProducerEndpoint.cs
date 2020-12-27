@@ -44,9 +44,10 @@ namespace Silverback.Messaging
         public KafkaProducerConfig Configuration { get; set; }
 
         /// <summary>
-        ///     Gets or sets the target partition. When not set the partition is automatically derived from the message
-        ///     key (use <see cref="KafkaKeyMemberAttribute" /> to specify a message key, otherwise a random one will be
-        ///     generated).
+        ///     Gets or sets the target partition. When set to <c>Partition.Any</c> (-1) the partition is automatically
+        ///     derived from the message key (use <see cref="KafkaKeyMemberAttribute" /> to specify a message key,
+        ///     otherwise a random one will be generated).
+        ///     The default is <c>Partition.Any</c> (-1).
         /// </summary>
         public Partition Partition
         {
@@ -55,7 +56,7 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
-        ///     Gets the <see cref="TopicPartition"/> representing this endpoint.
+        ///     Gets the <see cref="TopicPartition" /> representing this endpoint.
         /// </summary>
         public TopicPartition TopicPartition { get; private set; }
 

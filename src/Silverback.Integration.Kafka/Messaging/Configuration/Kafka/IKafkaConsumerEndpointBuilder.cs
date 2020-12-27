@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Configuration.Kafka
     public interface IKafkaConsumerEndpointBuilder : IConsumerEndpointBuilder<IKafkaConsumerEndpointBuilder>
     {
         /// <summary>
-        ///     Specifies the name of the topics.
+        ///     Specifies the name of the topics to be consumed.
         /// </summary>
         /// <param name="topicNames">
         ///     The name of the topics.
@@ -26,6 +26,28 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IKafkaConsumerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IKafkaConsumerEndpointBuilder ConsumeFrom(params string[] topicNames);
+
+        /// <summary>
+        ///     Specifies the topics and partitions to be consumed.
+        /// </summary>
+        /// <param name="topicPartitions">
+        ///     The topics and partitions to be consumed.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IKafkaConsumerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IKafkaConsumerEndpointBuilder ConsumeFrom(params TopicPartition[] topicPartitions);
+
+        /// <summary>
+        ///     Specifies the topics and partitions to be consumed.
+        /// </summary>
+        /// <param name="topicPartitions">
+        ///     The topics and partitions to be consumed and the starting offset.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IKafkaConsumerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IKafkaConsumerEndpointBuilder ConsumeFrom(params TopicPartitionOffset[] topicPartitions);
 
         /// <summary>
         ///     Configures the Kafka client properties.

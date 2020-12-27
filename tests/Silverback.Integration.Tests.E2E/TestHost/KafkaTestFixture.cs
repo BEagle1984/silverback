@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Testing;
 using Xunit;
@@ -21,9 +20,6 @@ namespace Silverback.Tests.Integration.E2E.TestHost
         {
         }
 
-        protected IInMemoryTopic DefaultTopic => _defaultTopic ??= GetTopic(DefaultTopicName);
-
-        protected IInMemoryTopic GetTopic(string name) =>
-            Host.ScopedServiceProvider.GetRequiredService<IInMemoryTopicCollection>()[name];
+        protected IInMemoryTopic DefaultTopic => _defaultTopic ??= Helper.GetTopic(DefaultTopicName);
     }
 }

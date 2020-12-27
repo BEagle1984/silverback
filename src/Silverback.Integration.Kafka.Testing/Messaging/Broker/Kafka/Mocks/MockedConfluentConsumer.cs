@@ -126,7 +126,19 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public void Assign(TopicPartitionOffset partition) => throw new NotSupportedException();
 
-        public void Assign(IEnumerable<TopicPartitionOffset> partitions) => throw new NotSupportedException();
+        public void Assign(IEnumerable<TopicPartitionOffset> partitions)
+        {
+            Assignment.Clear();
+
+            foreach (var topicPartitionOffset in partitions)
+            {
+                Assignment.Add(topicPartitionOffset.TopicPartition);
+                _topics[topicPartitionOffset.Topic].Assign(this, topicPartitionOffset.Partition);
+                Seek(GetStartingOffset(topicPartitionOffset));
+            }
+
+            PartitionsAssigned = true;
+        }
 
         public void Assign(IEnumerable<TopicPartition> partitions) => throw new NotSupportedException();
 
