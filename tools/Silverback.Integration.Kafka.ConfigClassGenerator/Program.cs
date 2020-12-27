@@ -71,7 +71,7 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
                 "    public abstract class ConfluentClientConfigProxyBase : IValidatableEndpointSettings");
             Console.WriteLine("    {");
             Console.WriteLine(
-                "        internal static readonly ConfigurationDictionaryEqualityComparer<string, string> ConfluentConfigComparer = new();");
+                "        internal static readonly ConfigurationDictionaryEqualityComparer<string, string> ConfluentConfigEqualityComparer = new();");
             Console.WriteLine();
             Console.WriteLine("        /// <inheritdoc cref=\"IValidatableEndpointSettings.Validate\" />");
             Console.WriteLine("        public abstract void Validate();");
