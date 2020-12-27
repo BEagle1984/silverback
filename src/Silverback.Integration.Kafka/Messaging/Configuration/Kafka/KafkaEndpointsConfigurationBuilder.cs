@@ -12,7 +12,8 @@ namespace Silverback.Messaging.Configuration.Kafka
     {
         private readonly IEndpointsConfigurationBuilder _endpointsConfigurationBuilder;
 
-        public KafkaEndpointsConfigurationBuilder(IEndpointsConfigurationBuilder endpointsConfigurationBuilder)
+        public KafkaEndpointsConfigurationBuilder(
+            IEndpointsConfigurationBuilder endpointsConfigurationBuilder)
         {
             _endpointsConfigurationBuilder = endpointsConfigurationBuilder;
         }
@@ -31,56 +32,74 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            Action<IKafkaProducerEndpointBuilder> endpointBuilderAction) =>
-            AddOutbound(typeof(TMessage), endpointBuilderAction);
+            Action<IKafkaProducerEndpointBuilder> endpointBuilderAction,
+            bool preloadProducers = true) =>
+            AddOutbound(typeof(TMessage), endpointBuilderAction, preloadProducers);
 
         public IKafkaEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
-            KafkaOutboundEndpointRouter<object>.RouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions)
+            DictionaryOutboundRouter<object, KafkaProducerEndpoint>.RouterFunction routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true)
         {
-            this.AddOutbound(
-                messageType,
-                new KafkaOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, ClientConfig));
+            var router = new KafkaOutboundEndpointRouter<object>(
+                routerFunction,
+                endpointBuilderActions,
+                ClientConfig);
+            this.AddOutbound(messageType, router, preloadProducers);
 
             return this;
         }
 
         public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            KafkaOutboundEndpointRouter<TMessage>.RouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions)
+            DictionaryOutboundRouter<TMessage, KafkaProducerEndpoint>.RouterFunction routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true)
         {
-            this.AddOutbound(
-                new KafkaOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, ClientConfig));
+            var router = new KafkaOutboundEndpointRouter<TMessage>(
+                routerFunction,
+                endpointBuilderActions,
+                ClientConfig);
+            this.AddOutbound(router, preloadProducers);
 
             return this;
         }
 
         public IKafkaEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
-            KafkaOutboundEndpointRouter<object>.SingleEndpointRouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions)
+            DictionaryOutboundRouter<object, KafkaProducerEndpoint>.SingleEndpointRouterFunction
+                routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true)
         {
-            this.AddOutbound(
-                messageType,
-                new KafkaOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, ClientConfig));
+            var router = new KafkaOutboundEndpointRouter<object>(
+                routerFunction,
+                endpointBuilderActions,
+                ClientConfig);
+            this.AddOutbound(messageType, router, preloadProducers);
 
             return this;
         }
 
         public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            KafkaOutboundEndpointRouter<TMessage>.SingleEndpointRouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions)
+            DictionaryOutboundRouter<TMessage, KafkaProducerEndpoint>.SingleEndpointRouterFunction
+                routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true)
         {
-            this.AddOutbound(
-                new KafkaOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, ClientConfig));
+            var router = new KafkaOutboundEndpointRouter<TMessage>(
+                routerFunction,
+                endpointBuilderActions,
+                ClientConfig);
+            this.AddOutbound(router, preloadProducers);
 
             return this;
         }
 
         public IKafkaEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
-            Action<IKafkaProducerEndpointBuilder> endpointBuilderAction)
+            Action<IKafkaProducerEndpointBuilder> endpointBuilderAction,
+            bool preloadProducers = true)
         {
             Check.NotNull(messageType, nameof(messageType));
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
@@ -88,7 +107,7 @@ namespace Silverback.Messaging.Configuration.Kafka
             var builder = new KafkaProducerEndpointBuilder(ClientConfig, this);
             endpointBuilderAction.Invoke(builder);
 
-            _endpointsConfigurationBuilder.AddOutbound(messageType, builder.Build());
+            this.AddOutbound(messageType, builder.Build(), preloadProducers);
 
             return this;
         }

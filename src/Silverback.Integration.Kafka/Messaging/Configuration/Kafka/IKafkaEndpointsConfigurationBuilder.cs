@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Outbound.Routing;
 
 namespace Silverback.Messaging.Configuration.Kafka
@@ -33,11 +34,16 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaProducerEndpointBuilder" /> and configures
         ///     it.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IKafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            Action<IKafkaProducerEndpointBuilder> endpointBuilderAction);
+            Action<IKafkaProducerEndpointBuilder> endpointBuilderAction,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an outbound endpoint to produce the specified message type to a Kafka topic.
@@ -52,13 +58,18 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
         ///     <see cref="Action{T}" /> to be invoked to build them.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IKafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IKafkaEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
-            KafkaOutboundEndpointRouter<object>.RouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions);
+            DictionaryOutboundRouter<object, KafkaProducerEndpoint>.RouterFunction routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an outbound endpoint to produce the specified message type to a Kafka topic.
@@ -73,12 +84,17 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
         ///     <see cref="Action{T}" /> to be invoked to build them.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IKafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            KafkaOutboundEndpointRouter<TMessage>.RouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions);
+            DictionaryOutboundRouter<TMessage, KafkaProducerEndpoint>.RouterFunction routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an outbound endpoint to produce the specified message type to a Kafka topic.
@@ -93,13 +109,19 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
         ///     <see cref="Action{T}" /> to be invoked to build them.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IKafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IKafkaEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
-            KafkaOutboundEndpointRouter<object>.SingleEndpointRouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions);
+            DictionaryOutboundRouter<object, KafkaProducerEndpoint>.SingleEndpointRouterFunction
+                routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an outbound endpoint to produce the specified message type to a Kafka topic.
@@ -114,12 +136,18 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
         ///     <see cref="Action{T}" /> to be invoked to build them.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IKafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            KafkaOutboundEndpointRouter<TMessage>.SingleEndpointRouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions);
+            DictionaryOutboundRouter<TMessage, KafkaProducerEndpoint>.SingleEndpointRouterFunction
+                routerFunction,
+            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an outbound endpoint to produce the specified message type to a Kafka topic.
@@ -131,12 +159,17 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaProducerEndpointBuilder" /> and configures
         ///     it.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IKafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IKafkaEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
-            Action<IKafkaProducerEndpointBuilder> endpointBuilderAction);
+            Action<IKafkaProducerEndpointBuilder> endpointBuilderAction,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an inbound endpoint to consume from a Kafka topic.

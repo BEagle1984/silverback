@@ -43,27 +43,29 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         public IMqttEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            Action<IMqttProducerEndpointBuilder> endpointBuilderAction) =>
-            AddOutbound(typeof(TMessage), endpointBuilderAction);
+            Action<IMqttProducerEndpointBuilder> endpointBuilderAction,
+            bool preloadProducers = true) =>
+            AddOutbound(typeof(TMessage), endpointBuilderAction, preloadProducers);
 
         public IMqttEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
             MqttOutboundEndpointRouter<object>.RouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions)
+            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true)
         {
-            this.AddOutbound(
-                messageType,
-                new MqttOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, ClientConfig));
+            var router = new MqttOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, ClientConfig);
+            this.AddOutbound(messageType, router, preloadProducers);
 
             return this;
         }
 
         public IMqttEndpointsConfigurationBuilder AddOutbound<TMessage>(
             MqttOutboundEndpointRouter<TMessage>.RouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions)
+            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true)
         {
-            this.AddOutbound(
-                new MqttOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, ClientConfig));
+            var router = new MqttOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, ClientConfig);
+            this.AddOutbound(router, preloadProducers);
 
             return this;
         }
@@ -71,28 +73,30 @@ namespace Silverback.Messaging.Configuration.Mqtt
         public IMqttEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
             MqttOutboundEndpointRouter<object>.SingleEndpointRouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions)
+            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true)
         {
-            this.AddOutbound(
-                messageType,
-                new MqttOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, ClientConfig));
+            var router = new MqttOutboundEndpointRouter<object>(routerFunction, endpointBuilderActions, ClientConfig);
+            this.AddOutbound(messageType, router, preloadProducers);
 
             return this;
         }
 
         public IMqttEndpointsConfigurationBuilder AddOutbound<TMessage>(
             MqttOutboundEndpointRouter<TMessage>.SingleEndpointRouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions)
+            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true)
         {
-            this.AddOutbound(
-                new MqttOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, ClientConfig));
+            var router = new MqttOutboundEndpointRouter<TMessage>(routerFunction, endpointBuilderActions, ClientConfig);
+            this.AddOutbound(router, preloadProducers);
 
             return this;
         }
 
         public IMqttEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
-            Action<IMqttProducerEndpointBuilder> endpointBuilderAction)
+            Action<IMqttProducerEndpointBuilder> endpointBuilderAction,
+            bool preloadProducers = true)
         {
             Check.NotNull(messageType, nameof(messageType));
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
@@ -100,7 +104,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
             var builder = new MqttProducerEndpointBuilder(ClientConfig, this);
             endpointBuilderAction.Invoke(builder);
 
-            _endpointsConfigurationBuilder.AddOutbound(messageType, builder.Build());
+            _endpointsConfigurationBuilder.AddOutbound(messageType, builder.Build(), preloadProducers);
 
             return this;
         }

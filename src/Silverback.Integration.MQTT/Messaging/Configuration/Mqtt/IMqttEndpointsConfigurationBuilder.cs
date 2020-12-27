@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Outbound.Routing;
 
 namespace Silverback.Messaging.Configuration.Mqtt
@@ -44,11 +45,16 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     An <see cref="Action{T}" /> that takes the <see cref="IMqttProducerEndpointBuilder" /> and configures
         ///     it.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IMqttEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IMqttEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            Action<IMqttProducerEndpointBuilder> endpointBuilderAction);
+            Action<IMqttProducerEndpointBuilder> endpointBuilderAction,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an outbound endpoint to produce the specified message type to a Mqtt topic.
@@ -63,13 +69,18 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
         ///     <see cref="Action{T}" /> to be invoked to build them.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IMqttEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IMqttEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
-            MqttOutboundEndpointRouter<object>.RouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions);
+            DictionaryOutboundRouter<object, MqttProducerEndpoint>.RouterFunction routerFunction,
+            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an outbound endpoint to produce the specified message type to a Mqtt topic.
@@ -84,12 +95,17 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
         ///     <see cref="Action{T}" /> to be invoked to build them.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IMqttEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IMqttEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            MqttOutboundEndpointRouter<TMessage>.RouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions);
+            DictionaryOutboundRouter<TMessage, MqttProducerEndpoint>.RouterFunction routerFunction,
+            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an outbound endpoint to produce the specified message type to a Mqtt topic.
@@ -104,13 +120,19 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
         ///     <see cref="Action{T}" /> to be invoked to build them.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IMqttEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IMqttEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
-            MqttOutboundEndpointRouter<object>.SingleEndpointRouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions);
+            DictionaryOutboundRouter<object, MqttProducerEndpoint>.SingleEndpointRouterFunction
+                routerFunction,
+            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an outbound endpoint to produce the specified message type to a Mqtt topic.
@@ -125,12 +147,18 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
         ///     <see cref="Action{T}" /> to be invoked to build them.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IMqttEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IMqttEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            MqttOutboundEndpointRouter<TMessage>.SingleEndpointRouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions);
+            DictionaryOutboundRouter<TMessage, MqttProducerEndpoint>.SingleEndpointRouterFunction
+                routerFunction,
+            IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an outbound endpoint to produce the specified message type to a Mqtt topic.
@@ -142,12 +170,17 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     An <see cref="Action{T}" /> that takes the <see cref="IMqttProducerEndpointBuilder" /> and configures
         ///     it.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IMqttEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public IMqttEndpointsConfigurationBuilder AddOutbound(
             Type messageType,
-            Action<IMqttProducerEndpointBuilder> endpointBuilderAction);
+            Action<IMqttProducerEndpointBuilder> endpointBuilderAction,
+            bool preloadProducers = true);
 
         /// <summary>
         ///     Adds an inbound endpoint to consume from a Mqtt topic.

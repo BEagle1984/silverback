@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
@@ -21,7 +22,7 @@ namespace Silverback.Messaging.Configuration
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
         /// <param name="endpoints">
-        ///     The endpoints (topics).
+        ///     The collection of <see cref="IProducerEndpoint" /> representing the destination topics or queues.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be published to this endpoint.
@@ -45,8 +46,12 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
-        /// <param name="endpoints">
-        ///     The endpoints (topics).
+        /// <param name="endpoint">
+        ///     The <see cref="IProducerEndpoint" /> representing the destination topic or queue.
+        /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
         /// </param>
         /// <typeparam name="TMessage">
         ///     The type of the messages to be published to this endpoint.
@@ -56,12 +61,46 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         public static IEndpointsConfigurationBuilder AddOutbound<TMessage>(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
-            IEnumerable<IProducerEndpoint> endpoints)
+            IProducerEndpoint endpoint,
+            bool preloadProducers = true)
+        {
+            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(endpoint, nameof(endpoint));
+
+            return endpointsConfigurationBuilder.AddOutbound(
+                typeof(TMessage),
+                new[] { endpoint },
+                preloadProducers);
+        }
+
+        /// <summary>
+        ///     Adds an outbound endpoint for the specified message type.
+        /// </summary>
+        /// <param name="endpointsConfigurationBuilder">
+        ///     The <see cref="IEndpointsConfigurationBuilder" />.
+        /// </param>
+        /// <param name="endpoints">
+        ///     The collection of <see cref="IProducerEndpoint" /> representing the destination topics or queues.
+        /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be published to this endpoint.
+        /// </typeparam>
+        /// <returns>
+        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static IEndpointsConfigurationBuilder AddOutbound<TMessage>(
+            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
+            IEnumerable<IProducerEndpoint> endpoints,
+            bool preloadProducers = true)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
             Check.NotNull(endpoints, nameof(endpoints));
 
-            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), endpoints);
+            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), endpoints, preloadProducers);
         }
 
         /// <summary>
@@ -73,8 +112,12 @@ namespace Silverback.Messaging.Configuration
         /// <param name="messageType">
         ///     The type of the messages to be published to this endpoint.
         /// </param>
-        /// <param name="endpoints">
-        ///     The endpoints (topics).
+        /// <param name="endpoint">
+        ///     The <see cref="IProducerEndpoint" /> representing the destination topic or queue.
+        /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
         /// </param>
         /// <returns>
         ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
@@ -82,13 +125,17 @@ namespace Silverback.Messaging.Configuration
         public static IEndpointsConfigurationBuilder AddOutbound(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
             Type messageType,
-            params IProducerEndpoint[] endpoints)
+            IProducerEndpoint endpoint,
+            bool preloadProducers = true)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
             Check.NotNull(messageType, nameof(messageType));
-            Check.NotNull(endpoints, nameof(endpoints));
+            Check.NotNull(endpoint, nameof(endpoint));
 
-            return endpointsConfigurationBuilder.AddOutbound(messageType, (IEnumerable<IProducerEndpoint>)endpoints);
+            return endpointsConfigurationBuilder.AddOutbound(
+                messageType,
+                new[] { endpoint },
+                preloadProducers);
         }
 
         /// <summary>
@@ -101,7 +148,7 @@ namespace Silverback.Messaging.Configuration
         ///     The type of the messages to be published to this endpoint.
         /// </param>
         /// <param name="endpoints">
-        ///     The endpoints (topics).
+        ///     The collection of <see cref="IProducerEndpoint" /> representing the destination topics or queues.
         /// </param>
         /// <returns>
         ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
@@ -109,7 +156,7 @@ namespace Silverback.Messaging.Configuration
         public static IEndpointsConfigurationBuilder AddOutbound(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
             Type messageType,
-            IEnumerable<IProducerEndpoint> endpoints)
+            params IProducerEndpoint[] endpoints)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
             Check.NotNull(messageType, nameof(messageType));
@@ -117,7 +164,42 @@ namespace Silverback.Messaging.Configuration
 
             return endpointsConfigurationBuilder.AddOutbound(
                 messageType,
-                new StaticOutboundRouter(endpoints));
+                (IEnumerable<IProducerEndpoint>)endpoints);
+        }
+
+        /// <summary>
+        ///     Adds an outbound endpoint for the specified message type.
+        /// </summary>
+        /// <param name="endpointsConfigurationBuilder">
+        ///     The <see cref="IEndpointsConfigurationBuilder" />.
+        /// </param>
+        /// <param name="messageType">
+        ///     The type of the messages to be published to this endpoint.
+        /// </param>
+        /// <param name="endpoints">
+        ///     The collection of <see cref="IProducerEndpoint" /> representing the destination topics or queues.
+        /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static IEndpointsConfigurationBuilder AddOutbound(
+            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
+            Type messageType,
+            IEnumerable<IProducerEndpoint> endpoints,
+            bool preloadProducers = true)
+        {
+            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+            Check.NotNull(messageType, nameof(messageType));
+            Check.NotNull(endpoints, nameof(endpoints));
+
+            return endpointsConfigurationBuilder.AddOutbound(
+                messageType,
+                new StaticOutboundRouter(endpoints),
+                preloadProducers);
         }
 
         /// <summary>
@@ -133,16 +215,24 @@ namespace Silverback.Messaging.Configuration
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static IEndpointsConfigurationBuilder AddOutbound<TMessage, TRouter>(
-            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder)
+            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
+            bool preloadProducers = true)
             where TRouter : IOutboundRouter<TMessage>
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
 
-            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), typeof(TRouter));
+            return endpointsConfigurationBuilder.AddOutbound(
+                typeof(TMessage),
+                typeof(TRouter),
+                preloadProducers);
         }
 
         /// <summary>
@@ -157,17 +247,22 @@ namespace Silverback.Messaging.Configuration
         /// <param name="router">
         ///     The <see cref="IOutboundRouter{TMessage}" /> to be used to determine the destination endpoint.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static IEndpointsConfigurationBuilder AddOutbound<TMessage>(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
-            IOutboundRouter<TMessage> router)
+            IOutboundRouter<TMessage> router,
+            bool preloadProducers = true)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
             Check.NotNull(router, nameof(router));
 
-            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), router);
+            return endpointsConfigurationBuilder.AddOutbound(typeof(TMessage), router, preloadProducers);
         }
 
         /// <summary>
@@ -183,13 +278,18 @@ namespace Silverback.Messaging.Configuration
         ///     The type of the <see cref="IOutboundRouter{TMessage}" /> to be used to determine the destination
         ///     endpoint.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static IEndpointsConfigurationBuilder AddOutbound(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
             Type messageType,
-            Type routerType)
+            Type routerType,
+            bool preloadProducers = true)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
             Check.NotNull(messageType, nameof(messageType));
@@ -198,6 +298,14 @@ namespace Silverback.Messaging.Configuration
             endpointsConfigurationBuilder.GetOutboundRoutingConfiguration().Add(
                 messageType,
                 serviceProvider => (IOutboundRouter)serviceProvider.GetRequiredService(routerType));
+
+            if (preloadProducers)
+            {
+                var router = (IOutboundRouter)endpointsConfigurationBuilder.ServiceProvider
+                    .GetRequiredService(routerType);
+
+                PreloadProducers(router, endpointsConfigurationBuilder.ServiceProvider);
+            }
 
             return endpointsConfigurationBuilder;
         }
@@ -214,13 +322,18 @@ namespace Silverback.Messaging.Configuration
         /// <param name="router">
         ///     The <see cref="IOutboundRouter{TMessage}" /> to be used to determine the destination endpoint.
         /// </param>
+        /// <param name="preloadProducers">
+        ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+        ///     <see cref="IProducer" /> will be created only when the first message is about to be produced.
+        /// </param>
         /// <returns>
         ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static IEndpointsConfigurationBuilder AddOutbound(
             this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
             Type messageType,
-            IOutboundRouter router)
+            IOutboundRouter router,
+            bool preloadProducers = true)
         {
             Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
             Check.NotNull(messageType, nameof(messageType));
@@ -229,7 +342,17 @@ namespace Silverback.Messaging.Configuration
             endpointsConfigurationBuilder.GetOutboundRoutingConfiguration()
                 .Add(messageType, _ => router);
 
+            if (preloadProducers)
+                PreloadProducers(router, endpointsConfigurationBuilder.ServiceProvider);
+
             return endpointsConfigurationBuilder;
+        }
+
+        private static void PreloadProducers(IOutboundRouter router, IServiceProvider serviceProvider)
+        {
+            var brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
+
+            router.Endpoints.ForEach(endpoint => brokers.GetProducer(endpoint));
         }
 
         private static IOutboundRoutingConfiguration GetOutboundRoutingConfiguration(

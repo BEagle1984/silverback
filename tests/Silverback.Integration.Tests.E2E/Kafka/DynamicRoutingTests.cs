@@ -16,6 +16,7 @@ using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
+using Silverback.Util;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -93,12 +94,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     })
                                 .AddOutbound(
                                     typeof(TestEventTwo),
-                                    (message, _, endpointsDictionary) => ((TestEventTwo)message).Content switch
-                                    {
-                                        "one" => endpointsDictionary["one"],
-                                        "two" => endpointsDictionary["two"],
-                                        _ => endpointsDictionary["three"]
-                                    },
+                                    (message, _, endpointsDictionary) =>
+                                        ((TestEventTwo)message).Content switch
+                                        {
+                                            "one" => endpointsDictionary["one"],
+                                            "two" => endpointsDictionary["two"],
+                                            _ => endpointsDictionary["three"]
+                                        },
                                     new Dictionary<string, Action<IKafkaProducerEndpointBuilder>>
                                     {
                                         { "one", endpoint => endpoint.ProduceTo("topicA") },
@@ -138,7 +140,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task DynamicRouting_GenericMultipleEndpointRouter_MessagesRouted()
+        public async Task DynamicRouting_WithProducerPreloading_ProducersPreloaded()
         {
             Host.ConfigureServices(
                     services => services
@@ -165,12 +167,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     })
                                 .AddOutbound(
                                     typeof(TestEventTwo),
-                                    (message, _, endpointsDictionary) => ((TestEventTwo)message).Content switch
-                                    {
-                                        "one" => endpointsDictionary.Values.Take(1),
-                                        "two-three" => endpointsDictionary.Values.Skip(1),
-                                        _ => throw new ArgumentOutOfRangeException()
-                                    },
+                                    (message, _, endpointsDictionary) =>
+                                        ((TestEventTwo)message).Content switch
+                                        {
+                                            "one" => endpointsDictionary.Values.Take(1),
+                                            "two-three" => endpointsDictionary.Values.Skip(1),
+                                            _ => throw new ArgumentOutOfRangeException()
+                                        },
                                     new Dictionary<string, Action<IKafkaProducerEndpointBuilder>>
                                     {
                                         { "one", endpoint => endpoint.ProduceTo("topicA") },
@@ -207,6 +210,111 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             topicA.TotalMessagesCount.Should().Be(1);
             topicB.TotalMessagesCount.Should().Be(1);
             topicC.TotalMessagesCount.Should().Be(1);
+        }
+
+        [Fact]
+        public void DynamicRouting_WithoutProducerPreloading_ProducersLoadedAtFirstProduce()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddSingletonOutboundRouter<TestOutboundRouter>()
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<TestEventOne>(
+                                    (message, _, endpointsDictionary) => message.Content switch
+                                    {
+                                        "one" => endpointsDictionary.Values.Take(1),
+                                        "two-three" => endpointsDictionary.Values.Skip(1),
+                                        _ => throw new ArgumentOutOfRangeException()
+                                    },
+                                    new Dictionary<string, Action<IKafkaProducerEndpointBuilder>>
+                                    {
+                                        { "one", endpoint => endpoint.ProduceTo("topic1") },
+                                        { "two", endpoint => endpoint.ProduceTo("topic2") },
+                                        { "three", endpoint => endpoint.ProduceTo("topic3") }
+                                    })
+                                .AddOutbound(
+                                    typeof(TestEventTwo),
+                                    (message, _, endpointsDictionary) =>
+                                        ((TestEventTwo)message).Content switch
+                                        {
+                                            "one" => endpointsDictionary.Values.Take(1),
+                                            "two-three" => endpointsDictionary.Values.Skip(1),
+                                            _ => throw new ArgumentOutOfRangeException()
+                                        },
+                                    new Dictionary<string, Action<IKafkaProducerEndpointBuilder>>
+                                    {
+                                        { "one", endpoint => endpoint.ProduceTo("topicA") },
+                                        { "two", endpoint => endpoint.ProduceTo("topicB") },
+                                        { "three", endpoint => endpoint.ProduceTo("topicC") }
+                                    }))
+                        .AddIntegrationSpy())
+                .Run();
+
+            Helper.Broker.Producers.Count.Should().Be(6);
+            Helper.Broker.Producers.ForEach(producer => producer.IsConnected.Should().BeTrue());
+            Helper.Spy.OutboundEnvelopes.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task DynamicRouting_GenericMultipleEndpointRouter_ProducersPreloaded()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddSingletonOutboundRouter<TestOutboundRouter>()
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<TestEventOne>(
+                                    (message, _, endpointsDictionary) => message.Content switch
+                                    {
+                                        "one" => endpointsDictionary.Values.Take(1),
+                                        "two-three" => endpointsDictionary.Values.Skip(1),
+                                        _ => throw new ArgumentOutOfRangeException()
+                                    },
+                                    new Dictionary<string, Action<IKafkaProducerEndpointBuilder>>
+                                    {
+                                        { "one", endpoint => endpoint.ProduceTo("topic1") },
+                                        { "two", endpoint => endpoint.ProduceTo("topic2") },
+                                        { "three", endpoint => endpoint.ProduceTo("topic3") }
+                                    },
+                                    false)
+                                .AddOutbound(
+                                    typeof(TestEventTwo),
+                                    (message, _, endpointsDictionary) =>
+                                        ((TestEventTwo)message).Content switch
+                                        {
+                                            "one" => endpointsDictionary.Values.Take(1),
+                                            "two-three" => endpointsDictionary.Values.Skip(1),
+                                            _ => throw new ArgumentOutOfRangeException()
+                                        },
+                                    new Dictionary<string, Action<IKafkaProducerEndpointBuilder>>
+                                    {
+                                        { "one", endpoint => endpoint.ProduceTo("topicA") },
+                                        { "two", endpoint => endpoint.ProduceTo("topicB") },
+                                        { "three", endpoint => endpoint.ProduceTo("topicC") }
+                                    },
+                                    false))
+                        .AddIntegrationSpy())
+                .Run();
+
+            Helper.Broker.Producers.Count.Should().Be(0);
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new TestEventOne { Content = "one" });
+            await publisher.PublishAsync(new TestEventTwo { Content = "one" });
+
+            Helper.Broker.Producers.Count.Should().Be(2);
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
