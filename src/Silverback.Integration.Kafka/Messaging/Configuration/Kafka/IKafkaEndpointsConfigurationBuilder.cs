@@ -52,7 +52,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The type of the messages to be published to this endpoint.
         /// </param>
         /// <param name="routerFunction">
-        ///     The <see cref="KafkaOutboundEndpointRouter{TMessage}.RouterFunction" />.
+        ///     The <see cref="DictionaryOutboundRouter{TMessage, TEndpoint}.RouterFunction" />.
         /// </param>
         /// <param name="endpointBuilderActions">
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
@@ -78,7 +78,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The type of the messages to be published to this endpoint.
         /// </typeparam>
         /// <param name="routerFunction">
-        ///     The <see cref="KafkaOutboundEndpointRouter{TMessage}.RouterFunction" />.
+        ///     The <see cref="DictionaryOutboundRouter{TMessage, TEndpoint}.RouterFunction" />.
         /// </param>
         /// <param name="endpointBuilderActions">
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
@@ -103,7 +103,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The type of the messages to be published to this endpoint.
         /// </param>
         /// <param name="routerFunction">
-        ///     The <see cref="KafkaOutboundEndpointRouter{TMessage}.SingleEndpointRouterFunction" />.
+        ///     The <see cref="DictionaryOutboundRouter{TMessage, TEndpoint}.SingleEndpointRouterFunction" />.
         /// </param>
         /// <param name="endpointBuilderActions">
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
@@ -130,7 +130,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The type of the messages to be published to this endpoint.
         /// </typeparam>
         /// <param name="routerFunction">
-        ///     The <see cref="KafkaOutboundEndpointRouter{TMessage}.SingleEndpointRouterFunction" />.
+        ///     The <see cref="DictionaryOutboundRouter{TMessage, TEndpoint}.SingleEndpointRouterFunction" />.
         /// </param>
         /// <param name="endpointBuilderActions">
         ///     The <see cref="IReadOnlyDictionary{TKey,TValue}" /> containing the key of each endpoint and the
