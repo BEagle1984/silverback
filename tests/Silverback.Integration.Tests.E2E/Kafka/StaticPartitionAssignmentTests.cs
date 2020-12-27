@@ -51,7 +51,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .ConsumeFrom(
                                             new TopicPartition("topic1", 2),
                                             new TopicPartition("topic2", 2))
-                                        .Configure(config => { config.GroupId = "consumer1"; })))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
