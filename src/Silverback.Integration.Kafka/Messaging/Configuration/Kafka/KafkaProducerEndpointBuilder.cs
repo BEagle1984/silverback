@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Confluent.Kafka;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.KafkaEvents.Statistics;
 using Silverback.Util;
@@ -15,6 +16,8 @@ namespace Silverback.Messaging.Configuration.Kafka
         private readonly KafkaClientConfig? _clientConfig;
 
         private string? _topicName;
+
+        private int? _partitionIndex;
 
         private Action<KafkaProducerConfig>? _configAction;
 
@@ -43,11 +46,12 @@ namespace Silverback.Messaging.Configuration.Kafka
         protected override IKafkaProducerEndpointBuilder This => this;
 
         /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo" />
-        public IKafkaProducerEndpointBuilder ProduceTo(string topicName)
+        public IKafkaProducerEndpointBuilder ProduceTo(string topicName, int? partition = null)
         {
             Check.NotEmpty(topicName, nameof(topicName));
 
             _topicName = topicName;
+            _partitionIndex = partition;
 
             return this;
         }
@@ -80,6 +84,9 @@ namespace Silverback.Messaging.Configuration.Kafka
                 throw new EndpointConfigurationException("Topic name not set.");
 
             var endpoint = new KafkaProducerEndpoint(_topicName, _clientConfig);
+
+            if (_partitionIndex != null)
+                endpoint.Partition = new Partition(_partitionIndex.Value);
 
             _configAction?.Invoke(endpoint.Configuration);
 

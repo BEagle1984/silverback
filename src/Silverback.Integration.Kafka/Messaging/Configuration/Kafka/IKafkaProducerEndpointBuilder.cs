@@ -4,6 +4,7 @@
 using System;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.KafkaEvents.Statistics;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Configuration.Kafka
 {
@@ -18,10 +19,15 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <param name="topicName">
         ///     The name of the topic.
         /// </param>
+        /// <param name="partition">
+        ///     The optional partition index. If <c>null</c> the the partition is automatically derived from the message
+        ///     key (use <see cref="KafkaKeyMemberAttribute" /> to specify a message key, otherwise a random one will be
+        ///     generated).
+        /// </param>
         /// <returns>
         ///     The <see cref="IKafkaProducerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
-        IKafkaProducerEndpointBuilder ProduceTo(string topicName);
+        IKafkaProducerEndpointBuilder ProduceTo(string topicName, int? partition = null);
 
         /// <summary>
         ///     Configures the Kafka client properties.
@@ -49,6 +55,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <returns>
         ///     The <see cref="IKafkaProducerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
-        IKafkaProducerEndpointBuilder OnStatisticsReceived(Action<KafkaStatistics, string, KafkaProducer> handler);
+        IKafkaProducerEndpointBuilder OnStatisticsReceived(
+            Action<KafkaStatistics, string, KafkaProducer> handler);
     }
 }

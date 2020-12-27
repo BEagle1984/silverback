@@ -3,8 +3,10 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.KafkaEvents;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging
 {
@@ -27,6 +29,7 @@ namespace Silverback.Messaging
             : base(name)
         {
             Configuration = new KafkaProducerConfig(clientConfig);
+            TopicPartition = new TopicPartition(name, Partition.Any);
         }
 
         /// <summary>
@@ -40,6 +43,22 @@ namespace Silverback.Messaging
         /// </summary>
         public KafkaProducerConfig Configuration { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the target partition. When not set the partition is automatically derived from the message
+        ///     key (use <see cref="KafkaKeyMemberAttribute" /> to specify a message key, otherwise a random one will be
+        ///     generated).
+        /// </summary>
+        public Partition Partition
+        {
+            get => TopicPartition.Partition;
+            set => TopicPartition = new TopicPartition(Name, value);
+        }
+
+        /// <summary>
+        ///     Gets the <see cref="TopicPartition"/> representing this endpoint.
+        /// </summary>
+        public TopicPartition TopicPartition { get; private set; }
+
         /// <inheritdoc cref="ProducerEndpoint.Validate" />
         public override void Validate()
         {
@@ -47,6 +66,12 @@ namespace Silverback.Messaging
 
             if (Configuration == null)
                 throw new EndpointConfigurationException("Configuration cannot be null.");
+
+            if (Partition.Value < -1)
+            {
+                throw new EndpointConfigurationException(
+                    "Partition should be set to an index greater or equal to 0, or Partition.Any.");
+            }
 
             Configuration.Validate();
         }
@@ -60,7 +85,9 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other))
                 return true;
 
-            return BaseEquals(other) && Equals(Configuration, other.Configuration);
+            return BaseEquals(other) &&
+                   Equals(Configuration, other.Configuration) &&
+                   Partition == other.Partition;
         }
 
         /// <inheritdoc cref="object.Equals(object)" />
@@ -79,7 +106,10 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
+        [SuppressMessage(
+            "ReSharper",
+            "NonReadonlyMemberInGetHashCode",
+            Justification = "Protected set is not abused")]
         public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
     }
 }

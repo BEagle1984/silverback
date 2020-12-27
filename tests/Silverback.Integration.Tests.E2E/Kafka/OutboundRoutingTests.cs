@@ -22,11 +22,147 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class DynamicRoutingTests : KafkaTestFixture
+    public class OutboundRoutingTests : KafkaTestFixture
     {
-        public DynamicRoutingTests(ITestOutputHelper testOutputHelper)
+        public OutboundRoutingTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
+        }
+
+        [Fact]
+        public async Task OutboundRouting_AnyPartition_MessagesRoutedToRandomPartition()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                        .AddIntegrationSpy())
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "2" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+            await publisher.PublishAsync(new TestEventOne { Content = "4" });
+            await publisher.PublishAsync(new TestEventOne { Content = "5" });
+
+            DefaultTopic.Partitions
+                .Where(partition => partition.TotalMessagesCount > 0)
+                .Should().HaveCountGreaterThan(1);
+        }
+
+        [Fact]
+        public async Task OutboundRouting_SpecificPartition_MessagesRoutedToSpecifiedPartition()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName, 3)))
+                        .AddIntegrationSpy())
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "2" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+            await publisher.PublishAsync(new TestEventOne { Content = "4" });
+            await publisher.PublishAsync(new TestEventOne { Content = "5" });
+
+            DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(0);
+            DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(0);
+            DefaultTopic.Partitions[2].TotalMessagesCount.Should().Be(0);
+            DefaultTopic.Partitions[3].TotalMessagesCount.Should().Be(5);
+            DefaultTopic.Partitions[4].TotalMessagesCount.Should().Be(0);
+        }
+
+        [Fact]
+        public async Task OutboundRouting_AnyPartitionWithPartitionKey_MessagesRoutedToPredictablePartition()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                        .AddIntegrationSpy())
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "1" });
+            await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "2" });
+            await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "3" });
+            await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "4" });
+            await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = "5" });
+
+            DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(2);
+            DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(1);
+            DefaultTopic.Partitions[2].TotalMessagesCount.Should().Be(0);
+            DefaultTopic.Partitions[3].TotalMessagesCount.Should().Be(0);
+            DefaultTopic.Partitions[4].TotalMessagesCount.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task
+            OutboundRouting_SpecificPartitionWithPartitionKey_MessagesRoutedToSpecifiedPartition()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName, 3)))
+                        .AddIntegrationSpy())
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "1" });
+            await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "2" });
+            await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 1, Content = "3" });
+            await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "4" });
+            await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = "5" });
+
+            DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(0);
+            DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(0);
+            DefaultTopic.Partitions[2].TotalMessagesCount.Should().Be(0);
+            DefaultTopic.Partitions[3].TotalMessagesCount.Should().Be(5);
+            DefaultTopic.Partitions[4].TotalMessagesCount.Should().Be(0);
         }
 
         [Fact]
@@ -137,6 +273,97 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             topicA.TotalMessagesCount.Should().Be(1);
             topicB.TotalMessagesCount.Should().Be(1);
             topicC.TotalMessagesCount.Should().Be(0);
+        }
+
+        [Fact]
+        public async Task DynamicRouting_GenericSingleEndpointRouter_MessagesRoutedToPartition()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
+                        .AddSingletonOutboundRouter<TestOutboundRouter>()
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<TestEventOne>(
+                                    (message, _, endpointsDictionary) => message.Content switch
+                                    {
+                                        "one" => endpointsDictionary["one"],
+                                        "two" => endpointsDictionary["two"],
+                                        _ => endpointsDictionary["three"]
+                                    },
+                                    new Dictionary<string, Action<IKafkaProducerEndpointBuilder>>
+                                    {
+                                        { "one", endpoint => endpoint.ProduceTo("topic1", 1) },
+                                        { "two", endpoint => endpoint.ProduceTo("topic1", 2) },
+                                        { "three", endpoint => endpoint.ProduceTo("topic1", 3) }
+                                    })
+                                .AddOutbound(
+                                    typeof(TestEventTwo),
+                                    (message, _, endpointsDictionary) =>
+                                        ((TestEventTwo)message).Content switch
+                                        {
+                                            "one" => endpointsDictionary["one"],
+                                            "two" => endpointsDictionary["two"],
+                                            _ => endpointsDictionary["three"]
+                                        },
+                                    new Dictionary<string, Action<IKafkaProducerEndpointBuilder>>
+                                    {
+                                        { "one", endpoint => endpoint.ProduceTo("topicA", 1) },
+                                        { "two", endpoint => endpoint.ProduceTo("topicA", 2) },
+                                        { "three", endpoint => endpoint.ProduceTo("topicA", 3) }
+                                    }))
+                        .AddIntegrationSpy())
+                .Run();
+
+            var topic1 = GetTopic("topic1");
+            var topicA = GetTopic("topicA");
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne { Content = "one" });
+
+            topic1.Partitions[0].TotalMessagesCount.Should().Be(0);
+            topic1.Partitions[1].TotalMessagesCount.Should().Be(1);
+            topic1.Partitions[2].TotalMessagesCount.Should().Be(0);
+            topic1.Partitions[3].TotalMessagesCount.Should().Be(0);
+            topic1.Partitions[4].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[0].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[1].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[2].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[3].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[4].TotalMessagesCount.Should().Be(0);
+
+            await publisher.PublishAsync(new TestEventOne { Content = "two" });
+
+            topic1.Partitions[0].TotalMessagesCount.Should().Be(0);
+            topic1.Partitions[1].TotalMessagesCount.Should().Be(1);
+            topic1.Partitions[2].TotalMessagesCount.Should().Be(1);
+            topic1.Partitions[3].TotalMessagesCount.Should().Be(0);
+            topic1.Partitions[4].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[0].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[1].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[2].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[3].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[4].TotalMessagesCount.Should().Be(0);
+
+            await publisher.PublishAsync(new TestEventTwo { Content = "one" });
+            await publisher.PublishAsync(new TestEventTwo { Content = "two" });
+
+            topic1.Partitions[0].TotalMessagesCount.Should().Be(0);
+            topic1.Partitions[1].TotalMessagesCount.Should().Be(1);
+            topic1.Partitions[2].TotalMessagesCount.Should().Be(1);
+            topic1.Partitions[3].TotalMessagesCount.Should().Be(0);
+            topic1.Partitions[4].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[0].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[1].TotalMessagesCount.Should().Be(1);
+            topicA.Partitions[2].TotalMessagesCount.Should().Be(1);
+            topicA.Partitions[3].TotalMessagesCount.Should().Be(0);
+            topicA.Partitions[4].TotalMessagesCount.Should().Be(0);
         }
 
         [Fact]

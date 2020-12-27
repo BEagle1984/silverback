@@ -21,9 +21,9 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         string Name { get; }
 
         /// <summary>
-        ///     Gets the number of partitions.
+        ///     Gets the partitions in this topic.
         /// </summary>
-        int PartitionsCount { get; }
+        IReadOnlyList<IInMemoryPartition> Partitions { get; }
 
         /// <summary>
         ///     Gets the number of messages written into this topic.

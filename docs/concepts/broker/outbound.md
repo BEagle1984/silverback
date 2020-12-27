@@ -29,7 +29,7 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                 .AddOutbound<IIntegrationEvent>(endpoint => endpoint
                     .ProduceTo("order-events")
                     .EnableChunking(500000)
-                    .ProduceToOutbox());
+                    .ProduceToOutbox()));
 }
 ```
 # [Legacy](#tab/kafka-producer-legacy)
@@ -67,7 +67,7 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
     public void Configure(IEndpointsConfigurationBuilder builder) =>
         builder
-            .AddInbound(
+            .AddOutbound<IIntegrationEvent>(
                 new RabbitQueueProducerEndpoint("inventory-commands-queue")
                 {
                     Connection = new RabbitConnectionConfig
@@ -83,7 +83,7 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                         IsAutoDeleteEnabled = false
                     }
                 })
-            .AddInbound(
+            .AddOutbound<IIntegrationEvent>(
                 new RabbitExchangeProducerEndpoint("order-events")
                     {
                         Connection = new RabbitConnectionConfig

@@ -109,7 +109,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             act.Should().NotThrow();
         }
 
-        private static KafkaProducerConfig GetValidConfig() => new KafkaProducerConfig
+        private static KafkaProducerConfig GetValidConfig() => new()
         {
             BootstrapServers = "test-server"
         };

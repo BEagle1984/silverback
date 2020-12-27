@@ -87,7 +87,9 @@ namespace Silverback.Messaging.Broker
                     kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
                 }
 
-                var deliveryResult = await GetConfluentProducer().ProduceAsync(Endpoint.Name, kafkaMessage)
+                var deliveryResult = await GetConfluentProducer().ProduceAsync(
+                        Endpoint.TopicPartition,
+                        kafkaMessage)
                     .ConfigureAwait(false);
 
                 if (Endpoint.Configuration.ArePersistenceStatusReportsEnabled)

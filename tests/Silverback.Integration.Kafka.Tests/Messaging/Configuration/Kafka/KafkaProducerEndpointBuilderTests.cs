@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using Confluent.Kafka;
 using FluentAssertions;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -54,6 +55,23 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             var endpoint = builder.Build();
 
             endpoint.Name.Should().Be("some-topic");
+            endpoint.Partition.Should().Be(Partition.Any);
+        }
+
+        [Fact]
+        public void ProduceTo_TopicNameAndPartition_TopicNameSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo("some-topic", 42);
+            var endpoint = builder.Build();
+
+            endpoint.Name.Should().Be("some-topic");
+            endpoint.Partition.Value.Should().Be(42);
         }
 
         [Fact]

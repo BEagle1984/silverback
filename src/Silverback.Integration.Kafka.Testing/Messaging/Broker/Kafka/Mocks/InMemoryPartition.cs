@@ -7,7 +7,7 @@ using Confluent.Kafka;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
-    internal class InMemoryPartition
+    internal class InMemoryPartition : IInMemoryPartition
     {
         private const int MaxRetainedMessages = 100;
 

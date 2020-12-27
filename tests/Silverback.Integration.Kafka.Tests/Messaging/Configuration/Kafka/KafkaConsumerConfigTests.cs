@@ -85,7 +85,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             act.Should().ThrowExactly<EndpointConfigurationException>();
         }
 
-        private static KafkaConsumerConfig GetValidConfig() => new KafkaConsumerConfig
+        private static KafkaConsumerConfig GetValidConfig() => new()
         {
             BootstrapServers = "test-server"
         };

@@ -34,32 +34,36 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public Task<DeliveryResult<byte[]?, byte[]?>> ProduceAsync(
             string topic,
             Message<byte[]?, byte[]?> message,
+            CancellationToken cancellationToken = default) =>
+            ProduceAsync(new TopicPartition(topic, Partition.Any), message, cancellationToken);
+
+        public Task<DeliveryResult<byte[]?, byte[]?>> ProduceAsync(
+            TopicPartition topicPartition,
+            Message<byte[]?, byte[]?> message,
             CancellationToken cancellationToken = default)
         {
             Check.NotNull(message, nameof(message));
 
-            var inMemoryTopic = _topics[topic];
-            int partition = GetPartitionIndex(inMemoryTopic, message.Key);
+            var inMemoryTopic = _topics[topicPartition.Topic];
 
-            var offset = inMemoryTopic.Push(partition, message);
+            var partitionIndex =
+                topicPartition.Partition == Partition.Any
+                    ? GetPartitionIndex(inMemoryTopic, message.Key)
+                    : topicPartition.Partition.Value;
+
+            var offset = inMemoryTopic.Push(partitionIndex, message);
 
             return Task.FromResult(
                 new DeliveryResult<byte[]?, byte[]?>
                 {
                     Message = message,
-                    Topic = topic,
-                    Partition = new Partition(partition),
+                    Topic = topicPartition.Topic,
+                    Partition = new Partition(partitionIndex),
                     Offset = offset,
                     Timestamp = new Timestamp(DateTime.Now),
                     Status = PersistenceStatus.Persisted
                 });
         }
-
-        public Task<DeliveryResult<byte[]?, byte[]?>> ProduceAsync(
-            TopicPartition topicPartition,
-            Message<byte[]?, byte[]?> message,
-            CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
 
         public void Produce(
             string topic,
@@ -108,7 +112,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             if (messageKey == null)
                 return 0;
 
-            return messageKey.Last() % topic.PartitionsCount;
+            return messageKey.Last() % topic.Partitions.Count;
         }
     }
 }

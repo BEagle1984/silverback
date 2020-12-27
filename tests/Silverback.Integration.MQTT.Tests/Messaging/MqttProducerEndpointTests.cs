@@ -2,25 +2,25 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Confluent.Kafka;
 using FluentAssertions;
+using MQTTnet.Client.Options;
 using Silverback.Messaging;
-using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Serialization;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging
+namespace Silverback.Tests.Integration.Mqtt.Messaging
 {
-    public class KafkaProducerEndpointTests
+    public class MqttProducerEndpointTests
     {
         [Fact]
         public void Equals_SameEndpointInstance_TrueIsReturned()
         {
-            var endpoint = new KafkaProducerEndpoint("topic")
+            var endpoint = new MqttProducerEndpoint("topic")
             {
                 Configuration =
                 {
-                    Acks = Acks.Leader
+                    ClientId = "client1"
                 }
             };
 
@@ -30,19 +30,19 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_SameConfiguration_TrueIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("topic")
+            var endpoint1 = new MqttProducerEndpoint("topic")
             {
                 Configuration =
                 {
-                    Acks = Acks.Leader
+                    ClientId = "client1"
                 }
             };
 
-            var endpoint2 = new KafkaProducerEndpoint("topic")
+            var endpoint2 = new MqttProducerEndpoint("topic")
             {
                 Configuration =
                 {
-                    Acks = Acks.Leader
+                    ClientId = "client1"
                 }
             };
 
@@ -52,52 +52,20 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_DifferentTopic_FalseIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("topic")
+            var endpoint1 = new MqttProducerEndpoint("topic")
             {
                 Configuration =
                 {
-                    Acks = Acks.Leader
+                    ClientId = "client1"
                 }
             };
 
-            var endpoint2 = new KafkaProducerEndpoint("topic2")
+            var endpoint2 = new MqttProducerEndpoint("topic2")
             {
                 Configuration =
                 {
-                    Acks = Acks.Leader
+                    ClientId = "client1"
                 }
-            };
-
-            endpoint1.Equals(endpoint2).Should().BeFalse();
-        }
-
-        [Fact]
-        public void Equals_SameTopicAndPartition_TrueIsReturned()
-        {
-            var endpoint1 = new KafkaProducerEndpoint("topic")
-            {
-                Partition = 1
-            };
-
-            var endpoint2 = new KafkaProducerEndpoint("topic")
-            {
-                Partition = 1
-            };
-
-            endpoint1.Equals(endpoint2).Should().BeTrue();
-        }
-
-        [Fact]
-        public void Equals_DifferentPartition_FalseIsReturned()
-        {
-            var endpoint1 = new KafkaProducerEndpoint("topic")
-            {
-                Partition = 1
-            };
-
-            var endpoint2 = new KafkaProducerEndpoint("topic")
-            {
-                Partition = 2
             };
 
             endpoint1.Equals(endpoint2).Should().BeFalse();
@@ -106,19 +74,19 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_DifferentConfiguration_FalseIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("topic")
+            var endpoint1 = new MqttProducerEndpoint("topic")
             {
                 Configuration =
                 {
-                    Acks = Acks.Leader
+                    ClientId = "client1"
                 }
             };
 
-            var endpoint2 = new KafkaProducerEndpoint("topic")
+            var endpoint2 = new MqttProducerEndpoint("topic")
             {
                 Configuration =
                 {
-                    Acks = Acks.All
+                    ClientId = "client2"
                 }
             };
 
@@ -128,8 +96,12 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_SameSerializerSettings_TrueIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("topic")
+            var endpoint1 = new MqttProducerEndpoint("topic")
             {
+                Configuration =
+                {
+                    ClientId = "client1"
+                },
                 Serializer = new JsonMessageSerializer
                 {
                     Options =
@@ -139,8 +111,12 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
                 }
             };
 
-            var endpoint2 = new KafkaProducerEndpoint("topic")
+            var endpoint2 = new MqttProducerEndpoint("topic")
             {
+                Configuration =
+                {
+                    ClientId = "client1"
+                },
                 Serializer = new JsonMessageSerializer
                 {
                     Options =
@@ -156,8 +132,12 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_DifferentSerializerSettings_FalseIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("topic")
+            var endpoint1 = new MqttProducerEndpoint("topic")
             {
+                Configuration =
+                {
+                    ClientId = "client1"
+                },
                 Serializer = new JsonMessageSerializer
                 {
                     Options =
@@ -167,8 +147,12 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
                 }
             };
 
-            var endpoint2 = new KafkaProducerEndpoint("topic")
+            var endpoint2 = new MqttProducerEndpoint("topic")
             {
+                Configuration =
+                {
+                    ClientId = "client1"
+                },
                 Serializer = new JsonMessageSerializer
                 {
                     Options =
@@ -192,9 +176,25 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         }
 
         [Fact]
+        public void Validate_MissingConfiguration_ExceptionThrown()
+        {
+            var endpoint = new MqttProducerEndpoint("topic")
+            {
+                Configuration = null!
+            };
+
+            Action act = () => endpoint.Validate();
+
+            act.Should().ThrowExactly<EndpointConfigurationException>();
+        }
+
+        [Fact]
         public void Validate_InvalidConfiguration_ExceptionThrown()
         {
-            var endpoint = new KafkaProducerEndpoint("topic");
+            var endpoint = new MqttProducerEndpoint("topic")
+            {
+                Configuration = new MqttClientConfig()
+            };
 
             Action act = () => endpoint.Validate();
 
@@ -204,11 +204,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Validate_MissingTopic_ExceptionThrown()
         {
-            var endpoint = new KafkaProducerEndpoint(string.Empty)
+            var endpoint = new MqttProducerEndpoint(string.Empty)
             {
-                Configuration = new KafkaProducerConfig
+                Configuration = new MqttClientConfig
                 {
-                    BootstrapServers = "test-server"
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "test-server"
+                    }
                 }
             };
 
@@ -217,31 +220,15 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             act.Should().ThrowExactly<EndpointConfigurationException>();
         }
 
-        [Theory]
-        [InlineData(0, true)]
-        [InlineData(42, true)]
-        [InlineData(-1, true)]
-        [InlineData(-2, false)]
-        public void Validate_Partition_CorrectlyValidated(int value, bool isValid)
-        {
-            var endpoint = GetValidEndpoint();
-
-            endpoint.Partition = value;
-
-            Action act = () => endpoint.Validate();
-
-            if (isValid)
-                act.Should().NotThrow();
-            else
-                act.Should().ThrowExactly<EndpointConfigurationException>();
-        }
-
-        private static KafkaProducerEndpoint GetValidEndpoint() =>
+        private static MqttProducerEndpoint GetValidEndpoint() =>
             new("test")
             {
-                Configuration = new KafkaProducerConfig
+                Configuration = new MqttClientConfig
                 {
-                    BootstrapServers = "test-server"
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "test-server"
+                    }
                 }
             };
     }

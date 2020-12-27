@@ -59,9 +59,6 @@ namespace Silverback.Messaging
             if (Configuration == null)
                 throw new EndpointConfigurationException("Configuration cannot be null.");
 
-            if (MessageExpiryInterval < 0)
-                throw new EndpointConfigurationException("MessageExpiryInterval must be greater than 0.");
-
             Configuration.Validate();
         }
 

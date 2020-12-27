@@ -519,7 +519,7 @@ namespace Silverback.Tests.Integration.MQTT.Messaging.Configuration.Mqtt
                 options =>
                 {
                     options.Uri = "uri";
-                    options.RequestHeaders = new Dictionary<string, string>()
+                    options.RequestHeaders = new Dictionary<string, string>
                     {
                         { "header", "value" }
                     };

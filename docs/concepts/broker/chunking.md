@@ -56,16 +56,16 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 ***
 
 > [!Important]
-> The chunks belonging to the same message must be contiguous. It is therefore recommended to have a single producer per endpoint or partition, if using Kafka (see also <xref:kafka-partitioning>).
+> The chunks belonging to the same message must be contiguous. It is therefore recommended to have a single producer per endpoint or partition. If using Kafka see also <xref:kafka-partitioning>.
 
 ## Consumer configuration
 
 No particular configuration is needed in the consumer side. Silverback will automatically recognize the chunks sequence by its headers and transparently reassemble the message.
 
-With Silverback 3.0.0 the consumer pipeline have been rewritten completely to handle these scenarios in a streaming way, processing each chunk directly and applying the behaviors (such as the deserializer) on the fly. The entire original message is never stored anywhere, therefore this approach is suitable also for very large payloads.
+With Silverback 3.0.0 the consumer pipeline has been rewritten completely to handle this scenario in a streaming way, processing each chunk directly and applying the behaviors (such as the deserializer) on the fly. The entire original message is never stored anywhere, therefore this approach is suitable also for very large payloads.
 
 > [!Important]
-> The chunks belonging to the same message must be contiguous and in the same partition, when using Kafka. This is automatically ensured by the Silverback producer.
+> The chunks belonging to the same message must be contiguous. It is therefore recommended to have a single producer per endpoint or partition. If using Kafka see also <xref:kafka-partitioning>.
 
 ### Incomplete sequences
 

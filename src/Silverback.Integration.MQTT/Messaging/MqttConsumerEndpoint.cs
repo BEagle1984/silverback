@@ -26,7 +26,7 @@ namespace Silverback.Messaging
         {
             Topics = topics;
 
-            if (topics == null)
+            if (topics == null || topics.Length == 0)
                 return;
 
             Name = topics.Length > 1 ? "[" + string.Join(",", topics) + "]" : topics[0];

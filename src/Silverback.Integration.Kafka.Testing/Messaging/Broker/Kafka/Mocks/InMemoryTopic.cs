@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public string Name { get; }
 
-        public int PartitionsCount => _partitions.Count;
+        public IReadOnlyList<IInMemoryPartition> Partitions => _partitions;
 
         public int TotalMessagesCount => _partitions.Sum(partition => partition.TotalMessagesCount);
 

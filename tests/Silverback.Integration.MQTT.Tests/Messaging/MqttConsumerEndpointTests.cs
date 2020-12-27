@@ -3,22 +3,23 @@
 
 using System;
 using FluentAssertions;
+using MQTTnet.Client.Options;
 using Silverback.Messaging;
-using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging
+namespace Silverback.Tests.Integration.Mqtt.Messaging
 {
-    public class KafkaConsumerEndpointTests
+    public class MqttConsumerEndpointTests
     {
         [Fact]
         public void Equals_SameEndpointInstance_TrueIsReturned()
         {
-            var endpoint = new KafkaConsumerEndpoint("topic")
+            var endpoint = new MqttConsumerEndpoint("topic")
             {
                 Configuration =
                 {
-                    AutoCommitIntervalMs = 1000
+                    ClientId = "client1"
                 }
             };
 
@@ -28,19 +29,19 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_SameConfiguration_TrueIsReturned()
         {
-            var endpoint1 = new KafkaConsumerEndpoint("topic")
+            var endpoint1 = new MqttConsumerEndpoint("topic")
             {
                 Configuration =
                 {
-                    AutoCommitIntervalMs = 1000
+                    ClientId = "client1"
                 }
             };
 
-            var endpoint2 = new KafkaConsumerEndpoint("topic")
+            var endpoint2 = new MqttConsumerEndpoint("topic")
             {
                 Configuration =
                 {
-                    AutoCommitIntervalMs = 1000
+                    ClientId = "client1"
                 }
             };
 
@@ -50,19 +51,19 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_DifferentTopic_FalseIsReturned()
         {
-            var endpoint1 = new KafkaConsumerEndpoint("topic")
+            var endpoint1 = new MqttConsumerEndpoint("topic")
             {
                 Configuration =
                 {
-                    AutoCommitIntervalMs = 1000
+                    ClientId = "client1"
                 }
             };
 
-            var endpoint2 = new KafkaConsumerEndpoint("topic2")
+            var endpoint2 = new MqttConsumerEndpoint("topic2")
             {
                 Configuration =
                 {
-                    AutoCommitIntervalMs = 1000
+                    ClientId = "client1"
                 }
             };
 
@@ -72,19 +73,19 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_DifferentConfiguration_FalseIsReturned()
         {
-            var endpoint1 = new KafkaConsumerEndpoint("topic")
+            var endpoint1 = new MqttConsumerEndpoint("topic")
             {
                 Configuration =
                 {
-                    AutoCommitIntervalMs = 1000
+                    ClientId = "client1"
                 }
             };
 
-            var endpoint2 = new KafkaConsumerEndpoint("topic")
+            var endpoint2 = new MqttConsumerEndpoint("topic")
             {
                 Configuration =
                 {
-                    BrokerAddressTtl = 2000
+                    ClientId = "client2"
                 }
             };
 
@@ -104,7 +105,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Validate_MissingConfiguration_ExceptionThrown()
         {
-            var endpoint = new KafkaConsumerEndpoint("topic")
+            var endpoint = new MqttConsumerEndpoint("topic")
             {
                 Configuration = null!
             };
@@ -117,9 +118,9 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Validate_InvalidConfiguration_ExceptionThrown()
         {
-            var endpoint = new KafkaConsumerEndpoint("topic")
+            var endpoint = new MqttConsumerEndpoint("topic")
             {
-                Configuration = new KafkaConsumerConfig()
+                Configuration = new MqttClientConfig()
             };
 
             Action act = () => endpoint.Validate();
@@ -130,11 +131,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Validate_MissingTopic_ExceptionThrown()
         {
-            var endpoint = new KafkaConsumerEndpoint()
+            var endpoint = new MqttConsumerEndpoint
             {
-                Configuration = new KafkaConsumerConfig
+                Configuration = new MqttClientConfig
                 {
-                    BootstrapServers = "test-server"
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "test-server"
+                    }
                 }
             };
 
@@ -143,50 +147,15 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             act.Should().ThrowExactly<EndpointConfigurationException>();
         }
 
-        [Theory]
-        [InlineData(1, true)]
-        [InlineData(42, true)]
-        [InlineData(0, false)]
-        [InlineData(-1, false)]
-        public void Validate_MaxDegreeOfParallelism_CorrectlyValidated(int value, bool isValid)
-        {
-            var endpoint = GetValidEndpoint();
-
-            endpoint.MaxDegreeOfParallelism = value;
-
-            Action act = () => endpoint.Validate();
-
-            if (isValid)
-                act.Should().NotThrow();
-            else
-                act.Should().ThrowExactly<EndpointConfigurationException>();
-        }
-
-        [Theory]
-        [InlineData(1, true)]
-        [InlineData(42, true)]
-        [InlineData(0, false)]
-        [InlineData(-1, false)]
-        public void Validate_BackpressureLimit_CorrectlyValidated(int value, bool isValid)
-        {
-            var endpoint = GetValidEndpoint();
-
-            endpoint.BackpressureLimit = value;
-
-            Action act = () => endpoint.Validate();
-
-            if (isValid)
-                act.Should().NotThrow();
-            else
-                act.Should().ThrowExactly<EndpointConfigurationException>();
-        }
-
-        private static KafkaConsumerEndpoint GetValidEndpoint() =>
+        private static MqttConsumerEndpoint GetValidEndpoint() =>
             new("test")
             {
-                Configuration = new KafkaConsumerConfig
+                Configuration = new MqttClientConfig
                 {
-                    BootstrapServers = "test-server"
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "test-server"
+                    }
                 }
             };
     }
