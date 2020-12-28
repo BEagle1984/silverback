@@ -17,7 +17,7 @@ footer:
       icon: "fas fa-fw fa-envelope"
       url: mailto:silverback-project@outlook.com
 
-baseurl: /silverback
+baseurl: /
 
 paginate: 5
 paginate_path: /_blog/page:num/
