@@ -62,7 +62,12 @@ function Check-Args([string[]]$argsArray)
 
 function Get-SourceProjectNames()
 {
-    return Get-ChildItem -Path ../src -Directory | Select-Object -ExpandProperty Name
+    $directories =
+        (Get-ChildItem -Path ../src -Directory -Exclude *.Testing) +
+        (Get-ChildItem -Path ../src -Directory -Filter Silverback.Integration.Testing) +
+        (Get-ChildItem -Path ../src -Directory -Filter *.Integration.*.Testing)
+
+    return $directories | Select-Object -ExpandProperty Name
 }
 
 function Pack-All()
