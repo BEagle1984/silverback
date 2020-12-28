@@ -36,7 +36,13 @@ function Check-Location()
 
 function Check-Args([string[]]$argsArray)
 {
-    For ($i = 0; $i -le $argsArray.Length; $i++) {
+    if (!$argsArray)
+    {
+        return
+    }
+
+    for ($i = 0; $i -le $argsArray.Length; $i++)
+    {
         $arg = $argsArray[$i]
 
         if ($arg -eq "--configuration" -Or $arg -eq "-c")
