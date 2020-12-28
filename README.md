@@ -74,7 +74,7 @@ You are encouraged to contribute to Silverback! Please check out the [how to con
 
 This code is licensed under MIT license (see [LICENSE](https://github.com/BEagle1984/silverback/blob/master/LICENSE) file for details)
 
-[docs-site]: https://beagle1984.github.io/silverback/
+[docs-site]: https://silverback-messaging.net
 [Nuget-Core]: https://www.nuget.org/packages/Silverback.Core/
 [Nuget-Core.Model]: https://www.nuget.org/packages/Silverback.Core.Model/
 [Nuget-Core.EntityFrameworkCore]: https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore/

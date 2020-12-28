@@ -85,7 +85,7 @@
     "cleanupCacheHistory": false,
     "disableGitFeatures": false,
     "sitemap": {
-      "baseUrl": "https://www.silverback-messaging.net/docfx",
+      "baseUrl": "https://silverback-messaging.net",
       "priority": 0.5,
       "changefreq": "weekly"
     }

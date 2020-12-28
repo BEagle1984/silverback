@@ -7,8 +7,8 @@
     <Description>Silverback is a simple but feature-rich framework to build reactive/event-driven applications or microservices.</Description>
     <License>MIT</License>
     <Copyright>Copyright (c) 2020 Sergio Aquilini</Copyright>
-    <ProjectUrl>https://beagle1984.github.io/silverback/</ProjectUrl>
-    <Tags>Microservices Bus Kafka RabbitMQ Messaging Event Sourcing DDD Domain Driven CQRS Mediator</Tags>
+    <ProjectUrl>https://silverback-messaging.net</ProjectUrl>
+    <Tags>Bus Mediator CQRS Kafka Rabbit RabbitMQ MQTT Microservices</Tags>
     <IconUrl>https://github.com/BEagle1984/silverback/raw/develop/graphics/Icon.png</IconUrl>
     <!-- SourceLink -->
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
