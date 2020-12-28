@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Kafka Partitioning and Key | Silverback </title>
+    <title>Kafka Partitioning and Message Key | Silverback </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Kafka Partitioning and Key | Silverback ">
+    <meta name="title" content="Kafka Partitioning and Message Key | Silverback ">
     <meta name="generator" content="docfx 2.56.5.0">
     
   
@@ -84,20 +84,100 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="kafka-partitioning">
-<h1 id="kafka-partitioning-and-key">Kafka Partitioning and Key</h1>
+<h1 id="kafka-partitioning-and-message-key">Kafka Partitioning and Message Key</h1>
 
-<p>While using a single poll loop, Silverback processes the messages consumed from each Kafka partition independently and concurrently.</p>
-<p>By default up to 10 messages/partitions are processed concurrently (per topic). This value can be tweaked in the endpoint configuration or disabled completely.</p>
+<h2 id="producer">Producer</h2>
+<h3 id="destination-partition">Destination partition</h3>
+<p>If the destination topic contains multiple partitions, the destination partition is picked according to the hash of the <a href="#message-key">message key</a>. If no explicit message key was set, a random one is generated, resulting in the messages being randomly spread across the partitions.</p>
+<p>You can override this default behavior explicitly setting the target partition in the endpoint. The endpoint can be statically defined like in the following snippet or resolved via <a class="xref" href="../outbound.html#dynamic-custom-routing">dynamic routing</a>.</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_kafka-consumer-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q_kafka-consumer-fluent" data-tab="kafka-consumer-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_CeZOj-G++Q_destination-partition-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q_destination-partition-fluent" data-tab="destination-partition-fluent" tabindex="0" aria-selected="true">Fluent (preferred)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q_kafka-consumer-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q_kafka-consumer-legacy" data-tab="kafka-consumer-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_CeZOj-G++Q_destination-partition-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q_destination-partition-legacy" data-tab="destination-partition-legacy" tabindex="-1">Legacy</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q_kafka-consumer-fluent" role="tabpanel" data-tab="kafka-consumer-fluent">
+<section id="tabpanel_CeZOj-G++Q_destination-partition-fluent" role="tabpanel" data-tab="destination-partition-fluent">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddOutbound&lt;IIntegrationEvent&gt;(endpoint =&gt; endpoint
+                    .ProduceTo(&quot;order-events&quot;, 2))); // &lt;- partition 2
+}
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q_destination-partition-legacy" role="tabpanel" data-tab="destination-partition-legacy" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddOutbound&lt;IIntegrationEvent&gt;(
+                new KafkaProducerEndpoint(&quot;order-events&quot;)
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    },
+                    Partition = 2
+                });
+}
+</code></pre>
+</section>
+</div>
+
+<p>Producing to a fixed partition may be required in the case you have multiple producers to the same topic and you have to prevent the messages from the different clients to be interleaved (e.g. because you are relying on sequences, like <a class="xref" href="../chunking.html">chunking</a>).</p>
+<h3 id="message-key">Message key</h3>
+<p>Apache Kafka require a message key for different purposes, such as:</p>
+<ul>
+<li><strong>Partitioning</strong>: Kafka can guarantee ordering only inside the same partition and it is therefore important to be able to route correlated messages into the same partition. To do so you need to specify a key for each message and Kafka will put all messages with the same key in the same partition.</li>
+<li><strong>Compacting topics</strong>: A topic can be configured with <code>cleanup.policy=compact</code> to instruct Kafka to keep only the latest message related to a certain object, identified by the message key. In other words Kafka will retain only 1 message per each key value.</li>
+</ul>
+<figure>
+	<a href="../../../images/diagrams/kafka-key.png"><img src="../../../images/diagrams/kafka-key.png"></a>
+    <figcaption>The messages with the same key are guaranteed to be written to the same partition.</figcaption>
+</figure>
+<p>Silverback will always generate a message key (same value as the <code>x-message-id</code> <a class="xref" href="../headers.html">header</a>) but it also offers a convenient way to specify a custom key. It is enough to decorate the properties that must be part of the key with <a class="xref" href="../../../api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a>.</p>
+<pre><code class="lang-csharp">public class MultipleKeyMembersMessage : IIntegrationMessage
+{
+    public Guid Id { get; set; }
+
+    [KafkaKeyMember]
+    public string One { get; set; }
+    
+    [KafkaKeyMember]
+    public string Two { get; set; }
+
+    public string Three { get; set; }
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The message key will also be received as header (see <a class="xref" href="../headers.html">Message Headers</a> for details).</p>
+</div>
+<h2 id="consumer">Consumer</h2>
+<h3 id="partitions-processing">Partitions processing</h3>
+<p>While using a single poll loop, Silverback processes the messages consumed from each Kafka partition independently and concurrently.</p>
+<p>By default up to 10 messages/partitions are processed concurrently (per topic). This value can be tweaked in the endpoint configuration or disabled completely.</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_concurrency-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_concurrency-fluent" data-tab="concurrency-fluent" tabindex="0" aria-selected="true">Fluent</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_concurrency-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_concurrency-legacy" data-tab="concurrency-legacy" tabindex="-1">Legacy</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_concurrency-fluent" role="tabpanel" data-tab="concurrency-fluent">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -125,7 +205,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q_kafka-consumer-legacy" role="tabpanel" data-tab="kafka-consumer-legacy" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-1_concurrency-legacy" role="tabpanel" data-tab="concurrency-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -155,34 +235,64 @@
 </code></pre>
 </section>
 </div>
-<h1 id="key">Key</h1>
-<p>Apache Kafka require a message key for different purposes, such as:</p>
-<ul>
-<li><strong>Partitioning</strong>: Kafka can guarantee ordering only inside the same partition and it is therefore important to be able to route correlated messages into the same partition. To do so you need to specify a key for each message and Kafka will put all messages with the same key in the same partition.</li>
-<li><strong>Compacting topics</strong>: A topic can be configured with <code>cleanup.policy=compact</code> to instruct Kafka to keep only the latest message related to a certain object, identified by the message key. In other words Kafka will retain only 1 message per each key value.</li>
+<h3 id="manual-partitions-assignment">Manual partitions assignment</h3>
+<p>In some cases you don't want to let the broker randomly distribute the partitions among the consumers. This is especially useful when dealing with large sequences (e.g. large messages/files being <a class="xref" href="../chunking.html">chunked</a>), to prevent that a rebalance occurs in the middle of a sequence, forcing the consumer to abort and restart from the beginning.</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_assignment-fluent" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_assignment-fluent" data-tab="assignment-fluent" tabindex="0" aria-selected="true">Fluent</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_assignment-legacy" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_assignment-legacy" data-tab="assignment-legacy" tabindex="-1">Legacy</a>
+</li>
 </ul>
-<figure>
-	<a href="../../../images/diagrams/kafka-key.png"><img src="../../../images/diagrams/kafka-key.png"></a>
-    <figcaption>The messages with the same key are guaranteed to be written to the same partition.</figcaption>
-</figure>
-<p>Silverback will always generate a message key (same value as the <code>x-message-id</code> <a class="xref" href="../headers.html">header</a>) but it also offers a convenient way to specify a custom key. It is enough to decorate the properties that must be part of the key with <a class="xref" href="../../../api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a>.</p>
-<pre><code class="lang-csharp">public class MultipleKeyMembersMessage : IIntegrationMessage
+<section id="tabpanel_CeZOj-G++Q-2_assignment-fluent" role="tabpanel" data-tab="assignment-fluent">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
-    public Guid Id { get; set; }
-
-    [KafkaKeyMember]
-    public string One { get; set; }
-    
-    [KafkaKeyMember]
-    public string Two { get; set; }
-
-    public string Three { get; set; }
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(
+                        new TopicPartition(&quot;order-events&quot;, 0),
+                        new TopicPartition(&quot;order-events&quot;, 1))
+                    .Configure(config =&gt;
+                        {
+                            config.GroupId = &quot;my-consumer&quot;;
+                        })));
 }
 </code></pre>
-<div class="NOTE">
-<h5>Note</h5>
-<p>The message key will also be received as header (see <a class="xref" href="../headers.html">Message Headers</a> for details).</p>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_assignment-legacy" role="tabpanel" data-tab="assignment-legacy" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddInbound(
+                new KafkaConsumerEndpoint(
+                    new TopicPartition(&quot;order-events&quot;, 0),
+                    new TopicPartition(&quot;order-events&quot;, 1))
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;,
+                        GroupId = &quot;my-consumer&quot;,
+                    } 
+                });
+}
+</code></pre>
+</section>
 </div>
+<h2 id="samples">Samples</h2>
+<ul>
+<li><a class="xref" href="../../../samples/kafka/binaryfile-streaming.html">Kafka - Files Streaming</a></li>
+</ul>
 </article>
           </div>
           

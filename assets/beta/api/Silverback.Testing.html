@@ -94,13 +94,49 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
   </h3>
+      <h4><a class="xref" href="Silverback.Testing.InboundSpyBrokerBehavior.html">InboundSpyBrokerBehavior</a></h4>
+      <section><p>Added at the end of the consumer pipeline, forwards the processed
+<a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Testing.InboundSpySubscriber.html">InboundSpySubscriber</a></h4>
+      <section><p>Subscribes to all the <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> transiting through the internal bus and forwards
+them to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a> to be collected.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Testing.IntegrationSpy.html">IntegrationSpy</a></h4>
+      <section><p>Monitors and collects all outbound and inbound messages.</p>
+</section>
       <h4><a class="xref" href="Silverback.Testing.KafkaTestingHelper.html">KafkaTestingHelper</a></h4>
-      <section><p>Exposes some helper methods to simplify testing.</p>
+      <section><p>Exposes some helper methods and shortcuts to simplify testing.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Testing.MqttTestingHelper.html">MqttTestingHelper</a></h4>
+      <section><p>Exposes some helper methods and shortcuts to simplify testing.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Testing.OutboundSpyBrokerBehavior.html">OutboundSpyBrokerBehavior</a></h4>
+      <section><p>Added at the very beginning of the producer pipeline, forwards the published
+<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Testing.RawInboundSpyBrokerBehavior.html">RawInboundSpyBrokerBehavior</a></h4>
+      <section><p>Added at the very beginning of the consumer pipeline, forwards the untouched
+<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a> to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Testing.RawOutboundSpyBrokerBehavior.html">RawOutboundSpyBrokerBehavior</a></h4>
+      <section><p>Added at the very end of the producer pipeline, forwards the produced <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html">IRawOutboundEnvelope</a>
+to the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Testing.TestingHelper-1.html">TestingHelper&lt;TBroker&gt;</a></h4>
+      <section><p>Exposes some helper methods and shortcuts to simplify testing.</p>
 </section>
     <h3 id="interfaces">Interfaces
   </h3>
+      <h4><a class="xref" href="Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a></h4>
+      <section><p>Monitors and collects all outbound and inbound messages.</p>
+</section>
       <h4><a class="xref" href="Silverback.Testing.IKafkaTestingHelper.html">IKafkaTestingHelper</a></h4>
-      <section><p>Exposes some helper methods to simplify testing.</p>
+      <section></section>
+      <h4><a class="xref" href="Silverback.Testing.IMqttTestingHelper.html">IMqttTestingHelper</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Silverback.Testing.ITestingHelper-1.html">ITestingHelper&lt;TBroker&gt;</a></h4>
+      <section><p>Exposes some helper methods and shortcuts to simplify testing.</p>
 </section>
 </article>
           </div>

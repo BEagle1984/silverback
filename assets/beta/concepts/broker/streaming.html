@@ -88,9 +88,7 @@
 
 <p><a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> is an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a> and <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> that will be asynchronously pushed with the consumed messages.</p>
 <p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> can be used to consume the entire topic in a streaming fashion and it's the only way to consume sequences (see for example <a class="xref" href="inbound.html#batch-processing">batch consuming</a>).</p>
-<pre><code class="lang-csharp">using Silverback.Messaging.Messages;
-
-public class StreamSubscriber
+<pre><code class="lang-csharp">public class StreamSubscriber
 {
     public async Task OnOrderStreamReceived(
         IMessageStreamEnumerable&lt;OrderEvent&gt; eventsStream)
@@ -127,9 +125,7 @@ public class StreamSubscriber
 </section>
 <section id="tabpanel_CeZOj-G++Q_rx-subscriber" role="tabpanel" data-tab="rx-subscriber" aria-hidden="true" hidden="hidden">
 
-<pre><code class="lang-csharp">using Silverback.Messaging.Messages;
-
-public class StreamSubscriber
+<pre><code class="lang-csharp">public class StreamSubscriber
 {
     public async Task OnOrderStreamReceived(
         IMessageStreamObservable&lt;OrderEvent&gt; eventsStream)

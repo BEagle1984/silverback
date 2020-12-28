@@ -1,0 +1,731 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class KafkaConsumerConfig
+   | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class KafkaConsumerConfig
+   | Silverback ">
+    <meta name="generator" content="docfx 2.56.5.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig">
+  
+  
+  <h1 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig" class="text-break">Class KafkaConsumerConfig
+  </h1>
+  <div class="markdown level0 summary"><p>Extends the <span class="xref">Confluent.Kafka.ConsumerConfig</span> adding the Silverback specific settings.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxyBase.html">ConfluentClientConfigProxyBase</a></div>
+    <div class="level2"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html">ConfluentClientConfigProxy</a>&lt;<span class="xref">Confluent.Kafka.ConsumerConfig</span>&gt;</div>
+    <div class="level3"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html">ConfluentConsumerConfigProxy</a></div>
+    <div class="level4"><span class="xref">KafkaConsumerConfig</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Messaging.Configuration.IValidatableEndpointSettings.html">IValidatableEndpointSettings</a></div>
+    <div><span class="xref">System.IEquatable</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a>&gt;</div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_ConsumeResultFields">ConfluentConsumerConfigProxy.ConsumeResultFields</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_AutoOffsetReset">ConfluentConsumerConfigProxy.AutoOffsetReset</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_GroupId">ConfluentConsumerConfigProxy.GroupId</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_GroupInstanceId">ConfluentConsumerConfigProxy.GroupInstanceId</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_PartitionAssignmentStrategy">ConfluentConsumerConfigProxy.PartitionAssignmentStrategy</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_SessionTimeoutMs">ConfluentConsumerConfigProxy.SessionTimeoutMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_HeartbeatIntervalMs">ConfluentConsumerConfigProxy.HeartbeatIntervalMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_GroupProtocolType">ConfluentConsumerConfigProxy.GroupProtocolType</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_CoordinatorQueryIntervalMs">ConfluentConsumerConfigProxy.CoordinatorQueryIntervalMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_MaxPollIntervalMs">ConfluentConsumerConfigProxy.MaxPollIntervalMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_EnableAutoCommit">ConfluentConsumerConfigProxy.EnableAutoCommit</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_AutoCommitIntervalMs">ConfluentConsumerConfigProxy.AutoCommitIntervalMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_EnableAutoOffsetStore">ConfluentConsumerConfigProxy.EnableAutoOffsetStore</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_QueuedMinMessages">ConfluentConsumerConfigProxy.QueuedMinMessages</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_QueuedMaxMessagesKbytes">ConfluentConsumerConfigProxy.QueuedMaxMessagesKbytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_FetchWaitMaxMs">ConfluentConsumerConfigProxy.FetchWaitMaxMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_MaxPartitionFetchBytes">ConfluentConsumerConfigProxy.MaxPartitionFetchBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_FetchMaxBytes">ConfluentConsumerConfigProxy.FetchMaxBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_FetchMinBytes">ConfluentConsumerConfigProxy.FetchMinBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_FetchErrorBackoffMs">ConfluentConsumerConfigProxy.FetchErrorBackoffMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_IsolationLevel">ConfluentConsumerConfigProxy.IsolationLevel</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_EnablePartitionEof">ConfluentConsumerConfigProxy.EnablePartitionEof</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_CheckCrcs">ConfluentConsumerConfigProxy.CheckCrcs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_AllowAutoCreateTopics">ConfluentConsumerConfigProxy.AllowAutoCreateTopics</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SaslMechanism">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SaslMechanism</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_Acks">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.Acks</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_ClientId">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.ClientId</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_BootstrapServers">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.BootstrapServers</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_MessageMaxBytes">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.MessageMaxBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_MessageCopyMaxBytes">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.MessageCopyMaxBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_ReceiveMessageMaxBytes">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.ReceiveMessageMaxBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_MaxInFlight">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.MaxInFlight</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_MetadataRequestTimeoutMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.MetadataRequestTimeoutMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_TopicMetadataRefreshIntervalMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.TopicMetadataRefreshIntervalMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_MetadataMaxAgeMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.MetadataMaxAgeMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_TopicMetadataRefreshFastIntervalMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.TopicMetadataRefreshFastIntervalMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_TopicMetadataRefreshSparse">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.TopicMetadataRefreshSparse</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_TopicMetadataPropagationMaxMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.TopicMetadataPropagationMaxMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_TopicBlacklist">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.TopicBlacklist</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_Debug">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.Debug</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SocketTimeoutMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SocketTimeoutMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SocketSendBufferBytes">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SocketSendBufferBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SocketReceiveBufferBytes">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SocketReceiveBufferBytes</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SocketKeepaliveEnable">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SocketKeepaliveEnable</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SocketNagleDisable">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SocketNagleDisable</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SocketMaxFails">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SocketMaxFails</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_BrokerAddressTtl">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.BrokerAddressTtl</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_BrokerAddressFamily">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.BrokerAddressFamily</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_ReconnectBackoffMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.ReconnectBackoffMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_ReconnectBackoffMaxMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.ReconnectBackoffMaxMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_StatisticsIntervalMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.StatisticsIntervalMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_LogQueue">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.LogQueue</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_LogThreadName">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.LogThreadName</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_EnableRandomSeed">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.EnableRandomSeed</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_LogConnectionClose">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.LogConnectionClose</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_InternalTerminationSignal">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.InternalTerminationSignal</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_ApiVersionRequest">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.ApiVersionRequest</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_ApiVersionRequestTimeoutMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.ApiVersionRequestTimeoutMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_ApiVersionFallbackMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.ApiVersionFallbackMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_BrokerVersionFallback">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.BrokerVersionFallback</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SecurityProtocol">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SecurityProtocol</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslCipherSuites">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslCipherSuites</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslCurvesList">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslCurvesList</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslSigalgsList">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslSigalgsList</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslKeyLocation">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslKeyLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslKeyPassword">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslKeyPassword</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslKeyPem">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslKeyPem</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslCertificateLocation">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslCertificateLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslCertificatePem">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslCertificatePem</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslCaLocation">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslCaLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslCrlLocation">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslCrlLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslKeystoreLocation">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslKeystoreLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslKeystorePassword">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslKeystorePassword</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_EnableSslCertificateVerification">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.EnableSslCertificateVerification</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SslEndpointIdentificationAlgorithm">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SslEndpointIdentificationAlgorithm</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SaslKerberosServiceName">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SaslKerberosServiceName</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SaslKerberosPrincipal">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SaslKerberosPrincipal</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SaslKerberosKinitCmd">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SaslKerberosKinitCmd</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SaslKerberosKeytab">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SaslKerberosKeytab</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SaslKerberosMinTimeBeforeRelogin">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SaslKerberosMinTimeBeforeRelogin</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SaslUsername">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SaslUsername</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SaslPassword">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SaslPassword</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_SaslOauthbearerConfig">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.SaslOauthbearerConfig</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_EnableSaslOauthbearerUnsecureJwt">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.EnableSaslOauthbearerUnsecureJwt</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_PluginLibraryPaths">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.PluginLibraryPaths</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_ClientRack">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.ClientRack</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_CancellationDelayMaxMs">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.CancellationDelayMaxMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_ConfluentConfig">ConfluentClientConfigProxy&lt;ConsumerConfig&gt;.ConfluentConfig</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.Kafka.html">Silverback.Messaging.Configuration.Kafka</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
+  <h5 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class KafkaConsumerConfig : ConfluentConsumerConfigProxy, IValidatableEndpointSettings, IEquatable&lt;KafkaConsumerConfig&gt;</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig__ctor_Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.%23ctor(Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L25">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig__ctor_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig__ctor_Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.#ctor(Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaConsumerConfig(KafkaClientConfig)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaConsumerConfig(KafkaClientConfig clientConfig = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a></td>
+        <td><span class="parametername">clientConfig</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a> to be used to initialize the
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_CommitOffsetEach.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.CommitOffsetEach%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L40">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_CommitOffsetEach_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.CommitOffsetEach*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_CommitOffsetEach" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.CommitOffsetEach">CommitOffsetEach</h4>
+  <div class="markdown level1 summary"><p>Defines the number of message to be processed before committing the offset to the server. The most
+reliable level is 1 but it reduces throughput.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int CommitOffsetEach { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_EnableAutoRecovery.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.EnableAutoRecovery%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L46">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_EnableAutoRecovery_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.EnableAutoRecovery*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_EnableAutoRecovery" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.EnableAutoRecovery">EnableAutoRecovery</h4>
+  <div class="markdown level1 summary"><p>Specifies whether the consumer has to be automatically restarted if a <span class="xref">Confluent.Kafka.KafkaException</span>
+is thrown while polling/consuming. The default is <code>true</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool EnableAutoRecovery { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_IsAutoCommitEnabled.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.IsAutoCommitEnabled%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L34">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_IsAutoCommitEnabled_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.IsAutoCommitEnabled*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_IsAutoCommitEnabled" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.IsAutoCommitEnabled">IsAutoCommitEnabled</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether autocommit is enabled according to the explicit
+configuration and Kafka defaults.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsAutoCommitEnabled { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals(Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L81">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals(Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig)">Equals(KafkaConsumerConfig)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(KafkaConsumerConfig other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L94">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_System_Object_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals(System.Object)">Equals(Object)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object obj)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">obj</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.Object.Equals(System.Object)</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L109">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_GetHashCode_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GetHashCode*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_GetHashCode" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.Object.GetHashCode()</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L49">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Validate_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Validate*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Validate" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Validate">Validate()</h4>
+  <div class="markdown level1 summary"><p>Throws an <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> if the current configuration is not valid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Validate()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxyBase.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxyBase_Validate">ConfluentClientConfigProxyBase.Validate()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.IValidatableEndpointSettings.html">IValidatableEndpointSettings</a>
+  </div>
+  <div>
+      <span class="xref">System.IEquatable&lt;T&gt;</span>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L13" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

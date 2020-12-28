@@ -123,13 +123,17 @@ application is being stopped.</p>
       <h4><a class="xref" href="Silverback.Messaging.Broker.KafkaProducer.html">KafkaProducer</a></h4>
       <section><p>Produces to an endpoint.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.MockedKafkaConsumer.html">MockedKafkaConsumer</a></h4>
-      <section><p>A mocked implementation of <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span> from Confluent.Kafka that consumes
-from an <a class="xref" href="Silverback.Messaging.Broker.Topics.InMemoryTopic.html">InMemoryTopic</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.MqttBroker.html">MqttBroker</a></h4>
+      <section><p>An <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementation for MQTT.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.MockedKafkaProducer.html">MockedKafkaProducer</a></h4>
-      <section><p>A mocked implementation of <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span> from Confluent.Kafka that produces
-to an <a class="xref" href="Silverback.Messaging.Broker.Topics.InMemoryTopic.html">InMemoryTopic</a>.</p>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.MqttClientMessageId.html">MqttClientMessageId</a></h4>
+      <section><p>The MQTT broker doesn't provide any message id, so the identifier is generated client-side.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.MqttConsumer.html">MqttConsumer</a></h4>
+      <section><p>Consumes an endpoint and invokes a callback delegate when a message is received.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.MqttProducer.html">MqttProducer</a></h4>
+      <section><p>Produces to an endpoint.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.ProduceException.html">ProduceException</a></h4>
       <section><p>The exception that is thrown by the <a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> when the message cannot be produced or
@@ -143,10 +147,6 @@ the message broker didn't acknowledge it.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.RabbitBroker.html">RabbitBroker</a></h4>
       <section><p>An <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementation for RabbitMQ.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.RabbitConnectionFactory.html">RabbitConnectionFactory</a></h4>
-      <section><p>The factory that creates and stores the connections to Rabbit in order to create a single connection
-per each <a class="xref" href="Silverback.Messaging.Configuration.RabbitConnectionConfig.html">RabbitConnectionConfig</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.RabbitConsumer.html">RabbitConsumer</a></h4>
       <section><p>Consumes an endpoint and invokes a callback delegate when a message is received.</p>
@@ -208,10 +208,6 @@ universally comparable (across restarts and across multiple instances, for a giv
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a></h4>
       <section><p>Produces to an endpoint.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.IRabbitConnectionFactory.html">IRabbitConnectionFactory</a></h4>
-      <section><p>The factory that creates and stores the connections to Rabbit in order to create a single connection
-per each <a class="xref" href="Silverback.Messaging.Configuration.RabbitConnectionConfig.html">RabbitConnectionConfig</a>.</p>
 </section>
     <h3 id="enums">Enums
   </h3>

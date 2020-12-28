@@ -89,11 +89,11 @@
 <p>Silverback ships a mocked version of the message broker implementations on a different nuget package:</p>
 <ul>
 <li><a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing">Silverback.Integration.Kafka.Testing</a></li>
-<li><a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ.Testing">Silverback.Integration.RabbitMQ.Testing</a></li>
+<li><em>(coming soon)</em> <a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ.Testing">Silverback.Integration.RabbitMQ.Testing</a></li>
 </ul>
 <p>These packages allow to perform end-to-end tests without having to integrate with a real message broker.</p>
 <h2 id="unit-tests">Unit Tests</h2>
-<p>Here an example of an xUnit test build using <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing">Silverback.Integration.Kafka.Testing</a>.</p>
+<p>Here an example of an xUnit test built using <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing">Silverback.Integration.Kafka.Testing</a>.</p>
 <pre><code class="lang-csharp">public class KafkaTests
 {
     private readonly IServiceProvider _serviceProvider;
@@ -158,7 +158,7 @@
 </code></pre>
 <h2 id="integration-tests">Integration Tests</h2>
 <p>Mocking the message broker is especially interesting for the integration tests, where you probably leverage the <a href="https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests">ASP.NET Core integration tests</a> to perform a full test based on the real configuration applied in the application's startup class.</p>
-<p>The following code shows the most simple integration test possible, in which an object is published to the broker and e.g. a subscriber is called.</p>
+<p>The following code shows the simplest integration test possible, in which an object is published to the broker and e.g. a subscriber is called.</p>
 <pre><code class="lang-csharp">public class IntegrationTests : IClassFixture&lt;WebApplicationFactory&lt;Startup&gt;&gt;
 {
     private readonly WebApplicationFactory&lt;Startup&gt; _factory;
@@ -216,14 +216,13 @@
     {
         // Arrange
 
-        // Resolve a producer to push to test-topic
-        var producer = _factory.Server.Host.Services
-            .GetRequiredService&lt;IBroker&gt;()
-            .GetProducer(new KafkaProducerEndpoint(&quot;tst-topic&quot;));
-            
         // Resolve the IKafkaTestingHelper (used below)
         var testingHelper = _factory.Server.Host.Services
             .GetRequiredService&lt;IKafkaTestingHelper&gt;();
+
+        // Resolve a producer to push to test-topic
+        var producer = testingHelper.Broker
+            .GetProducer(new KafkaProducerEndpoint(&quot;tst-topic&quot;));
 
         // Act
         await producer.ProduceAsync(new TestMessage { Content = &quot;abc&quot; });
@@ -237,8 +236,8 @@
     }
 }
 </code></pre>
-<h2 id="spy-behavior">Spy Behavior</h2>
-<p>The &lt;xref:Silverback.Testing.SpyBehavior&gt; ships with the testing packages and can be used to inspect all produced and consumed messages.</p>
+<h2 id="integrationspy">IntegrationSpy</h2>
+<p>The <a class="xref" href="../../api/Silverback.Testing.IIntegrationSpy.html">IIntegrationSpy</a> ships with the <a href="https://www.nuget.org/packages/Silverback.Integration.Testing">Silverback.Integration.Testing</a> package (referenced by the other Integration.Testing.* packages) and can be used to inspect all outbound and inbound messages.</p>
 <pre><code class="lang-csharp">public class IntegrationTests : IClassFixture&lt;WebApplicationFactory&lt;Startup&gt;&gt;
 {
     private readonly WebApplicationFactory&lt;Startup&gt; _factory;
@@ -251,12 +250,11 @@
             {
                 // Replace the usual broker (KafkaBroker)
                 // with the mocked version and add the
-                // BrokerTestingSubscriber (shipped with 
-                // the Testing packages)
+                // IIntegrationSpy
                 services
                     .ConfigureSilverback()
                     .UseMockedKafka()
-                    .AddSpyBehavior();
+                    .AddIntegrationSpy();
             });
         };
     }
@@ -265,15 +263,11 @@
     public async Task SampleTest()
     {
         // Arrange
-        var producer = _factory.Server.Host.Services
-            .GetRequiredService&lt;IBroker&gt;()
-            .GetProducer(new KafkaProducerEndpoint(&quot;tst-topic&quot;));
-
         var testingHelper = _factory.Server.Host.Services
             .GetRequiredService&lt;IKafkaTestingHelper&gt;();
 
-        var spyBehavior = _factory.Server.Host.Services
-            .GetRequiredService&lt;SpyBehavior&gt;();
+        var producer = testingHelper.Broker
+            .GetProducer(new KafkaProducerEndpoint(&quot;tst-topic&quot;));
 
         // Act
         await producer.ProduceAsync(new TestMessage { Content = &quot;abc&quot; });
@@ -281,16 +275,17 @@
         await testingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
         // Assert
-        spyBehavior.OutboundEnvelopes.Should().HaveCount(1);
-        spyBehavior.InboundEnvelopes.Should().HaveCount(1);
-        spyBehavior.InboundEnvelopes[0].Message.As&lt;TestMessage&gt;
+        testingHelper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+        testingHelper.Spy.InboundEnvelopes.Should().HaveCount(1);
+        testingHelper.Spy.InboundEnvelopes[0].Message.As&lt;TestMessage&gt;
             .Content.Should().Be(&quot;abc&quot;);
     }
 }
 </code></pre>
 <h2 id="mocked-kafka">Mocked Kafka</h2>
 <p>Many aspects of the Kafka broker have been mocked to replicated as much as possible the behavior you have when connected with the real broker. This new implementation supports commits, kafka events, offset reset, partitioning, rebalance, etc.</p>
-<p>The implementation revolves around the <a class="xref" href="../../api/Silverback.Messaging.Broker.Topics.IInMemoryTopicCollection.html">IInMemoryTopicCollection</a>. This type is registered as singleton and can be resolved in the tests to gain access to the <a class="xref" href="../../api/Silverback.Messaging.Broker.Topics.IInMemoryTopic.html">IInMemoryTopic</a> instances directly and inspect their partitions, offsets, etc.</p>
+<p>The implementation revolves around the &lt;xref:Silverback.Messaging.Broker.Topics.IInMemoryTopicCollection&gt;. This type is registered as singleton and can be resolved in the tests to gain access to the &lt;xref:Silverback.Messaging.Broker.Topics.IInMemoryTopic&gt; instances directly and inspect their partitions, offsets, etc.
+Alternatively the &lt;xref:Silverback.Messaging.Broker.Topics.IInMemoryTopic&gt; can be retrieved via the <code>GetTopic</code> method of the <a class="xref" href="../../api/Silverback.Testing.IKafkaTestingHelper.html">IKafkaTestingHelper</a>.</p>
 <h3 id="partitioning">Partitioning</h3>
 <p>By default 5 partitions will be created per each topic being mocked. This number can be configured as shown in the following snippet. The setting is per broker and there's currently no way to configure each topic independently.</p>
 <pre><code class="lang-csharp">public class IntegrationTests : IClassFixture&lt;WebApplicationFactory&lt;Startup&gt;&gt;

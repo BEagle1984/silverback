@@ -99,6 +99,7 @@
     <div class="level1"><a class="xref" href="Silverback.Messaging.Broker.Consumer.html">Consumer</a></div>
     <div class="level2"><span class="xref">Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;</span></div>
       <div class="level3"><a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a></div>
+      <div class="level3"><a class="xref" href="Silverback.Messaging.Broker.MqttConsumer.html">MqttConsumer</a></div>
       <div class="level3"><a class="xref" href="Silverback.Messaging.Broker.RabbitConsumer.html">RabbitConsumer</a></div>
   </div>
   <div classs="implements">
@@ -130,6 +131,18 @@
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IsDisconnecting">Consumer.IsDisconnecting</a>
     </div>
     <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_ConnectAsync">Consumer.ConnectAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_DisconnectAsync">Consumer.DisconnectAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StartAsync">Consumer.StartAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StopAsync">Consumer.StopAsync()</a>
+    </div>
+    <div>
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_CommitAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_">Consumer.CommitAsync(IBrokerMessageIdentifier)</a>
     </div>
     <div>
@@ -140,18 +153,6 @@
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RollbackAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__">Consumer.RollbackAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_ConnectAsync">Consumer.ConnectAsync()</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_DisconnectAsync">Consumer.DisconnectAsync()</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_Start">Consumer.Start()</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_Stop">Consumer.Stop()</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_IncrementFailedAttempts_Silverback_Messaging_Messages_IRawInboundEnvelope_">Consumer.IncrementFailedAttempts(IRawInboundEnvelope)</a>
@@ -169,10 +170,10 @@
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_DisconnectCoreAsync">Consumer.DisconnectCoreAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StartCore">Consumer.StartCore()</a>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StartCoreAsync">Consumer.StartCoreAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StopCore">Consumer.StopCore()</a>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StopCoreAsync">Consumer.StopCoreAsync()</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_WaitUntilConsumingStoppedAsync_System_Threading_CancellationToken_">Consumer.WaitUntilConsumingStoppedAsync(CancellationToken)</a>
@@ -244,7 +245,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3__ctor__0__1_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_Silverback_Diagnostics_ISilverbackIntegrationLogger_Silverback_Messaging_Broker_Consumer__0__1__2___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.%23ctor(%600%2C%601%2CSilverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider%7BSilverback.Messaging.Broker.Behaviors.IConsumerBehavior%7D%2CSystem.IServiceProvider%2CSilverback.Diagnostics.ISilverbackIntegrationLogger%7BSilverback.Messaging.Broker.Consumer%7B%600%2C%601%2C%602%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L52">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L52">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3__ctor_" data-uid="Silverback.Messaging.Broker.Consumer`3.#ctor*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3__ctor__0__1_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_Silverback_Diagnostics_ISilverbackIntegrationLogger_Silverback_Messaging_Broker_Consumer__0__1__2___" data-uid="Silverback.Messaging.Broker.Consumer`3.#ctor(`0,`1,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IConsumerBehavior},System.IServiceProvider,Silverback.Diagnostics.ISilverbackIntegrationLogger{Silverback.Messaging.Broker.Consumer{`0,`1,`2}})">Consumer(TBroker, TEndpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IServiceProvider, ISilverbackIntegrationLogger&lt;Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;&gt;)</h4>
@@ -304,7 +305,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_Broker.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.Broker%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L66">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L66">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_Broker_" data-uid="Silverback.Messaging.Broker.Consumer`3.Broker*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_Broker" data-uid="Silverback.Messaging.Broker.Consumer`3.Broker">Broker</h4>
@@ -335,7 +336,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_Endpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.Endpoint%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L71">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L71">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_Endpoint_" data-uid="Silverback.Messaging.Broker.Consumer`3.Endpoint*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_Endpoint" data-uid="Silverback.Messaging.Broker.Consumer`3.Endpoint">Endpoint</h4>
@@ -368,7 +369,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection%7B%602%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L111">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L111">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection{`2})">CommitCoreAsync(IReadOnlyCollection&lt;TIdentifier&gt;)</h4>
@@ -417,7 +418,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L74">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L74">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__" data-uid="Silverback.Messaging.Broker.Consumer`3.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IBrokerMessageIdentifier})">CommitCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</h4>
@@ -469,7 +470,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_GetSequenceStore__2_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.GetSequenceStore(%602)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L121">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L121">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore__2_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore(`2)">GetSequenceStore(TIdentifier)</h4>
@@ -518,7 +519,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_GetSequenceStore_Silverback_Messaging_Broker_IBrokerMessageIdentifier_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.GetSequenceStore(Silverback.Messaging.Broker.IBrokerMessageIdentifier)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L117">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L117">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_GetSequenceStore_Silverback_Messaging_Broker_IBrokerMessageIdentifier_" data-uid="Silverback.Messaging.Broker.Consumer`3.GetSequenceStore(Silverback.Messaging.Broker.IBrokerMessageIdentifier)">GetSequenceStore(IBrokerMessageIdentifier)</h4>
@@ -571,7 +572,7 @@ dedicated sequence store is used per each Kafka partition, since they may be pro
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection%7B%602%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L114">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L114">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection__2__" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection{`2})">RollbackCoreAsync(IReadOnlyCollection&lt;TIdentifier&gt;)</h4>
@@ -621,7 +622,7 @@ successfully, to ensure that they will be consumed again.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L92">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L92">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_Consumer_3_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IBrokerMessageIdentifier__" data-uid="Silverback.Messaging.Broker.Consumer`3.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.IBrokerMessageIdentifier})">RollbackCoreAsync(IReadOnlyCollection&lt;IBrokerMessageIdentifier&gt;)</h4>
@@ -687,7 +688,7 @@ successfully, to ensure that they will be consumed again.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Consumer_3.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Consumer%603%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L26" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Consumer`3.cs/#L26" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

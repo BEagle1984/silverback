@@ -94,8 +94,14 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
   </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.html">DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;</a></h4>
+      <section><p>Routes the outbound messages to one or multiple endpoints.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.KafkaOutboundEndpointRouter-1.html">KafkaOutboundEndpointRouter&lt;TMessage&gt;</a></h4>
       <section><p>Routes the outbound messages to one or multiple Kafka endpoints.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.MqttOutboundEndpointRouter-1.html">MqttOutboundEndpointRouter&lt;TMessage&gt;</a></h4>
+      <section><p>Routes the outbound messages to one or multiple MQTT endpoints.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.OutboundQueueProducer.html">OutboundQueueProducer</a></h4>
       <section><p>Produces to an endpoint.</p>
@@ -138,11 +144,11 @@ the messages of the specified type to.</p>
 </section>
     <h3 id="delegates">Delegates
   </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.KafkaOutboundEndpointRouter-1.RouterFunction.html">KafkaOutboundEndpointRouter&lt;TMessage&gt;.RouterFunction</a></h4>
+      <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.RouterFunction.html">DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;.RouterFunction</a></h4>
       <section><p>The actual router method that receives the message (including its headers) together with the
 dictionary containing all endpoints and returns the destination endpoints.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.KafkaOutboundEndpointRouter-1.SingleEndpointRouterFunction.html">KafkaOutboundEndpointRouter&lt;TMessage&gt;.SingleEndpointRouterFunction</a></h4>
+      <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.SingleEndpointRouterFunction.html">DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;.SingleEndpointRouterFunction</a></h4>
       <section><p>The actual router method that receives the message (including its headers) together with the
 dictionary containing all endpoints and returns the destination endpoint.</p>
 </section>

@@ -146,14 +146,14 @@
 
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p>The chunks belonging to the same message must be contiguous. It is therefore recommended to have a single producer per endpoint or partition, if using Kafka (see also <a class="xref" href="kafka/kafka-partitioning.html">Kafka Partitioning and Key</a>).</p>
+<p>The chunks belonging to the same message must be contiguous. It is therefore recommended to have a single producer per endpoint or partition. If using Kafka see also <a class="xref" href="kafka/kafka-partitioning.html">Kafka Partitioning and Message Key</a>.</p>
 </div>
 <h2 id="consumer-configuration">Consumer configuration</h2>
 <p>No particular configuration is needed in the consumer side. Silverback will automatically recognize the chunks sequence by its headers and transparently reassemble the message.</p>
-<p>With Silverback 3.0.0 the consumer pipeline have been rewritten completely to handle these scenarios in a streaming way, processing each chunk directly and applying the behaviors (such as the deserializer) on the fly. The entire original message is never stored anywhere, therefore this approach is suitable also for very large payloads.</p>
+<p>With Silverback 3.0.0 the consumer pipeline has been rewritten completely to handle this scenario in a streaming way, processing each chunk directly and applying the behaviors (such as the deserializer) on the fly. The entire original message is never stored anywhere, therefore this approach is suitable also for very large payloads.</p>
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p>The chunks belonging to the same message must be contiguous and in the same partition, when using Kafka. This is automatically ensured by the Silverback producer.</p>
+<p>The chunks belonging to the same message must be contiguous. It is therefore recommended to have a single producer per endpoint or partition. If using Kafka see also <a class="xref" href="kafka/kafka-partitioning.html">Kafka Partitioning and Message Key</a>.</p>
 </div>
 <h3 id="incomplete-sequences">Incomplete sequences</h3>
 <p>Some chunks sequences may be incomplete because either the producer failed to publish all chunks or the consumer started consuming from the middle of a sequence. In both cases Silverback will silently ignore the incomplete sequences and log a warning.</p>

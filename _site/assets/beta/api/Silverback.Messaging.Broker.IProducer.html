@@ -106,7 +106,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_Broker.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.Broker%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L19">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L25">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_IProducer_Broker_" data-uid="Silverback.Messaging.Broker.IProducer.Broker*"></a>
   <h4 id="Silverback_Messaging_Broker_IProducer_Broker" data-uid="Silverback.Messaging.Broker.IProducer.Broker">Broker</h4>
@@ -137,7 +137,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_Endpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.Endpoint%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L24">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L30">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_IProducer_Endpoint_" data-uid="Silverback.Messaging.Broker.IProducer.Endpoint*"></a>
   <h4 id="Silverback_Messaging_Broker_IProducer_Endpoint" data-uid="Silverback.Messaging.Broker.IProducer.Endpoint">Endpoint</h4>
@@ -163,14 +163,141 @@
       </tr>
     </tbody>
   </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_Id.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.Id%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L20">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_IProducer_Id_" data-uid="Silverback.Messaging.Broker.IProducer.Id*"></a>
+  <h4 id="Silverback_Messaging_Broker_IProducer_Id" data-uid="Silverback.Messaging.Broker.IProducer.Id">Id</h4>
+  <div class="markdown level1 summary"><p>Gets the <span class="xref">System.Guid</span> uniquely identifying the producer instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Guid Id { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Guid</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_IsConnected.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.IsConnected%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L36">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_IProducer_IsConnected_" data-uid="Silverback.Messaging.Broker.IProducer.IsConnected*"></a>
+  <h4 id="Silverback_Messaging_Broker_IProducer_IsConnected" data-uid="Silverback.Messaging.Broker.IProducer.IsConnected">IsConnected</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether this producer is connected to the message broker and ready to produce
+messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool IsConnected { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
   </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_ConnectAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.ConnectAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L44">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_IProducer_ConnectAsync_" data-uid="Silverback.Messaging.Broker.IProducer.ConnectAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_IProducer_ConnectAsync" data-uid="Silverback.Messaging.Broker.IProducer.ConnectAsync">ConnectAsync()</h4>
+  <div class="markdown level1 summary"><p>Initializes the connection to the message broker (if needed).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task ConnectAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_DisconnectAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.DisconnectAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L52">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_IProducer_DisconnectAsync_" data-uid="Silverback.Messaging.Broker.IProducer.DisconnectAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_IProducer_DisconnectAsync" data-uid="Silverback.Messaging.Broker.IProducer.DisconnectAsync">DisconnectAsync()</h4>
+  <div class="markdown level1 summary"><p>Disconnects from the message broker (if needed).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task DisconnectAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_Produce_Silverback_Messaging_Messages_IOutboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.Produce(Silverback.Messaging.Messages.IOutboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L43">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L71">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_IProducer_Produce_" data-uid="Silverback.Messaging.Broker.IProducer.Produce*"></a>
   <h4 id="Silverback_Messaging_Broker_IProducer_Produce_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Broker.IProducer.Produce(Silverback.Messaging.Messages.IOutboundEnvelope)">Produce(IOutboundEnvelope)</h4>
@@ -204,7 +331,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_Produce_System_Object_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.Produce(System.Object%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L35">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L63">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_IProducer_Produce_" data-uid="Silverback.Messaging.Broker.IProducer.Produce*"></a>
   <h4 id="Silverback_Messaging_Broker_IProducer_Produce_System_Object_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__" data-uid="Silverback.Messaging.Broker.IProducer.Produce(System.Object,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader})">Produce(Object, IReadOnlyCollection&lt;MessageHeader&gt;)</h4>
@@ -244,7 +371,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_ProduceAsync_Silverback_Messaging_Messages_IOutboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.ProduceAsync(Silverback.Messaging.Messages.IOutboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L92">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L120">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_IProducer_ProduceAsync_" data-uid="Silverback.Messaging.Broker.IProducer.ProduceAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_IProducer_ProduceAsync_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Broker.IProducer.ProduceAsync(Silverback.Messaging.Messages.IOutboundEnvelope)">ProduceAsync(IOutboundEnvelope)</h4>
@@ -294,7 +421,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_ProduceAsync_System_Object_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.ProduceAsync(System.Object%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L79">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L107">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_IProducer_ProduceAsync_" data-uid="Silverback.Messaging.Broker.IProducer.ProduceAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_IProducer_ProduceAsync_System_Object_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__" data-uid="Silverback.Messaging.Broker.IProducer.ProduceAsync(System.Object,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader})">ProduceAsync(Object, IReadOnlyCollection&lt;MessageHeader&gt;)</h4>
@@ -350,7 +477,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.RawProduce(System.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L54">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L82">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_IProducer_RawProduce_" data-uid="Silverback.Messaging.Broker.IProducer.RawProduce*"></a>
   <h4 id="Silverback_Messaging_Broker_IProducer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__" data-uid="Silverback.Messaging.Broker.IProducer.RawProduce(System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader})">RawProduce(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</h4>
@@ -390,7 +517,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.RawProduce(System.IO.Stream%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L65">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L93">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_IProducer_RawProduce_" data-uid="Silverback.Messaging.Broker.IProducer.RawProduce*"></a>
   <h4 id="Silverback_Messaging_Broker_IProducer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__" data-uid="Silverback.Messaging.Broker.IProducer.RawProduce(System.IO.Stream,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader})">RawProduce(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</h4>
@@ -430,7 +557,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.RawProduceAsync(System.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L106">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L134">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_IProducer_RawProduceAsync_" data-uid="Silverback.Messaging.Broker.IProducer.RawProduceAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_IProducer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__" data-uid="Silverback.Messaging.Broker.IProducer.RawProduceAsync(System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader})">RawProduceAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</h4>
@@ -486,7 +613,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer.RawProduceAsync(System.IO.Stream%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L120">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L148">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_IProducer_RawProduceAsync_" data-uid="Silverback.Messaging.Broker.IProducer.RawProduceAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_IProducer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__" data-uid="Silverback.Messaging.Broker.IProducer.RawProduceAsync(System.IO.Stream,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader})">RawProduceAsync(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</h4>
@@ -548,7 +675,7 @@
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_IProducer.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.IProducer%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L14" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/IProducer.cs/#L15" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

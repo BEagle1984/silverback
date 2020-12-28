@@ -96,7 +96,8 @@
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">AvroMessageSerializer&lt;TMessage&gt;</span></div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializerBase.html">AvroMessageSerializerBase</a></div>
+    <div class="level2"><span class="xref">AvroMessageSerializer&lt;TMessage&gt;</span></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -105,6 +106,12 @@
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializerBase.html#Silverback_Messaging_Serialization_AvroMessageSerializerBase_SchemaRegistryConfig">AvroMessageSerializerBase.SchemaRegistryConfig</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializerBase.html#Silverback_Messaging_Serialization_AvroMessageSerializerBase_AvroSerializerConfig">AvroMessageSerializerBase.AvroSerializerConfig</a>
+    </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
@@ -131,7 +138,7 @@
   <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.SchemaRegistry.dll</h6>
   <h5 id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AvroMessageSerializer&lt;TMessage&gt; : IKafkaMessageSerializer, IMessageSerializer where TMessage : class</code></pre>
+    <pre><code class="lang-csharp hljs">public class AvroMessageSerializer&lt;TMessage&gt; : AvroMessageSerializerBase, IKafkaMessageSerializer, IMessageSerializer where TMessage : class</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -149,70 +156,6 @@
       </tr>
     </tbody>
   </table>
-  <h3 id="properties">Properties
-  </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_AvroMessageSerializer_1_AvroSerializerConfig.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.AvroMessageSerializer%601.AvroSerializerConfig%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L32">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_AvroSerializerConfig_" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.AvroSerializerConfig*"></a>
-  <h4 id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_AvroSerializerConfig" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.AvroSerializerConfig">AvroSerializerConfig</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the Avro serializer configuration.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public AvroSerializerConfig AvroSerializerConfig { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Confluent.SchemaRegistry.Serdes.AvroSerializerConfig</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_AvroMessageSerializer_1_SchemaRegistryConfig.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.AvroMessageSerializer%601.SchemaRegistryConfig%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L27">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_SchemaRegistryConfig_" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.SchemaRegistryConfig*"></a>
-  <h4 id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_SchemaRegistryConfig" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.SchemaRegistryConfig">SchemaRegistryConfig</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the schema registry configuration.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public SchemaRegistryConfig SchemaRegistryConfig { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Confluent.SchemaRegistry.SchemaRegistryConfig</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
   <h3 id="methods">Methods
   </h3>
   <span class="small pull-right mobile-hide">
@@ -220,7 +163,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_AvroMessageSerializer_1_DeserializeAsync_System_IO_Stream_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.AvroMessageSerializer%601.DeserializeAsync(System.IO.Stream%2CSilverback.Messaging.Messages.MessageHeaderCollection%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L47">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L36">View source</a>
   </span>
   <a id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_DeserializeAsync_" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.DeserializeAsync*"></a>
   <h4 id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_DeserializeAsync_System_IO_Stream_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.DeserializeAsync(System.IO.Stream,Silverback.Messaging.Messages.MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">DeserializeAsync(Stream, MessageHeaderCollection, MessageSerializationContext)</h4>
@@ -229,7 +172,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ValueTask&lt;(object Message, Type MessageType)&gt; DeserializeAsync(Stream messageStream, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">public override ValueTask&lt;(object Message, Type MessageType)&gt; DeserializeAsync(Stream messageStream, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -278,12 +221,14 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializerBase.html#Silverback_Messaging_Serialization_AvroMessageSerializerBase_DeserializeAsync_System_IO_Stream_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_">AvroMessageSerializerBase.DeserializeAsync(Stream, MessageHeaderCollection, MessageSerializationContext)</a></div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_AvroMessageSerializer_1_DeserializeKey_System_Byte___Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.AvroMessageSerializer%601.DeserializeKey(System.Byte%5B%5D%2CSilverback.Messaging.Messages.MessageHeaderCollection%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L76">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L65">View source</a>
   </span>
   <a id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_DeserializeKey_" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.DeserializeKey*"></a>
   <h4 id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_DeserializeKey_System_Byte___Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.DeserializeKey(System.Byte[],Silverback.Messaging.Messages.MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">DeserializeKey(Byte[], MessageHeaderCollection, MessageSerializationContext)</h4>
@@ -292,7 +237,7 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string DeserializeKey(byte[] key, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">public override string DeserializeKey(byte[] key, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -340,12 +285,14 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializerBase.html#Silverback_Messaging_Serialization_AvroMessageSerializerBase_DeserializeKey_System_Byte___Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_">AvroMessageSerializerBase.DeserializeKey(Byte[], MessageHeaderCollection, MessageSerializationContext)</a></div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_AvroMessageSerializer_1_SerializeAsync_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.AvroMessageSerializer%601.SerializeAsync(System.Object%2CSilverback.Messaging.Messages.MessageHeaderCollection%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L35">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L24">View source</a>
   </span>
   <a id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_SerializeAsync_" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.SerializeAsync*"></a>
   <h4 id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_SerializeAsync_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.SerializeAsync(System.Object,Silverback.Messaging.Messages.MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">SerializeAsync(Object, MessageHeaderCollection, MessageSerializationContext)</h4>
@@ -354,7 +301,7 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ValueTask&lt;Stream&gt; SerializeAsync(object message, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">public override ValueTask&lt;Stream&gt; SerializeAsync(object message, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -403,12 +350,14 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializerBase.html#Silverback_Messaging_Serialization_AvroMessageSerializerBase_SerializeAsync_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_">AvroMessageSerializerBase.SerializeAsync(Object, MessageHeaderCollection, MessageSerializationContext)</a></div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_AvroMessageSerializer_1_SerializeKey_System_String_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.AvroMessageSerializer%601.SerializeKey(System.String%2CSilverback.Messaging.Messages.MessageHeaderCollection%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L62">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L51">View source</a>
   </span>
   <a id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_SerializeKey_" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.SerializeKey*"></a>
   <h4 id="Silverback_Messaging_Serialization_AvroMessageSerializer_1_SerializeKey_System_String_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.AvroMessageSerializer`1.SerializeKey(System.String,Silverback.Messaging.Messages.MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">SerializeKey(String, MessageHeaderCollection, MessageSerializationContext)</h4>
@@ -417,7 +366,7 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public byte[] SerializeKey(string key, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">public override byte[] SerializeKey(string key, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -465,6 +414,8 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializerBase.html#Silverback_Messaging_Serialization_AvroMessageSerializerBase_SerializeKey_System_String_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_">AvroMessageSerializerBase.SerializeKey(String, MessageHeaderCollection, MessageSerializationContext)</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Messaging.Serialization.IKafkaMessageSerializer.html">IKafkaMessageSerializer</a>
@@ -483,7 +434,7 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_AvroMessageSerializer_1.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.AvroMessageSerializer%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L21" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.SchemaRegistry/Messaging/Serialization/AvroMessageSerializer`1.cs/#L20" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

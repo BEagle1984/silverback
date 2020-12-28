@@ -79,7 +79,7 @@
             <article class="content wrap" id="_content" data-uid="releases">
 <h1 id="releases">Releases</h1>
 
-<h2 id="300-beta8"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.8">3.0.0-beta.8</a></h2>
+<h2 id="300-beta9"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.9">3.0.0-beta.9</a></h2>
 <h3 id="whats-new">What's new</h3>
 <ul>
 <li>Simplify configuration and reduce boiler plate (see <a class="xref" href="concepts/bus/subscribe.html">Subscribing</a> and <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)
@@ -98,7 +98,13 @@
 <li>Redesign sequences handling to support chunking, batch consuming and future sequences as well</li>
 </ul>
 </li>
-<li>Process Kafka partitions independently and concurrently (see <a class="xref" href="concepts/broker/kafka/kafka-partitioning.html">Kafka Partitioning and Key</a>)</li>
+<li>Improve Kafka partitions handling (see <a class="xref" href="concepts/broker/kafka/kafka-partitioning.html">Kafka Partitioning and Message Key</a>)
+<ul>
+<li>Process partitions independently and concurrently</li>
+<li>Add setting to produce to a specific partition</li>
+<li>Add setting to manually assign the consumer partitions</li>
+</ul>
+</li>
 <li>Add option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see <code>throwIfUnhandled</code> argument in the <a class="xref" href="api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> methods and <a class="xref" href="api/Silverback.Messaging.IConsumerEndpoint.html#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled">ThrowIfUnhandled</a> property in the <a class="xref" href="api/Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a>)</li>
 <li>Replace <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a> with <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a> to improve serialization and deserialization performance (the old serializers have been moved into the <a href="https://www.nuget.org/packages/Silverback.Integration.Newtonsoft">Silverback.Integration.Newtonsoft</a> package, see <a class="xref" href="concepts/broker/serialization.html">Serialization</a>)</li>
 <li>Add log levels configuration (see <a class="xref" href="concepts/logging.html">Logging</a>)</li>
@@ -116,7 +122,8 @@
 <li>Document the entire public API (see <a href="api/Microsoft.Extensions.DependencyInjection.html">API Documentation</a>)</li>
 </ul>
 </li>
-<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.5.1">Confluent.Kafka 1.5.1</a></li>
+<li>Released some utilities to help writing automated tests involving Silverback.Integration (see <a class="xref" href="concepts/broker/testing.html">Testing</a>)</li>
+<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.5.3">Confluent.Kafka 1.5.3</a></li>
 <li>Upgrade to <a href="https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.2.1">RabbitMQ.Client 6.2.1</a></li>
 </ul>
 <h3 id="fixes">Fixes</h3>
@@ -137,6 +144,7 @@
 </li>
 <li>Removed <em>IServiceCollection.Add*Subscriber</em>, <em>IServiceCollection.Add*Behavior</em>, <em>IServiceCollection.Add*BrokerBehavior</em>, <em>IServiceCollection.AddEndpointsConfigurator</em>, <em>IServiceCollection.Add*OutboundRouter</em> extension methods, use the same methods on the <a class="xref" href="api/Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> (using <a class="xref" href="api/Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions.html">IServiceCollection.ConfigureSilverback</a> to get an instance if the <a class="xref" href="api/Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> if necessary, as shown in  <a class="xref" href="concepts/bus/enabling.html">Enabling Silverback</a>)</li>
 <li>Removed <em>IBrokerOptionsBuilder.Add*BrokerBehavior</em>, <em>IBrokerOptionsBuilder.RegisterConfigurator</em>, <em>IBrokerOptionsBuilder.Add*OutboundRouter</em> extension methods, use the same methods on the <a class="xref" href="api/Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> (using <a class="xref" href="api/Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions.html">IServiceCollection.ConfigureSilverback</a> to get an instance if the <a class="xref" href="api/Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> if necessary, as shown in  <a class="xref" href="concepts/bus/enabling.html">Enabling Silverback</a>)</li>
+<li>Reorganized the <code>Silverback.Messaging.Configuration</code> namespace moving some broker specific types under <code>Silverback.Messaging.Configuration.Kafka</code>, <code>Silverback.Messaging.Configuration.Rabbit</code> or <code>Silverback.Messaging.Configuration.Mqtt</code></li>
 <li>The visibility of some types has been changed to internal to favor a cleaner and clearer API where the public types are well documented and their backward compatibility is valued</li>
 <li>Removed <em>Silverback</em> prefix from exceptions name</li>
 <li>Removed the <em>IRequest<tresponse></tresponse></em> interface (it was implemented by both <a class="xref" href="api/Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a> and <a class="xref" href="api/Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>)</li>
@@ -276,7 +284,7 @@
 <h2 id="103"><a href="https://github.com/BEagle1984/silverback/releases/tag/v1.0.3">1.0.3</a></h2>
 <h3 id="whats-new-7">What's new</h3>
 <ul>
-<li>Deprecate <em>PartitioningKeyMemberAttribute</em> in favor of <a class="xref" href="api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a>, since the message key isn't used just for partitioning (see <a class="xref" href="concepts/broker/kafka/kafka-partitioning.html">Kafka Partitioning and Key</a>)</li>
+<li>Deprecate <em>PartitioningKeyMemberAttribute</em> in favor of <a class="xref" href="api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a>, since the message key isn't used just for partitioning (see <a class="xref" href="concepts/broker/kafka/kafka-partitioning.html">Kafka Partitioning and Message Key</a>)</li>
 </ul>
 <h3 id="fixes-4">Fixes</h3>
 <ul>
@@ -320,7 +328,7 @@
 </ul>
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p><code>WithConnectionTo&lt;KafkaBroker&gt;</code> has to be replaced with <code>WithConnectionToKafka</code> in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see <a class="xref" href="concepts/broker/kafka/kafka-partitioning.html">Kafka Partitioning and Key</a>)</p>
+<p><code>WithConnectionTo&lt;KafkaBroker&gt;</code> has to be replaced with <code>WithConnectionToKafka</code> in order for all features to work properly. When failing to do so no message key will be generated, causing the messages to land in a random partition and/or preventing to publish to a compacted topic. (see <a class="xref" href="concepts/broker/kafka/kafka-partitioning.html">Kafka Partitioning and Message Key</a>)</p>
 </div>
 <ul>
 <li><a href="https://www.nuget.org/packages/Silverback.Integration.EntityFrameworkCore">Silverback.Integration.EntityFrameworkCore</a> and <a href="https://www.nuget.org/packages/Silverback.EventSourcing.EntityFrameworkCore">Silverback.EventSourcing.EntityFrameworkCore</a> have been deprecated (<a href="https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore">Silverback.Core.EntityFrameworkCore</a> contains all the necessary logic to use EF as store)</li>

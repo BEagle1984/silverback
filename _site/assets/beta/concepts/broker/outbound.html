@@ -115,7 +115,7 @@
                 .AddOutbound&lt;IIntegrationEvent&gt;(endpoint =&gt; endpoint
                     .ProduceTo(&quot;order-events&quot;)
                     .EnableChunking(500000)
-                    .ProduceToOutbox());
+                    .ProduceToOutbox()));
 }
 </code></pre>
 </section>
@@ -153,7 +153,7 @@
 {
     public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
         builder
-            .AddInbound(
+            .AddOutbound&lt;IIntegrationEvent&gt;(
                 new RabbitQueueProducerEndpoint(&quot;inventory-commands-queue&quot;)
                 {
                     Connection = new RabbitConnectionConfig
@@ -169,7 +169,7 @@
                         IsAutoDeleteEnabled = false
                     }
                 })
-            .AddInbound(
+            .AddOutbound&lt;IIntegrationEvent&gt;(
                 new RabbitExchangeProducerEndpoint(&quot;order-events&quot;)
                     {
                         Connection = new RabbitConnectionConfig

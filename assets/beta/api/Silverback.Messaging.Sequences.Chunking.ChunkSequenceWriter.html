@@ -139,7 +139,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_CanHandle_Silverback_Messaging_Messages_IOutboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.CanHandle(Silverback.Messaging.Messages.IOutboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkSequenceWriter.cs/#L21">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkSequenceWriter.cs/#L21">View source</a>
   </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_CanHandle_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.CanHandle*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_CanHandle_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.CanHandle(Silverback.Messaging.Messages.IOutboundEnvelope)">CanHandle(IOutboundEnvelope)</h4>
@@ -186,20 +186,20 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_ProcessMessage_Silverback_Messaging_Messages_IOutboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.ProcessMessage(Silverback.Messaging.Messages.IOutboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_ProcessMessageAsync_Silverback_Messaging_Messages_IOutboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.ProcessMessageAsync(Silverback.Messaging.Messages.IOutboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkSequenceWriter.cs/#L42">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkSequenceWriter.cs/#L42">View source</a>
   </span>
-  <a id="Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_ProcessMessage_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.ProcessMessage*"></a>
-  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_ProcessMessage_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.ProcessMessage(Silverback.Messaging.Messages.IOutboundEnvelope)">ProcessMessage(IOutboundEnvelope)</h4>
-  <div class="markdown level1 summary"><p>Sets the headers used to match the message with the sequence it belongs to. If needed it can also
-split a single message into multiple messages.</p>
+  <a id="Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_ProcessMessageAsync_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.ProcessMessageAsync*"></a>
+  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter_ProcessMessageAsync_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.ProcessMessageAsync(Silverback.Messaging.Messages.IOutboundEnvelope)">ProcessMessageAsync(IOutboundEnvelope)</h4>
+  <div class="markdown level1 summary"><p>Sets the headers used to match the message with the sequence it belongs to. If needed it can
+also split a single message into multiple messages.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IAsyncEnumerable&lt;IOutboundEnvelope&gt; ProcessMessage(IOutboundEnvelope envelope)</code></pre>
+    <pre><code class="lang-csharp hljs">public IAsyncEnumerable&lt;IOutboundEnvelope&gt; ProcessMessageAsync(IOutboundEnvelope envelope)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -230,7 +230,8 @@ split a single message into multiple messages.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Collections.Generic.IAsyncEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>&gt;</td>
-        <td><p>The envelopes containing the messages to be produced.</p>
+        <td><p>An <span class="xref">System.Collections.Generic.IAsyncEnumerable&lt;T&gt;</span> with the envelopes containing the messages to be
+produced.</p>
 </td>
       </tr>
     </tbody>
@@ -250,7 +251,7 @@ split a single message into multiple messages.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkSequenceWriter.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkSequenceWriter.cs/#L18" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkSequenceWriter.cs/#L18" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

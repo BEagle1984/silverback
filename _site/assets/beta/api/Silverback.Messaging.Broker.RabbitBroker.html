@@ -143,10 +143,10 @@
       <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_InstantiateConsumer__1_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_">Broker&lt;RabbitProducerEndpoint, RabbitConsumerEndpoint&gt;.InstantiateConsumer(RabbitConsumerEndpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IServiceProvider)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_ConnectAsync_System_Collections_Generic_IEnumerable_Silverback_Messaging_Broker_IConsumer__">Broker&lt;RabbitProducerEndpoint, RabbitConsumerEndpoint&gt;.ConnectAsync(IEnumerable&lt;IConsumer&gt;)</a>
+      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_ConnectAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IConsumer__">Broker&lt;RabbitProducerEndpoint, RabbitConsumerEndpoint&gt;.ConnectAsync(IReadOnlyCollection&lt;IProducer&gt;, IReadOnlyCollection&lt;IConsumer&gt;)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_DisconnectAsync_System_Collections_Generic_IEnumerable_Silverback_Messaging_Broker_IConsumer__">Broker&lt;RabbitProducerEndpoint, RabbitConsumerEndpoint&gt;.DisconnectAsync(IEnumerable&lt;IConsumer&gt;)</a>
+      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_DisconnectAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IConsumer__">Broker&lt;RabbitProducerEndpoint, RabbitConsumerEndpoint&gt;.DisconnectAsync(IReadOnlyCollection&lt;IProducer&gt;, IReadOnlyCollection&lt;IConsumer&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_Dispose_System_Boolean_">Broker&lt;RabbitProducerEndpoint, RabbitConsumerEndpoint&gt;.Dispose(Boolean)</a>
@@ -183,13 +183,13 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_RabbitBroker__ctor_Silverback_Messaging_Broker_IRabbitConnectionFactory_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.RabbitBroker.%23ctor(Silverback.Messaging.Broker.IRabbitConnectionFactory%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_RabbitBroker__ctor_Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.RabbitBroker.%23ctor(Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.RabbitMQ/Messaging/Broker/RabbitBroker.cs/#L28">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/Broker/RabbitBroker.cs/#L30">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_RabbitBroker__ctor_" data-uid="Silverback.Messaging.Broker.RabbitBroker.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Broker_RabbitBroker__ctor_Silverback_Messaging_Broker_IRabbitConnectionFactory_System_IServiceProvider_" data-uid="Silverback.Messaging.Broker.RabbitBroker.#ctor(Silverback.Messaging.Broker.IRabbitConnectionFactory,System.IServiceProvider)">RabbitBroker(IRabbitConnectionFactory, IServiceProvider)</h4>
+  <h4 id="Silverback_Messaging_Broker_RabbitBroker__ctor_Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_System_IServiceProvider_" data-uid="Silverback.Messaging.Broker.RabbitBroker.#ctor(Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory,System.IServiceProvider)">RabbitBroker(IRabbitConnectionFactory, IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.RabbitBroker.html">RabbitBroker</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -208,9 +208,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.IRabbitConnectionFactory.html">IRabbitConnectionFactory</a></td>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.html">IRabbitConnectionFactory</a></td>
         <td><span class="parametername">connectionFactory</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.IRabbitConnectionFactory.html">IRabbitConnectionFactory</a> to be used to create the channels to connect to the
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.html">IRabbitConnectionFactory</a> to be used to create the channels to connect to the
 endpoints.</p>
 </td>
       </tr>
@@ -229,7 +229,7 @@ endpoints.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_RabbitBroker_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.RabbitBroker.Dispose(System.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.RabbitMQ/Messaging/Broker/RabbitBroker.cs/#L63">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/Broker/RabbitBroker.cs/#L65">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_RabbitBroker_Dispose_" data-uid="Silverback.Messaging.Broker.RabbitBroker.Dispose*"></a>
   <h4 id="Silverback_Messaging_Broker_RabbitBroker_Dispose_System_Boolean_" data-uid="Silverback.Messaging.Broker.RabbitBroker.Dispose(System.Boolean)">Dispose(Boolean)</h4>
@@ -267,7 +267,7 @@ finalizer.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_RabbitBroker_InstantiateConsumer_Silverback_Messaging_RabbitConsumerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.RabbitBroker.InstantiateConsumer(Silverback.Messaging.RabbitConsumerEndpoint%2CSilverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider%7BSilverback.Messaging.Broker.Behaviors.IConsumerBehavior%7D%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.RabbitMQ/Messaging/Broker/RabbitBroker.cs/#L50">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/Broker/RabbitBroker.cs/#L52">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_RabbitBroker_InstantiateConsumer_" data-uid="Silverback.Messaging.Broker.RabbitBroker.InstantiateConsumer*"></a>
   <h4 id="Silverback_Messaging_Broker_RabbitBroker_InstantiateConsumer_Silverback_Messaging_RabbitConsumerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_" data-uid="Silverback.Messaging.Broker.RabbitBroker.InstantiateConsumer(Silverback.Messaging.RabbitConsumerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IConsumerBehavior},System.IServiceProvider)">InstantiateConsumer(RabbitConsumerEndpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IServiceProvider)</h4>
@@ -331,7 +331,7 @@ forwarded to the consumer.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_RabbitBroker_InstantiateProducer_Silverback_Messaging_RabbitProducerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IProducerBehavior__System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.RabbitBroker.InstantiateProducer(Silverback.Messaging.RabbitProducerEndpoint%2CSilverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider%7BSilverback.Messaging.Broker.Behaviors.IProducerBehavior%7D%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.RabbitMQ/Messaging/Broker/RabbitBroker.cs/#L37">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/Broker/RabbitBroker.cs/#L39">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_RabbitBroker_InstantiateProducer_" data-uid="Silverback.Messaging.Broker.RabbitBroker.InstantiateProducer*"></a>
   <h4 id="Silverback_Messaging_Broker_RabbitBroker_InstantiateProducer_Silverback_Messaging_RabbitProducerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IProducerBehavior__System_IServiceProvider_" data-uid="Silverback.Messaging.Broker.RabbitBroker.InstantiateProducer(Silverback.Messaging.RabbitProducerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IProducerBehavior},System.IServiceProvider)">InstantiateProducer(RabbitProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider)</h4>
@@ -409,7 +409,7 @@ forwarded to the consumer.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_RabbitBroker.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.RabbitBroker%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/feature/streaming/src/Silverback.Integration.RabbitMQ/Messaging/Broker/RabbitBroker.cs/#L14" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/Broker/RabbitBroker.cs/#L16" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

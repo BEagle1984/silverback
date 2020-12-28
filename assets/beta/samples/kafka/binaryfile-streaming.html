@@ -152,10 +152,8 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer
 }
 </code></pre></section>
 <section id="tabpanel_CeZOj-G++Q_producer-endpoints" role="tabpanel" data-tab="producer-endpoints" aria-hidden="true" hidden="hidden">
-<pre><code class="lang-csharp" name="Producer.EndpointsConfigurator">using Silverback.Messaging;
-using Silverback.Messaging.Configuration;
+<pre><code class="lang-csharp" name="Producer.EndpointsConfigurator">using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Sequences.Chunking;
 
 namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer
 {
@@ -164,24 +162,36 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer
         public void Configure(IEndpointsConfigurationBuilder builder)
         {
             builder
+                .AddKafkaEndpoints(
+                    endpoints =&gt; endpoints
 
-                // Produce the binary files to the samples-binary-file-streaming topic
-                .AddOutbound&lt;BinaryFileMessage&gt;(
-                    new KafkaProducerEndpoint(&quot;samples-binary-file-streaming&quot;)
-                    {
-                        // The producer only needs the bootstrap server address to be
-                        // able to connect
-                        Configuration = new KafkaProducerConfig
-                        {
-                            BootstrapServers = &quot;PLAINTEXT://localhost:9092&quot;
-                        },
+                        // Configure the properties needed by all consumers/producers
+                        .Configure(
+                            config =&gt;
+                            {
+                                // The bootstrap server address is needed to connect
+                                config.BootstrapServers =
+                                    &quot;PLAINTEXT://localhost:9092&quot;;
+                            })
 
-                        // Split the binary files into chunks of 512 kB
-                        Chunk = new ChunkSettings
-                        {
-                            Size = 524288
-                        }
-                    });
+                        // Produce the binary files to the
+                        // samples-binary-file-streaming topic
+                        .AddOutbound&lt;BinaryFileMessage&gt;(
+                            endpoint =&gt; endpoint
+
+                                // Force producing to a specific partition (0 in this
+                                // case) to be able to scale to multiple producers
+                                // writing to the same topic. Assigning a different
+                                // partition to each one will ensure that the chunks
+                                // are always contiguous.
+                                // This isn't mandatory and necessary only when
+                                // horizontally scaling the producer.
+                                // (In the final solution the &quot;0&quot; constant value
+                                // should be replaced by a configuration setting.)
+                                .ProduceTo(&quot;samples-binary-file-streaming&quot;, 0)
+
+                                // Split the binary files into chunks of 512 kB
+                                .EnableChunking(524288)));
         }
     }
 }
@@ -220,7 +230,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer.Controllers
         }
 
         [HttpPost(&quot;binary-file&quot;)]
-        public async Task&lt;IActionResult&gt; ProduceBinaryFile(
+        public async Task&lt;IActionResult&gt; ProduceBinaryFileAsync(
             string filePath,
             string? contentType)
         {
@@ -242,7 +252,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Producer.Controllers
         }
 
         [HttpPost(&quot;custom-binary-file&quot;)]
-        public async Task&lt;IActionResult&gt; ProduceBinaryFileWithCustomHeaders(
+        public async Task&lt;IActionResult&gt; ProduceBinaryFileWithCustomHeadersAsync(
             string filePath,
             string? contentType)
         {
@@ -351,39 +361,60 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer
                         // Consume the samples-binary-file-streaming topic
                         .AddInbound(
                             endpoint =&gt; endpoint
-                                .ConsumeFrom(&quot;samples-binary-file-streaming&quot;)
+
+                                // Manually assign the partitions to prevent the
+                                // broker to rebalance in the middle of a potentially
+                                // huge sequence of chunks. This is just an
+                                // optimization and isn't strictly necessary.
+                                // (In the final solution the &quot;0&quot; and &quot;1&quot; constant
+                                // values should be replaced by a configuration
+                                // setting.)
+                                .ConsumeFrom(
+                                    new TopicPartition(
+                                        &quot;samples-binary-file-streaming&quot;,
+                                        0),
+                                    new TopicPartition(
+                                        &quot;samples-binary-file-streaming&quot;,
+                                        1))
                                 .Configure(
                                     config =&gt;
                                     {
-                                        // The consumer needs at least the bootstrap server address
-                                        // and a group id to be able to connect
+                                        // The consumer needs at least the bootstrap
+                                        // server address and a group id to be able
+                                        // to connect
                                         config.GroupId = &quot;sample-consumer&quot;;
 
-                                        // AutoOffsetReset.Earliest means that the consumer must start
-                                        // consuming from the beginning of the topic, if no offset was
+                                        // AutoOffsetReset.Earliest means that the
+                                        // consumer must start consuming from the
+                                        // beginning of the topic, if no offset was
                                         // stored for this consumer group
                                         config.AutoOffsetReset =
                                             AutoOffsetReset.Earliest;
                                     })
 
-                                // Force the consumer to use the BinaryFileMessageSerializer: this
-                                // is not strictly necessary when the messages are produced by
-                                // Silverback but it increases the interoperability, since it
-                                // doesn't have to rely on the 'x-message-type' header value to
-                                // switch to the BinaryFileMessageSerializer.
+                                // Force the consumer to use the
+                                // BinaryFileMessageSerializer: this is not strictly
+                                // necessary when the messages are produced by
+                                // Silverback but it increases the interoperability,
+                                // since it doesn't have to rely on the
+                                // 'x-message-type' header value to switch to the
+                                // BinaryFileMessageSerializer.
                                 //
-                                // In this example the BinaryFileMessageSerializer is also set to
-                                // return a CustomBinaryFileMessage instead of the normal
-                                // BinaryFileMessage. This is only needed because we want to read
-                                // the custom 'x-message-filename' header, otherwise
-                                // 'ConsumeBinaryFiles()' would work perfectly fine (returning a basic BinaryFileMessage, without
-                                // the extra properties).
+                                // In this example the BinaryFileMessageSerializer is
+                                // also set to return a CustomBinaryFileMessage
+                                // instead of the normal BinaryFileMessage. This is
+                                // only needed because we want to read the custom
+                                // 'x-message-filename' header, otherwise
+                                // 'ConsumeBinaryFiles()' would work perfectly fine
+                                // (returning a basic BinaryFileMessage, without the
+                                // extra properties).
                                 .ConsumeBinaryFiles(
                                     serializer =&gt;
                                         serializer
                                             .UseModel&lt;CustomBinaryFileMessage&gt;())
 
-                                // Retry each chunks sequence 5 times in case of an exception
+                                // Retry each chunks sequence 5 times in case of an
+                                // exception
                                 .OnError(policy =&gt; policy.Retry(5))));
         }
     }
@@ -424,7 +455,7 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Subscribers
             _logger = logger;
         }
 
-        public async Task OnBinaryFileMessageReceived(
+        public async Task OnBinaryFileMessageReceivedAsync(
             CustomBinaryFileMessage binaryFileMessage)
         {
             EnsureTargetFolderExists();
