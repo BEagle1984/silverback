@@ -9,6 +9,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.TestTypes.Messages;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Configuration
@@ -26,6 +27,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((ReceiveTestEventOneDelegate)Receive));
 
@@ -46,6 +48,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Action<TestEventOne>)Receive));
 
@@ -70,6 +73,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, Task>)Receive));
 
@@ -91,6 +95,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, object>)ReceiveOne)
                     .AddDelegateSubscriber((Action<TestEventTwo>)ReceiveTwo));
@@ -114,6 +119,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, IEnumerable<object>>)ReceiveOne)
                     .AddDelegateSubscriber((Action<TestEventTwo>)ReceiveTwo));
@@ -137,6 +143,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, IReadOnlyCollection<object>>)ReceiveOne)
                     .AddDelegateSubscriber((Action<TestEventTwo>)ReceiveTwo));
@@ -158,6 +165,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, object>)ReceiveOne)
                     .AddDelegateSubscriber((Action<TestEventTwo>)ReceiveTwo));
@@ -178,6 +186,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Action<IEnumerable<TestEventOne>>)Receive));
 
@@ -198,6 +207,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Action<IReadOnlyCollection<TestEventOne>>)Receive));
 
@@ -222,6 +232,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, Task>)Receive));
 
@@ -243,6 +254,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, object>)ReceiveOne)
                     .AddDelegateSubscriber((Action<TestEventTwo>)ReceiveTwo));
@@ -266,6 +278,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, Task<object>>)ReceiveOne)
                     .AddDelegateSubscriber((Action<TestEventTwo>)ReceiveTwo));
@@ -290,6 +303,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Action<TestEventOne, IServiceProvider>)Receive));
 
@@ -313,6 +327,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Action<IEnumerable<TestEventOne>, IServiceProvider>)Receive));
 
@@ -337,6 +352,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, IServiceProvider, Task>)Receive));
 
@@ -360,6 +376,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, IServiceProvider, TestEventTwo>)Receive));
 
@@ -384,6 +401,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<TestEventOne, IServiceProvider, Task<TestEventTwo>>)Receive));
 
@@ -408,6 +426,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, IServiceProvider, Task>)Receive));
 
@@ -432,6 +451,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, IServiceProvider, TestEventTwo>)Receive));
 
@@ -456,6 +476,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber(
                         (Func<IEnumerable<TestEventOne>, IServiceProvider, Task<TestEventTwo>>)Receive));

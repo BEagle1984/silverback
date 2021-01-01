@@ -11,7 +11,7 @@ namespace Silverback.Diagnostics
     ///     Maps <see cref="EventId" />s to the <see cref="LogLevel" /> that should be used for it.
     /// </summary>
     public interface ILogLevelDictionary
-        : IReadOnlyDictionary<EventId, Func<Exception, LogLevel, Lazy<string>, LogLevel>>
+        : IReadOnlyDictionary<EventId, Func<Exception?, LogLevel, Lazy<string>, LogLevel>>
     {
     }
 }

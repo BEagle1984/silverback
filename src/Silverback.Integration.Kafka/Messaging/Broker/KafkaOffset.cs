@@ -35,7 +35,9 @@ namespace Silverback.Messaging.Broker
             int topicPartitionSeparatorIndex = key.IndexOf('[', StringComparison.Ordinal);
             Topic = key.Substring(0, topicPartitionSeparatorIndex);
             Partition = int.Parse(
-                key.Substring(topicPartitionSeparatorIndex + 1, key.Length - topicPartitionSeparatorIndex - 2),
+                key.Substring(
+                    topicPartitionSeparatorIndex + 1,
+                    key.Length - topicPartitionSeparatorIndex - 2),
                 CultureInfo.InvariantCulture);
             Offset = int.Parse(value, CultureInfo.InvariantCulture);
         }
@@ -174,6 +176,12 @@ namespace Silverback.Messaging.Broker
         ///     Right-hand operand.
         /// </param>
         public static bool operator !=(KafkaOffset left, KafkaOffset right) => !(left == right);
+
+        /// <inheritdoc cref="IBrokerMessageIdentifier.ToLogString" />
+        public string ToLogString() => $"{Partition}@{Offset}";
+
+        /// <inheritdoc cref="IBrokerMessageIdentifier.ToVerboseLogString" />
+        public string ToVerboseLogString() => $"{Topic}{Partition}@{Offset}";
 
         /// <summary>
         ///     Compares the current instance with another object of the same type and returns an integer that

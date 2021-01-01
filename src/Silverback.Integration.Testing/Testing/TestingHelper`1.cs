@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Util;
@@ -19,7 +18,7 @@ namespace Silverback.Testing
     public abstract class TestingHelper<TBroker> : ITestingHelper<TBroker>
         where TBroker : IBroker
     {
-        private readonly ISilverbackIntegrationLogger _logger;
+        private readonly ILogger _logger;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -34,9 +33,9 @@ namespace Silverback.Testing
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="ILogger{TCategoryName}" />.
         /// </param>
-        protected TestingHelper(IServiceProvider serviceProvider, ISilverbackIntegrationLogger logger)
+        protected TestingHelper(IServiceProvider serviceProvider, ILogger<TestingHelper<TBroker>> logger)
         {
             _logger = logger;
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));

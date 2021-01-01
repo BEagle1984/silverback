@@ -37,5 +37,28 @@ namespace Silverback.Messaging.Broker
         ///     Gets the identifier value.
         /// </summary>
         string Value { get; }
+
+        /// <summary>
+        ///     Gets a string that can be used to log the offset value.
+        /// </summary>
+        /// <remarks>
+        ///     This string should contain all identifiers except the endpoint name.
+        /// </remarks>
+        /// <returns>
+        ///     A <see cref="string" /> representing the offset value.
+        /// </returns>
+        string ToLogString();
+
+        /// <summary>
+        ///     Gets a string that can be used to log the offset value.
+        /// </summary>
+        /// <remarks>
+        ///     This string must include the endpoint name, if the identifier value isn't unique across
+        ///     different endpoints.
+        /// </remarks>
+        /// <returns>
+        ///     A <see cref="string" /> representing the offset value.
+        /// </returns>
+        string ToVerboseLogString();
     }
 }

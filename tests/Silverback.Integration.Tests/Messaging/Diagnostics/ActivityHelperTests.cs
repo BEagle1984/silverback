@@ -107,7 +107,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var headers = new MessageHeaderCollection();
 
-            Action act = () => Activity.Current.SetMessageHeaders(headers);
+            Action act = () => Activity.Current!.SetMessageHeaders(headers);
 
             act.Should().Throw<InvalidOperationException>();
         }

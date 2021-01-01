@@ -20,11 +20,11 @@ namespace Silverback.Messaging.Sequences
         ///     The <see cref="ISequenceReader" /> implementations to be used.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public SequencerConsumerBehavior(
             IEnumerable<ISequenceReader> sequenceReaders,
-            ISilverbackIntegrationLogger<SequencerConsumerBehavior> logger)
+            ISilverbackLogger<SequencerConsumerBehavior> logger)
             : base(sequenceReaders.Where(reader => !reader.HandlesRawMessages), logger)
         {
         }

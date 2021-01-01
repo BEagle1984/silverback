@@ -72,15 +72,14 @@ namespace Microsoft.Extensions.DependencyInjection
                 // Pipeline - Encryption
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<EncryptorProducerBehavior>()
-                    .AddSingletonBrokerBehavior<DecryptorConsumerBehavior>();
+                    .AddSingletonBrokerBehavior<DecryptorConsumerBehavior>()
+                    .Services
+                    .AddSingleton<ISilverbackCryptoStreamFactory, SilverbackCryptoStreamFactory>();
 
                 // Pipeline - Headers
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<HeadersWriterProducerBehavior>()
                     .AddSingletonBrokerBehavior<HeadersReaderConsumerBehavior>()
-                    .Services
-                    .AddSingleton<ISilverbackCryptoStreamFactory, SilverbackCryptoStreamFactory>();
-                brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<CustomHeadersMapperProducerBehavior>()
                     .AddSingletonBrokerBehavior<CustomHeadersMapperConsumerBehavior>()
                     .Services

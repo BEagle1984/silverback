@@ -4,9 +4,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Sequences
@@ -16,7 +17,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task GetAsync_ExistingSequence_SequenceReturned()
         {
-            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var store = new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
 
             await store.AddAsync(new ChunkSequence("aaa", 10, context));
@@ -34,7 +35,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [InlineData(false)]
         public async Task GetAsync_PartialId_SequenceReturnedIfMatchPrefixIsTrue(bool matchPrefix)
         {
-            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var store = new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
 
             await store.AddAsync(new ChunkSequence("aaa-123", 10, context));
@@ -55,7 +56,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task GetAsync_NotExistingSequence_NullReturned()
         {
-            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var store = new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
 
             await store.AddAsync(new ChunkSequence("aaa", 10, context));
@@ -70,7 +71,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task AddAsync_NewSequence_SequenceAddedAndReturned()
         {
-            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var store = new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
 
             var newSequence = new ChunkSequence("abc", 10, context);
@@ -83,7 +84,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task AddAsync_ExistingSequence_SequenceAbortedAndReplaced()
         {
-            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var store = new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
 
             var originalSequence = new ChunkSequence("abc", 10, context);
@@ -100,7 +101,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task AddAsyncAndGetAsync_Sequence_IsNewFlagAutomaticallyHandled()
         {
-            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var store = new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
 
             var sequence = await store.AddAsync(new ChunkSequence("abc", 10, context));
@@ -115,7 +116,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task Remove_ExistingSequence_SequenceRemoved()
         {
-            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var store = new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
 
             await store.AddAsync(new ChunkSequence("aaa", 10, context));
@@ -132,7 +133,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task Remove_NotExistingSequence_NoExceptionThrown()
         {
-            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var store = new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
             var context = ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store);
 
             await store.AddAsync(new ChunkSequence("aaa", 10, context));
@@ -149,7 +150,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public void GetPendingSequences_EmptyStore_EmptyCollectionReturned()
         {
-            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var store = new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
 
             var result = store.GetPendingSequences();
 
@@ -159,7 +160,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task GetPendingSequences_WithIncompleteSequence_PendingSequencesReturned()
         {
-            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var store = new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
 
             await store.AddAsync(new FakeSequence("aaa", true, false, store));
             await store.AddAsync(new FakeSequence("bbb", false, true, store));
@@ -175,7 +176,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
         [Fact]
         public async Task GetPendingSequences_WithAllCompleteOrAbortedSequences_EmptyCollectionReturned()
         {
-            var store = new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            var store = new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
 
             await store.AddAsync(new FakeSequence("aaa", true, false, store));
             await store.AddAsync(new FakeSequence("bbb", false, true, store));
@@ -183,19 +184,6 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
             var result = store.GetPendingSequences();
 
             result.Should().BeEmpty();
-        }
-
-        private sealed class FakeSequence : SequenceBase<IInboundEnvelope>
-        {
-            public FakeSequence(string sequenceId, bool isComplete, bool isAborted, ISequenceStore store)
-                : base(sequenceId, ConsumerPipelineContextHelper.CreateSubstitute(sequenceStore: store))
-            {
-                if (isComplete)
-                    CompleteAsync().Wait();
-
-                if (isAborted)
-                    AbortAsync(SequenceAbortReason.EnumerationAborted).Wait();
-            }
         }
     }
 }

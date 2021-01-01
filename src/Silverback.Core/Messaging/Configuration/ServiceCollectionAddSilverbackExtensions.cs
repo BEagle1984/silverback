@@ -52,6 +52,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddLogger(this IServiceCollection services) => services
             .AddSingleton(typeof(ISilverbackLogger<>), typeof(SilverbackLogger<>))
+            .AddSingleton(typeof(IMappedLevelsLogger<>), typeof(MappedLevelsLogger<>))
             .AddSingleton<ILogLevelDictionary, LogLevelDictionary>();
 
         // Note: resolvers and handlers will be evaluated in reverse order

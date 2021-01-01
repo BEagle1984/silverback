@@ -38,8 +38,8 @@ namespace Silverback.Messaging.Sequences
         /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
-        ///     <see cref="ISequence" /> or <c>null</c> if the message is to be ignored.
+        ///     <see cref="ISequence" />.
         /// </returns>
-        Task<ISequence?> GetSequenceAsync(ConsumerPipelineContext context);
+        Task<ISequence> GetSequenceAsync(ConsumerPipelineContext context);
     }
 }

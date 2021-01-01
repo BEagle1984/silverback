@@ -5,7 +5,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 
 namespace Silverback.Background
@@ -95,11 +94,7 @@ namespace Silverback.Background
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogInformation(
-                            CoreEventIds.RecurringDistributedBackgroundServiceException,
-                            ex,
-                            "Background service {BackgroundService} recurring execution failed.",
-                            GetType().FullName);
+                        _logger.LogRecurringBackgroundServiceException(this, ex);
                         throw;
                     }
                 }
@@ -113,10 +108,7 @@ namespace Silverback.Background
                     await SleepAsync(TimeSpan.FromMilliseconds(100), stoppingToken).ConfigureAwait(false);
             }
 
-            _logger.LogInformation(
-                CoreEventIds.RecurringBackgroundServiceStopped,
-                "Background service {BackgroundService} stopped.",
-                GetType().FullName);
+            _logger.LogRecurringBackgroundServiceStopped(this);
         }
 
         /// <summary>
@@ -137,11 +129,7 @@ namespace Silverback.Background
             if (delay <= TimeSpan.Zero)
                 return;
 
-            _logger.LogDebug(
-                CoreEventIds.RecurringDistributedBackgroundServiceSleeping,
-                "Background service {BackgroundService} sleeping for {sleepTimeInMilliseconds} milliseconds.",
-                GetType().FullName,
-                _interval.TotalMilliseconds);
+            _logger.LogRecurringBackgroundServiceSleeping(this, delay);
 
             try
             {

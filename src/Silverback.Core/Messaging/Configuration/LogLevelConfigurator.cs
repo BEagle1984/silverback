@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
-        public ILogLevelConfigurator SetLogLevel(EventId eventId, Func<Exception, LogLevel, LogLevel> logLevelFunc)
+        public ILogLevelConfigurator SetLogLevel(EventId eventId, Func<Exception?, LogLevel, LogLevel> logLevelFunc)
         {
             _logLevelDictionary[eventId] =
                 (exception, originalLogLevel, _) => logLevelFunc(exception, originalLogLevel);
@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Configuration
 
         public ILogLevelConfigurator SetLogLevel(
             EventId eventId,
-            Func<Exception, LogLevel, Lazy<string>, LogLevel> logLevelFunc)
+            Func<Exception?, LogLevel, Lazy<string>, LogLevel> logLevelFunc)
         {
             _logLevelDictionary[eventId] = logLevelFunc;
 

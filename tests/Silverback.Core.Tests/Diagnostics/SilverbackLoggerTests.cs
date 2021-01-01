@@ -2,8 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Silverback.Background;
 using Silverback.Diagnostics;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Diagnostics
@@ -13,134 +16,152 @@ namespace Silverback.Tests.Core.Diagnostics
         [Fact]
         public void Log_EmptyLogLevelMapping_LogLevelNotChanged()
         {
-            var logLevelDictionary = new LogLevelDictionary();
-            var internalLogger = new LoggerSubstitute<object>();
-            var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
+            var logLevels = new LogLevelDictionary();
+            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
+            var mappedLevelsLogger =
+                new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
-            logger.Log(LogLevel.Information, CoreEventIds.BackgroundServiceStarting, "Log Message");
+            silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
 
-            internalLogger.Received(LogLevel.Information, null, "Log Message");
+            logger.Received(LogLevel.Information, null, "Acquired lock name (id).");
         }
 
         [Fact]
         public void Log_ConfiguredLogLevelMapping_LogLevelChanged()
         {
-            var logLevelDictionary = new LogLevelDictionary
+            var logLevels = new LogLevelDictionary
             {
-                { CoreEventIds.BackgroundServiceStarting, (_, _, _) => LogLevel.Error }
+                { CoreLogEvents.DistributedLockAcquired.EventId, (_, _, _) => LogLevel.Error }
             };
-            var internalLogger = new LoggerSubstitute<object>();
-            var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
+            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
+            var mappedLevelsLogger =
+                new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
-            logger.Log(LogLevel.Information, CoreEventIds.BackgroundServiceStarting, "Log Message");
+            silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
 
-            internalLogger.Received(LogLevel.Error, null, "Log Message");
+            logger.Received(LogLevel.Error, null, "Acquired lock name (id).");
         }
 
         [Fact]
         public void Log_EventIdNotConfigured_LogLevelNotChanged()
         {
-            var logLevelDictionary = new LogLevelDictionary
+            var logLevels = new LogLevelDictionary
             {
-                { CoreEventIds.BackgroundServiceStarting, (_, _, _) => LogLevel.Error }
+                { CoreLogEvents.BackgroundServiceStarting.EventId, (_, _, _) => LogLevel.Error }
             };
-            var internalLogger = new LoggerSubstitute<object>();
-            var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
+            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
+            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
-            logger.Log(LogLevel.Information, CoreEventIds.BackgroundServiceLockAcquired, "Log Message");
+            silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
 
-            internalLogger.Received(LogLevel.Information, null, "Log Message");
+            logger.Received(LogLevel.Information, null, "Acquired lock name (id).");
         }
 
         [Fact]
         public void Log_ConfiguredConditionalLogLevelMapping_LogLevelChanged()
         {
-            var logLevelDictionary = new LogLevelDictionary
+            var logLevels = new LogLevelDictionary
             {
                 {
-                    CoreEventIds.BackgroundServiceStarting,
+                    CoreLogEvents.FailedToAcquireDistributedLock.EventId,
                     (exception, originalLogLevel, _) =>
                     {
                         if (exception is InvalidOperationException)
-                        {
                             return LogLevel.Error;
-                        }
 
                         return originalLogLevel;
                     }
                 }
             };
-            var internalLogger = new LoggerSubstitute<object>();
-            var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
+            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Error);
+            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
-            logger.Log(
-                LogLevel.Information,
-                CoreEventIds.BackgroundServiceStarting,
-                new InvalidOperationException(),
-                "Log Message");
+            silverbackLogger.LogFailedToAcquireLock(
+                new DistributedLockSettings("name", "id"),
+                new InvalidOperationException());
 
-            internalLogger.Received(LogLevel.Error, typeof(InvalidOperationException), "Log Message");
+            logger.Received(
+                LogLevel.Error,
+                typeof(InvalidOperationException),
+                "Failed to acquire lock name (id).");
         }
 
         [Fact]
         public void Log_ConfiguredConditionalLogLevelMapping_LogLevelNotChanged()
         {
-            var logLevelDictionary = new LogLevelDictionary
+            var logLevels = new LogLevelDictionary
             {
                 {
-                    CoreEventIds.BackgroundServiceStarting,
+                    CoreLogEvents.FailedToAcquireDistributedLock.EventId,
                     (exception, originalLogLevel, _) =>
                     {
-                        if (exception is InvalidOperationException)
-                        {
+                        if (exception is InvalidCastException)
                             return LogLevel.Error;
-                        }
 
                         return originalLogLevel;
                     }
                 }
             };
-            var internalLogger = new LoggerSubstitute<object>();
-            var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
+            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Debug);
+            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
-            logger.Log(
-                LogLevel.Information,
-                CoreEventIds.BackgroundServiceStarting,
-                new ArgumentException("param"),
-                "Log Message");
+            silverbackLogger.LogFailedToAcquireLock(
+                new DistributedLockSettings("name", "id"),
+                new InvalidOperationException());
 
-            internalLogger.Received(LogLevel.Information, typeof(ArgumentException), "Log Message");
+            logger.Received(
+                LogLevel.Debug,
+                typeof(InvalidOperationException),
+                "Failed to acquire lock name (id).");
         }
 
         [Fact]
         public void Log_ConfiguredMessageBasedLogLevelMapping_LogLevelChanged()
         {
-            var logLevelDictionary = new LogLevelDictionary
+            var logLevels = new LogLevelDictionary
             {
                 {
-                    CoreEventIds.BackgroundServiceStarting,
+                    CoreLogEvents.DistributedLockAcquired.EventId,
                     (_, originalLogLevel, message) =>
                     {
-                        if (message.Value == "TestMessage 10")
-                        {
+                        if (message.Value == "Acquired lock name (id).")
                             return LogLevel.Error;
-                        }
 
                         return originalLogLevel;
                     }
                 }
             };
-            var internalLogger = new LoggerSubstitute<object>();
-            var logger = new SilverbackLogger<object>(internalLogger, logLevelDictionary);
+            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
+            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
-            logger.Log(
-                LogLevel.Information,
-                CoreEventIds.BackgroundServiceStarting,
-                new ArgumentException("param"),
-                "TestMessage {Value}",
-                10);
+            silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
 
-            internalLogger.Received(LogLevel.Error, typeof(ArgumentException), "TestMessage 10");
+            logger.Received(LogLevel.Error, null, "Acquired lock name (id).");
+        }
+
+        [Fact]
+        public void IsEnabled_ConfiguredLogLevelMapping_CheckedAccordingToNewLevel()
+        {
+            var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
+            var logEvent = CoreLogEvents.AcquiringDistributedLock;
+            logger.IsEnabled(logEvent.Level).Should().BeTrue();
+
+            var logLevels = new LogLevelDictionary
+            {
+                { logEvent.EventId, (_, _, _) => LogLevel.Trace }
+            };
+            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
+
+            var result = silverbackLogger.IsEnabled(logEvent);
+
+            result.Should().BeFalse();
         }
     }
 }

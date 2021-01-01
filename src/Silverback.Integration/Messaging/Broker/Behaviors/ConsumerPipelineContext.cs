@@ -21,6 +21,8 @@ namespace Silverback.Messaging.Broker.Behaviors
 
         private IConsumerTransactionManager? _transactionManager;
 
+        private IRawInboundEnvelope _envelope;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConsumerPipelineContext" /> class.
         /// </summary>
@@ -42,7 +44,7 @@ namespace Silverback.Messaging.Broker.Behaviors
             ISequenceStore sequenceStore,
             IServiceProvider serviceProvider)
         {
-            Envelope = Check.NotNull(envelope, nameof(envelope));
+            _envelope = Check.NotNull(envelope, nameof(envelope));
             Consumer = Check.NotNull(consumer, nameof(consumer));
             SequenceStore = Check.NotNull(sequenceStore, nameof(sequenceStore));
             ServiceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
@@ -104,7 +106,11 @@ namespace Silverback.Messaging.Broker.Behaviors
         /// <summary>
         ///     Gets or sets the envelopes containing the messages being processed.
         /// </summary>
-        public IRawInboundEnvelope Envelope { get; set; }
+        public IRawInboundEnvelope Envelope
+        {
+            get => _envelope;
+            set => _envelope = Check.NotNull(value, nameof(value));
+        }
 
         /// <summary>
         ///     Gets the <see cref="Task" /> representing the message processing when it is not directly awaited (e.g.

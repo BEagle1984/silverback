@@ -4,10 +4,9 @@
 using System;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Configuration;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
@@ -18,11 +17,15 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 
         public KafkaProducerTests()
         {
-            var services = new ServiceCollection()
-                .AddSingleton<EndpointsConfiguratorsInvoker>()
-                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddBroker<KafkaBroker>()));
 
-            _broker = new KafkaBroker(services.BuildServiceProvider());
+            _broker = serviceProvider.GetRequiredService<KafkaBroker>();
         }
 
         [Fact]

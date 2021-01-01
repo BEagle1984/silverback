@@ -28,14 +28,14 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="IOutboundLogger{TCategoryName}" />.
         /// </param>
         protected Producer(
             TBroker broker,
             TEndpoint endpoint,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<Producer> logger)
+            IOutboundLogger<Producer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
         }

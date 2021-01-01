@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -27,7 +26,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
 
         private readonly IOutboundRoutingConfiguration _routingConfiguration;
 
-        private readonly ISilverbackIntegrationLogger<OutboxWorker> _logger;
+        private readonly IOutboundLogger<OutboxWorker> _logger;
 
         private readonly int _readBatchSize;
 
@@ -46,7 +45,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         ///     The configured outbound routes.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="IOutboundLogger{TCategoryName}" />.
         /// </param>
         /// <param name="enforceMessageOrder">
         ///     Specifies whether the messages must be produced in the same order as they were added to the queue.
@@ -61,7 +60,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             IServiceScopeFactory serviceScopeFactory,
             IBrokerCollection brokerCollection,
             IOutboundRoutingConfiguration routingConfiguration,
-            ISilverbackIntegrationLogger<OutboxWorker> logger,
+            IOutboundLogger<OutboxWorker> logger,
             bool enforceMessageOrder,
             int readBatchSize)
         {
@@ -84,10 +83,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    IntegrationEventIds.ErrorProcessingOutboundQueue,
-                    ex,
-                    "Error occurred processing the outbound queue.");
+                _logger.LogErrorProcessingOutbox(ex);
             }
         }
 
@@ -120,25 +116,19 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             IServiceProvider serviceProvider,
             CancellationToken stoppingToken)
         {
-            _logger.LogTrace(
-                IntegrationEventIds.ReadingMessagesFromOutbox,
-                "Reading outbound messages from queue (limit: {readBatchSize}).",
-                _readBatchSize);
+            _logger.LogReadingMessagesFromOutbox(_readBatchSize);
 
             var outboxReader = serviceProvider.GetRequiredService<IOutboxReader>();
             var outboxMessages =
                 (await outboxReader.ReadAsync(_readBatchSize).ConfigureAwait(false)).ToList();
 
             if (outboxMessages.Count == 0)
-                _logger.LogTrace(IntegrationEventIds.OutboxEmpty, "The outbox is empty.");
+                _logger.LogOutboxEmpty();
 
             for (var i = 0; i < outboxMessages.Count; i++)
             {
-                _logger.LogDebug(
-                    IntegrationEventIds.ProcessingOutboxStoredMessage,
-                    "Processing message {currentMessageIndex} of {totalMessages}.",
-                    i + 1,
-                    outboxMessages.Count);
+                _logger.LogProcessingOutboxStoredMessage(i + 1, outboxMessages.Count);
+
                 await ProcessMessageAsync(outboxMessages[i], outboxReader, serviceProvider)
                     .ConfigureAwait(false);
 
@@ -166,14 +156,12 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             }
             catch (Exception ex)
             {
-                _logger.LogErrorWithMessageInfo(
-                    IntegrationEventIds.ErrorProducingOutboxStoredMessage,
-                    ex,
-                    "Failed to produce the message in the outbox.",
+                _logger.LogErrorProducingOutboxStoredMessage(
                     new OutboundEnvelope(
                         message.Content,
                         message.Headers,
-                        new LoggingEndpoint(message.EndpointName)));
+                        new LoggingEndpoint(message.EndpointName)),
+                    ex);
 
                 await outboxReader.RetryAsync(message).ConfigureAwait(false);
 

@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Sequences
     {
         private readonly IReadOnlyCollection<ISequenceReader> _sequenceReaders;
 
-        private readonly ISilverbackIntegrationLogger<SequencerConsumerBehaviorBase> _logger;
+        private readonly ISilverbackLogger<SequencerConsumerBehaviorBase> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="SequencerConsumerBehaviorBase" /> class.
@@ -34,11 +34,11 @@ namespace Silverback.Messaging.Sequences
         ///     The <see cref="ISequenceReader" /> implementations to be used.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         protected SequencerConsumerBehaviorBase(
             IEnumerable<ISequenceReader> sequenceReaders,
-            ISilverbackIntegrationLogger<SequencerConsumerBehaviorBase> logger)
+            ISilverbackLogger<SequencerConsumerBehaviorBase> logger)
         {
             _sequenceReaders = Check.NotNull(sequenceReaders, nameof(sequenceReaders)).SortBySortIndex()
                 .ToList();
@@ -88,10 +88,7 @@ namespace Silverback.Messaging.Sequences
                 break;
             }
 
-            _logger.LogDebugWithMessageInfo(
-                IntegrationEventIds.MessageAddedToSequence,
-                $"Message added to {sequence.GetType().Name}.",
-                context);
+            _logger.LogMessageAddedToSequence(context.Envelope, sequence);
 
             if (sequence.IsComplete)
             {
@@ -104,10 +101,7 @@ namespace Silverback.Messaging.Sequences
                     context.SetIsSequenceEnd();
                 }
 
-                _logger.LogDebugWithMessageInfo(
-                    IntegrationEventIds.SequenceCompleted,
-                    $"{sequence.GetType().Name} '{sequence.SequenceId}' completed.",
-                    context);
+                _logger.LogSequenceCompleted(sequence);
             }
         }
 
@@ -187,13 +181,12 @@ namespace Silverback.Messaging.Sequences
         {
             var sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
 
-            if (sequence == null || sequence.IsComplete)
-            {
-                _logger.LogWarningWithMessageInfo(
-                    IntegrationEventIds.IncompleteSequenceDiscarded,
-                    "The incomplete sequence is ignored (probably missing the first message).",
-                    context);
+            if (sequence.IsComplete)
+                return null;
 
+            if (sequence is IncompleteSequence incompleteSequence)
+            {
+                _logger.LogSkippingIncompleteSequence(incompleteSequence);
                 return null;
             }
 
@@ -206,10 +199,7 @@ namespace Silverback.Messaging.Sequences
                 if (context.ProcessingTask != null)
                     MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);
 
-                _logger.LogDebugWithMessageInfo(
-                    IntegrationEventIds.SequenceStarted,
-                    $"Started new {sequence.GetType().Name}.",
-                    context);
+                _logger.LogSequenceStarted(sequence);
             }
 
             return sequence;

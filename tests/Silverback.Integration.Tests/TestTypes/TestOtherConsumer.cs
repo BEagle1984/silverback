@@ -25,7 +25,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 endpoint,
                 behaviorsProvider,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<TestOtherConsumer>>())
+                serviceProvider.GetRequiredService<IInboundLogger<TestOtherConsumer>>())
         {
         }
 

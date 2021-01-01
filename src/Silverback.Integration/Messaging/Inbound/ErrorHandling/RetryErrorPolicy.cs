@@ -14,8 +14,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 {
     /// <summary>
     ///     This policy retries to process the message that previously failed to be to processed. An optional
-    ///     delay can be
-    ///     specified.
+    ///     delay can be specified.
     /// </summary>
     /// TODO: Exponential backoff variant
     public class RetryErrorPolicy : RetryableErrorPolicyBase
@@ -66,7 +65,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 ApplyRule,
                 MessageToPublishFactory,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<RetryErrorPolicy>>());
+                serviceProvider.GetRequiredService<IInboundLogger<RetryErrorPolicy>>());
 
         private class RetryErrorPolicyImplementation : ErrorPolicyImplementation
         {
@@ -74,7 +73,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             private readonly TimeSpan _delayIncrement;
 
-            private readonly ISilverbackIntegrationLogger<RetryErrorPolicy> _logger;
+            private readonly IInboundLogger<RetryErrorPolicy> _logger;
 
             public RetryErrorPolicyImplementation(
                 TimeSpan initialDelay,
@@ -85,7 +84,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 Func<IRawInboundEnvelope, Exception, bool>? applyRule,
                 Func<IRawInboundEnvelope, object>? messageToPublishFactory,
                 IServiceProvider serviceProvider,
-                ISilverbackIntegrationLogger<RetryErrorPolicy> logger)
+                IInboundLogger<RetryErrorPolicy> logger)
                 : base(
                     maxFailedAttempts,
                     excludedExceptions,
@@ -100,19 +99,19 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 _logger = logger;
             }
 
-            protected override async Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
+            protected override async Task<bool> ApplyPolicyAsync(
+                ConsumerPipelineContext context,
+                Exception exception)
             {
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
 
-                await context.TransactionManager.RollbackAsync(exception, stopConsuming: false).ConfigureAwait(false);
+                await context.TransactionManager.RollbackAsync(exception, stopConsuming: false)
+                    .ConfigureAwait(false);
 
                 await ApplyDelayAsync(context).ConfigureAwait(false);
 
-                _logger.LogInformationWithMessageInfo(
-                    IntegrationEventIds.RetryMessageProcessing,
-                    "The message(s) will be processed again.",
-                    context);
+                _logger.LogRetryProcessing(context.Envelope);
 
                 return true;
             }
@@ -120,16 +119,20 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             private async Task ApplyDelayAsync(ConsumerPipelineContext context)
             {
                 var delay = (int)_initialDelay.TotalMilliseconds +
-                            (context.Envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts) *
+                            (context.Envelope.Headers.GetValueOrDefault<int>(
+                                 DefaultMessageHeaders.FailedAttempts) *
                              (int)_delayIncrement.TotalMilliseconds);
 
                 if (delay <= 0)
                     return;
 
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.RetryDelayed,
-                    $"Waiting {delay} milliseconds before retrying to process the message(s).",
-                    context);
+                _logger.LogInboundTrace(
+                    IntegrationLogEvents.RetryDelayed,
+                    context.Envelope,
+                    () => new object?[]
+                    {
+                        delay
+                    });
 
                 await Task.Delay(delay).ConfigureAwait(false);
             }

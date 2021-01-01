@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
@@ -18,6 +19,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(options => options.AddKafka()));
 

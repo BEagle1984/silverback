@@ -12,6 +12,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
@@ -45,7 +46,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                         .AddBroker<TestOtherBroker>())
                 .AddSingletonSubscriber(_testSubscriber);
 
-            services.AddNullLogger();
+            services.AddLoggerSubstitute();
 
             _serviceProvider = services.BuildServiceProvider();
 

@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ISilverbackIntegrationLogger<ErrorPolicyBase> _logger;
+        private readonly IInboundLogger<ErrorPolicyBase> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ErrorPolicyImplementation" /> class.
@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="IInboundLogger{TCategoryName}" />.
         /// </param>
         protected ErrorPolicyImplementation(
             int? maxFailedAttempts,
@@ -62,7 +62,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             Func<IRawInboundEnvelope, Exception, bool>? applyRule,
             Func<IRawInboundEnvelope, object>? messageToPublishFactory,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<ErrorPolicyBase> logger)
+            IInboundLogger<ErrorPolicyBase> logger)
         {
             _maxFailedAttempts = maxFailedAttempts;
             _excludedExceptions = Check.NotNull(excludedExceptions, nameof(excludedExceptions));
@@ -80,57 +80,62 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             Check.NotNull(context, nameof(context));
             Check.NotNull(exception, nameof(exception));
 
-            var failedAttempts = context.Envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts);
+            var failedAttempts =
+                context.Envelope.Headers.GetValueOrDefault<int>(DefaultMessageHeaders.FailedAttempts);
 
             if (_maxFailedAttempts != null && failedAttempts > _maxFailedAttempts)
             {
-                var traceString = $"The policy '{GetType().Name}' will be skipped because the current failed " +
-                                  $"attempts ({failedAttempts}) exceeds the configured maximum attempts " +
-                                  $"({_maxFailedAttempts}).";
-
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.PolicyMaxFailedAttemptsExceeded,
-                    traceString,
-                    context);
+                _logger.LogInboundTrace(
+                    IntegrationLogEvents.PolicyMaxFailedAttemptsExceeded,
+                    context.Envelope,
+                    () => new object?[]
+                    {
+                        GetType().Name,
+                        failedAttempts,
+                        _maxFailedAttempts
+                    });
 
                 return false;
             }
 
-            if (_includedExceptions.Any() && _includedExceptions.All(type => !type.IsInstanceOfType(exception)))
+            if (_includedExceptions.Any() &&
+                _includedExceptions.All(type => !type.IsInstanceOfType(exception)))
             {
-                var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
-                                  $"{exception.GetType().Name} is not in the list of handled exceptions.";
-
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.PolicyExceptionNotIncluded,
-                    traceString,
-                    context);
+                _logger.LogInboundTrace(
+                    IntegrationLogEvents.PolicyExceptionNotIncluded,
+                    context.Envelope,
+                    () => new object?[]
+                    {
+                        GetType().Name,
+                        exception.GetType().Name
+                    });
 
                 return false;
             }
 
             if (_excludedExceptions.Any(type => type.IsInstanceOfType(exception)))
             {
-                var traceString = $"The policy '{GetType().Name}' will be skipped because the " +
-                                  $"{exception.GetType().Name} is in the list of excluded exceptions.";
-
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.PolicyExceptionExcluded,
-                    traceString,
-                    context);
+                _logger.LogInboundTrace(
+                    IntegrationLogEvents.PolicyExceptionExcluded,
+                    context.Envelope,
+                    () => new object?[]
+                    {
+                        GetType().Name,
+                        exception.GetType().Name
+                    });
 
                 return false;
             }
 
             if (_applyRule != null && !_applyRule.Invoke(context.Envelope, exception))
             {
-                var traceString = $"The policy '{GetType().Name}' will be skipped because the apply rule has been " +
-                                  "evaluated and returned false.";
-
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.PolicyApplyRuleReturnedFalse,
-                    traceString,
-                    context);
+                _logger.LogInboundTrace(
+                    IntegrationLogEvents.PolicyApplyRuleReturnedFalse,
+                    context.Envelope,
+                    () => new object?[]
+                    {
+                        GetType().Name
+                    });
 
                 return false;
             }

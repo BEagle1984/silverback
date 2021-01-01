@@ -1,15 +1,18 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Silverback.Diagnostics
 {
     /// <summary>
-    ///     Custom logger for Silverback.
+    ///     Used to perform logging in Silverback.
     /// </summary>
-    /// <typeparam name="TCategoryName">The type who's name is used for the logger category name.</typeparam>
-    public interface ISilverbackLogger<out TCategoryName> : ILogger<TCategoryName>, ISilverbackLogger
+    /// <typeparam name="TCategoryName">
+    ///     The type who's name is used for the logger category name.
+    /// </typeparam>
+    [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used to init logger category")]
+    public interface ISilverbackLogger<out TCategoryName> : ISilverbackLogger
     {
     }
 }

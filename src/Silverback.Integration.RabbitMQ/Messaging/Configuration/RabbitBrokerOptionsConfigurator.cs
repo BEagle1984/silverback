@@ -24,11 +24,6 @@ namespace Silverback.Messaging.Configuration
                 .AddSingletonBrokerBehavior<RabbitRoutingKeyInitializerProducerBehavior>()
                 .Services
                 .AddSingleton<IRabbitConnectionFactory, RabbitConnectionFactory>();
-
-            brokerOptionsBuilder.LogTemplates
-                .ConfigureAdditionalData<RabbitQueueConsumerEndpoint>("deliveryTag")
-                .ConfigureAdditionalData<RabbitExchangeConsumerEndpoint>("deliveryTag", "routingKey")
-                .ConfigureAdditionalData<RabbitExchangeProducerEndpoint>("routingKey");
         }
     }
 }

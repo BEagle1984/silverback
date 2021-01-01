@@ -12,6 +12,7 @@ using NSubstitute;
 using Silverback.Background;
 using Silverback.Diagnostics;
 using Silverback.Tests.Core.TestTypes.Database;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Background
@@ -34,7 +35,7 @@ namespace Silverback.Tests.Core.Background
                 .AddDbContext<TestDbContext>(
                     opt => opt
                         .UseSqlite(_connection))
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddSilverback()
                 .UseDbContext<TestDbContext>();
 

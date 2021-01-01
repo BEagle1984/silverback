@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using FluentAssertions;
+using NSubstitute;
+using Silverback.Diagnostics;
 using Silverback.Messaging.KafkaEvents.Statistics;
 using Xunit;
 
@@ -9,15 +11,16 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.KafkaEvents.Statistics
 {
     public class KafkaStatisticsDeserializerTests
     {
-        private readonly IntegrationLoggerSubstitute<KafkaStatisticsDeserializerTests> _logger = new();
-
         [Fact]
         public void TryDeserialize_ValidStatisticsJson_StatisticsProperlyDeserialized()
         {
             var resourcesHelper = new ResourcesHelper(GetType().Assembly);
-            var json = resourcesHelper.GetAsString("Silverback.Tests.Integration.Kafka.Resources.statistics.json");
+            var json = resourcesHelper.GetAsString(
+                "Silverback.Tests.Integration.Kafka.Resources.statistics.json");
 
-            var statistics = KafkaStatisticsDeserializer.TryDeserialize(json, _logger);
+            var statistics = KafkaStatisticsDeserializer.TryDeserialize(
+                json,
+                Substitute.For<ISilverbackLogger>());
 
             // Global fields
             statistics.Name.Should().Be("Test#consumer-1");
@@ -302,7 +305,9 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.KafkaEvents.Statistics
         {
             var json = "{ WTF?! }";
 
-            var statistics = KafkaStatisticsDeserializer.TryDeserialize(json, _logger);
+            var statistics = KafkaStatisticsDeserializer.TryDeserialize(
+                json,
+                Substitute.For<ISilverbackLogger>());
 
             statistics.Should().NotBeNull();
         }

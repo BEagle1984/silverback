@@ -13,7 +13,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public void Serialize_SomeItems_SerializedStringReturned()
         {
-            var itemsToAdd = new List<KeyValuePair<string, string>>
+            var itemsToAdd = new List<KeyValuePair<string, string?>>
             {
                 new("key1", "value1"),
                 new("key2", "value2"),

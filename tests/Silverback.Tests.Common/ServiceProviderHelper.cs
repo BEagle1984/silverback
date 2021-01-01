@@ -8,15 +8,15 @@ namespace Silverback.Tests
 {
     public static class ServiceProviderHelper
     {
-        public static IServiceProvider GetServiceProvider(Action<IServiceCollection> servicesConfigurationAction)
+        public static IServiceProvider GetServiceProvider(
+            Action<IServiceCollection> servicesConfigurationAction)
         {
             var services = new ServiceCollection();
 
-            services.AddNullLogger();
-
             servicesConfigurationAction(services);
 
-            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+            var options = new ServiceProviderOptions { ValidateScopes = true };
+            var serviceProvider = services.BuildServiceProvider(options);
 
             return serviceProvider.CreateScope().ServiceProvider;
         }

@@ -13,9 +13,8 @@ namespace Silverback.Messaging.Messages
         public RawOutboundEnvelope(
             IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint,
-            IBrokerMessageIdentifier? brokerMessageIdentifier = null,
-            IDictionary<string, string>? additionalLogData = null)
-            : this(null, headers, endpoint, brokerMessageIdentifier, additionalLogData)
+            IBrokerMessageIdentifier? brokerMessageIdentifier = null)
+            : this(null, headers, endpoint, brokerMessageIdentifier)
         {
         }
 
@@ -23,9 +22,8 @@ namespace Silverback.Messaging.Messages
             Stream? rawMessage,
             IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint,
-            IBrokerMessageIdentifier? brokerMessageIdentifier = null,
-            IDictionary<string, string>? additionalLogData = null)
-            : base(rawMessage, headers, endpoint, additionalLogData)
+            IBrokerMessageIdentifier? brokerMessageIdentifier = null)
+            : base(rawMessage, headers, endpoint)
         {
             BrokerMessageIdentifier = brokerMessageIdentifier;
             ActualEndpointName = endpoint.Name;

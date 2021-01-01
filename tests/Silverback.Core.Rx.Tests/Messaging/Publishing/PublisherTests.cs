@@ -10,6 +10,7 @@ using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.Rx.TestTypes.Messages;
 using Silverback.Tests.Core.Rx.TestTypes.Messages.Base;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Rx.Messaging.Publishing
@@ -130,7 +131,7 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             var services = new ServiceCollection();
 
-            services.AddNullLogger();
+            services.AddLoggerSubstitute();
 
             var builder = services.AddSilverback().AsObservable();
 

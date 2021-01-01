@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 MessageToPublishFactory,
                 serviceProvider,
                 serviceProvider
-                    .GetRequiredService<ISilverbackIntegrationLogger<StopConsumerErrorPolicy>>());
+                    .GetRequiredService<IInboundLogger<StopConsumerErrorPolicy>>());
 
         private class StopConsumerErrorPolicyImplementation : ErrorPolicyImplementation
         {
@@ -38,7 +38,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 Func<IRawInboundEnvelope, Exception, bool>? applyRule,
                 Func<IRawInboundEnvelope, object>? messageToPublishFactory,
                 IServiceProvider serviceProvider,
-                ISilverbackIntegrationLogger<StopConsumerErrorPolicy> logger)
+                IInboundLogger<StopConsumerErrorPolicy> logger)
                 : base(
                     maxFailedAttempts,
                     excludedExceptions,
@@ -50,7 +50,9 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             {
             }
 
-            protected override Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception) =>
+            protected override Task<bool> ApplyPolicyAsync(
+                ConsumerPipelineContext context,
+                Exception exception) =>
                 Task.FromResult(false);
         }
     }

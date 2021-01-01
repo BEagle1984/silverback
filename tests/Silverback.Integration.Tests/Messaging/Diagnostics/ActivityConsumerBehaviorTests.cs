@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
@@ -30,30 +31,34 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new byte[5],
                 new MessageHeaderCollection
                 {
-                    { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
+                    {
+                        DefaultMessageHeaders.TraceId,
+                        "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
+                    }
                 },
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name,
                 new TestOffset());
 
             var entered = false;
-            await new ActivityConsumerBehavior().HandleAsync(
-                new ConsumerPipelineContext(
-                    rawEnvelope,
-                    Substitute.For<IConsumer>(),
-                    Substitute.For<ISequenceStore>(),
-                    Substitute.For<IServiceProvider>()),
-                _ =>
-                {
-                    Activity.Current.Should().NotBeNull();
-                    Activity.Current.ParentId.Should()
-                        .Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
-                    Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
+            await new ActivityConsumerBehavior(Substitute.For<IInboundLogger<ActivityConsumerBehavior>>())
+                .HandleAsync(
+                    new ConsumerPipelineContext(
+                        rawEnvelope,
+                        Substitute.For<IConsumer>(),
+                        Substitute.For<ISequenceStore>(),
+                        Substitute.For<IServiceProvider>()),
+                    _ =>
+                    {
+                        Activity.Current.Should().NotBeNull();
+                        Activity.Current!.ParentId.Should()
+                            .Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
+                        Activity.Current.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
 
-                    entered = true;
+                        entered = true;
 
-                    return Task.CompletedTask;
-                });
+                        return Task.CompletedTask;
+                    });
 
             entered.Should().BeTrue();
         }
@@ -65,28 +70,32 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new byte[5],
                 new MessageHeaderCollection
                 {
-                    { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
+                    {
+                        DefaultMessageHeaders.TraceId,
+                        "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01"
+                    }
                 },
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name,
                 new TestOffset());
 
             var entered = false;
-            await new ActivityConsumerBehavior().HandleAsync(
-                new ConsumerPipelineContext(
-                    rawEnvelope,
-                    Substitute.For<IConsumer>(),
-                    Substitute.For<ISequenceStore>(),
-                    Substitute.For<IServiceProvider>()),
-                _ =>
-                {
-                    Activity.Current.Should().NotBeNull();
-                    Activity.Current.Id.Should().NotBeNullOrEmpty();
+            await new ActivityConsumerBehavior(Substitute.For<IInboundLogger<ActivityConsumerBehavior>>())
+                .HandleAsync(
+                    new ConsumerPipelineContext(
+                        rawEnvelope,
+                        Substitute.For<IConsumer>(),
+                        Substitute.For<ISequenceStore>(),
+                        Substitute.For<IServiceProvider>()),
+                    _ =>
+                    {
+                        Activity.Current.Should().NotBeNull();
+                        Activity.Current!.Id.Should().NotBeNullOrEmpty();
 
-                    entered = true;
+                        entered = true;
 
-                    return Task.CompletedTask;
-                });
+                        return Task.CompletedTask;
+                    });
 
             entered.Should().BeTrue();
         }

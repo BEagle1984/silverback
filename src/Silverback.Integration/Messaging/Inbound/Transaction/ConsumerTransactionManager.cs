@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Inbound.Transaction
     {
         private readonly ConsumerPipelineContext _context;
 
-        private readonly ISilverbackIntegrationLogger<ConsumerTransactionManager> _logger;
+        private readonly IInboundLogger<ConsumerTransactionManager> _logger;
 
         private readonly List<ITransactional> _transactionalServices = new();
 
@@ -34,7 +34,7 @@ namespace Silverback.Messaging.Inbound.Transaction
         /// </param>
         public ConsumerTransactionManager(
             ConsumerPipelineContext context,
-            ISilverbackIntegrationLogger<ConsumerTransactionManager> logger)
+            IInboundLogger<ConsumerTransactionManager> logger)
         {
             _context = context;
             _logger = logger;
@@ -69,10 +69,9 @@ namespace Silverback.Messaging.Inbound.Transaction
         {
             if (_isCommitted)
             {
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.LowLevelTracing,
+                _logger.LogInboundLowLevelTrace(
                     "Not committing consumer transaction because it was already committed.",
-                    _context);
+                    _context.Envelope);
 
                 return;
             }
@@ -82,19 +81,13 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             _isCommitted = true;
 
-            _logger.LogTraceWithMessageInfo(
-                IntegrationEventIds.LowLevelTracing,
-                "Committing consumer transaction...",
-                _context);
+            _logger.LogInboundLowLevelTrace("Committing consumer transaction...", _context.Envelope);
 
             // TODO: At least once is ok? (Consider that the DbContext might have been committed already.
             await _transactionalServices.ForEachAsync(service => service.CommitAsync()).ConfigureAwait(false);
             await _context.Consumer.CommitAsync(_context.GetBrokerMessageIdentifiers()).ConfigureAwait(false);
 
-            _logger.LogTraceWithMessageInfo(
-                IntegrationEventIds.LowLevelTracing,
-                "Consumer transaction committed.",
-                _context);
+            _logger.LogInboundLowLevelTrace("Consumer transaction committed.", _context.Envelope);
         }
 
         /// <inheritdoc cref="IConsumerTransactionManager.RollbackAsync" />
@@ -106,10 +99,9 @@ namespace Silverback.Messaging.Inbound.Transaction
         {
             if (_isAborted)
             {
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.LowLevelTracing,
+                _logger.LogInboundLowLevelTrace(
                     "Not aborting consumer transaction because it was already aborted.",
-                    _context);
+                    _context.Envelope);
 
                 return false;
             }
@@ -124,11 +116,10 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             _isAborted = true;
 
-            _logger.LogTraceWithMessageInfo(
-                IntegrationEventIds.LowLevelTracing,
-                exception,
+            _logger.LogInboundLowLevelTrace(
                 "Aborting consumer transaction...",
-                _context);
+                _context.Envelope,
+                exception);
 
             try
             {
@@ -139,21 +130,20 @@ namespace Silverback.Messaging.Inbound.Transaction
             {
                 if (commitConsumer)
                 {
-                    await _context.Consumer.CommitAsync(_context.GetBrokerMessageIdentifiers()).ConfigureAwait(false);
+                    await _context.Consumer.CommitAsync(_context.GetBrokerMessageIdentifiers())
+                        .ConfigureAwait(false);
                 }
                 else
                 {
                     if (stopConsuming)
                         await _context.Consumer.StopAsync().ConfigureAwait(false);
 
-                    await _context.Consumer.RollbackAsync(_context.GetBrokerMessageIdentifiers()).ConfigureAwait(false);
+                    await _context.Consumer.RollbackAsync(_context.GetBrokerMessageIdentifiers())
+                        .ConfigureAwait(false);
                 }
             }
 
-            _logger.LogTraceWithMessageInfo(
-                IntegrationEventIds.LowLevelTracing,
-                "Consumer transaction aborted.",
-                _context);
+            _logger.LogInboundLowLevelTrace("Consumer transaction aborted.", _context.Envelope);
 
             return true;
         }

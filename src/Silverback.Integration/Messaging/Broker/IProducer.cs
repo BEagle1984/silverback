@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -15,9 +14,9 @@ namespace Silverback.Messaging.Broker
     public interface IProducer
     {
         /// <summary>
-        ///     Gets the <see cref="Guid" /> uniquely identifying the producer instance.
+        ///     Gets the <see cref="InstanceIdentifier" /> uniquely identifying the producer instance.
         /// </summary>
-        Guid Id { get; }
+        InstanceIdentifier Id { get; }
 
         /// <summary>
         ///     Gets the <see cref="IBroker" /> instance that owns this .

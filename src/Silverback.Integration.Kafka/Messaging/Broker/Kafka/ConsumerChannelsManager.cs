@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Sequences;
@@ -26,7 +25,7 @@ namespace Silverback.Messaging.Broker.Kafka
 
         private readonly IList<ISequenceStore> _sequenceStores;
 
-        private readonly ISilverbackIntegrationLogger _logger;
+        private readonly ISilverbackLogger _logger;
 
         private readonly Channel<ConsumeResult<byte[]?, byte[]?>>[] _channels;
 
@@ -40,7 +39,7 @@ namespace Silverback.Messaging.Broker.Kafka
             IReadOnlyList<TopicPartition> partitions,
             KafkaConsumer consumer,
             IList<ISequenceStore> sequenceStores,
-            ISilverbackIntegrationLogger logger)
+            ISilverbackLogger logger)
         {
             // Copy the partitions array to avoid concurrency issues if a rebalance occurs while initializing
             _partitions = Check.NotNull(partitions, nameof(partitions)).ToList();
@@ -74,7 +73,8 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         public Task Stopping =>
-            Task.WhenAll(_readTaskCompletionSources.Select(taskCompletionSource => taskCompletionSource.Task));
+            Task.WhenAll(
+                _readTaskCompletionSources.Select(taskCompletionSource => taskCompletionSource.Task));
 
         public bool[] IsReading { get; }
 
@@ -109,13 +109,16 @@ namespace Silverback.Messaging.Broker.Kafka
         {
             int channelIndex = GetChannelIndex(consumeResult.TopicPartition);
 
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
+            _logger.LogConsumerLowLevelTrace(
+                _consumer,
                 "Writing message ({topic}[{partition}]@{offset}) to channel {channelIndex}.",
-                consumeResult.Topic,
-                consumeResult.Partition.Value,
-                consumeResult.Offset,
-                channelIndex);
+                () => new object[]
+                {
+                    consumeResult.Topic,
+                    consumeResult.Partition.Value,
+                    consumeResult.Offset,
+                    channelIndex
+                });
 
             AsyncHelper.RunValueTaskSynchronously(
                 () => _channels[channelIndex].Writer.WriteAsync(consumeResult, cancellationToken));
@@ -124,7 +127,8 @@ namespace Silverback.Messaging.Broker.Kafka
         public void Dispose()
         {
             StopReading();
-            _readCancellationTokenSource.ForEach(cancellationTokenSource => cancellationTokenSource.Dispose());
+            _readCancellationTokenSource.ForEach(
+                cancellationTokenSource => cancellationTokenSource.Dispose());
             _messagesLimiterSemaphoreSlim?.Dispose();
         }
 
@@ -134,10 +138,10 @@ namespace Silverback.Messaging.Broker.Kafka
             if (_readCancellationTokenSource[channelIndex].IsCancellationRequested &&
                 !_readTaskCompletionSources[channelIndex].Task.IsCompleted)
             {
-                _logger.LogTrace(
-                    IntegrationEventIds.LowLevelTracing,
+                _logger.LogConsumerLowLevelTrace(
+                    _consumer,
                     "Deferring channel {channelIndex} processing loop startup...",
-                    channelIndex);
+                    () => new object[] { channelIndex });
 
                 // If the cancellation is still pending await it and restart after successful stop
                 Task.Run(
@@ -182,57 +186,49 @@ namespace Silverback.Messaging.Broker.Kafka
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task ReadChannelAsync(
-            int index,
+            int channelIndex,
             ChannelReader<ConsumeResult<byte[]?, byte[]?>> channelReader,
             CancellationToken cancellationToken)
         {
             try
             {
-                _logger.LogTrace(
-                    IntegrationEventIds.LowLevelTracing,
-                    "Starting channel {channelIndex} processing loop... (consumerId: {consumerId})",
-                    index,
-                    _consumer.Id);
+                _logger.LogConsumerLowLevelTrace(
+                    _consumer,
+                    "Starting channel {channelIndex} processing loop...",
+                    () => new object[] { channelIndex });
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    await ReadChannelOnceAsync(channelReader, index, cancellationToken).ConfigureAwait(false);
+                    await ReadChannelOnceAsync(channelReader, channelIndex, cancellationToken)
+                        .ConfigureAwait(false);
                 }
             }
             catch (OperationCanceledException)
             {
                 // Ignore
-                _logger.LogTrace(
-                    IntegrationEventIds.LowLevelTracing,
-                    "Exiting channel {channelIndex} processing loop (operation canceled). (consumerId: {consumerId})",
-                    index,
-                    _consumer.Id);
+                _logger.LogConsumerLowLevelTrace(
+                    _consumer,
+                    "Exiting channel {channelIndex} processing loop (operation canceled).",
+                    () => new object[] { channelIndex });
             }
             catch (Exception ex)
             {
                 if (!(ex is ConsumerPipelineFatalException))
-                {
-                    _logger.LogCritical(
-                        IntegrationEventIds.ConsumerFatalError,
-                        ex,
-                        "Fatal error occurred processing the consumed message. The consumer will be stopped. (consumerId: {consumerId})",
-                        _consumer.Id);
-                }
+                    _logger.LogConsumerFatalError(_consumer, ex);
 
-                IsReading[index] = false;
-                _readTaskCompletionSources[index].TrySetResult(false);
+                IsReading[channelIndex] = false;
+                _readTaskCompletionSources[channelIndex].TrySetResult(false);
 
                 await _consumer.DisconnectAsync().ConfigureAwait(false);
             }
 
-            IsReading[index] = false;
-            _readTaskCompletionSources[index].TrySetResult(true);
+            IsReading[channelIndex] = false;
+            _readTaskCompletionSources[channelIndex].TrySetResult(true);
 
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
-                "Exited channel {channelIndex} processing loop. (consumerId: {consumerId})",
-                index,
-                _consumer.Id);
+            _logger.LogConsumerLowLevelTrace(
+                _consumer,
+                "Exited channel {channelIndex} processing loop.",
+                () => new object[] { channelIndex });
         }
 
         private async Task ReadChannelOnceAsync(
@@ -242,11 +238,10 @@ namespace Silverback.Messaging.Broker.Kafka
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
-                "Reading channel {channelIndex}... (consumerId: {consumerId})",
-                channelIndex,
-                _consumer.Id);
+            _logger.LogConsumerLowLevelTrace(
+                _consumer,
+                "Reading channel {channelIndex}...",
+                () => new object[] { channelIndex });
 
             var consumeResult = await channelReader.ReadAsync(cancellationToken).ConfigureAwait(false);
 
@@ -254,13 +249,7 @@ namespace Silverback.Messaging.Broker.Kafka
 
             if (consumeResult.IsPartitionEOF)
             {
-                _logger.LogInformation(
-                    KafkaEventIds.EndOfPartition,
-                    "Partition EOF reached: {topic}[{partition}]@{offset}. (consumerId: {consumerId})",
-                    consumeResult.Topic,
-                    consumeResult.Partition.Value,
-                    consumeResult.Offset,
-                    _consumer.Id);
+                _logger.LogEndOfPartition(consumeResult, _consumer);
                 return;
             }
 
@@ -279,8 +268,11 @@ namespace Silverback.Messaging.Broker.Kafka
         }
 
         private int GetChannelIndex(TopicPartition topicPartition) =>
-            _consumer.Endpoint.ProcessPartitionsIndependently ? GetPartitionAssignmentIndex(topicPartition) : 0;
+            _consumer.Endpoint.ProcessPartitionsIndependently
+                ? GetPartitionAssignmentIndex(topicPartition)
+                : 0;
 
-        private int GetPartitionAssignmentIndex(TopicPartition topicPartition) => _partitions.IndexOf(topicPartition);
+        private int GetPartitionAssignmentIndex(TopicPartition topicPartition) =>
+            _partitions.IndexOf(topicPartition);
     }
 }

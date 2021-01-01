@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Diagnostics
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            var activity = new Activity(DiagnosticsConstants.ActivityNameMessageProducing);
+            using var activity = new Activity(DiagnosticsConstants.ActivityNameMessageProducing);
 
             try
             {

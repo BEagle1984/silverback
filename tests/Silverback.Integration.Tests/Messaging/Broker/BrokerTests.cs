@@ -9,6 +9,7 @@ using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -21,6 +22,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -37,6 +39,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -54,6 +57,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -71,6 +75,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -87,6 +92,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -104,6 +110,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -124,6 +131,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -149,6 +157,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options

@@ -3,6 +3,10 @@
 
 using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Silverback.Integration.Kafka")]
+[assembly: InternalsVisibleTo("Silverback.Integration.Mqtt")]
+[assembly: InternalsVisibleTo("Silverback.Integration.RabbitMQ")]
+
 [assembly: InternalsVisibleTo("Silverback.Integration.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Configuration.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka.Tests")]

@@ -15,15 +15,13 @@ namespace Silverback.Messaging.Messages
             IReadOnlyCollection<MessageHeader>? headers,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
-            IBrokerMessageIdentifier brokerMessageIdentifier,
-            IDictionary<string, string>? additionalLogData = null)
+            IBrokerMessageIdentifier brokerMessageIdentifier)
             : this(
                 rawMessage != null ? new MemoryStream(rawMessage) : null,
                 headers,
                 endpoint,
                 actualEndpointName,
-                brokerMessageIdentifier,
-                additionalLogData)
+                brokerMessageIdentifier)
         {
         }
 
@@ -32,9 +30,8 @@ namespace Silverback.Messaging.Messages
             IReadOnlyCollection<MessageHeader>? headers,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
-            IBrokerMessageIdentifier brokerMessageIdentifier,
-            IDictionary<string, string>? additionalLogData = null)
-            : base(rawMessage, headers, endpoint, additionalLogData)
+            IBrokerMessageIdentifier brokerMessageIdentifier)
+            : base(rawMessage, headers, endpoint)
         {
             ActualEndpointName = actualEndpointName;
             BrokerMessageIdentifier = brokerMessageIdentifier;

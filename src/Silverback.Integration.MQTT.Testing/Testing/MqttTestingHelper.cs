@@ -17,7 +17,7 @@ namespace Silverback.Testing
     {
         private readonly IInMemoryMqttBroker? _inMemoryMqttBroker;
 
-        private readonly ISilverbackIntegrationLogger<MqttTestingHelper> _logger;
+        private readonly ILogger<MqttTestingHelper> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttTestingHelper" /> class.
@@ -30,7 +30,7 @@ namespace Silverback.Testing
         /// </param>
         public MqttTestingHelper(
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<MqttTestingHelper> logger)
+            ILogger<MqttTestingHelper> logger)
             : base(serviceProvider, logger)
         {
             _inMemoryMqttBroker = serviceProvider.GetService<IInMemoryMqttBroker>();

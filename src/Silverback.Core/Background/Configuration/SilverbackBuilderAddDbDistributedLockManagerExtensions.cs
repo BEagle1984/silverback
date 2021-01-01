@@ -23,6 +23,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
+        // TODO: E2E test this!
         public static ISilverbackBuilder AddDbDistributedLockManager(this ISilverbackBuilder builder)
         {
             Check.NotNull(builder, nameof(builder));

@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -23,7 +22,7 @@ namespace Silverback.Messaging.Broker
     {
         private readonly IRabbitConnectionFactory _connectionFactory;
 
-        private readonly ISilverbackIntegrationLogger<Producer> _logger;
+        private readonly IOutboundLogger<Producer> _logger;
 
         private readonly BlockingCollection<QueuedMessage> _queue = new();
 
@@ -60,7 +59,7 @@ namespace Silverback.Messaging.Broker
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<Producer> logger)
+            IOutboundLogger<Producer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             _connectionFactory = connectionFactory;
@@ -102,7 +101,8 @@ namespace Silverback.Messaging.Broker
         }
 
         private static string GetRoutingKey(IEnumerable<MessageHeader> headers) =>
-            headers?.FirstOrDefault(header => header.Name == RabbitMessageHeaders.RoutingKey)?.Value ?? string.Empty;
+            headers?.FirstOrDefault(header => header.Name == RabbitMessageHeaders.RoutingKey)?.Value ??
+            string.Empty;
 
         [SuppressMessage("", "CA1031", Justification = "Exception is returned")]
         private void ProcessQueue(CancellationToken cancellationToken)
@@ -128,12 +128,9 @@ namespace Silverback.Messaging.Broker
                     }
                 }
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
-                _logger.LogTrace(
-                    RabbitEventIds.ProducerQueueProcessingCanceled,
-                    ex,
-                    "Producer queue processing was canceled.");
+                _logger.LogProducerQueueProcessingCanceled(this);
             }
         }
 
@@ -146,7 +143,9 @@ namespace Silverback.Messaging.Broker
 
             var properties = channel.CreateBasicProperties();
             properties.Persistent = true; // TODO: Make it configurable?
-            properties.Headers = envelope.Headers.ToDictionary(header => header.Name, header => (object?)header.Value);
+            properties.Headers = envelope.Headers.ToDictionary(
+                header => header.Name,
+                header => (object?)header.Value);
 
             string? routingKey;
 

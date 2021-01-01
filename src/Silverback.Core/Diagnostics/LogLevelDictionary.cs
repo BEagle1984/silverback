@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace Silverback.Diagnostics
 {
     internal class LogLevelDictionary
-        : Dictionary<EventId, Func<Exception, LogLevel, Lazy<string>, LogLevel>>, ILogLevelDictionary
+        : Dictionary<EventId, Func<Exception?, LogLevel, Lazy<string>, LogLevel>>, ILogLevelDictionary
     {
     }
 }

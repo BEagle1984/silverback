@@ -12,6 +12,7 @@ using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -27,7 +28,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var services = new ServiceCollection();
 
             services
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>());
 

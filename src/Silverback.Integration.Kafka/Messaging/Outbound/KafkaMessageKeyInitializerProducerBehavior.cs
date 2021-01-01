@@ -28,7 +28,6 @@ namespace Silverback.Messaging.Outbound
             string key = GetKafkaKey(context);
 
             context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, key);
-            context.Envelope.AdditionalLogData["kafkaKey"] = key;
 
             await next(context).ConfigureAwait(false);
         }

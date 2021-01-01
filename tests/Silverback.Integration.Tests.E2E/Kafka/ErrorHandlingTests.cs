@@ -9,8 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
@@ -30,7 +28,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
     {
         private static readonly byte[] AesEncryptionKey =
         {
-            0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e,
+            0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c,
+            0x1d, 0x1e,
             0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c
         };
 
@@ -58,7 +57,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -86,7 +86,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
             tryCount.Should().Be(11);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
-            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.ForEach(
+                envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -103,7 +104,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -152,7 +154,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -187,7 +190,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task RetryPolicy_JsonChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
+        public async Task
+            RetryPolicy_JsonChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
         {
             var tryCount = 0;
 
@@ -260,7 +264,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task RetryPolicy_BinaryFileChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
+        public async Task
+            RetryPolicy_BinaryFileChunkSequenceProcessedAfterSomeTries_RetriedMultipleTimesAndCommitted()
         {
             var message1 = new BinaryFileMessage
             {
@@ -348,12 +353,16 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             tryCount.Should().Be(2);
 
             Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(6);
-            Helper.Spy.RawOutboundEnvelopes.ForEach(envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
+            Helper.Spy.RawOutboundEnvelopes.ForEach(
+                envelope => envelope.RawMessage.ReReadAll()!.Length.Should().Be(10));
             Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
 
-            Helper.Spy.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
-            Helper.Spy.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should().Be("application/pdf");
-            Helper.Spy.InboundEnvelopes[2].Message.As<BinaryFileMessage>().ContentType.Should().Be("text/plain");
+            Helper.Spy.InboundEnvelopes[0].Message.As<BinaryFileMessage>().ContentType.Should()
+                .Be("application/pdf");
+            Helper.Spy.InboundEnvelopes[1].Message.As<BinaryFileMessage>().ContentType.Should()
+                .Be("application/pdf");
+            Helper.Spy.InboundEnvelopes[2].Message.As<BinaryFileMessage>().ContentType.Should()
+                .Be("text/plain");
 
             receivedFiles.Should().HaveCount(2);
             receivedFiles[0].Should().BeEquivalentTo(message1.Content.ReReadAll());
@@ -376,7 +385,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -426,7 +436,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -493,11 +504,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })))
                         .AddIntegrationSpy()
                         .AddDelegateSubscriber(
-                            (IIntegrationEvent _, IServiceProvider sp) =>
+                            (IIntegrationEvent _) =>
                             {
-                                var logger = sp.GetRequiredService<ISilverbackLogger<ErrorHandlingTests>>();
                                 tryCount++;
-                                logger.LogInformation($"Handling message ({tryCount})...");
                                 throw new InvalidOperationException("Retry!");
                             }))
                 .Run();
@@ -712,7 +721,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.OutboundEnvelopes[0].RawMessage.ReadAll().Should()
                 .NotBeEquivalentTo(rawMessageStream.ReReadAll());
             Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.ForEach(
+                envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -772,7 +782,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(6);
-            Helper.Spy.RawOutboundEnvelopes[0].RawMessage.ReReadAll().Should().NotBeEquivalentTo(rawMessage.Read(10));
+            Helper.Spy.RawOutboundEnvelopes[0].RawMessage.ReReadAll().Should()
+                .NotBeEquivalentTo(rawMessage.Read(10));
             Helper.Spy.RawOutboundEnvelopes.ForEach(
                 envelope =>
                 {
@@ -780,7 +791,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
                 });
             Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.ForEach(
+                envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -800,7 +812,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -814,7 +827,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddIntegrationSpy()
-                        .AddDelegateSubscriber((IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
+                        .AddDelegateSubscriber(
+                            (IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -825,7 +839,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
 
-            Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
+            Helper.Spy.OutboundEnvelopes[1].Message.Should()
+                .BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
             Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("other-topic");
 
             Helper.GetTopic("other-topic").TotalMessagesCount.Should().Be(1);
@@ -849,7 +864,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -880,7 +896,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(11);
             tryCount.Should().Be(11);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
-            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.ForEach(
+                envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -901,7 +918,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -909,7 +927,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             policy => policy
                                                 .Retry(1)
                                                 .ThenMoveToKafkaTopic(
-                                                moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
+                                                    moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
                                         .Configure(
                                             config =>
                                             {
@@ -935,7 +953,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             tryCount.Should().Be(2);
 
-            Helper.Spy.OutboundEnvelopes[1].Message.Should().BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
+            Helper.Spy.OutboundEnvelopes[1].Message.Should()
+                .BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
             Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("other-topic");
 
             Helper.GetTopic("other-topic").TotalMessagesCount.Should().Be(1);

@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Inbound
     /// </summary>
     public sealed class PublisherConsumerBehavior : IConsumerBehavior
     {
-        private readonly ISilverbackIntegrationLogger<PublisherConsumerBehavior> _logger;
+        private readonly IInboundLogger<PublisherConsumerBehavior> _logger;
 
         private bool? _enableMessageStreamEnumerable;
 
@@ -31,9 +31,9 @@ namespace Silverback.Messaging.Inbound
         ///     Initializes a new instance of the <see cref="PublisherConsumerBehavior" /> class.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger{TCategoryName}" />.
+        ///     The <see cref="IInboundLogger{TCategoryName}" />.
         /// </param>
-        public PublisherConsumerBehavior(ISilverbackIntegrationLogger<PublisherConsumerBehavior> logger)
+        public PublisherConsumerBehavior(IInboundLogger<PublisherConsumerBehavior> logger)
         {
             _logger = logger;
         }
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Inbound
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            _logger.LogProcessing(context);
+            _logger.LogProcessing(context.Envelope);
 
             if (context.Sequence != null)
             {
@@ -84,7 +84,9 @@ namespace Silverback.Messaging.Inbound
             await next(context).ConfigureAwait(false);
         }
 
-        private static async Task PublishEnvelopeAsync(ConsumerPipelineContext context, bool throwIfUnhandled) =>
+        private static async Task PublishEnvelopeAsync(
+            ConsumerPipelineContext context,
+            bool throwIfUnhandled) =>
             await context.ServiceProvider.GetRequiredService<IPublisher>()
                 .PublishAsync(context.Envelope, throwIfUnhandled).ConfigureAwait(false);
 
@@ -94,10 +96,15 @@ namespace Silverback.Messaging.Inbound
 
             context.ProcessingTask = processingTask;
 
-            _logger.LogTraceWithMessageInfo(
-                IntegrationEventIds.LowLevelTracing,
-                $"Published {sequence.GetType().Name} '{sequence.SequenceId}' (ProcessingTask.Id={processingTask.Id}).",
-                context);
+            _logger.LogInboundLowLevelTrace(
+                "Published {sequenceType} '{sequenceId}' (ProcessingTask.Id={processingTaskId}).",
+                context.Envelope,
+                () => new object[]
+                {
+                    sequence.GetType().Name,
+                    sequence.SequenceId,
+                    processingTask.Id
+                });
         }
 
         private async Task<UnboundedSequence> GetUnboundedSequenceAsync(ConsumerPipelineContext context)
@@ -117,13 +124,19 @@ namespace Silverback.Messaging.Inbound
             return sequence;
         }
 
-        [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
-        private async Task<Task> PublishStreamProviderAsync(ISequence sequence, ConsumerPipelineContext context)
+        [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to log and forward")]
+        private async Task<Task> PublishStreamProviderAsync(
+            ISequence sequence,
+            ConsumerPipelineContext context)
         {
-            _logger.LogTraceWithMessageInfo(
-                IntegrationEventIds.LowLevelTracing,
-                $"Publishing {sequence.GetType().Name} '{sequence.SequenceId}'...",
-                context);
+            _logger.LogInboundLowLevelTrace(
+                "Publishing {sequenceType} '{sequenceId}'...",
+                context.Envelope,
+                () => new object[]
+                {
+                    sequence.GetType().Name,
+                    sequence.SequenceId
+                });
 
             var publisher = context.ServiceProvider.GetRequiredService<IStreamPublisher>();
 
@@ -131,10 +144,15 @@ namespace Silverback.Messaging.Inbound
 
             if (processingTasks.Count == 0)
             {
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.LowLevelTracing,
-                    $"No subscribers for {sequence.GetType().Name} '{sequence.SequenceId}'.",
-                    context);
+                _logger.LogInboundLowLevelTrace(
+                    "No subscribers for {sequenceType} '{sequenceId}'.",
+                    context.Envelope,
+                    () => new object[]
+                    {
+                        sequence.GetType().Name,
+                        sequence.SequenceId
+                    });
+
                 return Task.CompletedTask;
             }
 
@@ -150,7 +168,8 @@ namespace Silverback.Messaging.Inbound
                         }
 
                         using var cancellationTokenSource = new CancellationTokenSource();
-                        var tasks = processingTasks.Select(task => task.CancelOnExceptionAsync(cancellationTokenSource))
+                        var tasks = processingTasks
+                            .Select(task => task.CancelOnExceptionAsync(cancellationTokenSource))
                             .ToList();
 
                         await Task.WhenAny(tasks).ConfigureAwait(false);
@@ -160,7 +179,8 @@ namespace Silverback.Messaging.Inbound
                             // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
                             // The reason behind this call here may be counterintuitive but with
                             // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
-                            await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
+                            await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted)
+                                .ConfigureAwait(false);
                         }
 
                         await Task.WhenAll(processingTasks).ConfigureAwait(false);
@@ -172,16 +192,21 @@ namespace Silverback.Messaging.Inbound
                     }
                     finally
                     {
-                        _logger.LogTraceWithMessageInfo(
-                            IntegrationEventIds.LowLevelTracing,
-                            $"{sequence.GetType().Name} '{sequence.SequenceId}' processing completed.",
-                            context);
+                        _logger.LogInboundLowLevelTrace(
+                            "{sequenceType} '{sequenceId}' processing completed.",
+                            context.Envelope,
+                            () => new object[]
+                            {
+                                sequence.GetType().Name,
+                                sequence.SequenceId
+                            });
                     }
                 });
         }
 
         private bool IsMessageStreamEnabled(ConsumerPipelineContext context) =>
             _enableMessageStreamEnumerable ??=
-                context.ServiceProvider.GetRequiredService<SubscribedMethodsLoader>().EnableMessageStreamEnumerable;
+                context.ServiceProvider.GetRequiredService<SubscribedMethodsLoader>()
+                    .EnableMessageStreamEnumerable;
     }
 }

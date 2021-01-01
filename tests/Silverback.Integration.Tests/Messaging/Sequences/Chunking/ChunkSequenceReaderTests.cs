@@ -7,6 +7,7 @@ using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -15,7 +16,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
     public sealed class ChunkSequenceReaderTests : IDisposable
     {
         private readonly ISequenceStore _defaultSequenceStore =
-            new DefaultSequenceStore(new IntegrationLoggerSubstitute<DefaultSequenceStore>());
+            new DefaultSequenceStore(new SilverbackLoggerSubstitute<DefaultSequenceStore>());
 
         [Fact]
         public async Task CanHandle_Chunk_TrueReturned()
@@ -140,7 +141,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
         }
 
         [Fact]
-        public async Task GetSequence_MissingFirstChunk_NullReturned()
+        public async Task GetSequence_MissingFirstChunk_IncompleteSequenceReturned()
         {
             var envelope = new RawInboundEnvelope(
                 new byte[] { 0x04, 0x05, 0x06 },
@@ -160,7 +161,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             var sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
 
-            sequence.Should().BeNull();
+            sequence.Should().BeOfType<IncompleteSequence>();
         }
 
         public void Dispose()

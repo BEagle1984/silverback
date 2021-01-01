@@ -12,18 +12,14 @@ namespace Silverback.Messaging.Messages
         protected RawBrokerEnvelope(
             Stream? rawMessage,
             IReadOnlyCollection<MessageHeader>? headers,
-            IEndpoint endpoint,
-            IDictionary<string, string>? additionalLogData)
+            IEndpoint endpoint)
         {
             RawMessage = rawMessage;
             Headers = new MessageHeaderCollection(headers);
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
-            AdditionalLogData = additionalLogData ?? new Dictionary<string, string>();
         }
 
         public IEndpoint Endpoint { get; }
-
-        public IDictionary<string, string> AdditionalLogData { get; }
 
         public MessageHeaderCollection Headers { get; }
 

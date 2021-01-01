@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
@@ -43,14 +42,14 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="IOutboundLogger{TCategoryName}" />.
         /// </param>
         public KafkaProducer(
             KafkaBroker broker,
             KafkaProducerEndpoint endpoint,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<KafkaProducer> logger)
+            IOutboundLogger<KafkaProducer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             Check.NotNull(endpoint, nameof(endpoint));
@@ -100,10 +99,7 @@ namespace Silverback.Messaging.Broker
                     CheckPersistenceStatus(deliveryResult);
                 }
 
-                var offset = new KafkaOffset(deliveryResult.TopicPartitionOffset);
-                envelope.AdditionalLogData["offset"] = $"{offset.Partition}@{offset.Offset}";
-
-                return offset;
+                return new KafkaOffset(deliveryResult.TopicPartitionOffset);
             }
             catch (KafkaException ex)
             {
@@ -167,9 +163,7 @@ namespace Silverback.Messaging.Broker
                         "The message was transmitted to broker, but no acknowledgement was received.");
 
                 case PersistenceStatus.PossiblyPersisted:
-                    _logger.LogWarning(
-                        KafkaEventIds.ProduceNotAcknowledged,
-                        "The message was transmitted to broker, but no acknowledgement was received.");
+                    _logger.LogProduceNotAcknowledged(this);
                     break;
 
                 case PersistenceStatus.NotPersisted:

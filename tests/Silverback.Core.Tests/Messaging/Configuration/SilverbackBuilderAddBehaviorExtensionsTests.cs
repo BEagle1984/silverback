@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.TestTypes.Behaviors;
 using Silverback.Tests.Core.TestTypes.Messages;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Configuration
@@ -19,6 +20,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var messages = new List<TestEventOne>();
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddTransientBehavior(typeof(ChangeTestEventOneContentBehavior))
                     .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
@@ -36,6 +38,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var messages = new List<TestEventOne>();
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddTransientBehavior<ChangeTestEventOneContentBehavior>()
                     .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
@@ -53,6 +56,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var messages = new List<TestEventOne>();
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddTransientBehavior(_ => new ChangeTestEventOneContentBehavior())
                     .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
@@ -70,6 +74,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var messages = new List<TestEventOne>();
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddScopedBehavior(typeof(ChangeTestEventOneContentBehavior))
                     .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
@@ -87,6 +92,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var messages = new List<TestEventOne>();
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddScopedBehavior<ChangeTestEventOneContentBehavior>()
                     .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
@@ -104,6 +110,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var messages = new List<TestEventOne>();
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddScopedBehavior(_ => new ChangeTestEventOneContentBehavior())
                     .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
@@ -122,6 +129,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var messages = new List<TestEventOne>();
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonBehavior(typeof(ChangeTestEventOneContentBehavior))
                     .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
@@ -139,6 +147,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var messages = new List<TestEventOne>();
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonBehavior<ChangeTestEventOneContentBehavior>()
                     .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
@@ -156,6 +165,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var messages = new List<TestEventOne>();
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonBehavior(_ => new ChangeTestEventOneContentBehavior())
                     .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));
@@ -173,6 +183,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var messages = new List<TestEventOne>();
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonBehavior(new ChangeTestEventOneContentBehavior())
                     .AddDelegateSubscriber<TestEventOne>(testEventOne => messages.Add(testEventOne)));

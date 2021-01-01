@@ -8,7 +8,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Silverback.Diagnostics;
@@ -24,7 +23,7 @@ namespace Silverback.Messaging.Broker
     {
         private readonly IRabbitConnectionFactory _connectionFactory;
 
-        private readonly ISilverbackIntegrationLogger<RabbitConsumer> _logger;
+        private readonly IInboundLogger<RabbitConsumer> _logger;
 
         private readonly object _pendingOffsetLock = new();
 
@@ -62,7 +61,7 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="IInboundLogger{TCategoryName}" />.
         /// </param>
         public RabbitConsumer(
             RabbitBroker broker,
@@ -70,7 +69,7 @@ namespace Silverback.Messaging.Broker
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<RabbitConsumer> logger)
+            IInboundLogger<RabbitConsumer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             _connectionFactory = connectionFactory;
@@ -145,14 +144,17 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        protected override Task CommitCoreAsync(IReadOnlyCollection<RabbitDeliveryTag> brokerMessageIdentifiers)
+        protected override Task CommitCoreAsync(
+            IReadOnlyCollection<RabbitDeliveryTag> brokerMessageIdentifiers)
         {
-            CommitOrStoreDeliveryTag(brokerMessageIdentifiers.OrderBy(deliveryTag => deliveryTag.DeliveryTag).Last());
+            CommitOrStoreDeliveryTag(
+                brokerMessageIdentifiers.OrderBy(deliveryTag => deliveryTag.DeliveryTag).Last());
             return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        protected override Task RollbackCoreAsync(IReadOnlyCollection<RabbitDeliveryTag> brokerMessageIdentifiers)
+        protected override Task RollbackCoreAsync(
+            IReadOnlyCollection<RabbitDeliveryTag> brokerMessageIdentifiers)
         {
             BasicNack(brokerMessageIdentifiers.Max(deliveryTag => deliveryTag.DeliveryTag));
             return Task.CompletedTask;
@@ -163,19 +165,15 @@ namespace Silverback.Messaging.Broker
         {
             try
             {
-                var deliveryTag = new RabbitDeliveryTag(deliverEventArgs.ConsumerTag, deliverEventArgs.DeliveryTag);
+                var deliveryTag = new RabbitDeliveryTag(
+                    deliverEventArgs.ConsumerTag,
+                    deliverEventArgs.DeliveryTag);
+                var headers = new MessageHeaderCollection(
+                    deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders());
 
-                Dictionary<string, string> logData = new()
-                {
-                    ["deliveryTag"] = $"{deliveryTag.DeliveryTag.ToString(CultureInfo.InvariantCulture)}",
-                    ["routingKey"] = deliverEventArgs.RoutingKey
-                };
+                headers.AddIfNotExists(DefaultMessageHeaders.MessageId, deliveryTag.Value);
 
-                _logger.LogDebug(
-                    RabbitEventIds.ConsumingMessage,
-                    "Consuming message {offset} from endpoint {endpointName}.",
-                    deliveryTag.Value,
-                    Endpoint.Name);
+                _logger.LogConsuming(deliveryTag.Value, this);
 
                 // TODO: Test this!
                 if (_disconnecting)
@@ -183,22 +181,15 @@ namespace Silverback.Messaging.Broker
 
                 await HandleMessageAsync(
                         deliverEventArgs.Body.ToArray(),
-                        deliverEventArgs.BasicProperties.Headers.ToSilverbackHeaders(),
+                        headers,
                         Endpoint.Name,
-                        deliveryTag,
-                        logData)
+                        deliveryTag)
                     .ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 if (!(ex is ConsumerPipelineFatalException))
-                {
-                    _logger.LogCritical(
-                        IntegrationEventIds.ConsumerFatalError,
-                        ex,
-                        "Fatal error occurred processing the consumed message. The consumer will be stopped. (consumerId: {consumerId})",
-                        Id);
-                }
+                    _logger.LogConsumerFatalError(this, ex);
 
                 await DisconnectAsync().ConfigureAwait(false);
             }
@@ -237,52 +228,14 @@ namespace Silverback.Messaging.Broker
 
         private void BasicAck(ulong deliveryTag)
         {
-            try
-            {
-                _channel!.BasicAck(deliveryTag, true);
-
-                _logger.LogDebug(
-                    RabbitEventIds.Commit,
-                    "Successfully committed (basic.ack) the delivery tag {deliveryTag}. (consumerId: {consumerId})",
-                    deliveryTag,
-                    Id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    RabbitEventIds.CommitError,
-                    ex,
-                    "Error occurred committing (basic.ack) the delivery tag {deliveryTag}. (consumerId: {consumerId})",
-                    deliveryTag,
-                    Id);
-
-                throw;
-            }
+            _channel!.BasicAck(deliveryTag, true);
+            _logger.LogCommit(deliveryTag.ToString(CultureInfo.InvariantCulture), this);
         }
 
         private void BasicNack(ulong deliveryTag)
         {
-            try
-            {
-                _channel!.BasicNack(deliveryTag, true, true);
-
-                _logger.LogDebug(
-                    RabbitEventIds.Rollback,
-                    "Successfully rolled back (basic.nack) the delivery tag {deliveryTag}. (consumerId: {consumerId})",
-                    deliveryTag,
-                    Id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    RabbitEventIds.RollbackError,
-                    ex,
-                    "Error occurred rolling back (basic.nack) the delivery tag {deliveryTag}. (consumerId: {consumerId})",
-                    deliveryTag,
-                    Id);
-
-                throw;
-            }
+            _channel!.BasicNack(deliveryTag, true, true);
+            _logger.LogRollback(deliveryTag.ToString(CultureInfo.InvariantCulture), this);
         }
     }
 }

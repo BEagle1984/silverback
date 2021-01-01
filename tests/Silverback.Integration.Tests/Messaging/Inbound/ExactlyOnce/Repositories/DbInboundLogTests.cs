@@ -12,6 +12,7 @@ using Silverback.Database;
 using Silverback.Messaging.Inbound.ExactlyOnce.Repositories;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes.Database;
+using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -35,7 +36,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
             var services = new ServiceCollection();
 
             services
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddDbContext<TestDbContext>(
                     options => options
                         .UseSqlite(_connection))

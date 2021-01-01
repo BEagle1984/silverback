@@ -34,7 +34,7 @@ namespace Silverback.Messaging.Broker
                 endpoint,
                 behaviorsProvider,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<MqttProducer>>());
+                serviceProvider.GetRequiredService<IOutboundLogger<MqttProducer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(
@@ -46,6 +46,6 @@ namespace Silverback.Messaging.Broker
                 endpoint,
                 behaviorsProvider,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<MqttConsumer>>());
+                serviceProvider.GetRequiredService<IInboundLogger<MqttConsumer>>());
     }
 }

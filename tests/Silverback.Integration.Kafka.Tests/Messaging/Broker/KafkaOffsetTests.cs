@@ -277,6 +277,10 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
 
             public string Value { get; }
 
+            public string ToLogString() => Value;
+
+            public string ToVerboseLogString() => Value;
+
             public bool Equals(IBrokerMessageIdentifier? other) => false;
 
             public int CompareTo(IBrokerMessageOffset? other) =>

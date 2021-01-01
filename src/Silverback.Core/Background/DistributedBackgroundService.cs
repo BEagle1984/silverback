@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Util;
 
@@ -75,10 +74,7 @@ namespace Silverback.Background
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation(
-                CoreEventIds.BackgroundServiceStarting,
-                "Starting background service {BackgroundService}...",
-                GetType().FullName);
+            _logger.LogBackgroundServiceStarting(this);
 
             // Run another task to avoid deadlocks
             return Task.Factory.StartNew(
@@ -91,10 +87,7 @@ namespace Silverback.Background
 
                         if (Lock != null)
                         {
-                            _logger.LogInformation(
-                                CoreEventIds.BackgroundServiceLockAcquired,
-                                "Lock acquired, executing background service {BackgroundService}.",
-                                GetType().FullName);
+                            _logger.LogBackgroundServiceLockAcquired(this);
                         }
 
                         await ExecuteLockedAsync(stoppingToken).ConfigureAwait(false);
@@ -105,11 +98,7 @@ namespace Silverback.Background
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(
-                            CoreEventIds.BackgroundServiceException,
-                            ex,
-                            "Background service '{BackgroundService}' failed.",
-                            GetType().FullName);
+                        _logger.LogBackgroundServiceException(this, ex);
                     }
                     finally
                     {

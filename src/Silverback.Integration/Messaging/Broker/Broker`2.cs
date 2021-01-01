@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
@@ -40,7 +39,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly EndpointsConfiguratorsInvoker _endpointsConfiguratorsInvoker;
 
-        private readonly ISilverbackIntegrationLogger _logger;
+        private readonly ISilverbackLogger _logger;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -59,9 +58,11 @@ namespace Silverback.Messaging.Broker
         protected Broker(IServiceProvider serviceProvider)
         {
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-            _endpointsConfiguratorsInvoker = _serviceProvider.GetRequiredService<EndpointsConfiguratorsInvoker>();
+            _endpointsConfiguratorsInvoker =
+                _serviceProvider.GetRequiredService<EndpointsConfiguratorsInvoker>();
             _logger = _serviceProvider
-                .GetRequiredService<ISilverbackIntegrationLogger<Broker<IProducerEndpoint, TConsumerEndpoint>>>();
+                .GetRequiredService<ISilverbackLogger<Broker<IProducerEndpoint, TConsumerEndpoint>>
+                >();
 
             ProducerEndpointType = typeof(TProducerEndpoint);
             ConsumerEndpointType = typeof(TConsumerEndpoint);
@@ -127,10 +128,7 @@ namespace Silverback.Messaging.Broker
             if (IsConnected)
                 throw new InvalidOperationException(CannotCreateConsumerIfConnectedExceptionMessage);
 
-            _logger.LogInformation(
-                IntegrationEventIds.CreatingNewConsumer,
-                "Creating new consumer for endpoint {endpointName}.",
-                endpoint.Name);
+            _logger.LogCreatingNewConsumer(endpoint);
 
             var consumer = InstantiateConsumer(
                 (TConsumerEndpoint)endpoint,
@@ -156,18 +154,12 @@ namespace Silverback.Messaging.Broker
 
             _endpointsConfiguratorsInvoker.Invoke();
 
-            _logger.LogDebug(
-                IntegrationEventIds.BrokerConnecting,
-                "Connecting to message broker ({broker})...",
-                GetType().Name);
+            _logger.LogBrokerConnecting(this);
 
             await ConnectAsync(_producers, _consumers).ConfigureAwait(false);
             IsConnected = true;
 
-            _logger.LogInformation(
-                IntegrationEventIds.BrokerConnected,
-                "Connected to message broker ({broker})!",
-                GetType().Name);
+            _logger.LogBrokerConnected(this);
         }
 
         /// <inheritdoc cref="IBroker.DisconnectAsync" />
@@ -179,18 +171,12 @@ namespace Silverback.Messaging.Broker
             if (_producers == null || _consumers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            _logger.LogDebug(
-                IntegrationEventIds.BrokerDisconnecting,
-                "Disconnecting from message broker ({broker})...",
-                GetType().Name);
+            _logger.LogBrokerDisconnecting(this);
 
             await DisconnectAsync(_producers, _consumers).ConfigureAwait(false);
             IsConnected = false;
 
-            _logger.LogInformation(
-                IntegrationEventIds.BrokerDisconnected,
-                "Disconnected from message broker ({broker})!",
-                GetType().Name);
+            _logger.LogBrokerDisconnected(this);
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -281,9 +267,13 @@ namespace Silverback.Messaging.Broker
             IReadOnlyCollection<IProducer> producers,
             IReadOnlyCollection<IConsumer> consumers)
         {
-            await producers.ParallelForEachAsync(producer => producer.DisconnectAsync(), MaxDisconnectParallelism)
+            await producers.ParallelForEachAsync(
+                    producer => producer.DisconnectAsync(),
+                    MaxDisconnectParallelism)
                 .ConfigureAwait(false);
-            await consumers.ParallelForEachAsync(consumer => consumer.DisconnectAsync(), MaxDisconnectParallelism)
+            await consumers.ParallelForEachAsync(
+                    consumer => consumer.DisconnectAsync(),
+                    MaxDisconnectParallelism)
                 .ConfigureAwait(false);
         }
 
@@ -316,11 +306,7 @@ namespace Silverback.Messaging.Broker
                 if (_endpointToProducerDictionary.TryGetValue(endpoint, out producer))
                     return producer;
 
-                _logger.LogInformation(
-                    IntegrationEventIds.CreatingNewProducer,
-                    "Creating new producer for endpoint {endpointName}. (Total producers: {ProducerCount})",
-                    endpoint.Name,
-                    _producers.Count + 1);
+                _logger.LogCreatingNewProducer(endpoint);
 
                 producer = InstantiateProducer(
                     (TProducerEndpoint)endpoint,

@@ -12,6 +12,7 @@ using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Logging;
 using Silverback.Util;
 using Xunit;
 
@@ -25,6 +26,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddTransient(_ => Substitute.For<IApplicationLifetime>())
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -49,6 +51,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddTransient(_ => Substitute.For<IApplicationLifetime>())
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -80,6 +83,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddTransient(_ => Substitute.For<IApplicationLifetime>())
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -110,6 +114,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddTransient(_ => lifetimeEvents)
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -137,6 +142,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddTransient(_ => Substitute.For<IApplicationLifetime>())
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -169,6 +175,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddTransient(_ => lifetimeEvents)
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options

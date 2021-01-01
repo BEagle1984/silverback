@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
@@ -30,7 +29,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly IConfluentConsumerBuilder _confluentConsumerBuilder;
 
-        private readonly ISilverbackIntegrationLogger<KafkaConsumer> _logger;
+        private readonly IInboundLogger<KafkaConsumer> _logger;
 
         private readonly object _messagesSinceCommitLock = new();
 
@@ -62,14 +61,14 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="IInboundLogger{TCategoryName}" />.
         /// </param>
         public KafkaConsumer(
             KafkaBroker broker,
             KafkaConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<KafkaConsumer> logger)
+            IInboundLogger<KafkaConsumer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             Check.NotNull(endpoint, nameof(endpoint));
@@ -126,11 +125,6 @@ namespace Silverback.Messaging.Broker
             Message<byte[]?, byte[]?> message,
             TopicPartitionOffset topicPartitionOffset)
         {
-            Dictionary<string, string> logData = new();
-
-            var offset = new KafkaOffset(topicPartitionOffset);
-            logData["offset"] = $"{offset.Partition}@{offset.Offset}";
-
             var headers = new MessageHeaderCollection(message.Headers.ToSilverbackHeaders());
 
             if (message.Key != null)
@@ -142,8 +136,6 @@ namespace Silverback.Messaging.Broker
 
                 headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, deserializedKafkaKey);
                 headers.AddIfNotExists(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
-
-                logData["kafkaKey"] = deserializedKafkaKey;
             }
 
             headers.AddOrReplace(
@@ -154,8 +146,7 @@ namespace Silverback.Messaging.Broker
                     message.Value,
                     headers,
                     topicPartitionOffset.Topic,
-                    offset,
-                    logData)
+                    new KafkaOffset(topicPartitionOffset))
                 .ConfigureAwait(false);
         }
 
@@ -163,18 +154,7 @@ namespace Silverback.Messaging.Broker
         {
             if (!Endpoint.Configuration.EnableAutoRecovery)
             {
-                const string errorMessage = "KafkaException occurred.. The consumer will be stopped. " +
-                                            "Enable auto recovery to allow Silverback to automatically try to reconnect " +
-                                            "(EnableAutoRecovery=true in the endpoint configuration). " +
-                                            "(consumerId: {consumerId}, topic(s): {topics})";
-
-                _logger.LogCritical(
-                    KafkaEventIds.KafkaExceptionNoAutoRecovery,
-                    ex,
-                    errorMessage,
-                    Id,
-                    Endpoint.Names);
-
+                _logger.LogKafkaExceptionNoAutoRecovery(this, ex);
                 return false;
             }
 
@@ -183,12 +163,7 @@ namespace Silverback.Messaging.Broker
                 if (cancellationToken.IsCancellationRequested)
                     return false;
 
-                _logger.LogWarning(
-                    KafkaEventIds.KafkaExceptionAutoRecovery,
-                    ex,
-                    "KafkaException occurred. The consumer will try to recover. (consumerId: {consumerId}, topic(s): {topics})",
-                    Id,
-                    Endpoint.Names);
+                _logger.LogKafkaExceptionAutoRecovery(this, ex);
 
                 ResetConfluentConsumer(cancellationToken);
 
@@ -360,15 +335,7 @@ namespace Silverback.Messaging.Broker
                 _confluentConsumer.Assign(Endpoint.TopicPartitions);
 
                 Endpoint.TopicPartitions.ForEach(
-                    partition =>
-                    {
-                        _logger.LogInformation(
-                            KafkaEventIds.PartitionsManuallyAssigned,
-                            "Assigned partition {topic}[{partition}]. (consumerId: {consumerId})",
-                            partition.Topic,
-                            partition.Partition.Value,
-                            Id);
-                    });
+                    topicPartitionOffset => _logger.LogPartitionManuallyAssigned(topicPartitionOffset, this));
             }
         }
 
@@ -466,12 +433,7 @@ namespace Silverback.Messaging.Broker
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(
-                    KafkaEventIds.ConsumerDisconnectError,
-                    ex,
-                    "Error disconnecting consumer. (consumerId: {consumerId}, topic(s): {topics})",
-                    Id,
-                    Endpoint.Names);
+                _logger.LogConsumerDisconnectError(this, ex);
             }
             finally
             {
@@ -495,13 +457,7 @@ namespace Silverback.Messaging.Broker
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogCritical(
-                        KafkaEventIds.ErrorRecoveringFromKafkaException,
-                        ex,
-                        "Failed to recover from consumer exception. Will retry in {SecondsUntilRetry} seconds. (consumerId: {consumerId}, topic(s): {topics})",
-                        RecoveryDelay.TotalSeconds,
-                        Id,
-                        Endpoint.Names);
+                    _logger.LogErrorRecoveringFromKafkaException(RecoveryDelay, this, ex);
 
                     Task.Delay(RecoveryDelay, cancellationToken).Wait(cancellationToken);
                 }
@@ -512,12 +468,15 @@ namespace Silverback.Messaging.Broker
         {
             foreach (var offset in offsets)
             {
-                _logger.LogTrace(
-                    IntegrationEventIds.LowLevelTracing,
+                _logger.LogConsumerLowLevelTrace(
+                    this,
                     "Storing offset {topic}[{partition}]@{offset}.",
-                    offset.Topic,
-                    offset.Partition.Value,
-                    offset.Offset.Value);
+                    () => new object[]
+                    {
+                        offset.Topic,
+                        offset.Partition.Value,
+                        offset.Offset.Value
+                    });
                 _confluentConsumer!.StoreOffset(offset);
             }
         }

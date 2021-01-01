@@ -5,7 +5,6 @@ using System;
 using System.Collections.Concurrent;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.KafkaEvents;
@@ -20,11 +19,11 @@ namespace Silverback.Messaging.Broker.Kafka
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ISilverbackIntegrationLogger<ConfluentProducersCache> _logger;
+        private readonly ISilverbackLogger _logger;
 
         public ConfluentProducersCache(
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<ConfluentProducersCache> logger)
+            ISilverbackLogger<ConfluentProducersCache> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
@@ -45,13 +44,15 @@ namespace Silverback.Messaging.Broker.Kafka
             producer.Dispose();
         }
 
-        private IProducer<byte[]?, byte[]?> CreateConfluentProducer(KafkaProducerConfig config, KafkaProducer owner)
+        private IProducer<byte[]?, byte[]?> CreateConfluentProducer(
+            KafkaProducerConfig config,
+            KafkaProducer ownerProducer)
         {
-            _logger.LogDebug(KafkaEventIds.CreatingConfluentProducer, "Creating Confluent.Kafka.Producer...");
+            _logger.LogCreatingConfluentProducer(ownerProducer);
 
             var builder = _serviceProvider.GetRequiredService<IConfluentProducerBuilder>();
             builder.SetConfig(config.GetConfluentConfig());
-            builder.SetEventsHandlers(owner, _logger);
+            builder.SetEventsHandlers(ownerProducer, _logger);
             return builder.Build();
         }
     }

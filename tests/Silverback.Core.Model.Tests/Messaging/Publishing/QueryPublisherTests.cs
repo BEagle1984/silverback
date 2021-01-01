@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.Model.TestTypes.Messages;
 using Silverback.Tests.Core.Model.TestTypes.Subscribers;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Model.Messaging.Publishing
@@ -23,7 +24,7 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
                 .UseModel()
                 .AddSingletonSubscriber(_ => new QueriesHandler());
 
-            services.AddNullLogger();
+            services.AddLoggerSubstitute();
 
             var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
 

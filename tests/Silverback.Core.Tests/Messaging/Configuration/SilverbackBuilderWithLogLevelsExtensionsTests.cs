@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Configuration
@@ -17,12 +18,12 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var services = new ServiceCollection();
 
             services
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddSilverback()
                 .WithLogLevels(
                     configurator => configurator
-                        .SetLogLevel(CoreEventIds.DistributedLockAcquired, LogLevel.Information)
-                        .SetLogLevel(CoreEventIds.FailedToAcquireDistributedLock, LogLevel.Warning));
+                        .SetLogLevel(CoreLogEvents.DistributedLockAcquired.EventId, LogLevel.Information)
+                        .SetLogLevel(CoreLogEvents.FailedToAcquireDistributedLock.EventId, LogLevel.Warning));
 
             var serviceProvider = services.BuildServiceProvider();
 

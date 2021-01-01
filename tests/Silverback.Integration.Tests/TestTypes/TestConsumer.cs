@@ -28,7 +28,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 endpoint,
                 behaviorsProvider,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<TestConsumer>>())
+                serviceProvider.GetRequiredService<IInboundLogger<TestConsumer>>())
         {
         }
 
@@ -79,8 +79,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 rawMessage,
                 headers,
                 "test-topic",
-                offset ?? new TestOffset(),
-                null);
+                offset ?? new TestOffset());
         }
 
         protected override Task ConnectCoreAsync() => Task.CompletedTask;

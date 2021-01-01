@@ -11,6 +11,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
+using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 
 namespace Silverback.Tests
@@ -41,6 +42,9 @@ namespace Silverback.Tests
         private static IServiceProvider GetServiceProvider() =>
             ServiceProviderHelper.GetServiceProvider(
                 services =>
-                    services.AddSilverback().WithConnectionToMessageBroker());
+                    services
+                        .AddFakeLogger()
+                        .AddSilverback()
+                        .WithConnectionToMessageBroker());
     }
 }

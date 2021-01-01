@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Diagnostics;
@@ -60,22 +59,14 @@ namespace Silverback.Background
             if (settings is NullLockSettings)
                 return await NullLockManager.AcquireAsync(settings, cancellationToken).ConfigureAwait(false);
 
-            _logger.LogInformation(
-                CoreEventIds.AcquiringDistributedLock,
-                "Trying to acquire lock {lockName} ({lockUniqueId})...",
-                settings.ResourceName,
-                settings.UniqueId);
+            _logger.LogAcquiringLock(settings);
 
             var stopwatch = Stopwatch.StartNew();
             while (settings.AcquireTimeout == null || stopwatch.Elapsed < settings.AcquireTimeout)
             {
                 if (await TryAcquireLockAsync(settings).ConfigureAwait(false))
                 {
-                    _logger.LogInformation(
-                        CoreEventIds.DistributedLockAcquired,
-                        "Acquired lock {lockName} ({lockUniqueId}).",
-                        settings.ResourceName,
-                        settings.UniqueId);
+                    _logger.LogLockAcquired(settings);
                     return new DistributedLock(settings, this);
                 }
 
@@ -85,7 +76,8 @@ namespace Silverback.Background
                     break;
             }
 
-            throw new TimeoutException($"Timeout waiting to get the required lock '{settings.ResourceName}'.");
+            throw new TimeoutException(
+                $"Timeout waiting to get the required lock '{settings.ResourceName}'.");
         }
 
         /// <inheritdoc cref="IDistributedLockManager.CheckIsStillLockedAsync" />
@@ -109,13 +101,7 @@ namespace Silverback.Background
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    CoreEventIds.FailedToCheckDistributedLock,
-                    ex,
-                    "Failed to check lock {lockName} ({lockUniqueId}). See inner exception for details.",
-                    settings.ResourceName,
-                    settings.UniqueId);
-
+                _logger.LogFailedToCheckLock(settings, ex);
                 return false;
             }
         }
@@ -132,18 +118,15 @@ namespace Silverback.Background
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                return await SendHeartbeatAsync(settings.ResourceName, settings.UniqueId, scope.ServiceProvider)
+                return await SendHeartbeatAsync(
+                        settings.ResourceName,
+                        settings.UniqueId,
+                        scope.ServiceProvider)
                     .ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                _logger.LogDebug(
-                    CoreEventIds.FailedToSendDistributedLockHeartbeat,
-                    ex,
-                    "Failed to send heartbeat for lock {lockName} ({lockUniqueId}). See inner exception for details.",
-                    settings.ResourceName,
-                    settings.UniqueId);
-
+                _logger.LogFailedToSendLockHeartbeat(settings, ex);
                 return false;
             }
         }
@@ -166,23 +149,13 @@ namespace Silverback.Background
                     await ReleaseAsync(settings.ResourceName, settings.UniqueId, scope.ServiceProvider)
                         .ConfigureAwait(false);
 
-                    _logger.LogInformation(
-                        CoreEventIds.DistributedLockReleased,
-                        "Released lock {lockName} ({lockUniqueId}).",
-                        settings.ResourceName,
-                        settings.UniqueId);
+                    _logger.LogLockReleased(settings);
 
                     break;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogWarning(
-                        CoreEventIds.FailedToReleaseDistributedLock,
-                        ex,
-                        "Failed to release lock '{lockName} ({lockUniqueId})'. See inner exception for details.",
-                        settings.ResourceName,
-                        settings.UniqueId);
-
+                    _logger.LogFailedToReleaseLock(settings, ex);
                     tryCount++;
                 }
             }
@@ -200,7 +173,12 @@ namespace Silverback.Background
                 .ConfigureAwait(false))
                 return false;
 
-            return await WriteLockAsync(settings.ResourceName, settings.UniqueId, heartbeatThreshold, dbSet, dbContext)
+            return await WriteLockAsync(
+                    settings.ResourceName,
+                    settings.UniqueId,
+                    heartbeatThreshold,
+                    dbSet,
+                    dbContext)
                 .ConfigureAwait(false);
         }
 
@@ -276,7 +254,10 @@ namespace Silverback.Background
         private static DateTime GetHeartbeatThreshold(TimeSpan heartbeatTimeout) =>
             DateTime.UtcNow.Subtract(heartbeatTimeout);
 
-        private static async Task ReleaseAsync(string resourceName, string uniqueId, IServiceProvider serviceProvider)
+        private static async Task ReleaseAsync(
+            string resourceName,
+            string uniqueId,
+            IServiceProvider serviceProvider)
         {
             var (dbSet, dbContext) = GetDbSet(serviceProvider);
 
@@ -302,12 +283,7 @@ namespace Silverback.Background
             }
             catch (Exception ex)
             {
-                _logger.LogDebug(
-                    CoreEventIds.FailedToAcquireDistributedLock,
-                    ex,
-                    "Failed to acquire lock {lockName} ({lockUniqueId}). See inner exception for details.",
-                    settings.ResourceName,
-                    settings.UniqueId);
+                _logger.LogFailedToAcquireLock(settings, ex);
             }
 
             return false;

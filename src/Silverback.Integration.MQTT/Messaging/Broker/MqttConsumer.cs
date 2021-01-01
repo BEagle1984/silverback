@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}" />
     public class MqttConsumer : Consumer<MqttBroker, MqttConsumerEndpoint, MqttMessageIdentifier>
     {
-        private readonly ISilverbackIntegrationLogger<MqttConsumer> _logger;
+        private readonly IInboundLogger<MqttConsumer> _logger;
 
         private readonly IMqttClientsCache _clientFactory;
 
@@ -45,14 +45,14 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="IInboundLogger{TCategoryName}" />.
         /// </param>
         public MqttConsumer(
             MqttBroker broker,
             MqttConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<MqttConsumer> logger)
+            IInboundLogger<MqttConsumer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             Check.NotNull(serviceProvider, nameof(serviceProvider));
@@ -63,8 +63,6 @@ namespace Silverback.Messaging.Broker
 
         internal async Task HandleMessageAsync(ConsumedApplicationMessage message)
         {
-            Dictionary<string, string> logData = new(); // TODO: Need additional data?
-
             var headers = Endpoint.Configuration.AreHeadersSupported
                 ? new MessageHeaderCollection(message.ApplicationMessage.UserProperties.ToSilverbackHeaders())
                 : new MessageHeaderCollection();
@@ -77,8 +75,7 @@ namespace Silverback.Messaging.Broker
                     message.ApplicationMessage.Payload,
                     headers,
                     message.ApplicationMessage.Topic,
-                    new MqttMessageIdentifier(Endpoint.Configuration.ClientId, message.Id),
-                    logData)
+                    new MqttMessageIdentifier(Endpoint.Configuration.ClientId, message.Id))
                 .ConfigureAwait(false);
         }
 

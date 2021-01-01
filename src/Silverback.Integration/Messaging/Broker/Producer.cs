@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -21,7 +20,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly ISilverbackIntegrationLogger<Producer> _logger;
+        private readonly IOutboundLogger<Producer> _logger;
 
         private Task? _connectTask;
 
@@ -41,14 +40,14 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="IOutboundLogger{TCategoryName}" />.
         /// </param>
         protected Producer(
             IBroker broker,
             IProducerEndpoint endpoint,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<Producer> logger)
+            IOutboundLogger<Producer> logger)
         {
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
@@ -60,7 +59,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IProducer.Id" />
-        public Guid Id { get; } = Guid.NewGuid();
+        public InstanceIdentifier Id { get; } = new();
 
         /// <inheritdoc cref="IProducer.Broker" />
         public IBroker Broker { get; }
@@ -99,11 +98,7 @@ namespace Silverback.Messaging.Broker
                 _connectTask = null;
             }
 
-            _logger.LogDebug(
-                IntegrationEventIds.ProducerConnected,
-                "Connected producer to endpoint {endpoint}. (producerId: {producerId})",
-                Endpoint.Name,
-                Id);
+            _logger.LogProducerConnected(this);
         }
 
         /// <inheritdoc cref="IProducer.DisconnectAsync" />
@@ -115,11 +110,7 @@ namespace Silverback.Messaging.Broker
             await DisconnectCoreAsync().ConfigureAwait(false);
 
             IsConnected = false;
-            _logger.LogDebug(
-                IntegrationEventIds.ConsumerDisconnected,
-                "Disconnected producer from endpoint {endpoint}. (producerId: {producerId})",
-                Endpoint.Name,
-                Id);
+            _logger.LogProducerDisconnected(this);
         }
 
         /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?)" />
@@ -256,37 +247,29 @@ namespace Silverback.Messaging.Broker
         /// </returns>
         protected abstract Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope);
 
-        private Task ExecutePipelineIfNeededAsync(
+        private async Task ExecutePipelineIfNeededAsync(
             ProducerPipelineContext context,
             ProducerBehaviorHandler finalAction)
         {
             if (context.Envelope is ProcessedOutboundEnvelope)
-                return finalAction(context);
+                await finalAction(context).ConfigureAwait(false);
+            else
+                await ExecutePipelineAsync(context, finalAction).ConfigureAwait(false);
 
-            return ExecutePipelineAsync(context, finalAction);
+            _logger.LogProduced(context.Envelope);
         }
 
-        private async Task ExecutePipelineAsync(
+        private Task ExecutePipelineAsync(
             ProducerPipelineContext context,
             ProducerBehaviorHandler finalAction,
             int stepIndex = 0)
         {
-            if (_behaviors.Count > 0 && stepIndex < _behaviors.Count)
-            {
-                await _behaviors[stepIndex].HandleAsync(
-                        context,
-                        nextContext => ExecutePipelineAsync(nextContext, finalAction, stepIndex + 1))
-                    .ConfigureAwait(false);
-            }
-            else
-            {
-                await finalAction(context).ConfigureAwait(false);
+            if (_behaviors.Count <= 0 || stepIndex >= _behaviors.Count)
+                return finalAction(context);
 
-                _logger.LogInformationWithMessageInfo(
-                    IntegrationEventIds.MessageProduced,
-                    "Message produced.",
-                    context.Envelope);
-            }
+            return _behaviors[stepIndex].HandleAsync(
+                context,
+                nextContext => ExecutePipelineAsync(nextContext, finalAction, stepIndex + 1));
         }
     }
 }

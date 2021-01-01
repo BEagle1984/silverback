@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -34,7 +33,7 @@ namespace Silverback.Messaging.Sequences
 
         private readonly object _abortLockObject = new();
 
-        private readonly ISilverbackIntegrationLogger<SequenceBase<TEnvelope>> _logger;
+        private readonly ISilverbackLogger<SequenceBase<TEnvelope>> _logger;
 
         private readonly TaskCompletionSource<bool> _sequencerBehaviorsTaskCompletionSource = new();
 
@@ -84,7 +83,7 @@ namespace Silverback.Messaging.Sequences
                               new MessageStreamProvider<TEnvelope>();
 
             _logger = context.ServiceProvider
-                .GetRequiredService<ISilverbackIntegrationLogger<SequenceBase<TEnvelope>>>();
+                .GetRequiredService<ISilverbackLogger<SequenceBase<TEnvelope>>>();
 
             _enforceTimeout = enforceTimeout;
             _timeout = timeout ?? Context.Envelope.Endpoint.Sequence.Timeout;
@@ -273,12 +272,14 @@ namespace Silverback.Messaging.Sequences
                     TotalLength = Length;
                     IsCompleting = true;
 
-                    _logger.LogTrace(
-                        IntegrationEventIds.LowLevelTracing,
+                    _logger.LogLowLevelTrace(
                         "{sequenceType} '{sequenceId}' is completing (total length {sequenceLength})...",
-                        GetType().Name,
-                        SequenceId,
-                        TotalLength);
+                        () => new object[]
+                        {
+                            GetType().Name,
+                            SequenceId,
+                            TotalLength
+                        });
                 }
 
                 int pushedStreamsCount = await _streamProvider.PushAsync(
@@ -299,12 +300,14 @@ namespace Silverback.Messaging.Sequences
             }
             catch (Exception ex)
             {
-                _logger.LogTrace(
-                    IntegrationEventIds.LowLevelTracing,
+                _logger.LogLowLevelTrace(
                     ex,
                     "Error occurred adding message to {sequenceType} '{sequenceId}'.",
-                    GetType().Name,
-                    SequenceId);
+                    () => new object[]
+                    {
+                        GetType().Name,
+                        SequenceId
+                    });
 
                 throw;
             }
@@ -340,12 +343,14 @@ namespace Silverback.Messaging.Sequences
             if (!IsPending)
                 return;
 
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
+            _logger.LogLowLevelTrace(
                 "Completing {sequenceType} '{sequenceId}' (length {sequenceLength})...",
-                GetType().Name,
-                SequenceId,
-                Length);
+                () => new object[]
+                {
+                    GetType().Name,
+                    SequenceId,
+                    Length
+                });
 
             IsComplete = true;
             IsCompleting = false;
@@ -368,11 +373,13 @@ namespace Silverback.Messaging.Sequences
             if (_disposed)
                 return;
 
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
+            _logger.LogLowLevelTrace(
                 "Disposing {sequenceType} '{sequenceId}'...",
-                GetType().Name,
-                SequenceId);
+                () => new object[]
+                {
+                    GetType().Name,
+                    SequenceId
+                });
 
             if (disposing)
             {
@@ -442,7 +449,7 @@ namespace Silverback.Messaging.Sequences
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex, "An error occurred aborting the timed out sequence.");
+                        _logger.LogSequenceAbortingError(this, ex);
                     }
                 });
         }
@@ -476,19 +483,21 @@ namespace Silverback.Messaging.Sequences
                 return;
             }
 
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
+            _logger.LogLowLevelTrace(
                 AbortException,
                 "Aborting {sequenceType} '{sequenceId}' ({abortReason})...",
-                GetType().Name,
-                SequenceId,
-                AbortReason);
+                () => new object[]
+                {
+                    GetType().Name,
+                    SequenceId,
+                    AbortReason
+                });
 
             _timeoutCancellationTokenSource?.Cancel();
 
             await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
             if (await HandleExceptionAsync(exception).ConfigureAwait(false))
-                _logger.LogSequenceAborted(Context, this, AbortReason, AbortException);
+                LogAbort();
 
             _streamProvider.Abort();
 
@@ -529,7 +538,8 @@ namespace Silverback.Messaging.Sequences
                     case SequenceAbortReason.Disposing:
                         done = await Context.TransactionManager.RollbackAsync(
                                 exception,
-                                throwIfAlreadyCommitted: false)
+                                throwIfAlreadyCommitted: false,
+                                stopConsuming: false)
                             .ConfigureAwait(false);
                         break;
                     default:
@@ -545,6 +555,22 @@ namespace Silverback.Messaging.Sequences
             }
 
             return done;
+        }
+
+        private void LogAbort()
+        {
+            switch (AbortReason)
+            {
+                case SequenceAbortReason.Error:
+                    _logger.LogSequenceProcessingError(this, AbortException!);
+                    break;
+                case SequenceAbortReason.IncompleteSequence:
+                    _logger.LogIncompleteSequenceAborted(this);
+                    break;
+                default:
+                    _logger.LogSequenceAborted(this, AbortReason);
+                    break;
+            }
         }
     }
 }

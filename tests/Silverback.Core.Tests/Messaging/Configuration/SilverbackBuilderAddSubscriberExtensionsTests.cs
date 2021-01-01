@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Subscribers;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Configuration
@@ -17,6 +18,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddTransientSubscriber(typeof(TestSubscriber)));
 
@@ -33,6 +35,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddTransientSubscriber<TestSubscriber>());
 
@@ -52,6 +55,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddTransientSubscriber(typeof(TestSubscriber), _ => new TestSubscriber()));
 
@@ -71,6 +75,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddTransientSubscriber(_ => new TestSubscriber()));
 
@@ -90,6 +95,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddScopedSubscriber(typeof(TestSubscriber)));
 
@@ -109,6 +115,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddScopedSubscriber<TestSubscriber>());
 
@@ -128,6 +135,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddScopedSubscriber(typeof(TestSubscriber), _ => new TestSubscriber()));
 
@@ -147,6 +155,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddScopedSubscriber(_ => new TestSubscriber()));
 
@@ -166,6 +175,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonSubscriber(typeof(TestSubscriber)));
 
@@ -185,6 +195,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonSubscriber<TestSubscriber>());
 
@@ -204,6 +215,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonSubscriber(typeof(TestSubscriber), _ => new TestSubscriber()));
 
@@ -223,6 +235,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonSubscriber(_ => new TestSubscriber()));
 
@@ -242,6 +255,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonSubscriber(typeof(TestSubscriber), new TestSubscriber()));
 
@@ -261,6 +275,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonSubscriber(new TestSubscriber()));
 
@@ -280,6 +295,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSingletonSubscriber<TestSubscriber>(autoSubscribeAllPublicMethods: false));
 
@@ -299,6 +315,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .AddSubscribers<IService>()
                     .Services

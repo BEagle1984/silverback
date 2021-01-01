@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Sequences.Unbounded;
 using Silverback.Util;
@@ -19,9 +18,9 @@ namespace Silverback.Messaging.Sequences
 
         private readonly Dictionary<string, ISequence> _store = new();
 
-        private readonly ISilverbackIntegrationLogger<DefaultSequenceStore> _logger;
+        private readonly ISilverbackLogger<DefaultSequenceStore> _logger;
 
-        public DefaultSequenceStore(ISilverbackIntegrationLogger<DefaultSequenceStore> logger)
+        public DefaultSequenceStore(ISilverbackLogger<DefaultSequenceStore> logger)
         {
             _logger = logger;
         }
@@ -54,12 +53,14 @@ namespace Silverback.Messaging.Sequences
         {
             Check.NotNull(sequence, nameof(sequence));
 
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
+            _logger.LogLowLevelTrace(
                 "Adding {sequenceType} '{sequenceId}' to store '{sequenceStoreId}'.",
-                sequence.GetType().Name,
-                sequence.SequenceId,
-                _id);
+                () => new object[]
+                {
+                    sequence.GetType().Name,
+                    sequence.SequenceId,
+                    _id
+                });
 
             if (_store.TryGetValue(sequence.SequenceId, out var oldSequence))
                 await oldSequence.AbortAsync(SequenceAbortReason.IncompleteSequence).ConfigureAwait(false);
@@ -71,11 +72,13 @@ namespace Silverback.Messaging.Sequences
 
         public Task RemoveAsync(string sequenceId)
         {
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
+            _logger.LogLowLevelTrace(
                 "Removing sequence '{sequenceId}' from store '{sequenceStoreId}'.",
-                sequenceId,
-                _id);
+                () => new object[]
+                {
+                    sequenceId,
+                    _id
+                });
 
             _store.Remove(sequenceId);
             return Task.CompletedTask;
@@ -91,10 +94,12 @@ namespace Silverback.Messaging.Sequences
 
         public void Dispose()
         {
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
+            _logger.LogLowLevelTrace(
                 "Disposing sequence store {sequenceStoreId}",
-                _id);
+                () => new object[]
+                {
+                    _id
+                });
 
             AsyncHelper.RunSynchronously(
                 () => _store.Values

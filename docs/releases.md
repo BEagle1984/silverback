@@ -89,6 +89,7 @@ uid: releases
 * Replaced _IBroker.Connect_ and _IBroker.Disconnect_ with [IBroker.ConnectAsync](xref:Silverback.Messaging.Broker.IBroker#Silverback_Messaging_Broker_IBroker_ConnectAsync) and [IBroker.DisconnectAsync](xref:Silverback.Messaging.Broker.IBroker#Silverback_Messaging_Broker_IBroker_DisconnectAsync)
 * Removed all batch events (_BatchStartedEvent_, _BatchCompleteEvent_, _BatchProcessedEvent_, _BatchAbortedEvent_), refer to <xref:streaming> to learn how to leverage the new <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1>
 * <xref:Silverback.Messaging.Sequences.Chunking.ChunkSettings> moved from `Silverback.Messaging.LargeMessages` namespace to `Silverback.Messaging.Sequences.Chunking`
+* Replaced _CoreEventIds_, _IntegrationEventIds_, _KafkaEventIds_ and _RabbitEventIds_ with <xref:Silverback.Diagnostics.CoreLogEvents>, <xref:Silverback.Diagnostics.IntegrationLogEvents>, <xref:Silverback.Diagnostics.KafkaLogEvents> and <xref:Silverback.Diagnostics.RabbitLogEvents> (see also <xref:logging>)
 * Setting the batch size to 1 doesn't disable batching anymore, set the `Batch` to `null` in the <xref:Silverback.Messaging.ConsumerEndpoint> to disable it
 
 ## [2.2.0](https://github.com/BEagle1984/silverback/releases/tag/v2.2.0)

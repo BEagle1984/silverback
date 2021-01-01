@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
@@ -15,9 +14,9 @@ namespace Silverback.Messaging.Broker
     public interface IConsumer
     {
         /// <summary>
-        ///     Gets the <see cref="Guid" /> uniquely identifying the consumer instance.
+        ///     Gets the <see cref="InstanceIdentifier" /> uniquely identifying the consumer instance.
         /// </summary>
-        Guid Id { get; }
+        InstanceIdentifier Id { get; }
 
         /// <summary>
         ///     Gets the <see cref="IBroker" /> that owns this consumer.

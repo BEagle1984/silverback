@@ -56,9 +56,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		nuget\Update.ps1 = nuget\Update.ps1
 		.gitignore = .gitignore
 		global.json = global.json
-		CodeAnalysis.Global.ruleset = CodeAnalysis.Global.ruleset
 		stylecop.json = stylecop.json
-		CodeAnalysis.Tests.ruleset = CodeAnalysis.Tests.ruleset
 		azure-pipelines.sonar.yml = azure-pipelines.sonar.yml
 		.editorconfig = .editorconfig
 	EndProjectSection

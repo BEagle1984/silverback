@@ -4,7 +4,7 @@ uid: logging
 
 # Logging
 
-Silverback logs quite a few events that may be very useful for troubleshooting. Of course `ILogger` is used for logging and will work with any logger you wired in the startup.
+Silverback logs quite a few events that may be very useful for troubleshooting. Of course [ILogger](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.ilogger) is used for logging and will work with any logger you wired in the startup.
 
 The `WithLogLevels` configuration method can be used to tweak the log levels of each particular event.
 
@@ -24,4 +24,10 @@ public class Startup
 ```
 ***
 
-Each package (that logs some events) has a static class exposing the `EventId` constants. See <xref:Silverback.Diagnostics.CoreEventIds>, <xref:Silverback.Diagnostics.IntegrationEventIds>, <xref:Silverback.Diagnostics.KafkaEventIds> and <xref:Silverback.Diagnostics.RabbitEventIds> for details about the events being logged and their default log level.
+Each package (that writes any log) has a static class declaring each log event: default [LogLevel](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.loglevel), [EventId](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.eventid) and message. Refer to those classes for details about the events being logged and their default log level.
+
+See:
+* <xref:Silverback.Diagnostics.CoreLogEvents>
+* <xref:Silverback.Diagnostics.IntegrationLogEvents>
+* <xref:Silverback.Diagnostics.KafkaEvents>
+* <xref:Silverback.Diagnostics.RabbitEvents>

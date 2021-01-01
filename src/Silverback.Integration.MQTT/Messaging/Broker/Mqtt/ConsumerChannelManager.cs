@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client.Receiving;
 using Silverback.Diagnostics;
@@ -20,7 +19,7 @@ namespace Silverback.Messaging.Broker.Mqtt
         [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
         private readonly MqttClientWrapper _mqttClientWrapper;
 
-        private readonly ISilverbackIntegrationLogger _logger;
+        private readonly IInboundLogger<IConsumer> _logger;
 
         private Channel<ConsumedApplicationMessage> _channel;
 
@@ -30,7 +29,7 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         public ConsumerChannelManager(
             MqttClientWrapper mqttClientWrapper,
-            ISilverbackIntegrationLogger logger)
+            IInboundLogger<IConsumer> logger)
         {
             _mqttClientWrapper = Check.NotNull(mqttClientWrapper, nameof(mqttClientWrapper));
             _logger = Check.NotNull(logger, nameof(logger));
@@ -85,11 +84,14 @@ namespace Silverback.Messaging.Broker.Mqtt
         {
             var receivedMessage = new ConsumedApplicationMessage(eventArgs.ApplicationMessage);
 
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
+            _logger.LogConsumerLowLevelTrace(
+                Consumer,
                 "Writing message {messageId} from {topic} to channel.",
-                receivedMessage.Id,
-                receivedMessage.ApplicationMessage.Topic);
+                () => new object[]
+                {
+                    receivedMessage.Id,
+                    receivedMessage.ApplicationMessage.Topic
+                });
 
             await _channel.Writer.WriteAsync(receivedMessage).ConfigureAwait(false);
 
@@ -114,10 +116,7 @@ namespace Silverback.Messaging.Broker.Mqtt
         {
             try
             {
-                _logger.LogTrace(
-                    IntegrationEventIds.LowLevelTracing,
-                    "Starting channel processing loop... (clientId: {clientId})",
-                    _mqttClientWrapper.MqttClient.Options.ClientId);
+                _logger.LogConsumerLowLevelTrace(Consumer, "Starting channel processing loop...");
 
                 while (!_readCancellationTokenSource.IsCancellationRequested)
                 {
@@ -127,21 +126,12 @@ namespace Silverback.Messaging.Broker.Mqtt
             catch (OperationCanceledException)
             {
                 // Ignore
-                _logger.LogTrace(
-                    IntegrationEventIds.LowLevelTracing,
-                    "Exiting channel processing loop (operation canceled). (clientId: {clientId})",
-                    _mqttClientWrapper.MqttClient.Options.ClientId);
+                _logger.LogConsumerLowLevelTrace(Consumer, "Exiting channel processing loop (operation canceled).");
             }
             catch (Exception ex)
             {
                 if (!(ex is ConsumerPipelineFatalException))
-                {
-                    _logger.LogCritical(
-                        IntegrationEventIds.ConsumerFatalError,
-                        ex,
-                        "Fatal error occurred processing the consumed message. The consumer will be stopped. (clientId: {clientId})",
-                        _mqttClientWrapper.MqttClient.Options.ClientId);
-                }
+                    _logger.LogConsumerFatalError(Consumer, ex);
 
                 IsReading = false;
                 _readTaskCompletionSource.TrySetResult(false);
@@ -152,20 +142,14 @@ namespace Silverback.Messaging.Broker.Mqtt
             IsReading = false;
             _readTaskCompletionSource.TrySetResult(true);
 
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
-                "Exited channel processing loop. (clientId: {clientId})",
-                _mqttClientWrapper.MqttClient.Options.ClientId);
+            _logger.LogConsumerLowLevelTrace(Consumer, "Exited channel processing loop.");
         }
 
         private async Task ReadChannelOnceAsync()
         {
             _readCancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-            _logger.LogTrace(
-                IntegrationEventIds.LowLevelTracing,
-                "Reading channel... (clientId: {clientId})",
-                _mqttClientWrapper.MqttClient.Options.ClientId);
+            _logger.LogConsumerLowLevelTrace(Consumer, "Reading channel...");
 
             var consumedMessage = await _channel.Reader.ReadAsync(_readCancellationTokenSource.Token)
                 .ConfigureAwait(false);

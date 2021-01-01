@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Background;
 using Silverback.Database.Model;
 using Silverback.Tests.Core.TestTypes.Database;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Background
@@ -33,7 +34,7 @@ namespace Silverback.Tests.Core.Background
                 .AddDbContext<TestDbContext>(
                     options => options
                         .UseSqlite(_connection))
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddSilverback()
                 .UseDbContext<TestDbContext>();
 

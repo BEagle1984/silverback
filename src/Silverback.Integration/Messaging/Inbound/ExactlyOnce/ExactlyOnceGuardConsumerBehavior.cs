@@ -14,15 +14,15 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce
     /// </summary>
     public class ExactlyOnceGuardConsumerBehavior : IConsumerBehavior
     {
-        private readonly ISilverbackIntegrationLogger<ExactlyOnceGuardConsumerBehavior> _logger;
+        private readonly IInboundLogger<ExactlyOnceGuardConsumerBehavior> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ExactlyOnceGuardConsumerBehavior" /> class.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger{TCategoryName}" />.
+        ///     The <see cref="IInboundLogger{TCategoryName}" />.
         /// </param>
-        public ExactlyOnceGuardConsumerBehavior(ISilverbackIntegrationLogger<ExactlyOnceGuardConsumerBehavior> logger)
+        public ExactlyOnceGuardConsumerBehavior(IInboundLogger<ExactlyOnceGuardConsumerBehavior> logger)
         {
             _logger = logger;
         }
@@ -52,10 +52,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce
             if (!await strategyImplementation.CheckIsAlreadyProcessedAsync(context).ConfigureAwait(false))
                 return false;
 
-            _logger.LogInformationWithMessageInfo(
-                IntegrationEventIds.MessageAlreadyProcessed,
-                "Message is being skipped since it was already processed.",
-                context);
+            _logger.LogAlreadyProcessed(context.Envelope);
 
             return true;
         }

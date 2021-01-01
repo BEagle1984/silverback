@@ -18,16 +18,15 @@ namespace Silverback.Messaging.Inbound.Transaction
     /// </summary>
     public class TransactionHandlerConsumerBehavior : IConsumerBehavior
     {
-        private readonly ISilverbackIntegrationLogger<TransactionHandlerConsumerBehavior> _logger;
+        private readonly IInboundLogger<TransactionHandlerConsumerBehavior> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TransactionHandlerConsumerBehavior" /> class.
         /// </summary>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger{TCategoryName}" />.
+        ///     The <see cref="IInboundLogger{TCategoryName}" />.
         /// </param>
-        public TransactionHandlerConsumerBehavior(
-            ISilverbackIntegrationLogger<TransactionHandlerConsumerBehavior> logger)
+        public TransactionHandlerConsumerBehavior(IInboundLogger<TransactionHandlerConsumerBehavior> logger)
         {
             _logger = logger;
         }
@@ -51,7 +50,7 @@ namespace Silverback.Messaging.Inbound.Transaction
                 context.TransactionManager = new ConsumerTransactionManager(
                     context,
                     context.ServiceProvider
-                        .GetRequiredService<ISilverbackIntegrationLogger<ConsumerTransactionManager>>());
+                        .GetRequiredService<IInboundLogger<ConsumerTransactionManager>>());
 
                 await next(context).ConfigureAwait(false);
 
@@ -78,10 +77,9 @@ namespace Silverback.Messaging.Inbound.Transaction
 
                     if (context.Sequence.Length > 0)
                     {
-                        _logger.LogTraceWithMessageInfo(
-                            IntegrationEventIds.LowLevelTracing,
+                        _logger.LogInboundLowLevelTrace(
                             "Awaiting sequence processing completed before rethrowing.",
-                            context);
+                            context.Envelope);
 
                         await context.Sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
                     }
@@ -103,17 +101,15 @@ namespace Silverback.Messaging.Inbound.Transaction
             // commit was performed or the error policies were applied before continuing
             if (context.IsSequenceEnd || context.Sequence.IsAborted)
             {
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.LowLevelTracing,
+                _logger.LogInboundLowLevelTrace(
                     "Sequence ended or aborted: awaiting processing task.",
-                    context);
+                    context.Envelope);
 
                 await context.Sequence.AwaitProcessingAsync(true).ConfigureAwait(false);
 
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.LowLevelTracing,
+                _logger.LogInboundLowLevelTrace(
                     "Sequence ended or aborted: processing task completed.",
-                    context);
+                    context.Envelope);
 
                 context.Dispose();
             }
@@ -124,6 +120,7 @@ namespace Silverback.Messaging.Inbound.Transaction
             Task.Run(() => AwaitSequenceProcessingAsync(context));
 
         [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync")]
+        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Logging is sync")]
         private async Task AwaitSequenceProcessingAsync(ConsumerPipelineContext context)
         {
             var sequence = context.Sequence ??
@@ -132,50 +129,25 @@ namespace Silverback.Messaging.Inbound.Transaction
 
             try
             {
-                var processingTask = context.ProcessingTask;
+                (context, sequence) = await AwaitSequenceCoreAsync(context, sequence).ConfigureAwait(false);
 
-                // Keep awaiting in a loop because the sequence and the processing task may be reassigned
-                // (a ChunkSequence may be added to another sequence only after the message is complete and deserialized)
-                while (processingTask != null)
+                if (!context.IsSequenceStart)
                 {
-                    _logger.LogTraceWithMessageInfo(
-                        IntegrationEventIds.LowLevelTracing,
-                        $"Awaiting {sequence.GetType().Name} '{sequence.SequenceId}' processing task.",
-                        context);
-
-                    await processingTask.ConfigureAwait(false);
-
-                    // Ensure we are at the start of the outer sequence
-                    if (!context.IsSequenceStart)
-                    {
-                        _logger.LogTraceWithMessageInfo(
-                            IntegrationEventIds.LowLevelTracing,
-                            $"{sequence.GetType().Name} '{sequence.SequenceId}' processing has completed but it's not the beginning of the outer sequence. No action will be performed.",
-                            context);
-                        return;
-                    }
-
-                    sequence = context.Sequence ??
-                               throw new InvalidOperationException("Sequence is null.");
-                    context = sequence.Context;
-
-                    processingTask = context.ProcessingTask != processingTask
-                        ? context.ProcessingTask
-                        : null;
+                    _logger.LogInboundLowLevelTrace(
+                        "{sequenceType} '{sequenceId}' processing has completed but it's not the beginning of the outer sequence. No action will be performed.",
+                        context.Envelope,
+                        () => new object[]
+                        {
+                            sequence.GetType().Name,
+                            sequence.SequenceId
+                        });
                 }
 
-                string logMessage = sequence.IsPending
-                    ? $"{sequence.GetType().Name} '{sequence.SequenceId}' processing seems " +
-                      "completed but the sequence is still pending. " +
-                      $"(ProcessingTask.Status={context.ProcessingTask?.Status}, ProcessingTask.Id={context.ProcessingTask?.Id})"
-                    : $"{sequence.GetType().Name} '{sequence.SequenceId}' processing completed.";
+                LogSequenceCompletedTrace(context, sequence);
 
-                _logger.LogTraceWithMessageInfo(
-                    IntegrationEventIds.LowLevelTracing,
-                    logMessage,
-                    context);
-
-                if (!sequence.IsAborted)
+                // Commit only if it is the start of the outer sequence (e.g. when combining batching and
+                // chunking), to avoid commits in the middle of the outer sequence (batch).
+                if (context.IsSequenceStart && !sequence.IsAborted)
                 {
                     await context.TransactionManager.CommitAsync().ConfigureAwait(false);
 
@@ -194,11 +166,100 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
+        [SuppressMessage("ReSharper", "AccessToModifiedClosure", Justification = "Logging is sync")]
+        private async Task<(ConsumerPipelineContext Context, ISequence Sequence)> AwaitSequenceCoreAsync(
+            ConsumerPipelineContext context,
+            ISequence sequence)
+        {
+            var processingTask = context.ProcessingTask;
+
+            // Keep awaiting in a loop because the sequence and the processing task may be reassigned
+            // (a ChunkSequence may be added to another sequence only after the message is complete and deserialized)
+            while (processingTask != null)
+            {
+                _logger.LogInboundLowLevelTrace(
+                    "Awaiting {sequenceType} '{sequenceId}' processing task.",
+                    context.Envelope,
+                    () => new object[]
+                    {
+                        sequence.GetType().Name,
+                        sequence.SequenceId
+                    });
+
+                await processingTask.ConfigureAwait(false);
+
+                // Break if this isn't the beginning of the outer sequence
+                // (e.g. when combining batching and chunking)
+                if (!context.IsSequenceStart)
+                    return (context, sequence);
+
+                sequence = context.Sequence ??
+                           throw new InvalidOperationException("Sequence is null.");
+                context = sequence.Context;
+
+                processingTask = context.ProcessingTask != processingTask
+                    ? context.ProcessingTask
+                    : null;
+            }
+
+            return (context, sequence);
+        }
+
+        private void LogSequenceCompletedTrace(ConsumerPipelineContext context, ISequence sequence)
+        {
+            if (!context.IsSequenceStart)
+            {
+                var logMessage =
+                    "{sequenceType} '{sequenceId}' processing has completed but it's not the beginning " +
+                    "of the outer sequence. No action will be performed.";
+
+                _logger.LogInboundLowLevelTrace(
+                    logMessage,
+                    context.Envelope,
+                    () => new object[]
+                    {
+                        sequence.GetType().Name,
+                        sequence.SequenceId
+                    });
+            }
+
+            if (sequence.IsPending)
+            {
+                var logMessage =
+                    "{sequenceType} '{sequenceId}' processing seems completed but the sequence is " +
+                    "still pending: " +
+                    "ProcessingTask.Status={processingTaskStatus}, " +
+                    "ProcessingTask.Id={processingTaskId})";
+
+                _logger.LogInboundLowLevelTrace(
+                    logMessage,
+                    context.Envelope,
+                    () => new object?[]
+                    {
+                        sequence.GetType().Name,
+                        sequence.SequenceId,
+                        context.ProcessingTask?.Status,
+                        context.ProcessingTask?.Id
+                    });
+            }
+            else
+            {
+                _logger.LogInboundLowLevelTrace(
+                    "{sequenceType} '{sequenceId}' processing completed.",
+                    context.Envelope,
+                    () => new object[]
+                    {
+                        sequence.GetType().Name,
+                        sequence.SequenceId
+                    });
+            }
+        }
+
         private async Task<bool> HandleExceptionAsync(
             ConsumerPipelineContext context,
             Exception exception)
         {
-            _logger.LogProcessingError(context, exception);
+            _logger.LogProcessingError(context.Envelope, exception);
 
             try
             {

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
@@ -35,7 +36,8 @@ namespace Silverback.Messaging.Sequences
         public abstract Task<bool> CanHandleAsync(ConsumerPipelineContext context);
 
         /// <inheritdoc cref="ISequenceReader.GetSequenceAsync" />
-        public async Task<ISequence?> GetSequenceAsync(ConsumerPipelineContext context)
+        [SuppressMessage("", "CA2000", Justification = "Sequence is being returned")]
+        public async Task<ISequence> GetSequenceAsync(ConsumerPipelineContext context)
         {
             Check.NotNull(context, nameof(context));
 
@@ -47,7 +49,8 @@ namespace Silverback.Messaging.Sequences
 
             return isNewSequence
                 ? await CreateNewSequenceAsync(sequenceId, context).ConfigureAwait(false)
-                : await GetExistingSequenceAsync(context, sequenceId).ConfigureAwait(false);
+                : await GetExistingSequenceAsync(context, sequenceId).ConfigureAwait(false) ??
+                  new IncompleteSequence(sequenceId, context);
         }
 
         /// <summary>
@@ -147,7 +150,8 @@ namespace Silverback.Messaging.Sequences
             return context.SequenceStore.GetAsync<ISequence>(sequenceId);
         }
 
-        private async Task AwaitOrAbortPreviousSequencesAsync(ISequenceStore sequenceStore)
+        private async Task AwaitOrAbortPreviousSequencesAsync(
+            ISequenceStore sequenceStore)
         {
             var sequences = sequenceStore.ToList();
 

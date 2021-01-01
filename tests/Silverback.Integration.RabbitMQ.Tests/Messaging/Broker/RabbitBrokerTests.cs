@@ -8,6 +8,7 @@ using RabbitMQ.Client;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Rabbit;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
@@ -20,6 +21,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
+                    .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(options => options.AddRabbit()));
 

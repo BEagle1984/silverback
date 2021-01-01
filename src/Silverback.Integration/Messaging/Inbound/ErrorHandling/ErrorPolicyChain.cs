@@ -48,7 +48,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 StackMaxFailedAttempts(_policies)
                     .Select(policy => policy.Build(serviceProvider))
                     .Cast<ErrorPolicyImplementation>(),
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<ErrorPolicyChainImplementation>>());
+                serviceProvider.GetRequiredService<IInboundLogger<ErrorPolicyChainImplementation>>());
 
         private static IReadOnlyCollection<ErrorPolicyBase> StackMaxFailedAttempts(
             IReadOnlyCollection<ErrorPolicyBase> policies)
@@ -68,13 +68,13 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
         private class ErrorPolicyChainImplementation : IErrorPolicyImplementation
         {
-            private readonly ISilverbackIntegrationLogger<ErrorPolicyChainImplementation> _logger;
+            private readonly IInboundLogger<ErrorPolicyChainImplementation> _logger;
 
             private readonly IReadOnlyCollection<ErrorPolicyImplementation> _policies;
 
             public ErrorPolicyChainImplementation(
                 IEnumerable<ErrorPolicyImplementation> policies,
-                ISilverbackIntegrationLogger<ErrorPolicyChainImplementation> logger)
+                IInboundLogger<ErrorPolicyChainImplementation> logger)
             {
                 _policies = Check.NotNull(policies, nameof(policies)).ToList();
                 Check.HasNoNulls(_policies, nameof(policies));
@@ -95,10 +95,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                         return policy.HandleErrorAsync(context, exception);
                 }
 
-                _logger.LogDebugWithMessageInfo(
-                    IntegrationEventIds.PolicyChainCompleted,
-                    "All policies have been applied but the message(s) couldn't be successfully processed. The consumer will be stopped.",
-                    context);
+                _logger.LogInboundTrace(IntegrationLogEvents.PolicyChainCompleted, context.Envelope);
 
                 return Task.FromResult(false);
             }

@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Publishing
@@ -47,7 +48,7 @@ namespace Silverback.Tests.Integration.Messaging.Publishing
         {
             var services = new ServiceCollection();
 
-            services.AddNullLogger();
+            services.AddLoggerSubstitute();
 
             var builder = services.AddSilverback();
 

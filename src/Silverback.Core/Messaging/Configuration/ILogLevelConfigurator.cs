@@ -8,7 +8,7 @@ using Silverback.Diagnostics;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    ///     Configure the loglevels that should be used to log events.
+    ///     Configure and stores the <see cref="LogLevel"/> overrides.
     /// </summary>
     public interface ILogLevelConfigurator
     {
@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Configuration
         /// <returns>
         ///     The <see cref="ILogLevelConfigurator" /> so that additional calls can be chained.
         /// </returns>
-        ILogLevelConfigurator SetLogLevel(EventId eventId, Func<Exception, LogLevel, LogLevel> logLevelFunc);
+        ILogLevelConfigurator SetLogLevel(EventId eventId, Func<Exception?, LogLevel, LogLevel> logLevelFunc);
 
         /// <summary>
         ///     Configure a delegate that determines the log level that should be applied to the specified event.
@@ -57,7 +57,7 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         ILogLevelConfigurator SetLogLevel(
             EventId eventId,
-            Func<Exception, LogLevel, Lazy<string>, LogLevel> logLevelFunc);
+            Func<Exception?, LogLevel, Lazy<string>, LogLevel> logLevelFunc);
 
         /// <summary>
         ///     Builds the <see cref="ILogLevelDictionary" /> based on the current state of the configurator.

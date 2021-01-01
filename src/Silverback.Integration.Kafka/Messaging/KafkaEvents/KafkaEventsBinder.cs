@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Confluent.Kafka;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka;
@@ -19,7 +18,7 @@ namespace Silverback.Messaging.KafkaEvents
         public static void SetEventsHandlers(
             this IConfluentProducerBuilder producerBuilder,
             KafkaProducer producer,
-            ISilverbackIntegrationLogger logger) =>
+            ISilverbackLogger logger) =>
             producerBuilder
                 .SetStatisticsHandler((_, statistics) => OnStatistics(statistics, producer, logger))
                 .SetLogHandler((_, logMessage) => OnLog(logMessage, producer, logger));
@@ -27,18 +26,20 @@ namespace Silverback.Messaging.KafkaEvents
         public static void SetEventsHandlers(
             this IConfluentConsumerBuilder consumerBuilder,
             KafkaConsumer consumer,
-            ISilverbackIntegrationLogger logger) =>
+            ISilverbackLogger logger) =>
             consumerBuilder
                 .SetStatisticsHandler((_, statistics) => OnStatistics(statistics, consumer, logger))
-                .SetPartitionsAssignedHandler((_, partitions) => OnPartitionsAssigned(partitions, consumer, logger))
-                .SetPartitionsRevokedHandler((_, partitions) => OnPartitionsRevoked(partitions, consumer, logger))
+                .SetPartitionsAssignedHandler(
+                    (_, partitions) => OnPartitionsAssigned(partitions, consumer, logger))
+                .SetPartitionsRevokedHandler(
+                    (_, partitions) => OnPartitionsRevoked(partitions, consumer, logger))
                 .SetOffsetsCommittedHandler((_, offsets) => OnOffsetsCommitted(offsets, consumer, logger))
                 .SetErrorHandler((_, error) => OnError(error, consumer, logger))
                 .SetLogHandler((_, logMessage) => OnLog(logMessage, consumer, logger));
 
-        private static void OnStatistics(string statistics, KafkaProducer producer, ISilverbackIntegrationLogger logger)
+        private static void OnStatistics(string statistics, KafkaProducer producer, ISilverbackLogger logger)
         {
-            logger.LogDebug(KafkaEventIds.ProducerStatisticsReceived, $"Statistics: {statistics}");
+            logger.LogProducerStatisticsReceived(statistics, producer);
 
             producer.Endpoint.Events.StatisticsHandler?.Invoke(
                 KafkaStatisticsDeserializer.TryDeserialize(statistics, logger),
@@ -46,9 +47,9 @@ namespace Silverback.Messaging.KafkaEvents
                 producer);
         }
 
-        private static void OnStatistics(string statistics, KafkaConsumer consumer, ISilverbackIntegrationLogger logger)
+        private static void OnStatistics(string statistics, KafkaConsumer consumer, ISilverbackLogger logger)
         {
-            logger.LogDebug(KafkaEventIds.ConsumerStatisticsReceived, $"Statistics: {statistics}");
+            logger.LogConsumerStatisticsReceived(statistics, consumer);
 
             consumer.Endpoint.Events.StatisticsHandler?.Invoke(
                 KafkaStatisticsDeserializer.TryDeserialize(statistics, logger),
@@ -59,18 +60,9 @@ namespace Silverback.Messaging.KafkaEvents
         private static IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
             List<TopicPartition> partitions,
             KafkaConsumer consumer,
-            ISilverbackIntegrationLogger logger)
+            ISilverbackLogger logger)
         {
-            partitions.ForEach(
-                partition =>
-                {
-                    logger.LogInformation(
-                        KafkaEventIds.PartitionsAssigned,
-                        "Assigned partition {topic}[{partition}]. (consumerId: {consumerId})",
-                        partition.Topic,
-                        partition.Partition.Value,
-                        consumer.Id);
-                });
+            partitions.ForEach(topicPartition => logger.LogPartitionAssigned(topicPartition, consumer));
 
             var topicPartitionOffsets =
                 consumer.Endpoint.Events.PartitionsAssignedHandler?.Invoke(partitions, consumer).ToList() ??
@@ -79,15 +71,7 @@ namespace Silverback.Messaging.KafkaEvents
             foreach (var topicPartitionOffset in topicPartitionOffsets)
             {
                 if (topicPartitionOffset.Offset != Offset.Unset)
-                {
-                    logger.LogDebug(
-                        KafkaEventIds.PartitionOffsetReset,
-                        "{topic}[{partition}] offset will be reset to {offset}. (consumerId: {consumerId})",
-                        topicPartitionOffset.Topic,
-                        topicPartitionOffset.Partition.Value,
-                        topicPartitionOffset.Offset,
-                        consumer.Id);
-                }
+                    logger.LogPartitionOffsetReset(topicPartitionOffset, consumer);
             }
 
             consumer.OnPartitionsAssigned(
@@ -101,21 +85,12 @@ namespace Silverback.Messaging.KafkaEvents
         private static void OnPartitionsRevoked(
             List<TopicPartitionOffset> partitions,
             KafkaConsumer consumer,
-            ISilverbackIntegrationLogger logger)
+            ISilverbackLogger logger)
         {
             consumer.OnPartitionsRevoked();
 
             partitions.ForEach(
-                partition =>
-                {
-                    logger.LogInformation(
-                        KafkaEventIds.PartitionsRevoked,
-                        "Revoked partition {topic}[{partition}]. (consumerId: {consumerId})",
-                        partition.Topic,
-                        partition.Partition.Value,
-                        consumer.MemberId,
-                        consumer.Id);
-                });
+                topicPartitionOffset => logger.LogPartitionRevoked(topicPartitionOffset, consumer));
 
             consumer.Endpoint.Events.PartitionsRevokedHandler?.Invoke(partitions, consumer);
         }
@@ -123,34 +98,21 @@ namespace Silverback.Messaging.KafkaEvents
         private static void OnOffsetsCommitted(
             CommittedOffsets offsets,
             KafkaConsumer consumer,
-            ISilverbackIntegrationLogger logger)
+            ISilverbackLogger logger)
         {
-            foreach (var offset in offsets.Offsets)
+            foreach (var topicPartitionOffsetError in offsets.Offsets)
             {
-                if (offset.Offset == Offset.Unset)
+                if (topicPartitionOffsetError.Offset == Offset.Unset)
                     continue;
 
-                if (offset.Error != null && offset.Error.Code != ErrorCode.NoError)
+                if (topicPartitionOffsetError.Error != null &&
+                    topicPartitionOffsetError.Error.Code != ErrorCode.NoError)
                 {
-                    logger.LogError(
-                        KafkaEventIds.KafkaEventsHandlerErrorWhileCommittingOffset,
-                        "Error occurred committing the offset {topic}[{partition}] @{offset}: {errorCode} - {errorReason} (consumerId: {consumerId})",
-                        offset.Topic,
-                        offset.Partition.Value,
-                        offset.Offset,
-                        offset.Error.Code,
-                        offset.Error.Reason,
-                        consumer.Id);
+                    logger.LogOffsetCommitError(topicPartitionOffsetError, consumer);
                 }
                 else
                 {
-                    logger.LogDebug(
-                        KafkaEventIds.OffsetCommitted,
-                        "Successfully committed offset {topic}[{partition}] @{offset} (consumerId: {consumerId})",
-                        offset.Topic,
-                        offset.Partition.Value,
-                        offset.Offset,
-                        consumer.Id);
+                    logger.LogOffsetCommitted(topicPartitionOffsetError.TopicPartitionOffset, consumer);
                 }
             }
 
@@ -158,7 +120,7 @@ namespace Silverback.Messaging.KafkaEvents
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private static void OnError(Error error, KafkaConsumer consumer, ISilverbackIntegrationLogger logger)
+        private static void OnError(Error error, KafkaConsumer consumer, ISilverbackLogger logger)
         {
             // Ignore errors if not consuming anymore
             // (lidrdkafka randomly throws some "brokers are down" while disconnecting)
@@ -173,33 +135,63 @@ namespace Silverback.Messaging.KafkaEvents
             }
             catch (Exception ex)
             {
-                logger.LogError(
-                    KafkaEventIds.KafkaErrorHandlerError,
-                    ex,
-                    "Error in Kafka consumer error handler.");
+                logger.LogKafkaErrorHandlerError(consumer, ex);
             }
 
-            logger.Log(
-                error.IsFatal ? LogLevel.Critical : LogLevel.Error,
-                KafkaEventIds.ConsumerError,
-                "Error in Kafka consumer ({consumerId}): {error} (topic(s): {topics})",
-                consumer.Id,
-                error,
-                consumer.Endpoint.Names);
+            if (error.IsFatal)
+                logger.LogConfluentConsumerFatalError(error, consumer);
+            else
+                logger.LogConfluentConsumerError(error, consumer);
         }
 
-        private static void OnLog(LogMessage logMessage, KafkaProducer producer, ISilverbackIntegrationLogger logger) =>
-            logger.Log(
-                logMessage.Level.ToLogLevel(),
-                KafkaEventIds.ConfluentKafkaProducerLog,
-                $"Log message from Confluent.Kafka producer ({{endpointName}}) -> {logMessage.Message}",
-                producer.Endpoint.Name);
+        private static void OnLog(LogMessage logMessage, KafkaProducer producer, ISilverbackLogger logger)
+        {
+            switch (logMessage.Level)
+            {
+                case SyslogLevel.Emergency:
+                case SyslogLevel.Alert:
+                case SyslogLevel.Critical:
+                    logger.LogConfluentProducerLogCritical(logMessage, producer);
+                    break;
+                case SyslogLevel.Error:
+                    logger.LogConfluentProducerLogError(logMessage, producer);
+                    break;
+                case SyslogLevel.Warning:
+                    logger.LogConfluentProducerLogWarning(logMessage, producer);
+                    break;
+                case SyslogLevel.Notice:
+                case SyslogLevel.Info:
+                    logger.LogConfluentProducerLogInformation(logMessage, producer);
+                    break;
+                default:
+                    logger.LogConfluentProducerLogDebug(logMessage, producer);
+                    break;
+            }
+        }
 
-        private static void OnLog(LogMessage logMessage, KafkaConsumer consumer, ISilverbackIntegrationLogger logger) =>
-            logger.Log(
-                logMessage.Level.ToLogLevel(),
-                KafkaEventIds.ConfluentKafkaConsumerLog,
-                $"Log message from Confluent.Kafka consumer ({{consumerId}}) -> {logMessage.Message}",
-                consumer.Id);
+        private static void OnLog(LogMessage logMessage, KafkaConsumer consumer, ISilverbackLogger logger)
+        {
+            switch (logMessage.Level)
+            {
+                case SyslogLevel.Emergency:
+                case SyslogLevel.Alert:
+                case SyslogLevel.Critical:
+                    logger.LogConfluentConsumerLogCritical(logMessage, consumer);
+                    break;
+                case SyslogLevel.Error:
+                    logger.LogConfluentConsumerLogError(logMessage, consumer);
+                    break;
+                case SyslogLevel.Warning:
+                    logger.LogConfluentConsumerLogWarning(logMessage, consumer);
+                    break;
+                case SyslogLevel.Notice:
+                case SyslogLevel.Info:
+                    logger.LogConfluentConsumerLogInformation(logMessage, consumer);
+                    break;
+                default:
+                    logger.LogConfluentConsumerLogDebug(logMessage, consumer);
+                    break;
+            }
+        }
     }
 }

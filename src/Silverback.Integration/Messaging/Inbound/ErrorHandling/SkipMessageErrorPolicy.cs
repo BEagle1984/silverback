@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -27,11 +26,11 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 ApplyRule,
                 MessageToPublishFactory,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<SkipMessageErrorPolicy>>());
+                serviceProvider.GetRequiredService<IInboundLogger<SkipMessageErrorPolicy>>());
 
         private class SkipMessageErrorPolicyImplementation : ErrorPolicyImplementation
         {
-            private readonly ISilverbackIntegrationLogger<SkipMessageErrorPolicy> _logger;
+            private readonly IInboundLogger<SkipMessageErrorPolicy> _logger;
 
             public SkipMessageErrorPolicyImplementation(
                 int? maxFailedAttempts,
@@ -40,7 +39,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 Func<IRawInboundEnvelope, Exception, bool>? applyRule,
                 Func<IRawInboundEnvelope, object>? messageToPublishFactory,
                 IServiceProvider serviceProvider,
-                ISilverbackIntegrationLogger<SkipMessageErrorPolicy> logger)
+                IInboundLogger<SkipMessageErrorPolicy> logger)
                 : base(
                     maxFailedAttempts,
                     excludedExceptions,
@@ -53,17 +52,14 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 _logger = logger;
             }
 
-            protected override async Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
+            protected override async Task<bool> ApplyPolicyAsync(
+                ConsumerPipelineContext context,
+                Exception exception)
             {
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
 
-                _logger.LogWithMessageInfo(
-                    LogLevel.Error,
-                    IntegrationEventIds.MessageSkipped,
-                    exception,
-                    "The message(s) will be skipped.",
-                    context);
+                _logger.LogSkipped(context.Envelope);
 
                 await context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
 

@@ -13,6 +13,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -62,7 +63,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var services = new ServiceCollection();
             services
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddSilverback().WithConnectionToMessageBroker(
                     options => options
                         .AddBroker<TestBroker>());
@@ -87,7 +88,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var services = new ServiceCollection();
             services
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddSilverback().WithConnectionToMessageBroker(
                     options => options
                         .AddBroker<TestBroker>());

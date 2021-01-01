@@ -5,6 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
+using Silverback.Tests.Logging;
 
 namespace Silverback.Tests.Core.Messaging.Publishing
 {
@@ -46,7 +47,9 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             return ServiceProviderHelper.GetServiceProvider(
                 services =>
                 {
-                    var builder = services.AddSilverback();
+                    var builder = services
+                        .AddFakeLogger()
+                        .AddSilverback();
                     buildAction(builder);
                 }).GetRequiredService<IPublisher>();
         }

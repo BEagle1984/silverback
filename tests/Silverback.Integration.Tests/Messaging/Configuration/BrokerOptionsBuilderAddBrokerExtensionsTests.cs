@@ -8,6 +8,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Configuration
@@ -18,7 +19,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void AddBroker_ActivityBehaviorsRegisteredForDI()
         {
             var serviceProvider = new ServiceCollection()
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
                 .Services.BuildServiceProvider();
@@ -33,7 +34,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void AddBroker_ExceptionLoggerBehaviorRegisteredForDI()
         {
             var serviceProvider = new ServiceCollection()
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
                 .Services.BuildServiceProvider();
@@ -48,7 +49,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void AddBroker_BrokerRegisteredForDI()
         {
             var serviceProvider = new ServiceCollection()
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options
@@ -63,7 +64,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void AddBroker_BrokerOptionsConfiguratorInvoked()
         {
             var serviceProvider = new ServiceCollection()
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
                     options => options

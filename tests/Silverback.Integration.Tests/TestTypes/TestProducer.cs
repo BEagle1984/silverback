@@ -25,7 +25,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 endpoint,
                 behaviorsProvider,
                 serviceProvider,
-                Substitute.For<ISilverbackIntegrationLogger<TestProducer>>())
+                Substitute.For<IOutboundLogger<TestProducer>>())
         {
             ProducedMessages = broker.ProducedMessages;
         }

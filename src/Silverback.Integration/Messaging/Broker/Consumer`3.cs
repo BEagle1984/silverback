@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Sequences;
@@ -29,7 +28,7 @@ namespace Silverback.Messaging.Broker
         where TEndpoint : IConsumerEndpoint
         where TIdentifier : IBrokerMessageIdentifier
     {
-        private readonly ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TIdentifier>> _logger;
+        private readonly IInboundLogger<Consumer<TBroker, TEndpoint, TIdentifier>> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer{TBroker, TEndpoint, TOffset}" /> class.
@@ -47,14 +46,14 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="IInboundLogger{TCategoryName}" />.
         /// </param>
         protected Consumer(
             TBroker broker,
             TEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<Consumer<TBroker, TEndpoint, TIdentifier>> logger)
+            IInboundLogger<Consumer<TBroker, TEndpoint, TIdentifier>> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             _logger = logger;
@@ -71,7 +70,8 @@ namespace Silverback.Messaging.Broker
         public new TEndpoint Endpoint => (TEndpoint)base.Endpoint;
 
         /// <inheritdoc cref="Consumer.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        protected override Task CommitCoreAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
+        protected override Task CommitCoreAsync(
+            IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers)
         {
             try
             {
@@ -79,11 +79,7 @@ namespace Silverback.Messaging.Broker
             }
             catch (Exception exception)
             {
-                _logger.LogError(
-                    IntegrationEventIds.ConsumerCommitError,
-                    exception,
-                    "Error occurred during commit. ({identifiers})",
-                    string.Join(", ", brokerMessageIdentifiers.Select(identifier => identifier.Value)));
+                _logger.LogConsumerCommitError(this, brokerMessageIdentifiers, exception);
                 throw;
             }
         }
@@ -98,11 +94,7 @@ namespace Silverback.Messaging.Broker
             }
             catch (Exception exception)
             {
-                _logger.LogError(
-                    IntegrationEventIds.ConsumerRollbackError,
-                    exception,
-                    "Error occurred during rollback. ({identifiers})",
-                    string.Join(", ", brokerMessageIdentifiers.Select(identifier => identifier.Value)));
+                _logger.LogConsumerRollbackError(this, brokerMessageIdentifiers, exception);
                 throw;
             }
         }
@@ -114,7 +106,8 @@ namespace Silverback.Messaging.Broker
         protected abstract Task RollbackCoreAsync(IReadOnlyCollection<TIdentifier> brokerMessageIdentifiers);
 
         /// <inheritdoc cref="Consumer.GetSequenceStore" />
-        protected override ISequenceStore GetSequenceStore(IBrokerMessageIdentifier brokerMessageIdentifier) =>
+        protected override ISequenceStore GetSequenceStore(
+            IBrokerMessageIdentifier brokerMessageIdentifier) =>
             GetSequenceStore((TIdentifier)brokerMessageIdentifier);
 
         /// <inheritdoc cref="Consumer.GetSequenceStore" />

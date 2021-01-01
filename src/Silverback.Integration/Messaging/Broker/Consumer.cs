@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -25,7 +24,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
 
-        private readonly ISilverbackIntegrationLogger<Consumer> _logger;
+        private readonly ISilverbackLogger<Consumer> _logger;
 
         private readonly ConsumerStatusInfo _statusInfo = new();
 
@@ -50,14 +49,14 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         protected Consumer(
             IBroker broker,
             IConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<Consumer> logger)
+            ISilverbackLogger<Consumer> logger)
         {
             Broker = Check.NotNull(broker, nameof(broker));
             Endpoint = Check.NotNull(endpoint, nameof(endpoint));
@@ -70,7 +69,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IConsumer.Id" />
-        public Guid Id { get; } = Guid.NewGuid();
+        public InstanceIdentifier Id { get; } = new();
 
         /// <inheritdoc cref="IConsumer.Broker" />
         public IBroker Broker { get; }
@@ -132,11 +131,7 @@ namespace Silverback.Messaging.Broker
             }
 
             _statusInfo.SetConnected();
-            _logger.LogDebug(
-                IntegrationEventIds.ConsumerConnected,
-                "Connected consumer to endpoint {endpoint}. (consumerId: {consumerId})",
-                Endpoint.Name,
-                Id);
+            _logger.LogConsumerConnected(this);
 
             await StartAsync().ConfigureAwait(false);
         }
@@ -177,25 +172,22 @@ namespace Silverback.Messaging.Broker
 
             using (var cancellationTokenSource = new CancellationTokenSource(ConsumerStopWaitTimeout))
             {
-                _logger.LogTrace(
-                    IntegrationEventIds.LowLevelTracing,
+                _logger.LogLowLevelTrace(
                     "Waiting until consumer stops...  (consumerId: {consumerId})",
-                    Id);
+                    () => new object[] { Id });
 
                 try
                 {
                     await WaitUntilConsumingStoppedAsync(cancellationTokenSource.Token).ConfigureAwait(false);
-                    _logger.LogTrace(
-                        IntegrationEventIds.LowLevelTracing,
+                    _logger.LogLowLevelTrace(
                         "Consumer stopped. (consumerId: {consumerId})",
-                        Id);
+                        () => new object[] { Id });
                 }
                 catch (OperationCanceledException)
                 {
-                    _logger.LogError(
-                        IntegrationEventIds.LowLevelTracing,
+                    _logger.LogLowLevelTrace(
                         "The timeout elapsed before the consumer stopped. (consumerId: {consumerId})",
-                        Id);
+                        () => new object[] { Id });
                 }
             }
 
@@ -206,11 +198,7 @@ namespace Silverback.Messaging.Broker
 
             IsConnected = false;
             _statusInfo.SetDisconnected();
-            _logger.LogDebug(
-                IntegrationEventIds.ConsumerDisconnected,
-                "Disconnected consumer from endpoint {endpoint}. (consumerId: {consumerId})",
-                Endpoint.Name,
-                Id);
+            _logger.LogConsumerDisconnected(this);
 
             IsDisconnecting = false;
         }
@@ -415,10 +403,6 @@ namespace Silverback.Messaging.Broker
         /// <param name="brokerMessageIdentifier">
         ///     The identifier of the consumed message.
         /// </param>
-        /// <param name="additionalLogData">
-        ///     An optional dictionary containing the broker specific data to be logged when processing the consumed
-        ///     message.
-        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -427,16 +411,14 @@ namespace Silverback.Messaging.Broker
             byte[]? message,
             IReadOnlyCollection<MessageHeader> headers,
             string sourceEndpointName,
-            IBrokerMessageIdentifier brokerMessageIdentifier,
-            IDictionary<string, string>? additionalLogData)
+            IBrokerMessageIdentifier brokerMessageIdentifier)
         {
             var envelope = new RawInboundEnvelope(
                 message,
                 headers,
                 Endpoint,
                 sourceEndpointName,
-                brokerMessageIdentifier,
-                additionalLogData);
+                brokerMessageIdentifier);
 
             _statusInfo.RecordConsumedMessage(brokerMessageIdentifier);
 
@@ -469,24 +451,18 @@ namespace Silverback.Messaging.Broker
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(
-                    IntegrationEventIds.ConsumerDisposingError,
-                    ex,
-                    "Error occurred while disposing consumer from endpoint {endpoint}. (consumerId: {consumerId})",
-                    Endpoint.Name,
-                    Id);
+                _logger.LogConsumerDisposingError(this, ex);
             }
         }
 
-        private async Task ExecutePipelineAsync(ConsumerPipelineContext context, int stepIndex = 0)
+        private Task ExecutePipelineAsync(ConsumerPipelineContext context, int stepIndex = 0)
         {
             if (_behaviors.Count == 0 || stepIndex >= _behaviors.Count)
-                return;
+                return Task.CompletedTask;
 
-            await _behaviors[stepIndex].HandleAsync(
-                    context,
-                    nextContext => ExecutePipelineAsync(nextContext, stepIndex + 1))
-                .ConfigureAwait(false);
+            return _behaviors[stepIndex].HandleAsync(
+                context,
+                nextContext => ExecutePipelineAsync(nextContext, stepIndex + 1));
         }
     }
 }

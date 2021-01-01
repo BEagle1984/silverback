@@ -12,6 +12,7 @@ using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 using Silverback.Messaging.Subscribers.Subscriptions;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Subscribers
@@ -26,7 +27,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
         {
             var services = new ServiceCollection();
             services
-                .AddNullLogger()
+                .AddLoggerSubstitute()
                 .AddSilverback();
 
             _serviceProvider = services.BuildServiceProvider();

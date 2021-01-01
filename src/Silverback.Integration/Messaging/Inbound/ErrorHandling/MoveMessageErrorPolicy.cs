@@ -70,7 +70,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 MessageToPublishFactory,
                 serviceProvider,
                 serviceProvider
-                    .GetRequiredService<ISilverbackIntegrationLogger<MoveMessageErrorPolicy>>());
+                    .GetRequiredService<IInboundLogger<MoveMessageErrorPolicy>>());
 
         private class MoveMessageErrorPolicyImplementation : ErrorPolicyImplementation
         {
@@ -78,7 +78,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             private readonly Action<IOutboundEnvelope, Exception>? _transformationAction;
 
-            private readonly ISilverbackIntegrationLogger<MoveMessageErrorPolicy> _logger;
+            private readonly IInboundLogger<MoveMessageErrorPolicy> _logger;
 
             private readonly IProducer _producer;
 
@@ -91,7 +91,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 Func<IRawInboundEnvelope, Exception, bool>? applyRule,
                 Func<IRawInboundEnvelope, object>? messageToPublishFactory,
                 IServiceProvider serviceProvider,
-                ISilverbackIntegrationLogger<MoveMessageErrorPolicy> logger)
+                IInboundLogger<MoveMessageErrorPolicy> logger)
                 : base(
                     maxFailedAttempts,
                     excludedExceptions,
@@ -114,10 +114,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
                 if (context.Sequence != null)
                 {
-                    _logger.LogWarningWithMessageInfo(
-                        IntegrationEventIds.CannotMoveSequences,
-                        $"The message belongs to a {context.Sequence.GetType().Name} and cannot be moved.",
-                        context);
+                    _logger.LogCannotMoveSequences(context.Envelope, context.Sequence);
                     return false;
                 }
 
@@ -131,10 +128,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
 
-                _logger.LogInformationWithMessageInfo(
-                    IntegrationEventIds.MessageMoved,
-                    $"The message will be moved to endpoint '{_endpoint.Name}'.",
-                    context);
+                _logger.LogMoved(context.Envelope, _endpoint);
 
                 await PublishToNewEndpointAsync(context.Envelope, exception).ConfigureAwait(false);
 
@@ -145,9 +139,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             private async Task PublishToNewEndpointAsync(IRawInboundEnvelope envelope, Exception exception)
             {
-                envelope.Headers.AddOrReplace(
-                    DefaultMessageHeaders.SourceEndpoint,
-                    envelope.Endpoint?.Name ?? string.Empty);
+                envelope.Headers.AddOrReplace(DefaultMessageHeaders.SourceEndpoint, envelope.Endpoint.Name);
 
                 var outboundEnvelope =
                     envelope is IInboundEnvelope deserializedEnvelope

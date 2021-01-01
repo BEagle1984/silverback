@@ -50,6 +50,12 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IBrokerMessageIdentifier.Value" />
         public string Value => MessageId;
 
+        /// <inheritdoc cref="IBrokerMessageIdentifier.ToLogString" />
+        public string ToLogString() => Value;
+
+        /// <inheritdoc cref="IBrokerMessageIdentifier.ToVerboseLogString" />
+        public string ToVerboseLogString() => $"{Key}@{Value}";
+
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         [SuppressMessage("", "CA1508", Justification = "False positive: is MqttClientMessageId")]
         public bool Equals(IBrokerMessageIdentifier? other)

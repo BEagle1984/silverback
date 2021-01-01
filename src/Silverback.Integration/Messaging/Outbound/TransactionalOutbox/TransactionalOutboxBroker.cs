@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 endpoint,
                 behaviorsProvider,
                 serviceProvider,
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<OutboundQueueProducer>>());
+                serviceProvider.GetRequiredService<IOutboundLogger<OutboundQueueProducer>>());
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateConsumer" />
         protected override IConsumer InstantiateConsumer(

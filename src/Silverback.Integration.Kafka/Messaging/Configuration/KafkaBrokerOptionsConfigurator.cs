@@ -4,6 +4,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
@@ -29,9 +30,23 @@ namespace Silverback.Messaging.Configuration
                 .AddTransient<IConfluentConsumerBuilder, ConfluentConsumerBuilder>()
                 .AddSingleton<IConfluentProducersCache, ConfluentProducersCache>();
 
-            brokerOptionsBuilder.LogTemplates
-                .ConfigureAdditionalData<KafkaConsumerEndpoint>("offset", "kafkaKey")
-                .ConfigureAdditionalData<KafkaProducerEndpoint>("offset", "kafkaKey");
+            brokerOptionsBuilder.GetLoggerCollection().AddInbound<KafkaConsumerEndpoint>(
+                "offset",
+                envelope =>
+                    envelope.BrokerMessageIdentifier is KafkaOffset offset
+                        ? $"{offset.Partition}@{offset.Offset}"
+                        : null,
+                "kafkaKey",
+                envelope => envelope.Headers.GetValue(KafkaMessageHeaders.KafkaMessageKey));
+
+            brokerOptionsBuilder.GetLoggerCollection().AddOutbound<KafkaProducerEndpoint>(
+                "offset",
+                envelope =>
+                    envelope.BrokerMessageIdentifier is KafkaOffset offset
+                        ? $"{offset.Partition}@{offset.Offset}"
+                        : null,
+                "kafkaKey",
+                envelope => envelope.Headers.GetValue(KafkaMessageHeaders.KafkaMessageKey));
         }
     }
 }

@@ -34,14 +34,14 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="IOutboundLogger{TCategoryName}" />.
         /// </param>
         public MqttProducer(
             MqttBroker broker,
             MqttProducerEndpoint endpoint,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<MqttProducer> logger)
+            IOutboundLogger<MqttProducer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             Check.NotNull(serviceProvider, nameof(serviceProvider));

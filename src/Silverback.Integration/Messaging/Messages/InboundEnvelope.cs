@@ -16,8 +16,7 @@ namespace Silverback.Messaging.Messages
                 envelope.Headers,
                 envelope.BrokerMessageIdentifier,
                 envelope.Endpoint,
-                envelope.ActualEndpointName,
-                envelope.AdditionalLogData)
+                envelope.ActualEndpointName)
         {
         }
 
@@ -26,15 +25,13 @@ namespace Silverback.Messaging.Messages
             IReadOnlyCollection<MessageHeader>? headers,
             IBrokerMessageIdentifier brokerMessageIdentifier,
             IConsumerEndpoint endpoint,
-            string actualEndpointName,
-            IDictionary<string, string>? additionalLogData = null)
+            string actualEndpointName)
             : base(
                 rawMessage,
                 headers,
                 endpoint,
                 actualEndpointName,
-                brokerMessageIdentifier,
-                additionalLogData)
+                brokerMessageIdentifier)
         {
         }
 
@@ -44,15 +41,13 @@ namespace Silverback.Messaging.Messages
             IReadOnlyCollection<MessageHeader>? headers,
             IBrokerMessageIdentifier brokerMessageIdentifier,
             IConsumerEndpoint endpoint,
-            string actualEndpointName,
-            IDictionary<string, string>? additionalLogData = null)
+            string actualEndpointName)
             : base(
                 rawMessage,
                 headers,
                 endpoint,
                 actualEndpointName,
-                brokerMessageIdentifier,
-                additionalLogData)
+                brokerMessageIdentifier)
         {
             Message = message;
         }

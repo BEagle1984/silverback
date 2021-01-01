@@ -4,12 +4,10 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Configuration;
 using Silverback.Tests.Integration.TestTypes;
+using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -36,18 +34,16 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             int endpointIndex,
             string expectedProducerType)
         {
-            var serviceProvider = new ServiceCollection()
-                .AddSingleton<EndpointsConfiguratorsInvoker>()
-                .AddTransient(typeof(IBrokerBehaviorsProvider<>), typeof(BrokerBehaviorsProvider<>))
-                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
-                .BuildServiceProvider();
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddBroker<TestBroker>()
+                            .AddBroker<TestOtherBroker>()));
 
-            var brokerCollection = new BrokerCollection(
-                new IBroker[]
-                {
-                    new TestBroker(serviceProvider),
-                    new TestOtherBroker(serviceProvider)
-                });
+            var brokerCollection = serviceProvider.GetRequiredService<IBrokerCollection>();
             var endpoint = _producerEndpoints[endpointIndex];
 
             var producer = brokerCollection.GetProducer(endpoint);
@@ -63,18 +59,16 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             int endpointIndex,
             string expectedConsumerType)
         {
-            var serviceProvider = new ServiceCollection()
-                .AddSingleton<EndpointsConfiguratorsInvoker>()
-                .AddTransient(typeof(IBrokerBehaviorsProvider<>), typeof(BrokerBehaviorsProvider<>))
-                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
-                .BuildServiceProvider();
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddBroker<TestBroker>()
+                            .AddBroker<TestOtherBroker>()));
 
-            var brokerCollection = new BrokerCollection(
-                new IBroker[]
-                {
-                    new TestBroker(serviceProvider),
-                    new TestOtherBroker(serviceProvider)
-                });
+            var brokerCollection = serviceProvider.GetRequiredService<IBrokerCollection>();
             var endpoint = _consumerEndpoints[endpointIndex];
 
             var consumer = brokerCollection.AddConsumer(endpoint);
@@ -84,19 +78,19 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         }
 
         [Fact]
-        public async Task ConnectAsyncAndDisconnectAsync_WithMultipleBrokers_AllBrokersConnectedAndDisconnected()
+        public async Task
+            ConnectAsyncAndDisconnectAsync_WithMultipleBrokers_AllBrokersConnectedAndDisconnected()
         {
-            var serviceProvider = new ServiceCollection()
-                .AddSingleton<EndpointsConfiguratorsInvoker>()
-                .AddSingleton(typeof(ISilverbackIntegrationLogger<>), typeof(IntegrationLoggerSubstitute<>))
-                .BuildServiceProvider();
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddBroker<TestBroker>()
+                            .AddBroker<TestOtherBroker>()));
 
-            var brokerCollection = new BrokerCollection(
-                new IBroker[]
-                {
-                    new TestBroker(serviceProvider),
-                    new TestOtherBroker(serviceProvider)
-                });
+            var brokerCollection = serviceProvider.GetRequiredService<IBrokerCollection>();
 
             brokerCollection[0].IsConnected.Should().BeFalse();
             brokerCollection[1].IsConnected.Should().BeFalse();

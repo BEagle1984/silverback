@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Outbound.Routing
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
         /// <param name="logger">
-        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        ///     The <see cref="IOutboundLogger{TCategoryName}" />.
         /// </param>
         public OutboundQueueProducer(
             IOutboxWriter queueWriter,
@@ -45,7 +45,7 @@ namespace Silverback.Messaging.Outbound.Routing
             IProducerEndpoint endpoint,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<Producer> logger)
+            IOutboundLogger<Producer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             _queueWriter = queueWriter;

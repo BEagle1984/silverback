@@ -20,7 +20,7 @@ namespace Silverback.Testing
     {
         private readonly IInMemoryTopicCollection? _topics;
 
-        private readonly ISilverbackIntegrationLogger<KafkaTestingHelper> _logger;
+        private readonly ILogger<KafkaTestingHelper> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaTestingHelper" /> class.
@@ -33,7 +33,7 @@ namespace Silverback.Testing
         /// </param>
         public KafkaTestingHelper(
             IServiceProvider serviceProvider,
-            ISilverbackIntegrationLogger<KafkaTestingHelper> logger)
+            ILogger<KafkaTestingHelper> logger)
             : base(serviceProvider, logger)
         {
             _topics = serviceProvider.GetService<IInMemoryTopicCollection>();

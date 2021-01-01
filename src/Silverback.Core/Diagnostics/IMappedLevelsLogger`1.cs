@@ -1,0 +1,20 @@
+﻿// Copyright (c) 2020 Sergio Aquilini
+// This code is licensed under MIT license (see LICENSE file for details)
+
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
+
+namespace Silverback.Diagnostics
+{
+    /// <summary>
+    ///     Wraps the <see cref="ILogger{TCategoryName}" /> mapping the log level according to the
+    ///     <see cref="ILogLevelDictionary" /> configuration.
+    /// </summary>
+    /// <typeparam name="TCategoryName">
+    ///     The type who's name is used for the logger category name.
+    /// </typeparam>
+    [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used to init logger category")]
+    internal interface IMappedLevelsLogger<out TCategoryName> : IMappedLevelsLogger
+    {
+    }
+}

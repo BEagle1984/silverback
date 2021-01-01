@@ -23,17 +23,17 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>
             _implementation ??= new OutboxProduceStrategyImplementation(
                 serviceProvider.GetRequiredService<TransactionalOutboxBroker>(),
-                serviceProvider.GetRequiredService<ISilverbackIntegrationLogger<OutboxProduceStrategy>>());
+                serviceProvider.GetRequiredService<IOutboundLogger<OutboxProduceStrategy>>());
 
         private class OutboxProduceStrategyImplementation : IProduceStrategyImplementation
         {
             private readonly TransactionalOutboxBroker _outboundQueueBroker;
 
-            private readonly ISilverbackIntegrationLogger<OutboxProduceStrategy> _logger;
+            private readonly IOutboundLogger<OutboxProduceStrategy> _logger;
 
             public OutboxProduceStrategyImplementation(
                 TransactionalOutboxBroker outboundQueueBroker,
-                ISilverbackIntegrationLogger<OutboxProduceStrategy> logger)
+                IOutboundLogger<OutboxProduceStrategy> logger)
             {
                 _outboundQueueBroker = outboundQueueBroker;
                 _logger = logger;
@@ -43,10 +43,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             {
                 Check.NotNull(envelope, nameof(envelope));
 
-                _logger.LogDebugWithMessageInfo(
-                    IntegrationEventIds.OutboundMessageWrittenToOutbox,
-                    "Writing the outbound message to the transactional outbox.",
-                    envelope);
+                _logger.LogWrittenToOutbox(envelope);
 
                 return _outboundQueueBroker.GetProducer(envelope.Endpoint).ProduceAsync(envelope);
             }

@@ -27,7 +27,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 ApplyRule,
                 MessageToPublishFactory,
                 serviceProvider,
-                Substitute.For<ISilverbackIntegrationLogger<TestErrorPolicy>>());
+                Substitute.For<IInboundLogger<TestErrorPolicy>>());
 
             return _implementation;
         }
@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 Func<IRawInboundEnvelope, Exception, bool>? applyRule,
                 Func<IRawInboundEnvelope, object>? messageToPublishFactory,
                 IServiceProvider serviceProvider,
-                ISilverbackIntegrationLogger<TestErrorPolicy> logger)
+                IInboundLogger<TestErrorPolicy> logger)
                 : base(
                     maxFailedAttempts,
                     excludedExceptions,
@@ -55,7 +55,9 @@ namespace Silverback.Tests.Integration.TestTypes
 
             public bool Applied { get; private set; }
 
-            protected override Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
+            protected override Task<bool> ApplyPolicyAsync(
+                ConsumerPipelineContext context,
+                Exception exception)
             {
                 Applied = true;
                 return Task.FromResult(false);

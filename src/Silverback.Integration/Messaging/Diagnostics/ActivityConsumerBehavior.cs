@@ -5,8 +5,6 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
@@ -18,10 +16,24 @@ namespace Silverback.Messaging.Diagnostics
     /// </summary>
     public class ActivityConsumerBehavior : IConsumerBehavior
     {
+        private readonly IInboundLogger<ActivityConsumerBehavior> _logger;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ActivityConsumerBehavior" /> class.
+        /// </summary>
+        /// <param name="logger">
+        ///     The <see cref="IInboundLogger{TCategoryName}" />.
+        /// </param>
+        public ActivityConsumerBehavior(IInboundLogger<ActivityConsumerBehavior> logger)
+        {
+            _logger = logger;
+        }
+
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Activity;
 
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task HandleAsync(
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
@@ -29,41 +41,26 @@ namespace Silverback.Messaging.Diagnostics
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
-            try
-            {
-                TryInitActivity(
-                    context,
-                    activity,
-                    context.ServiceProvider.GetService<ISilverbackLogger<ActivityConsumerBehavior>>());
+            using var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
 
-                await next(context).ConfigureAwait(false);
-            }
-            finally
-            {
-                activity.Stop();
-            }
-        }
-
-        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private static void TryInitActivity(
-            ConsumerPipelineContext context,
-            Activity activity,
-            ISilverbackLogger? logger)
-        {
             try
             {
                 activity.InitFromMessageHeaders(context.Envelope.Headers);
             }
             catch (Exception ex)
             {
-                logger?.LogWarning(
-                    IntegrationEventIds.ErrorInitializingActivity,
-                    ex,
-                    "Failed to initialize the current activity from the message headers.");
+                _logger.LogErrorInitializingActivity(context.Envelope, ex);
             }
 
-            activity.Start();
+            try
+            {
+                activity.Start();
+                await next(context).ConfigureAwait(false);
+            }
+            finally
+            {
+                activity.Stop();
+            }
         }
     }
 }

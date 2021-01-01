@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
@@ -151,9 +150,7 @@ namespace Silverback.Messaging.Publishing
                 }
                 else
                 {
-                    _logger.LogDebug(
-                        CoreEventIds.SubscriberResultDiscarded,
-                        "Discarding result of type {Type} because it doesn't match the expected return type {ExpectedType}.",
+                    _logger.LogSubscriberResultDiscarded(
                         result?.GetType().FullName,
                         typeof(TResult).FullName);
                 }

@@ -15,14 +15,14 @@ namespace Silverback.Messaging.Diagnostics
     /// </summary>
     public class FatalExceptionLoggerConsumerBehavior : IConsumerBehavior
     {
-        private readonly ISilverbackIntegrationLogger<FatalExceptionLoggerConsumerBehavior> _logger;
+        private readonly IInboundLogger<FatalExceptionLoggerConsumerBehavior> _logger;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="FatalExceptionLoggerConsumerBehavior" /> class.
         /// </summary>
-        /// <param name="logger">The <see cref="ISilverbackIntegrationLogger" />.</param>
+        /// <param name="logger">The <see cref="IInboundLogger{TCategoryName}" />.</param>
         public FatalExceptionLoggerConsumerBehavior(
-            ISilverbackIntegrationLogger<FatalExceptionLoggerConsumerBehavior> logger)
+            IInboundLogger<FatalExceptionLoggerConsumerBehavior> logger)
         {
             _logger = logger;
         }
@@ -44,13 +44,11 @@ namespace Silverback.Messaging.Diagnostics
             }
             catch (Exception ex)
             {
-                _logger.LogCriticalWithMessageInfo(
-                    IntegrationEventIds.ConsumerFatalError,
-                    ex,
-                    "Fatal error occurred processing the consumed message. The consumer will be stopped.",
-                    context);
+                _logger.LogProcessingFatalError(context.Envelope, ex);
 
-                throw new ConsumerPipelineFatalException("Fatal error occurred processing the consumed message.", ex);
+                throw new ConsumerPipelineFatalException(
+                    "Fatal error occurred processing the consumed message.",
+                    ex);
             }
         }
     }

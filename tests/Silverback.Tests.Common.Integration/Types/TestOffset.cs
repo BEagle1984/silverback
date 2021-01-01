@@ -62,6 +62,8 @@ namespace Silverback.Tests.Types
 
         public string ToLogString() => Value;
 
+        public string ToVerboseLogString() => $"{Key}@{Value}";
+
         [SuppressMessage("", "CA1508", Justification = "False positive: is TestOffset")]
         public bool Equals(IBrokerMessageIdentifier? other)
         {

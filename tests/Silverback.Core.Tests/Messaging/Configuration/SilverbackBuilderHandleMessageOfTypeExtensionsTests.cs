@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.TestTypes.Messages;
+using Silverback.Tests.Logging;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Configuration
@@ -161,7 +162,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
             var services = new ServiceCollection();
             var builder = services.AddSilverback();
 
-            services.AddNullLogger();
+            services.AddLoggerSubstitute();
 
             buildAction(builder);
 

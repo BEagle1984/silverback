@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration;
 using Silverback.Util;
@@ -107,11 +106,7 @@ namespace Silverback.Messaging.Broker
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log(
-                        _connectionOptions.RetryOnFailure ? LogLevel.Error : LogLevel.Critical,
-                        IntegrationEventIds.BrokerConnectionError,
-                        ex,
-                        "Error occurred connecting to the message broker(s).");
+                    _logger.LogBrokerConnectionError(ex);
 
                     if (!_connectionOptions.RetryOnFailure)
                         break;
