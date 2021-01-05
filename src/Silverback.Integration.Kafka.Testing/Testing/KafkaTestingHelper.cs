@@ -84,7 +84,7 @@ namespace Silverback.Testing
                                         cancellationTokenSource.Token)))
                         .ConfigureAwait(false);
                 }
-                while (await OutboxReader.GetLengthAsync().ConfigureAwait(false) > 0);
+                while (!await IsOutboxEmptyAsync().ConfigureAwait(false));
             }
             catch (OperationCanceledException)
             {

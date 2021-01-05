@@ -16,6 +16,8 @@ namespace Silverback.Testing
     public abstract class TestingHelper<TBroker> : ITestingHelper<TBroker>
         where TBroker : IBroker
     {
+        private readonly IServiceProvider _serviceProvider;
+
         private readonly TBroker? _broker;
 
         private readonly IIntegrationSpy? _integrationSpy;
@@ -28,20 +30,16 @@ namespace Silverback.Testing
         /// </param>
         protected TestingHelper(IServiceProvider serviceProvider)
         {
-            Check.NotNull(serviceProvider, nameof(serviceProvider));
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
 
             _broker = serviceProvider.GetRequiredService<TBroker>();
             _integrationSpy = serviceProvider.GetService<IIntegrationSpy>();
-            OutboxReader = serviceProvider.GetRequiredService<IOutboxReader>();
         }
 
         /// <inheritdoc cref="ITestingHelper{TBroker}.Broker" />
         [SuppressMessage("", "CA1508", Justification = "False positive")]
         public TBroker Broker => _broker ?? throw new InvalidOperationException(
             $"No broker of type {typeof(TBroker).Name} could be resolved.");
-
-        /// <inheritdoc cref="ITestingHelper{TBroker}.OutboxReader" />
-        public IOutboxReader OutboxReader { get; }
 
         /// <inheritdoc cref="ITestingHelper{TBroker}.Spy" />
         public IIntegrationSpy Spy => _integrationSpy ?? throw new InvalidOperationException(
@@ -56,11 +54,19 @@ namespace Silverback.Testing
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                if (await OutboxReader.GetLengthAsync().ConfigureAwait(false) == 0)
+                if (await IsOutboxEmptyAsync().ConfigureAwait(false))
                     return;
 
                 await Task.Delay(50, cancellationToken).ConfigureAwait(false);
             }
+        }
+
+        /// <inheritdoc cref="ITestingHelper{TBroker}.IsOutboxEmptyAsync" />
+        public async Task<bool> IsOutboxEmptyAsync()
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var outboxReader = scope.ServiceProvider.GetRequiredService<IOutboxReader>();
+            return await outboxReader.GetLengthAsync().ConfigureAwait(false) == 0;
         }
     }
 }

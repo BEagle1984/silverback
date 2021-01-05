@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost
         protected TestApplicationHost Host { get; }
 
         protected THelper Helper =>
-            _testingHelper ??= Host.ScopedServiceProvider.GetRequiredService<THelper>();
+            _testingHelper ??= Host.ServiceProvider.GetRequiredService<THelper>();
 
         public void Dispose()
         {

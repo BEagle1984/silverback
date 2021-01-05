@@ -5,7 +5,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
-using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 
 namespace Silverback.Testing
 {
@@ -22,11 +21,6 @@ namespace Silverback.Testing
         ///     Gets the current <see cref="IBroker" /> instance.
         /// </summary>
         TBroker Broker { get; }
-
-        /// <summary>
-        ///     Gets the <see cref="IOutboxReader"/>.
-        /// </summary>
-        IOutboxReader OutboxReader { get; }
 
         /// <summary>
         ///     Gets the <see cref="IIntegrationSpy" />.
@@ -60,5 +54,14 @@ namespace Silverback.Testing
         ///     A <see cref="Task" /> that completes when the outbox is empty.
         /// </returns>
         Task WaitUntilOutboxIsEmptyAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        ///     Checks whether the outbox (table) is empty.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains
+        ///     <c>true</c> if the outbox is empty, otherwise <c>false</c>.
+        /// </returns>
+        Task<bool> IsOutboxEmptyAsync();
     }
 }

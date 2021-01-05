@@ -10,14 +10,18 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 {
     public class TestApplicationFactory : WebApplicationFactory<BlankStartup>
     {
-        protected override IHostBuilder? CreateHostBuilder()
-        {
-            return null;
-        }
+        protected override IHostBuilder? CreateHostBuilder() =>
+            null;
 
-        protected override IWebHostBuilder CreateWebHostBuilder()
-        {
-            return WebHost.CreateDefaultBuilder().UseStartup<BlankStartup>();
-        }
+        protected override IWebHostBuilder CreateWebHostBuilder() =>
+            WebHost
+                .CreateDefaultBuilder()
+                .UseDefaultServiceProvider(
+                    (_, options) =>
+                    {
+                        options.ValidateScopes = true;
+                        options.ValidateOnBuild = true;
+                    })
+                .UseStartup<BlankStartup>();
     }
 }
