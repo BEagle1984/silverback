@@ -15,6 +15,9 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     public abstract class AvroMessageSerializerBase : IKafkaMessageSerializer
     {
+        /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
+        public bool RequireHeaders => false;
+
         /// <summary>
         ///     Gets or sets the schema registry configuration.
         /// </summary>

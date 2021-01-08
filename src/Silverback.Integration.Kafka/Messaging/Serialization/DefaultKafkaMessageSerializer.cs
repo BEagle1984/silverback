@@ -28,6 +28,9 @@ namespace Silverback.Messaging.Serialization
             _serializer = serializer;
         }
 
+        /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
+        public bool RequireHeaders => _serializer.RequireHeaders;
+
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         public ValueTask<Stream?> SerializeAsync(
             object? message,

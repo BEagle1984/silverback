@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using MQTTnet.Client.Options;
 using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Messaging.Inbound.ErrorHandling;
 
 namespace Silverback.Messaging
 {
@@ -57,6 +58,32 @@ namespace Silverback.Messaging
                 throw new EndpointConfigurationException("Configuration cannot be null.");
 
             Configuration.Validate();
+
+            if (!Configuration.AreHeadersSupported)
+            {
+                if (ErrorPolicy is ErrorPolicyBase errorPolicyBase &&
+                    errorPolicyBase.MaxFailedAttemptsCount > 1)
+                {
+                    throw new EndpointConfigurationException(
+                        "Cannot use MaxFailedAttempts because headers (user properties) are not " +
+                        "supported by MQTT prior to version 5.");
+                }
+
+                if (ErrorPolicy is ErrorPolicyChain)
+                {
+                    throw new EndpointConfigurationException(
+                        "Cannot chain multiple error policies because headers (user properties) are not " +
+                        "supported by MQTT prior to version 5.");
+                }
+
+                if (Serializer.RequireHeaders)
+                {
+                    throw new EndpointConfigurationException(
+                        "Wrong serializer configuration. Since headers (user properties) are not " +
+                        "supported by MQTT prior to version 5, the serializer must be configured with an " +
+                        "hardcoded message type.");
+                }
+            }
         }
 
         /// <inheritdoc cref="ConsumerEndpoint.GetUniqueConsumerGroupName" />
@@ -92,7 +119,10 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
+        [SuppressMessage(
+            "ReSharper",
+            "NonReadonlyMemberInGetHashCode",
+            Justification = "Protected set is not abused")]
         public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
     }
 }

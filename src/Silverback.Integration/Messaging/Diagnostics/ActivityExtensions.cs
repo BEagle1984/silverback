@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Diagnostics
                     "Activity.Id is null. Consider to start a new activity, before calling this method.");
             }
 
-            headers.Add(new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id));
+            headers.Add(DefaultMessageHeaders.TraceId, activity.Id);
 
             var traceState = activity.TraceStateString;
             if (traceState != null)
@@ -44,9 +44,8 @@ namespace Silverback.Messaging.Diagnostics
             if (activity.Baggage.Any())
             {
                 headers.Add(
-                    new MessageHeader(
-                        DefaultMessageHeaders.TraceBaggage,
-                        ActivityBaggageSerializer.Serialize(activity.Baggage)));
+                    DefaultMessageHeaders.TraceBaggage,
+                    ActivityBaggageSerializer.Serialize(activity.Baggage));
             }
         }
 

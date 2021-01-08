@@ -15,7 +15,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
     public interface IMqttClientConfigBuilder
     {
         /// <summary>
-        ///     Specifies the MQTT protocol version. The default is <see cref="MqttProtocolVersion.V311" />.
+        ///     Specifies the MQTT protocol version. The default is <see cref="MqttProtocolVersion.V500" />.
         /// </summary>
         /// <param name="value">
         ///     The <see cref="MqttProtocolVersion" />.

@@ -12,7 +12,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestErrorPolicy : ErrorPolicyBase
+    public class TestErrorPolicy : RetryableErrorPolicyBase
     {
         private TestErrorPolicyImplementation? _implementation;
 

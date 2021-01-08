@@ -24,6 +24,9 @@ namespace Silverback.Messaging.Serialization
         /// </summary>
         public static NewtonsoftJsonMessageSerializer Default { get; } = new();
 
+        /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
+        public override bool RequireHeaders => true;
+
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
         public override ValueTask<Stream?> SerializeAsync(
@@ -47,7 +50,8 @@ namespace Silverback.Messaging.Serialization
 
             messageHeaders.AddOrReplace(DefaultMessageHeaders.MessageType, type.AssemblyQualifiedName);
 
-            return ValueTaskFactory.FromResult<Stream?>(new MemoryStream(SystemEncoding.GetBytes(jsonString)));
+            return ValueTaskFactory.FromResult<Stream?>(
+                new MemoryStream(SystemEncoding.GetBytes(jsonString)));
         }
 
         /// <inheritdoc cref="IMessageSerializer.DeserializeAsync" />

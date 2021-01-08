@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Messages
 
         public OutboundEnvelope(
             object? message,
-            IEnumerable<MessageHeader>? headers,
+            IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint,
             bool autoUnwrap = false,
             IBrokerMessageIdentifier? brokerMessageIdentifier = null)

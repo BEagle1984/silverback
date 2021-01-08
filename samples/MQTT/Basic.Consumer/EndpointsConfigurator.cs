@@ -1,4 +1,5 @@
-﻿using Silverback.Messaging.Configuration;
+﻿using MQTTnet.Protocol;
+using Silverback.Messaging.Configuration;
 using Silverback.Samples.Mqtt.Basic.Common;
 
 namespace Silverback.Samples.Mqtt.Basic.Consumer
@@ -14,6 +15,7 @@ namespace Silverback.Samples.Mqtt.Basic.Consumer
                         // Configure the client options
                         .Configure(
                             config => config
+                                .WithClientId("samples.basic.consumer")
                                 .ConnectViaTcp("localhost")
 
                                 // Send last will message if disconnecting
@@ -27,6 +29,8 @@ namespace Silverback.Samples.Mqtt.Basic.Consumer
                         .AddInbound(
                             endpoint => endpoint
                                 .ConsumeFrom("samples/basic")
+                                .WithQualityOfServiceLevel(
+                                    MqttQualityOfServiceLevel.AtLeastOnce)
 
                                 // It is mandatory to specify the message type, since
                                 // MQTT doesn't support message headers

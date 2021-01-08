@@ -2,8 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using MQTTnet;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker.Mqtt
 {
@@ -12,12 +14,15 @@ namespace Silverback.Messaging.Broker.Mqtt
         public ConsumedApplicationMessage(MqttApplicationMessage applicationMessage)
         {
             ApplicationMessage = applicationMessage;
+            Id = applicationMessage.UserProperties
+                     ?.FirstOrDefault(header => header.Name == DefaultMessageHeaders.MessageId)?.Value
+                 ?? Guid.NewGuid().ToString();
         }
 
-        public Guid Id { get; } = Guid.NewGuid();
+        public string Id { get; }
 
         public MqttApplicationMessage ApplicationMessage { get; }
 
-        public TaskCompletionSource<bool> TaskCompletionSource { get; } = new();
+        public TaskCompletionSource<bool> TaskCompletionSource { get; set; } = new();
     }
 }

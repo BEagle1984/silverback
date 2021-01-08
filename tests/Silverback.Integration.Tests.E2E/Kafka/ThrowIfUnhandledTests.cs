@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -73,7 +72,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventThree());
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
+            var consumer = Helper.Broker.Consumers[0];
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
             receivedMessages.Should().HaveCount(3);
@@ -140,7 +139,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventThree());
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
+            var consumer = Helper.Broker.Consumers[0];
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
             receivedMessages.Should().HaveCount(3);
@@ -207,7 +206,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne());
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            var consumer = Host.ScopedServiceProvider.GetRequiredService<IBroker>().Consumers[0];
+            var consumer = Helper.Broker.Consumers[0];
 
             receivedMessages.Should().HaveCount(3);
             consumer.IsConnected.Should().BeTrue();

@@ -36,14 +36,14 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public Task TestHandleMessage(
             object message,
-            IEnumerable<MessageHeader>? headers = null,
+            IReadOnlyCollection<MessageHeader>? headers = null,
             TestOffset? offset = null,
             IMessageSerializer? serializer = null) =>
             TestHandleMessage(message, new MessageHeaderCollection(headers), offset, serializer);
 
         public Task TestConsume(
             byte[]? rawMessage,
-            IEnumerable<MessageHeader>? headers = null,
+            IReadOnlyCollection<MessageHeader>? headers = null,
             TestOffset? offset = null) =>
             TestHandleMessage(rawMessage, new MessageHeaderCollection(headers), offset);
 

@@ -44,7 +44,10 @@ namespace Silverback.Tests.Integration.TestTypes
             return Equals((TestOtherConsumerEndpoint)obj);
         }
 
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
+        [SuppressMessage(
+            "ReSharper",
+            "NonReadonlyMemberInGetHashCode",
+            Justification = "Protected set is not abused")]
         public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
     }
 }

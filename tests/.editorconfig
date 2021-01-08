@@ -11,6 +11,8 @@ dotnet_diagnostic.CA1062.severity = none
 dotnet_diagnostic.CA1506.severity = none
 # CA1707: Identifiers should not contain underscores
 dotnet_diagnostic.CA1707.severity = none
+# CA1806 Do not ignore method results
+dotnet_diagnostic.CA1806.severity = none
 # CA2000: Dispose objects before losing scope
 dotnet_diagnostic.CA2000.severity = none
 # CA2007: Consider calling ConfigureAwait on the awaited task

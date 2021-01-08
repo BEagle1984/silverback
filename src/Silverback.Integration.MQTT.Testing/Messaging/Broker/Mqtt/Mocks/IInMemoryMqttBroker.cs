@@ -18,6 +18,28 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
     public interface IInMemoryMqttBroker
     {
         /// <summary>
+        ///     Gets the <see cref="IClientSession" /> of the specified client.
+        /// </summary>
+        /// <param name="clientId">
+        ///     The client id.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IClientSession" />.
+        /// </returns>
+        IClientSession GetClientSession(string clientId);
+
+        /// <summary>
+        ///     Gets the total number of messages that were published to the specified topic.
+        /// </summary>
+        /// <param name="topic">
+        ///     The name of the topic.
+        /// </param>
+        /// <returns>
+        ///     The number of messages published to the topic.
+        /// </returns>
+        int GetMessagesCount(string topic);
+
+        /// <summary>
         ///     Connects the specified client.
         /// </summary>
         /// <param name="clientOptions">

@@ -19,6 +19,18 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
     {
         private readonly Dictionary<string, ClientSession> _sessions = new();
 
+        private readonly Dictionary<string, int> _messagesCountByTopic = new();
+
+        [SuppressMessage(
+            "ReSharper",
+            "InconsistentlySynchronizedField",
+            Justification = "Lock (dis-)connect only")]
+        public IClientSession GetClientSession(string clientId) => _sessions[clientId];
+
+        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
+        public int GetMessagesCount(string topic) =>
+            _messagesCountByTopic.ContainsKey(topic) ? _messagesCountByTopic[topic] : 0;
+
         public void Connect(IMqttClientOptions clientOptions, IMqttApplicationMessageReceivedHandler handler)
         {
             Check.NotNull(clientOptions, nameof(clientOptions));
@@ -75,11 +87,13 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         [SuppressMessage(
             "ReSharper",
             "InconsistentlySynchronizedField",
-            Justification = "Lock (dis-)connect only.")]
+            Justification = "Lock (dis-)connect only")]
         public Task PublishAsync(string clientId, MqttApplicationMessage message)
         {
             if (!_sessions.TryGetValue(clientId, out var publisherSession) || !publisherSession.IsConnected)
                 throw new InvalidOperationException("The client is not connected.");
+
+            IncrementMessagesCount(message);
 
             return _sessions.Values.ForEachAsync(session => session.PushAsync(message).AsTask());
         }
@@ -105,6 +119,17 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         public void Dispose()
         {
             _sessions.Values.ForEach(session => session.Dispose());
+        }
+
+        private void IncrementMessagesCount(MqttApplicationMessage message)
+        {
+            lock (_messagesCountByTopic)
+            {
+                if (_messagesCountByTopic.ContainsKey(message.Topic))
+                    _messagesCountByTopic[message.Topic] = _messagesCountByTopic[message.Topic] + 1;
+                else
+                    _messagesCountByTopic[message.Topic] = 1;
+            }
         }
     }
 }

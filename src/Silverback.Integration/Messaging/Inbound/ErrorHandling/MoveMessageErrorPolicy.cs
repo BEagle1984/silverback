@@ -18,9 +18,9 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     /// </summary>
     /// <remarks>
     ///     This policy can be used also to move the message at the end of the current topic to retry it later on.
-    ///     The number of retries can be limited using `MaxFailedAttempts`.
+    ///     The number of retries can be limited using <see cref="RetryableErrorPolicyBase.MaxFailedAttempts" />.
     /// </remarks>
-    public class MoveMessageErrorPolicy : ErrorPolicyBase
+    public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
     {
         private Action<IOutboundEnvelope, Exception>? _transformationAction;
 
@@ -124,7 +124,9 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 return base.CanHandle(context, exception);
             }
 
-            protected override async Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
+            protected override async Task<bool> ApplyPolicyAsync(
+                ConsumerPipelineContext context,
+                Exception exception)
             {
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
@@ -149,7 +151,10 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
                 var outboundEnvelope =
                     envelope is IInboundEnvelope deserializedEnvelope
-                        ? new OutboundEnvelope(deserializedEnvelope.Message, deserializedEnvelope.Headers, _endpoint)
+                        ? new OutboundEnvelope(
+                            deserializedEnvelope.Message,
+                            deserializedEnvelope.Headers,
+                            _endpoint)
                         : new OutboundEnvelope(envelope.RawMessage, envelope.Headers, _endpoint);
 
                 _transformationAction?.Invoke(outboundEnvelope, exception);

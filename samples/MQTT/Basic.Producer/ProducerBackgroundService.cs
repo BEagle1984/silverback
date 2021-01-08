@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Publishing;
 using Silverback.Samples.Mqtt.Basic.Common;
 
@@ -29,11 +30,18 @@ namespace Silverback.Samples.Mqtt.Basic.Producer
             // therefore be directly injected into the BackgroundService)
             using var scope = _serviceScopeFactory.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+            var broker = scope.ServiceProvider.GetRequiredService<IBroker>();
 
             int number = 0;
 
             while (!stoppingToken.IsCancellationRequested)
             {
+                // Check whether the connection has been established, since the
+                // BackgroundService will start immediately, before the application
+                // is completely bootstrapped.
+                if (!broker.IsConnected)
+                    await Task.Delay(100, stoppingToken);
+
                 await publisher.PublishAsync(
                     new SampleMessage
                     {

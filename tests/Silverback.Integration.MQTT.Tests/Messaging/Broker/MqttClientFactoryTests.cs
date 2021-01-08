@@ -10,7 +10,7 @@ using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
 
-namespace Silverback.Tests.Integration.MQTT.Messaging.Broker
+namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
 {
     public class MqttClientFactoryTests
     {

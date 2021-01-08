@@ -16,7 +16,7 @@ using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.MQTT.Messaging.Configuration.Mqtt
+namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 {
     public class MqttLastWillMessageBuilderTests
     {

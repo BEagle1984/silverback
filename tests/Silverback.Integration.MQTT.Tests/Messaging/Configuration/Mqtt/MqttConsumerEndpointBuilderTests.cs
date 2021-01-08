@@ -9,7 +9,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
 
-namespace Silverback.Tests.Integration.MQTT.Messaging.Configuration.Mqtt
+namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 {
     public class MqttConsumerEndpointBuilderTests
     {

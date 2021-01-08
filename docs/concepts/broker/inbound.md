@@ -185,6 +185,10 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 > If the processing still fails after the last policy is applied the exception will be returned to the consumer, causing it to stop.
 
 > [!Important]
+> The number of attempts are tracked according to the message id [header](xref:headers). A message id must be provided in order for the `MaxFailedAttempts` mechanism to work. This is ensured by the Silverback producer but might not be the case when consuming messages coming from other sources.
+> Some message broker implementations might transparently cope with the missing message id header and derive it from other identifiers (e.g. the kafka message key) but it's not automatically guaranteed that they will always be unique. You should carefully check that before relying on this feature.
+
+> [!Important]
 > The <xref:Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy> will prevent the message broker to be polled for the duration of the configured delay, which could lead to a timeout. With Kafka you should for example set the `max.poll.interval.ms` settings to an higher value.
 
 ### Apply rules

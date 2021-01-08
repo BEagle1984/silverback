@@ -2,13 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
-    internal static class HeadersMappingExtensions
+    internal static class KafkaHeadersMappingExtensions
     {
         private static readonly Encoding Encoding = Encoding.UTF8;
 
@@ -20,13 +19,17 @@ namespace Silverback.Messaging.Messages
         }
 
         public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(
-            this Confluent.Kafka.Headers kafkaHeaders) =>
-            kafkaHeaders.Select(
-                    kafkaHeader =>
+            this Confluent.Kafka.Headers kafkaHeaders)
+        {
+            var headers = new List<MessageHeader>(kafkaHeaders.Count);
+            kafkaHeaders.ForEach(
+                kafkaHeader =>
+                    headers.Add(
                         new MessageHeader(
                             kafkaHeader.Key,
-                            Decode(kafkaHeader.GetValueBytes())))
-                .ToList();
+                            Decode(kafkaHeader.GetValueBytes()))));
+            return headers;
+        }
 
         private static byte[]? Encode(string? value) => value != null
             ? Encoding.GetBytes(value)

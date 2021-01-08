@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Silverback.Util;
@@ -11,19 +12,34 @@ namespace Silverback.Messaging.Messages
     /// <summary>
     ///     A modifiable collection of message headers.
     /// </summary>
-    public class MessageHeaderCollection : List<MessageHeader>
+    public class MessageHeaderCollection : IReadOnlyList<MessageHeader>
     {
+        private List<MessageHeader> _list;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MessageHeaderCollection" /> class.
+        /// </summary>
+        /// <param name="capacity">
+        ///     The initial capacity of the backing <see cref="List{T}" />.
+        /// </param>
+        public MessageHeaderCollection(int capacity = 0)
+        {
+            _list = new(capacity);
+        }
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="MessageHeaderCollection" /> class.
         /// </summary>
         /// <param name="headers">
         ///     The headers to be added to the collection.
         /// </param>
-        public MessageHeaderCollection(IEnumerable<MessageHeader>? headers = null)
+        public MessageHeaderCollection(IReadOnlyCollection<MessageHeader>? headers)
         {
-            if (headers != null)
-                AddRange(headers);
+            _list = headers != null ? new List<MessageHeader>(headers) : new();
         }
+
+        /// <inheritdoc cref="IReadOnlyCollection{T}.Count" />
+        public int Count => _list.Count;
 
         /// <summary>
         ///     Gets or sets the value of the header with the specified name.
@@ -36,6 +52,14 @@ namespace Silverback.Messaging.Messages
             get => GetValue(Check.NotNull(name, nameof(name)), true);
             set => AddOrReplace(name, value);
         }
+
+        /// <summary>
+        ///     Gets the header at the specified index in the collection.
+        /// </summary>
+        /// <param name="index">
+        ///     The index in the collection.
+        /// </param>
+        public MessageHeader this[int index] => _list[index];
 
         /// <summary>
         ///     Adds a new header.
@@ -71,13 +95,46 @@ namespace Silverback.Messaging.Messages
         }
 
         /// <summary>
+        ///     Adds a new header.
+        /// </summary>
+        /// <param name="header">
+        ///     The header to be added.
+        /// </param>
+        public void Add(MessageHeader header)
+        {
+            Check.NotNull(header, nameof(header));
+
+            var newList = new List<MessageHeader>(_list.Capacity + 1);
+            newList.AddRange(_list);
+            newList.Add(header);
+            _list = newList;
+        }
+
+        /// <summary>
         ///     Removes all headers with the specified name.
         /// </summary>
         /// <param name="name">
         ///     The header name.
         /// </param>
-        public void Remove(string name) =>
-            RemoveAll(x => x.Name == name);
+        public void Remove(string name)
+        {
+            var newList = new List<MessageHeader>(_list);
+            newList.RemoveAll(x => x.Name == name);
+            _list = newList;
+        }
+
+        /// <summary>
+        ///     Removes the specified header.
+        /// </summary>
+        /// <param name="header">
+        ///     The header to remove.
+        /// </param>
+        public void Remove(MessageHeader header)
+        {
+            var newList = new List<MessageHeader>(_list);
+            newList.Remove(header);
+            _list = newList;
+        }
 
         /// <summary>
         ///     Adds a new header or replaces the header with the same name.
@@ -258,19 +315,10 @@ namespace Silverback.Messaging.Messages
         public object? GetValueOrDefault(string name, Type targetType) =>
             this.AsEnumerable().GetValueOrDefault(name, targetType);
 
-        /// <summary>
-        ///     Creates a new <see cref="MessageHeaderCollection" /> cloning all the headers in the current
-        ///     collection.
-        /// </summary>
-        /// <returns>
-        ///     A clone of the current collection.
-        /// </returns>
-        public IEnumerable<MessageHeader> Clone()
-        {
-            var clone = new MessageHeaderCollection();
-            clone.AddRange(this.Select(header => new MessageHeader(header.Name, header.Value)));
+        /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
+        public IEnumerator<MessageHeader> GetEnumerator() => _list.GetEnumerator();
 
-            return clone;
-        }
+        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
+        IEnumerator IEnumerable.GetEnumerator() => _list.GetEnumerator();
     }
 }

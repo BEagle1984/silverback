@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Linq;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Xunit;
@@ -18,8 +17,8 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             MessageIdProvider.EnsureMessageIdIsInitialized(headers);
 
             headers.Should().HaveCount(1);
-            headers.First().Name.Should().Be("x-message-id");
-            headers.First().Value.Should().NotBeNullOrWhiteSpace();
+            headers[0].Name.Should().Be("x-message-id");
+            headers[0].Value.Should().NotBeNullOrWhiteSpace();
         }
 
         [Fact]

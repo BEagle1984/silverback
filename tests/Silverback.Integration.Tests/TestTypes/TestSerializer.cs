@@ -11,6 +11,8 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class TestSerializer : IMessageSerializer
     {
+        public bool RequireHeaders => false;
+
         public int MustFailCount { get; set; }
 
         public int FailCount { get; private set; }

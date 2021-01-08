@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Messages
     {
         public ProcessedOutboundEnvelope(
             byte[]? messageContent,
-            IEnumerable<MessageHeader>? headers,
+            IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint)
             : base(messageContent, headers, endpoint)
         {
@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Messages
 
         public ProcessedOutboundEnvelope(
             Stream? messageStream,
-            IEnumerable<MessageHeader>? headers,
+            IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint)
             : base(messageStream, headers, endpoint)
         {

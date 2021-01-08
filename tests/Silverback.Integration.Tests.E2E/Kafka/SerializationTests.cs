@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
@@ -99,8 +98,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddIntegrationSpy())
                 .Run();
 
-            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
-            var producer = broker.GetProducer(
+            var producer = Helper.Broker.GetProducer(
                 new KafkaProducerEndpoint(DefaultTopicName)
                 {
                     Configuration = new KafkaProducerConfig
@@ -240,8 +238,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddIntegrationSpy())
                 .Run();
 
-            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
-            var producer = broker.GetProducer(
+            var producer = Helper.Broker.GetProducer(
                 new KafkaProducerEndpoint(DefaultTopicName)
                 {
                     Configuration = new KafkaProducerConfig

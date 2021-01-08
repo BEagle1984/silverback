@@ -18,7 +18,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Broker
 {
     /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}" />
-    public class MqttConsumer : Consumer<MqttBroker, MqttConsumerEndpoint, MqttClientMessageId>
+    public class MqttConsumer : Consumer<MqttBroker, MqttConsumerEndpoint, MqttMessageIdentifier>
     {
         private readonly ISilverbackIntegrationLogger<MqttConsumer> _logger;
 
@@ -66,8 +66,11 @@ namespace Silverback.Messaging.Broker
         {
             Dictionary<string, string> logData = new(); // TODO: Need additional data?
 
-            var headers = new MessageHeaderCollection();
-            headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id.ToString());
+            var headers = Endpoint.Configuration.AreHeadersSupported
+                ? new MessageHeaderCollection(message.ApplicationMessage.UserProperties.ToSilverbackHeaders())
+                : new MessageHeaderCollection();
+
+            headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id);
 
             _inProcessingMessage = message;
 
@@ -75,7 +78,7 @@ namespace Silverback.Messaging.Broker
                     message.ApplicationMessage.Payload,
                     headers,
                     message.ApplicationMessage.Topic,
-                    new MqttClientMessageId(Endpoint.Configuration.ClientId, message.Id),
+                    new MqttMessageIdentifier(Endpoint.Configuration.ClientId, message.Id),
                     logData)
                 .ConfigureAwait(false);
         }
@@ -134,20 +137,22 @@ namespace Silverback.Messaging.Broker
             _channelManager?.Stopping ?? Task.CompletedTask;
 
         /// <inheritdoc cref="Consumer.CommitCoreAsync" />
-        protected override Task CommitCoreAsync(IReadOnlyCollection<MqttClientMessageId> brokerMessageIdentifiers) =>
+        protected override Task CommitCoreAsync(
+            IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers) =>
             SetProcessingCompletedAsync(brokerMessageIdentifiers, true);
 
         /// <inheritdoc cref="Consumer.RollbackCoreAsync" />
-        protected override Task RollbackCoreAsync(IReadOnlyCollection<MqttClientMessageId> brokerMessageIdentifiers) =>
+        protected override Task RollbackCoreAsync(
+            IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers) =>
             SetProcessingCompletedAsync(brokerMessageIdentifiers, false);
 
         private Task SetProcessingCompletedAsync(
-            IReadOnlyCollection<MqttClientMessageId> brokerMessageIdentifiers,
+            IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers,
             bool isSuccess)
         {
             Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
-            var messageId = brokerMessageIdentifiers.Single().ClientMessageId;
+            var messageId = brokerMessageIdentifiers.Single().MessageId;
 
             if (_inProcessingMessage == null)
                 return Task.CompletedTask;

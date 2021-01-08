@@ -16,7 +16,8 @@ namespace Silverback.Messaging.Configuration.Mqtt
     {
         private readonly IServiceProvider? _serviceProvider;
 
-        private readonly MqttClientOptionsBuilder _builder = new();
+        private readonly MqttClientOptionsBuilder _builder =
+            new MqttClientOptionsBuilder().WithProtocolVersion(MqttProtocolVersion.V500);
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttClientConfigBuilder" /> class.

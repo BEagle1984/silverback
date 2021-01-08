@@ -21,12 +21,13 @@ namespace Silverback.Messaging.Configuration.Mqtt
     /// </summary>
     public sealed class MqttClientConfig : IEquatable<MqttClientConfig>, IValidatableEndpointSettings
     {
-        private static readonly ConfigurationDictionaryEqualityComparer<string, string> UserPropertiesEqualityComparer =
-            new();
+        private static readonly ConfigurationDictionaryEqualityComparer<string, string>
+            UserPropertiesEqualityComparer = new();
 
         private static readonly MqttClientCredentialsEqualityComparer CredentialsEqualityComparer = new();
 
-        private static readonly MqttClientChannelOptionsEqualityComparer ChannelOptionsEqualityComparer = new();
+        private static readonly MqttClientChannelOptionsEqualityComparer ChannelOptionsEqualityComparer =
+            new();
 
         private readonly MqttClientOptions _clientOptions;
 
@@ -38,14 +39,18 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// </param>
         public MqttClientConfig(MqttClientOptions? clientOptions = null)
         {
-            _clientOptions = clientOptions ?? new MqttClientOptions();
+            _clientOptions = clientOptions ?? new MqttClientOptions
+            {
+                ProtocolVersion = MqttProtocolVersion.V500
+            };
         }
 
         /// <summary>
         ///     Gets the list of user properties to be sent with the <i>CONNECT</i> packet. They can be used to send
         ///     connection related properties from the client to the server.
         /// </summary>
-        public IList<MqttUserProperty> UserProperties => _clientOptions.UserProperties ??= new List<MqttUserProperty>();
+        public IList<MqttUserProperty> UserProperties =>
+            _clientOptions.UserProperties ??= new List<MqttUserProperty>();
 
         /// <summary>
         ///     Gets or sets the client identifier. The default is <c>Guid.NewGuid().ToString()</c>.
@@ -85,7 +90,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         /// <summary>
-        ///     Gets or sets the MQTT protocol version. The default is <see cref="MqttProtocolVersion.V311" />.
+        ///     Gets or sets the MQTT protocol version. The default is <see cref="MqttProtocolVersion.V500" />.
         /// </summary>
         public MqttProtocolVersion ProtocolVersion
         {
@@ -224,6 +229,12 @@ namespace Silverback.Messaging.Configuration.Mqtt
             set => _clientOptions.TopicAliasMaximum = value;
         }
 
+        /// <summary>
+        ///     Gets a value indicating whether the headers (user properties) are supported according to the configured
+        ///     protocol version.
+        /// </summary>
+        internal bool AreHeadersSupported => _clientOptions.ProtocolVersion >= MqttProtocolVersion.V500;
+
         /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public void Validate()
         {
@@ -264,7 +275,9 @@ namespace Silverback.Messaging.Configuration.Mqtt
                    Equals(ClientId, other.ClientId) &&
                    CleanSession == other.CleanSession &&
                    CredentialsEqualityComparer.Equals(Credentials, other.Credentials) &&
-                   Equals(ExtendedAuthenticationExchangeHandler, other.ExtendedAuthenticationExchangeHandler) &&
+                   Equals(
+                       ExtendedAuthenticationExchangeHandler,
+                       other.ExtendedAuthenticationExchangeHandler) &&
                    ProtocolVersion == other.ProtocolVersion &&
                    ChannelOptionsEqualityComparer.Equals(ChannelOptions, other.ChannelOptions) &&
                    CommunicationTimeout == other.CommunicationTimeout &&
@@ -297,7 +310,10 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
+        [SuppressMessage(
+            "ReSharper",
+            "NonReadonlyMemberInGetHashCode",
+            Justification = Justifications.Settings)]
         public override int GetHashCode() => ClientId.GetHashCode(StringComparison.Ordinal);
 
         internal MqttClientOptions GetMqttClientOptions() => _clientOptions;

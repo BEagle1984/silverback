@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
@@ -9,7 +11,7 @@ namespace Silverback.Messaging.Messages
     /// <summary>
     ///     An header added to the message being sent over a message broker.
     /// </summary>
-    public class MessageHeader
+    public sealed class MessageHeader : IEquatable<MessageHeader>
     {
         private string _name = null!; // Always being set in constructor
 
@@ -60,5 +62,36 @@ namespace Silverback.Messaging.Messages
         ///     Gets or sets the header value.
         /// </summary>
         public string? Value { get; set; }
+
+        /// <inheritdoc cref="op_Equality" />
+        public static bool operator ==(MessageHeader? left, MessageHeader? right) => Equals(left, right);
+
+        /// <inheritdoc cref="op_Inequality" />
+        public static bool operator !=(MessageHeader? left, MessageHeader? right) => !Equals(left, right);
+
+        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
+        public bool Equals(MessageHeader? other)
+        {
+            if (ReferenceEquals(null, other))
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
+            return _name == other._name && Value == other.Value;
+        }
+
+        /// <inheritdoc cref="object.Equals(object)" />
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj))
+                return false;
+            if (ReferenceEquals(this, obj))
+                return true;
+            if (obj.GetType() != GetType())
+                return false;
+            return Equals((MessageHeader)obj);
+        }
+
+        /// <inheritdoc cref="object.GetHashCode" />
+        public override int GetHashCode() => RuntimeHelpers.GetHashCode(this);
     }
 }

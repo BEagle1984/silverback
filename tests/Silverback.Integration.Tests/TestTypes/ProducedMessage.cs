@@ -10,19 +10,19 @@ namespace Silverback.Tests.Integration.TestTypes
 {
     public class ProducedMessage
     {
-        public ProducedMessage(Stream? message, IEnumerable<MessageHeader>? headers, IEndpoint endpoint)
+        public ProducedMessage(
+            Stream? message,
+            IReadOnlyCollection<MessageHeader>? headers,
+            IEndpoint endpoint)
         {
             Message = message;
-
-            if (headers != null)
-                Headers.AddRange(headers);
-
+            Headers = headers != null ? new MessageHeaderCollection(headers) : new MessageHeaderCollection();
             Endpoint = endpoint;
         }
 
         public Stream? Message { get; }
 
-        public MessageHeaderCollection Headers { get; } = new();
+        public MessageHeaderCollection Headers { get; }
 
         public IEndpoint Endpoint { get; }
     }

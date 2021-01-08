@@ -22,6 +22,9 @@ namespace Silverback.Messaging.Serialization
     {
         private readonly Type _type = typeof(TMessage);
 
+        /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
+        public override bool RequireHeaders => false;
+
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
         public override ValueTask<Stream?> SerializeAsync(

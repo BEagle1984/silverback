@@ -48,22 +48,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
-            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
-
-            broker.Consumers[0].IsConnected.Should().BeTrue();
-            broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
+            Helper.Broker.Consumers[0].IsConnected.Should().BeTrue();
+            Helper.Broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            broker.Consumers[0].IsConnected.Should().BeTrue();
-            broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
+            Helper.Broker.Consumers[0].IsConnected.Should().BeTrue();
+            Helper.Broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
 
             await Helper.Broker.DisconnectAsync();
 
-            broker.Consumers[0].IsConnected.Should().BeFalse();
-            broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Disconnected);
+            Helper.Broker.Consumers[0].IsConnected.Should().BeFalse();
+            Helper.Broker.Consumers[0].StatusInfo.Status.Should().Be(ConsumerStatus.Disconnected);
         }
 
         [Fact]
@@ -92,25 +90,23 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
-            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
-
-            broker.Consumers[0].StatusInfo.History.Should().HaveCount(1);
-            broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Connected);
-            broker.Consumers[0].StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+            Helper.Broker.Consumers[0].StatusInfo.History.Should().HaveCount(1);
+            Helper.Broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Connected);
+            Helper.Broker.Consumers[0].StatusInfo.History.Last().Timestamp.Should().NotBeNull();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            broker.Consumers[0].StatusInfo.History.Should().HaveCount(2);
-            broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Consuming);
-            broker.Consumers[0].StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+            Helper.Broker.Consumers[0].StatusInfo.History.Should().HaveCount(2);
+            Helper.Broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Consuming);
+            Helper.Broker.Consumers[0].StatusInfo.History.Last().Timestamp.Should().NotBeNull();
 
             await Helper.Broker.DisconnectAsync();
 
-            broker.Consumers[0].StatusInfo.History.Should().HaveCount(3);
-            broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Disconnected);
-            broker.Consumers[0].StatusInfo.History.Last().Timestamp.Should().NotBeNull();
+            Helper.Broker.Consumers[0].StatusInfo.History.Should().HaveCount(3);
+            Helper.Broker.Consumers[0].StatusInfo.History.Last().Status.Should().Be(ConsumerStatus.Disconnected);
+            Helper.Broker.Consumers[0].StatusInfo.History.Last().Timestamp.Should().NotBeNull();
         }
 
         [Fact]
@@ -146,10 +142,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne());
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
-            broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.Should().BeOfType<KafkaOffset>();
-            broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.As<KafkaOffset>().Offset.Should().Be(1);
-            broker.Consumers[0].StatusInfo.LatestConsumedMessageTimestamp.Should().NotBeNull();
+            Helper.Broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.Should().BeOfType<KafkaOffset>();
+            Helper.Broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.As<KafkaOffset>().Offset.Should().Be(1);
+            Helper.Broker.Consumers[0].StatusInfo.LatestConsumedMessageTimestamp.Should().NotBeNull();
         }
     }
 }

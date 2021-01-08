@@ -14,6 +14,12 @@ namespace Silverback.Messaging.Serialization
     public interface IMessageSerializer
     {
         /// <summary>
+        ///     Gets a value indicating whether headers are mandatory for this serializer implementation or configuration
+        ///     to work properly.
+        /// </summary>
+        bool RequireHeaders { get; }
+
+        /// <summary>
         ///     Serializes the specified message object into a byte array.
         /// </summary>
         /// <param name="message">

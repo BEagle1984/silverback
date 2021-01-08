@@ -41,9 +41,13 @@ namespace Silverback.Testing
         }
 
         /// <inheritdoc cref="IKafkaTestingHelper.GetTopic" />
-        public IInMemoryTopic GetTopic(string name) =>
-            _topics?[name] ??
-            throw new InvalidOperationException("The IInMemoryTopicCollection is not initialized.");
+        public IInMemoryTopic GetTopic(string name)
+        {
+            if (_topics == null)
+                throw new InvalidOperationException("The IInMemoryTopicCollection is not initialized.");
+
+            return _topics[name];
+        }
 
         /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
         public override Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null) =>

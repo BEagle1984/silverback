@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
     {
         protected RawBrokerEnvelope(
             Stream? rawMessage,
-            IEnumerable<MessageHeader>? headers,
+            IReadOnlyCollection<MessageHeader>? headers,
             IEndpoint endpoint,
             IDictionary<string, string>? additionalLogData)
         {

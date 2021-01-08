@@ -65,5 +65,23 @@ namespace Silverback.Testing
                     "The timeout elapsed before all messages could be consumed and processed.");
             }
         }
+
+        /// <inheritdoc cref="IMqttTestingHelper.GetClientSession"/>
+        public IClientSession GetClientSession(string clientId)
+        {
+            if (_inMemoryMqttBroker == null)
+                throw new InvalidOperationException("The IInMemoryMqttBroker is not initialized.");
+
+            return _inMemoryMqttBroker.GetClientSession(clientId);
+        }
+
+        /// <inheritdoc cref="IMqttTestingHelper.GetMessagesCount"/>
+        public int GetMessagesCount(string topic)
+        {
+            if (_inMemoryMqttBroker == null)
+                throw new InvalidOperationException("The IInMemoryMqttBroker is not initialized.");
+
+            return _inMemoryMqttBroker.GetMessagesCount(topic);
+        }
     }
 }

@@ -4,6 +4,7 @@
 using System;
 using FluentAssertions;
 using MQTTnet.Client.Options;
+using MQTTnet.Formatter;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
@@ -12,6 +13,14 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 {
     public class MqttClientConfigTests
     {
+        [Fact]
+        public void Default_ProtocolVersionV500Set()
+        {
+            var config = new MqttClientConfig();
+
+            config.ProtocolVersion.Should().Be(MqttProtocolVersion.V500);
+        }
+
         [Fact]
         public void Validate_ValidConfiguration_NoExceptionThrown()
         {

@@ -69,7 +69,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             if (_channel.Reader.Completion.IsCompleted)
                 _channel = CreateBoundedChannel();
 
-            Task.Run(() => ReadChannelAsync());
+            Task.Run(ReadChannelAsync);
         }
 
         public void StopReading()
@@ -93,8 +93,10 @@ namespace Silverback.Messaging.Broker.Mqtt
 
             await _channel.Writer.WriteAsync(receivedMessage).ConfigureAwait(false);
 
-            eventArgs.ProcessingFailed =
-                !await receivedMessage.TaskCompletionSource.Task.ConfigureAwait(false);
+            while (!await receivedMessage.TaskCompletionSource.Task.ConfigureAwait(false))
+            {
+                await Task.Delay(10).ConfigureAwait(false);
+            }
         }
 
         public void Dispose()
@@ -105,7 +107,7 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         // TODO: Does backpressure limit make sense for MQTT? Will it push multiple messages?
         private static Channel<ConsumedApplicationMessage> CreateBoundedChannel() =>
-            Channel.CreateBounded<ConsumedApplicationMessage>(1);
+            Channel.CreateBounded<ConsumedApplicationMessage>(10);
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task ReadChannelAsync()
@@ -168,9 +170,16 @@ namespace Silverback.Messaging.Broker.Mqtt
             var consumedMessage = await _channel.Reader.ReadAsync(_readCancellationTokenSource.Token)
                 .ConfigureAwait(false);
 
-            _readCancellationTokenSource.Token.ThrowIfCancellationRequested();
+            // Retry locally until successfully processed (or skipped)
+            while (!_readCancellationTokenSource.Token.IsCancellationRequested)
+            {
+                await _mqttClientWrapper.HandleMessageAsync(consumedMessage).ConfigureAwait(false);
 
-            await _mqttClientWrapper.HandleMessageAsync(consumedMessage).ConfigureAwait(false);
+                if (await consumedMessage.TaskCompletionSource.Task.ConfigureAwait(false))
+                    break;
+
+                consumedMessage.TaskCompletionSource = new TaskCompletionSource<bool>();
+            }
         }
     }
 }

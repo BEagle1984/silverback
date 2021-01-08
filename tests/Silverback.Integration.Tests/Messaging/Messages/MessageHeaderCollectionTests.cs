@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Xunit;
@@ -64,7 +64,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             collection["four"] = "4";
 
-            collection.Last().Should().BeEquivalentTo(new MessageHeader("four", "4"));
+            collection[^1].Should().BeEquivalentTo(new MessageHeader("four", "4"));
         }
 
         [Fact]
@@ -96,6 +96,31 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new MessageHeader("one", "1"),
                 new MessageHeader("two", "2"),
                 new MessageHeader("three", "3"));
+        }
+
+        // This test is important because it ensures that we will not run into the
+        // "Collection was modified" InvalidOperationException when headers are added
+        // while the collection is being enumerated in another thread (e.g. to log the headers info)
+        [Fact]
+        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
+        public void Add_NewHeader_EnumerableNotBroken()
+        {
+            var collection = new MessageHeaderCollection
+            {
+                { "one", "1" },
+                { "two", "2" },
+                { "three", "3" }
+            };
+
+            using var enumerator = collection.GetEnumerator();
+
+            enumerator.MoveNext();
+
+            collection.Add("four", "4");
+
+            Action act = () => enumerator.MoveNext();
+
+            act.Should().NotThrow();
         }
 
         [Fact]
@@ -162,6 +187,101 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 new MessageHeader("one", "1"),
                 new MessageHeader("two", "2"),
                 new MessageHeader("three", "3"));
+        }
+
+        [Fact]
+        public void Remove_ExitingName_HeaderRemoved()
+        {
+            var collection = new MessageHeaderCollection
+            {
+                { "one", "1" },
+                { "two", "2" },
+                { "three", "3" }
+            };
+
+            collection.Remove("two");
+
+            collection.Should().BeEquivalentTo(
+                new MessageHeader("one", "1"),
+                new MessageHeader("three", "3"));
+        }
+
+        [Fact]
+        public void Remove_NotExitingName_CollectionUnchanged()
+        {
+            var collection = new MessageHeaderCollection
+            {
+                { "one", "1" },
+                { "two", "2" },
+                { "three", "3" }
+            };
+
+            collection.Remove("four");
+
+            collection.Should().BeEquivalentTo(
+                new MessageHeader("one", "1"),
+                new MessageHeader("two", "2"),
+                new MessageHeader("three", "3"));
+        }
+
+        [Fact]
+        public void Remove_ExitingHeader_HeaderRemoved()
+        {
+            var collection = new MessageHeaderCollection
+            {
+                { "one", "1" },
+                { "two", "2" },
+                { "three", "3" }
+            };
+
+            collection.Remove(new MessageHeader("two", "2"));
+
+            collection.Should().BeEquivalentTo(
+                new MessageHeader("one", "1"),
+                new MessageHeader("three", "3"));
+        }
+
+        [Fact]
+        public void Remove_NotExitingHeader_CollectionUnchanged()
+        {
+            var collection = new MessageHeaderCollection
+            {
+                { "one", "1" },
+                { "two", "2" },
+                { "three", "3" }
+            };
+
+            collection.Remove(new MessageHeader("four", "4"));
+
+            collection.Should().BeEquivalentTo(
+                new MessageHeader("one", "1"),
+                new MessageHeader("two", "2"),
+                new MessageHeader("three", "3"));
+        }
+
+        // This test is important because it ensures that we will not run into the
+        // "Collection was modified" InvalidOperationException when headers are removed
+        // while the collection is being enumerated in another thread (e.g. to log the headers info)
+        [Fact]
+        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Test code")]
+        public void Remove_ExistingHeader_EnumerableNotBroken()
+        {
+            var collection = new MessageHeaderCollection
+            {
+                { "one", "1" },
+                { "two", "2" },
+                { "three", "3" }
+            };
+
+            using var enumerator = collection.GetEnumerator();
+
+            enumerator.MoveNext();
+
+            collection.Remove(new MessageHeader("three", "3"));
+
+            Action act = () => enumerator.MoveNext();
+
+            act.Should().NotThrow();
         }
 
         [Fact]

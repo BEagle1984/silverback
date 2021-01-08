@@ -3,49 +3,35 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
-    ///     The MQTT broker doesn't provide any message id, so the identifier is generated client-side.
+    ///     The MQTT broker doesn't provide any message identifier, so the identifier is either the
+    ///     <see cref="DefaultMessageHeaders.MessageId" /> header value or a client-side generated
+    ///     <see cref="Guid" />.
     /// </summary>
     /// <remarks>
-    ///     Not having a unique identifier provided by the server might prevent some Silverback features to work
-    ///     properly.
+    ///     Generating the identifier client-side might prevent some Silverback features to work properly
+    ///     (e.g. <see cref="RetryableErrorPolicyBase.MaxFailedAttempts" />).
     /// </remarks>
-    /// TODO: Verify if we can somehow get the PackageId (for QoS > 0)
-    public sealed class MqttClientMessageId : IBrokerMessageIdentifier
+    public sealed class MqttMessageIdentifier : IBrokerMessageIdentifier
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="MqttClientMessageId" /> class.
-        /// </summary>
-        /// <param name="key">
-        ///     The unique key of the queue, topic or partition the message was produced to or consumed from.
-        /// </param>
-        /// <param name="value">
-        ///     The identifier value.
-        /// </param>
-        public MqttClientMessageId(string key, string value)
-        {
-            ClientId = key;
-            ClientMessageId = Guid.Parse(value);
-            Value = value;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="MqttClientMessageId" /> class.
+        ///     Initializes a new instance of the <see cref="MqttMessageIdentifier" /> class.
         /// </summary>
         /// <param name="clientId">
         ///     The client identifier.
         /// </param>
-        /// <param name="clientMessageId">
-        ///     The client message identifier. If not provided a new random one will be generated.
+        /// <param name="messageId">
+        ///     The message identifier.
         /// </param>
-        public MqttClientMessageId(string clientId, Guid? clientMessageId = null)
+        public MqttMessageIdentifier(string clientId, string messageId)
         {
             ClientId = clientId;
-            ClientMessageId = clientMessageId ?? Guid.NewGuid();
-            Value = ClientMessageId.ToString();
+            MessageId = messageId;
         }
 
         /// <summary>
@@ -56,13 +42,13 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Gets the client-side generated message identifier.
         /// </summary>
-        public Guid ClientMessageId { get; }
+        public string MessageId { get; }
 
         /// <inheritdoc cref="IBrokerMessageIdentifier.Key" />
         public string Key => ClientId;
 
         /// <inheritdoc cref="IBrokerMessageIdentifier.Value" />
-        public string Value { get; }
+        public string Value => MessageId;
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         [SuppressMessage("", "CA1508", Justification = "False positive: is MqttClientMessageId")]
@@ -73,10 +59,10 @@ namespace Silverback.Messaging.Broker
             if (ReferenceEquals(other, null))
                 return false;
 
-            if (!(other is MqttClientMessageId otherMessageId))
+            if (!(other is MqttMessageIdentifier otherMqttIdentifier))
                 return false;
 
-            return ClientId == otherMessageId.ClientId && ClientMessageId == otherMessageId.ClientMessageId;
+            return ClientId == otherMqttIdentifier.ClientId && MessageId == otherMqttIdentifier.MessageId;
         }
 
         /// <inheritdoc cref="object.Equals(object)" />
@@ -94,9 +80,6 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(ClientId, ClientMessageId);
-        }
+        public override int GetHashCode() => HashCode.Combine(ClientId, MessageId);
     }
 }

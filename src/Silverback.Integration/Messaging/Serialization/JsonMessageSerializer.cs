@@ -23,6 +23,9 @@ namespace Silverback.Messaging.Serialization
         /// </summary>
         public static JsonMessageSerializer Default { get; } = new();
 
+        /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
+        public override bool RequireHeaders => true;
+
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
         public override ValueTask<Stream?> SerializeAsync(
@@ -68,7 +71,8 @@ namespace Silverback.Messaging.Serialization
 
             var deserializedObject = await JsonSerializer.DeserializeAsync(messageStream, type, Options)
                                          .ConfigureAwait(false) ??
-                                     throw new MessageSerializerException("The deserialization returned null.");
+                                     throw new MessageSerializerException(
+                                         "The deserialization returned null.");
 
             return (deserializedObject, type);
         }

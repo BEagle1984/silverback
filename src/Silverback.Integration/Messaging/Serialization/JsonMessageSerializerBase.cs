@@ -20,6 +20,9 @@ namespace Silverback.Messaging.Serialization
         /// </summary>
         public JsonSerializerOptions Options { get; set; } = new();
 
+        /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
+        public abstract bool RequireHeaders { get; }
+
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         public abstract ValueTask<Stream?> SerializeAsync(
             object? message,

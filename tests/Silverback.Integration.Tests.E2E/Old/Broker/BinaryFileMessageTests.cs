@@ -8,7 +8,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
 using Silverback.Messaging.BinaryFiles;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Messages;
@@ -205,8 +204,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddIntegrationSpy())
                 .Run();
 
-            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
-            var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
+            var producer = Helper.Broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
             await producer.ProduceAsync(rawContent);
 
@@ -239,8 +237,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddIntegrationSpy())
                 .Run();
 
-            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
-            var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
+            var producer = Helper.Broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
             await producer.ProduceAsync(rawContent);
 
@@ -277,8 +274,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
                         .AddIntegrationSpy())
                 .Run();
 
-            var broker = Host.ScopedServiceProvider.GetRequiredService<IBroker>();
-            var producer = broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
+            var producer = Helper.Broker.GetProducer(new KafkaProducerEndpoint("test-e2e"));
 
             await producer.ProduceAsync(rawContent, headers);
 

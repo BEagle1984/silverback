@@ -59,6 +59,9 @@ namespace Silverback.Messaging
             if (Configuration == null)
                 throw new EndpointConfigurationException("Configuration cannot be null.");
 
+            if (Chunk != null)
+                throw new EndpointConfigurationException("Chunking is not supported over MQTT.");
+
             Configuration.Validate();
         }
 
@@ -92,7 +95,10 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
+        [SuppressMessage(
+            "ReSharper",
+            "NonReadonlyMemberInGetHashCode",
+            Justification = "Protected set is not abused")]
         public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
     }
 }

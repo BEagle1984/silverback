@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     ///     specified.
     /// </summary>
     /// TODO: Exponential backoff variant
-    public class RetryErrorPolicy : ErrorPolicyBase
+    public class RetryErrorPolicy : RetryableErrorPolicyBase
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="RetryErrorPolicy" /> class.

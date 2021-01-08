@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Messages
     internal class RawOutboundEnvelope : RawBrokerEnvelope, IRawOutboundEnvelope
     {
         public RawOutboundEnvelope(
-            IEnumerable<MessageHeader>? headers,
+            IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint,
             IBrokerMessageIdentifier? brokerMessageIdentifier = null,
             IDictionary<string, string>? additionalLogData = null)
@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Messages
 
         public RawOutboundEnvelope(
             Stream? rawMessage,
-            IEnumerable<MessageHeader>? headers,
+            IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint,
             IBrokerMessageIdentifier? brokerMessageIdentifier = null,
             IDictionary<string, string>? additionalLogData = null)

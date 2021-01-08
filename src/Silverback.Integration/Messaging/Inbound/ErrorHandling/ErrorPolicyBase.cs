@@ -16,27 +16,27 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         ///     Gets the number of times this policy should be applied to the same message in case of multiple failed
         ///     attempts.
         /// </summary>
-        internal int? MaxFailedAttemptsCount { get; private set; }
+        public int? MaxFailedAttemptsCount { get; internal set; }
 
         /// <summary>
         ///     Gets the collection of exception types this policy doesn't have to be applied to.
         /// </summary>
-        protected ICollection<Type> ExcludedExceptions { get; } = new List<Type>();
+        public ICollection<Type> ExcludedExceptions { get; } = new List<Type>();
 
         /// <summary>
         ///     Gets the collection of exception types this policy have to be applied to.
         /// </summary>
-        protected ICollection<Type> IncludedExceptions { get; } = new List<Type>();
+        public ICollection<Type> IncludedExceptions { get; } = new List<Type>();
 
         /// <summary>
         ///     Gets the custom apply rule function.
         /// </summary>
-        protected Func<IRawInboundEnvelope, Exception, bool>? ApplyRule { get; private set; }
+        public Func<IRawInboundEnvelope, Exception, bool>? ApplyRule { get; private set; }
 
         /// <summary>
         ///     Gets the factory that builds the message to be published after the policy is applied.
         /// </summary>
-        protected Func<IRawInboundEnvelope, object>? MessageToPublishFactory { get; private set; }
+        public Func<IRawInboundEnvelope, object>? MessageToPublishFactory { get; private set; }
 
         /// <summary>
         ///     Restricts the application of this policy to the specified exception type only. It is possible to
@@ -117,32 +117,6 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         public ErrorPolicyBase ApplyWhen(Func<IRawInboundEnvelope, Exception, bool> applyRule)
         {
             ApplyRule = applyRule;
-            return this;
-        }
-
-        /// <summary>
-        ///     Specifies how many times this rule can be applied to the same message. Most useful for
-        ///     <see cref="RetryErrorPolicy" /> and <see cref="MoveMessageErrorPolicy" /> to limit the number of
-        ///     iterations. If multiple policies are chained in an <see cref="ErrorPolicyChain" /> then the next
-        ///     policy will be triggered after the allotted amount of retries.
-        /// </summary>
-        /// <param name="maxFailedAttempts">
-        ///     The number of retries.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="ErrorPolicyBase" /> so that additional calls can be chained.
-        /// </returns>
-        public ErrorPolicyBase MaxFailedAttempts(int? maxFailedAttempts)
-        {
-            if (maxFailedAttempts != null && maxFailedAttempts < 1)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(maxFailedAttempts),
-                    maxFailedAttempts,
-                    "MaxFailedAttempts must be greater or equal to 1.");
-            }
-
-            MaxFailedAttemptsCount = maxFailedAttempts;
             return this;
         }
 

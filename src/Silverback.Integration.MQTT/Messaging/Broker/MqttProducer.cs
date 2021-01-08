@@ -79,8 +79,11 @@ namespace Silverback.Messaging.Broker
                 Payload = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false),
                 QualityOfServiceLevel = Endpoint.QualityOfServiceLevel,
                 Retain = Endpoint.Retain,
-                MessageExpiryInterval = Endpoint.MessageExpiryInterval
+                MessageExpiryInterval = Endpoint.MessageExpiryInterval,
             };
+
+            if (Endpoint.Configuration.AreHeadersSupported)
+                mqttApplicationMessage.UserProperties = envelope.Headers.ToUserProperties();
 
             var result = await ClientWrapper.MqttClient.PublishAsync(
                 mqttApplicationMessage,

@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Messages
 
         public InboundEnvelope(
             Stream? rawMessage,
-            IEnumerable<MessageHeader>? headers,
+            IReadOnlyCollection<MessageHeader>? headers,
             IBrokerMessageIdentifier brokerMessageIdentifier,
             IConsumerEndpoint endpoint,
             string actualEndpointName,
@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Messages
         public InboundEnvelope(
             object message,
             Stream? rawMessage,
-            IEnumerable<MessageHeader>? headers,
+            IReadOnlyCollection<MessageHeader>? headers,
             IBrokerMessageIdentifier brokerMessageIdentifier,
             IConsumerEndpoint endpoint,
             string actualEndpointName,

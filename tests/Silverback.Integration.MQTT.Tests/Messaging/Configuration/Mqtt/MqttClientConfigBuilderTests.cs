@@ -16,10 +16,21 @@ using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
-namespace Silverback.Tests.Integration.MQTT.Messaging.Configuration.Mqtt
+namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 {
     public class MqttClientConfigBuilderTests
     {
+        [Fact]
+        public void Default_ProtocolVersionV500Set()
+        {
+            var builder = new MqttClientConfigBuilder();
+
+            builder.ConnectViaTcp("tests-server");
+
+            var config = builder.Build();
+            config.ProtocolVersion.Should().Be(MqttProtocolVersion.V500);
+        }
+
         [Fact]
         public void UseProtocolVersion_ProtocolVersionSet()
         {
@@ -27,10 +38,10 @@ namespace Silverback.Tests.Integration.MQTT.Messaging.Configuration.Mqtt
 
             builder
                 .ConnectViaTcp("tests-server")
-                .UseProtocolVersion(MqttProtocolVersion.V500);
+                .UseProtocolVersion(MqttProtocolVersion.V311);
 
             var config = builder.Build();
-            config.ProtocolVersion.Should().Be(MqttProtocolVersion.V500);
+            config.ProtocolVersion.Should().Be(MqttProtocolVersion.V311);
         }
 
         [Fact]

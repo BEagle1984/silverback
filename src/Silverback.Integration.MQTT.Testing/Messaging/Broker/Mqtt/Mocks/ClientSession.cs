@@ -16,7 +16,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks
 {
-    internal sealed class ClientSession : IDisposable
+    internal sealed class ClientSession : IDisposable, IClientSession
     {
         private readonly IMqttApplicationMessageReceivedHandler _messageHandler;
 
@@ -130,12 +130,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                     ClientOptions.ClientId,
                     message);
 
-                do
-                {
-                    await _messageHandler.HandleApplicationMessageReceivedAsync(eventArgs)
-                        .ConfigureAwait(false);
-                }
-                while (eventArgs.ProcessingFailed || cancellationToken.IsCancellationRequested);
+                await _messageHandler.HandleApplicationMessageReceivedAsync(eventArgs)
+                    .ConfigureAwait(false);
 
                 Interlocked.Decrement(ref _pendingMessagesCount);
             }

@@ -18,6 +18,9 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     public abstract class NewtonsoftJsonMessageSerializerBase : IMessageSerializer
     {
+        /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
+        public abstract bool RequireHeaders { get; }
+
         /// <summary>
         ///     Gets or sets the message encoding. The default is UTF8.
         /// </summary>

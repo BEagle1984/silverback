@@ -28,11 +28,12 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             var builder = new ErrorPolicyBuilder();
 
-            builder.Stop(stopPolicy => stopPolicy.MaxFailedAttempts(42));
+            builder.Stop(stopPolicy => stopPolicy.Exclude<InvalidOperationException>());
             var policy = builder.Build();
 
             policy.Should().BeOfType<StopConsumerErrorPolicy>();
-            policy.As<StopConsumerErrorPolicy>().MaxFailedAttemptsCount.Should().Be(42);
+            policy.As<StopConsumerErrorPolicy>().ExcludedExceptions.Should()
+                .BeEquivalentTo(typeof(InvalidOperationException));
         }
 
         [Fact]
@@ -51,11 +52,12 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             var builder = new ErrorPolicyBuilder();
 
-            builder.Skip(skipPolicy => skipPolicy.MaxFailedAttempts(42));
+            builder.Skip(skipPolicy => skipPolicy.ApplyTo<TimeoutException>());
             var policy = builder.Build();
 
             policy.Should().BeOfType<SkipMessageErrorPolicy>();
-            policy.As<SkipMessageErrorPolicy>().MaxFailedAttemptsCount.Should().Be(42);
+            policy.As<SkipMessageErrorPolicy>().IncludedExceptions.Should()
+                .BeEquivalentTo(typeof(TimeoutException));
         }
 
         [Fact]

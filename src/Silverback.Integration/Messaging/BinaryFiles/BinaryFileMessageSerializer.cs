@@ -22,6 +22,9 @@ namespace Silverback.Messaging.BinaryFiles
         /// </summary>
         public static BinaryFileMessageSerializer Default { get; } = new();
 
+        /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
+        public bool RequireHeaders => false;
+
         /// <inheritdoc cref="IMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
         public ValueTask<Stream?> SerializeAsync(
@@ -63,7 +66,8 @@ namespace Silverback.Messaging.BinaryFiles
         {
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
-            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders, false) ?? typeof(BinaryFileMessage);
+            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders, false) ??
+                       typeof(BinaryFileMessage);
 
             var messageModel = (IBinaryFileMessage)Activator.CreateInstance(type);
             messageModel.Content = messageStream;

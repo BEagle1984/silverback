@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Xunit;
 
-namespace Silverback.Tests.Integration.MQTT.Messaging.Configuration
+namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration
 {
     public class BrokerOptionsBuilderAddMqttExtensionsTests
     {

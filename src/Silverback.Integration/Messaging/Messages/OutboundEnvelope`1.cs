@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Messages
     {
         public OutboundEnvelope(
             TMessage message,
-            IEnumerable<MessageHeader>? headers,
+            IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint,
             bool autoUnwrap = false)
             : base(message, headers, endpoint, autoUnwrap)

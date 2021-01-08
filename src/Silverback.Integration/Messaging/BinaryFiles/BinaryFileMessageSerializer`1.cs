@@ -23,6 +23,9 @@ namespace Silverback.Messaging.BinaryFiles
     {
         private readonly Type _type = typeof(TModel);
 
+        /// <inheritdoc cref="IMessageSerializer.RequireHeaders" />
+        public bool RequireHeaders => false;
+
         /// <inheritdoc cref="BinaryFileMessageSerializer.SerializeAsync" />
         [SuppressMessage("", "CA2000", Justification = "MemoryStream is being returned")]
         public ValueTask<Stream?> SerializeAsync(

@@ -4,8 +4,10 @@
 using System;
 using FluentAssertions;
 using MQTTnet.Client.Options;
+using MQTTnet.Formatter;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
 using Xunit;
 
@@ -212,6 +214,53 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging
                     {
                         Server = "test-server"
                     }
+                }
+            };
+
+            Action act = () => endpoint.Validate();
+
+            act.Should().ThrowExactly<EndpointConfigurationException>();
+        }
+
+        [Fact]
+        public void Validate_ChunkingEnabledOnV311_ExceptionThrown()
+        {
+            var endpoint = new MqttProducerEndpoint("topic")
+            {
+                Configuration = new MqttClientConfig
+                {
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "test-server"
+                    },
+                    ProtocolVersion = MqttProtocolVersion.V311
+                },
+                Chunk = new ChunkSettings
+                {
+                    Size = 10
+                }
+            };
+
+            Action act = () => endpoint.Validate();
+
+            act.Should().ThrowExactly<EndpointConfigurationException>();
+        }
+
+        [Fact]
+        public void Validate_ChunkingEnabledOnV500_ExceptionThrown()
+        {
+            var endpoint = new MqttProducerEndpoint("topic")
+            {
+                Configuration = new MqttClientConfig
+                {
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "test-server"
+                    }
+                },
+                Chunk = new ChunkSettings
+                {
+                    Size = 10
                 }
             };
 

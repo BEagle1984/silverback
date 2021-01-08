@@ -60,7 +60,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                     continue;
 
                 totalAttempts += policy.MaxFailedAttemptsCount.Value;
-                policy.MaxFailedAttempts(totalAttempts);
+                policy.MaxFailedAttemptsCount = totalAttempts;
             }
 
             return policies;
