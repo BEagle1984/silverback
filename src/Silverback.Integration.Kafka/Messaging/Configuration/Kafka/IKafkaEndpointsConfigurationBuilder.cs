@@ -172,8 +172,14 @@ namespace Silverback.Messaging.Configuration.Kafka
             bool preloadProducers = true);
 
         /// <summary>
-        ///     Adds an inbound endpoint to consume from a Kafka topic.
+        ///     Adds an inbound endpoint and instantiates a <see cref="KafkaConsumer" /> to consume from a Kafka topic.
         /// </summary>
+        /// <remarks>
+        ///     Multiple calls to this methods will cause multiple consumers to be instantiated, which means
+        ///     multiple connections being issues and more resources being used. The <see cref="KafkaConsumerEndpoint" />
+        ///     allows to define multiple topics to be consumed, to efficiently instantiate a single consumer for all of
+        ///     them.
+        /// </remarks>
         /// <param name="endpointBuilderAction">
         ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaConsumerEndpointBuilder" /> and configures
         ///     it.

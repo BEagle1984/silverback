@@ -90,7 +90,7 @@ namespace Silverback.Messaging.Broker
 
             await _clientWrapper.ConnectAsync(this).ConfigureAwait(false);
 
-            await _clientWrapper.MqttClient.SubscribeAsync(
+            await _clientWrapper.SubscribeAsync(
                     Endpoint.Topics.Select(
                             topic =>
                                 new MqttTopicFilterBuilder()

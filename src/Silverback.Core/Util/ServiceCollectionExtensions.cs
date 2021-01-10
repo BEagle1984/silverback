@@ -24,7 +24,9 @@ namespace Silverback.Util
             return instance != null ? (TService)instance : default;
         }
 
-        public static object? GetSingletonServiceInstance(this IServiceCollection services, Type serviceType) =>
+        public static object? GetSingletonServiceInstance(
+            this IServiceCollection services,
+            Type serviceType) =>
             services.FirstOrDefault(service => service.ServiceType == serviceType)?.ImplementationInstance;
     }
 }

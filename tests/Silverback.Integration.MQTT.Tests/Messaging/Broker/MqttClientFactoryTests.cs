@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Client.Options;
@@ -169,7 +170,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
         }
 
         [Fact]
-        public void GetClient_ConsumersWithEqualClientConfig_DifferentClientsReturned()
+        public void GetClient_ConsumersWithEquivalentClientConfig_ExceptionThrown()
         {
             var consumer1 = (MqttConsumer)_broker.AddConsumer(
                 new MqttConsumerEndpoint("some-topic")
@@ -197,12 +198,45 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                 });
 
             var factory = new MqttClientsCache(new MqttNetClientFactory());
-            var client1 = factory.GetClient(consumer1);
-            var client2 = factory.GetClient(consumer2);
+            factory.GetClient(consumer1);
+            Action act = () => factory.GetClient(consumer2);
 
-            client1.Should().NotBeNull();
-            client2.Should().NotBeNull();
-            client2.Should().NotBeSameAs(client1);
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void GetClient_ConsumersWithSameClientIdAndDifferentClientConfig_ExceptionThrown()
+        {
+            var consumer1 = (MqttConsumer)_broker.AddConsumer(
+                new MqttConsumerEndpoint("some-topic")
+                {
+                    Configuration = new MqttClientConfig
+                    {
+                        ClientId = "client1",
+                        ChannelOptions = new MqttClientTcpOptions
+                        {
+                            Server = "mqtt-server"
+                        }
+                    }
+                });
+            var consumer2 = (MqttConsumer)_broker.AddConsumer(
+                new MqttConsumerEndpoint("some-topic")
+                {
+                    Configuration = new MqttClientConfig
+                    {
+                        ClientId = "client1",
+                        ChannelOptions = new MqttClientTcpOptions
+                        {
+                            Server = "mqtt-server2"
+                        }
+                    }
+                });
+
+            var factory = new MqttClientsCache(new MqttNetClientFactory());
+            factory.GetClient(consumer1);
+            Action act = () => factory.GetClient(consumer2);
+
+            act.Should().Throw<InvalidOperationException>();
         }
 
         [Fact]

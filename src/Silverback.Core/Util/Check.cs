@@ -108,7 +108,9 @@ namespace Silverback.Util
             {
                 NotEmpty(parameterName, nameof(parameterName));
 
-                throw new ArgumentException("The collection cannot contain null or empty values.", parameterName);
+                throw new ArgumentException(
+                    "The collection cannot contain null or empty values.",
+                    parameterName);
             }
 
             return value;

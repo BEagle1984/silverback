@@ -59,8 +59,7 @@ namespace Silverback.Util
         /// <returns>
         ///     The canceled task.
         /// </returns>
-        public static ValueTask<TResult> FromCanceled<TResult>(
-            CancellationToken cancellationToken) =>
+        public static ValueTask<TResult> FromCanceled<TResult>(CancellationToken cancellationToken) =>
             new(Task.FromCanceled<TResult>(cancellationToken));
 
         /// <summary>

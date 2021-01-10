@@ -183,8 +183,14 @@ namespace Silverback.Messaging.Configuration.Mqtt
             bool preloadProducers = true);
 
         /// <summary>
-        ///     Adds an inbound endpoint to consume from a Mqtt topic.
+        ///     Adds an inbound endpoint and instantiates a <see cref="MqttConsumer"/> to consume from a Mqtt topic.
         /// </summary>
+        /// <remarks>
+        ///     Multiple calls to this methods will cause multiple consumers to be instantiated, which means
+        ///     multiple connections being issues and more resources being used. The <see cref="MqttConsumerEndpoint" />
+        ///     allows to define multiple topics to be consumed, to efficiently instantiate a single consumer for all of
+        ///     them.
+        /// </remarks>
         /// <param name="endpointBuilderAction">
         ///     An <see cref="Action{T}" /> that takes the <see cref="IMqttConsumerEndpointBuilder" /> and configures
         ///     it.

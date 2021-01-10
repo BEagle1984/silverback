@@ -7,7 +7,7 @@ function Run([string[]]$argsArray)
 {
     $stopwatch = [system.diagnostics.stopwatch]::StartNew()
 
-    Check-Args $argsArrays
+    Check-Args $argsArray
     Check-Location
 
     $global:sourceProjectNames = Get-SourceProjectNames
@@ -36,6 +36,7 @@ function Check-Location()
 
 function Check-Args([string[]]$argsArray)
 {
+    Write-Host $argsArray.Length
     if (!$argsArray)
     {
         return

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -42,6 +43,16 @@ namespace Silverback.Samples.Mqtt.Basic.Producer
                 if (!broker.IsConnected)
                     await Task.Delay(100, stoppingToken);
 
+                await ProduceMessageAsync(publisher, ++number);
+
+                await Task.Delay(100, stoppingToken);
+            }
+        }
+
+        private async Task ProduceMessageAsync(IPublisher publisher, int number)
+        {
+            try
+            {
                 await publisher.PublishAsync(
                     new SampleMessage
                     {
@@ -49,8 +60,10 @@ namespace Silverback.Samples.Mqtt.Basic.Producer
                     });
 
                 _logger.LogInformation($"Produced {number}");
-
-                await Task.Delay(100, stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Failed to produce {number}", ex);
             }
         }
     }

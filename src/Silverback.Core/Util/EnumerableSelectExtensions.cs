@@ -103,7 +103,8 @@ namespace Silverback.Util
             Func<T, Task<IEnumerable<TResult>>> selector,
             int? maxDegreeOfParallelism = null)
         {
-            var results = await ParallelSelectAsync(source, selector, maxDegreeOfParallelism).ConfigureAwait(false);
+            var results = await ParallelSelectAsync(source, selector, maxDegreeOfParallelism)
+                .ConfigureAwait(false);
             return results.SelectMany(r => r);
         }
     }

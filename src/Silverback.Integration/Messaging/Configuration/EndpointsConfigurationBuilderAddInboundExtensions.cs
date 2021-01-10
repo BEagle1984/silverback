@@ -11,10 +11,16 @@ namespace Silverback.Messaging.Configuration
     /// <summary>
     ///     Adds the <c>AddInbound</c> method to the <see cref="IEndpointsConfigurationBuilder" />.
     /// </summary>
+    /// <remarks>
+    ///     Multiple calls to this methods will cause multiple consumers to be instantiated, which could mean
+    ///     multiple connections being issues and more resources being used (depending on the actual message broker
+    ///     implementation). The consumer endpoint might allow to define multiple endpoints at once, to efficiently
+    ///     instantiate a single consumer for all of them.
+    /// </remarks>
     public static class EndpointsConfigurationBuilderAddInboundExtensions
     {
         /// <summary>
-        ///     Adds an inbound endpoint.
+        ///     Adds an inbound endpoint and instantiates a consumer.
         /// </summary>
         /// <param name="endpointsConfigurationBuilder">
         ///     The <see cref="IEndpointsConfigurationBuilder" />.

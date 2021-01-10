@@ -3,8 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using MQTTnet;
 using MQTTnet.Client;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
@@ -17,6 +20,8 @@ namespace Silverback.Messaging.Broker.Mqtt
     /// </summary>
     internal sealed class MqttClientWrapper : IDisposable
     {
+        private const int ConnectionMonitorMillisecondsInterval = 500;
+
         private readonly object _connectionLock = new();
 
         private readonly List<object> _connectedObjects = new();
@@ -26,6 +31,8 @@ namespace Silverback.Messaging.Broker.Mqtt
         private CancellationTokenSource? _connectCancellationTokenSource;
 
         private MqttConsumer? _consumer;
+
+        private MqttTopicFilter[]? _subscriptionTopicFilters;
 
         public MqttClientWrapper(
             IMqttClient mqttClient,
@@ -51,6 +58,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             }
         }
 
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public Task ConnectAsync(object sender)
         {
             Check.NotNull(sender, nameof(sender));
@@ -70,7 +78,15 @@ namespace Silverback.Messaging.Broker.Mqtt
                     _connectCancellationTokenSource.Token);
             }
 
+            Task.Run(() => MonitorConnectionAsync(_connectCancellationTokenSource.Token));
+
             return _connectingTask;
+        }
+
+        public Task SubscribeAsync(params MqttTopicFilter[] topicFilters)
+        {
+            _subscriptionTopicFilters = topicFilters;
+            return MqttClient.SubscribeAsync(topicFilters);
         }
 
         public Task DisconnectAsync(object sender)
@@ -82,11 +98,11 @@ namespace Silverback.Messaging.Broker.Mqtt
                 if (_connectedObjects.Contains(sender))
                     _connectedObjects.Remove(sender);
 
-                if (_connectedObjects.Count > 0 || !MqttClient.IsConnected)
-                    return Task.CompletedTask;
-
                 _connectCancellationTokenSource?.Cancel();
                 _connectCancellationTokenSource = null;
+
+                if (_connectedObjects.Count > 0 || !MqttClient.IsConnected)
+                    return Task.CompletedTask;
 
                 return MqttClient.DisconnectAsync();
             }
@@ -104,6 +120,48 @@ namespace Silverback.Messaging.Broker.Mqtt
                 throw new InvalidOperationException("No consumer was bound.");
 
             return _consumer.HandleMessageAsync(consumedMessage);
+        }
+
+        private async Task MonitorConnectionAsync(CancellationToken cancellationToken)
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(ConnectionMonitorMillisecondsInterval, cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (!MqttClient.IsConnected)
+                {
+                    if (Consumer != null)
+                        await Consumer.StopAsync().ConfigureAwait(false);
+
+                    if (!await TryReconnectAsync(cancellationToken).ConfigureAwait(false))
+                        continue;
+
+                    if (Consumer != null && _subscriptionTopicFilters != null)
+                    {
+                        await SubscribeAsync(_subscriptionTopicFilters).ConfigureAwait(false);
+                        await Consumer.StartAsync().ConfigureAwait(false);
+                    }
+                }
+            }
+        }
+
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+        private async Task<bool> TryReconnectAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                await MqttClient
+                    .ConnectAsync(ClientConfig.GetMqttClientOptions(), cancellationToken)
+                    .ConfigureAwait(false);
+
+                return true;
+            }
+            catch
+            {
+                // Ignore, will be logged
+                return false;
+            }
         }
     }
 }

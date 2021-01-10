@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
@@ -13,9 +14,7 @@ namespace Silverback.Messaging.Broker.Mqtt
     {
         private readonly IMqttNetClientFactory _mqttClientFactory;
 
-        private readonly Dictionary<MqttClientConfig, MqttClientWrapper> _clients = new();
-
-        private readonly List<MqttClientWrapper> _extraClients = new();
+        private readonly Dictionary<string, MqttClientWrapper> _clients = new();
 
         public MqttClientsCache(IMqttNetClientFactory mqttClientFactory)
         {
@@ -38,12 +37,9 @@ namespace Silverback.Messaging.Broker.Mqtt
         {
             _clients.Values.ForEach(clientWrapper => clientWrapper.Dispose());
             _clients.Clear();
-
-            _extraClients.ForEach(clientWrapper => clientWrapper.Dispose());
-            _extraClients.Clear();
         }
 
-        private MqttClientWrapper GetClient(MqttClientConfig connectionConfig, bool forConsumer)
+        private MqttClientWrapper GetClient(MqttClientConfig connectionConfig, bool isForConsumer)
         {
             Check.NotNull(connectionConfig, nameof(connectionConfig));
 
@@ -52,16 +48,27 @@ namespace Silverback.Messaging.Broker.Mqtt
 
             lock (_clients)
             {
-                bool clientExists = _clients.TryGetValue(connectionConfig, out MqttClientWrapper client);
-                if (clientExists && (!forConsumer || client.Consumer == null))
-                    return client;
+                bool clientExists = _clients.TryGetValue(connectionConfig.ClientId, out MqttClientWrapper client);
 
-                client = new MqttClientWrapper(_mqttClientFactory.CreateClient(), connectionConfig);
+                if (clientExists)
+                {
+                    if (!client.ClientConfig.Equals(connectionConfig))
+                    {
+                        throw new InvalidOperationException(
+                            "A client with the same id is already connected but with a different configuration.");
+                    }
 
-                if (!clientExists)
-                    _clients.Add(connectionConfig, client);
+                    if (isForConsumer && client.Consumer != null)
+                    {
+                        throw new InvalidOperationException(
+                            "Cannot use the same client id for multiple consumers.");
+                    }
+                }
                 else
-                    _extraClients.Add(client);
+                {
+                    client = new MqttClientWrapper(_mqttClientFactory.CreateClient(), connectionConfig);
+                    _clients.Add(connectionConfig.ClientId, client);
+                }
 
                 return client;
             }

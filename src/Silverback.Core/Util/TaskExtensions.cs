@@ -42,7 +42,9 @@ namespace Silverback.Util
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        public static async Task CancelOnExceptionAsync(this Task task, CancellationTokenSource cancellationTokenSource)
+        public static async Task CancelOnExceptionAsync(
+            this Task task,
+            CancellationTokenSource cancellationTokenSource)
         {
             // TODO: Array pool?
             var tasks = new[] { task, cancellationTokenSource.Token.AsTask() };
