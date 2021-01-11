@@ -15,6 +15,8 @@ namespace Silverback.Messaging.Outbound.Routing
 
         public bool PublishOutboundMessagesToInternalBus { get; set; }
 
+        public bool IdempotentEndpointRegistration { get; set; } = true;
+
         public IOutboundRoutingConfiguration Add<TMessage>(
             Func<IServiceProvider, IOutboundRouter> outboundRouterFactory) =>
             Add(typeof(TMessage), outboundRouterFactory);

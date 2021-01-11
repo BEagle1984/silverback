@@ -40,7 +40,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScopedBehavior<OutboundRouterBehavior>()
                 .AddScopedBehavior<ProduceBehavior>()
                 .Services
-                .AddSingleton<IOutboundRoutingConfiguration, OutboundRoutingConfiguration>();
+                .AddSingleton<IOutboundRoutingConfiguration>(new OutboundRoutingConfiguration());
 
             // Broker Collection
             silverbackBuilder.Services

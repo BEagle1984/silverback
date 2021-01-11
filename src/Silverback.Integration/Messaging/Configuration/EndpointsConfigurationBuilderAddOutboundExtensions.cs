@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Outbound.Routing;
@@ -196,9 +197,20 @@ namespace Silverback.Messaging.Configuration
             Check.NotNull(messageType, nameof(messageType));
             Check.NotNull(endpoints, nameof(endpoints));
 
+            IEnumerable<IProducerEndpoint> endpointsToRegister;
+
+            if (endpointsConfigurationBuilder.GetOutboundRoutingConfiguration().IdempotentEndpointRegistration)
+            {
+                endpointsToRegister = endpointsConfigurationBuilder.FilterRegisteredEndpoints(endpoints, messageType);
+            }
+            else
+            {
+                endpointsToRegister = endpoints;
+            }
+
             return endpointsConfigurationBuilder.AddOutbound(
                 messageType,
-                new StaticOutboundRouter(endpoints),
+                new StaticOutboundRouter(endpointsToRegister),
                 preloadProducers);
         }
 
@@ -353,6 +365,48 @@ namespace Silverback.Messaging.Configuration
             var brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
 
             router.Endpoints.ForEach(endpoint => brokers.GetProducer(endpoint));
+        }
+
+        private static IEnumerable<IProducerEndpoint> FilterRegisteredEndpoints(
+            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
+            IEnumerable<IProducerEndpoint> endpoints,
+            Type messageType)
+        {
+            IList<IProducerEndpoint> endpointsToRegister = new List<IProducerEndpoint>();
+
+            IList<IProducerEndpoint> registeredStaticEndpoints = endpointsConfigurationBuilder
+                .GetOutboundRoutingConfiguration()
+                .Routes.Where(r => r.MessageType == messageType)
+                .Select(route => route.GetOutboundRouter(endpointsConfigurationBuilder.ServiceProvider))
+                .OfType<StaticOutboundRouter>()
+                .SelectMany(router => router.Endpoints)
+                .ToList();
+
+            foreach (var endpoint in endpoints)
+            {
+                // There can only be one matching already registered endpoint.
+                // Because when that one was registered it was also checked for already
+                // existing registrations and, thus, would not have been added.
+                // The only way this could be broken is when a user registers a
+                // StaticOutboundRouter with endpoints explicitly - which is unlikely
+                // and would cause SingleOrDefault to throw.
+                IProducerEndpoint? registeredEndpoint =
+                    registeredStaticEndpoints.SingleOrDefault(r => endpoint.Name == r.Name);
+
+                if (registeredEndpoint is null)
+                {
+                    endpointsToRegister.Add(endpoint);
+                    break;
+                }
+
+                if (!endpoint.Equals(registeredEndpoint))
+                {
+                    throw new EndpointConfigurationException(
+                        $"An endpoint '{endpoint.Name}' for message type '{messageType.FullName}' but with a different configuration is already registered.");
+                }
+            }
+
+            return endpointsToRegister;
         }
 
         private static IOutboundRoutingConfiguration GetOutboundRoutingConfiguration(
