@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Serialization;
@@ -55,6 +56,42 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(message);
 
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+        }
+
+        [Fact]
+        public async Task Outbound_AllowDuplicateEndpoints_SerializedAndProducedTwice()
+        {
+            var message = new TestEventOne
+            {
+                Content = "Hello E2E!"
+            };
+
+            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                message,
+                new MessageHeaderCollection(),
+                MessageSerializationContext.Empty)).ReadAll();
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options
+                            .AddMockedKafka()
+                            .AllowDuplicateEndpointRegistrations())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(message);
+
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
             Helper.Spy.OutboundEnvelopes[0].RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
         }
 

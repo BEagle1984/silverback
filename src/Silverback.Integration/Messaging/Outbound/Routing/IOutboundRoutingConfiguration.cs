@@ -23,6 +23,13 @@ namespace Silverback.Messaging.Outbound.Routing
         bool PublishOutboundMessagesToInternalBus { get; set; }
 
         /// <summary>
+        ///     Gets or sets a value indicating whether the registration of endpoints is idempotent. This means that
+        ///     an endpoint for the same message type and the same name cannot be registered multiple times. The default
+        ///     is <c>true</c>.
+        /// </summary>
+        bool IdempotentEndpointRegistration { get; set; }
+
+        /// <summary>
         ///     Add an outbound routing rule.
         /// </summary>
         /// <typeparam name="TMessage">
