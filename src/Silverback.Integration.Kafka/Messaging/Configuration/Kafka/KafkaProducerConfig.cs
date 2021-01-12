@@ -41,7 +41,7 @@ namespace Silverback.Messaging.Configuration.Kafka
 
         /// <summary>
         ///     Specifies whether the producer has to be disposed and recreated if a <see cref="KafkaException" />
-        ///     is thrown. The default is <c>false</c>.
+        ///     is thrown. The default is <c>true</c>.
         /// </summary>
         public bool DisposeOnException { get; set; } = true;
 
