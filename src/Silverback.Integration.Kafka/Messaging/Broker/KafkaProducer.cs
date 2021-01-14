@@ -116,7 +116,8 @@ namespace Silverback.Messaging.Broker
 
         private byte[]? GetKafkaKeyAndRemoveHeader(MessageHeaderCollection headers)
         {
-            var kafkaKeyHeader = headers.FirstOrDefault(header => header.Name == KafkaMessageHeaders.KafkaMessageKey);
+            var kafkaKeyHeader =
+                headers.FirstOrDefault(header => header.Name == KafkaMessageHeaders.KafkaMessageKey);
 
             if (kafkaKeyHeader == null)
                 return null;

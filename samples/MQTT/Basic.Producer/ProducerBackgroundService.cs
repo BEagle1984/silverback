@@ -41,7 +41,10 @@ namespace Silverback.Samples.Mqtt.Basic.Producer
                 // BackgroundService will start immediately, before the application
                 // is completely bootstrapped.
                 if (!broker.IsConnected)
+                {
                     await Task.Delay(100, stoppingToken);
+                    continue;
+                }
 
                 await ProduceMessageAsync(publisher, ++number);
 
@@ -63,7 +66,7 @@ namespace Silverback.Samples.Mqtt.Basic.Producer
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Failed to produce {number}", ex);
+                _logger.LogError(ex, $"Failed to produce {number}");
             }
         }
     }

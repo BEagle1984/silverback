@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -40,8 +41,21 @@ namespace Silverback.Samples.Kafka.Basic.Producer
                 // BackgroundService will start immediately, before the application
                 // is completely bootstrapped.
                 if (!broker.IsConnected)
+                {
                     await Task.Delay(100, stoppingToken);
+                    continue;
+                }
 
+                await ProduceMessageAsync(publisher, ++number);
+
+                await Task.Delay(100, stoppingToken);
+            }
+        }
+
+        private async Task ProduceMessageAsync(IPublisher publisher, int number)
+        {
+            try
+            {
                 await publisher.PublishAsync(
                     new SampleMessage
                     {
@@ -49,8 +63,10 @@ namespace Silverback.Samples.Kafka.Basic.Producer
                     });
 
                 _logger.LogInformation($"Produced {number}");
-
-                await Task.Delay(100, stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to produce {number}");
             }
         }
     }
