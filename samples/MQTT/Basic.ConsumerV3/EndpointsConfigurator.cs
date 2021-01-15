@@ -32,6 +32,13 @@ namespace Silverback.Samples.Mqtt.Basic.Consumer
                                 .WithQualityOfServiceLevel(
                                     MqttQualityOfServiceLevel.AtLeastOnce)
 
+                                // It is mandatory to specify the message type, since
+                                // MQTT 3 doesn't support message headers (aka user
+                                // properties)
+                                .DeserializeJson(
+                                    serializer => serializer
+                                        .UseFixedType<SampleMessage>())
+
                                 // Silently skip the messages in case of exception
                                 .OnError(policy => policy.Skip())));
         }

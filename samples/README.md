@@ -44,6 +44,15 @@ Produce and consume basic messages.
     1. `dotnet run -p ./samples/MQTT/Basic.Consumer/.`
 1. Observe the console output while the messages are produced and consumed
 
+### Basic but using protocol version 3.1.0
+
+Produce and consume basic messages.
+
+1. Run the two applications
+    1. `dotnet run -p ./samples/MQTT/Basic.ProducerV3/.`
+    1. `dotnet run -p ./samples/MQTT/Basic.ConsumerV3/.`
+1. Observe the console output while the messages are produced and consumed
+
 ### Binary Files Streaming
 
 Binary file streaming over MQTT.

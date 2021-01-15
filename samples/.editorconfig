@@ -45,7 +45,7 @@ dotnet_diagnostic.CA1028.severity = warning
 # CA1030: Use events where appropriate
 dotnet_diagnostic.CA1030.severity = warning
 # CA1031: Do not catch general exception types
-dotnet_diagnostic.CA1031.severity = warning
+dotnet_diagnostic.CA1031.severity = none
 # CA1032: Implement standard exception constructors
 dotnet_diagnostic.CA1032.severity = warning
 # CA1033: Interface methods should be callable by child types
