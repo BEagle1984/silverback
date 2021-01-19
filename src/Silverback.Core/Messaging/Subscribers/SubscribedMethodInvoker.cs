@@ -166,7 +166,7 @@ namespace Silverback.Messaging.Subscribers
             MethodInfo methodInfo,
             object?[] parameters) =>
             methodInfo.ReturnsTask()
-                ? (Task)methodInfo.Invoke(target, parameters)
+                ? Task.Run(() => (Task)methodInfo.Invoke(target, parameters))
                 : Task.Run(() => (object?)methodInfo.Invoke(target, parameters));
 
         private object?[] GetArgumentValuesArray(SubscribedMethod method)
