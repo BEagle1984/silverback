@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using Silverback.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
@@ -39,6 +39,10 @@ namespace Silverback.Messaging.Broker.Mqtt
             _clients.Clear();
         }
 
+        [SuppressMessage(
+            "ReSharper",
+            "ParameterOnlyUsedForPreconditionCheck.Local",
+            Justification = "Different checks for consumer")]
         private MqttClientWrapper GetClient(MqttClientConfig connectionConfig, bool isForConsumer)
         {
             Check.NotNull(connectionConfig, nameof(connectionConfig));
@@ -48,7 +52,9 @@ namespace Silverback.Messaging.Broker.Mqtt
 
             lock (_clients)
             {
-                bool clientExists = _clients.TryGetValue(connectionConfig.ClientId, out MqttClientWrapper client);
+                bool clientExists = _clients.TryGetValue(
+                    connectionConfig.ClientId,
+                    out MqttClientWrapper client);
 
                 if (clientExists)
                 {
