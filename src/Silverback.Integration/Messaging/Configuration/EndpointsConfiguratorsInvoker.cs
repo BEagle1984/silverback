@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Util;
 
@@ -9,6 +10,8 @@ namespace Silverback.Messaging.Configuration
     internal class EndpointsConfiguratorsInvoker
     {
         private readonly IServiceScopeFactory _scopeFactory;
+
+        private readonly object _lock = new();
 
         private bool _invoked;
 
@@ -19,16 +22,27 @@ namespace Silverback.Messaging.Configuration
 
         public void Invoke()
         {
-            if (_invoked)
-                return;
+            lock (_lock)
+            {
+                if (_invoked)
+                    return;
 
-            using var scope = _scopeFactory.CreateScope();
-            var endpointsConfigurationBuilder = new EndpointsConfigurationBuilder(scope.ServiceProvider);
+                _invoked = true;
+            }
 
-            scope.ServiceProvider.GetServices<IEndpointsConfigurator>()
-                .ForEach(configurator => configurator.Configure(endpointsConfigurationBuilder));
+            try
+            {
+                using var scope = _scopeFactory.CreateScope();
+                var endpointsConfigurationBuilder = new EndpointsConfigurationBuilder(scope.ServiceProvider);
 
-            _invoked = true;
+                scope.ServiceProvider.GetServices<IEndpointsConfigurator>()
+                    .ForEach(configurator => configurator.Configure(endpointsConfigurationBuilder));
+            }
+            catch (Exception)
+            {
+                _invoked = false;
+                throw;
+            }
         }
     }
 }
