@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Sequences.Batch
         {
             Check.NotNull(context, nameof(context));
 
-            bool isBatchEnabled = context.Envelope.Endpoint.Batch != null && context.Envelope.Endpoint.Batch.Size > 1;
+            bool isBatchEnabled = context.Envelope.Endpoint.Batch != null;
 
             return Task.FromResult(isBatchEnabled);
         }

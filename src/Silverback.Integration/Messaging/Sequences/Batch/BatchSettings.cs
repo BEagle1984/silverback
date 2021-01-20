@@ -7,8 +7,7 @@ using Silverback.Messaging.Configuration;
 namespace Silverback.Messaging.Sequences.Batch
 {
     /// <summary>
-    ///     The batch consuming settings. To enable batch consuming just set the <c>Size</c> property to a value
-    ///     greater than 1.
+    ///     The batch consuming settings.
     /// </summary>
     public sealed class BatchSettings : IEquatable<BatchSettings>, IValidatableEndpointSettings
     {

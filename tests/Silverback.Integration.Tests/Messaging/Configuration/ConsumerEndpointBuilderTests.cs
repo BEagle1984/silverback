@@ -93,24 +93,28 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             endpoint.ExactlyOnceStrategy.Should().BeOfType<OffsetStoreExactlyOnceStrategy>();
         }
 
-        [Fact]
-        public void EnableBatchProcessing_ValidBatchSettings_BatchSettingsSet()
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2000)]
+        public void EnableBatchProcessing_ValidBatchSettings_BatchSettingsSet(int size)
         {
             var builder = new TestConsumerEndpointBuilder();
 
-            var endpoint = builder.EnableBatchProcessing(42, TimeSpan.FromMinutes(42)).Build();
+            var endpoint = builder.EnableBatchProcessing(size, TimeSpan.FromMinutes(42)).Build();
 
             endpoint.Batch.Should().NotBeNull();
-            endpoint.Batch!.Size.Should().Be(42);
+            endpoint.Batch!.Size.Should().Be(size);
             endpoint.Batch!.MaxWaitTime.Should().Be(TimeSpan.FromMinutes(42));
         }
 
-        [Fact]
-        public void EnableBatchProcessing_InvalidBatchSize_ExceptionThrown()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void EnableBatchProcessing_InvalidBatchSize_ExceptionThrown(int size)
         {
             var builder = new TestConsumerEndpointBuilder();
 
-            Action act = () => builder.EnableBatchProcessing(1).Build();
+            Action act = () => builder.EnableBatchProcessing(size).Build();
 
             act.Should().ThrowExactly<ArgumentOutOfRangeException>();
         }

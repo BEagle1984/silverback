@@ -96,12 +96,12 @@ namespace Silverback.Messaging.Configuration
         /// <inheritdoc cref="IConsumerEndpointBuilder{TBuilder}.EnableBatchProcessing(int, TimeSpan?)" />
         public TBuilder EnableBatchProcessing(int batchSize, TimeSpan? maxWaitTime = null)
         {
-            if (batchSize <= 1)
+            if (batchSize < 1)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(batchSize),
                     batchSize,
-                    "batchSize must be greater than 1.");
+                    "batchSize must be greater or equal to 1.");
             }
 
             _batchSize = batchSize;

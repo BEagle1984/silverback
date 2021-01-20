@@ -926,7 +926,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task BatchOfBinaryFiles_SubscribingToEnvelopesStream_MessagesReceivedAndCommittedInBatch()
+        public async Task
+            BatchOfBinaryFiles_SubscribingToEnvelopesStream_MessagesReceivedAndCommittedInBatch()
         {
             var receivedBatches = new List<List<IBinaryFileMessage>>();
             var completedBatches = 0;
@@ -959,7 +960,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .EnableBatchProcessing(10)
                                         .ConsumeBinaryFiles()))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<IInboundEnvelope<IBinaryFileMessage>> eventsStream) =>
+                            async (
+                                IMessageStreamEnumerable<IInboundEnvelope<IBinaryFileMessage>>
+                                    eventsStream) =>
                             {
                                 var list = new List<IBinaryFileMessage>();
                                 receivedBatches.Add(list);
@@ -1012,6 +1015,66 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             completedBatches.Should().Be(2);
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(20);
+        }
+
+        [Fact]
+        public async Task Batch_WithSize1_MessageBatchReceived()
+        {
+            var receivedBatches = new List<List<TestEventOne>>();
+            var completedBatches = 0;
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })
+                                        .EnableBatchProcessing(1)))
+                        .AddDelegateSubscriber(
+                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            {
+                                var list = new List<TestEventOne>();
+                                receivedBatches.Add(list);
+
+                                await foreach (var message in eventsStream)
+                                {
+                                    list.Add(message);
+                                }
+
+                                completedBatches++;
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishAsync(new TestEventOne());
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            receivedBatches.Should().HaveCount(3);
+            completedBatches.Should().Be(3);
+            receivedBatches.Sum(batch => batch.Count).Should().Be(3);
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
         }
     }
 }
