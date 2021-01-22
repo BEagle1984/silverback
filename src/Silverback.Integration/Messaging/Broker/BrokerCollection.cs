@@ -75,7 +75,10 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IBrokerCollection.ConnectAsync" />
-        public Task ConnectAsync() => _brokers.ParallelForEachAsync(broker => broker.ConnectAsync(), 2);
+        public Task ConnectAsync()
+        {
+            return _brokers.ParallelForEachAsync(broker => broker.ConnectAsync(), 2);
+        }
 
         /// <inheritdoc cref="IBrokerCollection.DisconnectAsync" />
         public Task DisconnectAsync() => _brokers.ParallelForEachAsync(broker => broker.DisconnectAsync(), 2);

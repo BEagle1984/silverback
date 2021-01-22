@@ -28,20 +28,21 @@ namespace Silverback.Messaging.Configuration
                     return;
 
                 _invoked = true;
-            }
 
-            try
-            {
-                using var scope = _scopeFactory.CreateScope();
-                var endpointsConfigurationBuilder = new EndpointsConfigurationBuilder(scope.ServiceProvider);
+                try
+                {
+                    using var scope = _scopeFactory.CreateScope();
+                    var endpointsConfigurationBuilder =
+                        new EndpointsConfigurationBuilder(scope.ServiceProvider);
 
-                scope.ServiceProvider.GetServices<IEndpointsConfigurator>()
-                    .ForEach(configurator => configurator.Configure(endpointsConfigurationBuilder));
-            }
-            catch (Exception)
-            {
-                _invoked = false;
-                throw;
+                    scope.ServiceProvider.GetServices<IEndpointsConfigurator>()
+                        .ForEach(configurator => configurator.Configure(endpointsConfigurationBuilder));
+                }
+                catch (Exception)
+                {
+                    _invoked = false;
+                    throw;
+                }
             }
         }
     }
