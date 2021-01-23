@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
@@ -162,6 +163,232 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
+        public async Task DynamicRouting_NameFunction_MessagesRouted()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ProduceTo(
+                                            envelope =>
+                                            {
+                                                var testEventOne = (TestEventOne)envelope.Message!;
+                                                switch (testEventOne.Content)
+                                                {
+                                                    case "1":
+                                                        return "topic1";
+                                                    case "2":
+                                                        return "topic2";
+                                                    case "3":
+                                                        return "topic3";
+                                                    default:
+                                                        throw new InvalidOperationException();
+                                                }
+                                            }))))
+                .Run();
+
+            var topic1 = Helper.GetTopic("topic1");
+            var topic2 = Helper.GetTopic("topic2");
+            var topic3 = Helper.GetTopic("topic3");
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "2" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            topic1.TotalMessagesCount.Should().Be(1);
+            topic2.TotalMessagesCount.Should().Be(1);
+            topic3.TotalMessagesCount.Should().Be(1);
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            topic1.TotalMessagesCount.Should().Be(2);
+            topic2.TotalMessagesCount.Should().Be(1);
+            topic3.TotalMessagesCount.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task DynamicRouting_NameAndPartitionFunctions_MessagesRouted()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ProduceTo(
+                                            envelope =>
+                                            {
+                                                var testEventOne = (TestEventOne)envelope.Message!;
+                                                switch (testEventOne.Content)
+                                                {
+                                                    case "1":
+                                                        return "topic1";
+                                                    case "2":
+                                                        return "topic2";
+                                                    case "3":
+                                                        return "topic3";
+                                                    default:
+                                                        throw new InvalidOperationException();
+                                                }
+                                            },
+                                            envelope =>
+                                            {
+                                                var testEventOne = (TestEventOne)envelope.Message!;
+                                                switch (testEventOne.Content)
+                                                {
+                                                    case "1":
+                                                        return 2;
+                                                    case "2":
+                                                        return 3;
+                                                    default:
+                                                        return Partition.Any;
+                                                }
+                                            }))))
+                .Run();
+
+            var topic1 = Helper.GetTopic("topic1");
+            var topic2 = Helper.GetTopic("topic2");
+            var topic3 = Helper.GetTopic("topic3");
+            var partition1 = topic1.Partitions[2];
+            var partition2 = topic2.Partitions[3];
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "2" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            topic1.TotalMessagesCount.Should().Be(1);
+            topic2.TotalMessagesCount.Should().Be(1);
+            topic3.TotalMessagesCount.Should().Be(1);
+            partition1.TotalMessagesCount.Should().Be(1);
+            partition2.TotalMessagesCount.Should().Be(1);
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            topic1.TotalMessagesCount.Should().Be(2);
+            topic2.TotalMessagesCount.Should().Be(1);
+            topic3.TotalMessagesCount.Should().Be(2);
+            partition1.TotalMessagesCount.Should().Be(2);
+            partition2.TotalMessagesCount.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task DynamicRouting_NameFormat_MessagesRouted()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ProduceTo(
+                                            "topic{0}",
+                                            envelope =>
+                                            {
+                                                var testEventOne = (TestEventOne)envelope.Message!;
+                                                switch (testEventOne.Content)
+                                                {
+                                                    case "1":
+                                                        return new[] { "1" };
+                                                    case "2":
+                                                        return new[] { "2" };
+                                                    case "3":
+                                                        return new[] { "3" };
+                                                    default:
+                                                        throw new InvalidOperationException();
+                                                }
+                                            }))))
+                .Run();
+
+            var topic1 = Helper.GetTopic("topic1");
+            var topic2 = Helper.GetTopic("topic2");
+            var topic3 = Helper.GetTopic("topic3");
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "2" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            topic1.TotalMessagesCount.Should().Be(1);
+            topic2.TotalMessagesCount.Should().Be(1);
+            topic3.TotalMessagesCount.Should().Be(1);
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            topic1.TotalMessagesCount.Should().Be(2);
+            topic2.TotalMessagesCount.Should().Be(1);
+            topic3.TotalMessagesCount.Should().Be(2);
+        }
+
+        [Fact]
+        public async Task DynamicRouting_CustomNameResolver_MessagesRouted()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSingleton<TestEndpointNameResolver>()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<TestEventOne>(
+                                    endpoint => endpoint
+                                        .UseEndpointNameResolver<TestEndpointNameResolver>())))
+                .Run();
+
+            var topic1 = Helper.GetTopic("topic1");
+            var topic2 = Helper.GetTopic("topic2");
+            var topic3 = Helper.GetTopic("topic3");
+            var partition1 = topic1.Partitions[2];
+            var partition2 = topic2.Partitions[3];
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "2" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            topic1.TotalMessagesCount.Should().Be(1);
+            topic2.TotalMessagesCount.Should().Be(1);
+            topic3.TotalMessagesCount.Should().Be(1);
+            partition1.TotalMessagesCount.Should().Be(1);
+            partition2.TotalMessagesCount.Should().Be(1);
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            topic1.TotalMessagesCount.Should().Be(2);
+            topic2.TotalMessagesCount.Should().Be(1);
+            topic3.TotalMessagesCount.Should().Be(2);
+            partition1.TotalMessagesCount.Should().Be(2);
+            partition2.TotalMessagesCount.Should().Be(1);
+        }
+
+        [Fact]
         public async Task DynamicRouting_CustomOutboundRouter_MessagesRouted()
         {
             Host.ConfigureServices(
@@ -206,7 +433,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddSingletonOutboundRouter<TestOutboundRouter>()
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
@@ -280,7 +506,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
-                        .AddSingletonOutboundRouter<TestOutboundRouter>()
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
@@ -368,7 +593,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddSingletonOutboundRouter<TestOutboundRouter>()
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
@@ -440,7 +664,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddSingletonOutboundRouter<TestOutboundRouter>()
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
@@ -489,7 +712,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddSingletonOutboundRouter<TestOutboundRouter>()
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
@@ -534,6 +756,40 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             Helper.Broker.Producers.Count.Should().Be(2);
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+        }
+
+        [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
+        private class TestEndpointNameResolver : IKafkaProducerEndpointNameResolver
+        {
+            public string GetName(IOutboundEnvelope envelope)
+            {
+                var testEventOne = (TestEventOne)envelope.Message!;
+                switch (testEventOne.Content)
+                {
+                    case "1":
+                        return "topic1";
+                    case "2":
+                        return "topic2";
+                    case "3":
+                        return "topic3";
+                    default:
+                        throw new InvalidOperationException();
+                }
+            }
+
+            public int? GetPartition(IOutboundEnvelope envelope)
+            {
+                var testEventOne = (TestEventOne)envelope.Message!;
+                switch (testEventOne.Content)
+                {
+                    case "1":
+                        return 2;
+                    case "2":
+                        return 3;
+                    default:
+                        return null;
+                }
+            }
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]

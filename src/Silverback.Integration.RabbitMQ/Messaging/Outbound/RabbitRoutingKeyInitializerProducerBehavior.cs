@@ -6,7 +6,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Behaviors
+namespace Silverback.Messaging.Outbound
 {
     /// <summary>
     ///     Sets the routing key header with the value from the property decorated with the

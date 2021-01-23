@@ -28,10 +28,13 @@ namespace Silverback.Messaging.Messages
             : base(rawMessage, headers, endpoint, additionalLogData)
         {
             BrokerMessageIdentifier = brokerMessageIdentifier;
+            ActualEndpointName = endpoint.Name;
         }
 
         public new IProducerEndpoint Endpoint => (IProducerEndpoint)base.Endpoint;
 
         public IBrokerMessageIdentifier? BrokerMessageIdentifier { get; internal set; }
+
+        public string ActualEndpointName { get; internal set; }
     }
 }

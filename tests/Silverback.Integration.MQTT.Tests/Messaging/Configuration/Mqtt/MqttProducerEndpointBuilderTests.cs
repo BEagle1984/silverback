@@ -5,8 +5,11 @@ using System;
 using FluentAssertions;
 using MQTTnet.Client.Options;
 using MQTTnet.Protocol;
+using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
@@ -53,6 +56,40 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             var endpoint = builder.Build();
 
             endpoint.Name.Should().Be("some-topic");
+        }
+
+        [Fact]
+        public void ProduceTo_TopicNameFunction_TopicSet()
+        {
+            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            builder.ProduceTo(_ => "some-topic");
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+        }
+
+        [Fact]
+        public void ProduceTo_TopicNameFunctionWithServiceProvider_TopicSet()
+        {
+            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            builder.ProduceTo((_, _) => "some-topic");
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+        }
+
+        [Fact]
+        public void UseEndpointNameResolver_TopicAndPartitionSet()
+        {
+            var serviceProvider = Substitute.For<IServiceProvider>();
+            serviceProvider.GetService(typeof(TestEndpointNameResolver))
+                .Returns(new TestEndpointNameResolver());
+
+            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            builder.UseEndpointNameResolver<TestEndpointNameResolver>();
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, serviceProvider).Should().Be("some-topic");
         }
 
         [Fact]
@@ -113,6 +150,11 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             var endpoint = builder.Build();
 
             endpoint.MessageExpiryInterval.Should().Be(42 * 60);
+        }
+
+        private class TestEndpointNameResolver : IProducerEndpointNameResolver
+        {
+            public string GetName(IOutboundEnvelope envelope) => "some-topic";
         }
     }
 }

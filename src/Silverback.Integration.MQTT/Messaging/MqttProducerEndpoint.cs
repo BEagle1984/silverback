@@ -6,6 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 using MQTTnet.Client.Options;
 using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration.Mqtt;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 
 namespace Silverback.Messaging
 {
@@ -22,6 +24,57 @@ namespace Silverback.Messaging
         /// </param>
         public MqttProducerEndpoint(string name)
             : base(name)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MqttProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="nameFunction">
+        ///     The function returning the endpoint name for the message being produced.
+        /// </param>
+        public MqttProducerEndpoint(Func<IOutboundEnvelope, string> nameFunction)
+            : base(nameFunction)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MqttProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="nameFunction">
+        ///     The function returning the endpoint name for the message being produced.
+        /// </param>
+        public MqttProducerEndpoint(Func<IOutboundEnvelope, IServiceProvider, string> nameFunction)
+            : base(nameFunction)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MqttProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="nameFormat">
+        ///     The endpoint name format string that will be combined with the arguments returned by the
+        ///     <paramref name="argumentsFunction" /> using a <c>string.Format</c>.
+        /// </param>
+        /// <param name="argumentsFunction">
+        ///     The function returning the arguments to be used to format the string.
+        /// </param>
+        public MqttProducerEndpoint(
+            string nameFormat,
+            Func<IOutboundEnvelope, string[]> argumentsFunction)
+            : base(nameFormat, argumentsFunction)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MqttProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="nameResolverType">
+        ///     The type of the <see cref="IProducerEndpointNameResolver" /> to be used to resolve the actual
+        ///     endpoint name.
+        /// </param>
+        public MqttProducerEndpoint(Type nameResolverType)
+            : base(nameResolverType)
         {
         }
 

@@ -7,7 +7,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Behaviors
+namespace Silverback.Messaging.Outbound
 {
     /// <summary>
     ///     Sets the message key header with the value from the properties decorated with the

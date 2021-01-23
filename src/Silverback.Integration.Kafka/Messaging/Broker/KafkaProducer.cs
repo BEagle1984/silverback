@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -87,9 +88,11 @@ namespace Silverback.Messaging.Broker
                     kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
                 }
 
-                var deliveryResult = await GetConfluentProducer().ProduceAsync(
-                        Endpoint.TopicPartition,
-                        kafkaMessage)
+                var topicPartition = new TopicPartition(
+                    envelope.ActualEndpointName,
+                    GetPartitionAndRemoveHeader(envelope.Headers));
+
+                var deliveryResult = await GetConfluentProducer().ProduceAsync(topicPartition, kafkaMessage)
                     .ConfigureAwait(false);
 
                 if (Endpoint.Configuration.ArePersistenceStatusReportsEnabled)
@@ -112,6 +115,22 @@ namespace Silverback.Messaging.Broker
                     "Error occurred producing the message. See inner exception for details.",
                     ex);
             }
+        }
+
+        private static Partition GetPartitionAndRemoveHeader(MessageHeaderCollection headers)
+        {
+            var partitionHeader =
+                headers.FirstOrDefault(header => header.Name == KafkaMessageHeaders.KafkaPartitionIndex);
+
+            if (partitionHeader == null)
+                return Partition.Any;
+
+            headers.Remove(partitionHeader);
+
+            if (partitionHeader.Value == null)
+                return Partition.Any;
+
+            return int.Parse(partitionHeader.Value, CultureInfo.InvariantCulture);
         }
 
         private byte[]? GetKafkaKeyAndRemoveHeader(MessageHeaderCollection headers)

@@ -13,6 +13,37 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
 {
     public class KafkaProducerEndpointTests
     {
+        [Theory]
+        [InlineData(0, true)]
+        [InlineData(42, true)]
+        [InlineData(-1, true)]
+        [InlineData(-2, false)]
+        public void Constructor_Partition_CorrectlyValidated(int value, bool isValid)
+        {
+            KafkaProducerEndpoint? endpoint = null;
+
+            Action act = () =>
+            {
+                endpoint = new KafkaProducerEndpoint("test", value)
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = "test-server"
+                    }
+                };
+            };
+
+            if (isValid)
+            {
+                act.Should().NotThrow();
+                endpoint.Should().NotBeNull();
+            }
+            else
+            {
+                act.Should().ThrowExactly<ArgumentOutOfRangeException>();
+            }
+        }
+
         [Fact]
         public void Equals_SameEndpointInstance_TrueIsReturned()
         {
@@ -74,33 +105,10 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         [Fact]
         public void Equals_SameTopicAndPartition_TrueIsReturned()
         {
-            var endpoint1 = new KafkaProducerEndpoint("topic")
-            {
-                Partition = 1
-            };
-
-            var endpoint2 = new KafkaProducerEndpoint("topic")
-            {
-                Partition = 1
-            };
+            var endpoint1 = new KafkaProducerEndpoint("topic", 1);
+            var endpoint2 = new KafkaProducerEndpoint("topic", 1);
 
             endpoint1.Equals(endpoint2).Should().BeTrue();
-        }
-
-        [Fact]
-        public void Equals_DifferentPartition_FalseIsReturned()
-        {
-            var endpoint1 = new KafkaProducerEndpoint("topic")
-            {
-                Partition = 1
-            };
-
-            var endpoint2 = new KafkaProducerEndpoint("topic")
-            {
-                Partition = 2
-            };
-
-            endpoint1.Equals(endpoint2).Should().BeFalse();
         }
 
         [Fact]
@@ -215,25 +223,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             Action act = () => endpoint.Validate();
 
             act.Should().ThrowExactly<EndpointConfigurationException>();
-        }
-
-        [Theory]
-        [InlineData(0, true)]
-        [InlineData(42, true)]
-        [InlineData(-1, true)]
-        [InlineData(-2, false)]
-        public void Validate_Partition_CorrectlyValidated(int value, bool isValid)
-        {
-            var endpoint = GetValidEndpoint();
-
-            endpoint.Partition = value;
-
-            Action act = () => endpoint.Validate();
-
-            if (isValid)
-                act.Should().NotThrow();
-            else
-                act.Should().ThrowExactly<EndpointConfigurationException>();
         }
 
         private static KafkaProducerEndpoint GetValidEndpoint() =>

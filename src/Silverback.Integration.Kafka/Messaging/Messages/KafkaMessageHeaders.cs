@@ -9,11 +9,15 @@ namespace Silverback.Messaging.Messages
     public static class KafkaMessageHeaders
     {
         /// <summary>
-        ///     The header that will be filled with the key of the message consumed from Kafka. It is used also to
-        ///     temporary store the key for the produced message, defined via
-        ///     <see cref="KafkaKeyMemberAttribute" />.
+        ///     The header that will be filled with the key of the message consumed from Kafka. It is also used to
+        ///     temporary store the key for the produced message, defined via <see cref="KafkaKeyMemberAttribute" />.
         /// </summary>
         public const string KafkaMessageKey = "x-kafka-message-key";
+
+        /// <summary>
+        ///     Used to temporary store the target partition index for the produced message.
+        /// </summary>
+        public const string KafkaPartitionIndex = "x-kafka-partition-index";
 
         /// <summary>
         ///     The header that will be filled with the timestamp of the message consumed from Kafka.

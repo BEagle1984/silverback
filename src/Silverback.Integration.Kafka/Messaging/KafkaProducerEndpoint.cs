@@ -4,9 +4,11 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.KafkaEvents;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 
 namespace Silverback.Messaging
 {
@@ -15,6 +17,11 @@ namespace Silverback.Messaging
     /// </summary>
     public sealed class KafkaProducerEndpoint : ProducerEndpoint, IEquatable<KafkaProducerEndpoint>
     {
+        private static readonly Func<IOutboundEnvelope, IServiceProvider, Partition> AnyPartitionFunction =
+            (_, _) => Partition.Any;
+
+        private readonly Func<IOutboundEnvelope, IServiceProvider, Partition> _partitionFunction;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
         /// </summary>
@@ -25,11 +32,230 @@ namespace Silverback.Messaging
         ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
         ///     <see cref="KafkaProducerConfig" />.
         /// </param>
-        public KafkaProducerEndpoint(string name, KafkaClientConfig? clientConfig = null)
+        public KafkaProducerEndpoint(
+            string name,
+            KafkaClientConfig? clientConfig = null)
+            : this(name, (int?)null, clientConfig)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="name">
+        ///     The name of the topic.
+        /// </param>
+        /// <param name="partition">
+        ///     The optional partition index. If <c>null</c> the partition is automatically derived from the message
+        ///     key (use <see cref="KafkaKeyMemberAttribute" /> to specify a message key, otherwise a random one will be
+        ///     generated).
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaProducerConfig" />.
+        /// </param>
+        public KafkaProducerEndpoint(
+            string name,
+            int? partition,
+            KafkaClientConfig? clientConfig = null)
             : base(name)
         {
+            if (partition != null && partition < Partition.Any)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(partition),
+                    "The partition index must be greater or equal to 0, or Partition.Any (-1).");
+            }
+
             Configuration = new KafkaProducerConfig(clientConfig);
-            TopicPartition = new TopicPartition(name, Partition.Any);
+
+            if (partition != null)
+                _partitionFunction = (_, _) => partition.Value;
+            else
+                _partitionFunction = AnyPartitionFunction;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="nameFunction">
+        ///     The function returning the endpoint name for the message being produced.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaProducerConfig" />.
+        /// </param>
+        public KafkaProducerEndpoint(
+            Func<IOutboundEnvelope, string> nameFunction,
+            KafkaClientConfig? clientConfig = null)
+            : this(nameFunction, null, clientConfig)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="nameFunction">
+        ///     The function returning the endpoint name for the message being produced.
+        /// </param>
+        /// <param name="partitionFunction">
+        ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
+        ///     the partition is automatically derived from the message key (use <see cref="KafkaKeyMemberAttribute" />
+        ///     to specify a message key, otherwise a random one will be generated).
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaProducerConfig" />.
+        /// </param>
+        public KafkaProducerEndpoint(
+            Func<IOutboundEnvelope, string> nameFunction,
+            Func<IOutboundEnvelope, int>? partitionFunction,
+            KafkaClientConfig? clientConfig = null)
+            : base(nameFunction)
+        {
+            Configuration = new KafkaProducerConfig(clientConfig);
+
+            if (partitionFunction != null)
+                _partitionFunction = (envelope, _) => partitionFunction.Invoke(envelope);
+            else
+                _partitionFunction = AnyPartitionFunction;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="nameFunction">
+        ///     The function returning the endpoint name for the message being produced.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaProducerConfig" />.
+        /// </param>
+        public KafkaProducerEndpoint(
+            Func<IOutboundEnvelope, IServiceProvider, string> nameFunction,
+            KafkaClientConfig? clientConfig = null)
+            : this(nameFunction, null, clientConfig)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="nameFunction">
+        ///     The function returning the endpoint name for the message being produced.
+        /// </param>
+        /// <param name="partitionFunction">
+        ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
+        ///     the partition is automatically derived from the message key (use <see cref="KafkaKeyMemberAttribute" />
+        ///     to specify a message key, otherwise a random one will be generated).
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaProducerConfig" />.
+        /// </param>
+        public KafkaProducerEndpoint(
+            Func<IOutboundEnvelope, IServiceProvider, string> nameFunction,
+            Func<IOutboundEnvelope, IServiceProvider, int>? partitionFunction,
+            KafkaClientConfig? clientConfig = null)
+            : base(nameFunction)
+        {
+            Configuration = new KafkaProducerConfig(clientConfig);
+
+            if (partitionFunction != null)
+            {
+                _partitionFunction =
+                    (envelope, serviceProvider) => partitionFunction.Invoke(envelope, serviceProvider);
+            }
+            else
+            {
+                _partitionFunction = AnyPartitionFunction;
+            }
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="nameFormat">
+        ///     The endpoint name format string that will be combined with the arguments returned by the
+        ///     <paramref name="argumentsFunction" /> using a <c>string.Format</c>.
+        /// </param>
+        /// <param name="argumentsFunction">
+        ///     The function returning the arguments to be used to format the string.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaProducerConfig" />.
+        /// </param>
+        [SuppressMessage("ReSharper", "CoVariantArrayConversion", Justification = "Read-only array")]
+        public KafkaProducerEndpoint(
+            string nameFormat,
+            Func<IOutboundEnvelope, string[]> argumentsFunction,
+            KafkaClientConfig? clientConfig = null)
+            : this(nameFormat, argumentsFunction, null, clientConfig)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="nameFormat">
+        ///     The endpoint name format string that will be combined with the arguments returned by the
+        ///     <paramref name="argumentsFunction" /> using a <c>string.Format</c>.
+        /// </param>
+        /// <param name="argumentsFunction">
+        ///     The function returning the arguments to be used to format the string.
+        /// </param>
+        /// <param name="partitionFunction">
+        ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
+        ///     the partition is automatically derived from the message key (use <see cref="KafkaKeyMemberAttribute" />
+        ///     to specify a message key, otherwise a random one will be generated).
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaProducerConfig" />.
+        /// </param>
+        [SuppressMessage("ReSharper", "CoVariantArrayConversion", Justification = "Read-only array")]
+        public KafkaProducerEndpoint(
+            string nameFormat,
+            Func<IOutboundEnvelope, string[]> argumentsFunction,
+            Func<IOutboundEnvelope, int>? partitionFunction,
+            KafkaClientConfig? clientConfig = null)
+            : base(nameFormat, argumentsFunction)
+        {
+            Configuration = new KafkaProducerConfig(clientConfig);
+
+            if (partitionFunction != null)
+                _partitionFunction = (envelope, _) => partitionFunction.Invoke(envelope);
+            else
+                _partitionFunction = AnyPartitionFunction;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaProducerEndpoint" /> class.
+        /// </summary>
+        /// <param name="nameResolverType">
+        ///     The type of the <see cref="IKafkaProducerEndpointNameResolver" /> to be used to resolve the actual
+        ///     endpoint name.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaProducerConfig" />.
+        /// </param>
+        public KafkaProducerEndpoint(Type nameResolverType, KafkaClientConfig? clientConfig = null)
+            : base(nameResolverType)
+        {
+            Configuration = new KafkaProducerConfig(clientConfig);
+
+            if (!typeof(IKafkaProducerEndpointNameResolver).IsAssignableFrom(nameResolverType))
+            {
+                throw new ArgumentException(
+                    "The specified type must implement IKafkaProducerEndpointNameResolver.",
+                    nameof(nameResolverType));
+            }
+
+            _partitionFunction = (envelope, serviceProvider) =>
+                ((IKafkaProducerEndpointNameResolver)serviceProvider.GetRequiredService(nameResolverType))
+                .GetPartition(envelope) ?? Partition.Any;
         }
 
         /// <summary>
@@ -44,21 +270,22 @@ namespace Silverback.Messaging
         public KafkaProducerConfig Configuration { get; set; }
 
         /// <summary>
-        ///     Gets or sets the target partition. When set to <c>Partition.Any</c> (-1) the partition is automatically
+        ///     Gets the target partition. When set to <c>Partition.Any</c> (-1) the partition is automatically
         ///     derived from the message key (use <see cref="KafkaKeyMemberAttribute" /> to specify a message key,
         ///     otherwise a random one will be generated).
         ///     The default is <c>Partition.Any</c> (-1).
         /// </summary>
-        public Partition Partition
-        {
-            get => TopicPartition.Partition;
-            set => TopicPartition = new TopicPartition(Name, value);
-        }
-
-        /// <summary>
-        ///     Gets the <see cref="TopicPartition" /> representing this endpoint.
-        /// </summary>
-        public TopicPartition TopicPartition { get; private set; }
+        /// <param name="envelope">
+        ///     The envelope containing the message being produced.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> in the current scope.
+        /// </param>
+        /// <returns>
+        ///     The partition to be produced to.
+        /// </returns>
+        public Partition GetPartition(IOutboundEnvelope envelope, IServiceProvider serviceProvider) =>
+            _partitionFunction.Invoke(envelope, serviceProvider);
 
         /// <inheritdoc cref="ProducerEndpoint.Validate" />
         public override void Validate()
@@ -67,12 +294,6 @@ namespace Silverback.Messaging
 
             if (Configuration == null)
                 throw new EndpointConfigurationException("Configuration cannot be null.");
-
-            if (Partition.Value < -1)
-            {
-                throw new EndpointConfigurationException(
-                    "Partition should be set to an index greater or equal to 0, or Partition.Any.");
-            }
 
             Configuration.Validate();
         }
@@ -87,8 +308,7 @@ namespace Silverback.Messaging
                 return true;
 
             return BaseEquals(other) &&
-                   Equals(Configuration, other.Configuration) &&
-                   Partition == other.Partition;
+                   Equals(Configuration, other.Configuration);
         }
 
         /// <inheritdoc cref="object.Equals(object)" />

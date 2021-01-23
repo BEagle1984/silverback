@@ -3,17 +3,20 @@
 
 using System;
 using MQTTnet.Protocol;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt
 {
     /// <inheritdoc cref="IMqttProducerEndpointBuilder" />
     public class MqttProducerEndpointBuilder
-        : ProducerEndpointBuilder<MqttProducerEndpoint, IMqttProducerEndpointBuilder>, IMqttProducerEndpointBuilder
+        : ProducerEndpointBuilder<MqttProducerEndpoint, IMqttProducerEndpointBuilder>,
+            IMqttProducerEndpointBuilder
     {
         private readonly MqttClientConfig _clientConfig;
 
-        private string? _topicName;
+        private Func<MqttProducerEndpoint>? _endpointFactory;
 
         private MqttQualityOfServiceLevel? _qualityOfServiceLevel;
 
@@ -42,12 +45,57 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.This" />
         protected override IMqttProducerEndpointBuilder This => this;
 
-        /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo" />
+        /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo(string)" />
         public IMqttProducerEndpointBuilder ProduceTo(string topicName)
         {
             Check.NotEmpty(topicName, nameof(topicName));
 
-            _topicName = topicName;
+            _endpointFactory = () => new MqttProducerEndpoint(topicName);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo(Func{IOutboundEnvelope, string})" />
+        public IMqttProducerEndpointBuilder ProduceTo(Func<IOutboundEnvelope, string> topicNameFunction)
+        {
+            Check.NotNull(topicNameFunction, nameof(topicNameFunction));
+
+            _endpointFactory = () => new MqttProducerEndpoint(topicNameFunction);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo(Func{IOutboundEnvelope, IServiceProvider, string})" />
+        public IMqttProducerEndpointBuilder ProduceTo(
+            Func<IOutboundEnvelope, IServiceProvider, string> topicNameFunction)
+        {
+            Check.NotNull(topicNameFunction, nameof(topicNameFunction));
+
+            _endpointFactory = () => new MqttProducerEndpoint(topicNameFunction);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo(string, Func{IOutboundEnvelope, string[]})" />
+        public IMqttProducerEndpointBuilder ProduceTo(
+            string topicNameFormatString,
+            Func<IOutboundEnvelope, string[]> topicNameArgumentsFunction)
+        {
+            Check.NotEmpty(topicNameFormatString, nameof(topicNameFormatString));
+            Check.NotNull(topicNameArgumentsFunction, nameof(topicNameArgumentsFunction));
+
+            _endpointFactory = () => new MqttProducerEndpoint(
+                topicNameFormatString,
+                topicNameArgumentsFunction);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttProducerEndpointBuilder.UseEndpointNameResolver{TResolver}" />
+        public IMqttProducerEndpointBuilder UseEndpointNameResolver<TResolver>()
+            where TResolver : IProducerEndpointNameResolver
+        {
+            _endpointFactory = () => new MqttProducerEndpoint(typeof(TResolver));
 
             return this;
         }
@@ -103,13 +151,15 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.CreateEndpoint" />
         protected override MqttProducerEndpoint CreateEndpoint()
         {
-            if (string.IsNullOrEmpty(_topicName))
-                throw new EndpointConfigurationException("Topic name not set.");
-
-            var endpoint = new MqttProducerEndpoint(_topicName)
+            if (_endpointFactory == null)
             {
-                Configuration = _clientConfig
-            };
+                throw new EndpointConfigurationException(
+                    "Topic name not set. Use ProduceTo or UseEndpointNameResolver to set it.");
+            }
+
+            var endpoint = _endpointFactory.Invoke();
+
+            endpoint.Configuration = _clientConfig;
 
             if (_qualityOfServiceLevel != null)
                 endpoint.QualityOfServiceLevel = _qualityOfServiceLevel.Value;

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging;
-using Silverback.Messaging.Behaviors;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
 using Xunit;
 

@@ -19,10 +19,13 @@ namespace Silverback.Messaging.Broker.Rabbit
         /// <param name="endpoint">
         ///     The endpoint to be produced to.
         /// </param>
+        /// <param name="actualEndpointName">
+        ///     The actual target endpoint name.
+        /// </param>
         /// <returns>
         ///     The <see cref="IModel" /> representing the channel.
         /// </returns>
-        IModel GetChannel(RabbitProducerEndpoint endpoint);
+        IModel GetChannel(RabbitProducerEndpoint endpoint, string actualEndpointName);
 
         /// <summary>
         ///     Returns a channel to consume from the specified endpoint.

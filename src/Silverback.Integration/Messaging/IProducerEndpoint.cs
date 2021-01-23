@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Sequences.Chunking;
 
@@ -23,5 +25,19 @@ namespace Silverback.Messaging
         ///     messages will be sent to the message broker directly.
         /// </summary>
         IProduceStrategy Strategy { get; }
+
+        /// <summary>
+        ///     Gets the actual target endpoint name for the message being produced.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The envelope containing the message being produced.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider"/> in the current scope.
+        /// </param>
+        /// <returns>
+        ///     The actual name of the endpoint to be produced to.
+        /// </returns>
+        public string GetActualName(IOutboundEnvelope envelope, IServiceProvider serviceProvider);
     }
 }

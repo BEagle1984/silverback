@@ -3,6 +3,8 @@
 
 using System;
 using MQTTnet.Protocol;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 
 namespace Silverback.Messaging.Configuration.Mqtt
 {
@@ -21,6 +23,58 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="IMqttProducerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IMqttProducerEndpointBuilder ProduceTo(string topicName);
+
+        /// <summary>
+        ///     Specifies the name of the topic and optionally the target partition.
+        /// </summary>
+        /// <param name="topicNameFunction">
+        ///     The function returning the topic name for the message being produced.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttProducerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMqttProducerEndpointBuilder ProduceTo(Func<IOutboundEnvelope, string> topicNameFunction);
+
+        /// <summary>
+        ///     Specifies the name of the topic and optionally the target partition.
+        /// </summary>
+        /// <param name="topicNameFunction">
+        ///     The function returning the topic name for the message being produced.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttProducerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMqttProducerEndpointBuilder ProduceTo(Func<IOutboundEnvelope, IServiceProvider, string> topicNameFunction);
+
+        /// <summary>
+        ///     Specifies the name of the topic and optionally the target partition.
+        /// </summary>
+        /// <param name="topicNameFormatString">
+        ///     The endpoint name format string that will be combined with the arguments returned by the
+        ///     <paramref name="topicNameArgumentsFunction" /> using a <c>string.Format</c>.
+        /// </param>
+        /// <param name="topicNameArgumentsFunction">
+        ///     The function returning the arguments to be used to format the string.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttProducerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMqttProducerEndpointBuilder ProduceTo(
+            string topicNameFormatString,
+            Func<IOutboundEnvelope, string[]> topicNameArgumentsFunction);
+
+        /// <summary>
+        ///     Specifies the type of the <see cref="IProducerEndpointNameResolver" /> to be used to resolve the
+        ///     actual endpoint name and partition.
+        /// </summary>
+        /// <typeparam name="TResolver">
+        ///     The type of the <see cref="IProducerEndpointNameResolver" /> to be used.
+        /// </typeparam>
+        /// <returns>
+        ///     The <see cref="IMqttProducerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMqttProducerEndpointBuilder UseEndpointNameResolver<TResolver>()
+            where TResolver : IProducerEndpointNameResolver;
 
         /// <summary>
         ///     Specifies the desired quality of service level.

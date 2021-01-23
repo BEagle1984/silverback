@@ -2,9 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Behaviors;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka;
+using Silverback.Messaging.Outbound;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
@@ -22,6 +23,7 @@ namespace Silverback.Messaging.Configuration
 
             brokerOptionsBuilder.SilverbackBuilder
                 .AddSingletonBrokerBehavior<KafkaMessageKeyInitializerProducerBehavior>()
+                .AddSingletonBrokerBehavior<PartitionResolverProducerBehavior>()
                 .Services
                 .AddTransient<IConfluentProducerBuilder, ConfluentProducerBuilder>()
                 .AddTransient<IConfluentConsumerBuilder, ConfluentConsumerBuilder>()

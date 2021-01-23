@@ -14,6 +14,7 @@ using Silverback.Messaging.Headers;
 using Silverback.Messaging.Inbound;
 using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Inbound.Transaction;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
@@ -41,7 +42,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static IBrokerOptionsBuilder AddBroker<TBroker>(this IBrokerOptionsBuilder brokerOptionsBuilder)
+        public static IBrokerOptionsBuilder AddBroker<TBroker>(
+            this IBrokerOptionsBuilder brokerOptionsBuilder)
             where TBroker : class, IBroker
         {
             Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
@@ -100,9 +102,10 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddSingletonBrokerBehavior<BinaryFileHandlerProducerBehavior>()
                     .AddSingletonBrokerBehavior<BinaryFileHandlerConsumerBehavior>();
 
-                // Pipeline - Message Id Initializer
+                // Pipeline - Producer basic logic
                 brokerOptionsBuilder.SilverbackBuilder
-                    .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>();
+                    .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>()
+                    .AddSingletonBrokerBehavior<EndpointNameResolverProducerBehavior>();
 
                 // Pipeline - Consumer basic logic
                 brokerOptionsBuilder.SilverbackBuilder

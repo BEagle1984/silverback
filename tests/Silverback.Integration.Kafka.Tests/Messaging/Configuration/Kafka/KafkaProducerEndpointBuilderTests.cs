@@ -4,10 +4,13 @@
 using System;
 using Confluent.Kafka;
 using FluentAssertions;
+using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.KafkaEvents.Statistics;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
@@ -54,8 +57,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             builder.ProduceTo("some-topic");
             var endpoint = builder.Build();
 
-            endpoint.Name.Should().Be("some-topic");
-            endpoint.Partition.Should().Be(Partition.Any);
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+            endpoint.GetPartition(null!, null!).Should().Be(Partition.Any);
         }
 
         [Fact]
@@ -70,8 +73,92 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             builder.ProduceTo("some-topic", 42);
             var endpoint = builder.Build();
 
-            endpoint.Name.Should().Be("some-topic");
-            endpoint.Partition.Value.Should().Be(42);
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+            endpoint.GetPartition(null!, null!).Should().Be(new Partition(42));
+        }
+
+        [Fact]
+        public void ProduceTo_TopicNameFunction_TopicSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo(_ => "some-topic");
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+            endpoint.GetPartition(null!, null!).Should().Be(Partition.Any);
+        }
+
+        [Fact]
+        public void ProduceTo_TopicNameAndPartitionFunctions_TopicAndPartitionSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo(_ => "some-topic", _ => 42);
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+            endpoint.GetPartition(null!, null!).Should().Be(new Partition(42));
+        }
+
+        [Fact]
+        public void ProduceTo_TopicNameFunctionWithServiceProvider_TopicSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo((_, _) => "some-topic");
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+            endpoint.GetPartition(null!, null!).Should().Be(Partition.Any);
+        }
+
+        [Fact]
+        public void ProduceTo_TopicNameAndPartitionFunctionsWithServiceProvider_TopicAndPartitionSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo((_, _) => "some-topic", (_, _) => 42);
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+            endpoint.GetPartition(null!, null!).Should().Be(new Partition(42));
+        }
+
+        [Fact]
+        public void UseEndpointNameResolver_TopicAndPartitionSet()
+        {
+            var serviceProvider = Substitute.For<IServiceProvider>();
+            serviceProvider.GetService(typeof(TestEndpointNameResolver))
+                .Returns(new TestEndpointNameResolver());
+
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.UseEndpointNameResolver<TestEndpointNameResolver>();
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, serviceProvider).Should().Be("some-topic");
+            endpoint.GetPartition(null!, serviceProvider).Should().Be(new Partition(42));
         }
 
         [Fact]
@@ -141,6 +228,13 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             var endpoint = builder.Build();
 
             endpoint.Events.StatisticsHandler.Should().BeSameAs(handler);
+        }
+
+        private class TestEndpointNameResolver : IKafkaProducerEndpointNameResolver
+        {
+            public string GetName(IOutboundEnvelope envelope) => "some-topic";
+
+            public int? GetPartition(IOutboundEnvelope envelope) => 42;
         }
     }
 }

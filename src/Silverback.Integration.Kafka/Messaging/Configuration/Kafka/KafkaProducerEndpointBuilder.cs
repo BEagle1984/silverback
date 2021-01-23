@@ -2,22 +2,22 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Confluent.Kafka;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.KafkaEvents.Statistics;
+using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka
 {
     /// <inheritdoc cref="IKafkaProducerEndpointBuilder" />
     public class KafkaProducerEndpointBuilder
-        : ProducerEndpointBuilder<KafkaProducerEndpoint, IKafkaProducerEndpointBuilder>, IKafkaProducerEndpointBuilder
+        : ProducerEndpointBuilder<KafkaProducerEndpoint, IKafkaProducerEndpointBuilder>,
+            IKafkaProducerEndpointBuilder
     {
         private readonly KafkaClientConfig? _clientConfig;
 
-        private string? _topicName;
-
-        private int? _partitionIndex;
+        private Func<KafkaProducerEndpoint>? _endpointFactory;
 
         private Action<KafkaProducerConfig>? _configAction;
 
@@ -45,13 +45,69 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.This" />
         protected override IKafkaProducerEndpointBuilder This => this;
 
-        /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo" />
+        /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo(string, int?)" />
         public IKafkaProducerEndpointBuilder ProduceTo(string topicName, int? partition = null)
         {
             Check.NotEmpty(topicName, nameof(topicName));
 
-            _topicName = topicName;
-            _partitionIndex = partition;
+            _endpointFactory = () => new KafkaProducerEndpoint(topicName, partition, _clientConfig);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo(Func{IOutboundEnvelope, string}, Func{IOutboundEnvelope, int}?)" />
+        public IKafkaProducerEndpointBuilder ProduceTo(
+            Func<IOutboundEnvelope, string> topicNameFunction,
+            Func<IOutboundEnvelope, int>? partitionFunction = null)
+        {
+            Check.NotNull(topicNameFunction, nameof(topicNameFunction));
+
+            _endpointFactory = () => new KafkaProducerEndpoint(
+                topicNameFunction,
+                partitionFunction,
+                _clientConfig);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo(Func{IOutboundEnvelope, IServiceProvider, string}, Func{IOutboundEnvelope, IServiceProvider, int}?)" />
+        public IKafkaProducerEndpointBuilder ProduceTo(
+            Func<IOutboundEnvelope, IServiceProvider, string> topicNameFunction,
+            Func<IOutboundEnvelope, IServiceProvider, int>? partitionFunction = null)
+        {
+            Check.NotNull(topicNameFunction, nameof(topicNameFunction));
+
+            _endpointFactory = () => new KafkaProducerEndpoint(
+                topicNameFunction,
+                partitionFunction,
+                _clientConfig);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo(string, Func{IOutboundEnvelope, string[]}, Func{IOutboundEnvelope, int}?)" />
+        public IKafkaProducerEndpointBuilder ProduceTo(
+            string topicNameFormatString,
+            Func<IOutboundEnvelope, string[]> topicNameArgumentsFunction,
+            Func<IOutboundEnvelope, int>? partitionFunction = null)
+        {
+            Check.NotEmpty(topicNameFormatString, nameof(topicNameFormatString));
+            Check.NotNull(topicNameArgumentsFunction, nameof(topicNameArgumentsFunction));
+
+            _endpointFactory = () => new KafkaProducerEndpoint(
+                topicNameFormatString,
+                topicNameArgumentsFunction,
+                partitionFunction,
+                _clientConfig);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IKafkaProducerEndpointBuilder.UseEndpointNameResolver{TResolver}" />
+        public IKafkaProducerEndpointBuilder UseEndpointNameResolver<TResolver>()
+            where TResolver : IKafkaProducerEndpointNameResolver
+        {
+            _endpointFactory = () => new KafkaProducerEndpoint(typeof(TResolver), _clientConfig);
 
             return this;
         }
@@ -80,13 +136,13 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.CreateEndpoint" />
         protected override KafkaProducerEndpoint CreateEndpoint()
         {
-            if (string.IsNullOrEmpty(_topicName))
-                throw new EndpointConfigurationException("Topic name not set.");
+            if (_endpointFactory == null)
+            {
+                throw new EndpointConfigurationException(
+                    "Topic name not set. Use ProduceTo or UseEndpointNameResolver to set it.");
+            }
 
-            var endpoint = new KafkaProducerEndpoint(_topicName, _clientConfig);
-
-            if (_partitionIndex != null)
-                endpoint.Partition = new Partition(_partitionIndex.Value);
+            var endpoint = _endpointFactory.Invoke();
 
             _configAction?.Invoke(endpoint.Configuration);
 

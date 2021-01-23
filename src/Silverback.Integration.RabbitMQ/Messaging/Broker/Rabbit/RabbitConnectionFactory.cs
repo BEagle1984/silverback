@@ -14,8 +14,8 @@ namespace Silverback.Messaging.Broker.Rabbit
     {
         private Dictionary<RabbitConnectionConfig, IConnection>? _connections = new();
 
-        /// <inheritdoc cref="IRabbitConnectionFactory.GetChannel(RabbitProducerEndpoint)" />
-        public IModel GetChannel(RabbitProducerEndpoint endpoint)
+        /// <inheritdoc cref="IRabbitConnectionFactory.GetChannel(RabbitProducerEndpoint, string)" />
+        public IModel GetChannel(RabbitProducerEndpoint endpoint, string actualEndpointName)
         {
             Check.NotNull(endpoint, nameof(endpoint));
 
@@ -28,7 +28,7 @@ namespace Silverback.Messaging.Broker.Rabbit
             {
                 case RabbitQueueProducerEndpoint queueEndpoint:
                     channel.QueueDeclare(
-                        queueEndpoint.Name,
+                        actualEndpointName,
                         queueEndpoint.Queue.IsDurable,
                         queueEndpoint.Queue.IsExclusive,
                         queueEndpoint.Queue.IsAutoDeleteEnabled,
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker.Rabbit
                     break;
                 case RabbitExchangeProducerEndpoint exchangeEndpoint:
                     channel.ExchangeDeclare(
-                        exchangeEndpoint.Name,
+                        actualEndpointName,
                         exchangeEndpoint.Exchange.ExchangeType,
                         exchangeEndpoint.Exchange.IsDurable,
                         exchangeEndpoint.Exchange.IsAutoDeleteEnabled,

@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Broker
 
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        private IModel? _channel;
+        private readonly Dictionary<string, IModel> _channels = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitProducer" /> class.
@@ -83,8 +83,8 @@ namespace Silverback.Messaging.Broker
 
             _queue.Dispose();
 
-            _channel?.Dispose();
-            _channel = null;
+            _channels.Values.ForEach(channel => channel.Dispose());
+            _channels.Clear();
         }
 
         /// <inheritdoc cref="Producer.ProduceCore" />
@@ -139,9 +139,12 @@ namespace Silverback.Messaging.Broker
 
         private void PublishToChannel(IRawOutboundEnvelope envelope)
         {
-            _channel ??= _connectionFactory.GetChannel(Endpoint);
+            var channel = _channels.TryGetValue(envelope.ActualEndpointName, out var value)
+                ? value!
+                : _channels[envelope.ActualEndpointName] =
+                    _connectionFactory.GetChannel(Endpoint, envelope.ActualEndpointName);
 
-            var properties = _channel.CreateBasicProperties();
+            var properties = channel.CreateBasicProperties();
             properties.Persistent = true; // TODO: Make it configurable?
             properties.Headers = envelope.Headers.ToDictionary(header => header.Name, header => (object?)header.Value);
 
@@ -151,7 +154,7 @@ namespace Silverback.Messaging.Broker
             {
                 case RabbitQueueProducerEndpoint queueEndpoint:
                     routingKey = queueEndpoint.Name;
-                    _channel.BasicPublish(
+                    channel.BasicPublish(
                         string.Empty,
                         routingKey,
                         properties,
@@ -159,7 +162,7 @@ namespace Silverback.Messaging.Broker
                     break;
                 case RabbitExchangeProducerEndpoint exchangeEndpoint:
                     routingKey = GetRoutingKey(envelope.Headers);
-                    _channel.BasicPublish(
+                    channel.BasicPublish(
                         exchangeEndpoint.Name,
                         routingKey,
                         properties,
@@ -170,7 +173,7 @@ namespace Silverback.Messaging.Broker
             }
 
             if (Endpoint.ConfirmationTimeout.HasValue)
-                _channel.WaitForConfirmsOrDie(Endpoint.ConfirmationTimeout.Value);
+                channel.WaitForConfirmsOrDie(Endpoint.ConfirmationTimeout.Value);
         }
 
         private void Flush()

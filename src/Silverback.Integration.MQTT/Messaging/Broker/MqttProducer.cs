@@ -75,7 +75,7 @@ namespace Silverback.Messaging.Broker
 
             var mqttApplicationMessage = new MqttApplicationMessage
             {
-                Topic = Endpoint.Name,
+                Topic = envelope.ActualEndpointName,
                 Payload = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false),
                 QualityOfServiceLevel = Endpoint.QualityOfServiceLevel,
                 Retain = Endpoint.Retain,
