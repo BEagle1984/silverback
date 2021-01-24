@@ -156,7 +156,7 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                 });
 }
 ```
-# [EndpointsConfigurator](#tab/resolvers-resolver)
+# [ProducerEndpointNameResolver](#tab/resolvers-resolver)
 ```csharp
 public class MyEndpointNameResolver : ProducerEndpointNameResolver<TestEventOne>
 {
