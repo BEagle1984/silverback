@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class BatchSequence
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -97,14 +97,14 @@
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html">SequenceBase</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a>&gt;</div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html">SequenceBase</a>&lt;<span class="xref">IInboundEnvelope</span>&gt;</div>
     <div class="level2"><a class="xref" href="Silverback.Messaging.Sequences.Sequence.html">Sequence</a></div>
     <div class="level3"><span class="xref">BatchSequence</span></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
     <div><a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a></div>
-    <div><span class="xref">System.IDisposable</span></div>
+    <div><span class="xref">IDisposable</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -163,10 +163,10 @@
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_CreateStream__1">SequenceBase&lt;IInboundEnvelope&gt;.CreateStream&lt;TMessage&gt;()</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_AddAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_System_Boolean_">SequenceBase&lt;IInboundEnvelope&gt;.AddAsync(IRawInboundEnvelope, ISequence, Boolean)</a>
+      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_AddAsync_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_System_Boolean_">SequenceBase&lt;IInboundEnvelope&gt;.AddAsync(IRawInboundEnvelope, ISequence, Boolean)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_AbortAsync_Silverback_Messaging_Sequences_SequenceAbortReason_System_Exception_">SequenceBase&lt;IInboundEnvelope&gt;.AbortAsync(SequenceAbortReason, Exception)</a>
+      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_AbortAsync_Silverback_Messaging_Sequences_SequenceAbortReason_System_Nullable_Exception__">SequenceBase&lt;IInboundEnvelope&gt;.AbortAsync(SequenceAbortReason, Nullable&lt;Exception&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_GetBrokerMessageIdentifiers">SequenceBase&lt;IInboundEnvelope&gt;.GetBrokerMessageIdentifiers()</a>
@@ -181,16 +181,22 @@
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_IsLastMessage__0_">SequenceBase&lt;IInboundEnvelope&gt;.IsLastMessage(IInboundEnvelope)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_CompleteAsync_System_Threading_CancellationToken_">SequenceBase&lt;IInboundEnvelope&gt;.CompleteAsync(CancellationToken)</a>
+      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_CompleteAsync_CancellationToken_">SequenceBase&lt;IInboundEnvelope&gt;.CompleteAsync(CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_Dispose_System_Boolean_">SequenceBase&lt;IInboundEnvelope&gt;.Dispose(Boolean)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -201,30 +207,19 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Sequences.Batch.html">Silverback.Messaging.Sequences.Batch</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Sequences_Batch_BatchSequence_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class BatchSequence : Sequence, ISequenceImplementation, ISequence, IDisposable</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Batch_BatchSequence__ctor_System_String_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Batch.BatchSequence.%23ctor(System.String%2CSilverback.Messaging.Broker.Behaviors.ConsumerPipelineContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/Batch/BatchSequence.cs/#L27">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_Batch_BatchSequence__ctor_" data-uid="Silverback.Messaging.Sequences.Batch.BatchSequence.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Sequences_Batch_BatchSequence__ctor_System_String_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_" data-uid="Silverback.Messaging.Sequences.Batch.BatchSequence.#ctor(System.String,Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext)">BatchSequence(String, ConsumerPipelineContext)</h4>
+  <h4 id="Silverback_Messaging_Sequences_Batch_BatchSequence__ctor_System_String_ConsumerPipelineContext_" data-uid="Silverback.Messaging.Sequences.Batch.BatchSequence.#ctor(System.String,ConsumerPipelineContext)">BatchSequence(String, ConsumerPipelineContext)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -249,9 +244,9 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></td>
+        <td><span class="xref">ConsumerPipelineContext</span></td>
         <td><span class="parametername">context</span></td>
-        <td><p>The current <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a>, assuming that it will be the one from which the
+        <td><p>The current <see cref="!:ConsumerPipelineContext"></see>, assuming that it will be the one from which the
 sequence gets published to the internal bus.</p>
 </td>
       </tr>
@@ -259,13 +254,8 @@ sequence gets published to the internal bus.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Batch_BatchSequence_OnTimeoutElapsedAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Batch.BatchSequence.OnTimeoutElapsedAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/Batch/BatchSequence.cs/#L46">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_Batch_BatchSequence_OnTimeoutElapsedAsync_" data-uid="Silverback.Messaging.Sequences.Batch.BatchSequence.OnTimeoutElapsedAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_Batch_BatchSequence_OnTimeoutElapsedAsync" data-uid="Silverback.Messaging.Sequences.Batch.BatchSequence.OnTimeoutElapsedAsync">OnTimeoutElapsedAsync()</h4>
   <div class="markdown level1 summary"><p>Called when the timout is elapsed. In this special case the sequence is completed instead of aborted.</p>
@@ -285,20 +275,20 @@ sequence gets published to the internal bus.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> representing the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">Silverback.Messaging.Sequences.SequenceBase&lt;Silverback.Messaging.Messages.IInboundEnvelope&gt;.OnTimeoutElapsedAsync()</span></div>
+  <div><span class="xref">Silverback.Messaging.Sequences.SequenceBase&lt;IInboundEnvelope&gt;.OnTimeoutElapsedAsync()</span></div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a>
   </div>
   <div>
-      <span class="xref">System.IDisposable</span>
+      <span class="xref">IDisposable</span>
   </div>
 </article>
           </div>
@@ -307,12 +297,6 @@ sequence gets published to the internal bus.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Batch_BatchSequence.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Batch.BatchSequence%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/Batch/BatchSequence.cs/#L15" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

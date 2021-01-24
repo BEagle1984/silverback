@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface ILogLevelDictionary
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,41 +90,14 @@
   
   <h1 id="Silverback_Diagnostics_ILogLevelDictionary" data-uid="Silverback.Diagnostics.ILogLevelDictionary" class="text-break">Interface ILogLevelDictionary
   </h1>
-  <div class="markdown level0 summary"><p>Maps <span class="xref">Microsoft.Extensions.Logging.EventId</span>s to the <span class="xref">Microsoft.Extensions.Logging.LogLevel</span> that should be used for it.</p>
+  <div class="markdown level0 summary"><p>Maps <see cref="!:EventId"></see>s to the <see cref="!:LogLevel"></see> that should be used for it.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Collections.Generic.IReadOnlyDictionary&lt;Microsoft.Extensions.Logging.EventId, System.Func&lt;System.Exception, Microsoft.Extensions.Logging.LogLevel, System.Lazy&lt;System.String&gt;, Microsoft.Extensions.Logging.LogLevel&gt;&gt;.ContainsKey(Microsoft.Extensions.Logging.EventId)</span>
-    </div>
-    <div>
-      <span class="xref">System.Collections.Generic.IReadOnlyDictionary&lt;Microsoft.Extensions.Logging.EventId, System.Func&lt;System.Exception, Microsoft.Extensions.Logging.LogLevel, System.Lazy&lt;System.String&gt;, Microsoft.Extensions.Logging.LogLevel&gt;&gt;.TryGetValue(Microsoft.Extensions.Logging.EventId, System.Func&lt;System.Exception, Microsoft.Extensions.Logging.LogLevel, System.Lazy&lt;System.String&gt;, Microsoft.Extensions.Logging.LogLevel&gt;)</span>
-    </div>
-    <div>
-      <span class="xref">System.Collections.Generic.IReadOnlyDictionary&lt;Microsoft.Extensions.Logging.EventId, System.Func&lt;System.Exception, Microsoft.Extensions.Logging.LogLevel, System.Lazy&lt;System.String&gt;, Microsoft.Extensions.Logging.LogLevel&gt;&gt;.Item[Microsoft.Extensions.Logging.EventId]</span>
-    </div>
-    <div>
-      <span class="xref">System.Collections.Generic.IReadOnlyDictionary&lt;Microsoft.Extensions.Logging.EventId, System.Func&lt;System.Exception, Microsoft.Extensions.Logging.LogLevel, System.Lazy&lt;System.String&gt;, Microsoft.Extensions.Logging.LogLevel&gt;&gt;.Keys</span>
-    </div>
-    <div>
-      <span class="xref">System.Collections.Generic.IReadOnlyDictionary&lt;Microsoft.Extensions.Logging.EventId, System.Func&lt;System.Exception, Microsoft.Extensions.Logging.LogLevel, System.Lazy&lt;System.String&gt;, Microsoft.Extensions.Logging.LogLevel&gt;&gt;.Values</span>
-    </div>
-    <div>
-      <span class="xref">System.Collections.Generic.IReadOnlyCollection&lt;System.Collections.Generic.KeyValuePair&lt;Microsoft.Extensions.Logging.EventId, System.Func&lt;System.Exception, Microsoft.Extensions.Logging.LogLevel, System.Lazy&lt;System.String&gt;, Microsoft.Extensions.Logging.LogLevel&gt;&gt;&gt;.Count</span>
-    </div>
-    <div>
-      <span class="xref">System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;Microsoft.Extensions.Logging.EventId, System.Func&lt;System.Exception, Microsoft.Extensions.Logging.LogLevel, System.Lazy&lt;System.String&gt;, Microsoft.Extensions.Logging.LogLevel&gt;&gt;&gt;.GetEnumerator()</span>
-    </div>
-    <div>
-      <span class="xref">System.Collections.IEnumerable.GetEnumerator()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Diagnostics.html">Silverback.Diagnostics</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Core.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Diagnostics_ILogLevelDictionary_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface ILogLevelDictionary : IReadOnlyDictionary&lt;EventId, Func&lt;Exception, LogLevel, Lazy&lt;string&gt;, LogLevel&gt;&gt;, IReadOnlyCollection&lt;KeyValuePair&lt;EventId, Func&lt;Exception, LogLevel, Lazy&lt;string&gt;, LogLevel&gt;&gt;&gt;, IEnumerable&lt;KeyValuePair&lt;EventId, Func&lt;Exception, LogLevel, Lazy&lt;string&gt;, LogLevel&gt;&gt;&gt;, IEnumerable</code></pre>
+    <pre><code class="lang-csharp hljs">public interface ILogLevelDictionary : IReadOnlyDictionary&lt;EventId, Func&lt;Exception, LogLevel, Lazy&lt;string&gt;, LogLevel&gt;&gt;</code></pre>
   </div>
 </article>
           </div>
@@ -133,12 +106,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_ILogLevelDictionary.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.ILogLevelDictionary%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Diagnostics/ILogLevelDictionary.cs/#L13" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

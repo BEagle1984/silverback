@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class MqttConsumerEndpoint
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -104,7 +104,7 @@
     <h5>Implements</h5>
     <div><a class="xref" href="Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a></div>
     <div><a class="xref" href="Silverback.Messaging.IEndpoint.html">IEndpoint</a></div>
-    <div><span class="xref">System.IEquatable</span>&lt;<a class="xref" href="Silverback.Messaging.MqttConsumerEndpoint.html">MqttConsumerEndpoint</a>&gt;</div>
+    <div><span class="xref">IEquatable</span>&lt;<a class="xref" href="Silverback.Messaging.MqttConsumerEndpoint.html">MqttConsumerEndpoint</a>&gt;</div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -139,7 +139,13 @@
       <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_BaseEquals_Silverback_Messaging_Endpoint_">Endpoint.BaseEquals(Endpoint)</a>
     </div>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetType()</span>
@@ -147,28 +153,17 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.html">Silverback.Messaging</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_MqttConsumerEndpoint_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public sealed class MqttConsumerEndpoint : ConsumerEndpoint, IConsumerEndpoint, IEndpoint, IEquatable&lt;MqttConsumerEndpoint&gt;</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttConsumerEndpoint__ctor_System_String___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttConsumerEndpoint.%23ctor(System.String%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/MqttConsumerEndpoint.cs/#L24">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_MqttConsumerEndpoint__ctor_" data-uid="Silverback.Messaging.MqttConsumerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_MqttConsumerEndpoint__ctor_System_String___" data-uid="Silverback.Messaging.MqttConsumerEndpoint.#ctor(System.String[])">MqttConsumerEndpoint(String[])</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.MqttConsumerEndpoint.html">MqttConsumerEndpoint</a> class.</p>
@@ -198,17 +193,12 @@
   </table>
   <h3 id="properties">Properties
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttConsumerEndpoint_Configuration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttConsumerEndpoint.Configuration%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/MqttConsumerEndpoint.cs/#L44">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_MqttConsumerEndpoint_Configuration_" data-uid="Silverback.Messaging.MqttConsumerEndpoint.Configuration*"></a>
   <h4 id="Silverback_Messaging_MqttConsumerEndpoint_Configuration" data-uid="Silverback.Messaging.MqttConsumerEndpoint.Configuration">Configuration</h4>
   <div class="markdown level1 summary"><p>Gets or sets the MQTT client configuration. This is actually a wrapper around the
-<span class="xref">MQTTnet.Client.Options.MqttClientOptions</span> from the MQTTnet library.</p>
+<see cref="!:MqttClientOptions"></see> from the MQTTnet library.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -225,18 +215,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html">MqttClientConfig</a></td>
+        <td><span class="xref">MqttClientConfig</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttConsumerEndpoint_QualityOfServiceLevel.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttConsumerEndpoint.QualityOfServiceLevel%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/MqttConsumerEndpoint.cs/#L49">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_MqttConsumerEndpoint_QualityOfServiceLevel_" data-uid="Silverback.Messaging.MqttConsumerEndpoint.QualityOfServiceLevel*"></a>
   <h4 id="Silverback_Messaging_MqttConsumerEndpoint_QualityOfServiceLevel" data-uid="Silverback.Messaging.MqttConsumerEndpoint.QualityOfServiceLevel">QualityOfServiceLevel</h4>
   <div class="markdown level1 summary"><p>Gets or sets the quality of service level (at most once, at least once or exactly once).</p>
@@ -256,18 +241,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MQTTnet.Protocol.MqttQualityOfServiceLevel</span></td>
+        <td><span class="xref">MqttQualityOfServiceLevel</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttConsumerEndpoint_Topics.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttConsumerEndpoint.Topics%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/MqttConsumerEndpoint.cs/#L38">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_MqttConsumerEndpoint_Topics_" data-uid="Silverback.Messaging.MqttConsumerEndpoint.Topics*"></a>
   <h4 id="Silverback_Messaging_MqttConsumerEndpoint_Topics" data-uid="Silverback.Messaging.MqttConsumerEndpoint.Topics">Topics</h4>
   <div class="markdown level1 summary"><p>Gets the name of the topics or the topic filter strings.</p>
@@ -287,20 +267,15 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttConsumerEndpoint_Equals_Silverback_Messaging_MqttConsumerEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttConsumerEndpoint.Equals(Silverback.Messaging.MqttConsumerEndpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/MqttConsumerEndpoint.cs/#L66">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_MqttConsumerEndpoint_Equals_" data-uid="Silverback.Messaging.MqttConsumerEndpoint.Equals*"></a>
   <h4 id="Silverback_Messaging_MqttConsumerEndpoint_Equals_Silverback_Messaging_MqttConsumerEndpoint_" data-uid="Silverback.Messaging.MqttConsumerEndpoint.Equals(Silverback.Messaging.MqttConsumerEndpoint)">Equals(MqttConsumerEndpoint)</h4>
   <div class="markdown level1 summary"></div>
@@ -341,13 +316,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttConsumerEndpoint_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttConsumerEndpoint.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/MqttConsumerEndpoint.cs/#L80">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_MqttConsumerEndpoint_Equals_" data-uid="Silverback.Messaging.MqttConsumerEndpoint.Equals*"></a>
   <h4 id="Silverback_Messaging_MqttConsumerEndpoint_Equals_System_Object_" data-uid="Silverback.Messaging.MqttConsumerEndpoint.Equals(System.Object)">Equals(Object)</h4>
   <div class="markdown level1 summary"></div>
@@ -390,13 +360,8 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.Object.Equals(System.Object)</span></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttConsumerEndpoint_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttConsumerEndpoint.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/MqttConsumerEndpoint.cs/#L95">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_MqttConsumerEndpoint_GetHashCode_" data-uid="Silverback.Messaging.MqttConsumerEndpoint.GetHashCode*"></a>
   <h4 id="Silverback_Messaging_MqttConsumerEndpoint_GetHashCode" data-uid="Silverback.Messaging.MqttConsumerEndpoint.GetHashCode">GetHashCode()</h4>
   <div class="markdown level1 summary"></div>
@@ -422,13 +387,8 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.Object.GetHashCode()</span></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttConsumerEndpoint_GetUniqueConsumerGroupName.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttConsumerEndpoint.GetUniqueConsumerGroupName%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/MqttConsumerEndpoint.cs/#L63">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_MqttConsumerEndpoint_GetUniqueConsumerGroupName_" data-uid="Silverback.Messaging.MqttConsumerEndpoint.GetUniqueConsumerGroupName*"></a>
   <h4 id="Silverback_Messaging_MqttConsumerEndpoint_GetUniqueConsumerGroupName" data-uid="Silverback.Messaging.MqttConsumerEndpoint.GetUniqueConsumerGroupName">GetUniqueConsumerGroupName()</h4>
   <div class="markdown level1 summary"><p>Gets a unique name for the consumer group (e.g. Kafka's consumer group id). This value (joint with
@@ -462,13 +422,8 @@ the endpoint name) will be used for example to ensure the exactly-once delivery.
 consumer groups within the same process and/or using the same database to store the information
 needed to ensure the exactly-once delivery.</p>
 </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttConsumerEndpoint_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttConsumerEndpoint.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/MqttConsumerEndpoint.cs/#L52">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_MqttConsumerEndpoint_Validate_" data-uid="Silverback.Messaging.MqttConsumerEndpoint.Validate*"></a>
   <h4 id="Silverback_Messaging_MqttConsumerEndpoint_Validate" data-uid="Silverback.Messaging.MqttConsumerEndpoint.Validate">Validate()</h4>
   <div class="markdown level1 summary"><p>Validates the endpoint configuration and throws an <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> if
@@ -489,7 +444,7 @@ not valid.</p>
       <a class="xref" href="Silverback.Messaging.IEndpoint.html">IEndpoint</a>
   </div>
   <div>
-      <span class="xref">System.IEquatable&lt;T&gt;</span>
+      <span class="xref">IEquatable&lt;&gt;</span>
   </div>
 </article>
           </div>
@@ -498,12 +453,6 @@ not valid.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttConsumerEndpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttConsumerEndpoint%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/MqttConsumerEndpoint.cs/#L16" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

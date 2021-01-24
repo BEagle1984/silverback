@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class OutboxWorker
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -105,10 +105,16 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -119,30 +125,19 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.html">Silverback.Messaging.Outbound.TransactionalOutbox</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class OutboxWorker : IOutboxWorker</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__ctor_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Silverback_Messaging_Broker_IBrokerCollection_Silverback_Messaging_Outbound_Routing_IOutboundRoutingConfiguration_Silverback_Diagnostics_ISilverbackIntegrationLogger_Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__System_Boolean_System_Int32_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.%23ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory%2CSilverback.Messaging.Broker.IBrokerCollection%2CSilverback.Messaging.Outbound.Routing.IOutboundRoutingConfiguration%2CSilverback.Diagnostics.ISilverbackIntegrationLogger%7BSilverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker%7D%2CSystem.Boolean%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/OutboxWorker.cs/#L60">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__ctor_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__ctor_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Silverback_Messaging_Broker_IBrokerCollection_Silverback_Messaging_Outbound_Routing_IOutboundRoutingConfiguration_Silverback_Diagnostics_ISilverbackIntegrationLogger_Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__System_Boolean_System_Int32_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.#ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Silverback.Messaging.Broker.IBrokerCollection,Silverback.Messaging.Outbound.Routing.IOutboundRoutingConfiguration,Silverback.Diagnostics.ISilverbackIntegrationLogger{Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker},System.Boolean,System.Int32)">OutboxWorker(IServiceScopeFactory, IBrokerCollection, IOutboundRoutingConfiguration, ISilverbackIntegrationLogger&lt;OutboxWorker&gt;, Boolean, Int32)</h4>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__ctor_IServiceScopeFactory_IBrokerCollection_IOutboundRoutingConfiguration_ISilverbackIntegrationLogger_Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__System_Boolean_System_Int32_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.#ctor(IServiceScopeFactory,IBrokerCollection,IOutboundRoutingConfiguration,ISilverbackIntegrationLogger{Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker},System.Boolean,System.Int32)">OutboxWorker(IServiceScopeFactory, IBrokerCollection, IOutboundRoutingConfiguration, ISilverbackIntegrationLogger&lt;OutboxWorker&gt;, Boolean, Int32)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -161,27 +156,27 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Microsoft.Extensions.DependencyInjection.IServiceScopeFactory</span></td>
+        <td><span class="xref">IServiceScopeFactory</span></td>
         <td><span class="parametername">serviceScopeFactory</span></td>
-        <td><p>The <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceScopeFactory</span> used to resolve the scoped types.</p>
+        <td><p>The <see cref="!:IServiceScopeFactory"></see> used to resolve the scoped types.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.IBrokerCollection.html">IBrokerCollection</a></td>
+        <td><span class="xref">IBrokerCollection</span></td>
         <td><span class="parametername">brokerCollection</span></td>
         <td><p>The collection containing the available brokers.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Outbound.Routing.IOutboundRoutingConfiguration.html">IOutboundRoutingConfiguration</a></td>
+        <td><span class="xref">IOutboundRoutingConfiguration</span></td>
         <td><span class="parametername">routingConfiguration</span></td>
         <td><p>The configured outbound routes.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.ISilverbackIntegrationLogger-1.html">ISilverbackIntegrationLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a>&gt;</td>
+        <td><span class="xref">ISilverbackIntegrationLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackIntegrationLogger.html">ISilverbackIntegrationLogger</a>.</p>
+        <td><p>The <see cref="!:ISilverbackIntegrationLogger"></see>.</p>
 </td>
       </tr>
       <tr>
@@ -203,15 +198,10 @@ produced.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker_ProcessQueueAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.ProcessQueueAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/OutboxWorker.cs/#L77">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker_ProcessQueueAsync_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.ProcessQueueAsync*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker_ProcessQueueAsync_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.ProcessQueueAsync(System.Threading.CancellationToken)">ProcessQueueAsync(CancellationToken)</h4>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker_ProcessQueueAsync_CancellationToken_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.ProcessQueueAsync(CancellationToken)">ProcessQueueAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Processes the outbox.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -230,9 +220,9 @@ produced.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">stoppingToken</span></td>
-        <td><p>A <span class="xref">System.Threading.CancellationToken</span> to observe while waiting for the task to complete.</p>
+        <td><p>A <see cref="!:CancellationToken"></see> to observe while waiting for the task to complete.</p>
 </td>
       </tr>
     </tbody>
@@ -247,27 +237,22 @@ produced.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that represents the long running operations.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> that represents the long running operations.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker_ProduceMessageAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__Silverback_Messaging_IProducerEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.ProduceMessageAsync(System.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSilverback.Messaging.IProducerEndpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/OutboxWorker.cs/#L109">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker_ProduceMessageAsync_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.ProduceMessageAsync*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker_ProduceMessageAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__Silverback_Messaging_IProducerEndpoint_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.ProduceMessageAsync(System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},Silverback.Messaging.IProducerEndpoint)">ProduceMessageAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, IProducerEndpoint)</h4>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker_ProduceMessageAsync_System_Byte___System_Nullable_IReadOnlyCollection_MessageHeader___Silverback_Messaging_IProducerEndpoint_System_String_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.ProduceMessageAsync(System.Byte[],System.Nullable{IReadOnlyCollection{MessageHeader}},Silverback.Messaging.IProducerEndpoint,System.String)">ProduceMessageAsync(Byte[], Nullable&lt;IReadOnlyCollection&lt;MessageHeader&gt;&gt;, IProducerEndpoint, String)</h4>
   <div class="markdown level1 summary"><p>Gets the producer for the specified endpoint and produces the specified message.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected virtual Task ProduceMessageAsync(byte[] content, IReadOnlyCollection&lt;MessageHeader&gt; headers, IProducerEndpoint endpoint)</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task ProduceMessageAsync(byte[] content, IReadOnlyCollection&lt;MessageHeader&gt;? headers, IProducerEndpoint endpoint, string actualEndpointName)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -286,7 +271,7 @@ produced.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">MessageHeader</span>&gt;&gt;</td>
         <td><span class="parametername">headers</span></td>
         <td><p>The collection of message headers.</p>
 </td>
@@ -295,6 +280,12 @@ produced.</p>
         <td><a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a></td>
         <td><span class="parametername">endpoint</span></td>
         <td><p>The endpoint to produce to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">actualEndpointName</span></td>
+        <td><p>The actual endpoint name that was resolved for the message.</p>
 </td>
       </tr>
     </tbody>
@@ -309,8 +300,8 @@ produced.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> representing the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
@@ -326,12 +317,6 @@ produced.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/OutboxWorker.cs/#L22" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

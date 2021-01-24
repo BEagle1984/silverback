@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class RecurringDistributedBackgroundService
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -97,15 +97,8 @@ intervals. The distributed lock mechanism prevents concurrent executions.</p>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">Microsoft.Extensions.Hosting.BackgroundService</span></div>
-    <div class="level2"><a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a></div>
-    <div class="level3"><span class="xref">RecurringDistributedBackgroundService</span></div>
-      <div class="level4"><a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.html">OutboxWorkerService</a></div>
-  </div>
-  <div classs="implements">
-    <h5>Implements</h5>
-    <div><span class="xref">Microsoft.Extensions.Hosting.IHostedService</span></div>
-    <div><span class="xref">System.IDisposable</span></div>
+    <div class="level1"><a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a></div>
+    <div class="level2"><span class="xref">RecurringDistributedBackgroundService</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -113,56 +106,21 @@ intervals. The distributed lock mechanism prevents concurrent executions.</p>
       <a class="xref" href="Silverback.Background.DistributedBackgroundService.html#Silverback_Background_DistributedBackgroundService_Lock">DistributedBackgroundService.Lock</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Background.DistributedBackgroundService.html#Silverback_Background_DistributedBackgroundService_ExecuteAsync_System_Threading_CancellationToken_">DistributedBackgroundService.ExecuteAsync(CancellationToken)</a>
-    </div>
-    <div>
-      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.StartAsync(System.Threading.CancellationToken)</span>
-    </div>
-    <div>
-      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.StopAsync(System.Threading.CancellationToken)</span>
-    </div>
-    <div>
-      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.Dispose()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
+      <a class="xref" href="Silverback.Background.DistributedBackgroundService.html#Silverback_Background_DistributedBackgroundService_ExecuteAsync_CancellationToken_">DistributedBackgroundService.ExecuteAsync(CancellationToken)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Background.html">Silverback.Background</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Core.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Background_RecurringDistributedBackgroundService_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class RecurringDistributedBackgroundService : DistributedBackgroundService, IHostedService, IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class RecurringDistributedBackgroundService : DistributedBackgroundService</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_RecurringDistributedBackgroundService__ctor_System_TimeSpan_Silverback_Background_DistributedLockSettings_Silverback_Background_IDistributedLockManager_Silverback_Diagnostics_ISilverbackLogger_Silverback_Background_RecurringDistributedBackgroundService__.md&amp;value=---%0Auid%3A%20Silverback.Background.RecurringDistributedBackgroundService.%23ctor(System.TimeSpan%2CSilverback.Background.DistributedLockSettings%2CSilverback.Background.IDistributedLockManager%2CSilverback.Diagnostics.ISilverbackLogger%7BSilverback.Background.RecurringDistributedBackgroundService%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/RecurringDistributedBackgroundService.cs/#L61">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Background_RecurringDistributedBackgroundService__ctor_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.#ctor*"></a>
-  <h4 id="Silverback_Background_RecurringDistributedBackgroundService__ctor_System_TimeSpan_Silverback_Background_DistributedLockSettings_Silverback_Background_IDistributedLockManager_Silverback_Diagnostics_ISilverbackLogger_Silverback_Background_RecurringDistributedBackgroundService__" data-uid="Silverback.Background.RecurringDistributedBackgroundService.#ctor(System.TimeSpan,Silverback.Background.DistributedLockSettings,Silverback.Background.IDistributedLockManager,Silverback.Diagnostics.ISilverbackLogger{Silverback.Background.RecurringDistributedBackgroundService})">RecurringDistributedBackgroundService(TimeSpan, DistributedLockSettings, IDistributedLockManager, ISilverbackLogger&lt;RecurringDistributedBackgroundService&gt;)</h4>
+  <h4 id="Silverback_Background_RecurringDistributedBackgroundService__ctor_TimeSpan_Silverback_Background_DistributedLockSettings_Silverback_Background_IDistributedLockManager_ISilverbackLogger_Silverback_Background_RecurringDistributedBackgroundService__" data-uid="Silverback.Background.RecurringDistributedBackgroundService.#ctor(TimeSpan,Silverback.Background.DistributedLockSettings,Silverback.Background.IDistributedLockManager,ISilverbackLogger{Silverback.Background.RecurringDistributedBackgroundService})">RecurringDistributedBackgroundService(TimeSpan, DistributedLockSettings, IDistributedLockManager, ISilverbackLogger&lt;RecurringDistributedBackgroundService&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -181,9 +139,9 @@ intervals. The distributed lock mechanism prevents concurrent executions.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="xref">TimeSpan</span></td>
         <td><span class="parametername">interval</span></td>
-        <td><p>The <span class="xref">System.TimeSpan</span> interval between each execution.</p>
+        <td><p>The <see cref="!:TimeSpan"></see> interval between each execution.</p>
 </td>
       </tr>
       <tr>
@@ -199,22 +157,17 @@ intervals. The distributed lock mechanism prevents concurrent executions.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.ISilverbackLogger-1.html">ISilverbackLogger</a>&lt;<a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a>&gt;</td>
+        <td><span class="xref">ISilverbackLogger</span>&lt;<a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
+        <td><p>The <see cref="!:ISilverbackLogger"></see>.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_RecurringDistributedBackgroundService__ctor_System_TimeSpan_Silverback_Background_IDistributedLockManager_Silverback_Diagnostics_ISilverbackLogger_Silverback_Background_RecurringDistributedBackgroundService__.md&amp;value=---%0Auid%3A%20Silverback.Background.RecurringDistributedBackgroundService.%23ctor(System.TimeSpan%2CSilverback.Background.IDistributedLockManager%2CSilverback.Diagnostics.ISilverbackLogger%7BSilverback.Background.RecurringDistributedBackgroundService%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/RecurringDistributedBackgroundService.cs/#L38">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Background_RecurringDistributedBackgroundService__ctor_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.#ctor*"></a>
-  <h4 id="Silverback_Background_RecurringDistributedBackgroundService__ctor_System_TimeSpan_Silverback_Background_IDistributedLockManager_Silverback_Diagnostics_ISilverbackLogger_Silverback_Background_RecurringDistributedBackgroundService__" data-uid="Silverback.Background.RecurringDistributedBackgroundService.#ctor(System.TimeSpan,Silverback.Background.IDistributedLockManager,Silverback.Diagnostics.ISilverbackLogger{Silverback.Background.RecurringDistributedBackgroundService})">RecurringDistributedBackgroundService(TimeSpan, IDistributedLockManager, ISilverbackLogger&lt;RecurringDistributedBackgroundService&gt;)</h4>
+  <h4 id="Silverback_Background_RecurringDistributedBackgroundService__ctor_TimeSpan_Silverback_Background_IDistributedLockManager_ISilverbackLogger_Silverback_Background_RecurringDistributedBackgroundService__" data-uid="Silverback.Background.RecurringDistributedBackgroundService.#ctor(TimeSpan,Silverback.Background.IDistributedLockManager,ISilverbackLogger{Silverback.Background.RecurringDistributedBackgroundService})">RecurringDistributedBackgroundService(TimeSpan, IDistributedLockManager, ISilverbackLogger&lt;RecurringDistributedBackgroundService&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a> class using
 the default settings for the lock mechanism.</p>
 </div>
@@ -234,7 +187,7 @@ the default settings for the lock mechanism.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="xref">TimeSpan</span></td>
         <td><span class="parametername">interval</span></td>
         <td><p>The interval between each execution.</p>
 </td>
@@ -246,25 +199,20 @@ the default settings for the lock mechanism.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.ISilverbackLogger-1.html">ISilverbackLogger</a>&lt;<a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a>&gt;</td>
+        <td><span class="xref">ISilverbackLogger</span>&lt;<a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
+        <td><p>The <see cref="!:ISilverbackLogger"></see>.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_RecurringDistributedBackgroundService_ExecuteLockedAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Background.RecurringDistributedBackgroundService.ExecuteLockedAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/RecurringDistributedBackgroundService.cs/#L83">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Background_RecurringDistributedBackgroundService_ExecuteLockedAsync_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.ExecuteLockedAsync*"></a>
-  <h4 id="Silverback_Background_RecurringDistributedBackgroundService_ExecuteLockedAsync_System_Threading_CancellationToken_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.ExecuteLockedAsync(System.Threading.CancellationToken)">ExecuteLockedAsync(CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>This method is called when the <span class="xref">Microsoft.Extensions.Hosting.IHostedService</span> starts and the lock is acquired. The
+  <h4 id="Silverback_Background_RecurringDistributedBackgroundService_ExecuteLockedAsync_CancellationToken_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.ExecuteLockedAsync(CancellationToken)">ExecuteLockedAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>This method is called when the <see cref="!:IHostedService"></see> starts and the lock is acquired. The
 implementation should return a task that represents the lifetime of the long running operation(s)
 being performed.</p>
 </div>
@@ -284,9 +232,9 @@ being performed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">stoppingToken</span></td>
-        <td><p>A <span class="xref">System.Threading.CancellationToken</span> to observe while waiting for the task to complete.</p>
+        <td><p>A <see cref="!:CancellationToken"></see> to observe while waiting for the task to complete.</p>
 </td>
       </tr>
     </tbody>
@@ -301,24 +249,19 @@ being performed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that represents the long running operations.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> that represents the long running operations.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Silverback.Background.DistributedBackgroundService.html#Silverback_Background_DistributedBackgroundService_ExecuteLockedAsync_System_Threading_CancellationToken_">DistributedBackgroundService.ExecuteLockedAsync(CancellationToken)</a></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_RecurringDistributedBackgroundService_ExecuteRecurringAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Background.RecurringDistributedBackgroundService.ExecuteRecurringAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/RecurringDistributedBackgroundService.cs/#L133">View source</a>
-  </span>
+  <div><a class="xref" href="Silverback.Background.DistributedBackgroundService.html#Silverback_Background_DistributedBackgroundService_ExecuteLockedAsync_CancellationToken_">DistributedBackgroundService.ExecuteLockedAsync(CancellationToken)</a></div>
+  
+  
   <a id="Silverback_Background_RecurringDistributedBackgroundService_ExecuteRecurringAsync_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.ExecuteRecurringAsync*"></a>
-  <h4 id="Silverback_Background_RecurringDistributedBackgroundService_ExecuteRecurringAsync_System_Threading_CancellationToken_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.ExecuteRecurringAsync(System.Threading.CancellationToken)">ExecuteRecurringAsync(CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>This method is called at regular intervals after the <span class="xref">Microsoft.Extensions.Hosting.IHostedService</span> starts and the
+  <h4 id="Silverback_Background_RecurringDistributedBackgroundService_ExecuteRecurringAsync_CancellationToken_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.ExecuteRecurringAsync(CancellationToken)">ExecuteRecurringAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>This method is called at regular intervals after the <see cref="!:IHostedService"></see> starts and the
 lock is acquired. The implementation should return a task that represents the lifetime of the long
 running operation(s) being performed.</p>
 </div>
@@ -338,9 +281,9 @@ running operation(s) being performed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">stoppingToken</span></td>
-        <td><p>A <span class="xref">System.Threading.CancellationToken</span> to observe while waiting for the task to complete.</p>
+        <td><p>A <see cref="!:CancellationToken"></see> to observe while waiting for the task to complete.</p>
 </td>
       </tr>
     </tbody>
@@ -355,19 +298,14 @@ running operation(s) being performed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that represents the long running operations.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> that represents the long running operations.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_RecurringDistributedBackgroundService_Pause.md&amp;value=---%0Auid%3A%20Silverback.Background.RecurringDistributedBackgroundService.Pause%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/RecurringDistributedBackgroundService.cs/#L75">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Background_RecurringDistributedBackgroundService_Pause_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.Pause*"></a>
   <h4 id="Silverback_Background_RecurringDistributedBackgroundService_Pause" data-uid="Silverback.Background.RecurringDistributedBackgroundService.Pause">Pause()</h4>
   <div class="markdown level1 summary"><p>Pauses the execution of the recurring task.</p>
@@ -377,13 +315,8 @@ running operation(s) being performed.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Pause()</code></pre>
   </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_RecurringDistributedBackgroundService_Resume.md&amp;value=---%0Auid%3A%20Silverback.Background.RecurringDistributedBackgroundService.Resume%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/RecurringDistributedBackgroundService.cs/#L80">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Background_RecurringDistributedBackgroundService_Resume_" data-uid="Silverback.Background.RecurringDistributedBackgroundService.Resume*"></a>
   <h4 id="Silverback_Background_RecurringDistributedBackgroundService_Resume" data-uid="Silverback.Background.RecurringDistributedBackgroundService.Resume">Resume()</h4>
   <div class="markdown level1 summary"><p>Resumes the execution of the previously paused recurring task.</p>
@@ -393,13 +326,6 @@ running operation(s) being performed.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public void Resume()</code></pre>
   </div>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <span class="xref">Microsoft.Extensions.Hosting.IHostedService</span>
-  </div>
-  <div>
-      <span class="xref">System.IDisposable</span>
-  </div>
 </article>
           </div>
           
@@ -407,12 +333,6 @@ running operation(s) being performed.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_RecurringDistributedBackgroundService.md&amp;value=---%0Auid%3A%20Silverback.Background.RecurringDistributedBackgroundService%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/RecurringDistributedBackgroundService.cs/#L17" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

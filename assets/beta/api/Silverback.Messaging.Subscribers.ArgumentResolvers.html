@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Silverback.Messaging.Subscribers.ArgumentResolvers
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -96,14 +96,14 @@
   </h3>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.DefaultAdditionalArgumentResolver.html">DefaultAdditionalArgumentResolver</a></h4>
       <section><p>Simply tries to resolve the additional parameters of the subscribed methods using the
-<span class="xref">System.IServiceProvider</span>.</p>
+<see cref="!:IServiceProvider"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.html">EnumerableMessageArgumentResolver</a></h4>
-      <section><p>Resolves the parameters declared as <span class="xref">System.Collections.Generic.IEnumerable&lt;T&gt;</span> where <code>T</code> is compatible with
+      <section><p>Resolves the parameters declared as <see cref="!:IEnumerable&lt;T>"></see> where <code>T</code> is compatible with
 the type of the message being published.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.ObservableMessageArgumentResolver.html">ObservableMessageArgumentResolver</a></h4>
-      <section><p>Resolves the parameters declared as <span class="xref">System.IObservable&lt;T&gt;</span> where <code>T</code> is compatible with
+      <section><p>Resolves the parameters declared as <see cref="!:IObservable&lt;T>"></see> where <code>T</code> is compatible with
 the type of the message being published.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.ObservableStreamMessageArgumentResolver.html">ObservableStreamMessageArgumentResolver</a></h4>
@@ -111,7 +111,7 @@ the type of the message being published.</p>
 <code>TMessage</code> is compatible with the type of the message being published.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.ReadOnlyCollectionMessageArgumentResolver.html">ReadOnlyCollectionMessageArgumentResolver</a></h4>
-      <section><p>Resolves the parameters declared as <span class="xref">System.Collections.Generic.IReadOnlyCollection&lt;T&gt;</span> where <code>T</code> is
+      <section><p>Resolves the parameters declared as <see cref="!:IReadOnlyCollection&lt;T>"></see> where <code>T</code> is
 compatible with the type of the message being published.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.SingleMessageArgumentResolver.html">SingleMessageArgumentResolver</a></h4>
@@ -119,7 +119,7 @@ compatible with the type of the message being published.</p>
 published.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.StreamEnumerableMessageArgumentResolver.html">StreamEnumerableMessageArgumentResolver</a></h4>
-      <section><p>Resolves the parameters declared as <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> where
+      <section><p>Resolves the parameters declared as <see cref="!:IMessageStreamEnumerable&lt;TMessage>"></see> where
 <code>TMessage</code> is compatible with the type of the message being published.</p>
 </section>
     <h3 id="interfaces">Interfaces
@@ -133,8 +133,8 @@ itself) of the subscribed methods.</p>
 <a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IAdditionalArgumentResolver.html">IAdditionalArgumentResolver</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IEnumerableMessageArgumentResolver.html">IEnumerableMessageArgumentResolver</a></h4>
-      <section><p>These resolvers are used to handle the messages collection parameter (<span class="xref">System.Collections.Generic.IEnumerable&lt;T&gt;</span>,
-<span class="xref">System.IObservable&lt;T&gt;</span>, etc.).</p>
+      <section><p>These resolvers are used to handle the messages collection parameter (<see cref="!:IEnumerable&lt;T>"></see>,
+<see cref="!:IObservable&lt;T>"></see>, etc.).</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.ILazyArgumentValue.html">ILazyArgumentValue</a></h4>
       <section><p>Represent a value for an argument that will be available in the future.</p>
@@ -149,10 +149,10 @@ enumerable or collection).</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IStreamEnumerableMessageArgumentResolver.html">IStreamEnumerableMessageArgumentResolver</a></h4>
       <section><p>These resolvers are used to handle the message streams such as
-<a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a>. The streams are basically handled as a single
+<see cref="!:IMessageStreamEnumerable&lt;TMessage>"></see>. The streams are basically handled as a single
 message by the publisher. The difference is that it is guaranteed that the subscribers are invoked
-from another thread, when published via <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Object_">PublishAsync(Object)</a>/
-<a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync__1_System_Object_">PublishAsync&lt;TResult&gt;(Object)</a>. This is done to avoid blocking the original
+from another thread, when published via <see cref="!:IPublisher.PublishAsync(object)"></see>/
+<see cref="!:IPublisher.PublishAsync&lt;TResult>(object)"></see>. This is done to avoid blocking the original
 thread waiting for the stream to complete.</p>
 </section>
 </article>

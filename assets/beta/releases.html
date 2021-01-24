@@ -8,7 +8,7 @@
     <title>Releases | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Releases | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-touch-icon.png">
@@ -79,7 +79,7 @@
             <article class="content wrap" id="_content" data-uid="releases">
 <h1 id="releases">Releases</h1>
 
-<h2 id="300-beta9"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.9">3.0.0-beta.9</a></h2>
+<h2 id="300-beta12"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.12">3.0.0-beta.12</a></h2>
 <h3 id="whats-new">What's new</h3>
 <ul>
 <li>Simplify configuration and reduce boiler plate (see <a class="xref" href="concepts/bus/subscribe.html">Subscribing</a> and <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)
@@ -107,6 +107,7 @@
 </li>
 <li>Add option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see <code>throwIfUnhandled</code> argument in the <a class="xref" href="api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> methods and <a class="xref" href="api/Silverback.Messaging.IConsumerEndpoint.html#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled">ThrowIfUnhandled</a> property in the <a class="xref" href="api/Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a>)</li>
 <li>Replace <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a> with <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a> to improve serialization and deserialization performance (the old serializers have been moved into the <a href="https://www.nuget.org/packages/Silverback.Integration.Newtonsoft">Silverback.Integration.Newtonsoft</a> package, see <a class="xref" href="concepts/broker/serialization.html">Serialization</a>)</li>
+<li>Improve outbound routing customization options with endpoint name resolvers (see <a class="xref" href="concepts/broker/outbound-routing.html">Outbound Messages Routing</a>)</li>
 <li>Add log levels configuration (see <a class="xref" href="concepts/logging.html">Logging</a>)</li>
 <li>Allow header names customization (see <a class="xref" href="concepts/broker/headers.html">Message Headers</a>)</li>
 <li>Add consumer status information and statistics (see <a class="xref" href="concepts/broker/connecting.html#consumer-management-api">Connecting to a Message Broker</a>)</li>
@@ -183,6 +184,7 @@
 <li>Replaced <em>IBroker.Connect</em> and <em>IBroker.Disconnect</em> with <a class="xref" href="api/Silverback.Messaging.Broker.IBroker.html#Silverback_Messaging_Broker_IBroker_ConnectAsync">IBroker.ConnectAsync</a> and <a class="xref" href="api/Silverback.Messaging.Broker.IBroker.html#Silverback_Messaging_Broker_IBroker_DisconnectAsync">IBroker.DisconnectAsync</a></li>
 <li>Removed all batch events (<em>BatchStartedEvent</em>, <em>BatchCompleteEvent</em>, <em>BatchProcessedEvent</em>, <em>BatchAbortedEvent</em>), refer to <a class="xref" href="concepts/broker/streaming.html">Streaming</a> to learn how to leverage the new <a class="xref" href="api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a></li>
 <li><a class="xref" href="api/Silverback.Messaging.Sequences.Chunking.ChunkSettings.html">ChunkSettings</a> moved from <code>Silverback.Messaging.LargeMessages</code> namespace to <code>Silverback.Messaging.Sequences.Chunking</code></li>
+<li>Setting the batch size to 1 doesn't disable batching anymore, set the <code>Batch</code> to <code>null</code> in the <a class="xref" href="api/Silverback.Messaging.ConsumerEndpoint.html">ConsumerEndpoint</a> to disable it</li>
 </ul>
 <h2 id="220"><a href="https://github.com/BEagle1984/silverback/releases/tag/v2.2.0">2.2.0</a></h2>
 <h3 id="whats-new-1">What's new</h3>
@@ -199,7 +201,7 @@
 <ul>
 <li>Add support for multiple message brokers (Kafka and RabbitMQ) in the same application (see <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)</li>
 <li>Add end-to-end message encryption (see <a class="xref" href="concepts/broker/encryption.html">Encryption</a>)</li>
-<li>Add dynamic custom routing of outbound messages (see <a class="xref" href="concepts/broker/outbound.html">Outbound Endpoint</a>)</li>
+<li>Add dynamic custom routing of outbound messages (see <a class="xref" href="concepts/broker/outbound-routing.html">Outbound Messages Routing</a>)</li>
 <li>Improve support for message headers (see <a class="xref" href="concepts/broker/headers.html">Message Headers</a>)</li>
 <li>Add support for binary files (see <a class="xref" href="concepts/broker/binary-files.html">Binary Files</a>)</li>
 <li>Improve message identifier handling: the <a class="xref" href="api/Silverback.Messaging.Messages.IIntegrationMessage.html">IIntegrationMessage</a> is not required to have an <code>Id</code> property anymore (the <code>x-message-id</code> header will still be generated and if the property exists will continue to be automatically initialized)</li>

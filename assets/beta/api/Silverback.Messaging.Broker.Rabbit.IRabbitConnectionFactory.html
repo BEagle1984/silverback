@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IRabbitConnectionFactory
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -91,30 +91,19 @@
   <h1 id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory" class="text-break">Interface IRabbitConnectionFactory
   </h1>
   <div class="markdown level0 summary"><p>The factory that creates and stores the connections to Rabbit in order to create a single connection
-per each <a class="xref" href="Silverback.Messaging.Configuration.Rabbit.RabbitConnectionConfig.html">RabbitConnectionConfig</a>.</p>
+per each <see cref="!:RabbitConnectionConfig"></see>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.IDisposable.Dispose()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Rabbit.html">Silverback.Messaging.Broker.Rabbit</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.RabbitMQ.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public interface IRabbitConnectionFactory : IDisposable</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_GetChannel_Silverback_Messaging_RabbitConsumerEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.GetChannel(Silverback.Messaging.RabbitConsumerEndpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/Broker/Rabbit/IRabbitConnectionFactory.cs/#L36">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_GetChannel_" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.GetChannel*"></a>
   <h4 id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_GetChannel_Silverback_Messaging_RabbitConsumerEndpoint_" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.GetChannel(Silverback.Messaging.RabbitConsumerEndpoint)">GetChannel(RabbitConsumerEndpoint)</h4>
   <div class="markdown level1 summary"><p>Returns a channel to consume from the specified endpoint.</p>
@@ -152,27 +141,22 @@ per each <a class="xref" href="Silverback.Messaging.Configuration.Rabbit.RabbitC
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.ValueTuple</span>&lt;<span class="xref">RabbitMQ.Client.IModel</span>, <span class="xref">System.String</span>&gt;</td>
-        <td><p>The <span class="xref">RabbitMQ.Client.IModel</span> representing the channel.</p>
+        <td><span class="xref">System.ValueTuple</span>&lt;<span class="xref">IModel</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><p>The <see cref="!:IModel"></see> representing the channel.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_GetChannel_Silverback_Messaging_RabbitProducerEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.GetChannel(Silverback.Messaging.RabbitProducerEndpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/Broker/Rabbit/IRabbitConnectionFactory.cs/#L25">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_GetChannel_" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.GetChannel*"></a>
-  <h4 id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_GetChannel_Silverback_Messaging_RabbitProducerEndpoint_" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.GetChannel(Silverback.Messaging.RabbitProducerEndpoint)">GetChannel(RabbitProducerEndpoint)</h4>
+  <h4 id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_GetChannel_Silverback_Messaging_RabbitProducerEndpoint_System_String_" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.GetChannel(Silverback.Messaging.RabbitProducerEndpoint,System.String)">GetChannel(RabbitProducerEndpoint, String)</h4>
   <div class="markdown level1 summary"><p>Returns a channel to produce to the specified endpoint.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IModel GetChannel(RabbitProducerEndpoint endpoint)</code></pre>
+    <pre><code class="lang-csharp hljs">IModel GetChannel(RabbitProducerEndpoint endpoint, string actualEndpointName)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -190,6 +174,12 @@ per each <a class="xref" href="Silverback.Messaging.Configuration.Rabbit.RabbitC
         <td><p>The endpoint to be produced to.</p>
 </td>
       </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">actualEndpointName</span></td>
+        <td><p>The actual target endpoint name.</p>
+</td>
+      </tr>
     </tbody>
   </table>
   <h5 class="returns">Returns</h5>
@@ -202,8 +192,8 @@ per each <a class="xref" href="Silverback.Messaging.Configuration.Rabbit.RabbitC
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">RabbitMQ.Client.IModel</span></td>
-        <td><p>The <span class="xref">RabbitMQ.Client.IModel</span> representing the channel.</p>
+        <td><span class="xref">IModel</span></td>
+        <td><p>The <see cref="!:IModel"></see> representing the channel.</p>
 </td>
       </tr>
     </tbody>
@@ -215,12 +205,6 @@ per each <a class="xref" href="Silverback.Messaging.Configuration.Rabbit.RabbitC
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/Broker/Rabbit/IRabbitConnectionFactory.cs/#L14" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class StaticOutboundRouter
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -107,13 +107,19 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Silverback.Messaging.Outbound.Routing.OutboundRouter-1.html#Silverback_Messaging_Outbound_Routing_OutboundRouter_1_Silverback_Messaging_Outbound_Routing_IOutboundRouter_GetDestinationEndpoints_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection_">OutboundRouter&lt;Object&gt;.IOutboundRouter.GetDestinationEndpoints(Object, MessageHeaderCollection)</a>
+      <a class="xref" href="Silverback.Messaging.Outbound.Routing.OutboundRouter-1.html#Silverback_Messaging_Outbound_Routing_OutboundRouter_1_Silverback_Messaging_Outbound_Routing_IOutboundRouter_GetDestinationEndpoints_System_Object_MessageHeaderCollection_">OutboundRouter&lt;Object&gt;.IOutboundRouter.GetDestinationEndpoints(Object, MessageHeaderCollection)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -124,28 +130,46 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Outbound.Routing.html">Silverback.Messaging.Outbound.Routing</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class StaticOutboundRouter : OutboundRouter&lt;object&gt;, IOutboundRouter&lt;object&gt;, IOutboundRouter</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_Routing_StaticOutboundRouter__ctor_Silverback_Messaging_IProducerEndpoint___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.%23ctor(Silverback.Messaging.IProducerEndpoint%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/Routing/StaticOutboundRouter.cs/#L34">View source</a>
-  </span>
+  
+  
+  <a id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter__ctor_" data-uid="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter__ctor_IEnumerable_Silverback_Messaging_IProducerEndpoint__" data-uid="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.#ctor(IEnumerable{Silverback.Messaging.IProducerEndpoint})">StaticOutboundRouter(IEnumerable&lt;IProducerEndpoint&gt;)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.html">StaticOutboundRouter</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public StaticOutboundRouter(IEnumerable&lt;IProducerEndpoint&gt; endpoints)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
+        <td><span class="parametername">endpoints</span></td>
+        <td><p>The endpoints to route the messages to.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter__ctor_" data-uid="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.#ctor*"></a>
   <h4 id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter__ctor_Silverback_Messaging_IProducerEndpoint___" data-uid="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.#ctor(Silverback.Messaging.IProducerEndpoint[])">StaticOutboundRouter(IProducerEndpoint[])</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.html">StaticOutboundRouter</a> class.</p>
@@ -173,54 +197,15 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_Routing_StaticOutboundRouter__ctor_System_Collections_Generic_IEnumerable_Silverback_Messaging_IProducerEndpoint__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.%23ctor(System.Collections.Generic.IEnumerable%7BSilverback.Messaging.IProducerEndpoint%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/Routing/StaticOutboundRouter.cs/#L23">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter__ctor_" data-uid="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter__ctor_System_Collections_Generic_IEnumerable_Silverback_Messaging_IProducerEndpoint__" data-uid="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.#ctor(System.Collections.Generic.IEnumerable{Silverback.Messaging.IProducerEndpoint})">StaticOutboundRouter(IEnumerable&lt;IProducerEndpoint&gt;)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.html">StaticOutboundRouter</a> class.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public StaticOutboundRouter(IEnumerable&lt;IProducerEndpoint&gt; endpoints)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
-        <td><span class="parametername">endpoints</span></td>
-        <td><p>The endpoints to route the messages to.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   <h3 id="properties">Properties
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_Routing_StaticOutboundRouter_Endpoints.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.Endpoints%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/Routing/StaticOutboundRouter.cs/#L40">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter_Endpoints_" data-uid="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.Endpoints*"></a>
   <h4 id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter_Endpoints" data-uid="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.Endpoints">Endpoints</h4>
   <div class="markdown level1 summary"><p>Gets the endpoints that are potentially targeted by this router. This collection could be built over
 time in case of a dynamic <a class="xref" href="Silverback.Messaging.Outbound.Routing.IOutboundRouter.html">IOutboundRouter</a> but that will prevent the
-<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> to work properly and it's not optimal as it used for example by the
+<see cref="!:IOutboxWorker"></see> to work properly and it's not optimal as it used for example by the
 health checks to ping all possible endpoints.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -238,7 +223,7 @@ health checks to ping all possible endpoints.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -247,15 +232,10 @@ health checks to ping all possible endpoints.</p>
   <div><span class="xref">Silverback.Messaging.Outbound.Routing.OutboundRouter&lt;System.Object&gt;.Endpoints</span></div>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_Routing_StaticOutboundRouter_GetDestinationEndpoints_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.GetDestinationEndpoints(System.Object%2CSilverback.Messaging.Messages.MessageHeaderCollection)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/Routing/StaticOutboundRouter.cs/#L46">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter_GetDestinationEndpoints_" data-uid="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.GetDestinationEndpoints*"></a>
-  <h4 id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter_GetDestinationEndpoints_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection_" data-uid="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.GetDestinationEndpoints(System.Object,Silverback.Messaging.Messages.MessageHeaderCollection)">GetDestinationEndpoints(Object, MessageHeaderCollection)</h4>
+  <h4 id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter_GetDestinationEndpoints_System_Object_MessageHeaderCollection_" data-uid="Silverback.Messaging.Outbound.Routing.StaticOutboundRouter.GetDestinationEndpoints(System.Object,MessageHeaderCollection)">GetDestinationEndpoints(Object, MessageHeaderCollection)</h4>
   <div class="markdown level1 summary"><p>Returns the collection of <a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> representing the endpoints where the
 specified message must be produced.</p>
 </div>
@@ -280,7 +260,7 @@ specified message must be produced.</p>
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.MessageHeaderCollection.html">MessageHeaderCollection</a></td>
+        <td><span class="xref">MessageHeaderCollection</span></td>
         <td><span class="parametername">headers</span></td>
         <td><p>The message headers collection.</p>
 </td>
@@ -297,15 +277,15 @@ specified message must be produced.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
         <td><p>The endpoints to route the message to.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">Silverback.Messaging.Outbound.Routing.OutboundRouter&lt;System.Object&gt;.GetDestinationEndpoints(System.Object, Silverback.Messaging.Messages.MessageHeaderCollection)</span></div>
-  <h5 id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter_GetDestinationEndpoints_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection__remarks">Remarks</h5>
+  <div><span class="xref">Silverback.Messaging.Outbound.Routing.OutboundRouter&lt;System.Object&gt;.GetDestinationEndpoints(System.Object, MessageHeaderCollection)</span></div>
+  <h5 id="Silverback_Messaging_Outbound_Routing_StaticOutboundRouter_GetDestinationEndpoints_System_Object_MessageHeaderCollection__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Always returns the endpoints provided in the constructor.</p>
 </div>
   <h3 id="implements">Implements</h3>
@@ -322,12 +302,6 @@ specified message must be produced.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_Routing_StaticOutboundRouter.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.Routing.StaticOutboundRouter%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/Routing/StaticOutboundRouter.cs/#L13" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

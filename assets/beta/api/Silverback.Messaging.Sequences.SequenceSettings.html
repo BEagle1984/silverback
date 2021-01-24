@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class SequenceSettings
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -100,42 +100,18 @@
   </div>
   <div classs="implements">
     <h5>Implements</h5>
-    <div><span class="xref">System.IEquatable</span>&lt;<a class="xref" href="Silverback.Messaging.Sequences.SequenceSettings.html">SequenceSettings</a>&gt;</div>
-    <div><a class="xref" href="Silverback.Messaging.Configuration.IValidatableEndpointSettings.html">IValidatableEndpointSettings</a></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
+    <div><span class="xref">IValidatableEndpointSettings</span></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Sequences.html">Silverback.Messaging.Sequences</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Sequences_SequenceSettings_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public sealed class SequenceSettings : IEquatable&lt;SequenceSettings&gt;, IValidatableEndpointSettings</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceSettings_Timeout.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceSettings.Timeout%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceSettings.cs/#L24">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_SequenceSettings_Timeout_" data-uid="Silverback.Messaging.Sequences.SequenceSettings.Timeout*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceSettings_Timeout" data-uid="Silverback.Messaging.Sequences.SequenceSettings.Timeout">Timeout</h4>
   <div class="markdown level1 summary"><p>Gets or sets the timeout after which an incomplete sequence that isn't pushed with new messages will
@@ -156,24 +132,19 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="xref">TimeSpan</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 id="Silverback_Messaging_Sequences_SequenceSettings_Timeout_remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This setting is ignored for batches (<a class="xref" href="Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>), use the
-<a class="xref" href="Silverback.Messaging.Sequences.Batch.BatchSettings.html#Silverback_Messaging_Sequences_Batch_BatchSettings_MaxWaitTime">MaxWaitTime</a> instead.</p>
+  <div class="markdown level1 remarks"><p>This setting is ignored for batches (<see cref="!:BatchSequence"></see>), use the
+<see cref="!:BatchSettings.MaxWaitTime"></see> instead.</p>
 </div>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceSettings_Equals_Silverback_Messaging_Sequences_SequenceSettings_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceSettings.Equals(Silverback.Messaging.Sequences.SequenceSettings)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceSettings.cs/#L40">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_SequenceSettings_Equals_" data-uid="Silverback.Messaging.Sequences.SequenceSettings.Equals*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceSettings_Equals_Silverback_Messaging_Sequences_SequenceSettings_" data-uid="Silverback.Messaging.Sequences.SequenceSettings.Equals(Silverback.Messaging.Sequences.SequenceSettings)">Equals(SequenceSettings)</h4>
   <div class="markdown level1 summary"></div>
@@ -214,13 +185,8 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceSettings_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceSettings.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceSettings.cs/#L52">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_SequenceSettings_Equals_" data-uid="Silverback.Messaging.Sequences.SequenceSettings.Equals*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceSettings_Equals_System_Object_" data-uid="Silverback.Messaging.Sequences.SequenceSettings.Equals(System.Object)">Equals(Object)</h4>
   <div class="markdown level1 summary"></div>
@@ -261,15 +227,8 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.Object.Equals(System.Object)</span></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceSettings_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceSettings.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceSettings.cs/#L67">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_SequenceSettings_GetHashCode_" data-uid="Silverback.Messaging.Sequences.SequenceSettings.GetHashCode*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceSettings_GetHashCode" data-uid="Silverback.Messaging.Sequences.SequenceSettings.GetHashCode">GetHashCode()</h4>
   <div class="markdown level1 summary"></div>
@@ -293,19 +252,11 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">System.Object.GetHashCode()</span></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceSettings_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceSettings.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceSettings.cs/#L27">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_SequenceSettings_Validate_" data-uid="Silverback.Messaging.Sequences.SequenceSettings.Validate*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequenceSettings_Validate" data-uid="Silverback.Messaging.Sequences.SequenceSettings.Validate">Validate()</h4>
-  <div class="markdown level1 summary"><p>Throws an <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> if the current configuration is not valid.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -313,10 +264,7 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
   </div>
   <h3 id="implements">Implements</h3>
   <div>
-      <span class="xref">System.IEquatable&lt;T&gt;</span>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Configuration.IValidatableEndpointSettings.html">IValidatableEndpointSettings</a>
+      <span class="xref">IValidatableEndpointSettings</span>
   </div>
 </article>
           </div>
@@ -325,12 +273,6 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequenceSettings.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequenceSettings%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequenceSettings.cs/#L14" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

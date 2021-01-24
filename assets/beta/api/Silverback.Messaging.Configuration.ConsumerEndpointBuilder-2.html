@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ConsumerEndpointBuilder&lt;TEndpoint, TBuilder&gt;
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -115,10 +115,10 @@
       <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_This">EndpointBuilder&lt;TEndpoint, TBuilder&gt;.This</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_UseSerializer_Silverback_Messaging_Serialization_IMessageSerializer_">EndpointBuilder&lt;TEndpoint, TBuilder&gt;.UseSerializer(IMessageSerializer)</a>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_UseSerializer_IMessageSerializer_">EndpointBuilder&lt;TEndpoint, TBuilder&gt;.UseSerializer(IMessageSerializer)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_WithEncryption_Silverback_Messaging_Encryption_EncryptionSettings_">EndpointBuilder&lt;TEndpoint, TBuilder&gt;.WithEncryption(EncryptionSettings)</a>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_WithEncryption_System_Nullable_EncryptionSettings__">EndpointBuilder&lt;TEndpoint, TBuilder&gt;.WithEncryption(Nullable&lt;EncryptionSettings&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_Build">EndpointBuilder&lt;TEndpoint, TBuilder&gt;.Build()</a>
@@ -127,10 +127,16 @@
       <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_CreateEndpoint">EndpointBuilder&lt;TEndpoint, TBuilder&gt;.CreateEndpoint()</a>
     </div>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -141,15 +147,9 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.html">Silverback.Messaging.Configuration</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public abstract class ConsumerEndpointBuilder&lt;TEndpoint, TBuilder&gt; : EndpointBuilder&lt;TEndpoint, TBuilder&gt;, IConsumerEndpointBuilder&lt;TBuilder&gt;, IEndpointBuilder&lt;TBuilder&gt; where TEndpoint : ConsumerEndpoint where TBuilder : IConsumerEndpointBuilder&lt;TBuilder&gt;</code></pre>
@@ -177,13 +177,8 @@
   </table>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2__ctor_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.%23ctor(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L47">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2__ctor_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.#ctor*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2__ctor_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.#ctor(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)">ConsumerEndpointBuilder(IEndpointsConfigurationBuilder)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html">ConsumerEndpointBuilder&lt;TEndpoint, TBuilder&gt;</a> class.</p>
@@ -214,13 +209,8 @@ builder.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_Build.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.Build%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L135">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_Build_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.Build*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_Build" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.Build">Build()</h4>
   <div class="markdown level1 summary"><p>Builds the endpoint instance.</p>
@@ -248,16 +238,11 @@ builder.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">Silverback.Messaging.Configuration.EndpointBuilder&lt;TEndpoint, TBuilder&gt;.Build()</span></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_Decrypt_Silverback_Messaging_Encryption_EncryptionSettings_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.Decrypt(Silverback.Messaging.Encryption.EncryptionSettings)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L57">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_Decrypt_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.Decrypt*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_Decrypt_Silverback_Messaging_Encryption_EncryptionSettings_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.Decrypt(Silverback.Messaging.Encryption.EncryptionSettings)">Decrypt(EncryptionSettings)</h4>
-  <div class="markdown level1 summary"><p>Specifies the <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a> to be used to decrypt the messages.</p>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_Decrypt_EncryptionSettings_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.Decrypt(EncryptionSettings)">Decrypt(EncryptionSettings)</h4>
+  <div class="markdown level1 summary"><p>Specifies the <see cref="!:EncryptionSettings"></see> to be used to decrypt the messages.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -275,9 +260,9 @@ builder.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a></td>
+        <td><span class="xref">EncryptionSettings</span></td>
         <td><span class="parametername">encryptionSettings</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a>.</p>
+        <td><p>The <see cref="!:EncryptionSettings"></see>.</p>
 </td>
       </tr>
     </tbody>
@@ -298,16 +283,11 @@ builder.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_DeserializeUsing_Silverback_Messaging_Serialization_IMessageSerializer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.DeserializeUsing(Silverback.Messaging.Serialization.IMessageSerializer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L53">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_DeserializeUsing_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.DeserializeUsing*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_DeserializeUsing_Silverback_Messaging_Serialization_IMessageSerializer_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.DeserializeUsing(Silverback.Messaging.Serialization.IMessageSerializer)">DeserializeUsing(IMessageSerializer)</h4>
-  <div class="markdown level1 summary"><p>Specifies the <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> to be used to deserialize the messages.</p>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_DeserializeUsing_IMessageSerializer_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.DeserializeUsing(IMessageSerializer)">DeserializeUsing(IMessageSerializer)</h4>
+  <div class="markdown level1 summary"><p>Specifies the <see cref="!:IMessageSerializer"></see> to be used to deserialize the messages.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -325,9 +305,9 @@ builder.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a></td>
+        <td><span class="xref">IMessageSerializer</span></td>
         <td><span class="parametername">serializer</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
+        <td><p>The <see cref="!:IMessageSerializer"></see>.</p>
 </td>
       </tr>
     </tbody>
@@ -348,15 +328,10 @@ builder.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnableBatchProcessing_System_Int32_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.EnableBatchProcessing(System.Int32%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L97">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnableBatchProcessing_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnableBatchProcessing*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnableBatchProcessing_System_Int32_System_Nullable_System_TimeSpan__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnableBatchProcessing(System.Int32,System.Nullable{System.TimeSpan})">EnableBatchProcessing(Int32, Nullable&lt;TimeSpan&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnableBatchProcessing_System_Int32_System_Nullable_TimeSpan__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnableBatchProcessing(System.Int32,System.Nullable{TimeSpan})">EnableBatchProcessing(Int32, Nullable&lt;TimeSpan&gt;)</h4>
   <div class="markdown level1 summary"><p>Enables batch processing.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -381,7 +356,7 @@ builder.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">TimeSpan</span>&gt;</td>
         <td><span class="parametername">maxWaitTime</span></td>
         <td><p>The maximum amount of time to wait for the batch to be filled. After this time the batch will be
 completed even if the specified <code>batchSize</code> is not reached.</p>
@@ -405,65 +380,10 @@ completed even if the specified <code>batchSize</code> is not reached.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_Silverback_Messaging_Inbound_ExactlyOnce_IExactlyOnceStrategy_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.EnsureExactlyOnce(Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L79">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_Silverback_Messaging_Inbound_ExactlyOnce_IExactlyOnceStrategy_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce(Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy)">EnsureExactlyOnce(IExactlyOnceStrategy)</h4>
-  <div class="markdown level1 summary"><p>Specifies the strategy to be used to ensure that each message is processed exactly once.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TBuilder EnsureExactlyOnce(IExactlyOnceStrategy strategy)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy.html">IExactlyOnceStrategy</a></td>
-        <td><span class="parametername">strategy</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy.html">IExactlyOnceStrategy</a>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_System_Action_Silverback_Messaging_Configuration_IExactlyOnceStrategyBuilder__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.EnsureExactlyOnce(System.Action%7BSilverback.Messaging.Configuration.IExactlyOnceStrategyBuilder%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L86">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_System_Action_Silverback_Messaging_Configuration_IExactlyOnceStrategyBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce(System.Action{Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder})">EnsureExactlyOnce(Action&lt;IExactlyOnceStrategyBuilder&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_Action_Silverback_Messaging_Configuration_IExactlyOnceStrategyBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce(Action{Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder})">EnsureExactlyOnce(Action&lt;IExactlyOnceStrategyBuilder&gt;)</h4>
   <div class="markdown level1 summary"><p>Specifies the strategy to be used to ensure that each message is processed exactly once.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -482,9 +402,9 @@ completed even if the specified <code>batchSize</code> is not reached.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a>&gt;</td>
+        <td><span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a>&gt;</td>
         <td><span class="parametername">strategyBuilderAction</span></td>
-        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a> and configures
+        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a> and configures
 it.</p>
 </td>
       </tr>
@@ -506,13 +426,53 @@ it.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_IgnoreUnhandledMessages.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.IgnoreUnhandledMessages%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L128">View source</a>
-  </span>
+  
+  
+  <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_IExactlyOnceStrategy_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce(IExactlyOnceStrategy)">EnsureExactlyOnce(IExactlyOnceStrategy)</h4>
+  <div class="markdown level1 summary"><p>Specifies the strategy to be used to ensure that each message is processed exactly once.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TBuilder EnsureExactlyOnce(IExactlyOnceStrategy strategy)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IExactlyOnceStrategy</span></td>
+        <td><span class="parametername">strategy</span></td>
+        <td><p>The <see cref="!:IExactlyOnceStrategy"></see>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TBuilder</span></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_IgnoreUnhandledMessages_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.IgnoreUnhandledMessages*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_IgnoreUnhandledMessages" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.IgnoreUnhandledMessages">IgnoreUnhandledMessages()</h4>
   <div class="markdown level1 summary"><p>Specifies that the message has to be silently ignored if no subscriber is handling it.</p>
@@ -538,66 +498,10 @@ it.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_Silverback_Messaging_Inbound_ErrorHandling_IErrorPolicy_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.OnError(Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L61">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_Silverback_Messaging_Inbound_ErrorHandling_IErrorPolicy_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError(Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy)">OnError(IErrorPolicy)</h4>
-  <div class="markdown level1 summary"><p>Specifies the error policy to be applied when an exception occurs during the processing of the
-consumed messages.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TBuilder OnError(IErrorPolicy errorPolicy)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a></td>
-        <td><span class="parametername">errorPolicy</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_System_Action_Silverback_Messaging_Configuration_IErrorPolicyBuilder__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.OnError(System.Action%7BSilverback.Messaging.Configuration.IErrorPolicyBuilder%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L68">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_System_Action_Silverback_Messaging_Configuration_IErrorPolicyBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError(System.Action{Silverback.Messaging.Configuration.IErrorPolicyBuilder})">OnError(Action&lt;IErrorPolicyBuilder&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_Action_Silverback_Messaging_Configuration_IErrorPolicyBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError(Action{Silverback.Messaging.Configuration.IErrorPolicyBuilder})">OnError(Action&lt;IErrorPolicyBuilder&gt;)</h4>
   <div class="markdown level1 summary"><p>Specifies the error policy to be applied when an exception occurs during the processing of the
 consumed messages.</p>
 </div>
@@ -617,9 +521,9 @@ consumed messages.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a>&gt;</td>
+        <td><span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a>&gt;</td>
         <td><span class="parametername">errorPolicyBuilderAction</span></td>
-        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a> and configures it.</p>
+        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a> and configures it.</p>
 </td>
       </tr>
     </tbody>
@@ -640,13 +544,54 @@ consumed messages.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_ThrowIfUnhandled.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.ThrowIfUnhandled%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L121">View source</a>
-  </span>
+  
+  
+  <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_IErrorPolicy_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError(IErrorPolicy)">OnError(IErrorPolicy)</h4>
+  <div class="markdown level1 summary"><p>Specifies the error policy to be applied when an exception occurs during the processing of the
+consumed messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TBuilder OnError(IErrorPolicy errorPolicy)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IErrorPolicy</span></td>
+        <td><span class="parametername">errorPolicy</span></td>
+        <td><p>The <see cref="!:IErrorPolicy"></see>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TBuilder</span></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_ThrowIfUnhandled_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.ThrowIfUnhandled*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_ThrowIfUnhandled" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.ThrowIfUnhandled">ThrowIfUnhandled()</h4>
   <div class="markdown level1 summary"><p>Specifies that an exception must be thrown if no subscriber is handling the received message. This
@@ -674,15 +619,10 @@ option is enabled by default. Use the
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_System_TimeSpan_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602.WithSequenceTimeout(System.TimeSpan)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L114">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.WithSequenceTimeout*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.WithSequenceTimeout(System.TimeSpan)">WithSequenceTimeout(TimeSpan)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_TimeSpan_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.WithSequenceTimeout(TimeSpan)">WithSequenceTimeout(TimeSpan)</h4>
   <div class="markdown level1 summary"><p>Sets the timeout after which an incomplete sequence that isn't pushed with new messages will
 be aborted and discarded. The default is a conservative 30 minutes.</p>
 </div>
@@ -702,7 +642,7 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="xref">TimeSpan</span></td>
         <td><span class="parametername">timeout</span></td>
         <td><p>The timeout.</p>
 </td>
@@ -725,10 +665,10 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_System_TimeSpan__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This setting is ignored for batches (<a class="xref" href="Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>), use the
+  <h5 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_TimeSpan__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This setting is ignored for batches (<see cref="!:BatchSequence"></see>), use the
 <code>maxWaitTime</code> parameter of
-<a class="xref" href="Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_EnableBatchProcessing_System_Int32_System_Nullable_System_TimeSpan__">EnableBatchProcessing(Int32, Nullable&lt;TimeSpan&gt;)</a> instead.</p>
+<a class="xref" href="Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_EnableBatchProcessing_System_Int32_System_Nullable_TimeSpan__">EnableBatchProcessing(Int32, Nullable&lt;TimeSpan&gt;)</a> instead.</p>
 </div>
   <h3 id="implements">Implements</h3>
   <div>
@@ -737,19 +677,6 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
   <div>
       <a class="xref" href="Silverback.Messaging.Configuration.IEndpointBuilder-1.html">IEndpointBuilder&lt;TBuilder&gt;</a>
   </div>
-  <h3 id="extensionmethods">Extension Methods</h3>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions_DeserializeJsonUsingNewtonsoft__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Action_Silverback_Messaging_Configuration_INewtonsoftJsonMessageSerializerBuilder__">ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions.DeserializeJsonUsingNewtonsoft&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Action&lt;INewtonsoftJsonMessageSerializerBuilder&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointBuilderConsumeBinaryFilesExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilderConsumeBinaryFilesExtensions_ConsumeBinaryFiles__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Action_Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder__">ConsumerEndpointBuilderConsumeBinaryFilesExtensions.ConsumeBinaryFiles&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Action&lt;IBinaryFileMessageSerializerBuilder&gt;)</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilderDecryptUsingExtensions_DecryptUsingAes__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Byte___System_Byte___">ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Byte[], Byte[])</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeJsonExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilderDeserializeJsonExtensions_DeserializeJson__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Action_Silverback_Messaging_Configuration_IJsonMessageSerializerBuilder__">ConsumerEndpointBuilderDeserializeJsonExtensions.DeserializeJson&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Action&lt;IJsonMessageSerializerBuilder&gt;)</a>
-  </div>
 </article>
           </div>
           
@@ -757,12 +684,6 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilder%602%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilder`2.cs/#L23" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class MqttTestingHelper
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -96,13 +96,13 @@
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><a class="xref" href="Silverback.Testing.TestingHelper-1.html">TestingHelper</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.MqttBroker.html">MqttBroker</a>&gt;</div>
+    <div class="level1"><a class="xref" href="Silverback.Testing.TestingHelper-1.html">TestingHelper</a>&lt;<span class="xref">MqttBroker</span>&gt;</div>
     <div class="level2"><span class="xref">MqttTestingHelper</span></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
     <div><a class="xref" href="Silverback.Testing.IMqttTestingHelper.html">IMqttTestingHelper</a></div>
-    <div><a class="xref" href="Silverback.Testing.ITestingHelper-1.html">ITestingHelper</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.MqttBroker.html">MqttBroker</a>&gt;</div>
+    <div><a class="xref" href="Silverback.Testing.ITestingHelper-1.html">ITestingHelper</a>&lt;<span class="xref">MqttBroker</span>&gt;</div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -110,19 +110,25 @@
       <a class="xref" href="Silverback.Testing.TestingHelper-1.html#Silverback_Testing_TestingHelper_1_Broker">TestingHelper&lt;MqttBroker&gt;.Broker</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Testing.TestingHelper-1.html#Silverback_Testing_TestingHelper_1_OutboxReader">TestingHelper&lt;MqttBroker&gt;.OutboxReader</a>
-    </div>
-    <div>
       <a class="xref" href="Silverback.Testing.TestingHelper-1.html#Silverback_Testing_TestingHelper_1_Spy">TestingHelper&lt;MqttBroker&gt;.Spy</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Testing.TestingHelper-1.html#Silverback_Testing_TestingHelper_1_WaitUntilOutboxIsEmptyAsync_System_Threading_CancellationToken_">TestingHelper&lt;MqttBroker&gt;.WaitUntilOutboxIsEmptyAsync(CancellationToken)</a>
+      <a class="xref" href="Silverback.Testing.TestingHelper-1.html#Silverback_Testing_TestingHelper_1_WaitUntilOutboxIsEmptyAsync_CancellationToken_">TestingHelper&lt;MqttBroker&gt;.WaitUntilOutboxIsEmptyAsync(CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Testing.TestingHelper-1.html#Silverback_Testing_TestingHelper_1_IsOutboxEmptyAsync">TestingHelper&lt;MqttBroker&gt;.IsOutboxEmptyAsync()</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -133,30 +139,19 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Testing.html">Silverback.Testing</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.Testing.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Testing_MqttTestingHelper_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class MqttTestingHelper : TestingHelper&lt;MqttBroker&gt;, IMqttTestingHelper, ITestingHelper&lt;MqttBroker&gt;</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_MqttTestingHelper__ctor_System_IServiceProvider_Silverback_Diagnostics_ISilverbackIntegrationLogger_Silverback_Testing_MqttTestingHelper__.md&amp;value=---%0Auid%3A%20Silverback.Testing.MqttTestingHelper.%23ctor(System.IServiceProvider%2CSilverback.Diagnostics.ISilverbackIntegrationLogger%7BSilverback.Testing.MqttTestingHelper%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Testing/MqttTestingHelper.cs/#L31">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Testing_MqttTestingHelper__ctor_" data-uid="Silverback.Testing.MqttTestingHelper.#ctor*"></a>
-  <h4 id="Silverback_Testing_MqttTestingHelper__ctor_System_IServiceProvider_Silverback_Diagnostics_ISilverbackIntegrationLogger_Silverback_Testing_MqttTestingHelper__" data-uid="Silverback.Testing.MqttTestingHelper.#ctor(System.IServiceProvider,Silverback.Diagnostics.ISilverbackIntegrationLogger{Silverback.Testing.MqttTestingHelper})">MqttTestingHelper(IServiceProvider, ISilverbackIntegrationLogger&lt;MqttTestingHelper&gt;)</h4>
+  <h4 id="Silverback_Testing_MqttTestingHelper__ctor_IServiceProvider_ISilverbackIntegrationLogger_Silverback_Testing_MqttTestingHelper__" data-uid="Silverback.Testing.MqttTestingHelper.#ctor(IServiceProvider,ISilverbackIntegrationLogger{Silverback.Testing.MqttTestingHelper})">MqttTestingHelper(IServiceProvider, ISilverbackIntegrationLogger&lt;MqttTestingHelper&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Testing.MqttTestingHelper.html">MqttTestingHelper</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -175,31 +170,116 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.IServiceProvider</span></td>
+        <td><span class="xref">IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <span class="xref">System.IServiceProvider</span>.</p>
+        <td><p>The <see cref="!:IServiceProvider"></see>.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Diagnostics.ISilverbackIntegrationLogger-1.html">ISilverbackIntegrationLogger</a>&lt;<a class="xref" href="Silverback.Testing.MqttTestingHelper.html">MqttTestingHelper</a>&gt;</td>
+        <td><span class="xref">ISilverbackIntegrationLogger</span>&lt;<a class="xref" href="Silverback.Testing.MqttTestingHelper.html">MqttTestingHelper</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
+        <td><p>The <see cref="!:ISilverbackLogger"></see>.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_MqttTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Testing/MqttTestingHelper.cs/#L41">View source</a>
-  </span>
+  
+  
+  <a id="Silverback_Testing_MqttTestingHelper_GetClientSession_" data-uid="Silverback.Testing.MqttTestingHelper.GetClientSession*"></a>
+  <h4 id="Silverback_Testing_MqttTestingHelper_GetClientSession_System_String_" data-uid="Silverback.Testing.MqttTestingHelper.GetClientSession(System.String)">GetClientSession(String)</h4>
+  <div class="markdown level1 summary"><p>Gets the <see cref="!:IClientSession"></see> of the specified client.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IClientSession GetClientSession(string clientId)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">clientId</span></td>
+        <td><p>The client id.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IClientSession</span></td>
+        <td><p>The <see cref="!:IClientSession"></see>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Silverback_Testing_MqttTestingHelper_GetMessagesCount_" data-uid="Silverback.Testing.MqttTestingHelper.GetMessagesCount*"></a>
+  <h4 id="Silverback_Testing_MqttTestingHelper_GetMessagesCount_System_String_" data-uid="Silverback.Testing.MqttTestingHelper.GetMessagesCount(System.String)">GetMessagesCount(String)</h4>
+  <div class="markdown level1 summary"><p>Gets the total number of messages that were published to the specified topic.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetMessagesCount(string topic)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">topic</span></td>
+        <td><p>The name of the topic.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The number of messages published to the topic.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Silverback_Testing_MqttTestingHelper_WaitUntilAllMessagesAreConsumedAsync_" data-uid="Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync*"></a>
-  <h4 id="Silverback_Testing_MqttTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan})">WaitUntilAllMessagesAreConsumedAsync(Nullable&lt;TimeSpan&gt;)</h4>
-  <div class="markdown level1 summary"><p>Returns a <span class="xref">System.Threading.Tasks.Task</span> that completes when all messages routed to the consumers have been
+  <h4 id="Silverback_Testing_MqttTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_TimeSpan__" data-uid="Silverback.Testing.MqttTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{TimeSpan})">WaitUntilAllMessagesAreConsumedAsync(Nullable&lt;TimeSpan&gt;)</h4>
+  <div class="markdown level1 summary"><p>Returns a <see cref="!:Task"></see> that completes when all messages routed to the consumers have been
 processed and committed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -218,7 +298,7 @@ processed and committed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">TimeSpan</span>&gt;</td>
         <td><span class="parametername">timeout</span></td>
         <td><p>The timeout after which the method will return even if the messages haven't been
 processed. The default is 30 seconds.</p>
@@ -236,14 +316,14 @@ processed. The default is 30 seconds.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that completes when all messages have been processed.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> that completes when all messages have been processed.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">Silverback.Testing.TestingHelper&lt;Silverback.Messaging.Broker.MqttBroker&gt;.WaitUntilAllMessagesAreConsumedAsync(System.Nullable&lt;System.TimeSpan&gt;)</span></div>
+  <div><span class="xref">Silverback.Testing.TestingHelper&lt;MqttBroker&gt;.WaitUntilAllMessagesAreConsumedAsync(System.Nullable&lt;TimeSpan&gt;)</span></div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Testing.IMqttTestingHelper.html">IMqttTestingHelper</a>
@@ -258,12 +338,6 @@ processed. The default is 30 seconds.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_MqttTestingHelper.md&amp;value=---%0Auid%3A%20Silverback.Testing.MqttTestingHelper%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Testing/MqttTestingHelper.cs/#L16" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

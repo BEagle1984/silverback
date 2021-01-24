@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class CommandPublisher
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_Publishing_CommandPublisher" data-uid="Silverback.Messaging.Publishing.CommandPublisher" class="text-break">Class CommandPublisher
   </h1>
-  <div class="markdown level0 summary"><p>Publishes the messages implementing <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a> or <a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>.</p>
+  <div class="markdown level0 summary"><p>Publishes the messages implementing <see cref="!:ICommand"></see> or <see cref="!:ICommand&lt;TResult>"></see>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -105,10 +105,16 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -119,28 +125,17 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Publishing.html">Silverback.Messaging.Publishing</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Core.Model.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Publishing_CommandPublisher_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class CommandPublisher : ICommandPublisher</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher__ctor_Silverback_Messaging_Publishing_IPublisher_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.%23ctor(Silverback.Messaging.Publishing.IPublisher)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L22">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher__ctor_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.#ctor*"></a>
   <h4 id="Silverback_Messaging_Publishing_CommandPublisher__ctor_Silverback_Messaging_Publishing_IPublisher_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.#ctor(Silverback.Messaging.Publishing.IPublisher)">CommandPublisher(IPublisher)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Publishing.CommandPublisher.html">CommandPublisher</a> class.</p>
@@ -170,15 +165,10 @@
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_Execute_Silverback_Messaging_Messages_ICommand_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.Execute(Silverback.Messaging.Messages.ICommand)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L28">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute_Silverback_Messaging_Messages_ICommand_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute(Silverback.Messaging.Messages.ICommand)">Execute(ICommand)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute_ICommand_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute(ICommand)">Execute(ICommand)</h4>
   <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
 its subscribers and the method will not complete until all subscribers have processed it (unless
 using Silverback.Integration to produce and consume the message through a message broker).</p>
@@ -199,22 +189,17 @@ using Silverback.Integration to produce and consume the message through a messag
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></td>
+        <td><span class="xref">ICommand</span></td>
         <td><span class="parametername">commandMessage</span></td>
         <td><p>The command to be executed.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_Execute_Silverback_Messaging_Messages_ICommand_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.Execute(Silverback.Messaging.Messages.ICommand%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L31">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute_Silverback_Messaging_Messages_ICommand_System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute(Silverback.Messaging.Messages.ICommand,System.Boolean)">Execute(ICommand, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute_ICommand_System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute(ICommand,System.Boolean)">Execute(ICommand, Boolean)</h4>
   <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
 its subscribers and the method will not complete until all subscribers have processed it (unless
 using Silverback.Integration to produce and consume the message through a message broker).</p>
@@ -235,7 +220,7 @@ using Silverback.Integration to produce and consume the message through a messag
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></td>
+        <td><span class="xref">ICommand</span></td>
         <td><span class="parametername">commandMessage</span></td>
         <td><p>The command to be executed.</p>
 </td>
@@ -249,15 +234,10 @@ message.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_Execute_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.Execute(System.Collections.Generic.IEnumerable%7BSilverback.Messaging.Messages.ICommand%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L35">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand__" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute(System.Collections.Generic.IEnumerable{Silverback.Messaging.Messages.ICommand})">Execute(IEnumerable&lt;ICommand&gt;)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute_IEnumerable_ICommand__" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute(IEnumerable{ICommand})">Execute(IEnumerable&lt;ICommand&gt;)</h4>
   <div class="markdown level1 summary"><p>Executes the specified commands publishing them to the internal bus. The messages will be forwarded
 to their subscribers and the method will not complete until all subscribers have processed all
 messages (unless using Silverback.Integration to produce and consume the messages through a message
@@ -279,22 +259,17 @@ broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">ICommand</span>&gt;</td>
         <td><span class="parametername">commandMessages</span></td>
         <td><p>The commands to be executed.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_Execute_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand__System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.Execute(System.Collections.Generic.IEnumerable%7BSilverback.Messaging.Messages.ICommand%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L38">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand__System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute(System.Collections.Generic.IEnumerable{Silverback.Messaging.Messages.ICommand},System.Boolean)">Execute(IEnumerable&lt;ICommand&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute_IEnumerable_ICommand__System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute(IEnumerable{ICommand},System.Boolean)">Execute(IEnumerable&lt;ICommand&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Executes the specified commands publishing them to the internal bus. The messages will be forwarded
 to their subscribers and the method will not complete until all subscribers have processed all
 messages (unless using Silverback.Integration to produce and consume the messages through a message
@@ -316,7 +291,7 @@ broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">ICommand</span>&gt;</td>
         <td><span class="parametername">commandMessages</span></td>
         <td><p>The commands to be executed.</p>
 </td>
@@ -330,15 +305,10 @@ message.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_Execute__1_Silverback_Messaging_Messages_ICommand___0__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.Execute%60%601(Silverback.Messaging.Messages.ICommand%7B%60%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L42">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute__1_Silverback_Messaging_Messages_ICommand___0__" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute``1(Silverback.Messaging.Messages.ICommand{``0})">Execute&lt;TResult&gt;(ICommand&lt;TResult&gt;)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute__1_ICommand___0__" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute``1(ICommand{``0})">Execute&lt;TResult&gt;(ICommand&lt;TResult&gt;)</h4>
   <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
 its subscribers and the method will not complete until all subscribers have processed it (unless
 using Silverback.Integration to produce and consume the message through a message broker).</p>
@@ -359,7 +329,7 @@ using Silverback.Integration to produce and consume the message through a messag
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</td>
+        <td><span class="xref">ICommand</span>&lt;TResult&gt;</td>
         <td><span class="parametername">commandMessage</span></td>
         <td><p>The command to be executed.</p>
 </td>
@@ -398,15 +368,10 @@ using Silverback.Integration to produce and consume the message through a messag
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_Execute__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.Execute%60%601(Silverback.Messaging.Messages.ICommand%7B%60%600%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L46">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute``1(Silverback.Messaging.Messages.ICommand{``0},System.Boolean)">Execute&lt;TResult&gt;(ICommand&lt;TResult&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute__1_ICommand___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute``1(ICommand{``0},System.Boolean)">Execute&lt;TResult&gt;(ICommand&lt;TResult&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
 its subscribers and the method will not complete until all subscribers have processed it (unless
 using Silverback.Integration to produce and consume the message through a message broker).</p>
@@ -427,7 +392,7 @@ using Silverback.Integration to produce and consume the message through a messag
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</td>
+        <td><span class="xref">ICommand</span>&lt;TResult&gt;</td>
         <td><span class="parametername">commandMessage</span></td>
         <td><p>The command to be executed.</p>
 </td>
@@ -473,15 +438,10 @@ message.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_Execute__1_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand___0___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.Execute%60%601(System.Collections.Generic.IEnumerable%7BSilverback.Messaging.Messages.ICommand%7B%60%600%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L50">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute__1_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand___0___" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute``1(System.Collections.Generic.IEnumerable{Silverback.Messaging.Messages.ICommand{``0}})">Execute&lt;TResult&gt;(IEnumerable&lt;ICommand&lt;TResult&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute__1_IEnumerable_ICommand___0___" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute``1(IEnumerable{ICommand{``0}})">Execute&lt;TResult&gt;(IEnumerable&lt;ICommand&lt;TResult&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>Executes the specified commands publishing them to the internal bus. The messages will be forwarded
 to their subscribers and the method will not complete until all subscribers have processed all
 messages (unless using Silverback.Integration to produce and consume the messages through a message
@@ -503,7 +463,7 @@ broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">ICommand</span>&lt;TResult&gt;&gt;</td>
         <td><span class="parametername">commandMessages</span></td>
         <td><p>The commands to be executed.</p>
 </td>
@@ -520,7 +480,7 @@ broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;TResult&gt;</td>
+        <td><span class="xref">IReadOnlyCollection</span>&lt;TResult&gt;</td>
         <td><p>The commands result.</p>
 </td>
       </tr>
@@ -542,15 +502,10 @@ broker).</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_Execute__1_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand___0___System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.Execute%60%601(System.Collections.Generic.IEnumerable%7BSilverback.Messaging.Messages.ICommand%7B%60%600%7D%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L54">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute__1_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand___0___System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute``1(System.Collections.Generic.IEnumerable{Silverback.Messaging.Messages.ICommand{``0}},System.Boolean)">Execute&lt;TResult&gt;(IEnumerable&lt;ICommand&lt;TResult&gt;&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute__1_IEnumerable_ICommand___0___System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute``1(IEnumerable{ICommand{``0}},System.Boolean)">Execute&lt;TResult&gt;(IEnumerable&lt;ICommand&lt;TResult&gt;&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Executes the specified commands publishing them to the internal bus. The messages will be forwarded
 to their subscribers and the method will not complete until all subscribers have processed all
 messages (unless using Silverback.Integration to produce and consume the messages through a message
@@ -572,7 +527,7 @@ broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">ICommand</span>&lt;TResult&gt;&gt;</td>
         <td><span class="parametername">commandMessages</span></td>
         <td><p>The commands to be executed.</p>
 </td>
@@ -596,7 +551,7 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;TResult&gt;</td>
+        <td><span class="xref">IReadOnlyCollection</span>&lt;TResult&gt;</td>
         <td><p>The commands result.</p>
 </td>
       </tr>
@@ -618,17 +573,12 @@ message.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_Silverback_Messaging_Messages_ICommand_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(Silverback.Messaging.Messages.ICommand)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L59">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_Silverback_Messaging_Messages_ICommand_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(Silverback.Messaging.Messages.ICommand)">ExecuteAsync(ICommand)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_ICommand_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(ICommand)">ExecuteAsync(ICommand)</h4>
   <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed
+its subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have processed
 it (unless using Silverback.Integration to produce and consume the message through a message
 broker).</p>
 </div>
@@ -648,7 +598,7 @@ broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></td>
+        <td><span class="xref">ICommand</span></td>
         <td><span class="parametername">commandMessage</span></td>
         <td><p>The command to be executed.</p>
 </td>
@@ -665,23 +615,18 @@ broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> representing the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_Silverback_Messaging_Messages_ICommand_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(Silverback.Messaging.Messages.ICommand%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L62">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_Silverback_Messaging_Messages_ICommand_System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(Silverback.Messaging.Messages.ICommand,System.Boolean)">ExecuteAsync(ICommand, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_ICommand_System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(ICommand,System.Boolean)">ExecuteAsync(ICommand, Boolean)</h4>
   <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed
+its subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have processed
 it (unless using Silverback.Integration to produce and consume the message through a message
 broker).</p>
 </div>
@@ -701,7 +646,7 @@ broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></td>
+        <td><span class="xref">ICommand</span></td>
         <td><span class="parametername">commandMessage</span></td>
         <td><p>The command to be executed.</p>
 </td>
@@ -725,23 +670,18 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> representing the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(System.Collections.Generic.IEnumerable%7BSilverback.Messaging.Messages.ICommand%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L66">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand__" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Messages.ICommand})">ExecuteAsync(IEnumerable&lt;ICommand&gt;)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_IEnumerable_ICommand__" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(IEnumerable{ICommand})">ExecuteAsync(IEnumerable&lt;ICommand&gt;)</h4>
   <div class="markdown level1 summary"><p>Executes the specified commands publishing them to the internal bus. The messages will be forwarded
-to their subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have
+to their subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have
 processed all messages (unless using Silverback.Integration to produce and consume the messages
 through a message broker).</p>
 </div>
@@ -761,7 +701,7 @@ through a message broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">ICommand</span>&gt;</td>
         <td><span class="parametername">commandMessages</span></td>
         <td><p>The commands to be executed.</p>
 </td>
@@ -778,23 +718,18 @@ through a message broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> representing the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand__System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(System.Collections.Generic.IEnumerable%7BSilverback.Messaging.Messages.ICommand%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L69">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand__System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(System.Collections.Generic.IEnumerable{Silverback.Messaging.Messages.ICommand},System.Boolean)">ExecuteAsync(IEnumerable&lt;ICommand&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_IEnumerable_ICommand__System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(IEnumerable{ICommand},System.Boolean)">ExecuteAsync(IEnumerable&lt;ICommand&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Executes the specified commands publishing them to the internal bus. The messages will be forwarded
-to their subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have
+to their subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have
 processed all messages (unless using Silverback.Integration to produce and consume the messages
 through a message broker).</p>
 </div>
@@ -814,7 +749,7 @@ through a message broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a>&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">ICommand</span>&gt;</td>
         <td><span class="parametername">commandMessages</span></td>
         <td><p>The commands to be executed.</p>
 </td>
@@ -838,23 +773,18 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> representing the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_ICommand___0__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync%60%601(Silverback.Messaging.Messages.ICommand%7B%60%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L73">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_ICommand___0__" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync``1(Silverback.Messaging.Messages.ICommand{``0})">ExecuteAsync&lt;TResult&gt;(ICommand&lt;TResult&gt;)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_ICommand___0__" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync``1(ICommand{``0})">ExecuteAsync&lt;TResult&gt;(ICommand&lt;TResult&gt;)</h4>
   <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed
+its subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have processed
 it (unless using Silverback.Integration to produce and consume the message through a message
 broker).</p>
 </div>
@@ -874,7 +804,7 @@ broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</td>
+        <td><span class="xref">ICommand</span>&lt;TResult&gt;</td>
         <td><span class="parametername">commandMessage</span></td>
         <td><p>The command to be executed.</p>
 </td>
@@ -891,8 +821,8 @@ broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TResult&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+        <td><span class="xref">Task</span>&lt;TResult&gt;</td>
+        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
 command result.</p>
 </td>
       </tr>
@@ -914,17 +844,12 @@ command result.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync%60%601(Silverback.Messaging.Messages.ICommand%7B%60%600%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L79">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync``1(Silverback.Messaging.Messages.ICommand{``0},System.Boolean)">ExecuteAsync&lt;TResult&gt;(ICommand&lt;TResult&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_ICommand___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync``1(ICommand{``0},System.Boolean)">ExecuteAsync&lt;TResult&gt;(ICommand&lt;TResult&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed
+its subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have processed
 it (unless using Silverback.Integration to produce and consume the message through a message
 broker).</p>
 </div>
@@ -944,7 +869,7 @@ broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</td>
+        <td><span class="xref">ICommand</span>&lt;TResult&gt;</td>
         <td><span class="parametername">commandMessage</span></td>
         <td><p>The command to be executed.</p>
 </td>
@@ -968,8 +893,8 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TResult&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+        <td><span class="xref">Task</span>&lt;TResult&gt;</td>
+        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
 command result.</p>
 </td>
       </tr>
@@ -991,17 +916,12 @@ command result.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand___0___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync%60%601(System.Collections.Generic.IEnumerable%7BSilverback.Messaging.Messages.ICommand%7B%60%600%7D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L85">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand___0___" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync``1(System.Collections.Generic.IEnumerable{Silverback.Messaging.Messages.ICommand{``0}})">ExecuteAsync&lt;TResult&gt;(IEnumerable&lt;ICommand&lt;TResult&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_IEnumerable_ICommand___0___" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync``1(IEnumerable{ICommand{``0}})">ExecuteAsync&lt;TResult&gt;(IEnumerable&lt;ICommand&lt;TResult&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>Executes the specified commands publishing them to the internal bus. The messages will be forwarded
-to their subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have
+to their subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have
 processed all messages (unless using Silverback.Integration to produce and consume the messages
 through a message broker).</p>
 </div>
@@ -1021,7 +941,7 @@ through a message broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">ICommand</span>&lt;TResult&gt;&gt;</td>
         <td><span class="parametername">commandMessages</span></td>
         <td><p>The commands to be executed.</p>
 </td>
@@ -1038,8 +958,8 @@ through a message broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;TResult&gt;&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+        <td><span class="xref">Task</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;TResult&gt;&gt;</td>
+        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
 commands result.</p>
 </td>
       </tr>
@@ -1061,17 +981,12 @@ commands result.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand___0___System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync%60%601(System.Collections.Generic.IEnumerable%7BSilverback.Messaging.Messages.ICommand%7B%60%600%7D%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L90">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_ICommand___0___System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync``1(System.Collections.Generic.IEnumerable{Silverback.Messaging.Messages.ICommand{``0}},System.Boolean)">ExecuteAsync&lt;TResult&gt;(IEnumerable&lt;ICommand&lt;TResult&gt;&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_IEnumerable_ICommand___0___System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync``1(IEnumerable{ICommand{``0}},System.Boolean)">ExecuteAsync&lt;TResult&gt;(IEnumerable&lt;ICommand&lt;TResult&gt;&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Executes the specified commands publishing them to the internal bus. The messages will be forwarded
-to their subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have
+to their subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have
 processed all messages (unless using Silverback.Integration to produce and consume the messages
 through a message broker).</p>
 </div>
@@ -1091,7 +1006,7 @@ through a message broker).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">ICommand</span>&lt;TResult&gt;&gt;</td>
         <td><span class="parametername">commandMessages</span></td>
         <td><p>The commands to be executed.</p>
 </td>
@@ -1115,8 +1030,8 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;TResult&gt;&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+        <td><span class="xref">Task</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;TResult&gt;&gt;</td>
+        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
 commands result.</p>
 </td>
       </tr>
@@ -1149,12 +1064,6 @@ commands result.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_CommandPublisher.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.CommandPublisher%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core.Model/Messaging/Publishing/CommandPublisher.cs/#L12" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

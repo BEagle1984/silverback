@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ConsumerEndpointBuilderConsumeBinaryFilesExtensions
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -102,10 +102,16 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -116,44 +122,33 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.html">Silverback.Messaging.Configuration</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderConsumeBinaryFilesExtensions_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static class ConsumerEndpointBuilderConsumeBinaryFilesExtensions</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilderConsumeBinaryFilesExtensions_ConsumeBinaryFiles__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Action_Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilderConsumeBinaryFilesExtensions.ConsumeBinaryFiles%60%601(Silverback.Messaging.Configuration.IConsumerEndpointBuilder%7B%60%600%7D%2CSystem.Action%7BSilverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilderConsumeBinaryFilesExtensions.cs/#L46">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderConsumeBinaryFilesExtensions_ConsumeBinaryFiles_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilderConsumeBinaryFilesExtensions.ConsumeBinaryFiles*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderConsumeBinaryFilesExtensions_ConsumeBinaryFiles__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Action_Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilderConsumeBinaryFilesExtensions.ConsumeBinaryFiles``1(Silverback.Messaging.Configuration.IConsumerEndpointBuilder{``0},System.Action{Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder})">ConsumeBinaryFiles&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Action&lt;IBinaryFileMessageSerializerBuilder&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderConsumeBinaryFilesExtensions_ConsumeBinaryFiles__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Nullable_Action_Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder___" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilderConsumeBinaryFilesExtensions.ConsumeBinaryFiles``1(Silverback.Messaging.Configuration.IConsumerEndpointBuilder{``0},System.Nullable{Action{Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder}})">ConsumeBinaryFiles&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Nullable&lt;Action&lt;IBinaryFileMessageSerializerBuilder&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>
-    Sets the serializer to an instance of <a class="xref" href="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.html">BinaryFileMessageSerializer</a> (or
-<a class="xref" href="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer-1.html">BinaryFileMessageSerializer&lt;TModel&gt;</a>) to wrap the consumed binary files into a
-<a class="xref" href="Silverback.Messaging.Messages.BinaryFileMessage.html">BinaryFileMessage</a>.
+    Sets the serializer to an instance of <see cref="!:BinaryFileMessageSerializer"></see> (or
+<see cref="!:BinaryFileMessageSerializer&lt;TModel>"></see>) to wrap the consumed binary files into a
+<see cref="!:BinaryFileMessage"></see>.
 </p>
 <p>
-    This settings will force the <a class="xref" href="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.html">BinaryFileMessageSerializer</a> to be used regardless of
+    This settings will force the <see cref="!:BinaryFileMessageSerializer"></see> to be used regardless of
     the message type header.
 </p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static TBuilder ConsumeBinaryFiles&lt;TBuilder&gt;(this IConsumerEndpointBuilder&lt;TBuilder&gt; endpointBuilder, Action&lt;IBinaryFileMessageSerializerBuilder&gt; serializerBuilderAction = null)
+    <pre><code class="lang-csharp hljs">public static TBuilder ConsumeBinaryFiles&lt;TBuilder&gt;(this IConsumerEndpointBuilder&lt;TBuilder&gt; endpointBuilder, Action&lt;IBinaryFileMessageSerializerBuilder&gt;? serializerBuilderAction = default(Action&lt;IBinaryFileMessageSerializerBuilder&gt;? ))
     where TBuilder : IConsumerEndpointBuilder&lt;TBuilder&gt;</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -173,9 +168,9 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder.html">IBinaryFileMessageSerializerBuilder</a>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder.html">IBinaryFileMessageSerializerBuilder</a>&gt;&gt;</td>
         <td><span class="parametername">serializerBuilderAction</span></td>
-        <td><p>An optional <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder.html">IBinaryFileMessageSerializerBuilder</a>
+        <td><p>An optional <see cref="!:Action&lt;T>"></see> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder.html">IBinaryFileMessageSerializerBuilder</a>
 and configures it.</p>
 </td>
       </tr>
@@ -213,8 +208,8 @@ and configures it.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderConsumeBinaryFilesExtensions_ConsumeBinaryFiles__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Action_Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder___remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This replaces the <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> and the endpoint will only be able to deal with
+  <h5 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderConsumeBinaryFilesExtensions_ConsumeBinaryFiles__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Nullable_Action_Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This replaces the <see cref="!:IMessageSerializer"></see> and the endpoint will only be able to deal with
 binary files.</p>
 </div>
 </article>
@@ -224,12 +219,6 @@ binary files.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilderConsumeBinaryFilesExtensions.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilderConsumeBinaryFilesExtensions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilderConsumeBinaryFilesExtensions.cs/#L16" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

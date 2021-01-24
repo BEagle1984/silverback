@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IProducerEndpoint
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -110,20 +110,15 @@ exchange).</p>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.html">Silverback.Messaging</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_IProducerEndpoint_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public interface IProducerEndpoint : IEndpoint</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_IProducerEndpoint_Chunk.md&amp;value=---%0Auid%3A%20Silverback.Messaging.IProducerEndpoint.Chunk%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L19">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_IProducerEndpoint_Chunk_" data-uid="Silverback.Messaging.IProducerEndpoint.Chunk*"></a>
   <h4 id="Silverback_Messaging_IProducerEndpoint_Chunk" data-uid="Silverback.Messaging.IProducerEndpoint.Chunk">Chunk</h4>
   <div class="markdown level1 summary"><p>Gets the message chunking settings. This option can be used to split large messages into smaller
@@ -132,7 +127,7 @@ chunks.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ChunkSettings Chunk { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">ChunkSettings? Chunk { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -144,18 +139,13 @@ chunks.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSettings.html">ChunkSettings</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">ChunkSettings</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_IProducerEndpoint_Strategy.md&amp;value=---%0Auid%3A%20Silverback.Messaging.IProducerEndpoint.Strategy%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L25">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_IProducerEndpoint_Strategy_" data-uid="Silverback.Messaging.IProducerEndpoint.Strategy*"></a>
   <h4 id="Silverback_Messaging_IProducerEndpoint_Strategy" data-uid="Silverback.Messaging.IProducerEndpoint.Strategy">Strategy</h4>
   <div class="markdown level1 summary"><p>Gets the strategy to be used to produce the messages. If no strategy is specified, the
@@ -176,8 +166,61 @@ messages will be sent to the message broker directly.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Outbound.IProduceStrategy.html">IProduceStrategy</a></td>
+        <td><span class="xref">IProduceStrategy</span></td>
         <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Silverback_Messaging_IProducerEndpoint_GetActualName_" data-uid="Silverback.Messaging.IProducerEndpoint.GetActualName*"></a>
+  <h4 id="Silverback_Messaging_IProducerEndpoint_GetActualName_IOutboundEnvelope_IServiceProvider_" data-uid="Silverback.Messaging.IProducerEndpoint.GetActualName(IOutboundEnvelope,IServiceProvider)">GetActualName(IOutboundEnvelope, IServiceProvider)</h4>
+  <div class="markdown level1 summary"><p>Gets the actual target endpoint name for the message being produced.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string GetActualName(IOutboundEnvelope envelope, IServiceProvider serviceProvider)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IOutboundEnvelope</span></td>
+        <td><span class="parametername">envelope</span></td>
+        <td><p>The envelope containing the message being produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">IServiceProvider</span></td>
+        <td><span class="parametername">serviceProvider</span></td>
+        <td><p>The <see cref="!:IServiceProvider"></see> in the current scope.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The actual name of the endpoint to be produced to.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -188,12 +231,6 @@ messages will be sent to the message broker directly.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_IProducerEndpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.IProducerEndpoint%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L13" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

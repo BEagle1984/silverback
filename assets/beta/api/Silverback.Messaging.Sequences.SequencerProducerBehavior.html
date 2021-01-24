@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class SequencerProducerBehavior
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -99,41 +99,11 @@ split the published message or messages set to create the sequences.</p>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">SequencerProducerBehavior</span></div>
   </div>
-  <div classs="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a></div>
-    <div><a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehavior.html">IBrokerBehavior</a></div>
-    <div><a class="xref" href="Silverback.ISorted.html">ISorted</a></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Sequences.html">Silverback.Messaging.Sequences</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Sequences_SequencerProducerBehavior_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SequencerProducerBehavior : IProducerBehavior, IBrokerBehavior, ISorted</code></pre>
+    <pre><code class="lang-csharp hljs">public class SequencerProducerBehavior : IProducerBehavior</code></pre>
   </div>
   <h5 id="Silverback_Messaging_Sequences_SequencerProducerBehavior_remarks"><strong>Remarks</strong></h5>
   <div class="markdown level0 remarks"><p>A sequence is a set of messages that are handled as a single unit of work. A sequence could be used to
@@ -142,15 +112,10 @@ to implement batch processing.</p>
 </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequencerProducerBehavior__ctor_System_Collections_Generic_IEnumerable_Silverback_Messaging_Sequences_ISequenceWriter__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequencerProducerBehavior.%23ctor(System.Collections.Generic.IEnumerable%7BSilverback.Messaging.Sequences.ISequenceWriter%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequencerProducerBehavior.cs/#L31">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_SequencerProducerBehavior__ctor_" data-uid="Silverback.Messaging.Sequences.SequencerProducerBehavior.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Sequences_SequencerProducerBehavior__ctor_System_Collections_Generic_IEnumerable_Silverback_Messaging_Sequences_ISequenceWriter__" data-uid="Silverback.Messaging.Sequences.SequencerProducerBehavior.#ctor(System.Collections.Generic.IEnumerable{Silverback.Messaging.Sequences.ISequenceWriter})">SequencerProducerBehavior(IEnumerable&lt;ISequenceWriter&gt;)</h4>
+  <h4 id="Silverback_Messaging_Sequences_SequencerProducerBehavior__ctor_IEnumerable_Silverback_Messaging_Sequences_ISequenceWriter__" data-uid="Silverback.Messaging.Sequences.SequencerProducerBehavior.#ctor(IEnumerable{Silverback.Messaging.Sequences.ISequenceWriter})">SequencerProducerBehavior(IEnumerable&lt;ISequenceWriter&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Sequences.SequencerProducerBehavior.html">SequencerProducerBehavior</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -169,7 +134,7 @@ to implement batch processing.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Sequences.ISequenceWriter.html">ISequenceWriter</a>&gt;</td>
+        <td><span class="xref">IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Sequences.ISequenceWriter.html">ISequenceWriter</a>&gt;</td>
         <td><span class="parametername">sequenceWriters</span></td>
         <td><p>The <a class="xref" href="Silverback.Messaging.Sequences.ISequenceWriter.html">ISequenceWriter</a> implementations to be used.</p>
 </td>
@@ -178,13 +143,8 @@ to implement batch processing.</p>
   </table>
   <h3 id="properties">Properties
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequencerProducerBehavior_SortIndex.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequencerProducerBehavior.SortIndex%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequencerProducerBehavior.cs/#L37">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_SequencerProducerBehavior_SortIndex_" data-uid="Silverback.Messaging.Sequences.SequencerProducerBehavior.SortIndex*"></a>
   <h4 id="Silverback_Messaging_Sequences_SequencerProducerBehavior_SortIndex" data-uid="Silverback.Messaging.Sequences.SequencerProducerBehavior.SortIndex">SortIndex</h4>
   <div class="markdown level1 summary"><p>Gets the sort index of this type or .</p>
@@ -211,17 +171,11 @@ to implement batch processing.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequencerProducerBehavior_HandleAsync_Silverback_Messaging_Broker_Behaviors_ProducerPipelineContext_Silverback_Messaging_Broker_Behaviors_ProducerBehaviorHandler_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequencerProducerBehavior.HandleAsync(Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext%2CSilverback.Messaging.Broker.Behaviors.ProducerBehaviorHandler)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequencerProducerBehavior.cs/#L40">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_SequencerProducerBehavior_HandleAsync_" data-uid="Silverback.Messaging.Sequences.SequencerProducerBehavior.HandleAsync*"></a>
-  <h4 id="Silverback_Messaging_Sequences_SequencerProducerBehavior_HandleAsync_Silverback_Messaging_Broker_Behaviors_ProducerPipelineContext_Silverback_Messaging_Broker_Behaviors_ProducerBehaviorHandler_" data-uid="Silverback.Messaging.Sequences.SequencerProducerBehavior.HandleAsync(Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext,Silverback.Messaging.Broker.Behaviors.ProducerBehaviorHandler)">HandleAsync(ProducerPipelineContext, ProducerBehaviorHandler)</h4>
-  <div class="markdown level1 summary"><p>Process, handles or transforms the message being produced.</p>
-</div>
+  <h4 id="Silverback_Messaging_Sequences_SequencerProducerBehavior_HandleAsync_ProducerPipelineContext_ProducerBehaviorHandler_" data-uid="Silverback.Messaging.Sequences.SequencerProducerBehavior.HandleAsync(ProducerPipelineContext,ProducerBehaviorHandler)">HandleAsync(ProducerPipelineContext, ProducerBehaviorHandler)</h4>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -238,16 +192,14 @@ to implement batch processing.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext.html">ProducerPipelineContext</a></td>
+        <td><span class="xref">ProducerPipelineContext</span></td>
         <td><span class="parametername">context</span></td>
-        <td><p>The context that is passed along the behaviors pipeline.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ProducerBehaviorHandler.html">ProducerBehaviorHandler</a></td>
+        <td><span class="xref">ProducerBehaviorHandler</span></td>
         <td><span class="parametername">next</span></td>
-        <td><p>The next behavior in the pipeline.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -261,22 +213,11 @@ to implement batch processing.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
-</td>
+        <td><span class="xref">Task</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehavior.html">IBrokerBehavior</a>
-  </div>
-  <div>
-      <a class="xref" href="Silverback.ISorted.html">ISorted</a>
-  </div>
 </article>
           </div>
           
@@ -284,12 +225,6 @@ to implement batch processing.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_SequencerProducerBehavior.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.SequencerProducerBehavior%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/SequencerProducerBehavior.cs/#L21" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

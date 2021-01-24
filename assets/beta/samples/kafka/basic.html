@@ -8,7 +8,7 @@
     <title>Kafka - Basic | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Kafka - Basic | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -177,11 +177,13 @@ namespace Silverback.Samples.Kafka.Basic.Producer
 }
 </code></pre></section>
 <section id="tabpanel_CeZOj-G++Q_producer-background-service" role="tabpanel" data-tab="producer-background-service" aria-hidden="true" hidden="hidden">
-<pre><code class="lang-csharp" name="Producer.BackgroundService">using System.Threading;
+<pre><code class="lang-csharp" name="Producer.BackgroundService">using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Publishing;
 using Silverback.Samples.Kafka.Basic.Common;
 
@@ -208,10 +210,30 @@ namespace Silverback.Samples.Kafka.Basic.Producer
             // therefore be directly injected into the BackgroundService)
             using var scope = _serviceScopeFactory.CreateScope();
             var publisher = scope.ServiceProvider.GetRequiredService&lt;IPublisher&gt;();
+            var broker = scope.ServiceProvider.GetRequiredService&lt;IBroker&gt;();
 
             int number = 0;
 
             while (!stoppingToken.IsCancellationRequested)
+            {
+                // Check whether the connection has been established, since the
+                // BackgroundService will start immediately, before the application
+                // is completely bootstrapped.
+                if (!broker.IsConnected)
+                {
+                    await Task.Delay(100, stoppingToken);
+                    continue;
+                }
+
+                await ProduceMessageAsync(publisher, ++number);
+
+                await Task.Delay(100, stoppingToken);
+            }
+        }
+
+        private async Task ProduceMessageAsync(IPublisher publisher, int number)
+        {
+            try
             {
                 await publisher.PublishAsync(
                     new SampleMessage
@@ -220,8 +242,10 @@ namespace Silverback.Samples.Kafka.Basic.Producer
                     });
 
                 _logger.LogInformation($&quot;Produced {number}&quot;);
-
-                await Task.Delay(100, stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $&quot;Failed to produce {number}&quot;);
             }
         }
     }

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class NullLockManager
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -107,10 +107,16 @@ lock. Is is used when the <a class="xref" href="Silverback.Background.NullLockSe
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -121,36 +127,25 @@ lock. Is is used when the <a class="xref" href="Silverback.Background.NullLockSe
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Background.html">Silverback.Background</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Core.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Background_NullLockManager_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class NullLockManager : IDistributedLockManager</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_NullLockManager_AcquireAsync_Silverback_Background_DistributedLockSettings_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Background.NullLockManager.AcquireAsync(Silverback.Background.DistributedLockSettings%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/NullLockManager.cs/#L17">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Background_NullLockManager_AcquireAsync_" data-uid="Silverback.Background.NullLockManager.AcquireAsync*"></a>
-  <h4 id="Silverback_Background_NullLockManager_AcquireAsync_Silverback_Background_DistributedLockSettings_System_Threading_CancellationToken_" data-uid="Silverback.Background.NullLockManager.AcquireAsync(Silverback.Background.DistributedLockSettings,System.Threading.CancellationToken)">AcquireAsync(DistributedLockSettings, CancellationToken)</h4>
+  <h4 id="Silverback_Background_NullLockManager_AcquireAsync_Silverback_Background_DistributedLockSettings_CancellationToken_" data-uid="Silverback.Background.NullLockManager.AcquireAsync(Silverback.Background.DistributedLockSettings,CancellationToken)">AcquireAsync(DistributedLockSettings, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Acquires a new lock on the specified resource.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;DistributedLock&gt; AcquireAsync(DistributedLockSettings settings, CancellationToken cancellationToken = default(CancellationToken))</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;DistributedLock&gt; AcquireAsync(DistributedLockSettings settings, CancellationToken cancellationToken = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -169,9 +164,9 @@ lock. Is is used when the <a class="xref" href="Silverback.Background.NullLockSe
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="xref">CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
-        <td><p>A <span class="xref">System.Threading.CancellationToken</span> to observe while waiting for the task to complete.</p>
+        <td><p>A <see cref="!:CancellationToken"></see> to observe while waiting for the task to complete.</p>
 </td>
       </tr>
     </tbody>
@@ -186,20 +181,15 @@ lock. Is is used when the <a class="xref" href="Silverback.Background.NullLockSe
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Silverback.Background.DistributedLock.html">DistributedLock</a>&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+        <td><span class="xref">Task</span>&lt;<a class="xref" href="Silverback.Background.DistributedLock.html">DistributedLock</a>&gt;</td>
+        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
 acquired <a class="xref" href="Silverback.Background.DistributedLock.html">DistributedLock</a> (or <code>null</code> if no lock was actually acquired).</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_NullLockManager_CheckIsStillLockedAsync_Silverback_Background_DistributedLockSettings_.md&amp;value=---%0Auid%3A%20Silverback.Background.NullLockManager.CheckIsStillLockedAsync(Silverback.Background.DistributedLockSettings)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/NullLockManager.cs/#L23">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Background_NullLockManager_CheckIsStillLockedAsync_" data-uid="Silverback.Background.NullLockManager.CheckIsStillLockedAsync*"></a>
   <h4 id="Silverback_Background_NullLockManager_CheckIsStillLockedAsync_Silverback_Background_DistributedLockSettings_" data-uid="Silverback.Background.NullLockManager.CheckIsStillLockedAsync(Silverback.Background.DistributedLockSettings)">CheckIsStillLockedAsync(DistributedLockSettings)</h4>
   <div class="markdown level1 summary"><p>Returns a boolean value indicating whether the specified lock is taken already.</p>
@@ -237,20 +227,15 @@ acquired <a class="xref" href="Silverback.Background.DistributedLock.html">Distr
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains a
+        <td><span class="xref">Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains a
 boolean value indicating whether the lock is taken.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_NullLockManager_ReleaseAsync_Silverback_Background_DistributedLockSettings_.md&amp;value=---%0Auid%3A%20Silverback.Background.NullLockManager.ReleaseAsync(Silverback.Background.DistributedLockSettings)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/NullLockManager.cs/#L31">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Background_NullLockManager_ReleaseAsync_" data-uid="Silverback.Background.NullLockManager.ReleaseAsync*"></a>
   <h4 id="Silverback_Background_NullLockManager_ReleaseAsync_Silverback_Background_DistributedLockSettings_" data-uid="Silverback.Background.NullLockManager.ReleaseAsync(Silverback.Background.DistributedLockSettings)">ReleaseAsync(DistributedLockSettings)</h4>
   <div class="markdown level1 summary"><p>Releases the lock.</p>
@@ -288,19 +273,14 @@ boolean value indicating whether the lock is taken.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> representing the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_NullLockManager_SendHeartbeatAsync_Silverback_Background_DistributedLockSettings_.md&amp;value=---%0Auid%3A%20Silverback.Background.NullLockManager.SendHeartbeatAsync(Silverback.Background.DistributedLockSettings)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/NullLockManager.cs/#L27">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Background_NullLockManager_SendHeartbeatAsync_" data-uid="Silverback.Background.NullLockManager.SendHeartbeatAsync*"></a>
   <h4 id="Silverback_Background_NullLockManager_SendHeartbeatAsync_Silverback_Background_DistributedLockSettings_" data-uid="Silverback.Background.NullLockManager.SendHeartbeatAsync(Silverback.Background.DistributedLockSettings)">SendHeartbeatAsync(DistributedLockSettings)</h4>
   <div class="markdown level1 summary"><p>Called periodically after the lock has been acquired to send an heartbeat that keeps the lock.</p>
@@ -338,8 +318,8 @@ boolean value indicating whether the lock is taken.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains a
+        <td><span class="xref">Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains a
 boolean value indicating whether the lock could be refreshed.</p>
 </td>
       </tr>
@@ -356,12 +336,6 @@ boolean value indicating whether the lock could be refreshed.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Background_NullLockManager.md&amp;value=---%0Auid%3A%20Silverback.Background.NullLockManager%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Background/NullLockManager.cs/#L14" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

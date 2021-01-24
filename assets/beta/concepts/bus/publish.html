@@ -8,7 +8,7 @@
     <title>Publishing | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Publishing | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -123,7 +123,7 @@ public class PublishingService
 <p>Please note the required call to <code>Single()</code>, because Silverback allows you to have multiple subscribers for the same message and therefore collect multiple return values. This is not needed if using <a class="xref" href="../../api/Silverback.Messaging.Publishing.IQueryPublisher.html">IQueryPublisher</a> or <a class="xref" href="../../api/Silverback.Messaging.Publishing.ICommandPublisher.html">ICommandPublisher</a> described in the <a class="xref" href="model.html">Creating the Message model</a> page.</p>
 </div>
 <h2 id="batches">Batches</h2>
-<p>It is possible to publish multiple messages with a single call to <a class="xref" href="../../api/Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_Publish_System_Collections_Generic_IEnumerable_System_Object__">Publish</a> or <a class="xref" href="../../api/Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync_System_Collections_Generic_IEnumerable_System_Object__">PublishAsync</a>. The effect is very different than looping and calling the publish for each message since the collection will be handled as a batch, enabling parallel processing. It is usually suggested to publish multiple messages with the overloads accepting an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable">IEnumerable</a> and let the subscribers decide between parallel or sequential processing.</p>
+<p>It is possible to publish multiple messages with a single call to <a class="xref" href="../../api/Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_Publish_IEnumerable_System_Object__System_Boolean_">Publish</a> or <a class="xref" href="../../api/Silverback.Messaging.Publishing.IPublisher.html#Silverback_Messaging_Publishing_IPublisher_PublishAsync_IEnumerable_System_Object__">PublishAsync</a>. The effect is very different than looping and calling the publish for each message since the collection will be handled as a batch, enabling parallel processing. It is usually suggested to publish multiple messages with the overloads accepting an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable">IEnumerable</a> and let the subscribers decide between parallel or sequential processing.</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">

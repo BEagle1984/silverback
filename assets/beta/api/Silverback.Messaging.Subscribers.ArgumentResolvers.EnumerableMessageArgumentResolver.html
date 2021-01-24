@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class EnumerableMessageArgumentResolver
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver" class="text-break">Class EnumerableMessageArgumentResolver
   </h1>
-  <div class="markdown level0 summary"><p>Resolves the parameters declared as <span class="xref">System.Collections.Generic.IEnumerable&lt;T&gt;</span> where <code>T</code> is compatible with
+  <div class="markdown level0 summary"><p>Resolves the parameters declared as <see cref="!:IEnumerable&lt;T>"></see> where <code>T</code> is compatible with
 the type of the message being published.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -109,10 +109,16 @@ the type of the message being published.</p>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -123,30 +129,19 @@ the type of the message being published.</p>
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.html">Silverback.Messaging.Subscribers.ArgumentResolvers</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Core.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class EnumerableMessageArgumentResolver : IEnumerableMessageArgumentResolver, IStreamEnumerableMessageArgumentResolver, IMessageArgumentResolver, IArgumentResolver</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_CanResolve_System_Type_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.CanResolve(System.Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/ArgumentResolvers/EnumerableMessageArgumentResolver.cs/#L19">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_CanResolve_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.CanResolve*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_CanResolve_System_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.CanResolve(System.Type)">CanResolve(Type)</h4>
+  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_CanResolve_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.CanResolve(Type)">CanResolve(Type)</h4>
   <div class="markdown level1 summary"><p>Returns a boolean value indicating whether this resolver instance can handle the parameter of the
 specified type.</p>
 </div>
@@ -166,7 +161,7 @@ specified type.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Type</span></td>
+        <td><span class="xref">Type</span></td>
         <td><span class="parametername">parameterType</span></td>
         <td><p>The type of the parameter to be resolved.</p>
 </td>
@@ -189,15 +184,10 @@ specified type.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetMessageType_System_Type_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetMessageType(System.Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/ArgumentResolvers/EnumerableMessageArgumentResolver.cs/#L28">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetMessageType_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetMessageType*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetMessageType_System_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetMessageType(System.Type)">GetMessageType(Type)</h4>
+  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetMessageType_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetMessageType(Type)">GetMessageType(Type)</h4>
   <div class="markdown level1 summary"><p>Returns the actual message type in the specified parameter type (e.g. <code>TMessage</code> for a parameter
 declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
 </div>
@@ -217,7 +207,7 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Type</span></td>
+        <td><span class="xref">Type</span></td>
         <td><span class="parametername">parameterType</span></td>
         <td><p>The type of the parameter to be resolved.</p>
 </td>
@@ -234,21 +224,16 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Type</span></td>
+        <td><span class="xref">Type</span></td>
         <td><p>The actual message type.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_Silverback_Messaging_Messages_IMessageStreamProvider_System_Type_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue(Silverback.Messaging.Messages.IMessageStreamProvider%2CSystem.Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/ArgumentResolvers/EnumerableMessageArgumentResolver.cs/#L44">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_Silverback_Messaging_Messages_IMessageStreamProvider_System_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue(Silverback.Messaging.Messages.IMessageStreamProvider,System.Type)">GetValue(IMessageStreamProvider, Type)</h4>
+  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_IMessageStreamProvider_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue(IMessageStreamProvider,Type)">GetValue(IMessageStreamProvider, Type)</h4>
   <div class="markdown level1 summary"><p>Returns the messages stream in a shape that is compatible with the subscribed method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -267,13 +252,13 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IMessageStreamProvider.html">IMessageStreamProvider</a></td>
+        <td><span class="xref">IMessageStreamProvider</span></td>
         <td><span class="parametername">streamProvider</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IMessageStreamProvider.html">IMessageStreamProvider</a> being published.</p>
+        <td><p>The <see cref="!:IMessageStreamProvider"></see> being published.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Type</span></td>
+        <td><span class="xref">Type</span></td>
         <td><span class="parametername">targetMessageType</span></td>
         <td><p>The actual message type being declared by the subscribed method (e.g. <code>TMessage</code> for an
 <code>IMessageStreamEnumerable&lt;TMessage&gt;</code>).</p>
@@ -297,15 +282,10 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_System_Collections_Generic_IReadOnlyCollection_System_Object__System_Type_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue(System.Collections.Generic.IReadOnlyCollection%7BSystem.Object%7D%2CSystem.Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/ArgumentResolvers/EnumerableMessageArgumentResolver.cs/#L36">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_System_Collections_Generic_IReadOnlyCollection_System_Object__System_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue(System.Collections.Generic.IReadOnlyCollection{System.Object},System.Type)">GetValue(IReadOnlyCollection&lt;Object&gt;, Type)</h4>
+  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_IReadOnlyCollection_System_Object__Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue(IReadOnlyCollection{System.Object},Type)">GetValue(IReadOnlyCollection&lt;Object&gt;, Type)</h4>
   <div class="markdown level1 summary"><p>Returns the messages collection in a shape that is compatible with the subscribed method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -324,13 +304,13 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<span class="xref">System.Object</span>&gt;</td>
+        <td><span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">messages</span></td>
         <td><p>The messages being published.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Type</span></td>
+        <td><span class="xref">Type</span></td>
         <td><span class="parametername">targetMessageType</span></td>
         <td><p>The actual message type being declared by the subscribed method (e.g. <code>TMessage</code> for an
 <code>IEnumerable&lt;TMessage&gt;</code>).</p>
@@ -374,12 +354,6 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Subscribers/ArgumentResolvers/EnumerableMessageArgumentResolver.cs/#L15" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

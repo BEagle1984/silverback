@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class LogExactlyOnceStrategy
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_Inbound_ExactlyOnce_LogExactlyOnceStrategy" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.LogExactlyOnceStrategy" class="text-break">Class LogExactlyOnceStrategy
   </h1>
-  <div class="markdown level0 summary"><p>Uses an <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.IInboundLog.html">IInboundLog</a> to keep track of the processed message identifiers and guarantee
+  <div class="markdown level0 summary"><p>Uses an <see cref="!:IInboundLog"></see> to keep track of the processed message identifiers and guarantee
 that each message is processed only once.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -106,10 +106,16 @@ that each message is processed only once.</p>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -120,31 +126,20 @@ that each message is processed only once.</p>
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.html">Silverback.Messaging.Inbound.ExactlyOnce</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Inbound_ExactlyOnce_LogExactlyOnceStrategy_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class LogExactlyOnceStrategy : IExactlyOnceStrategy</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ExactlyOnce_LogExactlyOnceStrategy_Build_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ExactlyOnce.LogExactlyOnceStrategy.Build(System.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Inbound/ExactlyOnce/LogExactlyOnceStrategy.cs/#L20">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_LogExactlyOnceStrategy_Build_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.LogExactlyOnceStrategy.Build*"></a>
-  <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_LogExactlyOnceStrategy_Build_System_IServiceProvider_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.LogExactlyOnceStrategy.Build(System.IServiceProvider)">Build(IServiceProvider)</h4>
-  <div class="markdown level1 summary"><p>Returns the actual strategy implementation, built using the provided <span class="xref">System.IServiceProvider</span>.</p>
+  <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_LogExactlyOnceStrategy_Build_IServiceProvider_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.LogExactlyOnceStrategy.Build(IServiceProvider)">Build(IServiceProvider)</h4>
+  <div class="markdown level1 summary"><p>Returns the actual strategy implementation, built using the provided <see cref="!:IServiceProvider"></see>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -162,9 +157,9 @@ that each message is processed only once.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.IServiceProvider</span></td>
+        <td><span class="xref">IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <span class="xref">System.IServiceProvider</span> to be used to build the strategy.</p>
+        <td><p>The <see cref="!:IServiceProvider"></see> to be used to build the strategy.</p>
 </td>
       </tr>
     </tbody>
@@ -197,12 +192,6 @@ messages.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ExactlyOnce_LogExactlyOnceStrategy.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ExactlyOnce.LogExactlyOnceStrategy%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Inbound/ExactlyOnce/LogExactlyOnceStrategy.cs/#L17" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
