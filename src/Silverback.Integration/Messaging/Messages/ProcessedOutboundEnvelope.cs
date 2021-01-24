@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
@@ -15,17 +16,21 @@ namespace Silverback.Messaging.Messages
         public ProcessedOutboundEnvelope(
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
-            IProducerEndpoint endpoint)
+            IProducerEndpoint endpoint,
+            string actualEndpointName)
             : base(messageContent, headers, endpoint)
         {
+            ActualEndpointName = Check.NotNull(actualEndpointName, nameof(actualEndpointName));
         }
 
         public ProcessedOutboundEnvelope(
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            IProducerEndpoint endpoint)
+            IProducerEndpoint endpoint,
+            string actualEndpointName)
             : base(messageStream, headers, endpoint)
         {
+            ActualEndpointName = Check.NotNull(actualEndpointName, nameof(actualEndpointName));
         }
     }
 }

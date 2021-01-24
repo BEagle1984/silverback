@@ -93,6 +93,40 @@ namespace Silverback.Messaging.Broker
         void RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <param name="actualEndpointName">
+        ///     The actual target endpoint name.
+        /// </param>
+        /// <param name="messageContent">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        void RawProduce(
+            string actualEndpointName,
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers = null);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <param name="actualEndpointName">
+        ///     The actual target endpoint name.
+        /// </param>
+        /// <param name="messageStream">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        void RawProduce(
+            string actualEndpointName,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers = null);
+
+        /// <summary>
         ///     Publishes the specified message.
         /// </summary>
         /// <param name="message">
@@ -131,7 +165,9 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null);
+        Task RawProduceAsync(
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -145,6 +181,48 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null);
+        Task RawProduceAsync(
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers = null);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <param name="actualEndpointName">
+        ///     The actual target endpoint name.
+        /// </param>
+        /// <param name="messageContent">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task RawProduceAsync(
+            string actualEndpointName,
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers = null);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <param name="actualEndpointName">
+        ///     The actual target endpoint name.
+        /// </param>
+        /// <param name="messageStream">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        Task RawProduceAsync(
+            string actualEndpointName,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers = null);
     }
 }

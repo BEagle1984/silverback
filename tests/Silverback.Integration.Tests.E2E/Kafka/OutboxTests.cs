@@ -11,6 +11,7 @@ using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Database;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
+using Silverback.Util;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -128,6 +129,77 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             dbContext.Outbox.Should().BeEmpty();
             DefaultTopic.TotalMessagesCount.Should().Be(0);
+        }
+
+        [Fact]
+        public async Task OutboxProduceStrategy_WithEndpointNameFunction_ProducedToProperEndpoint()
+        {
+            Host
+                .WithTestDbContext()
+                .ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .UseDbContext<TestDbContext>()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddMockedKafka()
+                                .AddOutboxDatabaseTable()
+                                .AddOutboxWorker(TimeSpan.FromMilliseconds(100)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(
+                                            envelope =>
+                                            {
+                                                var testEventOne = (TestEventOne)envelope.Message!;
+                                                switch (testEventOne.Content)
+                                                {
+                                                    case "1":
+                                                        return "topic1";
+                                                    case "2":
+                                                        return "topic2";
+                                                    case "3":
+                                                        return "topic3";
+                                                    default:
+                                                        throw new InvalidOperationException();
+                                                }
+                                            })
+                                        .ProduceToOutbox()))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            var dbContext = Host.ScopedServiceProvider.GetRequiredService<TestDbContext>();
+            var topic1 = Helper.GetTopic("topic1");
+            var topic2 = Helper.GetTopic("topic2");
+            var topic3 = Helper.GetTopic("topic3");
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "2" });
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            topic1.TotalMessagesCount.Should().Be(0);
+            topic2.TotalMessagesCount.Should().Be(0);
+            topic3.TotalMessagesCount.Should().Be(0);
+
+            await dbContext.SaveChangesAsync();
+
+            await AsyncTestingUtil.WaitAsync(
+                () =>
+                    topic1.TotalMessagesCount >= 1 &&
+                    topic2.TotalMessagesCount >= 1 &&
+                    topic3.TotalMessagesCount >= 1);
+
+            dbContext.Outbox.ForEach(
+                outboxMessage => outboxMessage.ActualEndpointName.Should().NotBeNullOrEmpty());
+
+            topic1.TotalMessagesCount.Should().Be(1);
+            topic2.TotalMessagesCount.Should().Be(1);
+            topic3.TotalMessagesCount.Should().Be(1);
         }
     }
 }

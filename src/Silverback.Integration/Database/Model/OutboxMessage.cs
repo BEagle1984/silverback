@@ -29,7 +29,7 @@ namespace Silverback.Database.Model
         ///     Gets or sets the message content (body).
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        public byte[]? Content { get; set; } = null!;
+        public byte[]? Content { get; set; }
 
         /// <summary>
         ///     Gets or sets the serialized message headers.
@@ -39,7 +39,7 @@ namespace Silverback.Database.Model
         ///     with the next major release.
         /// </remarks>
         [Obsolete("Replaced by SerializedHeaders.")]
-        public string? Headers { get; set; } = null!;
+        public string? Headers { get; set; }
 
         /// <summary>
         ///     Gets or sets the serialized message headers.
@@ -48,10 +48,16 @@ namespace Silverback.Database.Model
         public byte[]? SerializedHeaders { get; set; }
 
         /// <summary>
-        ///     Gets or sets the endpoint name.
+        ///     Gets or sets the name of the producer endpoint.
         /// </summary>
         [MaxLength(300)]
         public string EndpointName { get; set; } = null!;
+
+        /// <summary>
+        ///     Gets or sets the name of the actual target endpoint that was resolved for the message.
+        /// </summary>
+        [MaxLength(300)]
+        public string? ActualEndpointName { get; set; }
 
         /// <summary>
         ///     Gets or sets the datetime when the message was stored in the queue.

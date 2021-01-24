@@ -65,7 +65,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
                     GetMessageType(message),
                     message.Content,
                     DeserializeHeaders(message),
-                    message.EndpointName))
+                    message.EndpointName,
+                    message.ActualEndpointName))
             .ToList();
 
         /// <inheritdoc cref="IOutboxReader.RetryAsync" />

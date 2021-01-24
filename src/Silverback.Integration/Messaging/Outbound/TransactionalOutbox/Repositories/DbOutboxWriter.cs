@@ -43,6 +43,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
                     SerializedHeaders =
                         JsonSerializer.SerializeToUtf8Bytes((IEnumerable<MessageHeader>)envelope.Headers),
                     EndpointName = envelope.Endpoint.Name,
+                    ActualEndpointName = envelope.ActualEndpointName,
                     Created = DateTime.UtcNow
                 });
         }

@@ -125,12 +125,30 @@ namespace Silverback.Messaging.Broker
                 });
 
         /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?)" />
-        public void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
-            => Produce(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint));
+        public void RawProduce(
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers = null)
+            => Produce(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint, Endpoint.Name));
 
         /// <inheritdoc cref="IProducer.RawProduce(Stream?,IReadOnlyCollection{MessageHeader}?)" />
-        public void RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null)
-            => Produce(new ProcessedOutboundEnvelope(messageStream, headers, Endpoint));
+        public void RawProduce(
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers = null)
+            => Produce(new ProcessedOutboundEnvelope(messageStream, headers, Endpoint, Endpoint.Name));
+
+        /// <inheritdoc cref="IProducer.RawProduce(string, byte[],IReadOnlyCollection{MessageHeader}?)" />
+        public void RawProduce(
+            string actualEndpointName,
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers = null)
+            => Produce(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint, actualEndpointName));
+
+        /// <inheritdoc cref="IProducer.RawProduce(string, Stream?,IReadOnlyCollection{MessageHeader}?)" />
+        public void RawProduce(
+            string actualEndpointName,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers = null)
+            => Produce(new ProcessedOutboundEnvelope(messageStream, headers, Endpoint, actualEndpointName));
 
         /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?)" />
         public Task ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
@@ -151,12 +169,32 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
-        public Task RawProduceAsync(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null)
-            => ProduceAsync(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint));
+        public Task RawProduceAsync(
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers = null)
+            => ProduceAsync(new ProcessedOutboundEnvelope(messageContent, headers, Endpoint, Endpoint.Name));
 
         /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?)" />
-        public Task RawProduceAsync(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null)
-            => ProduceAsync(new ProcessedOutboundEnvelope(messageStream, headers, Endpoint));
+        public Task RawProduceAsync(
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers = null)
+            => ProduceAsync(new ProcessedOutboundEnvelope(messageStream, headers, Endpoint, Endpoint.Name));
+
+        /// <inheritdoc cref="IProducer.RawProduceAsync(string, byte[],IReadOnlyCollection{MessageHeader}?)" />
+        public Task RawProduceAsync(
+            string actualEndpointName,
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers = null)
+            => ProduceAsync(
+                new ProcessedOutboundEnvelope(messageContent, headers, Endpoint, actualEndpointName));
+
+        /// <inheritdoc cref="IProducer.RawProduceAsync(string, Stream?,IReadOnlyCollection{MessageHeader}?)" />
+        public Task RawProduceAsync(
+            string actualEndpointName,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers = null)
+            => ProduceAsync(
+                new ProcessedOutboundEnvelope(messageStream, headers, Endpoint, actualEndpointName));
 
         /// <summary>
         ///     Connects to the message broker.

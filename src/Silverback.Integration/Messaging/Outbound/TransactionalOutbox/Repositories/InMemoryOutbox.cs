@@ -38,7 +38,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
                 envelope.Message?.GetType(),
                 await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false),
                 envelope.Headers,
-                envelope.Endpoint.Name);
+                envelope.Endpoint.Name,
+                envelope.ActualEndpointName);
 
             await AddAsync(item).ConfigureAwait(false);
         }

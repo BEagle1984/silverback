@@ -103,16 +103,22 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         /// <param name="endpoint">
         ///     The endpoint to produce to.
         /// </param>
+        /// <param name="actualEndpointName">
+        ///     The actual endpoint name that was resolved for the message.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
         protected virtual Task ProduceMessageAsync(
             byte[]? content,
             IReadOnlyCollection<MessageHeader>? headers,
-            IProducerEndpoint endpoint) =>
-            _brokerCollection.GetProducer(endpoint).RawProduceAsync(content, headers);
+            IProducerEndpoint endpoint,
+            string actualEndpointName) =>
+            _brokerCollection.GetProducer(endpoint).RawProduceAsync(actualEndpointName, content, headers);
 
-        private async Task ProcessQueueAsync(IServiceProvider serviceProvider, CancellationToken stoppingToken)
+        private async Task ProcessQueueAsync(
+            IServiceProvider serviceProvider,
+            CancellationToken stoppingToken)
         {
             _logger.LogTrace(
                 IntegrationEventIds.ReadingMessagesFromOutbox,
@@ -120,7 +126,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 _readBatchSize);
 
             var outboxReader = serviceProvider.GetRequiredService<IOutboxReader>();
-            var outboxMessages = (await outboxReader.ReadAsync(_readBatchSize).ConfigureAwait(false)).ToList();
+            var outboxMessages =
+                (await outboxReader.ReadAsync(_readBatchSize).ConfigureAwait(false)).ToList();
 
             if (outboxMessages.Count == 0)
                 _logger.LogTrace(IntegrationEventIds.OutboxEmpty, "The outbox is empty.");
@@ -132,7 +139,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                     "Processing message {currentMessageIndex} of {totalMessages}.",
                     i + 1,
                     outboxMessages.Count);
-                await ProcessMessageAsync(outboxMessages[i], outboxReader, serviceProvider).ConfigureAwait(false);
+                await ProcessMessageAsync(outboxMessages[i], outboxReader, serviceProvider)
+                    .ConfigureAwait(false);
 
                 if (stoppingToken.IsCancellationRequested)
                     break;
@@ -147,7 +155,12 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             try
             {
                 var endpoint = GetTargetEndpoint(message.MessageType, message.EndpointName, serviceProvider);
-                await ProduceMessageAsync(message.Content, message.Headers, endpoint).ConfigureAwait(false);
+                await ProduceMessageAsync(
+                    message.Content,
+                    message.Headers,
+                    endpoint,
+                    message.ActualEndpointName ?? endpoint.Name)
+                    .ConfigureAwait(false);
 
                 await outboxReader.AcknowledgeAsync(message).ConfigureAwait(false);
             }
@@ -157,7 +170,10 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                     IntegrationEventIds.ErrorProducingOutboxStoredMessage,
                     ex,
                     "Failed to produce the message in the outbox.",
-                    new OutboundEnvelope(message.Content, message.Headers, new LoggingEndpoint(message.EndpointName)));
+                    new OutboundEnvelope(
+                        message.Content,
+                        message.Headers,
+                        new LoggingEndpoint(message.EndpointName)));
 
                 await outboxReader.RetryAsync(message).ConfigureAwait(false);
 
