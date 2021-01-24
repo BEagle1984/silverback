@@ -11,6 +11,7 @@ using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.KafkaEvents.Statistics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
@@ -94,6 +95,22 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         }
 
         [Fact]
+        public void ProduceTo_TypedTopicNameFunction_TopicSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo<TestEventOne>(_ => "some-topic");
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+            endpoint.GetPartition(null!, null!).Should().Be(Partition.Any);
+        }
+
+        [Fact]
         public void ProduceTo_TopicNameAndPartitionFunctions_TopicAndPartitionSet()
         {
             var builder = new KafkaProducerEndpointBuilder(
@@ -103,6 +120,22 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
                 });
 
             builder.ProduceTo(_ => "some-topic", _ => 42);
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+            endpoint.GetPartition(null!, null!).Should().Be(new Partition(42));
+        }
+
+        [Fact]
+        public void ProduceTo_TypedTopicNameAndPartitionFunctions_TopicAndPartitionSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo<TestEventOne>(_ => "some-topic", _ => 42);
             var endpoint = builder.Build();
 
             endpoint.GetActualName(null!, null!).Should().Be("some-topic");
@@ -126,6 +159,22 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         }
 
         [Fact]
+        public void ProduceTo_TypedTopicNameFunctionWithServiceProvider_TopicSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo<TestEventOne>((_, _) => "some-topic");
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+            endpoint.GetPartition(null!, null!).Should().Be(Partition.Any);
+        }
+
+        [Fact]
         public void ProduceTo_TopicNameAndPartitionFunctionsWithServiceProvider_TopicAndPartitionSet()
         {
             var builder = new KafkaProducerEndpointBuilder(
@@ -138,6 +187,86 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             var endpoint = builder.Build();
 
             endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+            endpoint.GetPartition(null!, null!).Should().Be(new Partition(42));
+        }
+
+        [Fact]
+        public void ProduceTo_TypedTopicNameAndPartitionFunctionsWithServiceProvider_TopicAndPartitionSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo<TestEventOne>((_, _) => "some-topic", (_, _) => 42);
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+            endpoint.GetPartition(null!, null!).Should().Be(new Partition(42));
+        }
+
+        [Fact]
+        public void ProduceTo_TopicNameFormat_TopicSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo("some-topic-{0}", _ => new[] { "123" });
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic-123");
+            endpoint.GetPartition(null!, null!).Should().Be(Partition.Any);
+        }
+
+        [Fact]
+        public void ProduceTo_TypedTopicNameFormat_TopicSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo<TestEventOne>("some-topic-{0}", _ => new[] { "123" });
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic-123");
+            endpoint.GetPartition(null!, null!).Should().Be(Partition.Any);
+        }
+
+        [Fact]
+        public void ProduceTo_TopicNameFormatAndPartitionFunction_TopicAndPartitionSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo("some-topic-{0}", _ => new[] { "123" }, _ => 42);
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic-123");
+            endpoint.GetPartition(null!, null!).Should().Be(new Partition(42));
+        }
+
+        [Fact]
+        public void ProduceTo_TypedTopicNameFormatAndPartitionFunction_TopicAndPartitionSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ProduceTo<TestEventOne>("some-topic-{0}", _ => new[] { "123" }, _ => 42);
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic-123");
             endpoint.GetPartition(null!, null!).Should().Be(new Partition(42));
         }
 

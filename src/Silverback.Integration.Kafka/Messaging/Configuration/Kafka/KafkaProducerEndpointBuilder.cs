@@ -70,6 +70,30 @@ namespace Silverback.Messaging.Configuration.Kafka
             return this;
         }
 
+        /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo{TMessage}(Func{IOutboundEnvelope{TMessage}, string}, Func{IOutboundEnvelope{TMessage}, int}?)" />
+        public IKafkaProducerEndpointBuilder ProduceTo<TMessage>(
+            Func<IOutboundEnvelope<TMessage>, string> topicNameFunction,
+            Func<IOutboundEnvelope<TMessage>, int>? partitionFunction = null)
+            where TMessage : class
+        {
+            Check.NotNull(topicNameFunction, nameof(topicNameFunction));
+
+            Func<IOutboundEnvelope, int>? wrappedPartitionFunction = null;
+
+            if (partitionFunction != null)
+            {
+                wrappedPartitionFunction =
+                    envelope => partitionFunction.Invoke((IOutboundEnvelope<TMessage>)envelope);
+            }
+
+            _endpointFactory = () => new KafkaProducerEndpoint(
+                envelope => topicNameFunction.Invoke((IOutboundEnvelope<TMessage>)envelope),
+                wrappedPartitionFunction,
+                _clientConfig);
+
+            return this;
+        }
+
         /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo(Func{IOutboundEnvelope, IServiceProvider, string}, Func{IOutboundEnvelope, IServiceProvider, int}?)" />
         public IKafkaProducerEndpointBuilder ProduceTo(
             Func<IOutboundEnvelope, IServiceProvider, string> topicNameFunction,
@@ -80,6 +104,31 @@ namespace Silverback.Messaging.Configuration.Kafka
             _endpointFactory = () => new KafkaProducerEndpoint(
                 topicNameFunction,
                 partitionFunction,
+                _clientConfig);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo{TMessage}(Func{IOutboundEnvelope{TMessage}, IServiceProvider, string}, Func{IOutboundEnvelope{TMessage}, IServiceProvider, int}?)" />
+        public IKafkaProducerEndpointBuilder ProduceTo<TMessage>(
+            Func<IOutboundEnvelope<TMessage>, IServiceProvider, string> topicNameFunction,
+            Func<IOutboundEnvelope<TMessage>, IServiceProvider, int>? partitionFunction = null)
+            where TMessage : class
+        {
+            Check.NotNull(topicNameFunction, nameof(topicNameFunction));
+
+            Func<IOutboundEnvelope, IServiceProvider, int>? wrappedPartitionFunction = null;
+
+            if (partitionFunction != null)
+            {
+                wrappedPartitionFunction = (envelope, serviceProvider) =>
+                    partitionFunction.Invoke((IOutboundEnvelope<TMessage>)envelope, serviceProvider);
+            }
+
+            _endpointFactory = () => new KafkaProducerEndpoint(
+                (envelope, serviceProvider) =>
+                    topicNameFunction.Invoke((IOutboundEnvelope<TMessage>)envelope, serviceProvider),
+                wrappedPartitionFunction,
                 _clientConfig);
 
             return this;
@@ -98,6 +147,33 @@ namespace Silverback.Messaging.Configuration.Kafka
                 topicNameFormatString,
                 topicNameArgumentsFunction,
                 partitionFunction,
+                _clientConfig);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IKafkaProducerEndpointBuilder.ProduceTo{TMessage}(string, Func{IOutboundEnvelope{TMessage}, string[]}, Func{IOutboundEnvelope{TMessage}, int}?)" />
+        public IKafkaProducerEndpointBuilder ProduceTo<TMessage>(
+            string topicNameFormatString,
+            Func<IOutboundEnvelope<TMessage>, string[]> topicNameArgumentsFunction,
+            Func<IOutboundEnvelope<TMessage>, int>? partitionFunction = null)
+            where TMessage : class
+        {
+            Check.NotEmpty(topicNameFormatString, nameof(topicNameFormatString));
+            Check.NotNull(topicNameArgumentsFunction, nameof(topicNameArgumentsFunction));
+
+            Func<IOutboundEnvelope, int>? wrappedPartitionFunction = null;
+
+            if (partitionFunction != null)
+            {
+                wrappedPartitionFunction = (envelope) =>
+                    partitionFunction.Invoke((IOutboundEnvelope<TMessage>)envelope);
+            }
+
+            _endpointFactory = () => new KafkaProducerEndpoint(
+                topicNameFormatString,
+                envelope => topicNameArgumentsFunction.Invoke((IOutboundEnvelope<TMessage>)envelope),
+                wrappedPartitionFunction,
                 _clientConfig);
 
             return this;

@@ -40,11 +40,10 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .ConnectViaTcp("e2e-mqtt-broker"))
                                 .AddOutbound<TestEventOne>(
                                     endpoint => endpoint
-                                        .ProduceTo(
+                                        .ProduceTo<TestEventOne>(
                                             envelope =>
                                             {
-                                                var testEventOne = (TestEventOne)envelope.Message!;
-                                                switch (testEventOne.Content)
+                                                switch (envelope.Message!.Content)
                                                 {
                                                     case "1":
                                                         return "topic1";
@@ -93,12 +92,11 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .ConnectViaTcp("e2e-mqtt-broker"))
                                 .AddOutbound<TestEventOne>(
                                     endpoint => endpoint
-                                        .ProduceTo(
+                                        .ProduceTo<TestEventOne>(
                                             "topic{0}",
                                             envelope =>
                                             {
-                                                var testEventOne = (TestEventOne)envelope.Message!;
-                                                switch (testEventOne.Content)
+                                                switch (envelope.Message!.Content)
                                                 {
                                                     case "1":
                                                         return new[] { "1" };
@@ -170,12 +168,11 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class TestEndpointNameResolver : IProducerEndpointNameResolver
+        private class TestEndpointNameResolver : ProducerEndpointNameResolver<TestEventOne>
         {
-            public string GetName(IOutboundEnvelope envelope)
+            protected override string GetName(IOutboundEnvelope<TestEventOne> envelope)
             {
-                var testEventOne = (TestEventOne)envelope.Message!;
-                switch (testEventOne.Content)
+                switch (envelope.Message!.Content)
                 {
                     case "1":
                         return "topic1";

@@ -23,7 +23,7 @@ namespace Silverback.Messaging.Configuration
 
             brokerOptionsBuilder.SilverbackBuilder
                 .AddSingletonBrokerBehavior<KafkaMessageKeyInitializerProducerBehavior>()
-                .AddSingletonBrokerBehavior<PartitionResolverProducerBehavior>()
+                .AddSingletonBrokerBehavior<KafkaPartitionResolverProducerBehavior>()
                 .Services
                 .AddTransient<IConfluentProducerBuilder, ConfluentProducerBuilder>()
                 .AddTransient<IConfluentConsumerBuilder, ConfluentConsumerBuilder>()

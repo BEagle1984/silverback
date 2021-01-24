@@ -10,6 +10,7 @@ using Silverback.Messaging;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
+using Silverback.Tests.Types.Domain;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
@@ -69,6 +70,16 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         }
 
         [Fact]
+        public void ProduceTo_TypedTopicNameFunction_TopicSet()
+        {
+            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            builder.ProduceTo<TestEventOne>(_ => "some-topic");
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+        }
+
+        [Fact]
         public void ProduceTo_TopicNameFunctionWithServiceProvider_TopicSet()
         {
             var builder = new MqttProducerEndpointBuilder(_clientConfig);
@@ -76,6 +87,36 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             var endpoint = builder.Build();
 
             endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+        }
+
+        [Fact]
+        public void ProduceTo_TypedTopicNameFunctionWithServiceProvider_TopicSet()
+        {
+            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            builder.ProduceTo<TestEventOne>((_, _) => "some-topic");
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic");
+        }
+
+        [Fact]
+        public void ProduceTo_TopicNameFormat_TopicSet()
+        {
+            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            builder.ProduceTo("some-topic/{0}", _ => new[] { "123" });
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic/123");
+        }
+
+        [Fact]
+        public void ProduceTo_TypedTopicNameFormat_TopicSet()
+        {
+            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            builder.ProduceTo<TestEventOne>("some-topic/{0}", _ => new[] { "123" });
+            var endpoint = builder.Build();
+
+            endpoint.GetActualName(null!, null!).Should().Be("some-topic/123");
         }
 
         [Fact]

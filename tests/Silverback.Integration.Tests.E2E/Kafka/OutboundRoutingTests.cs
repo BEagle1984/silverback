@@ -176,11 +176,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<TestEventOne>(
                                     endpoint => endpoint
-                                        .ProduceTo(
+                                        .ProduceTo<TestEventOne>(
                                             envelope =>
                                             {
-                                                var testEventOne = (TestEventOne)envelope.Message!;
-                                                switch (testEventOne.Content)
+                                                switch (envelope.Message!.Content)
                                                 {
                                                     case "1":
                                                         return "topic1";
@@ -229,11 +228,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<TestEventOne>(
                                     endpoint => endpoint
-                                        .ProduceTo(
+                                        .ProduceTo<TestEventOne>(
                                             envelope =>
                                             {
-                                                var testEventOne = (TestEventOne)envelope.Message!;
-                                                switch (testEventOne.Content)
+                                                switch (envelope.Message!.Content)
                                                 {
                                                     case "1":
                                                         return "topic1";
@@ -247,8 +245,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             },
                                             envelope =>
                                             {
-                                                var testEventOne = (TestEventOne)envelope.Message!;
-                                                switch (testEventOne.Content)
+                                                switch (envelope.Message!.Content)
                                                 {
                                                     case "1":
                                                         return 2;
@@ -302,12 +299,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<TestEventOne>(
                                     endpoint => endpoint
-                                        .ProduceTo(
+                                        .ProduceTo<TestEventOne>(
                                             "topic{0}",
                                             envelope =>
                                             {
-                                                var testEventOne = (TestEventOne)envelope.Message!;
-                                                switch (testEventOne.Content)
+                                                switch (envelope.Message!.Content)
                                                 {
                                                     case "1":
                                                         return new[] { "1" };
@@ -759,12 +755,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class TestEndpointNameResolver : IKafkaProducerEndpointNameResolver
+        private class TestEndpointNameResolver : KafkaProducerEndpointNameResolver<TestEventOne>
         {
-            public string GetName(IOutboundEnvelope envelope)
+            protected override string GetName(IOutboundEnvelope<TestEventOne> envelope)
             {
-                var testEventOne = (TestEventOne)envelope.Message!;
-                switch (testEventOne.Content)
+                switch (envelope.Message!.Content)
                 {
                     case "1":
                         return "topic1";
@@ -777,10 +772,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 }
             }
 
-            public int? GetPartition(IOutboundEnvelope envelope)
+            protected override int? GetPartition(IOutboundEnvelope<TestEventOne> envelope)
             {
-                var testEventOne = (TestEventOne)envelope.Message!;
-                switch (testEventOne.Content)
+                switch (envelope.Message!.Content)
                 {
                     case "1":
                         return 2;

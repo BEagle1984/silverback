@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Outbound.Routing
     ///     Resolves the target partition for the message being published using the
     ///     <see cref="KafkaProducerEndpoint.GetPartition" /> method.
     /// </summary>
-    public class PartitionResolverProducerBehavior : IProducerBehavior
+    public class KafkaPartitionResolverProducerBehavior : IProducerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Producer.EndpointNameResolver + 1;

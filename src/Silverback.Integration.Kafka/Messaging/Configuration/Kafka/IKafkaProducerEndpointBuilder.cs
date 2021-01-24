@@ -51,6 +51,28 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <summary>
         ///     Specifies the name of the topic and optionally the target partition.
         /// </summary>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages being produced.
+        /// </typeparam>
+        /// <param name="topicNameFunction">
+        ///     The function returning the topic name for the message being produced.
+        /// </param>
+        /// <param name="partitionFunction">
+        ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
+        ///     the partition is automatically derived from the message key (use <see cref="KafkaKeyMemberAttribute" />
+        ///     to specify a message key, otherwise a random one will be generated).
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IKafkaProducerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IKafkaProducerEndpointBuilder ProduceTo<TMessage>(
+            Func<IOutboundEnvelope<TMessage>, string> topicNameFunction,
+            Func<IOutboundEnvelope<TMessage>, int>? partitionFunction = null)
+            where TMessage : class;
+
+        /// <summary>
+        ///     Specifies the name of the topic and optionally the target partition.
+        /// </summary>
         /// <param name="topicNameFunction">
         ///     The function returning the topic name for the message being produced.
         /// </param>
@@ -65,6 +87,28 @@ namespace Silverback.Messaging.Configuration.Kafka
         IKafkaProducerEndpointBuilder ProduceTo(
             Func<IOutboundEnvelope, IServiceProvider, string> topicNameFunction,
             Func<IOutboundEnvelope, IServiceProvider, int>? partitionFunction = null);
+
+        /// <summary>
+        ///     Specifies the name of the topic and optionally the target partition.
+        /// </summary>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages being produced.
+        /// </typeparam>
+        /// <param name="topicNameFunction">
+        ///     The function returning the topic name for the message being produced.
+        /// </param>
+        /// <param name="partitionFunction">
+        ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
+        ///     the partition is automatically derived from the message key (use <see cref="KafkaKeyMemberAttribute" />
+        ///     to specify a message key, otherwise a random one will be generated).
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IKafkaProducerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IKafkaProducerEndpointBuilder ProduceTo<TMessage>(
+            Func<IOutboundEnvelope<TMessage>, IServiceProvider, string> topicNameFunction,
+            Func<IOutboundEnvelope<TMessage>, IServiceProvider, int>? partitionFunction = null)
+            where TMessage : class;
 
         /// <summary>
         ///     Specifies the name of the topic and optionally the target partition.
@@ -88,6 +132,33 @@ namespace Silverback.Messaging.Configuration.Kafka
             string topicNameFormatString,
             Func<IOutboundEnvelope, string[]> topicNameArgumentsFunction,
             Func<IOutboundEnvelope, int>? partitionFunction = null);
+
+        /// <summary>
+        ///     Specifies the name of the topic and optionally the target partition.
+        /// </summary>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages being produced.
+        /// </typeparam>
+        /// <param name="topicNameFormatString">
+        ///     The endpoint name format string that will be combined with the arguments returned by the
+        ///     <paramref name="topicNameArgumentsFunction" /> using a <c>string.Format</c>.
+        /// </param>
+        /// <param name="topicNameArgumentsFunction">
+        ///     The function returning the arguments to be used to format the string.
+        /// </param>
+        /// <param name="partitionFunction">
+        ///     The optional function returning the target partition index for the message being produced. If <c>null</c>
+        ///     the partition is automatically derived from the message key (use <see cref="KafkaKeyMemberAttribute" />
+        ///     to specify a message key, otherwise a random one will be generated).
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IKafkaProducerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IKafkaProducerEndpointBuilder ProduceTo<TMessage>(
+            string topicNameFormatString,
+            Func<IOutboundEnvelope<TMessage>, string[]> topicNameArgumentsFunction,
+            Func<IOutboundEnvelope<TMessage>, int>? partitionFunction = null)
+            where TMessage : class;
 
         /// <summary>
         ///     Specifies the type of the <see cref="IKafkaProducerEndpointNameResolver" /> to be used to resolve the

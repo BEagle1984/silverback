@@ -65,6 +65,19 @@ namespace Silverback.Messaging.Configuration.Mqtt
             return this;
         }
 
+        /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo{TMessage}(Func{IOutboundEnvelope{TMessage}, string})" />
+        public IMqttProducerEndpointBuilder ProduceTo<TMessage>(
+            Func<IOutboundEnvelope<TMessage>, string> topicNameFunction)
+            where TMessage : class
+        {
+            Check.NotNull(topicNameFunction, nameof(topicNameFunction));
+
+            _endpointFactory = () => new MqttProducerEndpoint(
+                envelope => topicNameFunction.Invoke((IOutboundEnvelope<TMessage>)envelope));
+
+            return this;
+        }
+
         /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo(Func{IOutboundEnvelope, IServiceProvider, string})" />
         public IMqttProducerEndpointBuilder ProduceTo(
             Func<IOutboundEnvelope, IServiceProvider, string> topicNameFunction)
@@ -72,6 +85,20 @@ namespace Silverback.Messaging.Configuration.Mqtt
             Check.NotNull(topicNameFunction, nameof(topicNameFunction));
 
             _endpointFactory = () => new MqttProducerEndpoint(topicNameFunction);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo{TMessage}(Func{IOutboundEnvelope{TMessage}, IServiceProvider, string})" />
+        public IMqttProducerEndpointBuilder ProduceTo<TMessage>(
+            Func<IOutboundEnvelope<TMessage>, IServiceProvider, string> topicNameFunction)
+            where TMessage : class
+        {
+            Check.NotNull(topicNameFunction, nameof(topicNameFunction));
+
+            _endpointFactory = () => new MqttProducerEndpoint(
+                (envelope, serviceProvider) =>
+                    topicNameFunction.Invoke((IOutboundEnvelope<TMessage>)envelope, serviceProvider));
 
             return this;
         }
@@ -87,6 +114,22 @@ namespace Silverback.Messaging.Configuration.Mqtt
             _endpointFactory = () => new MqttProducerEndpoint(
                 topicNameFormatString,
                 topicNameArgumentsFunction);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttProducerEndpointBuilder.ProduceTo{TMessage}(string, Func{IOutboundEnvelope{TMessage}, string[]})" />
+        public IMqttProducerEndpointBuilder ProduceTo<TMessage>(
+            string topicNameFormatString,
+            Func<IOutboundEnvelope<TMessage>, string[]> topicNameArgumentsFunction)
+            where TMessage : class
+        {
+            Check.NotEmpty(topicNameFormatString, nameof(topicNameFormatString));
+            Check.NotNull(topicNameArgumentsFunction, nameof(topicNameArgumentsFunction));
+
+            _endpointFactory = () => new MqttProducerEndpoint(
+                topicNameFormatString,
+                envelope => topicNameArgumentsFunction.Invoke((IOutboundEnvelope<TMessage>)envelope));
 
             return this;
         }
