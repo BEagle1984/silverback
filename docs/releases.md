@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.0.0-beta.9](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.9)
+## [3.0.0-beta.12](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.12)
 
 ### What's new
 
@@ -24,6 +24,7 @@ uid: releases
   * Add setting to manually assign the consumer partitions
 * Add option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see `throwIfUnhandled` argument in the <xref:Silverback.Messaging.Publishing.IPublisher> methods and [ThrowIfUnhandled](xref:Silverback.Messaging.IConsumerEndpoint#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled) property in the <xref:Silverback.Messaging.IConsumerEndpoint>)
 * Replace [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json) with [System.Text.Json](https://www.nuget.org/packages/System.Text.Json) to improve serialization and deserialization performance (the old serializers have been moved into the [Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft) package, see <xref:serialization>)
+* Improve outbound routing customization options with endpoint name resolvers (see <xref:outbound-routing>)
 * Add log levels configuration (see <xref:logging>)
 * Allow header names customization (see <xref:headers>) 
 * Add consumer status information and statistics (see <xref:message-broker#consumer-management-api>)
@@ -105,7 +106,7 @@ uid: releases
 ### What's new
 * Add support for multiple message brokers (Kafka and RabbitMQ) in the same application (see <xref:message-broker>)
 * Add end-to-end message encryption (see <xref:encryption>)
-* Add dynamic custom routing of outbound messages (see <xref:outbound>)
+* Add dynamic custom routing of outbound messages (see <xref:outbound-routing>)
 * Improve support for message headers (see <xref:headers>)
 * Add support for binary files (see <xref:binary-files>)
 * Improve message identifier handling: the <xref:Silverback.Messaging.Messages.IIntegrationMessage> is not required to have an `Id` property anymore (the `x-message-id` header will still be generated and if the property exists will continue to be automatically initialized)

@@ -107,7 +107,7 @@ With Silverback you can configure some error handling policies for each inbound 
         </div>
         <div class="row">
             <div class="col-md-12 more">
-                <a href="xref:overview" class="btn btn-default btn-lg"><i class="fas fa-search-plus"></i> Discover more</a>
+                <a href="xref:introduction" class="btn btn-default btn-lg"><i class="fas fa-search-plus"></i> Discover more</a>
             </div>
         </div>
     </div>

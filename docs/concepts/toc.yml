@@ -1,5 +1,5 @@
-- name: Overview
-  href: overview.md
+- name: Introduction
+  href: introduction.md
 - name: Bus
   items:
   - name: Enabling the Bus
@@ -14,34 +14,40 @@
     href: bus/behaviors.md
 - name: Message Broker
   items:
-    - name: Connecting
-      href: broker/connecting.md
-    - name: Outbound Endpoint
-      href: broker/outbound.md
-    - name: Inbound Endpoint
-      href: broker/inbound.md
-    - name: Translating Messages
-      href: broker/translating-messages.md
-    - name: Message Headers
-      href: broker/headers.md
-    - name: Serialization
-      href: broker/serialization.md
-    - name: Chunking
-      href: broker/chunking.md
-    - name: Encryption
-      href: broker/encryption.md
-    - name: Binary Files
-      href: broker/binary-files.md
-    - name: Streaming
-      href: broker/streaming.md
-    - name: Message Identifier
-      href: broker/message-id.md
-    - name: IInboundEnvelope
-      href: broker/inboundenvelope.md
-    - name: Behaviors pipeline
-      href: broker/behaviors.md
-    - name: Testing
-      href: broker/testing.md
+    - name: Basics
+      items:
+        - name: Connecting
+          href: broker/connecting.md
+        - name: Outbound Endpoint
+          href: broker/outbound.md
+        - name: Inbound Endpoint
+          href: broker/inbound.md
+        - name: Translating Messages
+          href: broker/translating-messages.md
+        - name: Message Headers
+          href: broker/headers.md
+        - name: Serialization
+          href: broker/serialization.md
+        - name: Message Identifier
+          href: broker/message-id.md
+        - name: IInboundEnvelope
+          href: broker/inboundenvelope.md
+        - name: Testing
+          href: broker/testing.md
+    - name: Features
+      items:
+        - name: Outbound Messages Routing
+          href: broker/outbound-routing.md
+        - name: Chunking
+          href: broker/chunking.md
+        - name: Encryption
+          href: broker/encryption.md
+        - name: Binary Files
+          href: broker/binary-files.md
+        - name: Streaming
+          href: broker/streaming.md
+        - name: Behaviors pipeline
+          href: broker/behaviors.md
     - name: Kafka Specific
       items:
         - name: Partitioning and Key

@@ -13,7 +13,7 @@ using Silverback.Messaging.Outbound;
 using Silverback.Tests.Integration.Kafka.TestTypes.Messages;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.Messaging.Behaviors
+namespace Silverback.Tests.Integration.Kafka.Messaging.Outbound
 {
     public class KafkaMessageKeyInitializerProducerBehaviorTests
     {

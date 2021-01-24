@@ -9,7 +9,7 @@ Silverback proxies those events to give you full access to those features.
 
 ## Consumer events
 
-The event handlers are configured via the <xref:Silverback.Messaging.KafkaEvents.KafkaConsumerEventsHandlers> and the related methods in the <xref:Silverback.Messaging.Configuration.IKafkaConsumerEndpointBuilder>.
+The event handlers are configured via the <xref:Silverback.Messaging.KafkaEvents.KafkaConsumerEventsHandlers> and the related methods in the <xref:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder>.
 
 ### Offset reset example
 
@@ -65,4 +65,4 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 
 ## Producer events
 
-The event handlers are configured via the <xref:Silverback.Messaging.KafkaEvents.KafkaProducerEventsHandlers> and the related methods in the <xref:Silverback.Messaging.Configuration.IKafkaProducerEndpointBuilder>.
+The event handlers are configured via the <xref:Silverback.Messaging.KafkaEvents.KafkaProducerEventsHandlers> and the related methods in the <xref:Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder>.

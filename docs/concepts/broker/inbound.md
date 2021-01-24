@@ -193,7 +193,7 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 
 ### Apply rules
 
-Use [ApplyTo](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyTo__1) and [Exclude](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Exclude__1) methods to decide which exceptions must be handled by the error policy or take advantage of [ApplyWhen](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyWhen_System_Func_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Boolean__) to specify a custom apply rule.
+Use [ApplyTo](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyTo_Type_) and [Exclude](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Exclude_Type_) methods to decide which exceptions must be handled by the error policy or take advantage of [ApplyWhen](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyWhen_Func_IRawInboundEnvelope_Exception_System_Boolean__) to specify a custom apply rule.
 
 ```csharp
 .OnError(policy => policy
@@ -356,7 +356,7 @@ The consumer processes the messages sequentially, this is by design.
 
 The <xref:Silverback.Messaging.Broker.KafkaConsumer> is a bit special and actually processes each assigned partition independently and concurrently.
 
-This feature can be toggled using the [ProcessAllPartitionsTogether](xref:Silverback.Messaging.Configuration.IKafkaConsumerEndpointBuilder#Silverback_Messaging_Configuration_IKafkaConsumerEndpointBuilder_ProcessAllPartitionsTogether) and [ProcessPartitionsIndependently](xref:Silverback.Messaging.Configuration.IKafkaConsumerEndpointBuilder#Silverback_Messaging_Configuration_IKafkaConsumerEndpointBuilder_ProcessPartitionsIndependently) methods of the <xref:Silverback.Messaging.Configuration.IKafkaConsumerEndpointBuilder> (or the [KafkaConsumerEndpoint.ProcessPartitionsIndependently](xref:Silverback.Messaging.KafkaConsumerEndpoint#Silverback_Messaging_KafkaConsumerEndpoint_ProcessPartitionsIndependently) property), while the [LimitParallelism](xref:Silverback.Messaging.Configuration.IKafkaConsumerEndpointBuilder#Silverback_Messaging_Configuration_IKafkaConsumerEndpointBuilder_LimitParallelism_System_Int32_) method (or the [KafkaConsumerEndpoint.MaxDegreeOfParallelism](xref:Silverback.Messaging.KafkaConsumerEndpoint#Silverback_Messaging_KafkaConsumerEndpoint_MaxDegreeOfParallelism) property) can be used to limit the number of messages being actually processed concurrently.
+This feature can be toggled using the [ProcessAllPartitionsTogether](xref:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_ProcessAllPartitionsTogether) and [ProcessPartitionsIndependently](xref:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_ProcessPartitionsIndependently) methods of the <xref:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder> (or the [KafkaConsumerEndpoint.ProcessPartitionsIndependently](xref:Silverback.Messaging.KafkaConsumerEndpoint#Silverback_Messaging_KafkaConsumerEndpoint_ProcessPartitionsIndependently) property), while the [LimitParallelism](xref:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_LimitParallelism_System_Int32_) method (or the [KafkaConsumerEndpoint.MaxDegreeOfParallelism](xref:Silverback.Messaging.KafkaConsumerEndpoint#Silverback_Messaging_KafkaConsumerEndpoint_MaxDegreeOfParallelism) property) can be used to limit the number of messages being actually processed concurrently.
 
 ## Exactly-once processing
 
@@ -517,3 +517,7 @@ public class Startup
     }
 } 
 ```
+
+## Samples
+
+* [All](xref:samples)

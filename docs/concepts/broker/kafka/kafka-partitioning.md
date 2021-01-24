@@ -10,7 +10,7 @@ uid: kafka-partitioning
 
 If the destination topic contains multiple partitions, the destination partition is picked according to the hash of the [message key](#message-key). If no explicit message key was set, a random one is generated, resulting in the messages being randomly spread across the partitions.
 
-You can override this default behavior explicitly setting the target partition in the endpoint. The endpoint can be statically defined like in the following snippet or resolved via [dynamic routing](xref:outbound#dynamic-custom-routing).
+You can override this default behavior explicitly setting the target partition in the endpoint. The endpoint can be statically defined like in the following snippet or resolved via [dynamic routing](xref:outbound-routing).
 
 # [Fluent (preferred)](#tab/destination-partition-fluent)
 ```csharp

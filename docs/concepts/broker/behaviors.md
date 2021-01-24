@@ -20,11 +20,13 @@ Name | Index | Description
 <xref:Silverback.Messaging.Diagnostics.ActivityProducerBehavior> | 100 | Starts an [Activity](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity) and adds the tracing information to the message headers.
 <xref:Silverback.Messaging.Headers.HeadersWriterProducerBehavior> | 200 | Maps the properties decorated with the <xref:Silverback.Messaging.Messages.HeaderAttribute> to the message headers.
 <xref:Silverback.Messaging.Broker.Behaviors.MessageIdInitializerProducerBehavior> | 300 | It ensures that an `x-message-id` header is always produced.
-BrokerKeyHeaderInitializer | 400 | Provided by the message broker implementation (e.g. <xref:Silverback.Messaging.Behaviors.KafkaMessageKeyInitializerProducerBehavior> or <Silverback.Messaging.Behaviors.RabbitRoutingKeyInitializerProducerBehavior>), sets the message key header that will be used by the <xref:Silverback.Messaging.Broker.IProducer> implementation to set the actual message key.
+BrokerKeyHeaderInitializer | 400 | Provided by the message broker implementation (e.g. <xref:Silverback.Messaging.Outbound.KafkaMessageKeyInitializerProducerBehavior> or <xref:Silverback.Messaging.Outbound.RabbitRoutingKeyInitializerProducerBehavior>), sets the message key header that will be used by the <xref:Silverback.Messaging.Broker.IProducer> implementation to set the actual message key.
 <xref:Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior> | 500 | Switches to the <xref:Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer> if the message being produced implements the <xref:Silverback.Messaging.Messages.IBinaryFileMessage> interface.
 <xref:Silverback.Messaging.Serialization.SerializerProducerBehavior> | 600 | Serializes the message being produced using the configured <xref:Silverback.Messaging.Serialization.IMessageSerializer>.
 <xref:Silverback.Messaging.Encryption.EncryptorProducerBehavior> | 700 | Encrypts the message according to the <xref:Silverback.Messaging.Encryption.EncryptionSettings>.
 <xref:Silverback.Messaging.Sequences.SequencerProducerBehavior> | 800 | Uses the available implementations of <xref:Silverback.Messaging.Sequences.ISequenceWriter> (e.g. <xref:Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter>) to set the proper headers and split the published message or messages set to create the sequences.
+<xref:Silverback.Messaging.Outbound.Routing.EndpointNameResolverProducerBehavior> | 900 | Resolves the actual target endpoint name for the message being published.
+<xref:Silverback.Messaging.Outbound.Routing.KafkaPartitionResolverProducerBehavior> | 901 | Resolves the actual target endpoint name for the message being published.
 <xref:Silverback.Messaging.Headers.CustomHeadersMapperProducerBehavior> | 1000 | Applies the custom header name mappings.
 
 ## Built-in consumer behaviors

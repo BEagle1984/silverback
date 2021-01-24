@@ -312,9 +312,9 @@ It is important to properly close the consumers using the `DisconnectAsync` meth
 The [Silverback.Integration.HealthChecks](https://www.nuget.org/packages/Silverback.Integration.HealthChecks) package contains some extensions for [Microsoft.Extensions.Diagnostics.HealthChecks](https://www.nuget.org/packages/Microsoft.Extensions.Diagnostics.HealthChecks) that can be used to monitor the connection to the message broker.
 
 Currently two checks exists:
-* [AddOutboundEndpointsCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__): Adds an health check that sends a ping message to all the outbound endpoints.
-* [AddOutboxCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__): Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.
-* [AddConsumersCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__): Adds an health check that verifies that all consumers are connected.
+* [AddOutboundEndpointsCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___): Adds an health check that sends a ping message to all the outbound endpoints.
+* [AddOutboxCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___): Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.
+* [AddConsumersCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___): Adds an health check that verifies that all consumers are connected.
 
 The usage is very simple, you just need to configure the checks in the Startup.cs, as shown in the following example.
 
@@ -387,4 +387,4 @@ public class ConsumerManagementService
 
 ## Samples
 
-* <xref:sample-kafka-basic>
+* [All](xref:samples)

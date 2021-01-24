@@ -13,7 +13,7 @@ using Silverback.Messaging.Outbound;
 using Silverback.Tests.Integration.RabbitMQ.TestTypes.Messages;
 using Xunit;
 
-namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Behaviors
+namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Outbound
 {
     public class RabbitRoutingKeyInitializerProducerBehaviorTests
     {
