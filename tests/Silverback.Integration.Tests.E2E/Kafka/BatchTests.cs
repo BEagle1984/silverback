@@ -1076,5 +1076,116 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
         }
+
+        [Fact]
+        public async Task Batch_WithMultiplePartitions_StreamPerPartitionIsReceived()
+        {
+            var receivedBatches = new List<List<TestEventOne>>();
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(2)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })
+                                        .EnableBatchProcessing(20)))
+                        .AddDelegateSubscriber(
+                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            {
+                                var list = new List<TestEventOne>();
+                                receivedBatches.Add(list);
+
+                                await foreach (var message in eventsStream)
+                                {
+                                    list.Add(message);
+                                }
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 15; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
+            await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
+
+            receivedBatches.Should().HaveCount(2);
+            receivedBatches.Sum(batch => batch.Count).Should().Be(15);
+        }
+
+        [Fact]
+        public async Task Batch_WithMultiplePartitionsProcessedTogether_SingleStreamIsReceived()
+        {
+            var receivedBatches = new List<List<TestEventOne>>();
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(2)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })
+                                        .EnableBatchProcessing(20)
+                                        .ProcessAllPartitionsTogether()))
+                        .AddDelegateSubscriber(
+                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            {
+                                var list = new List<TestEventOne>();
+                                receivedBatches.Add(list);
+
+                                await foreach (var message in eventsStream)
+                                {
+                                    list.Add(message);
+                                }
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 15; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
+            await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 15);
+
+            receivedBatches.Should().HaveCount(1);
+            receivedBatches.Sum(batch => batch.Count).Should().Be(15);
+        }
     }
 }
