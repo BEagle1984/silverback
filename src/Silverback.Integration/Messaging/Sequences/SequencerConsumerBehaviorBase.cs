@@ -40,7 +40,8 @@ namespace Silverback.Messaging.Sequences
             IEnumerable<ISequenceReader> sequenceReaders,
             ISilverbackIntegrationLogger<SequencerConsumerBehaviorBase> logger)
         {
-            _sequenceReaders = Check.NotNull(sequenceReaders, nameof(sequenceReaders)).SortBySortIndex().ToList();
+            _sequenceReaders = Check.NotNull(sequenceReaders, nameof(sequenceReaders)).SortBySortIndex()
+                .ToList();
             _logger = Check.NotNull(logger, nameof(logger));
         }
 
@@ -53,7 +54,8 @@ namespace Silverback.Messaging.Sequences
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            var sequenceReader = await _sequenceReaders.FirstOrDefaultAsync(reader => reader.CanHandleAsync(context))
+            var sequenceReader = await _sequenceReaders
+                .FirstOrDefaultAsync(reader => reader.CanHandleAsync(context))
                 .ConfigureAwait(false);
 
             if (sequenceReader == null)
@@ -68,34 +70,23 @@ namespace Silverback.Messaging.Sequences
             // Store the previous sequence since it must be added to the new one (e.g. ChunkSequence into BatchSequence)
             var previousSequence = context.Sequence;
 
-            var sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
+            ISequence? sequence;
 
-            if (sequence == null)
+            // Loop to handle edge cases where the sequence gets completed between the calls to
+            // GetSequenceAsync and AddAsync
+            while (true)
             {
-                _logger.LogWarningWithMessageInfo(
-                    IntegrationEventIds.IncompleteSequenceDiscarded,
-                    "The incomplete sequence is ignored (probably missing the first message).",
-                    context);
+                sequence = await GetSequenceAsync(context, next, sequenceReader).ConfigureAwait(false);
 
-                return;
+                if (sequence == null)
+                    return;
+
+                if (!sequence.IsPending || sequence.IsCompleting)
+                    continue;
+
+                await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
+                break;
             }
-
-            context.SetSequence(sequence, sequence.IsNew);
-
-            if (sequence.IsNew)
-            {
-                await PublishSequenceAsync(context, next).ConfigureAwait(false);
-
-                if (context.ProcessingTask != null)
-                    MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);
-
-                _logger.LogDebugWithMessageInfo(
-                    IntegrationEventIds.SequenceStarted,
-                    $"Started new {sequence.GetType().Name}.",
-                    context);
-            }
-
-            await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
 
             _logger.LogDebugWithMessageInfo(
                 IntegrationEventIds.MessageAddedToSequence,
@@ -132,7 +123,9 @@ namespace Silverback.Messaging.Sequences
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected abstract Task PublishSequenceAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next);
+        protected abstract Task PublishSequenceAsync(
+            ConsumerPipelineContext context,
+            ConsumerBehaviorHandler next);
 
         /// <summary>
         ///     When overridden in a derived class awaits for the sequence to be processed by the other twin behavior.
@@ -148,7 +141,10 @@ namespace Silverback.Messaging.Sequences
         /// </returns>
         protected virtual Task AwaitOtherBehaviorIfNeededAsync(ISequence sequence) => Task.CompletedTask;
 
-        [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
+        [SuppressMessage(
+            "",
+            "CA1031",
+            Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         private static void MonitorProcessingTaskPrematureCompletion(Task processingTask, ISequence sequence)
         {
@@ -170,7 +166,8 @@ namespace Silverback.Messaging.Sequences
                         // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
                         // The reason behind this call here may be counterintuitive but with
                         // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
-                        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted).ConfigureAwait(false);
+                        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted)
+                            .ConfigureAwait(false);
                     }
                     catch (Exception exception)
                     {
@@ -181,6 +178,41 @@ namespace Silverback.Messaging.Sequences
                             .ConfigureAwait(false);
                     }
                 });
+        }
+
+        private async Task<ISequence?> GetSequenceAsync(
+            ConsumerPipelineContext context,
+            ConsumerBehaviorHandler next,
+            ISequenceReader sequenceReader)
+        {
+            var sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
+
+            if (sequence == null || sequence.IsComplete)
+            {
+                _logger.LogWarningWithMessageInfo(
+                    IntegrationEventIds.IncompleteSequenceDiscarded,
+                    "The incomplete sequence is ignored (probably missing the first message).",
+                    context);
+
+                return null;
+            }
+
+            context.SetSequence(sequence, sequence.IsNew);
+
+            if (sequence.IsNew)
+            {
+                await PublishSequenceAsync(context, next).ConfigureAwait(false);
+
+                if (context.ProcessingTask != null)
+                    MonitorProcessingTaskPrematureCompletion(context.ProcessingTask, sequence);
+
+                _logger.LogDebugWithMessageInfo(
+                    IntegrationEventIds.SequenceStarted,
+                    $"Started new {sequence.GetType().Name}.",
+                    context);
+            }
+
+            return sequence;
         }
     }
 }

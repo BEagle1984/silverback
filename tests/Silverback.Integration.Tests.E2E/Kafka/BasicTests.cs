@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -77,14 +78,17 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .WithConnectionToMessageBroker(options => options
-                            .AddMockedKafka()
-                            .AllowDuplicateEndpointRegistrations())
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddMockedKafka()
+                                .AllowDuplicateEndpointRegistrations())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -139,6 +143,70 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes
                 .Select(envelope => ((TestEventOne)envelope.Message!).Content)
                 .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+        }
+
+        [Fact]
+        public async Task OutboundAndInbound_DefaultSettings_MessagesNotOverlapping()
+        {
+            var receivedMessages = new[] { 0, 0, 0 };
+            var exitedSubscribers = new[] { 0, 0, 0 };
+            var areOverlapping = false;
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockOptions => mockOptions.WithDefaultPartitionsCount(3)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.AutoCommitIntervalMs = 50;
+                                            })))
+                        .AddDelegateSubscriber(
+                            async (IInboundEnvelope<TestEventOne> envelope) =>
+                            {
+                                var endpoint = (KafkaOffset)envelope.BrokerMessageIdentifier;
+                                var partitionIndex = endpoint.Partition;
+
+                                if (receivedMessages[partitionIndex] != exitedSubscribers[partitionIndex])
+                                    areOverlapping = true;
+
+                                receivedMessages[partitionIndex]++;
+
+                                await Task.Delay(100);
+
+                                exitedSubscribers[partitionIndex]++;
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 10; i++)
+            {
+                await publisher.PublishAsync(
+                    new TestEventOne
+                    {
+                        Content = $"{i}"
+                    });
+            }
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            areOverlapping.Should().BeFalse();
+            receivedMessages.Sum().Should().Be(10);
+            exitedSubscribers.Sum().Should().Be(10);
         }
 
         [Fact]

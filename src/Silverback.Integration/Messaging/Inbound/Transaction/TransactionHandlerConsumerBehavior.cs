@@ -76,15 +76,14 @@ namespace Silverback.Messaging.Inbound.Transaction
                     await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception)
                         .ConfigureAwait(false);
 
-                    if (context.Sequence.Length > 0 &&
-                        context.Sequence is ISequenceImplementation sequenceImpl)
+                    if (context.Sequence.Length > 0)
                     {
                         _logger.LogTraceWithMessageInfo(
                             IntegrationEventIds.LowLevelTracing,
                             "Awaiting sequence processing completed before rethrowing.",
                             context);
 
-                        await sequenceImpl.ProcessingCompletedTask.ConfigureAwait(false);
+                        await context.Sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
                     }
 
                     throw;
@@ -104,20 +103,17 @@ namespace Silverback.Messaging.Inbound.Transaction
             // commit was performed or the error policies were applied before continuing
             if (context.IsSequenceEnd || context.Sequence.IsAborted)
             {
-                if (context.Sequence is ISequenceImplementation sequenceImpl)
-                {
-                    _logger.LogTraceWithMessageInfo(
-                        IntegrationEventIds.LowLevelTracing,
-                        "Sequence ended or aborted: awaiting processing task.",
-                        context);
+                _logger.LogTraceWithMessageInfo(
+                    IntegrationEventIds.LowLevelTracing,
+                    "Sequence ended or aborted: awaiting processing task.",
+                    context);
 
-                    await sequenceImpl.ProcessingCompletedTask.ConfigureAwait(false);
+                await context.Sequence.AwaitProcessingAsync(true).ConfigureAwait(false);
 
-                    _logger.LogTraceWithMessageInfo(
-                        IntegrationEventIds.LowLevelTracing,
-                        "Sequence ended or aborted: processing task completed.",
-                        context);
-                }
+                _logger.LogTraceWithMessageInfo(
+                    IntegrationEventIds.LowLevelTracing,
+                    "Sequence ended or aborted: processing task completed.",
+                    context);
 
                 context.Dispose();
             }

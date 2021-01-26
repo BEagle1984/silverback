@@ -29,7 +29,8 @@ namespace Silverback.Messaging.Broker
 
         private readonly ConsumerStatusInfo _statusInfo = new();
 
-        private readonly ConcurrentDictionary<IBrokerMessageIdentifier, int> _failedAttemptsDictionary = new();
+        private readonly ConcurrentDictionary<IBrokerMessageIdentifier, int>
+            _failedAttemptsDictionary = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
@@ -139,7 +140,17 @@ namespace Silverback.Messaging.Broker
                 await SequenceStores
                     .SelectMany(store => store)
                     .ToList()
-                    .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.ConsumerAborted))
+                    .ParallelForEachAsync(
+                        async sequence =>
+                        {
+                            if (sequence.IsPending)
+                            {
+                                await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted)
+                                    .ConfigureAwait(false);
+                            }
+
+                            await sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
+                        })
                     .ConfigureAwait(false);
             }
 
@@ -317,7 +328,8 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected abstract Task CommitCoreAsync(IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
+        protected abstract Task CommitCoreAsync(
+            IReadOnlyCollection<IBrokerMessageIdentifier> brokerMessageIdentifiers);
 
         /// <summary>
         ///     If necessary notifies the message broker that the specified messages couldn't be processed

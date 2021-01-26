@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Sequences.Batch
     /// </summary>
     public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
     {
-        private const string SequenceIdPrefix = "batch|";
+        private const string SequenceIdPrefix = "batch";
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => int.MaxValue; // Ignored if a proper sequence is detected

@@ -233,12 +233,7 @@ namespace Silverback.Messaging.Sequences
         protected virtual async Task<int> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
         {
             if (!IsPending || IsCompleting)
-            {
-                if (IsAborted)
-                    return 0;
-
-                throw new InvalidOperationException("Cannot add new messages to the complete or aborted sequence.");
-            }
+                return 0;
 
             ResetTimeout();
 
@@ -345,7 +340,6 @@ namespace Silverback.Messaging.Sequences
 
             _timeoutCancellationTokenSource?.Cancel();
 
-            await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
             await _streamProvider.CompleteAsync(cancellationToken).ConfigureAwait(false);
         }
 
@@ -414,14 +408,15 @@ namespace Silverback.Messaging.Sequences
             }
 
             _timeoutCancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = _timeoutCancellationTokenSource.Token;
 
             Task.Run(
                 async () =>
                 {
-                    await Task.Delay(_timeout, _timeoutCancellationTokenSource.Token).ConfigureAwait(false);
-
                     try
                     {
+                        await Task.Delay(_timeout, cancellationToken).ConfigureAwait(false);
+
                         await OnTimeoutElapsedAsync().ConfigureAwait(false);
                     }
                     catch (OperationCanceledException)
@@ -484,7 +479,7 @@ namespace Silverback.Messaging.Sequences
             _abortingTaskCompletionSource?.SetResult(true);
         }
 
-        [SuppressMessage("", "CA1031", Justification = "Exeption notified")]
+        [SuppressMessage("", "CA1031", Justification = "Exception notified")]
         private async Task<bool> HandleExceptionAsync(Exception? exception)
         {
             var done = true;

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -58,10 +59,10 @@ namespace Silverback.Tests.Integration.E2E.KafkaAndMQTT
                         .AddDelegateSubscriber(
                             (TestEventOne eventOne) =>
                             {
-                                eventOneCount++;
+                                Interlocked.Increment(ref eventOneCount);
                                 return new TestEventTwo { Content = eventOne.Content };
                             })
-                        .AddDelegateSubscriber((TestEventTwo _) => eventTwoCount++))
+                        .AddDelegateSubscriber((TestEventTwo _) => Interlocked.Increment(ref eventTwoCount)))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();

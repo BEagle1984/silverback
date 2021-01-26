@@ -98,6 +98,7 @@ namespace Silverback.Messaging.Sequences
 
             AsyncHelper.RunSynchronously(
                 () => _store.Values
+                    .Where(sequence => sequence.IsPending)
                     .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.Disposing)));
         }
 
