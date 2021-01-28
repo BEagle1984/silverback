@@ -28,6 +28,9 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         private readonly List<string> _groupsPendingRebalance = new();
 
+        private readonly Dictionary<string, Dictionary<IMockedConfluentConsumer, List<Partition>>>
+            _assignmentsDictionary = new();
+
         public InMemoryTopic(string name, int partitions, object consumersLock)
         {
             Name = Check.NotEmpty(name, nameof(name));
@@ -57,13 +60,13 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             _partitions[partition].Add(message);
 
         public bool TryPull(
-            string groupId,
+            IMockedConfluentConsumer consumer,
             IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
             out ConsumeResult<byte[]?, byte[]?>? result)
         {
             try
             {
-                if (!_committedOffsets.ContainsKey(groupId))
+                if (!_committedOffsets.ContainsKey(consumer.GroupId))
                 {
                     result = null;
                     return false;
@@ -82,6 +85,30 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             catch (Exception exception)
             {
                 throw new KafkaException(new Error(ErrorCode.Unknown), exception);
+            }
+        }
+
+        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Sync writes only")]
+        public void EnsurePartitionsAssigned(
+            IMockedConfluentConsumer consumer,
+            CancellationToken cancellationToken)
+        {
+            if (consumer.PartitionsAssigned)
+                return;
+
+            while (!_assignmentsDictionary.ContainsKey(consumer.GroupId) ||
+                   !_assignmentsDictionary[consumer.GroupId].ContainsKey(consumer))
+            {
+                Task.Delay(10, cancellationToken).Wait(cancellationToken);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            lock (_consumersLock)
+            {
+                ((MockedConfluentConsumer)consumer).OnPartitionsAssigned(
+                    Name,
+                    _assignmentsDictionary[consumer.GroupId][consumer]);
             }
         }
 
@@ -179,7 +206,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 if (_subscribedConsumers.Union(_assignedConsumers).All(HasFinishedConsuming))
                     return;
 
-                await Task.Delay(50, cancellationToken).ConfigureAwait(false);
+                await Task.Delay(10, cancellationToken).ConfigureAwait(false);
             }
         }
 
@@ -258,9 +285,10 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                     assignments[partitionIndex % groupConsumers.Count].Add(new Partition(partitionIndex));
                 }
 
+                _assignmentsDictionary[groupId] = new Dictionary<IMockedConfluentConsumer, List<Partition>>();
                 for (int i = 0; i < groupConsumers.Count; i++)
                 {
-                    groupConsumers[i].OnPartitionsAssigned(Name, assignments[i]);
+                    _assignmentsDictionary[groupId][groupConsumers[i]] = assignments[i];
                 }
             }
         }

@@ -94,29 +94,30 @@ namespace Silverback.Messaging.Broker
 
             lock (_channelsLock)
             {
-                InitConsumeLoopHandlerAndChannelsManager(partitions);
-
-                if (!IsConsuming)
-                    return;
-
-                _channelsManager?.StartReading();
-                _consumeLoopHandler?.Start();
+                InitAndStartChannelsManager(partitions);
             }
         }
 
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         internal void OnPartitionsRevoked()
         {
-            lock (_channelsLock)
-            {
-                StopCore();
-                AsyncHelper.RunSynchronously(() => WaitUntilConsumingStoppedAsync(CancellationToken.None));
+            StopConsumeLoopHandlerAndChannelsManager();
 
-                if (!Endpoint.Configuration.IsAutoCommitEnabled)
-                    CommitOffsets();
-            }
+            AsyncHelper.RunSynchronously(WaitUntilChannelsManagerStopsAsync);
+
+            if (!Endpoint.Configuration.IsAutoCommitEnabled)
+                CommitOffsets();
 
             SequenceStores.ForEach(store => store.Dispose());
             SequenceStores.Clear();
+
+            // The ConsumeLoopHandler needs to be immediately restarted because the partitions will be
+            // reassigned only if Consume is called again.
+            // Furthermore the ConsumeLoopHandler stopping Task cannot be awaited in the
+            // OnPartitionsRevoked callback, before the partitions are revoked because the Consume method is
+            // "frozen" during that operation and will never return, therefore the stopping Task would never
+            // complete. Therefore, let's start an async Task to await it and restart the ChannelManager.
+            Task.Run(RestartConsumeLoopHandler);
         }
 
         internal async Task HandleMessageAsync(
@@ -143,7 +144,9 @@ namespace Silverback.Messaging.Broker
                 logData["kafkaKey"] = deserializedKafkaKey;
             }
 
-            headers.AddOrReplace(KafkaMessageHeaders.TimestampKey, message.Timestamp.UtcDateTime.ToString("O"));
+            headers.AddOrReplace(
+                KafkaMessageHeaders.TimestampKey,
+                message.Timestamp.UtcDateTime.ToString("O"));
 
             await HandleMessageAsync(
                     message.Value,
@@ -231,29 +234,20 @@ namespace Silverback.Messaging.Broker
         {
             lock (_channelsLock)
             {
-                if (Endpoint.TopicPartitions != null)
-                {
-                    // In case of static partitions assignment start consuming right away without waiting
-                    // for the assignment event
-                    InitConsumeLoopHandlerAndChannelsManager(_confluentConsumer!.Assignment);
-                }
-                else
-                {
-                    // The consume loop must start immediately because the Confluent consumer connects for
-                    // real only when Consume is called
-                    _consumeLoopHandler ??= new ConsumeLoopHandler(
-                        this,
-                        _confluentConsumer!,
-                        _channelsManager,
-                        _logger);
-                }
-
-                _consumeLoopHandler!.Start();
-                _channelsManager?.StartReading();
-
-                // Set IsConsuming inside the lock because it is checked in OnPartitionsAssigned to decide to start the
-                // channels manager
+                // Set IsConsuming before calling the init methods, otherwise they don't start for real
                 IsConsuming = true;
+
+                // The consume loop must start immediately because the partitions assignment is received
+                // only after Consume is called
+                InitAndStartConsumeLoopHandler();
+
+                // Start reading from the channels right away in case of static partitions assignment or if
+                // the consumer is restarting and the partition assignment is set already
+                if (Endpoint.TopicPartitions != null ||
+                    _confluentConsumer?.Assignment != null && _confluentConsumer.Assignment.Count > 0)
+                {
+                    InitAndStartChannelsManager(_confluentConsumer!.Assignment);
+                }
             }
 
             return Task.CompletedTask;
@@ -262,13 +256,16 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer.StopCoreAsync" />
         protected override Task StopCoreAsync()
         {
-            StopCore();
+            StopConsumeLoopHandlerAndChannelsManager();
 
             return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.GetSequenceStore(IBrokerMessageIdentifier)" />
-        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Sync start/stop only")]
+        [SuppressMessage(
+            "ReSharper",
+            "InconsistentlySynchronizedField",
+            Justification = "Sync start/stop only")]
         protected override ISequenceStore GetSequenceStore(KafkaOffset brokerMessageIdentifier)
         {
             Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
@@ -277,20 +274,14 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />
-        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Sync start/stop only")]
-        protected override async Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken)
-        {
-            if (_consumeLoopHandler != null)
-                await _consumeLoopHandler.Stopping.ConfigureAwait(false);
-
-            if (_channelsManager != null)
-                await _channelsManager.Stopping.ConfigureAwait(false);
-
-            _consumeLoopHandler?.Dispose();
-            _consumeLoopHandler = null;
-            _channelsManager?.Dispose();
-            _channelsManager = null;
-        }
+        [SuppressMessage(
+            "ReSharper",
+            "InconsistentlySynchronizedField",
+            Justification = "Sync start/stop only")]
+        protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) =>
+            Task.WhenAll(
+                WaitUntilChannelsManagerStopsAsync(),
+                WaitUntilConsumeLoopHandlerStopsAsync());
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
         protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
@@ -317,8 +308,12 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Sync start/stop only")]
-        protected override async Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
+        [SuppressMessage(
+            "ReSharper",
+            "InconsistentlySynchronizedField",
+            Justification = "Sync start/stop only")]
+        protected override async Task RollbackCoreAsync(
+            IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
             if (IsConsuming && _consumeLoopHandler != null)
                 await _consumeLoopHandler.StopAsync().ConfigureAwait(false);
@@ -336,18 +331,10 @@ namespace Silverback.Messaging.Broker
                 _consumeLoopHandler?.Start();
         }
 
-        // This is needed to avoid a deadlock on _channelsLock when
-        // called from OnPartitionsRevoked
-        private void StopCore()
-        {
-            lock (_channelsLock)
-            {
-                _consumeLoopHandler?.StopAsync();
-                _channelsManager?.StopReading();
-            }
-        }
-
-        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Sync start/stop only")]
+        [SuppressMessage(
+            "ReSharper",
+            "InconsistentlySynchronizedField",
+            Justification = "Sync start/stop only")]
         private void Seek(TopicPartitionOffset topicPartitionOffset)
         {
             _channelsManager?.StopReading(topicPartitionOffset.TopicPartition);
@@ -383,11 +370,71 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private void InitConsumeLoopHandlerAndChannelsManager(IReadOnlyList<TopicPartition> partitions)
+        private void InitAndStartConsumeLoopHandler()
+        {
+            _consumeLoopHandler ??= new ConsumeLoopHandler(
+                this,
+                _confluentConsumer!,
+                _channelsManager,
+                _logger);
+
+            if (_channelsManager != null)
+                _consumeLoopHandler.SetChannelsManager(_channelsManager);
+
+            if (IsConsuming)
+                _consumeLoopHandler.Start();
+        }
+
+        private void InitAndStartChannelsManager(IReadOnlyList<TopicPartition> partitions)
         {
             _channelsManager ??= new ConsumerChannelsManager(partitions, this, SequenceStores, _logger);
-            _consumeLoopHandler ??= new ConsumeLoopHandler(this, _confluentConsumer!, _channelsManager, _logger);
-            _consumeLoopHandler.SetChannelsManager(_channelsManager);
+
+            _consumeLoopHandler?.SetChannelsManager(_channelsManager);
+
+            if (IsConsuming)
+                _channelsManager.StartReading();
+        }
+
+        private void RestartConsumeLoopHandler()
+        {
+            AsyncHelper.RunSynchronously(WaitUntilConsumeLoopHandlerStopsAsync);
+
+            InitAndStartConsumeLoopHandler();
+        }
+
+        private void StopConsumeLoopHandlerAndChannelsManager()
+        {
+            lock (_channelsLock)
+            {
+                _consumeLoopHandler?.StopAsync();
+                _channelsManager?.StopReading();
+            }
+        }
+
+        [SuppressMessage(
+            "ReSharper",
+            "InconsistentlySynchronizedField",
+            Justification = "Sync start/stop only")]
+        private async Task WaitUntilConsumeLoopHandlerStopsAsync()
+        {
+            if (_consumeLoopHandler != null)
+                await _consumeLoopHandler.Stopping.ConfigureAwait(false);
+
+            _consumeLoopHandler?.Dispose();
+            _consumeLoopHandler = null;
+        }
+
+        [SuppressMessage(
+            "ReSharper",
+            "InconsistentlySynchronizedField",
+            Justification = "Sync start/stop only")]
+        private async Task WaitUntilChannelsManagerStopsAsync()
+        {
+            if (_channelsManager != null)
+                await _channelsManager.Stopping.ConfigureAwait(false);
+
+            _channelsManager?.Dispose();
+            _channelsManager = null;
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]

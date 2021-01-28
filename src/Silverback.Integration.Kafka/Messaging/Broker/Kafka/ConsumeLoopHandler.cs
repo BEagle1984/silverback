@@ -98,7 +98,7 @@ namespace Silverback.Messaging.Broker.Kafka
             TaskCompletionSource<bool> taskCompletionSource,
             CancellationToken cancellationToken)
         {
-            while (!_cancellationTokenSource.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 if (!ConsumeOnce(cancellationToken))
                     break;

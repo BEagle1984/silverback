@@ -112,7 +112,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                                !session.IsConnected))
                     return;
 
-                await Task.Delay(50, cancellationToken).ConfigureAwait(false);
+                await Task.Delay(10, cancellationToken).ConfigureAwait(false);
             }
         }
 

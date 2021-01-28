@@ -1966,6 +1966,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.Rebalance();
 
+            await AsyncTestingUtil.WaitAsync(() => sequence.IsAborted);
+
             sequence.IsAborted.Should().BeTrue();
             sequenceStore.GetPendingSequences().Should().BeEmpty();
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
@@ -2049,6 +2051,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequence!.IsAborted.Should().BeFalse();
 
             DefaultTopic.Rebalance();
+
+            await AsyncTestingUtil.WaitAsync(() => sequence.IsAborted);
 
             sequence.IsAborted.Should().BeTrue();
             sequenceStore.GetPendingSequences().Should().BeEmpty();

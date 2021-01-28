@@ -47,8 +47,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         /// <summary>
         ///     Pulls the next message from the topic, if available.
         /// </summary>
-        /// <param name="groupId">
-        ///     The consumer group id.
+        /// <param name="consumer">
+        ///     The consumer.
         /// </param>
         /// <param name="partitionOffsets">
         ///     The offset of the next message in each partition.
@@ -60,9 +60,21 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         ///     A value indicating whether a message was available for pulling.
         /// </returns>
         bool TryPull(
-            string groupId,
+            IMockedConfluentConsumer consumer,
             IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
             out ConsumeResult<byte[]?, byte[]?>? result);
+
+        /// <summary>
+        ///     Ensures that a partition assignment has been given to the specified consumer, otherwise
+        ///     triggers the assignment process.
+        /// </summary>
+        /// <param name="consumer">
+        ///     The consumer.
+        /// </param>
+        /// <param name="cancellationToken">
+        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
+        /// </param>
+        void EnsurePartitionsAssigned(IMockedConfluentConsumer consumer, CancellationToken cancellationToken);
 
         /// <summary>
         ///     Subscribes the consumer to the topic.

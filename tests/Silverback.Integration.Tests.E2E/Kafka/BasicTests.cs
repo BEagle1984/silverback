@@ -864,6 +864,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.Rebalance();
 
+            await AsyncTestingUtil.WaitAsync(() => DefaultTopic.GetCommittedOffsetsCount("consumer1") == 3);
+
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
         }
 

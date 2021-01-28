@@ -8,7 +8,7 @@ namespace Silverback.Tests
 {
     public static class AsyncTestingUtil
     {
-        private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(50);
+        private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(5);
 
         public static Task WaitAsync(Func<bool> breakCondition, TimeSpan? timeout = null) =>
             WaitAsync(() => Task.FromResult(breakCondition()), timeout);
