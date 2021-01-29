@@ -12,16 +12,16 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 {
     [Trait("Category", "E2E")]
     public abstract class E2ETestFixture<THelper> : IDisposable
-    where THelper : ITestingHelper<IBroker>
+        where THelper : ITestingHelper<IBroker>
     {
         private THelper? _testingHelper;
 
         protected E2ETestFixture(ITestOutputHelper testOutputHelper)
         {
-            Host = new TestApplicationHost().WithTestOutputHelper(testOutputHelper);
+            Host = new TestApplicationHost<THelper>().WithTestOutputHelper(testOutputHelper);
         }
 
-        protected TestApplicationHost Host { get; }
+        protected TestApplicationHost<THelper> Host { get; }
 
         protected THelper Helper =>
             _testingHelper ??= Host.ServiceProvider.GetRequiredService<THelper>();

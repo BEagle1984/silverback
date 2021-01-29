@@ -36,6 +36,11 @@ namespace Silverback.Messaging.Broker
         bool IsConnected { get; }
 
         /// <summary>
+        ///     Gets a value indicating whether this producer is trying to connect to the message broker.
+        /// </summary>
+        bool IsConnecting { get; }
+
+        /// <summary>
         ///     Initializes the connection to the message broker (if needed).
         /// </summary>
         /// <returns>

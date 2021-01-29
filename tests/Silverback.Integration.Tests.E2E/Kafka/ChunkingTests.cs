@@ -2052,7 +2052,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultTopic.Rebalance();
 
-            await AsyncTestingUtil.WaitAsync(() => sequence.IsAborted);
+            await AsyncTestingUtil.WaitAsync(() => sequence.IsAborted && enumerationAborted);
 
             sequence.IsAborted.Should().BeTrue();
             sequenceStore.GetPendingSequences().Should().BeEmpty();

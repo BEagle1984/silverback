@@ -36,6 +36,11 @@ namespace Silverback.Messaging.Broker
         bool IsConnected { get; }
 
         /// <summary>
+        ///     Gets a value indicating whether this consumer is trying to connect to the message broker.
+        /// </summary>
+        bool IsConnecting { get; }
+
+        /// <summary>
         ///     Gets a value indicating whether this consumer is connected and consuming.
         /// </summary>
         bool IsConsuming { get; }

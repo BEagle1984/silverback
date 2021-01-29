@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Publishing;
+using Silverback.Testing;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
@@ -66,6 +67,9 @@ namespace Silverback.Tests.Integration.E2E.KafkaAndMQTT
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            var mqttTestingHelper = Host.ServiceProvider.GetRequiredService<IMqttTestingHelper>();
+
+            await mqttTestingHelper.WaitUntilConnectedAsync();
 
             for (int i = 1; i <= 15; i++)
             {

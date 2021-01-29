@@ -31,7 +31,7 @@ namespace Silverback.Testing
         public MqttTestingHelper(
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<MqttTestingHelper> logger)
-            : base(serviceProvider)
+            : base(serviceProvider, logger)
         {
             _inMemoryMqttBroker = serviceProvider.GetService<IInMemoryMqttBroker>();
             _logger = logger;
@@ -66,7 +66,7 @@ namespace Silverback.Testing
             }
         }
 
-        /// <inheritdoc cref="IMqttTestingHelper.GetClientSession"/>
+        /// <inheritdoc cref="IMqttTestingHelper.GetClientSession" />
         public IClientSession GetClientSession(string clientId)
         {
             if (_inMemoryMqttBroker == null)
@@ -75,7 +75,7 @@ namespace Silverback.Testing
             return _inMemoryMqttBroker.GetClientSession(clientId);
         }
 
-        /// <inheritdoc cref="IMqttTestingHelper.GetMessagesCount"/>
+        /// <inheritdoc cref="IMqttTestingHelper.GetMessagesCount" />
         public int GetMessagesCount(string topic)
         {
             if (_inMemoryMqttBroker == null)

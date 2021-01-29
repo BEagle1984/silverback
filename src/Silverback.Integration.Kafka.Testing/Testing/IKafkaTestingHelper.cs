@@ -31,8 +31,7 @@ namespace Silverback.Testing
         ///     The name of the topics to be monitored.
         /// </param>
         /// <param name="timeout">
-        ///     The timeout after which the method will return even if the messages haven't been
-        ///     processed. The default is 30 seconds.
+        ///     The time to wait for the messages to be consumed and processed. The default is 30 seconds.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> that completes when all messages have been processed.

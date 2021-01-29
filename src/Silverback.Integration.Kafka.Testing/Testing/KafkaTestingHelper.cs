@@ -34,7 +34,7 @@ namespace Silverback.Testing
         public KafkaTestingHelper(
             IServiceProvider serviceProvider,
             ISilverbackIntegrationLogger<KafkaTestingHelper> logger)
-            : base(serviceProvider)
+            : base(serviceProvider, logger)
         {
             _topics = serviceProvider.GetService<IInMemoryTopicCollection>();
             _logger = logger;

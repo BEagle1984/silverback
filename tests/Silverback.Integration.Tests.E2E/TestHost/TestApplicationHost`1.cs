@@ -11,12 +11,17 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
+using Silverback.Testing;
 using Silverback.Tests.Integration.E2E.TestTypes.Database;
+using Silverback.Util;
 using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
 {
-    public sealed class TestApplicationHost : IDisposable
+    public sealed class TestApplicationHost<THelper> : IDisposable
+        where THelper : ITestingHelper<IBroker>
     {
         private readonly List<Action<IServiceCollection>>
             _configurationActions = new();
@@ -39,14 +44,14 @@ namespace Silverback.Tests.Integration.E2E.TestHost
         public IServiceProvider ScopedServiceProvider =>
             _scopedServiceProvider ??= ServiceProvider.CreateScope().ServiceProvider;
 
-        public TestApplicationHost ConfigureServices(Action<IServiceCollection> configurationAction)
+        public TestApplicationHost<THelper> ConfigureServices(Action<IServiceCollection> configurationAction)
         {
             _configurationActions.Add(configurationAction);
 
             return this;
         }
 
-        public TestApplicationHost WithTestDbContext()
+        public TestApplicationHost<THelper> WithTestDbContext()
         {
             _addDbContext = true;
 
@@ -56,7 +61,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost
             return this;
         }
 
-        public TestApplicationHost WithTestOutputHelper(ITestOutputHelper testOutputHelper)
+        public TestApplicationHost<THelper> WithTestOutputHelper(ITestOutputHelper testOutputHelper)
         {
             _testOutputHelper = testOutputHelper;
 
@@ -85,7 +90,9 @@ namespace Silverback.Tests.Integration.E2E.TestHost
                                             configure
                                                 .AddXUnit(_testOutputHelper)
                                                 .SetMinimumLevel(LogLevel.Trace)
-                                                .AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Information));
+                                                .AddFilter(
+                                                    "Microsoft.EntityFrameworkCore",
+                                                    LogLevel.Information));
                                 }
 
                                 _configurationActions.ForEach(configAction => configAction(services));
@@ -106,7 +113,9 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
             _configurationActions.Clear();
 
-            ScopedServiceProvider.GetService<ILogger<TestApplicationHost>>()
+            WaitUntilBrokerIsConnected();
+
+            ScopedServiceProvider.GetService<ILogger<TestApplicationHost<THelper>>>()
                 ?.LogInformation($"Starting end-to-end test {_testMethodName}.");
         }
 
@@ -116,11 +125,22 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         public void Dispose()
         {
-            ScopedServiceProvider.GetService<ILogger<TestApplicationHost>>()
+            ScopedServiceProvider.GetService<ILogger<TestApplicationHost<THelper>>>()
                 ?.LogInformation($"Disposing test host ({_testMethodName}).");
 
             _sqliteConnection?.Dispose();
             _applicationFactory?.Dispose();
+        }
+
+        private void WaitUntilBrokerIsConnected()
+        {
+            var connectionOptions = ServiceProvider.GetRequiredService<BrokerConnectionOptions>();
+
+            if (connectionOptions.Mode == BrokerConnectionMode.Manual)
+                return;
+
+            AsyncHelper.RunSynchronously(
+                () => ServiceProvider.GetRequiredService<THelper>().WaitUntilConnectedAsync());
         }
 
         private void InitDatabase()

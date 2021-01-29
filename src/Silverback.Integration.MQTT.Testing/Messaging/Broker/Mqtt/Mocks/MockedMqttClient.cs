@@ -28,6 +28,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
     {
         private readonly IInMemoryMqttBroker _broker;
 
+        private bool _connecting;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="MockedMqttClient" /> class.
         /// </summary>
@@ -60,19 +62,27 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         private string ClientId => Options?.ClientId ?? "(none)";
 
         /// <inheritdoc cref="IMqttClient.ConnectAsync" />
-        public Task<MqttClientAuthenticateResult> ConnectAsync(
+        public async Task<MqttClientAuthenticateResult> ConnectAsync(
             IMqttClientOptions options,
             CancellationToken cancellationToken)
         {
             Check.NotNull(options, nameof(options));
 
+            if (_connecting)
+                throw new InvalidOperationException("ConnectAsync shouldn't be called concurrently.");
+
+            _connecting = true;
+
             Options = options;
 
             _broker.Connect(options, this);
 
-            IsConnected = true;
+            await Task.Delay(10, cancellationToken).ConfigureAwait(false);
 
-            return Task.FromResult(new MqttClientAuthenticateResult());
+            IsConnected = true;
+            _connecting = false;
+
+            return new MqttClientAuthenticateResult();
         }
 
         /// <inheritdoc cref="IMqttClient.DisconnectAsync" />

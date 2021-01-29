@@ -78,7 +78,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                     config.AutoCommitIntervalMs = 50;
                                                 })))
                             .AddDelegateSubscriber(
-                                (BinaryFileMessage binaryFile) => receivedFiles.Add(binaryFile.Content.ReadAll()))
+                                (BinaryFileMessage binaryFile) =>
+                                {
+                                    lock (receivedFiles)
+                                    {
+                                        receivedFiles.Add(binaryFile.Content.ReadAll());
+                                    }
+                                })
                             .AddIntegrationSpy();
                     })
                 .Run();

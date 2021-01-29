@@ -4,7 +4,10 @@
 using System;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using MQTTnet.Client.Options;
+using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Mqtt;
@@ -49,7 +52,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                     Configuration = config
                 });
 
-            var factory = new MqttClientsCache(new MqttNetClientFactory());
+            var factory = new MqttClientsCache(new MqttNetClientFactory(), new NullLogger<MqttClientsCache>());
             var client1 = factory.GetClient(producer1);
             var client2 = factory.GetClient(producer2);
 
@@ -86,7 +89,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                     }
                 });
 
-            var factory = new MqttClientsCache(new MqttNetClientFactory());
+            var factory = new MqttClientsCache(new MqttNetClientFactory(), new NullLogger<MqttClientsCache>());
             var client1 = factory.GetClient(producer1);
             var client2 = factory.GetClient(producer2);
 
@@ -123,7 +126,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                     }
                 });
 
-            var factory = new MqttClientsCache(new MqttNetClientFactory());
+            var factory = new MqttClientsCache(new MqttNetClientFactory(), new NullLogger<MqttClientsCache>());
             var client1 = factory.GetClient(producer);
             var client2 = factory.GetClient(consumer);
 
@@ -160,7 +163,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                     }
                 });
 
-            var factory = new MqttClientsCache(new MqttNetClientFactory());
+            var factory = new MqttClientsCache(new MqttNetClientFactory(), new NullLogger<MqttClientsCache>());
             var client1 = factory.GetClient(producer);
             var client2 = factory.GetClient(consumer);
 
@@ -197,7 +200,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                     }
                 });
 
-            var factory = new MqttClientsCache(new MqttNetClientFactory());
+            var factory = new MqttClientsCache(new MqttNetClientFactory(), new NullLogger<MqttClientsCache>());
             factory.GetClient(consumer1);
             Action act = () => factory.GetClient(consumer2);
 
@@ -232,7 +235,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                     }
                 });
 
-            var factory = new MqttClientsCache(new MqttNetClientFactory());
+            var factory = new MqttClientsCache(new MqttNetClientFactory(), new NullLogger<MqttClientsCache>());
             factory.GetClient(consumer1);
             Action act = () => factory.GetClient(consumer2);
 
@@ -267,7 +270,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                     }
                 });
 
-            var factory = new MqttClientsCache(new MqttNetClientFactory());
+            var factory = new MqttClientsCache(new MqttNetClientFactory(), new NullLogger<MqttClientsCache>());
             var client1 = factory.GetClient(producer1);
             var client2 = factory.GetClient(producer2);
 

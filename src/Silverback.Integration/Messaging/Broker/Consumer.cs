@@ -32,6 +32,8 @@ namespace Silverback.Messaging.Broker
         private readonly ConcurrentDictionary<IBrokerMessageIdentifier, int>
             _failedAttemptsDictionary = new();
 
+        private Task? _connectTask;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
         /// </summary>
@@ -82,6 +84,9 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.IsConnected" />
         public bool IsConnected { get; private set; }
 
+        /// <inheritdoc cref="IConsumer.IsConnecting" />
+        public bool IsConnecting => _connectTask != null;
+
         /// <inheritdoc cref="IConsumer.IsConsuming" />
         public bool IsConsuming { get; protected set; }
 
@@ -107,9 +112,25 @@ namespace Silverback.Messaging.Broker
             if (IsConnected)
                 return;
 
-            await ConnectCoreAsync().ConfigureAwait(false);
+            if (_connectTask != null)
+            {
+                await _connectTask.ConfigureAwait(false);
+                return;
+            }
 
-            IsConnected = true;
+            _connectTask = ConnectCoreAsync();
+
+            try
+            {
+                await _connectTask.ConfigureAwait(false);
+
+                IsConnected = true;
+            }
+            finally
+            {
+                _connectTask = null;
+            }
+
             _statusInfo.SetConnected();
             _logger.LogDebug(
                 IntegrationEventIds.ConsumerConnected,

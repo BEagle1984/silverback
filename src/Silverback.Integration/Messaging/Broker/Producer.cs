@@ -23,6 +23,8 @@ namespace Silverback.Messaging.Broker
 
         private readonly ISilverbackIntegrationLogger<Producer> _logger;
 
+        private Task? _connectTask;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Producer" /> class.
         /// </summary>
@@ -69,15 +71,34 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IProducer.IsConnected" />
         public bool IsConnected { get; private set; }
 
+        /// <inheritdoc cref="IProducer.IsConnecting" />
+        public bool IsConnecting => _connectTask != null;
+
         /// <inheritdoc cref="IProducer.ConnectAsync" />
         public async Task ConnectAsync()
         {
             if (IsConnected)
                 return;
 
-            await ConnectCoreAsync().ConfigureAwait(false);
+            if (_connectTask != null)
+            {
+                await _connectTask.ConfigureAwait(false);
+                return;
+            }
 
-            IsConnected = true;
+            _connectTask = ConnectCoreAsync();
+
+            try
+            {
+                await _connectTask.ConfigureAwait(false);
+
+                IsConnected = true;
+            }
+            finally
+            {
+                _connectTask = null;
+            }
+
             _logger.LogDebug(
                 IntegrationEventIds.ProducerConnected,
                 "Connected producer to endpoint {endpoint}. (producerId: {producerId})",

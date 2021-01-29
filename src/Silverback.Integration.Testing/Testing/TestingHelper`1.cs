@@ -3,9 +3,12 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories;
 using Silverback.Util;
@@ -16,9 +19,11 @@ namespace Silverback.Testing
     public abstract class TestingHelper<TBroker> : ITestingHelper<TBroker>
         where TBroker : IBroker
     {
+        private readonly ISilverbackIntegrationLogger _logger;
+
         private readonly IServiceProvider _serviceProvider;
 
-        private readonly TBroker? _broker;
+        private readonly TBroker _broker;
 
         private readonly IIntegrationSpy? _integrationSpy;
 
@@ -28,8 +33,12 @@ namespace Silverback.Testing
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" />.
         /// </param>
-        protected TestingHelper(IServiceProvider serviceProvider)
+        /// <param name="logger">
+        ///     The <see cref="ISilverbackIntegrationLogger" />.
+        /// </param>
+        protected TestingHelper(IServiceProvider serviceProvider, ISilverbackIntegrationLogger logger)
         {
+            _logger = logger;
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
 
             _broker = serviceProvider.GetRequiredService<TBroker>();
@@ -45,6 +54,28 @@ namespace Silverback.Testing
         public IIntegrationSpy Spy => _integrationSpy ?? throw new InvalidOperationException(
             "The IIntegrationSpy couldn't be resolved. " +
             "Register it calling AddIntegrationSpy or AddIntegrationSpyAndSubscriber.");
+
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilConnectedAsync" />
+        public async Task WaitUntilConnectedAsync(TimeSpan? timeout = null)
+        {
+            using var cancellationTokenSource =
+                new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
+
+            try
+            {
+                while (!_broker.IsConnected || _broker.Consumers.Any(consumer => consumer.IsConnecting))
+                {
+                    cancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                    await Task.Delay(10, cancellationTokenSource.Token).ConfigureAwait(false);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogWarning(
+                    "The timeout elapsed before all messages could be consumed and processed.");
+            }
+        }
 
         /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />
         public abstract Task WaitUntilAllMessagesAreConsumedAsync(TimeSpan? timeout = null);

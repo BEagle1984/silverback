@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
 using Silverback.Messaging.Configuration.Mqtt;
@@ -21,11 +22,13 @@ namespace Silverback.Messaging.Broker.Mqtt
     {
         private const int ConnectionMonitorMillisecondsInterval = 500;
 
+        private readonly ILogger _logger;
+
         private readonly object _connectionLock = new();
 
         private readonly List<object> _connectedObjects = new();
 
-        private Task? _connectingTask;
+        private TaskCompletionSource<bool> _connectingTaskCompletionSource = new();
 
         private CancellationTokenSource? _connectCancellationTokenSource;
 
@@ -35,10 +38,12 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         public MqttClientWrapper(
             IMqttClient mqttClient,
-            MqttClientConfig clientConfig)
+            MqttClientConfig clientConfig,
+            ILogger logger)
         {
             ClientConfig = clientConfig;
             MqttClient = mqttClient;
+            _logger = logger;
         }
 
         public MqttClientConfig ClientConfig { get; }
@@ -57,7 +62,6 @@ namespace Silverback.Messaging.Broker.Mqtt
             }
         }
 
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public Task ConnectAsync(object sender)
         {
             Check.NotNull(sender, nameof(sender));
@@ -68,18 +72,12 @@ namespace Silverback.Messaging.Broker.Mqtt
                     _connectedObjects.Add(sender);
 
                 if (_connectedObjects.Count > 1 || MqttClient.IsConnected)
-                    return _connectingTask ?? Task.CompletedTask;
+                    return _connectingTaskCompletionSource.Task;
 
-                _connectCancellationTokenSource ??= new CancellationTokenSource();
-
-                _connectingTask = MqttClient.ConnectAsync(
-                    ClientConfig.GetMqttClientOptions(),
-                    _connectCancellationTokenSource.Token);
+                ConnectAndMonitorConnection();
             }
 
-            Task.Run(() => MonitorConnectionAsync(_connectCancellationTokenSource.Token));
-
-            return _connectingTask;
+            return _connectingTaskCompletionSource.Task;
         }
 
         public Task SubscribeAsync(params MqttTopicFilter[] topicFilters)
@@ -109,7 +107,6 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         public void Dispose()
         {
-            _connectingTask?.Dispose();
             MqttClient.Dispose();
         }
 
@@ -121,32 +118,57 @@ namespace Silverback.Messaging.Broker.Mqtt
             return _consumer.HandleMessageAsync(consumedMessage);
         }
 
+        private void ConnectAndMonitorConnection()
+        {
+            _connectCancellationTokenSource ??= new CancellationTokenSource();
+
+            _ = Task.Run(() => MonitorConnectionAsync(_connectCancellationTokenSource.Token));
+        }
+
         private async Task MonitorConnectionAsync(CancellationToken cancellationToken)
         {
+            bool isFirstTry = true;
+
             while (!cancellationToken.IsCancellationRequested)
             {
+                if (!MqttClient.IsConnected)
+                    isFirstTry = await TryConnectAsync(isFirstTry, cancellationToken).ConfigureAwait(false);
+
                 await Task.Delay(ConnectionMonitorMillisecondsInterval, cancellationToken)
                     .ConfigureAwait(false);
-
-                if (!MqttClient.IsConnected)
-                {
-                    if (Consumer != null)
-                        await Consumer.StopAsync().ConfigureAwait(false);
-
-                    if (!await TryReconnectAsync(cancellationToken).ConfigureAwait(false))
-                        continue;
-
-                    if (Consumer != null && _subscriptionTopicFilters != null)
-                    {
-                        await SubscribeAsync(_subscriptionTopicFilters).ConfigureAwait(false);
-                        await Consumer.StartAsync().ConfigureAwait(false);
-                    }
-                }
             }
         }
 
+        private async Task<bool> TryConnectAsync(bool isFirstTry, CancellationToken cancellationToken)
+        {
+            lock (_connectionLock)
+            {
+                if (_connectingTaskCompletionSource.Task.IsCompleted)
+                {
+                    _connectingTaskCompletionSource = new TaskCompletionSource<bool>();
+
+                    _logger.LogInformation("Connection with MQTT broker lost, trying to reconnect.");
+                }
+            }
+
+            if (Consumer != null)
+                await Consumer.StopAsync().ConfigureAwait(false);
+
+            if (!await TryConnectClientAsync(isFirstTry, cancellationToken).ConfigureAwait(false))
+                return false;
+
+            if (Consumer != null && _subscriptionTopicFilters != null)
+            {
+                await SubscribeAsync(_subscriptionTopicFilters).ConfigureAwait(false);
+                await Consumer.StartAsync().ConfigureAwait(false);
+            }
+
+            _connectingTaskCompletionSource.SetResult(true);
+            return true;
+        }
+
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task<bool> TryReconnectAsync(CancellationToken cancellationToken)
+        private async Task<bool> TryConnectClientAsync(bool isFirstTry, CancellationToken cancellationToken)
         {
             try
             {
@@ -156,9 +178,14 @@ namespace Silverback.Messaging.Broker.Mqtt
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore, will be logged
+                // TODO: Improve logging
+                if (isFirstTry)
+                    _logger.LogWarning(ex, "Failed to connect to MQTT broker.");
+                else
+                    _logger.LogDebug(ex, "Failed to connect to MQTT broker.");
+
                 return false;
             }
         }
