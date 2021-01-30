@@ -166,6 +166,7 @@ namespace Silverback.Tests.Core.Background
         }
 
         [Fact]
+        [Trait("CI", "false")]
         public async Task PauseAndResume_SimpleTask_ExecutionPausedAndResumed()
         {
             int executions = 0;
