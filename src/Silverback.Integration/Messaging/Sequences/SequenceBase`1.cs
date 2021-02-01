@@ -48,6 +48,8 @@ namespace Silverback.Messaging.Sequences
 
         private ICollection<ISequence>? _sequences;
 
+        private bool _disposed;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="SequenceBase{TEnvelope}" /> class.
         /// </summary>
@@ -145,7 +147,8 @@ namespace Silverback.Messaging.Sequences
         void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
 
         /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
-        void ISequenceImplementation.SetParentSequence(ISequence parentSequence) => ParentSequence = parentSequence;
+        void ISequenceImplementation.SetParentSequence(ISequence parentSequence) =>
+            ParentSequence = parentSequence;
 
         /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
         void ISequenceImplementation.CompleteSequencerBehaviorsTask() =>
@@ -155,7 +158,8 @@ namespace Silverback.Messaging.Sequences
         void ISequenceImplementation.NotifyProcessingCompleted()
         {
             _processingCompleteTaskCompletionSource.TrySetResult(true);
-            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
+            _sequences?.OfType<ISequenceImplementation>()
+                .ForEach(sequence => sequence.NotifyProcessingCompleted());
         }
 
         /// <inheritdoc cref="ISequenceImplementation.NotifyProcessingFailed" />
@@ -164,15 +168,20 @@ namespace Silverback.Messaging.Sequences
             _processingCompleteTaskCompletionSource.TrySetException(exception);
 
             // Don't forward the error, it's enough to handle it once
-            _sequences?.OfType<ISequenceImplementation>().ForEach(sequence => sequence.NotifyProcessingCompleted());
+            _sequences?.OfType<ISequenceImplementation>()
+                .ForEach(sequence => sequence.NotifyProcessingCompleted());
             _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
         }
 
         /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />
-        public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>() => StreamProvider.CreateStream<TMessage>();
+        public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>() =>
+            StreamProvider.CreateStream<TMessage>();
 
         /// <inheritdoc cref="ISequence.AddAsync" />
-        public Task<int> AddAsync(IRawInboundEnvelope envelope, ISequence? sequence, bool throwIfUnhandled = true)
+        public Task<int> AddAsync(
+            IRawInboundEnvelope envelope,
+            ISequence? sequence,
+            bool throwIfUnhandled = true)
         {
             Check.NotNull(envelope, nameof(envelope));
 
@@ -230,7 +239,10 @@ namespace Silverback.Messaging.Sequences
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     number of streams that have been pushed.
         /// </returns>
-        protected virtual async Task<int> AddCoreAsync(TEnvelope envelope, ISequence? sequence, bool throwIfUnhandled)
+        protected virtual async Task<int> AddCoreAsync(
+            TEnvelope envelope,
+            ISequence? sequence,
+            bool throwIfUnhandled)
         {
             if (!IsPending || IsCompleting)
                 return 0;
@@ -353,6 +365,9 @@ namespace Silverback.Messaging.Sequences
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
+            if (_disposed)
+                return;
+
             _logger.LogTrace(
                 IntegrationEventIds.LowLevelTracing,
                 "Disposing {sequenceType} '{sequenceId}'...",
@@ -379,6 +394,8 @@ namespace Silverback.Messaging.Sequences
                 // If necessary cancel the SequencerBehaviorsTask (if an error occurs between the two behaviors)
                 if (!SequencerBehaviorsTask.IsCompleted)
                     _sequencerBehaviorsTaskCompletionSource.TrySetCanceled();
+
+                _disposed = true;
             }
         }
 
@@ -510,7 +527,9 @@ namespace Silverback.Messaging.Sequences
                         throw new InvalidOperationException("Reason shouldn't be None.");
                     case SequenceAbortReason.ConsumerAborted:
                     case SequenceAbortReason.Disposing:
-                        done = await Context.TransactionManager.RollbackAsync(exception, throwIfAlreadyCommitted: false)
+                        done = await Context.TransactionManager.RollbackAsync(
+                                exception,
+                                throwIfAlreadyCommitted: false)
                             .ConfigureAwait(false);
                         break;
                     default:

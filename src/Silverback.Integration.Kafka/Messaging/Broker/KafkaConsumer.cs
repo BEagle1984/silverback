@@ -94,6 +94,8 @@ namespace Silverback.Messaging.Broker
 
             lock (_channelsLock)
             {
+                IsConsuming = true;
+
                 InitAndStartChannelsManager(partitions);
             }
         }
