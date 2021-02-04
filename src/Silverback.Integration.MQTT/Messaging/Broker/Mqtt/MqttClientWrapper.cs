@@ -39,14 +39,18 @@ namespace Silverback.Messaging.Broker.Mqtt
         public MqttClientWrapper(
             IMqttClient mqttClient,
             MqttClientConfig clientConfig,
+            MqttEventsHandlers eventsHandlers,
             ISilverbackLogger logger)
         {
             ClientConfig = clientConfig;
+            EventsHandlers = eventsHandlers;
             MqttClient = mqttClient;
             _logger = logger;
         }
 
         public MqttClientConfig ClientConfig { get; }
+
+        public MqttEventsHandlers EventsHandlers { get; }
 
         public IMqttClient MqttClient { get; }
 
@@ -100,9 +104,11 @@ namespace Silverback.Messaging.Broker.Mqtt
 
                 if (_connectedObjects.Count > 0 || !MqttClient.IsConnected)
                     return Task.CompletedTask;
-
-                return MqttClient.DisconnectAsync();
             }
+
+            EventsHandlers.DisconnectingHandler?.Invoke(ClientConfig);
+
+            return MqttClient.DisconnectAsync();
         }
 
         public void Dispose()
@@ -164,6 +170,9 @@ namespace Silverback.Messaging.Broker.Mqtt
             }
 
             _connectingTaskCompletionSource.SetResult(true);
+
+            EventsHandlers.ConnectedHandler?.Invoke(ClientConfig);
+
             return true;
         }
 

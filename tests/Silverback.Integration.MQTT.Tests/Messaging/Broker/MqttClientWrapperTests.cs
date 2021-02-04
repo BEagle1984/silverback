@@ -25,6 +25,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var sender1 = new object();
             var sender2 = new object();
             var mqttClientConfig = new MqttClientConfig();
+            var mqttEventsHandlers = new MqttEventsHandlers();
 
             var mqttClient = Substitute.For<IMqttClient>();
             mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
@@ -33,6 +34,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var clientWrapper = new MqttClientWrapper(
                 mqttClient,
                 mqttClientConfig,
+                mqttEventsHandlers,
                 Substitute.For<ISilverbackLogger>());
 
             var task1 = clientWrapper.ConnectAsync(sender1);
@@ -80,6 +82,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var sender1 = new object();
             var sender2 = new object();
             var mqttClientConfig = new MqttClientConfig();
+            var mqttEventsHandlers = new MqttEventsHandlers();
 
             var mqttClient = Substitute.For<IMqttClient>();
             mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
@@ -88,6 +91,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var clientWrapper = new MqttClientWrapper(
                 mqttClient,
                 mqttClientConfig,
+                mqttEventsHandlers,
                 Substitute.For<ISilverbackLogger>());
 
             await clientWrapper.ConnectAsync(sender1);
@@ -119,6 +123,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var clientWrapper = new MqttClientWrapper(
                 mqttClient,
                 new MqttClientConfig(),
+                new MqttEventsHandlers(),
                 Substitute.For<ISilverbackLogger>());
 
             await clientWrapper.DisconnectAsync(new object());

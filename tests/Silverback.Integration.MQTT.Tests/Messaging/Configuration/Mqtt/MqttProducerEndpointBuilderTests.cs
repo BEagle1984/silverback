@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using MQTTnet.Client.Options;
 using MQTTnet.Protocol;
@@ -25,10 +26,12 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             }
         };
 
+        private readonly MqttEventsHandlers _mqttEventsHandlers = new();
+
         [Fact]
         public void Build_WithoutTopicName_ExceptionThrown()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
 
             Action act = () => builder.Build();
 
@@ -38,7 +41,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void Build_WithoutServer_ExceptionThrown()
         {
-            var builder = new MqttProducerEndpointBuilder(new MqttClientConfig());
+            var builder = new MqttProducerEndpointBuilder(new MqttClientConfig(), _mqttEventsHandlers);
 
             Action act = () =>
             {
@@ -52,7 +55,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void ProduceTo_TopicName_TopicSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder.ProduceTo("some-topic");
             var endpoint = builder.Build();
 
@@ -62,7 +65,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void ProduceTo_TopicNameFunction_TopicSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder.ProduceTo(_ => "some-topic");
             var endpoint = builder.Build();
 
@@ -72,7 +75,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void ProduceTo_TypedTopicNameFunction_TopicSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder.ProduceTo<TestEventOne>(_ => "some-topic");
             var endpoint = builder.Build();
 
@@ -82,7 +85,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void ProduceTo_TopicNameFunctionWithServiceProvider_TopicSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder.ProduceTo((_, _) => "some-topic");
             var endpoint = builder.Build();
 
@@ -92,7 +95,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void ProduceTo_TypedTopicNameFunctionWithServiceProvider_TopicSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder.ProduceTo<TestEventOne>((_, _) => "some-topic");
             var endpoint = builder.Build();
 
@@ -102,7 +105,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void ProduceTo_TopicNameFormat_TopicSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder.ProduceTo("some-topic/{0}", _ => new[] { "123" });
             var endpoint = builder.Build();
 
@@ -112,7 +115,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void ProduceTo_TypedTopicNameFormat_TopicSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder.ProduceTo<TestEventOne>("some-topic/{0}", _ => new[] { "123" });
             var endpoint = builder.Build();
 
@@ -126,7 +129,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             serviceProvider.GetService(typeof(TestEndpointNameResolver))
                 .Returns(new TestEndpointNameResolver());
 
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder.UseEndpointNameResolver<TestEndpointNameResolver>();
             var endpoint = builder.Build();
 
@@ -136,7 +139,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void Configure_ConfigAction_ConfigurationMergedWithBase()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder
                 .ProduceTo("some-topic")
                 .Configure(config => config.ClientId = "client42");
@@ -150,7 +153,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void Configure_BuilderAction_ConfigurationMergedWithBase()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder
                 .ProduceTo("some-topic")
                 .Configure(config => config.WithClientId("client42"));
@@ -162,9 +165,41 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         }
 
         [Fact]
+        public void BindEvents_EventsHandlerAction_HandlersMergedWithBase()
+        {
+            Func<MqttClientConfig, Task> callback = _ => Task.CompletedTask;
+
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
+            builder
+                .ProduceTo("some-topic")
+                .BindEvents(handlers => handlers.ConnectedHandler = callback);
+            var endpoint = builder.Build();
+
+            endpoint.EventsHandlers.ConnectedHandler.Should().BeSameAs(callback);
+            endpoint.EventsHandlers.DisconnectingHandler.Should()
+                .BeSameAs(_mqttEventsHandlers.DisconnectingHandler); // Reference comparison
+        }
+
+        [Fact]
+        public void BindEvents_EventsHandlerBuilderAction_HandlersMergedWithBase()
+        {
+            Func<MqttClientConfig, Task> callback = _ => Task.CompletedTask;
+
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
+            builder
+                .ProduceTo("some-topic")
+                .BindEvents(b => b.OnConnected(callback));
+            var endpoint = builder.Build();
+
+            endpoint.EventsHandlers.ConnectedHandler.Should().BeSameAs(callback);
+            endpoint.EventsHandlers.DisconnectingHandler.Should()
+                .Be(_mqttEventsHandlers.DisconnectingHandler); // Value comparison
+        }
+
+        [Fact]
         public void WithQualityOfServiceLevel_QualityOfServiceLevelSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder
                 .ProduceTo("some-topic")
                 .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce);
@@ -176,7 +211,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void WithAtMostOnceQoS_QualityOfServiceLevelSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder
                 .ProduceTo("some-topic")
                 .WithAtMostOnceQoS();
@@ -188,7 +223,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void WithAtLeastOnceQoS_QualityOfServiceLevelSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder
                 .ProduceTo("some-topic")
                 .WithAtLeastOnceQoS();
@@ -200,7 +235,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void Retain_RetainSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder
                 .ProduceTo("some-topic")
                 .Retain();
@@ -212,7 +247,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void WithMessageExpiration_MessageExpiryIntervalSet()
         {
-            var builder = new MqttProducerEndpointBuilder(_clientConfig);
+            var builder = new MqttProducerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
             builder
                 .ProduceTo("some-topic")
                 .WithMessageExpiration(TimeSpan.FromMinutes(42));

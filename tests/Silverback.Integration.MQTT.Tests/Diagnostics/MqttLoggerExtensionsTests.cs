@@ -91,6 +91,7 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                 {
                     ClientId = "test-client"
                 },
+                new MqttEventsHandlers(),
                 _silverbackLogger);
 
             var expectedMessage =
@@ -114,6 +115,7 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                 {
                     ClientId = "test-client"
                 },
+                new MqttEventsHandlers(),
                 _silverbackLogger);
 
             var expectedMessage =
@@ -137,6 +139,7 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                 {
                     ClientId = "test-client"
                 },
+                new MqttEventsHandlers(),
                 _silverbackLogger);
 
             var expectedMessage =
