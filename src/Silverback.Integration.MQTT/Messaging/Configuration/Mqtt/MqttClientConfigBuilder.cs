@@ -16,6 +16,9 @@ namespace Silverback.Messaging.Configuration.Mqtt
     {
         private readonly IServiceProvider? _serviceProvider;
 
+        private Action<MqttClientConfig>? _onClientConnected;
+        private Action<MqttClientConfig>? _onClientDisconnecting;
+
         private readonly MqttClientOptionsBuilder _builder =
             new MqttClientOptionsBuilder().WithProtocolVersion(MqttProtocolVersion.V500);
 
@@ -350,12 +353,36 @@ namespace Silverback.Messaging.Configuration.Mqtt
             return this;
         }
 
+        /// <inheritdoc />
+        public IMqttClientConfigBuilder OnConnected(Action<MqttClientConfig> onConnected)
+        {
+            Check.NotNull(onConnected, nameof(onConnected));
+
+            _onClientConnected = onConnected;
+
+            return this;
+        }
+
+        /// <inheritdoc />
+        public IMqttClientConfigBuilder OnDisconnecting(Action<MqttClientConfig> onDisconnecting)
+        {
+            Check.NotNull(onDisconnecting, nameof(onDisconnecting));
+
+            _onClientDisconnecting = onDisconnecting;
+
+            return this;
+        }
+
         /// <summary>
         ///     Builds the <see cref="MqttClientConfig" /> instance.
         /// </summary>
         /// <returns>
         ///     The <see cref="MqttClientConfig" />.
         /// </returns>
-        public MqttClientConfig Build() => new((MqttClientOptions)_builder.Build());
+        public MqttClientConfig Build() => new((MqttClientOptions)_builder.Build())
+        {
+            OnDisconnecting = _onClientDisconnecting,
+            OnConnected = _onClientConnected
+        };
     }
 }

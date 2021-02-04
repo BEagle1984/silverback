@@ -32,6 +32,8 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         private CancellationTokenSource? _connectCancellationTokenSource;
 
+        private bool _disconnectingCallbackCalled;
+
         private MqttConsumer? _consumer;
 
         private MqttTopicFilter[]? _subscriptionTopicFilters;
@@ -92,6 +94,13 @@ namespace Silverback.Messaging.Broker.Mqtt
 
             lock (_connectionLock)
             {
+                if (ClientConfig.OnDisconnecting != null &&
+                    !_disconnectingCallbackCalled)
+                {
+                    ClientConfig.OnDisconnecting.Invoke(ClientConfig);
+                    _disconnectingCallbackCalled = true;
+                }
+
                 if (_connectedObjects.Contains(sender))
                     _connectedObjects.Remove(sender);
 
@@ -164,6 +173,9 @@ namespace Silverback.Messaging.Broker.Mqtt
             }
 
             _connectingTaskCompletionSource.SetResult(true);
+
+            ClientConfig.OnConnected?.Invoke(ClientConfig);
+
             return true;
         }
 

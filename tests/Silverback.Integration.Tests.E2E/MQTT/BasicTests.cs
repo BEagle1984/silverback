@@ -1,12 +1,16 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Formatter;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -154,6 +158,152 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                 new MessageHeader("x-custom-header", "Hello header!"));
             Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
                 new MessageHeader("x-custom-header2", "False"));
+        }
+
+        [Fact]
+        public void OnConnected_DefaultSettings_CallbackCalled()
+        {
+            int callbackCalls = 0;
+            Action<MqttClientConfig> callback = _ =>
+            {
+                Interlocked.Increment(ref callbackCalls);
+            };
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                        .AddMqttEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config => config
+                                        .WithClientId("e2e-test")
+                                        .ConnectViaTcp("e2e-mqtt-broker")
+                                        .OnConnected(callback)) // OnConnected Callback
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            callbackCalls.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task OnConnected_DefaultSettings_MessageSent()
+        {
+            TestEventOne message = new();
+
+            Action<MqttClientConfig> callback = _ =>
+            {
+                var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+                publisher.Publish(message);
+            };
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                        .AddMqttEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config => config
+                                        .WithClientId("e2e-test")
+                                        .ConnectViaTcp("e2e-mqtt-broker")
+                                        .OnConnected(callback)) // OnConnected Callback
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            await Task.Delay(TimeSpan.FromSeconds(2));
+
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes[0].Message.Should().BeSameAs(message);
+        }
+
+        [Fact]
+        public async Task OnDisconnecting_DefaultSettings_CallbackCalled()
+        {
+            int callbackCalls = 0;
+            Action<MqttClientConfig> callback = _ =>
+            {
+                Interlocked.Increment(ref callbackCalls);
+            };
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                        .AddMqttEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config => config
+                                        .WithClientId("e2e-test")
+                                        .ConnectViaTcp("e2e-mqtt-broker")
+                                        .OnDisconnecting(callback)) // OnDisconnecting Callback
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            var brokers = Host.ServiceProvider.GetRequiredService<IBrokerCollection>();
+            await brokers.DisconnectAsync();
+
+            callbackCalls.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task OnDisconnecting_DefaultSettings_MessageSent()
+        {
+            TestEventOne message = new();
+
+            Action<MqttClientConfig> callback = _ =>
+            {
+                var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+                publisher.Publish(message);
+            };
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                        .AddMqttEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config => config
+                                        .WithClientId("e2e-test")
+                                        .ConnectViaTcp("e2e-mqtt-broker")
+                                        .OnDisconnecting(callback)) // OnDisconnecting Callback
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            var brokers = Host.ServiceProvider.GetRequiredService<IBrokerCollection>();
+            await brokers.DisconnectAsync();
+
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
+            Helper.Spy.OutboundEnvelopes[0].Message.Should().BeSameAs(message);
         }
     }
 }

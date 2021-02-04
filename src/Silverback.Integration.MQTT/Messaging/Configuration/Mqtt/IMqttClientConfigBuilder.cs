@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using MQTTnet.Client;
 using MQTTnet.Client.ExtendedAuthenticationExchange;
 using MQTTnet.Client.Options;
 using MQTTnet.Formatter;
@@ -442,5 +443,30 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="IMqttClientConfigBuilder" /> so that additional calls can be chained.
         /// </returns>
         IMqttClientConfigBuilder EnableTls(Action<MqttClientOptionsBuilderTlsParameters> parametersAction);
+
+        /// <summary>
+        ///     A callback that is triggered as soon as the underlying <see cref="IMqttClient"/> is connected.
+        /// </summary>
+        /// <param name="onConnected">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientConfig"/> and is being called
+        ///     after the <see cref="IMqttClient"/> is connected.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttClientConfigBuilder"/> so that additional calls can be chained.
+        /// </returns>
+        IMqttClientConfigBuilder OnConnected(Action<MqttClientConfig> onConnected);
+
+        /// <summary>
+        ///     A callback that is triggered before the underlying <see cref="IMqttClient"/> disconnects
+        ///     from the broker.
+        /// </summary>
+        /// <param name="onDisconnecting">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientConfig"/> and is being called
+        ///     before the <see cref="IMqttClient"/> disconnects from the broker.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttClientConfigBuilder"/> so that additional calls can be chained.
+        /// </returns>
+        IMqttClientConfigBuilder OnDisconnecting(Action<MqttClientConfig> onDisconnecting);
     }
 }

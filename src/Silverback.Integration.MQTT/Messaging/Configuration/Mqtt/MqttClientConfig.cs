@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using MQTTnet;
+using MQTTnet.Client;
 using MQTTnet.Client.ExtendedAuthenticationExchange;
 using MQTTnet.Client.Options;
 using MQTTnet.Formatter;
@@ -228,6 +229,16 @@ namespace Silverback.Messaging.Configuration.Mqtt
             get => _clientOptions.TopicAliasMaximum;
             set => _clientOptions.TopicAliasMaximum = value;
         }
+
+        /// <summary>
+        ///     Gets or sets a callback that is called when the <see cref="IMqttClient"/> connected to the broker.
+        /// </summary>
+        public Action<MqttClientConfig>? OnConnected { get; set; }
+
+        /// <summary>
+        ///     Gets or sets a callback that is called before the <see cref="IMqttClient"/> disconnects from the broker.
+        /// </summary>
+        public Action<MqttClientConfig>? OnDisconnecting { get; set; }
 
         /// <summary>
         ///     Gets a value indicating whether the headers (user properties) are supported according to the configured

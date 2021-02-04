@@ -668,6 +668,24 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             config.ChannelOptions.TlsOptions.AllowUntrustedCertificates.Should().BeTrue();
         }
 
+        [Fact]
+        public void OnConnected_CallbackSet()
+        {
+            var builder = new MqttClientConfigBuilder();
+
+            Action<MqttClientConfig> connectedCallback = _ => { };
+            Action<MqttClientConfig> disconnectingCallback = _ => { };
+
+            builder
+                .ConnectViaTcp("tests-server")
+                .OnConnected(connectedCallback)
+                .OnDisconnecting(disconnectingCallback);
+
+            var config = builder.Build();
+            config.OnConnected.Should().BeSameAs(connectedCallback);
+            config.OnDisconnecting.Should().BeSameAs(disconnectingCallback);
+        }
+
         private class TestExtendedAuthenticationExchangeHandler : IMqttExtendedAuthenticationExchangeHandler
         {
             public Task HandleRequestAsync(MqttExtendedAuthenticationExchangeContext context) =>
