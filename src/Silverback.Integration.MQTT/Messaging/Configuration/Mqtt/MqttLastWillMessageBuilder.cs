@@ -21,6 +21,8 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
         private IMessageSerializer? _serializer;
 
+        private bool _retain;
+
         /// <summary>
         ///     Gets the desired delay in seconds.
         /// </summary>
@@ -68,6 +70,13 @@ namespace Silverback.Messaging.Configuration.Mqtt
         public IMqttLastWillMessageBuilder WithExactlyOnceQoS() =>
             WithQualityOfServiceLevel(MqttQualityOfServiceLevel.ExactlyOnce);
 
+        /// <inheritdoc cref="IMqttLastWillMessageBuilder.Retain" />
+        public IMqttLastWillMessageBuilder Retain()
+        {
+            _retain = true;
+            return this;
+        }
+
         /// <inheritdoc cref="IMqttLastWillMessageBuilder.SerializeUsing" />
         public IMqttLastWillMessageBuilder SerializeUsing(IMessageSerializer serializer)
         {
@@ -106,7 +115,8 @@ namespace Silverback.Messaging.Configuration.Mqtt
             {
                 Topic = _topic,
                 Payload = payloadStream.ReadAll(),
-                QualityOfServiceLevel = _qosLevel
+                QualityOfServiceLevel = _qosLevel,
+                Retain = _retain
             };
         }
     }

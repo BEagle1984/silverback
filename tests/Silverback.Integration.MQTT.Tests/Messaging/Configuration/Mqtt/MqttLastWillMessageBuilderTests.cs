@@ -127,6 +127,19 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         }
 
         [Fact]
+        public void WithRetain_RetainFlagSet()
+        {
+            var builder = new MqttLastWillMessageBuilder();
+
+            builder
+                .ProduceTo("testaments")
+                .Retain();
+
+            var willMessage = builder.Build();
+            willMessage.Retain.Should().BeTrue();
+        }
+
+        [Fact]
         public async Task SerializeUsing_NewtonsoftJsonSerializer_PayloadSerialized()
         {
             var message = new TestEventOne { Content = "Hello MQTT!" };
