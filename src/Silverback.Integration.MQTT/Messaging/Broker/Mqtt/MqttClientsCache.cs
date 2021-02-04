@@ -28,11 +28,11 @@ namespace Silverback.Messaging.Broker.Mqtt
         }
 
         public MqttClientWrapper GetClient(MqttProducer producer) =>
-            GetClient(producer.Endpoint.Configuration, false);
+            GetClient(producer.Endpoint.Configuration, producer.Endpoint.EventsHandlers, false);
 
         public MqttClientWrapper GetClient(MqttConsumer consumer)
         {
-            var client = GetClient(consumer.Endpoint.Configuration, true);
+            var client = GetClient(consumer.Endpoint.Configuration, consumer.Endpoint.EventsHandlers, true);
 
             client.Consumer = consumer;
 
@@ -49,9 +49,9 @@ namespace Silverback.Messaging.Broker.Mqtt
             "ReSharper",
             "ParameterOnlyUsedForPreconditionCheck.Local",
             Justification = "Different checks for consumer")]
-        private MqttClientWrapper GetClient(MqttClientConfig connectionConfig, bool isForConsumer)
+        private MqttClientWrapper GetClient(MqttClientConfig clientConfig, MqttEventsHandlers eventsHandlers, bool isForConsumer)
         {
-            Check.NotNull(connectionConfig, nameof(connectionConfig));
+            Check.NotNull(clientConfig, nameof(clientConfig));
 
             if (_clients == null)
                 throw new ObjectDisposedException(null);
@@ -59,15 +59,21 @@ namespace Silverback.Messaging.Broker.Mqtt
             lock (_clients)
             {
                 bool clientExists = _clients.TryGetValue(
-                    connectionConfig.ClientId,
+                    clientConfig.ClientId,
                     out MqttClientWrapper client);
 
                 if (clientExists)
                 {
-                    if (!client.ClientConfig.Equals(connectionConfig))
+                    if (!client.ClientConfig.Equals(clientConfig))
                     {
                         throw new InvalidOperationException(
                             "A client with the same id is already connected but with a different configuration.");
+                    }
+
+                    if (!client.EventsHandlers.Equals(eventsHandlers))
+                    {
+                        throw new InvalidOperationException(
+                            "A client with the same id is already connected but with different event handlers.");
                     }
 
                     if (isForConsumer && client.Consumer != null)
@@ -80,9 +86,10 @@ namespace Silverback.Messaging.Broker.Mqtt
                 {
                     client = new MqttClientWrapper(
                         _mqttClientFactory.CreateClient(),
-                        connectionConfig,
+                        clientConfig,
+                        eventsHandlers,
                         _logger);
-                    _clients.Add(connectionConfig.ClientId, client);
+                    _clients.Add(clientConfig.ClientId, client);
                 }
 
                 return client;

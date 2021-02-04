@@ -106,8 +106,10 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
         }
 
         [Fact]
-        public void GetClient_ProducerAndConsumerWithEqualClientConfig_SameClientReturned()
+        public void GetClient_ProducerAndConsumerWithEqualClientConfigAndEventHandlers_SameClientReturned()
         {
+            var eventsHandlers = new MqttEventsHandlers();
+
             var producer = (MqttProducer)_broker.GetProducer(
                 new MqttProducerEndpoint("some-topic")
                 {
@@ -118,7 +120,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         {
                             Server = "mqtt-server"
                         }
-                    }
+                    },
+                    EventsHandlers = eventsHandlers
                 });
             var consumer = (MqttConsumer)_broker.AddConsumer(
                 new MqttConsumerEndpoint("some-topic")
@@ -130,7 +133,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         {
                             Server = "mqtt-server"
                         }
-                    }
+                    },
+                    EventsHandlers = eventsHandlers
                 });
 
             var factory = new MqttClientsCache(
@@ -147,6 +151,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
         [Fact]
         public void GetClient_ConsumerAndProducerWithEqualClientConfig_SameClientReturned()
         {
+            var eventsHandlers = new MqttEventsHandlers();
+
             var consumer = (MqttConsumer)_broker.AddConsumer(
                 new MqttConsumerEndpoint("some-topic")
                 {
@@ -157,7 +163,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         {
                             Server = "mqtt-server"
                         }
-                    }
+                    },
+                    EventsHandlers = eventsHandlers
                 });
             var producer = (MqttProducer)_broker.GetProducer(
                 new MqttProducerEndpoint("some-topic")
@@ -169,7 +176,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         {
                             Server = "mqtt-server"
                         }
-                    }
+                    },
+                    EventsHandlers = eventsHandlers
                 });
 
             var factory = new MqttClientsCache(
@@ -294,6 +302,45 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             client1.Should().NotBeNull();
             client2.Should().NotBeNull();
             client2.Should().NotBeSameAs(client1);
+        }
+
+        [Fact]
+        public void GetClient_ConsumerAndProducerWithDifferentEventHandlers_ExceptionThrown()
+        {
+            var consumer = (MqttConsumer)_broker.AddConsumer(
+                new MqttConsumerEndpoint("some-topic")
+                {
+                    Configuration = new MqttClientConfig
+                    {
+                        ClientId = "client1",
+                        ChannelOptions = new MqttClientTcpOptions
+                        {
+                            Server = "mqtt-server"
+                        }
+                    },
+                    EventsHandlers = new MqttEventsHandlers()
+                });
+            var producer = (MqttProducer)_broker.GetProducer(
+                new MqttProducerEndpoint("some-topic")
+                {
+                    Configuration = new MqttClientConfig
+                    {
+                        ClientId = "client1",
+                        ChannelOptions = new MqttClientTcpOptions
+                        {
+                            Server = "mqtt-server"
+                        }
+                    },
+                    EventsHandlers = new MqttEventsHandlers()
+                });
+
+            var factory = new MqttClientsCache(
+                new MqttNetClientFactory(),
+                _logger);
+            var client1 = factory.GetClient(producer);
+            Action act = () => factory.GetClient(consumer);
+
+            act.Should().Throw<InvalidOperationException>();
         }
     }
 }

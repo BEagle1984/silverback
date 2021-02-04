@@ -45,6 +45,29 @@ namespace Silverback.Messaging.Configuration.Mqtt
         IMqttConsumerEndpointBuilder Configure(Action<IMqttClientConfigBuilder> configBuilderAction);
 
         /// <summary>
+        ///     Configures the MQTT client events.
+        /// </summary>
+        /// <param name="eventsHandlersBuilderAction">
+        ///     An <see cref="Action{T}"/> that takes the <see cref="IMqttEventsHandlersBuilder"/> and configures it.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttProducerEndpointBuilder"/> so that additional calls can be chained.
+        /// </returns>
+        IMqttConsumerEndpointBuilder BindEvents(
+            Action<IMqttEventsHandlersBuilder> eventsHandlersBuilderAction);
+
+        /// <summary>
+        ///     Configures the MQTT client events.
+        /// </summary>
+        /// <param name="eventsHandlersAction">
+        ///     An <see cref="Action{T}"/> that takes the <see cref="MqttEventsHandlers"/> and configures it.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttProducerEndpointBuilder"/> so that additional calls can be chained.
+        /// </returns>
+        IMqttConsumerEndpointBuilder BindEvents(Action<MqttEventsHandlers> eventsHandlersAction);
+
+        /// <summary>
         ///     Specifies the desired quality of service level.
         /// </summary>
         /// <param name="qosLevel">

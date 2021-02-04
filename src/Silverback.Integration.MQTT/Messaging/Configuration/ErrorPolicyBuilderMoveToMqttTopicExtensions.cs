@@ -38,12 +38,17 @@ namespace Silverback.Messaging.Configuration
             Check.NotNull(builder, nameof(builder));
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
 
-            var mqttClientConfig =
-                ((builder as ErrorPolicyBuilder)?.EndpointsConfigurationBuilder as MqttEndpointsConfigurationBuilder)
-                ?.ClientConfig
-                ?? throw new InvalidOperationException("Missing ClientConfig.");
+            MqttEndpointsConfigurationBuilder? mqttEndpointsConfigurationBuilder =
+                (builder as ErrorPolicyBuilder)?.EndpointsConfigurationBuilder as
+                MqttEndpointsConfigurationBuilder;
 
-            var endpointBuilder = new MqttProducerEndpointBuilder(mqttClientConfig);
+            var mqttClientConfig = mqttEndpointsConfigurationBuilder?.ClientConfig
+                                   ?? throw new InvalidOperationException("Missing ClientConfig.");
+
+            var mqttEventsHandlers = mqttEndpointsConfigurationBuilder?.MqttEventsHandlers
+                                     ?? throw new InvalidOperationException("Missing MqttEventsHandlers.");
+
+            var endpointBuilder = new MqttProducerEndpointBuilder(mqttClientConfig, mqttEventsHandlers);
             endpointBuilderAction(endpointBuilder);
 
             return builder.Move(endpointBuilder.Build(), policyConfigurationAction);

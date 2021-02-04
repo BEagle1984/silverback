@@ -148,7 +148,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                 {
                     Configuration =
                         ((MqttClientConfigBuilder)new MqttClientConfigBuilder()
-                            .WithClientId("e2e-test")
+                            .WithClientId("e2e-test-helper")
                             .ConnectViaTcp("e2e-mqtt-broker")
                             .UseProtocolVersion(MqttProtocolVersion.V500))
                         .Build()

@@ -13,6 +13,8 @@ namespace Silverback.Messaging.Configuration.Mqtt
     {
         private MqttClientConfig _clientConfig;
 
+        private MqttEventsHandlers _mqttEventsHandlers;
+
         private string[]? _topicNames;
 
         private MqttQualityOfServiceLevel? _qualityOfServiceLevel;
@@ -23,16 +25,21 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <param name="clientConfig">
         ///     The <see cref="MqttClientConfig" />.
         /// </param>
+        /// <param name="mqttEventsHandlers">
+        ///     The <see cref="MqttEventsHandlers" />.
+        /// </param>
         /// <param name="endpointsConfigurationBuilder">
         ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the
         ///     builder.
         /// </param>
         public MqttConsumerEndpointBuilder(
             MqttClientConfig clientConfig,
+            MqttEventsHandlers mqttEventsHandlers,
             IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
             : base(endpointsConfigurationBuilder)
         {
-            _clientConfig = clientConfig.ShallowCopy();
+            _mqttEventsHandlers = mqttEventsHandlers;
+            _clientConfig = clientConfig;
         }
 
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.This" />
@@ -73,6 +80,29 @@ namespace Silverback.Messaging.Configuration.Mqtt
             return this;
         }
 
+        /// <inheritdoc cref="IMqttConsumerEndpointBuilder.BindEvents(Action{IMqttEventsHandlersBuilder})"/>
+        public IMqttConsumerEndpointBuilder BindEvents(Action<IMqttEventsHandlersBuilder> eventsHandlersBuilderAction)
+        {
+            Check.NotNull(eventsHandlersBuilderAction, nameof(eventsHandlersBuilderAction));
+
+            var eventsBuilder = new MqttEventsHandlersBuilder(_mqttEventsHandlers);
+            eventsHandlersBuilderAction.Invoke(eventsBuilder);
+
+            _mqttEventsHandlers = eventsBuilder.Build();
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttConsumerEndpointBuilder.BindEvents(Action{MqttEventsHandlers})"/>
+        public IMqttConsumerEndpointBuilder BindEvents(Action<MqttEventsHandlers> eventsHandlersAction)
+        {
+            Check.NotNull(eventsHandlersAction, nameof(eventsHandlersAction));
+
+            eventsHandlersAction.Invoke(_mqttEventsHandlers);
+
+            return this;
+        }
+
         /// <inheritdoc cref="IMqttConsumerEndpointBuilder.WithQualityOfServiceLevel" />
         public IMqttConsumerEndpointBuilder WithQualityOfServiceLevel(MqttQualityOfServiceLevel qosLevel)
         {
@@ -106,7 +136,8 @@ namespace Silverback.Messaging.Configuration.Mqtt
         {
             var endpoint = new MqttConsumerEndpoint(_topicNames ?? Array.Empty<string>())
             {
-                Configuration = _clientConfig
+                Configuration = _clientConfig,
+                EventsHandlers = _mqttEventsHandlers
             };
 
             if (_qualityOfServiceLevel != null)
