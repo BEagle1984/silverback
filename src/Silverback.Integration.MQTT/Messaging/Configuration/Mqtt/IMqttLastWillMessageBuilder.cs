@@ -84,6 +84,14 @@ namespace Silverback.Messaging.Configuration.Mqtt
         IMqttLastWillMessageBuilder WithExactlyOnceQoS();
 
         /// <summary>
+        ///     Specifies that the LWT message will be sent with the retain flag, causing it to be persisted on the broker.
+        /// </summary>
+        /// <returns>
+        ///     The <see cref="IMqttLastWillMessageBuilder"/> so that additional calls can be chained.
+        /// </returns>
+        IMqttLastWillMessageBuilder Retain();
+
+        /// <summary>
         ///     Specifies the <see cref="IMessageSerializer" /> to be used to serialize the LWT message.
         /// </summary>
         /// <param name="serializer">
