@@ -40,8 +40,16 @@ namespace Silverback.Messaging.Configuration
                 var endpointsConfigurationBuilder =
                     new EndpointsConfigurationBuilder(scope.ServiceProvider);
 
-                scope.ServiceProvider.GetServices<IEndpointsConfigurator>()
-                    .ForEach(configurator => InvokeConfigurator(configurator, endpointsConfigurationBuilder));
+                foreach (var configurator in scope.ServiceProvider.GetServices<IEndpointsConfigurator>())
+                {
+                    InvokeConfigurator(configurator, endpointsConfigurationBuilder);
+                }
+
+                foreach (var handler in scope.ServiceProvider.GetServices<IBrokerEventsHandler>()
+                    .SortBySortIndex())
+                {
+                    AsyncHelper.RunSynchronously(() => handler.OnEndpointsConfiguredAsync());
+                }
             }
         }
 
