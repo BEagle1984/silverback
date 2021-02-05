@@ -288,6 +288,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 _assignmentsDictionary[groupId] = new Dictionary<IMockedConfluentConsumer, List<Partition>>();
                 for (int i = 0; i < groupConsumers.Count; i++)
                 {
+                    groupConsumers[i].OnPartitionsRevoked(Name);
+
                     _assignmentsDictionary[groupId][groupConsumers[i]] = assignments[i];
                 }
             }

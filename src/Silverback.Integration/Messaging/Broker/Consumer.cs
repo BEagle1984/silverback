@@ -154,26 +154,14 @@ namespace Silverback.Messaging.Broker
             if (SequenceStores.Count > 0)
             {
                 await SequenceStores
-                    .SelectMany(store => store)
-                    .ToList()
-                    .ParallelForEachAsync(
-                        async sequence =>
-                        {
-                            if (sequence.IsPending)
-                            {
-                                await sequence.AbortAsync(SequenceAbortReason.ConsumerAborted)
-                                    .ConfigureAwait(false);
-                            }
-
-                            await sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
-                        })
+                    .DisposeAllAsync(SequenceAbortReason.ConsumerAborted)
                     .ConfigureAwait(false);
             }
 
             using (var cancellationTokenSource = new CancellationTokenSource(ConsumerStopWaitTimeout))
             {
                 _logger.LogLowLevelTrace(
-                    "Waiting until consumer stops...  (consumerId: {consumerId})",
+                    "Waiting until consumer stops... (consumerId: {consumerId})",
                     () => new object[] { Id });
 
                 try

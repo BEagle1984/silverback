@@ -251,6 +251,21 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             PartitionsAssigned = false;
         }
 
+        internal void OnPartitionsRevoked(string topicName)
+        {
+            PartitionsAssigned = false;
+
+            if (_topicAssignments.Contains(topicName))
+                _topicAssignments.Remove(topicName);
+
+            if (_topicAssignments.Count > 0)
+                return;
+
+            InvokePartitionsRevokedHandler(topicName);
+
+            ClearPartitionsAssignment();
+        }
+
         internal void OnPartitionsAssigned(string topicName, IReadOnlyCollection<Partition> partitions)
         {
             _temporaryAssignment.RemoveAll(topicPartitionOffset => topicPartitionOffset.Topic == topicName);
@@ -263,27 +278,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             if (_topicAssignments.Count < Subscription.Count)
                 return;
 
-            var partitionOffsets = _temporaryAssignment;
-
-            var revokeHandlerResult = InvokePartitionsRevokedHandler(topicName);
-            if (revokeHandlerResult != null && revokeHandlerResult.Count > 0)
-            {
-                partitionOffsets = partitionOffsets
-                    .Union(revokeHandlerResult)
-                    .GroupBy(partitionOffset => partitionOffset.TopicPartition)
-                    .Select(
-                        group =>
-                            new TopicPartitionOffset(
-                                group.Key,
-                                group.Max(topicPartitionOffset => topicPartitionOffset.Offset)))
-                    .ToList();
-            }
-
-            ClearPartitionsAssignment();
-
-            var assignHandlerResult = InvokePartitionsAssignedHandler(partitionOffsets);
-            if (assignHandlerResult != null)
-                partitionOffsets = assignHandlerResult;
+            var partitionOffsets =
+                InvokePartitionsAssignedHandler(_temporaryAssignment) ?? _temporaryAssignment;
 
             foreach (var partitionOffset in partitionOffsets)
             {
@@ -303,19 +299,18 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 ?.ToList();
         }
 
-        private List<TopicPartitionOffset>? InvokePartitionsRevokedHandler(string topicName)
+        private void InvokePartitionsRevokedHandler(string topicName)
         {
             if (PartitionsRevokedHandler == null || Assignment.Count == 0)
-                return null;
+                return;
 
-            return PartitionsRevokedHandler.Invoke(
-                    this,
-                    Assignment.Where(topicPartition => topicPartition.Topic == topicName).Select(
-                            partition => new TopicPartitionOffset(
-                                partition,
-                                _topics[partition.Topic].GetCommittedOffset(partition.Partition, GroupId)))
-                        .ToList())
-                ?.ToList();
+            PartitionsRevokedHandler.Invoke(
+                this,
+                Assignment.Where(topicPartition => topicPartition.Topic == topicName).Select(
+                        partition => new TopicPartitionOffset(
+                            partition,
+                            _topics[partition.Topic].GetCommittedOffset(partition.Partition, GroupId)))
+                    .ToList());
         }
 
         private void ClearPartitionsAssignment()

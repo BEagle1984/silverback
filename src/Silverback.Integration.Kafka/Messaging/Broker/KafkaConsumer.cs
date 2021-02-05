@@ -109,7 +109,8 @@ namespace Silverback.Messaging.Broker
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 CommitOffsets();
 
-            SequenceStores.ForEach(store => store.Dispose());
+            AsyncHelper.RunSynchronously(
+                () => SequenceStores.DisposeAllAsync(SequenceAbortReason.ConsumerAborted));
             SequenceStores.Clear();
 
             // The ConsumeLoopHandler needs to be immediately restarted because the partitions will be

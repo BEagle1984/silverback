@@ -1544,6 +1544,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedBatches[0].Should().HaveCount(10);
             receivedBatches[1].Should().HaveCount(5);
             completedBatches.Should().Be(1);
+            receivedBatches.Sum(batch => batch.Count).Should().Be(15);
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
 
@@ -1556,6 +1557,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedBatches[1].Should().HaveCount(5);
             receivedBatches[2].Should().HaveCount(5);
             completedBatches.Should().Be(1);
+            receivedBatches.Sum(batch => batch.Count).Should().Be(20);
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
 
