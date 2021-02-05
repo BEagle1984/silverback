@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Logging;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
@@ -15,11 +15,13 @@ namespace Silverback.Messaging.Broker.Mqtt
     {
         private readonly IMqttNetClientFactory _mqttClientFactory;
 
-        private readonly ILogger _logger;
+        private readonly ISilverbackLogger _logger;
 
         private readonly Dictionary<string, MqttClientWrapper> _clients = new();
 
-        public MqttClientsCache(IMqttNetClientFactory mqttClientFactory, ILogger<MqttClientsCache> logger)
+        public MqttClientsCache(
+            IMqttNetClientFactory mqttClientFactory,
+            ISilverbackLogger<MqttClientsCache> logger)
         {
             _mqttClientFactory = mqttClientFactory;
             _logger = logger;

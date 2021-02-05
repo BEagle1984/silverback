@@ -62,13 +62,13 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 .AddConsumer(_consumerEndpoint);
 
             var expectedMessage =
-                "Consuming message: test[2]@42. | " +
-                $"consumerId: {consumer.Id}, endpointName: test";
+                "Consuming message: actual[2]@42. | " +
+                $"consumerId: {consumer.Id}, endpointName: actual";
 
             _silverbackLogger.LogConsuming(
                 new ConsumeResult<byte[]?, byte[]?>
                 {
-                    Topic = "test",
+                    Topic = "actual",
                     Partition = 2,
                     Offset = 42
                 },
@@ -84,13 +84,13 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 .AddConsumer(_consumerEndpoint);
 
             var expectedMessage =
-                "Partition EOF reached: test[2]@42. | " +
-                $"consumerId: {consumer.Id}, endpointName: test";
+                "Partition EOF reached: actual[2]@42. | " +
+                $"consumerId: {consumer.Id}, endpointName: actual";
 
             _silverbackLogger.LogEndOfPartition(
                 new ConsumeResult<byte[]?, byte[]?>
                 {
-                    Topic = "test",
+                    Topic = "actual",
                     Partition = 2,
                     Offset = 42
                 },

@@ -207,7 +207,7 @@ namespace Silverback.Diagnostics
                 consumeResult.Partition,
                 consumeResult.Offset,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumeResult.Topic,
                 null);
 
         public static void LogEndOfPartition(
@@ -220,7 +220,7 @@ namespace Silverback.Diagnostics
                 consumeResult.Partition,
                 consumeResult.Offset,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumeResult.Topic,
                 null);
 
         public static void LogKafkaExceptionAutoRecovery(

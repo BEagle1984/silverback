@@ -84,14 +84,7 @@ namespace Silverback.Messaging.Broker.Mqtt
         {
             var receivedMessage = new ConsumedApplicationMessage(eventArgs.ApplicationMessage);
 
-            _logger.LogConsumerLowLevelTrace(
-                Consumer,
-                "Writing message {messageId} from {topic} to channel.",
-                () => new object[]
-                {
-                    receivedMessage.Id,
-                    receivedMessage.ApplicationMessage.Topic
-                });
+            _logger.LogConsuming(receivedMessage, Consumer!);
 
             await _channel.Writer.WriteAsync(receivedMessage).ConfigureAwait(false);
 

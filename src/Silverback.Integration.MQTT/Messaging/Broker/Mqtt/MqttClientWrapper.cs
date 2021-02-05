@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using MQTTnet;
 using MQTTnet.Client;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Broker.Mqtt
     {
         private const int ConnectionMonitorMillisecondsInterval = 500;
 
-        private readonly ILogger _logger;
+        private readonly ISilverbackLogger _logger;
 
         private readonly object _connectionLock = new();
 
@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Broker.Mqtt
         public MqttClientWrapper(
             IMqttClient mqttClient,
             MqttClientConfig clientConfig,
-            ILogger logger)
+            ISilverbackLogger logger)
         {
             ClientConfig = clientConfig;
             MqttClient = mqttClient;
@@ -147,7 +147,7 @@ namespace Silverback.Messaging.Broker.Mqtt
                 {
                     _connectingTaskCompletionSource = new TaskCompletionSource<bool>();
 
-                    _logger.LogInformation("Connection with MQTT broker lost, trying to reconnect.");
+                    _logger.LogConnectionLost(this);
                 }
             }
 
@@ -180,11 +180,10 @@ namespace Silverback.Messaging.Broker.Mqtt
             }
             catch (Exception ex)
             {
-                // TODO: Improve logging
                 if (isFirstTry)
-                    _logger.LogWarning(ex, "Failed to connect to MQTT broker.");
+                    _logger.LogConnectError(this, ex);
                 else
-                    _logger.LogDebug(ex, "Failed to connect to MQTT broker.");
+                    _logger.LogConnectRetryError(this, ex);
 
                 return false;
             }

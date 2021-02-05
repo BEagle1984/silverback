@@ -5,12 +5,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using MQTTnet.Client;
 using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
 using NSubstitute;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
@@ -33,7 +33,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var clientWrapper = new MqttClientWrapper(
                 mqttClient,
                 mqttClientConfig,
-                Substitute.For<ILogger>());
+                Substitute.For<ISilverbackLogger>());
 
             var task1 = clientWrapper.ConnectAsync(sender1);
             var task2 = clientWrapper.ConnectAsync(sender2);
@@ -88,7 +88,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var clientWrapper = new MqttClientWrapper(
                 mqttClient,
                 mqttClientConfig,
-                Substitute.For<ILogger>());
+                Substitute.For<ISilverbackLogger>());
 
             await clientWrapper.ConnectAsync(sender1);
             await clientWrapper.ConnectAsync(sender2);
@@ -119,7 +119,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var clientWrapper = new MqttClientWrapper(
                 mqttClient,
                 new MqttClientConfig(),
-                Substitute.For<ILogger>());
+                Substitute.For<ISilverbackLogger>());
 
             await clientWrapper.DisconnectAsync(new object());
 
