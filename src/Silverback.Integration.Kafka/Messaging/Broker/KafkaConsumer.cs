@@ -43,8 +43,6 @@ namespace Silverback.Messaging.Broker
 
         private int _messagesSinceCommit;
 
-        private IConsumer<byte[]?, byte[]?>? _confluentConsumer;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaConsumer" /> class.
         /// </summary>
@@ -84,7 +82,9 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Gets the (dynamic) group member id of this consumer (as set by the broker).
         /// </summary>
-        public string MemberId => _confluentConsumer?.MemberId ?? string.Empty;
+        public string MemberId => ConfluentConsumer?.MemberId ?? string.Empty;
+
+        internal IConsumer<byte[]?, byte[]?>? ConfluentConsumer { get; private set; }
 
         internal void OnPartitionsAssigned(IReadOnlyList<TopicPartition> partitions)
         {
@@ -151,7 +151,7 @@ namespace Silverback.Messaging.Broker
                 .ConfigureAwait(false);
         }
 
-        internal bool AutoRecoveryIfEnabled(KafkaException ex, CancellationToken cancellationToken)
+        internal bool AutoRecoveryIfEnabled(Exception ex, CancellationToken cancellationToken)
         {
             if (!Endpoint.Configuration.EnableAutoRecovery)
             {
@@ -222,9 +222,9 @@ namespace Silverback.Messaging.Broker
                 // Start reading from the channels right away in case of static partitions assignment or if
                 // the consumer is restarting and the partition assignment is set already
                 if (Endpoint.TopicPartitions != null ||
-                    _confluentConsumer?.Assignment != null && _confluentConsumer.Assignment.Count > 0)
+                    ConfluentConsumer?.Assignment != null && ConfluentConsumer.Assignment.Count > 0)
                 {
-                    InitAndStartChannelsManager(_confluentConsumer!.Assignment);
+                    InitAndStartChannelsManager(ConfluentConsumer!.Assignment);
                 }
             }
 
@@ -317,7 +317,7 @@ namespace Silverback.Messaging.Broker
         {
             _channelsManager?.StopReading(topicPartitionOffset.TopicPartition);
 
-            _confluentConsumer!.Seek(topicPartitionOffset);
+            ConfluentConsumer!.Seek(topicPartitionOffset);
 
             if (IsConsuming)
                 _channelsManager?.StartReading(topicPartitionOffset.TopicPartition);
@@ -325,15 +325,15 @@ namespace Silverback.Messaging.Broker
 
         private void InitConfluentConsumer()
         {
-            _confluentConsumer = _confluentConsumerBuilder.Build();
+            ConfluentConsumer = _confluentConsumerBuilder.Build();
 
             if (Endpoint.TopicPartitions == null)
             {
-                _confluentConsumer.Subscribe(Endpoint.Names);
+                ConfluentConsumer.Subscribe(Endpoint.Names);
             }
             else
             {
-                _confluentConsumer.Assign(Endpoint.TopicPartitions);
+                ConfluentConsumer.Assign(Endpoint.TopicPartitions);
 
                 Endpoint.TopicPartitions.ForEach(
                     topicPartitionOffset => _logger.LogPartitionManuallyAssigned(topicPartitionOffset, this));
@@ -342,11 +342,7 @@ namespace Silverback.Messaging.Broker
 
         private void InitAndStartConsumeLoopHandler()
         {
-            _consumeLoopHandler ??= new ConsumeLoopHandler(
-                this,
-                _confluentConsumer!,
-                _channelsManager,
-                _logger);
+            _consumeLoopHandler ??= new ConsumeLoopHandler(this, _channelsManager, _logger);
 
             if (_channelsManager != null)
                 _consumeLoopHandler.SetChannelsManager(_channelsManager);
@@ -410,7 +406,7 @@ namespace Silverback.Messaging.Broker
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private void DisposeConfluentConsumer()
         {
-            if (_confluentConsumer == null)
+            if (ConfluentConsumer == null)
                 return;
 
             var timeoutCancellationTokenSource = new CancellationTokenSource(CloseTimeout);
@@ -421,9 +417,9 @@ namespace Silverback.Messaging.Broker
                 Task.Run(
                         () =>
                         {
-                            _confluentConsumer?.Close();
-                            _confluentConsumer?.Dispose();
-                            _confluentConsumer = null;
+                            ConfluentConsumer?.Close();
+                            ConfluentConsumer?.Dispose();
+                            ConfluentConsumer = null;
                         },
                         timeoutCancellationTokenSource.Token)
                     .Wait(timeoutCancellationTokenSource.Token);
@@ -441,7 +437,7 @@ namespace Silverback.Messaging.Broker
                 timeoutCancellationTokenSource.Dispose();
             }
 
-            _confluentConsumer = null;
+            ConfluentConsumer = null;
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
@@ -478,7 +474,7 @@ namespace Silverback.Messaging.Broker
                         offset.Partition.Value,
                         offset.Offset.Value
                     });
-                _confluentConsumer!.StoreOffset(offset);
+                ConfluentConsumer!.StoreOffset(offset);
             }
         }
 
@@ -495,7 +491,7 @@ namespace Silverback.Messaging.Broker
                 _messagesSinceCommit = 0;
             }
 
-            _confluentConsumer!.Commit();
+            ConfluentConsumer!.Commit();
         }
 
         private void CommitOffsets()
@@ -505,7 +501,7 @@ namespace Silverback.Messaging.Broker
 
             try
             {
-                var offsets = _confluentConsumer!.Commit();
+                var offsets = ConfluentConsumer!.Commit();
 
                 Endpoint.Events.OffsetsCommittedHandler?.Invoke(
                     new CommittedOffsets(

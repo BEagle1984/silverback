@@ -5,9 +5,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Confluent.Kafka;
 using Silverback.Diagnostics;
-using Silverback.Messaging.Diagnostics;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka
@@ -16,9 +14,6 @@ namespace Silverback.Messaging.Broker.Kafka
     {
         [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
         private readonly KafkaConsumer _consumer;
-
-        [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
-        private readonly IConsumer<byte[]?, byte[]?> _confluenceConsumer;
 
         private readonly ISilverbackLogger _logger;
 
@@ -31,12 +26,10 @@ namespace Silverback.Messaging.Broker.Kafka
 
         public ConsumeLoopHandler(
             KafkaConsumer consumer,
-            IConsumer<byte[]?, byte[]?> confluenceConsumer,
             ConsumerChannelsManager? channelsManager,
             ISilverbackLogger logger)
         {
             _consumer = Check.NotNull(consumer, nameof(consumer));
-            _confluenceConsumer = Check.NotNull(confluenceConsumer, nameof(confluenceConsumer));
             _channelsManager = channelsManager;
             _logger = Check.NotNull(logger, nameof(logger));
         }
@@ -117,7 +110,13 @@ namespace Silverback.Messaging.Broker.Kafka
         {
             try
             {
-                var consumeResult = _confluenceConsumer.Consume(cancellationToken);
+                if (_consumer.ConfluentConsumer == null)
+                {
+                    _logger.LogConsumerLowLevelTrace(_consumer, "KafkaConsumer.ConfluentConsumer is null.");
+                    return false;
+                }
+
+                var consumeResult = _consumer.ConfluentConsumer.Consume(cancellationToken);
 
                 if (consumeResult == null)
                     return true;
@@ -126,7 +125,9 @@ namespace Silverback.Messaging.Broker.Kafka
 
                 if (_channelsManager == null)
                 {
-                    _logger.LogConsumerLowLevelTrace(_consumer, "Waiting for channels manager to be initialized...");
+                    _logger.LogConsumerLowLevelTrace(
+                        _consumer,
+                        "Waiting for channels manager to be initialized...");
 
                     // Wait until the ChannelsManager is set (after the partitions have been assigned)
                     while (_channelsManager == null)
@@ -144,17 +145,10 @@ namespace Silverback.Messaging.Broker.Kafka
                 if (cancellationToken.IsCancellationRequested)
                     _logger.LogConsumingCanceled(_consumer);
             }
-            catch (KafkaException ex)
+            catch (Exception ex)
             {
                 if (!_consumer.AutoRecoveryIfEnabled(ex, cancellationToken))
                     return false;
-            }
-            catch (Exception ex)
-            {
-                if (!(ex is ConsumerPipelineFatalException))
-                    _logger.LogConsumerFatalError(_consumer, ex);
-
-                return false;
             }
 
             return true;

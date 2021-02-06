@@ -106,7 +106,8 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 .AddConsumer(_consumerEndpoint);
 
             var expectedMessage =
-                "KafkaException occurred. The consumer will try to recover. | " +
+                "An error occurred while trying to pull the next message. " +
+                "The consumer will try to recover. | " +
                 $"consumerId: {consumer.Id}, endpointName: test";
 
             _silverbackLogger.LogKafkaExceptionAutoRecovery(
@@ -123,7 +124,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 .AddConsumer(_consumerEndpoint);
 
             var expectedMessage =
-                "KafkaException occurred. The consumer will be stopped. " +
+                "An error occurred while trying to pull the next message. The consumer will be stopped. " +
                 "Enable auto recovery to allow Silverback to automatically try to reconnect " +
                 "(EnableAutoRecovery=true in the consumer configuration). | " +
                 $"consumerId: {consumer.Id}, endpointName: test";

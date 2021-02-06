@@ -40,7 +40,7 @@ namespace Silverback.Diagnostics
         public static LogEvent KafkaExceptionAutoRecovery { get; } = new(
             LogLevel.Warning,
             GetEventId(13, nameof(KafkaExceptionAutoRecovery)),
-            "KafkaException occurred. The consumer will try to recover.");
+            "An error occurred while trying to pull the next message. The consumer will try to recover.");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when a
@@ -50,7 +50,7 @@ namespace Silverback.Diagnostics
         public static LogEvent KafkaExceptionNoAutoRecovery { get; } = new(
             LogLevel.Error,
             GetEventId(14, nameof(KafkaExceptionNoAutoRecovery)),
-            "KafkaException occurred. The consumer will be stopped. " +
+            "An error occurred while trying to pull the next message. The consumer will be stopped. " +
             "Enable auto recovery to allow Silverback to automatically try to reconnect " +
             "(EnableAutoRecovery=true in the consumer configuration).");
 
