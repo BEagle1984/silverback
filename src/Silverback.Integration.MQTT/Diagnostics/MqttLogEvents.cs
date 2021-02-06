@@ -3,7 +3,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
-using Silverback.Messaging.Broker;
 
 namespace Silverback.Diagnostics
 {
