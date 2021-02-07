@@ -17,8 +17,8 @@ Discover more in the [project's website][docs-site].
 
 ### Build
 
-[![Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/BEagle1984.silverback?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=2&branchName=master) 
-[![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/2/master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=2&branchName=master)
+[![Build Status](https://dev.azure.com/beagle1984/Silverback/_apis/build/status/continuous?branchName=master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master) 
+[![Azure DevOps tests (branch)](https://img.shields.io/azure-devops/tests/beagle1984/Silverback/5/master)](https://dev.azure.com/beagle1984/Silverback/_build/latest?definitionId=5&branchName=master)
 
 ### Quality
 

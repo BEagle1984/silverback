@@ -1,9 +1,15 @@
 name: sonar.$(date:yyyyMMdd)$(rev:.r)
 
-trigger:
-  - master
-  - develop
-  - feature/*
+trigger: none
+pr: none
+resources:
+    pipelines:
+        - pipeline: continuous
+          source: continuous
+
+          trigger:
+              branches:
+                - '*'
 
 pool:
   vmImage: 'ubuntu-latest'
