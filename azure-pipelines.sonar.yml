@@ -12,7 +12,7 @@ resources:
                 - '*'
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-20.04'
 
 variables:
   buildConfiguration: 'Release'
@@ -21,8 +21,8 @@ steps:
   # Install .net core sdk
   - task: UseDotNet@2
     inputs:
-        packageType: 'sdk'
-        version: '2.2.x'
+      packageType: 'sdk'
+      version: '2.2.x'
     displayName: 'Install sdk 2.2.x'
   - task: UseDotNet@2
     inputs:
@@ -50,7 +50,7 @@ steps:
     displayName: 'Prepare code analysis on SonarCloud'
   - script: |
       dotnet build Silverback.sln --configuration $(buildConfiguration)
-    displayName: 'Build (dotnet build $(buildConfiguration))'
+    displayName: 'Build ($(buildConfiguration))'
   - script: |
       dotnet test Silverback.sln \
         --configuration $(buildConfiguration) \
@@ -58,17 +58,17 @@ steps:
         --verbosity Normal \
         --logger trx \
         --collect "Code coverage" \
-        --filter CI!=false \
+        --filter "CI!=false" \
         -p:CollectCoverage=true \
         -p:CoverletOutputFormat=opencover%2ccobertura \
-        -p:Exclude="[xunit.*]*%2c[Silverback.Tests.Common]*"
-    displayName: 'Test (dotnet test)'
+        -p:Exclude="[xunit.*]*%2c[Silverback.Tests.*]*"
+    displayName: 'Run tests'
   - task: SonarCloudAnalyze@1
     condition: succeededOrFailed()
-    displayName: 'Run code analysis on SonarCloud'
+    displayName: 'Run SonarCloud analysis'
   - task: SonarCloudPublish@1
     condition: succeededOrFailed()
-    displayName: 'Publish quality gate result on SonarCloud'
+    displayName: 'Publish SonarCloud quality gate result'
   # Publish results
   - task: PublishTestResults@2
     condition: succeededOrFailed()

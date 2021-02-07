@@ -1,7 +1,7 @@
 name: continuous.$(date:yyyyMMdd)$(rev:.r)
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-20.04'
 
 variables:
   buildConfiguration: 'Release'
@@ -18,22 +18,18 @@ steps:
       packageType: 'sdk'
       version: '5.0.x'
     displayName: 'Install sdk 5.0.x'
-  # Build, test and analyze
+  # Build and test
   - script: |
       dotnet build Silverback.sln --configuration $(buildConfiguration) -warnaserror | tee build.log && grep -q 'Build succeeded' build.log
-    displayName: 'Build (dotnet build $(buildConfiguration))'
+    displayName: 'Build ($(buildConfiguration))'
   - script: |
       dotnet test Silverback.sln \
         --configuration $(buildConfiguration) \
         --no-build \
         --verbosity Normal \
         --logger trx \
-        --collect "Code coverage" \
-        --filter CI!=false \
-        -p:CollectCoverage=true \
-        -p:CoverletOutputFormat=opencover%2ccobertura \
-        -p:Exclude="[xunit.*]*%2c[Silverback.Tests.Common]*"
-    displayName: 'Test (dotnet test)'
+        --filter "CI!=false"
+    displayName: 'Run tests'
   # Publish results
   - task: PublishTestResults@2
     condition: succeededOrFailed()
@@ -41,9 +37,3 @@ steps:
       testRunner: VSTest
       testResultsFiles: '**/*.trx'
     displayName: 'Publish test results'
-  - task: PublishCodeCoverageResults@1
-    condition: succeededOrFailed()
-    inputs:
-      summaryFileLocation: $(System.DefaultWorkingDirectory)/**/coverage.cobertura.xml
-      codecoverageTool: cobertura
-    displayName: 'Publish code coverage results'

@@ -129,6 +129,9 @@ namespace Silverback.Messaging.Broker.Kafka
             StopReading();
             _readCancellationTokenSource.ForEach(
                 cancellationTokenSource => cancellationTokenSource.Dispose());
+
+            _logger.LogConsumerLowLevelTrace(_consumer, "All channels reader cancellation tokens disposed.");
+
             _messagesLimiterSemaphoreSlim?.Dispose();
         }
 

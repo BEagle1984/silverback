@@ -82,8 +82,12 @@ namespace Silverback.Messaging.Broker.Kafka
 
         public void Dispose()
         {
+            _logger.LogConsumerLowLevelTrace(_consumer, "Disposing ConsumeLoopHandler...");
+
             AsyncHelper.RunSynchronously(StopAsync);
             _cancellationTokenSource.Dispose();
+
+            _logger.LogConsumerLowLevelTrace(_consumer, "Disposed ConsumeLoopHandler.");
         }
 
         private async Task ConsumeAsync(

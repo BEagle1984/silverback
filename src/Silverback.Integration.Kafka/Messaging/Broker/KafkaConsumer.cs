@@ -250,14 +250,26 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />
-        [SuppressMessage(
-            "ReSharper",
-            "InconsistentlySynchronizedField",
-            Justification = "Sync start/stop only")]
-        protected override Task WaitUntilConsumingStoppedAsync() =>
-            Task.WhenAll(
-                WaitUntilChannelsManagerStopsAsync(),
-                WaitUntilConsumeLoopHandlerStopsAsync());
+        protected override async Task WaitUntilConsumingStoppedAsync()
+        {
+            var timeoutTask = Task.Delay(TimeSpan.FromSeconds(10));
+
+            var channelsManagerTask = Task.Run(WaitUntilChannelsManagerStopsAsync);
+            var consumeLoopHandlerTask = Task.Run(WaitUntilConsumeLoopHandlerStopsAsync);
+
+            await Task.WhenAny(
+                Task.WhenAll(channelsManagerTask, consumeLoopHandlerTask),
+                timeoutTask).ConfigureAwait(false);
+
+            if (timeoutTask.IsCompleted)
+            {
+                var logMessage =
+                    "Timeout elapsed while waiting until consuming stops. | " +
+                    $"channelsManagerTask: {channelsManagerTask.Status}, " +
+                    $"consumeLoopHandlerTask: {consumeLoopHandlerTask.Status}";
+                _logger.LogConsumerLowLevelTrace(this, logMessage);
+            }
+        }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
         protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
@@ -381,13 +393,20 @@ namespace Silverback.Messaging.Broker
             Justification = "Sync start/stop only")]
         private async Task WaitUntilConsumeLoopHandlerStopsAsync()
         {
-            if (_consumeLoopHandler != null)
-                await _consumeLoopHandler.Stopping.ConfigureAwait(false);
+            if (_consumeLoopHandler == null)
+            {
+                _logger.LogConsumerLowLevelTrace(this, "ConsumeLoopHandler is null.");
+                return;
+            }
+
+            await _consumeLoopHandler.Stopping.ConfigureAwait(false);
 
             _logger.LogConsumerLowLevelTrace(this, "ConsumeLoopHandler stopped.");
 
             _consumeLoopHandler?.Dispose();
             _consumeLoopHandler = null;
+
+            _logger.LogConsumerLowLevelTrace(this, "ConsumeLoopHandler disposed.");
         }
 
         [SuppressMessage(
@@ -396,13 +415,20 @@ namespace Silverback.Messaging.Broker
             Justification = "Sync start/stop only")]
         private async Task WaitUntilChannelsManagerStopsAsync()
         {
-            if (_channelsManager != null)
-                await _channelsManager.Stopping.ConfigureAwait(false);
+            if (_channelsManager == null)
+            {
+                _logger.LogConsumerLowLevelTrace(this, "ChannelsManager is null.");
+                return;
+            }
+
+            await _channelsManager.Stopping.ConfigureAwait(false);
 
             _logger.LogConsumerLowLevelTrace(this, "ChannelsManager stopped.");
 
             _channelsManager?.Dispose();
             _channelsManager = null;
+
+            _logger.LogConsumerLowLevelTrace(this, "ChannelsManager disposed.");
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]

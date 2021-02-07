@@ -113,7 +113,7 @@ namespace Silverback.Tests.Integration.Diagnostics
         public void LogIncompleteSequenceAborted_Logged()
         {
             var expectedMessage =
-                "The incomplete FakeSequence 'fake1' is aborted.  | " +
+                "The incomplete FakeSequence 'fake1' is aborted. | " +
                 "length: 3";
 
             _silverbackLogger.LogIncompleteSequenceAborted(new FakeSequence());

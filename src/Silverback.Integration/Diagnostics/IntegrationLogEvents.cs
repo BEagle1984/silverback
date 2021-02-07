@@ -99,7 +99,7 @@ namespace Silverback.Diagnostics
         public static LogEvent IncompleteSequenceAborted { get; } = new(
             LogLevel.Warning,
             GetEventId(8, nameof(IncompleteSequenceAborted)),
-            "The incomplete {sequenceType} '{sequenceId}' is aborted.  | " +
+            "The incomplete {sequenceType} '{sequenceId}' is aborted. | " +
             "length: {sequenceLength}");
 
         /// <summary>
