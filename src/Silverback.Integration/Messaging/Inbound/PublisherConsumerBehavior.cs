@@ -153,8 +153,10 @@ namespace Silverback.Messaging.Inbound
                         sequence.SequenceId
                     });
 
-                return Task.CompletedTask;
+                return context.ProcessingTask = Task.CompletedTask;
             }
+
+            context.ProcessingTask = Task.WhenAll(processingTasks);
 
             return Task.Run(
                 async () =>
