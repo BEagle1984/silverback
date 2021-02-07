@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Publishing;
@@ -172,9 +173,10 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                 services => services
                     .AddFakeLogger()
                     .AddSilverback()
-                    .WithConnectionToMessageBroker(options => options
-                        .AddBroker<TestBroker>()
-                        .AllowDuplicateEndpointRegistrations())
+                    .WithConnectionToMessageBroker(
+                        options => options
+                            .AddBroker<TestBroker>()
+                            .AllowDuplicateEndpointRegistrations())
                     .AddEndpoints(
                         endpoints =>
                             endpoints
@@ -192,11 +194,11 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         }
 
         [Fact]
-        public void AddOutbound_WithIdempotentRegistration_ThrowWhenConfigurationDiffers()
+        public async Task AddOutbound_WithIdempotentRegistration_LogCriticalWhenConfigurationDiffers()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
-                    .AddFakeLogger()
+                    .AddLoggerSubstitute()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
                         options => options
@@ -212,10 +214,97 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
                                     })));
 
             var broker = serviceProvider.GetRequiredService<TestBroker>();
-            Func<Task> action = async () => await broker.ConnectAsync();
+            var loggerSubstitute =
+                (LoggerSubstitute<EndpointsConfigurationBuilder>)serviceProvider
+                    .GetRequiredService<ILogger<EndpointsConfigurationBuilder>>();
 
-            action.Should().Throw<EndpointConfigurationException>()
-                .WithMessage("An endpoint 'test1' for message type 'Silverback.Tests.Types.Domain.TestEventOne' but with a different configuration is already registered.");
+            await broker.ConnectAsync();
+
+            loggerSubstitute.Received(
+                LogLevel.Critical,
+                typeof(EndpointConfigurationException),
+                null,
+                1102,
+                "An endpoint 'test1' for message type 'Silverback.Tests.Types.Domain.TestEventOne' but with a different configuration is already registered.");
+        }
+
+        [Fact]
+        public async Task AddInbound_WithInvalidEndpoint_ValidEndpointsAdded()
+        {
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
+                    .AddEndpoints(
+                        endpoints =>
+                            endpoints
+                                .AddInbound(new TestConsumerEndpoint("test1"))
+                                .AddInbound(new TestConsumerEndpoint(string.Empty))
+                                .AddInbound(new TestConsumerEndpoint("test2"))));
+
+            var broker = serviceProvider.GetRequiredService<TestBroker>();
+            await broker.ConnectAsync();
+
+            broker.Consumers.Should().HaveCount(2);
+            broker.Consumers[0].Endpoint.Name.Should().Be("test1");
+            broker.Consumers[1].Endpoint.Name.Should().Be("test2");
+        }
+
+        [Fact]
+        public async Task AddOutbound_WithInvalidEndpoint_ValidEndpointsAdded()
+        {
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
+                    .AddEndpoints(
+                        endpoints =>
+                            endpoints
+                                .AddOutbound<TestEventOne>(new TestProducerEndpoint("test1"))
+                                .AddOutbound<TestEventOne>(new TestProducerEndpoint(string.Empty))
+                                .AddOutbound<TestEventOne>(new TestProducerEndpoint("test2"))));
+
+            var broker = serviceProvider.GetRequiredService<TestBroker>();
+            await broker.ConnectAsync();
+
+            broker.Producers.Should().HaveCount(2);
+            broker.Producers[0].Endpoint.Name.Should().Be("test1");
+            broker.Producers[1].Endpoint.Name.Should().Be("test2");
+        }
+
+        [Fact]
+        public async Task AddInboundOutbound_MultipleConfiguratorsWithInvalidEndpoints_ValidEndpointsAdded()
+        {
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
+                    .AddEndpoints(
+                        endpoints =>
+                            endpoints
+                                .AddOutbound<TestEventOne>(new TestProducerEndpoint("test1"))
+                                .AddInbound(new TestConsumerEndpoint(string.Empty))
+                                .AddInbound(new TestConsumerEndpoint("test1")))
+                    .AddEndpoints(_ => throw new InvalidOperationException())
+                    .AddEndpoints(
+                        endpoints =>
+                            endpoints
+                                .AddOutbound<TestEventOne>(new TestProducerEndpoint(string.Empty))
+                                .AddOutbound<TestEventOne>(new TestProducerEndpoint("test2"))
+                                .AddInbound(new TestConsumerEndpoint("test2"))));
+
+            var broker = serviceProvider.GetRequiredService<TestBroker>();
+            await broker.ConnectAsync();
+
+            broker.Producers.Should().HaveCount(2);
+            broker.Producers[0].Endpoint.Name.Should().Be("test1");
+            broker.Producers[1].Endpoint.Name.Should().Be("test2");
+            broker.Consumers.Should().HaveCount(2);
+            broker.Consumers[0].Endpoint.Name.Should().Be("test1");
+            broker.Consumers[1].Endpoint.Name.Should().Be("test2");
         }
     }
 }

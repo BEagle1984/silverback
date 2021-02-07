@@ -25,14 +25,16 @@ namespace Silverback.Tests.Logging
             LogLevel logLevel,
             Type? exceptionType,
             string? message = null,
-            int? eventId = null)
+            int? eventId = null,
+            string? exceptionMessage = null)
         {
             bool containsMatchingCall = _receivedCalls.Any(
                 call =>
                     call.LogLevel == logLevel &&
-                    call.ExceptionType == exceptionType
+                    call.Exception?.GetType() == exceptionType
                     && (message == null || call.Message == message)
-                    && (eventId == null || call.EventId == eventId));
+                    && (eventId == null || call.EventId == eventId)
+                    && (exceptionMessage == null || call.Exception?.Message == exceptionMessage));
 
             if (!containsMatchingCall)
             {
@@ -40,7 +42,7 @@ namespace Silverback.Tests.Logging
                     ", ",
                     _receivedCalls.Select(
                         call =>
-                            $"{call.LogLevel}, \"{call.Message}\", {call.ExceptionType?.Name ?? "no exception"}, {call.EventId}"));
+                            $"{call.LogLevel}, \"{call.Message}\", {call.Exception?.GetType().Name ?? "no exception"}, {call.EventId}"));
                 throw new InvalidOperationException(
                     $"No matching call received. Received calls: {receivedCallsDump}");
             }
@@ -56,7 +58,7 @@ namespace Silverback.Tests.Logging
             _receivedCalls.Add(
                 new ReceivedCall(
                     logLevel,
-                    exception?.GetType(),
+                    exception,
                     formatter.Invoke(state, exception),
                     eventId.Id));
         }
@@ -67,17 +69,17 @@ namespace Silverback.Tests.Logging
 
         private class ReceivedCall
         {
-            public ReceivedCall(LogLevel logLevel, Type? exceptionType, string message, int eventId)
+            public ReceivedCall(LogLevel logLevel, Exception? exception, string message, int eventId)
             {
                 LogLevel = logLevel;
-                ExceptionType = exceptionType;
+                Exception = exception;
                 Message = message;
                 EventId = eventId;
             }
 
             public LogLevel LogLevel { get; }
 
-            public Type? ExceptionType { get; }
+            public Exception? Exception { get; }
 
             public int EventId { get; }
 

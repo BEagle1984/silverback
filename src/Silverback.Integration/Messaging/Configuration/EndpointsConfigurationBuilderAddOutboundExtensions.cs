@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
@@ -199,9 +200,11 @@ namespace Silverback.Messaging.Configuration
 
             IEnumerable<IProducerEndpoint> endpointsToRegister;
 
-            if (endpointsConfigurationBuilder.GetOutboundRoutingConfiguration().IdempotentEndpointRegistration)
+            if (endpointsConfigurationBuilder.GetOutboundRoutingConfiguration()
+                .IdempotentEndpointRegistration)
             {
-                endpointsToRegister = endpointsConfigurationBuilder.FilterRegisteredEndpoints(endpoints, messageType);
+                endpointsToRegister =
+                    endpointsConfigurationBuilder.FilterRegisteredEndpoints(endpoints, messageType);
             }
             else
             {
@@ -363,8 +366,21 @@ namespace Silverback.Messaging.Configuration
         private static void PreloadProducers(IOutboundRouter router, IServiceProvider serviceProvider)
         {
             var brokers = serviceProvider.GetRequiredService<IBrokerCollection>();
+            var logger =
+                serviceProvider.GetRequiredService<ISilverbackLogger<IEndpointsConfigurationBuilder>>();
 
-            router.Endpoints.ForEach(endpoint => brokers.GetProducer(endpoint));
+            router.Endpoints.ForEach(endpoint => PreloadProducer(brokers, endpoint, logger));
+        }
+
+        private static void PreloadProducer(
+            IBrokerCollection brokers,
+            IProducerEndpoint endpoint,
+            ISilverbackLogger logger)
+        {
+            if (!endpoint.IsValid(logger))
+                return;
+
+            brokers.GetProducer(endpoint);
         }
 
         private static IEnumerable<IProducerEndpoint> FilterRegisteredEndpoints(
@@ -372,11 +388,11 @@ namespace Silverback.Messaging.Configuration
             IEnumerable<IProducerEndpoint> endpoints,
             Type messageType)
         {
-            IList<IProducerEndpoint> endpointsToRegister = new List<IProducerEndpoint>();
+            var endpointsToRegister = new List<IProducerEndpoint>();
 
-            IList<IProducerEndpoint> registeredStaticEndpoints = endpointsConfigurationBuilder
+            var registeredStaticEndpoints = endpointsConfigurationBuilder
                 .GetOutboundRoutingConfiguration()
-                .Routes.Where(r => r.MessageType == messageType)
+                .Routes.Where(route => route.MessageType == messageType)
                 .Select(route => route.GetOutboundRouter(endpointsConfigurationBuilder.ServiceProvider))
                 .OfType<StaticOutboundRouter>()
                 .SelectMany(router => router.Endpoints)

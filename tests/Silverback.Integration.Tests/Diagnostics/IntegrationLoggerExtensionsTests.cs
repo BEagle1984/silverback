@@ -8,6 +8,8 @@ using System.Security.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Tests.Integration.TestTypes;
@@ -207,7 +209,11 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             _silverbackLogger.LogBrokerConnectionError(new AuthenticationException());
 
-            _loggerSubstitute.Received(LogLevel.Error, typeof(AuthenticationException), expectedMessage, 1017);
+            _loggerSubstitute.Received(
+                LogLevel.Error,
+                typeof(AuthenticationException),
+                expectedMessage,
+                1017);
         }
 
         [Fact]
@@ -381,7 +387,43 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             _silverbackLogger.LogErrorProcessingOutbox(new InvalidCredentialException());
 
-            _loggerSubstitute.Received(LogLevel.Error, typeof(InvalidCredentialException), expectedMessage, 1078);
+            _loggerSubstitute.Received(
+                LogLevel.Error,
+                typeof(InvalidCredentialException),
+                expectedMessage,
+                1078);
+        }
+
+        [Fact]
+        public void LogInvalidEndpointConfiguration_Logged()
+        {
+            var expectedMessage = "Invalid configuration for endpoint 'test'.";
+
+            _silverbackLogger.LogInvalidEndpointConfiguration(
+                TestProducerEndpoint.GetDefault(),
+                new EndpointConfigurationException());
+
+            _loggerSubstitute.Received(
+                LogLevel.Critical,
+                typeof(EndpointConfigurationException),
+                expectedMessage,
+                1101);
+        }
+
+        [Fact]
+        public void LogEndpointConfiguratorError_Logged()
+        {
+            var expectedMessage = "Error occurred configuring the endpoints. | configurator: GenericEndpointsConfigurator";
+
+            _silverbackLogger.LogEndpointConfiguratorError(
+                new GenericEndpointsConfigurator(_ => { }),
+                new EndpointConfigurationException());
+
+            _loggerSubstitute.Received(
+                LogLevel.Critical,
+                typeof(EndpointConfigurationException),
+                expectedMessage,
+                1102);
         }
 
         [Fact]
@@ -406,7 +448,11 @@ namespace Silverback.Tests.Integration.Diagnostics
                 "Message {string} {int} {bool}",
                 () => new object[] { "A", 42, true });
 
-            _loggerSubstitute.Received(LogLevel.Trace, typeof(InvalidComObjectException), expectedMessage, 1999);
+            _loggerSubstitute.Received(
+                LogLevel.Trace,
+                typeof(InvalidComObjectException),
+                expectedMessage,
+                1999);
         }
 
         [Fact]

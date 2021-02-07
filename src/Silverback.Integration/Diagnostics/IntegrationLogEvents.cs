@@ -4,6 +4,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Sequences.Batch;
@@ -432,6 +433,22 @@ namespace Silverback.Diagnostics
             LogLevel.Error,
             GetEventId(78, nameof(ErrorProcessingOutbox)),
             "Error occurred processing the outbox.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when trying to connect an endpoint with an invalid configuration.
+        /// </summary>
+        public static LogEvent InvalidEndpointConfiguration { get; } = new(
+            LogLevel.Critical,
+            GetEventId(101, nameof(InvalidEndpointConfiguration)),
+            "Invalid configuration for endpoint '{endpointName}'.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown from within an <see cref="IEndpointsConfigurator"/>.
+        /// </summary>
+        public static LogEvent EndpointConfiguratorError { get; } = new(
+            LogLevel.Critical,
+            GetEventId(102, nameof(EndpointConfiguratorError)),
+            "Error occurred configuring the endpoints. | configurator: {endpointsConfiguratorName}");
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the low level tracing logs.

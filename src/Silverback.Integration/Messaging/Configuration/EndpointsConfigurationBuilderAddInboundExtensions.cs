@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Util;
 
@@ -52,6 +53,11 @@ namespace Silverback.Messaging.Configuration
 
             var serviceProvider = endpointsConfigurationBuilder.ServiceProvider;
             var brokerCollection = serviceProvider.GetRequiredService<IBrokerCollection>();
+            var logger =
+                serviceProvider.GetRequiredService<ISilverbackLogger<IEndpointsConfigurationBuilder>>();
+
+            if (!endpoint.IsValid(logger))
+                return endpointsConfigurationBuilder;
 
             for (int i = 0; i < consumersCount; i++)
             {

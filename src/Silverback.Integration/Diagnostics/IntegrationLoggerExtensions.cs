@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 
@@ -141,6 +142,12 @@ namespace Silverback.Diagnostics
 
         private static readonly Action<ILogger, Exception?> ErrorProcessingOutbox =
             SilverbackLoggerMessage.Define(IntegrationLogEvents.ErrorProcessingOutbox);
+
+        private static readonly Action<ILogger, string, Exception?> InvalidEndpointConfiguration =
+            SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.InvalidEndpointConfiguration);
+
+        private static readonly Action<ILogger, string, Exception?> EndpointConfiguratorError =
+            SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.EndpointConfiguratorError);
 
         public static void LogMessageAddedToSequence(
             this ISilverbackLogger logger,
@@ -372,6 +379,18 @@ namespace Silverback.Diagnostics
             this ISilverbackLogger logger,
             Exception exception) =>
             ErrorProcessingOutbox(logger.InnerLogger, exception);
+
+        public static void LogInvalidEndpointConfiguration(
+            this ISilverbackLogger logger,
+            IEndpoint endpoint,
+            Exception exception) =>
+            InvalidEndpointConfiguration(logger.InnerLogger, endpoint.Name, exception);
+
+        public static void LogEndpointConfiguratorError(
+            this ISilverbackLogger logger,
+            IEndpointsConfigurator configurator,
+            Exception exception) =>
+            EndpointConfiguratorError(logger.InnerLogger, configurator.GetType().Name, exception);
 
         public static void LogLowLevelTrace(
             this ISilverbackLogger logger,

@@ -24,8 +24,9 @@ namespace Silverback.Tests.Logging
             LogLevel logLevel,
             Type? exceptionType,
             string? message = null,
-            int? eventId = null) =>
-            _logger.Received(logLevel, exceptionType, message, eventId);
+            int? eventId = null,
+            string? exceptionMessage = null) =>
+            _logger.Received(logLevel, exceptionType, message, eventId, exceptionMessage);
 
         public void Log<TState>(
             LogLevel logLevel,
