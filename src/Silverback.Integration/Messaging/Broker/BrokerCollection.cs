@@ -75,10 +75,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IBrokerCollection.ConnectAsync" />
-        public Task ConnectAsync()
-        {
-            return _brokers.ParallelForEachAsync(broker => broker.ConnectAsync(), 2);
-        }
+        public Task ConnectAsync() => _brokers.ParallelForEachAsync(broker => broker.ConnectAsync(), 2);
 
         /// <inheritdoc cref="IBrokerCollection.DisconnectAsync" />
         public Task DisconnectAsync() => _brokers.ParallelForEachAsync(broker => broker.DisconnectAsync(), 2);
@@ -96,7 +93,8 @@ namespace Silverback.Messaging.Broker
             endpointTypeMap.GetOrAdd(
                 endpointType,
                 _ => _brokers.FirstOrDefault(
-                         broker => endpointTypePropertySelector.Invoke(broker).IsAssignableFrom(endpointType)) ??
+                         broker => endpointTypePropertySelector.Invoke(broker)
+                             .IsAssignableFrom(endpointType)) ??
                      throw new InvalidOperationException(
                          $"No message broker could be found to handle the endpoint of type {endpointType.Name}. " +
                          "Please register the necessary IBroker implementation with the DI container."));

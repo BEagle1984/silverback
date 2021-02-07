@@ -20,7 +20,7 @@ namespace Silverback
     public interface ISorted
     {
         /// <summary>
-        ///     Gets the sort index of this type or .
+        ///     Gets the sort index.
         /// </summary>
         int SortIndex { get; }
     }

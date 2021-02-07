@@ -51,7 +51,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other))
                 return true;
 
-            if (!(other is RabbitProducerEndpoint otherRabbitProducerEndpoint))
+            if (other is not RabbitProducerEndpoint otherRabbitProducerEndpoint)
                 return false;
 
             return base.BaseEquals(other) && Equals(Connection, otherRabbitProducerEndpoint.Connection);

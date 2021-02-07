@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
             ReceivedMessages.Add(message);
 
-            if (!(message is ISilverbackEvent) &&
+            if (message is not ISilverbackEvent &&
                 MustFailCount > FailCount || (FailCondition?.Invoke(message) ?? false))
             {
                 FailCount++;

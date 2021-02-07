@@ -188,7 +188,7 @@ namespace Silverback.Messaging.Broker
             }
             catch (Exception ex)
             {
-                if (!(ex is ConsumerPipelineFatalException))
+                if (ex is not ConsumerPipelineFatalException)
                     _logger.LogConsumerFatalError(this, ex);
 
                 await DisconnectAsync().ConfigureAwait(false);

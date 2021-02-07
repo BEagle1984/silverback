@@ -123,7 +123,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             }
             catch (Exception ex)
             {
-                if (!(ex is ConsumerPipelineFatalException))
+                if (ex is not ConsumerPipelineFatalException)
                     _logger.LogConsumerFatalError(Consumer, ex);
 
                 IsReading = false;

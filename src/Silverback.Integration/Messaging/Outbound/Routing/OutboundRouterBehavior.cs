@@ -61,7 +61,7 @@ namespace Silverback.Messaging.Outbound.Routing
             IEnumerable<object> messages)
         {
             var envelopesToRepublish = messages
-                .Where(message => !(message is IOutboundEnvelope))
+                .Where(message => message is not IOutboundEnvelope)
                 .SelectMany(
                     message =>
                         _routing

@@ -15,7 +15,7 @@ namespace Silverback.Util
     {
         [ContractAnnotation("value:null => halt")]
         public static T NotNull<T>(
-            [NoEnumeration] [ValidatedNotNullAttribute]
+            [NoEnumeration] [ValidatedNotNull]
             T? value,
             [InvokerParameterName] string parameterName)
             where T : class
@@ -31,7 +31,7 @@ namespace Silverback.Util
 
         [ContractAnnotation("value:null => halt")]
         public static IReadOnlyCollection<T> NotEmpty<T>(
-            [ValidatedNotNullAttribute] IReadOnlyCollection<T>? value,
+            [ValidatedNotNull] IReadOnlyCollection<T>? value,
             [InvokerParameterName] string parameterName)
         {
             value = NotNull(value, parameterName);
@@ -47,7 +47,7 @@ namespace Silverback.Util
 
         [ContractAnnotation("value:null => halt")]
         public static string NotEmpty(
-            [ValidatedNotNullAttribute] string? value,
+            [ValidatedNotNull] string? value,
             [InvokerParameterName] string parameterName)
         {
             Exception? exception = null;
@@ -69,7 +69,7 @@ namespace Silverback.Util
 
         public static string? NullButNotEmpty(string? value, [InvokerParameterName] string parameterName)
         {
-            if (!(value is null) && value.Length == 0)
+            if (value != null && value.Length == 0)
             {
                 NotEmpty(parameterName, nameof(parameterName));
 

@@ -65,7 +65,7 @@ namespace Silverback.Messaging.Broker
             if (ReferenceEquals(other, null))
                 return false;
 
-            if (!(other is MqttMessageIdentifier otherMqttIdentifier))
+            if (other is not MqttMessageIdentifier otherMqttIdentifier)
                 return false;
 
             return ClientId == otherMqttIdentifier.ClientId && MessageId == otherMqttIdentifier.MessageId;

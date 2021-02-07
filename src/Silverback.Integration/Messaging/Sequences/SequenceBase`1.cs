@@ -145,11 +145,11 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
         void ISequenceImplementation.SetIsNew(bool value) => IsNew = value;
 
-        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
+        /// <inheritdoc cref="ISequenceImplementation.SetParentSequence" />
         void ISequenceImplementation.SetParentSequence(ISequence parentSequence) =>
             ParentSequence = parentSequence;
 
-        /// <inheritdoc cref="ISequenceImplementation.SetIsNew" />
+        /// <inheritdoc cref="ISequenceImplementation.CompleteSequencerBehaviorsTask" />
         void ISequenceImplementation.CompleteSequencerBehaviorsTask() =>
             _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
 
@@ -184,7 +184,7 @@ namespace Silverback.Messaging.Sequences
         {
             Check.NotNull(envelope, nameof(envelope));
 
-            if (!(envelope is TEnvelope typedEnvelope))
+            if (envelope is not TEnvelope typedEnvelope)
                 throw new ArgumentException($"Expected an envelope of type {typeof(TEnvelope).Name}.");
 
             return AddCoreAsync(typedEnvelope, sequence, throwIfUnhandled);

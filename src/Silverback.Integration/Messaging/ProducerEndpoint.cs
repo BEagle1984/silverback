@@ -124,7 +124,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other))
                 return true;
 
-            if (!(other is ProducerEndpoint otherProducerEndpoint))
+            if (other is not ProducerEndpoint otherProducerEndpoint)
                 return false;
 
             return base.BaseEquals(other) && Equals(Chunk, otherProducerEndpoint.Chunk);

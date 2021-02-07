@@ -79,7 +79,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
         /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
         public async Task AcknowledgeAsync(OutboxStoredMessage outboxMessage)
         {
-            if (!(outboxMessage is DbOutboxStoredMessage dbOutboxMessage))
+            if (outboxMessage is not DbOutboxStoredMessage dbOutboxMessage)
                 throw new InvalidOperationException("A DbOutboxStoredMessage is expected.");
 
             var entity = await DbSet.FindAsync(dbOutboxMessage.Id).ConfigureAwait(false);

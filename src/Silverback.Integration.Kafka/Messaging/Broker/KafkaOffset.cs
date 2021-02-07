@@ -229,7 +229,7 @@ namespace Silverback.Messaging.Broker
             if (ReferenceEquals(other, null))
                 return false;
 
-            if (!(other is KafkaOffset otherKafkaOffset))
+            if (other is not KafkaOffset otherKafkaOffset)
                 return false;
 
             return Topic == otherKafkaOffset.Topic &&

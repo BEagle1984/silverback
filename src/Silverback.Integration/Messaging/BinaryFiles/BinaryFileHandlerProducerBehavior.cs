@@ -27,7 +27,7 @@ namespace Silverback.Messaging.BinaryFiles
             Check.NotNull(next, nameof(next));
 
             if (context.Envelope.Message is IBinaryFileMessage &&
-                !(context.Envelope.Endpoint.Serializer is BinaryFileMessageSerializer))
+                context.Envelope.Endpoint.Serializer is not BinaryFileMessageSerializer)
             {
                 context.Envelope.RawMessage = await _binaryFileMessageSerializer.SerializeAsync(
                         context.Envelope.Message,

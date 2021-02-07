@@ -75,7 +75,7 @@ namespace Silverback.Messaging.Broker
             if (ReferenceEquals(other, null))
                 return false;
 
-            if (!(other is RabbitDeliveryTag otherRabbitOffset))
+            if (other is not RabbitDeliveryTag otherRabbitOffset)
                 return false;
 
             return ConsumerTag == otherRabbitOffset.ConsumerTag && DeliveryTag == otherRabbitOffset.DeliveryTag;

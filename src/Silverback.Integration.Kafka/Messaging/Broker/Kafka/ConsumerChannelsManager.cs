@@ -213,7 +213,7 @@ namespace Silverback.Messaging.Broker.Kafka
             }
             catch (Exception ex)
             {
-                if (!(ex is ConsumerPipelineFatalException))
+                if (ex is not ConsumerPipelineFatalException)
                     _logger.LogConsumerFatalError(_consumer, ex);
 
                 IsReading[channelIndex] = false;

@@ -72,7 +72,7 @@ namespace Silverback.Tests.Types
             if (ReferenceEquals(other, null))
                 return false;
 
-            if (!(other is TestOffset otherRabbitOffset))
+            if (other is not TestOffset otherRabbitOffset)
                 return false;
 
             return Key == otherRabbitOffset.Key && Value == otherRabbitOffset.Value;

@@ -87,7 +87,7 @@ namespace Silverback.Messaging.Sequences
         public IReadOnlyCollection<ISequence> GetPendingSequences(bool includeUnbounded = false) =>
             _store.Values.Where(
                     sequence =>
-                        sequence.IsPending && (includeUnbounded || !(sequence is UnboundedSequence)))
+                        sequence.IsPending && (includeUnbounded || sequence is not UnboundedSequence))
                 .ToList();
 
         public IEnumerator<ISequence> GetEnumerator() => _store.Values.GetEnumerator();

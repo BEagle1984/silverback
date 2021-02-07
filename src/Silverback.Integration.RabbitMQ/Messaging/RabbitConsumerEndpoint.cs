@@ -72,7 +72,7 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other))
                 return true;
 
-            if (!(other is RabbitConsumerEndpoint otherRabbitConsumerEndpoint))
+            if (other is not RabbitConsumerEndpoint otherRabbitConsumerEndpoint)
                 return false;
 
             return base.BaseEquals(other) &&

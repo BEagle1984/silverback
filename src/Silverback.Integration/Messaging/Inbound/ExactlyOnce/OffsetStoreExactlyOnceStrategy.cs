@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce
 
                 var envelope = context.Envelope;
 
-                if (!(envelope.BrokerMessageIdentifier is IBrokerMessageOffset offset))
+                if (envelope.BrokerMessageIdentifier is not IBrokerMessageOffset offset)
                 {
                     throw new InvalidOperationException(
                         "The message broker implementation doesn't seem to support comparable offsets. " +
