@@ -191,7 +191,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [InlineData(0, true)]
         [InlineData(42, true)]
         [InlineData(ushort.MaxValue, true)]
-        [InlineData((int)ushort.MaxValue + 1, false)]
+        [InlineData(ushort.MaxValue + 1, false)]
         [InlineData(int.MaxValue, false)]
         [InlineData(-1, false)]
         public void LimitTopicAlias_Int_RangeValidated(int value, bool isValid)
@@ -256,7 +256,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [InlineData(1, true)]
         [InlineData(42, true)]
         [InlineData(ushort.MaxValue, true)]
-        [InlineData((int)ushort.MaxValue + 1, false)]
+        [InlineData(ushort.MaxValue + 1, false)]
         [InlineData(int.MaxValue, false)]
         [InlineData(0, false)]
         [InlineData(-1, false)]
@@ -433,7 +433,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
                 .UseExtendedAuthenticationExchangeHandler<TestExtendedAuthenticationExchangeHandler>();
 
             var config = builder.Build();
-            config.ExtendedAuthenticationExchangeHandler.Should().BeOfType<TestExtendedAuthenticationExchangeHandler>();
+            config.ExtendedAuthenticationExchangeHandler.Should()
+                .BeOfType<TestExtendedAuthenticationExchangeHandler>();
         }
 
         [Fact]
@@ -450,7 +451,8 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
                 .UseExtendedAuthenticationExchangeHandler(typeof(TestExtendedAuthenticationExchangeHandler));
 
             var config = builder.Build();
-            config.ExtendedAuthenticationExchangeHandler.Should().BeOfType<TestExtendedAuthenticationExchangeHandler>();
+            config.ExtendedAuthenticationExchangeHandler.Should()
+                .BeOfType<TestExtendedAuthenticationExchangeHandler>();
         }
 
         [Fact]
@@ -515,10 +517,10 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             config.ChannelOptions.Should().BeOfType<MqttClientWebSocketOptions>();
             config.ChannelOptions.As<MqttClientWebSocketOptions>().Uri.Should().Be("uri");
             config.ChannelOptions.As<MqttClientWebSocketOptions>().RequestHeaders.Should().BeEquivalentTo(
-                    new Dictionary<string, string>
-                    {
-                        { "header", "value" }
-                    });
+                new Dictionary<string, string>
+                {
+                    { "header", "value" }
+                });
         }
 
         [Fact]
@@ -563,11 +565,13 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 
             var config = builder.Build();
             config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Should().NotBeNull();
-            config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Address.Should().Be("address");
+            config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Address.Should()
+                .Be("address");
             config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Username.Should().Be("user");
             config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Password.Should().Be("pass");
             config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Domain.Should().Be("domain");
-            config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.BypassOnLocal.Should().BeTrue();
+            config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.BypassOnLocal.Should()
+                .BeTrue();
             config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.BypassList.Should()
                 .BeEquivalentTo("local1", "local2");
         }
@@ -592,11 +596,13 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 
             var config = builder.Build();
             config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Should().NotBeNull();
-            config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Address.Should().Be("address");
+            config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Address.Should()
+                .Be("address");
             config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Username.Should().Be("user");
             config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Password.Should().Be("pass");
             config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.Domain.Should().Be("domain");
-            config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.BypassOnLocal.Should().BeTrue();
+            config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.BypassOnLocal.Should()
+                .BeTrue();
             config.ChannelOptions.As<MqttClientWebSocketOptions>().ProxyOptions.BypassList.Should()
                 .BeEquivalentTo("local1", "local2");
         }
@@ -666,6 +672,62 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             config.ChannelOptions!.TlsOptions.UseTls.Should().BeTrue();
             config.ChannelOptions.TlsOptions.SslProtocol.Should().Be(SslProtocols.Tls12);
             config.ChannelOptions.TlsOptions.AllowUntrustedCertificates.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Constructor_WithTcpBaseConfig_InitializedFromBaseConfig()
+        {
+            var builder = new MqttClientConfigBuilder();
+
+            builder
+                .UseProtocolVersion(MqttProtocolVersion.V311)
+                .ConnectViaTcp("tests-server", 1234)
+                .EnableTls(
+                    parameters =>
+                    {
+                        parameters.SslProtocol = SslProtocols.Tls12;
+                        parameters.AllowUntrustedCertificates = true;
+                    })
+                .UseExtendedAuthenticationExchangeHandler(new TestExtendedAuthenticationExchangeHandler());
+
+            var baseConfig = builder.Build();
+            var config = new MqttClientConfigBuilder(baseConfig).Build();
+
+            config.Should().BeEquivalentTo(baseConfig);
+            config.Should().NotBeSameAs(baseConfig);
+        }
+
+        [Fact]
+        public void Constructor_WithWebSocketBaseConfig_InitializedFromBaseConfig()
+        {
+            var builder = new MqttClientConfigBuilder();
+
+            builder
+                .UseProtocolVersion(MqttProtocolVersion.V311)
+                .ConnectViaWebSocket("uri")
+                .UseProxy(
+                    options =>
+                    {
+                        options.Address = "address";
+                        options.Username = "user";
+                        options.Password = "pass";
+                        options.Domain = "domain";
+                        options.BypassOnLocal = true;
+                        options.BypassList = new[] { "local1", "local2" };
+                    })
+                .EnableTls(
+                    parameters =>
+                    {
+                        parameters.SslProtocol = SslProtocols.Tls12;
+                        parameters.AllowUntrustedCertificates = true;
+                    })
+                .UseExtendedAuthenticationExchangeHandler(new TestExtendedAuthenticationExchangeHandler());
+
+            var baseConfig = builder.Build();
+            var config = new MqttClientConfigBuilder(baseConfig).Build();
+
+            config.Should().BeEquivalentTo(baseConfig);
+            config.Should().NotBeSameAs(baseConfig);
         }
 
         private class TestExtendedAuthenticationExchangeHandler : IMqttExtendedAuthenticationExchangeHandler

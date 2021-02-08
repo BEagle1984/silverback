@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using MQTTnet.Protocol;
 
 namespace Silverback.Messaging.Configuration.Mqtt
@@ -20,6 +21,28 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="IMqttConsumerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IMqttConsumerEndpointBuilder ConsumeFrom(params string[] topics);
+
+        /// <summary>
+        ///     Configures the MQTT client properties.
+        /// </summary>
+        /// <param name="configAction">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientConfig" /> and configures it.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttConsumerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMqttConsumerEndpointBuilder Configure(Action<MqttClientConfig> configAction);
+
+        /// <summary>
+        ///     Configures the MQTT client properties.
+        /// </summary>
+        /// <param name="configBuilderAction">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="IMqttClientConfigBuilder" /> and configures it.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttConsumerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMqttConsumerEndpointBuilder Configure(Action<IMqttClientConfigBuilder> configBuilderAction);
 
         /// <summary>
         ///     Specifies the desired quality of service level.

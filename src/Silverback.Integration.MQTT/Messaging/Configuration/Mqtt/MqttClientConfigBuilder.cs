@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
+using MQTTnet;
 using MQTTnet.Client.ExtendedAuthenticationExchange;
 using MQTTnet.Client.Options;
 using MQTTnet.Formatter;
@@ -29,6 +30,106 @@ namespace Silverback.Messaging.Configuration.Mqtt
         public MqttClientConfigBuilder(IServiceProvider? serviceProvider = null)
         {
             _serviceProvider = serviceProvider;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MqttClientConfigBuilder" /> class.
+        /// </summary>
+        /// <param name="baseConfig">
+        ///     The <see cref="MqttClientConfig" /> to be used to initialize the builder.
+        /// </param>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the required types (e.g. the
+        ///     <see cref="IMqttExtendedAuthenticationExchangeHandler" />).
+        /// </param>
+        public MqttClientConfigBuilder(MqttClientConfig baseConfig, IServiceProvider? serviceProvider = null)
+            : this(serviceProvider)
+        {
+            Check.NotNull(baseConfig, nameof(baseConfig));
+
+            UseProtocolVersion(baseConfig.ProtocolVersion);
+            WithCommunicationTimeout(baseConfig.CommunicationTimeout);
+
+            if (baseConfig.CleanSession)
+                RequestCleanSession();
+            else
+                RequestPersistentSession();
+
+            if (baseConfig.KeepAlivePeriod == TimeSpan.Zero)
+                DisableKeepAlive();
+            else
+                SendKeepAlive(baseConfig.KeepAlivePeriod);
+
+            WithClientId(baseConfig.ClientId);
+
+            if (baseConfig.WillMessage != null)
+                SendLastWillMessage(baseConfig.WillMessage, baseConfig.WillDelayInterval);
+
+            WithAuthentication(baseConfig.AuthenticationMethod, baseConfig.AuthenticationData);
+
+            if (baseConfig.TopicAliasMaximum != null)
+                LimitTopicAlias(baseConfig.TopicAliasMaximum.Value);
+
+            if (baseConfig.MaximumPacketSize != null)
+                LimitPacketSize(baseConfig.MaximumPacketSize.Value);
+
+            if (baseConfig.ReceiveMaximum != null)
+                LimitUnacknowledgedPublications(baseConfig.ReceiveMaximum.Value);
+
+            if (baseConfig.RequestProblemInformation != null)
+            {
+                if (baseConfig.RequestProblemInformation.Value)
+                    RequestProblemInformation();
+                else
+                    DisableProblemInformation();
+            }
+
+            if (baseConfig.RequestResponseInformation != null)
+            {
+                if (baseConfig.RequestResponseInformation.Value)
+                    RequestResponseInformation();
+                else
+                    DisableResponseInformation();
+            }
+
+            if (baseConfig.SessionExpiryInterval != null)
+                WithSessionExpiration(baseConfig.SessionExpiryInterval.Value);
+
+            baseConfig.UserProperties.ForEach(property => AddUserProperty(property.Name, property.Value));
+
+            if (baseConfig.Credentials != null)
+                WithCredentials(baseConfig.Credentials);
+
+            if (baseConfig.ExtendedAuthenticationExchangeHandler != null)
+                UseExtendedAuthenticationExchangeHandler(baseConfig.ExtendedAuthenticationExchangeHandler);
+
+            if (baseConfig.ChannelOptions is MqttClientTcpOptions tcpOptions)
+            {
+                ConnectViaTcp(
+                    options =>
+                    {
+                        options.Port = tcpOptions.Port;
+                        options.Server = tcpOptions.Server;
+                        options.AddressFamily = tcpOptions.AddressFamily;
+                        options.BufferSize = tcpOptions.BufferSize;
+                        options.DualMode = tcpOptions.DualMode;
+                        options.NoDelay = tcpOptions.NoDelay;
+                        options.TlsOptions = tcpOptions.TlsOptions;
+                    });
+            }
+            else if (baseConfig.ChannelOptions is MqttClientWebSocketOptions webSocketOptions)
+            {
+                ConnectViaWebSocket(
+                    options =>
+                    {
+                        options.Uri = webSocketOptions.Uri;
+                        options.CookieContainer = webSocketOptions.CookieContainer;
+                        options.ProxyOptions = webSocketOptions.ProxyOptions;
+                        options.RequestHeaders = webSocketOptions.RequestHeaders;
+                        options.SubProtocols = webSocketOptions.SubProtocols;
+                        options.TlsOptions = webSocketOptions.TlsOptions;
+                    });
+            }
         }
 
         /// <inheritdoc cref="IMqttClientConfigBuilder.UseProtocolVersion" />
@@ -94,8 +195,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
             var builder = new MqttLastWillMessageBuilder();
             lastWillBuilderAction.Invoke(builder);
-            _builder.WithWillMessage(builder.Build());
-            _builder.WithWillDelayInterval(builder.Delay);
+            SendLastWillMessage(builder.Build(), builder.Delay);
             return this;
         }
 
@@ -164,9 +264,13 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// <inheritdoc cref="IMqttClientConfigBuilder.WithSessionExpiration" />
         public IMqttClientConfigBuilder WithSessionExpiration(TimeSpan sessionExpiryInterval)
         {
-            Check.Range(sessionExpiryInterval, nameof(sessionExpiryInterval), TimeSpan.Zero, TimeSpan.MaxValue);
+            Check.Range(
+                sessionExpiryInterval,
+                nameof(sessionExpiryInterval),
+                TimeSpan.Zero,
+                TimeSpan.MaxValue);
 
-            _builder.WithSessionExpiryInterval((uint)sessionExpiryInterval.TotalSeconds);
+            WithSessionExpiration((uint)sessionExpiryInterval.TotalSeconds);
             return this;
         }
 
@@ -335,7 +439,8 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         /// <inheritdoc cref="IMqttClientConfigBuilder.EnableTls(Action{MqttClientOptionsBuilderTlsParameters})" />
-        public IMqttClientConfigBuilder EnableTls(Action<MqttClientOptionsBuilderTlsParameters> parametersAction)
+        public IMqttClientConfigBuilder EnableTls(
+            Action<MqttClientOptionsBuilderTlsParameters> parametersAction)
         {
             Check.NotNull(parametersAction, nameof(parametersAction));
 
@@ -357,5 +462,14 @@ namespace Silverback.Messaging.Configuration.Mqtt
         ///     The <see cref="MqttClientConfig" />.
         /// </returns>
         public MqttClientConfig Build() => new((MqttClientOptions)_builder.Build());
+
+        private void SendLastWillMessage(MqttApplicationMessage message, uint? delay)
+        {
+            _builder.WithWillMessage(message);
+            _builder.WithWillDelayInterval(delay);
+        }
+
+        private void WithSessionExpiration(uint totalSeconds) =>
+            _builder.WithSessionExpiryInterval(totalSeconds);
     }
 }

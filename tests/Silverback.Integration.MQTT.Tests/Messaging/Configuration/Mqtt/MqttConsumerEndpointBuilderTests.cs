@@ -66,6 +66,34 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         }
 
         [Fact]
+        public void Configure_ConfigAction_ConfigurationMergedWithBase()
+        {
+            var builder = new MqttConsumerEndpointBuilder(_clientConfig);
+            builder
+                .ConsumeFrom("some-topic")
+                .Configure(config => config.ClientId = "client42");
+            var endpoint = builder.Build();
+
+            endpoint.Configuration.ChannelOptions.Should().NotBeNull();
+            endpoint.Configuration.ChannelOptions.Should().BeSameAs(_clientConfig.ChannelOptions);
+            endpoint.Configuration.ClientId.Should().Be("client42");
+        }
+
+        [Fact]
+        public void Configure_BuilderAction_ConfigurationMergedWithBase()
+        {
+            var builder = new MqttConsumerEndpointBuilder(_clientConfig);
+            builder
+                .ConsumeFrom("some-topic")
+                .Configure(config => config.WithClientId("client42"));
+            var endpoint = builder.Build();
+
+            endpoint.Configuration.ChannelOptions.Should().NotBeNull();
+            endpoint.Configuration.ChannelOptions.Should().BeEquivalentTo(_clientConfig.ChannelOptions);
+            endpoint.Configuration.ClientId.Should().Be("client42");
+        }
+
+        [Fact]
         public void WithQualityOfServiceLevel_QualityOfServiceLevelSet()
         {
             var builder = new MqttConsumerEndpointBuilder(_clientConfig);

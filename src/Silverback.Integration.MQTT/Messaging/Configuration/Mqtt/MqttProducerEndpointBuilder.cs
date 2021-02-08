@@ -14,7 +14,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         : ProducerEndpointBuilder<MqttProducerEndpoint, IMqttProducerEndpointBuilder>,
             IMqttProducerEndpointBuilder
     {
-        private readonly MqttClientConfig _clientConfig;
+        private MqttClientConfig _clientConfig;
 
         private Func<MqttProducerEndpoint>? _endpointFactory;
 
@@ -139,6 +139,31 @@ namespace Silverback.Messaging.Configuration.Mqtt
             where TResolver : IProducerEndpointNameResolver
         {
             _endpointFactory = () => new MqttProducerEndpoint(typeof(TResolver));
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttProducerEndpointBuilder.Configure(Action{MqttClientConfig})" />
+        public IMqttProducerEndpointBuilder Configure(Action<MqttClientConfig> configAction)
+        {
+            Check.NotNull(configAction, nameof(configAction));
+
+            configAction.Invoke(_clientConfig);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttProducerEndpointBuilder.Configure(Action{IMqttClientConfigBuilder})" />
+        public IMqttProducerEndpointBuilder Configure(Action<IMqttClientConfigBuilder> configBuilderAction)
+        {
+            Check.NotNull(configBuilderAction, nameof(configBuilderAction));
+
+            var configBuilder = new MqttClientConfigBuilder(
+                _clientConfig,
+                EndpointsConfigurationBuilder?.ServiceProvider);
+            configBuilderAction.Invoke(configBuilder);
+
+            _clientConfig = configBuilder.Build();
 
             return this;
         }

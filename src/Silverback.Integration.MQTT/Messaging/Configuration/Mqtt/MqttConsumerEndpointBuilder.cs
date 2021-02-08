@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
     public class MqttConsumerEndpointBuilder
         : ConsumerEndpointBuilder<MqttConsumerEndpoint, IMqttConsumerEndpointBuilder>, IMqttConsumerEndpointBuilder
     {
-        private readonly MqttClientConfig _clientConfig;
+        private MqttClientConfig _clientConfig;
 
         private string[]? _topicNames;
 
@@ -32,7 +32,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
             IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
             : base(endpointsConfigurationBuilder)
         {
-            _clientConfig = clientConfig;
+            _clientConfig = clientConfig.ShallowCopy();
         }
 
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.This" />
@@ -44,6 +44,31 @@ namespace Silverback.Messaging.Configuration.Mqtt
             Check.HasNoEmpties(topics, nameof(topics));
 
             _topicNames = topics;
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttConsumerEndpointBuilder.Configure(Action{MqttClientConfig})" />
+        public IMqttConsumerEndpointBuilder Configure(Action<MqttClientConfig> configAction)
+        {
+            Check.NotNull(configAction, nameof(configAction));
+
+            configAction.Invoke(_clientConfig);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IMqttConsumerEndpointBuilder.Configure(Action{IMqttClientConfigBuilder})" />
+        public IMqttConsumerEndpointBuilder Configure(Action<IMqttClientConfigBuilder> configBuilderAction)
+        {
+            Check.NotNull(configBuilderAction, nameof(configBuilderAction));
+
+            var configBuilder = new MqttClientConfigBuilder(
+                _clientConfig,
+                EndpointsConfigurationBuilder?.ServiceProvider);
+            configBuilderAction.Invoke(configBuilder);
+
+            _clientConfig = configBuilder.Build();
 
             return this;
         }

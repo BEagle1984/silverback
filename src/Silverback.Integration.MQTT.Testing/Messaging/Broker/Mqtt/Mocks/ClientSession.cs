@@ -44,7 +44,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         public bool IsConnected { get; private set; }
 
         public bool IsConsumerDisconnected =>
-            !(_messageHandler as MockedMqttClient)?.Consumer?.IsConnected ?? false;
+            !((_messageHandler as MockedMqttClient)?.Consumer?.IsConnected ?? true);
 
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void Connect()

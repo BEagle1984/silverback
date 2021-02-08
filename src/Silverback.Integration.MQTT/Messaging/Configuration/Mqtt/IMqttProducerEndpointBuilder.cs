@@ -131,6 +131,28 @@ namespace Silverback.Messaging.Configuration.Mqtt
             where TResolver : IProducerEndpointNameResolver;
 
         /// <summary>
+        ///     Configures the MQTT client properties.
+        /// </summary>
+        /// <param name="configAction">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="MqttClientConfig" /> and configures it.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttProducerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMqttProducerEndpointBuilder Configure(Action<MqttClientConfig> configAction);
+
+        /// <summary>
+        ///     Configures the MQTT client properties.
+        /// </summary>
+        /// <param name="configBuilderAction">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="IMqttClientConfigBuilder" /> and configures it.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttProducerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMqttProducerEndpointBuilder Configure(Action<IMqttClientConfigBuilder> configBuilderAction);
+
+        /// <summary>
         ///     Specifies the desired quality of service level.
         /// </summary>
         /// t
