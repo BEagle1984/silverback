@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -40,7 +41,9 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
         {
             var calls = 0;
 
-            var subscribedMethod = new DelegateSubscription((Action<TestEventOne>)Method1, new SubscriptionOptions());
+            var subscribedMethod = new DelegateSubscription(
+                (Action<TestEventOne>)Method1,
+                new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -60,7 +63,9 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
         {
             var calls = 0;
 
-            var subscribedMethod = new DelegateSubscription((Action<IEvent>)Method1, new SubscriptionOptions());
+            var subscribedMethod = new DelegateSubscription(
+                (Action<IEvent>)Method1,
+                new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -102,7 +107,9 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var receivedMessages = 0;
 
             var subscribedMethod =
-                new DelegateSubscription((Action<IEnumerable<TestEventOne>>)Method1, new SubscriptionOptions());
+                new DelegateSubscription(
+                    (Action<IEnumerable<TestEventOne>>)Method1,
+                    new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -189,7 +196,9 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             var receivedMessages = 0;
 
             var subscribedMethod =
-                new DelegateSubscription((Action<IReadOnlyCollection<IEvent>>)Method1, new SubscriptionOptions());
+                new DelegateSubscription(
+                    (Action<IReadOnlyCollection<IEvent>>)Method1,
+                    new SubscriptionOptions());
 
             var messages = new object[] { new TestEventOne(), new TestEventTwo(), new TestEventOne() };
 
@@ -231,7 +240,9 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
         {
             var calls = 0;
 
-            var subscribedMethod = new DelegateSubscription((Action<IEvent>)Method1, new SubscriptionOptions());
+            var subscribedMethod = new DelegateSubscription(
+                (Action<IEvent>)Method1,
+                new SubscriptionOptions());
 
             var envelopes = new object[]
             {
@@ -256,7 +267,9 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
         {
             var calls = 0;
 
-            var subscribedMethod = new DelegateSubscription((Action<TestEnvelope>)Method1, new SubscriptionOptions());
+            var subscribedMethod = new DelegateSubscription(
+                (Action<TestEnvelope>)Method1,
+                new SubscriptionOptions());
 
             var envelopes = new object[]
             {
@@ -274,6 +287,49 @@ namespace Silverback.Tests.Core.Messaging.Subscribers
             calls.Should().Be(3);
 
             void Method1(TestEnvelope envelope) => calls++;
+        }
+
+        [Fact]
+        public async Task Invoke_WithActivityListener_StartActivity()
+        {
+            var subscribedMethod = new DelegateSubscription(
+                (Action<TestEventOne>)(_ => { }),
+                new SubscriptionOptions());
+
+            var messages = new object[] { new TestEventOne() };
+
+            using TestActivityListener activityListener = new();
+            await new SubscribedMethodInvoker(_returnValueHandler, _serviceProvider)
+                .InvokeAsync(
+                    subscribedMethod.GetSubscribedMethods(_serviceProvider).First(),
+                    messages,
+                    true);
+
+            activityListener.Activites.Should().Contain(
+                a => a.OperationName == "Silverback.Core.Subscribers.InvokeSubscriber");
+        }
+
+        private class TestActivityListener : IDisposable
+        {
+            private readonly ActivityListener _listener;
+
+            private readonly List<Activity> _activites = new();
+
+            public TestActivityListener()
+            {
+                _listener = new ActivityListener();
+                _listener.ShouldListenTo = s => true;
+                _listener.Sample = (ref ActivityCreationOptions<ActivityContext> o) => ActivitySamplingResult.AllDataAndRecorded;
+                _listener.ActivityStarted = a => _activites.Add(a);
+                ActivitySource.AddActivityListener(_listener);
+            }
+
+            public IEnumerable<Activity> Activites => _activites;
+
+            public void Dispose()
+            {
+                _listener.Dispose();
+            }
         }
     }
 }

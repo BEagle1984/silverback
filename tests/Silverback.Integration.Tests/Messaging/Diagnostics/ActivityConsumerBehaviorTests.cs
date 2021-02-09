@@ -41,7 +41,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new TestOffset());
 
             var entered = false;
-            await new ActivityConsumerBehavior(Substitute.For<IInboundLogger<ActivityConsumerBehavior>>())
+            await new ActivityConsumerBehavior(Substitute.For<IActivityEnricherFactory>())
                 .HandleAsync(
                     new ConsumerPipelineContext(
                         rawEnvelope,
@@ -80,7 +80,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new TestOffset());
 
             var entered = false;
-            await new ActivityConsumerBehavior(Substitute.For<IInboundLogger<ActivityConsumerBehavior>>())
+            await new ActivityConsumerBehavior(Substitute.For<IActivityEnricherFactory>())
                 .HandleAsync(
                     new ConsumerPipelineContext(
                         rawEnvelope,

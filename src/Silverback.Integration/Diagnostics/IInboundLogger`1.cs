@@ -109,17 +109,6 @@ namespace Silverback.Diagnostics
         void LogRollbackToSkipFailed(IRawInboundEnvelope envelope, Exception exception);
 
         /// <summary>
-        ///     Logs the <see cref="IntegrationLogEvents.ErrorInitializingActivity" /> event.
-        /// </summary>
-        /// <param name="envelope">
-        ///     The <see cref="IRawInboundEnvelope" />.
-        /// </param>
-        /// <param name="exception">
-        ///     The <see cref="Exception" />.
-        /// </param>
-        void LogErrorInitializingActivity(IRawInboundEnvelope envelope, Exception exception);
-
-        /// <summary>
         ///     Logs the <see cref="IntegrationLogEvents.MessageAlreadyProcessed" /> event.
         /// </summary>
         /// <param name="envelope">

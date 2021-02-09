@@ -3,7 +3,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -16,24 +15,21 @@ namespace Silverback.Messaging.Diagnostics
     /// </summary>
     public class ActivityConsumerBehavior : IConsumerBehavior
     {
-        private readonly IInboundLogger<ActivityConsumerBehavior> _logger;
+        private readonly IActivityEnricherFactory _activityEnricherFactory;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ActivityConsumerBehavior" /> class.
         /// </summary>
-        /// <param name="logger">
-        ///     The <see cref="IInboundLogger{TCategoryName}" />.
-        /// </param>
-        public ActivityConsumerBehavior(IInboundLogger<ActivityConsumerBehavior> logger)
+        /// <param name="activityEnricherFactory">The <see cref="IActivityEnricherFactory"/> to resolve the ActivityEnricher.</param>
+        public ActivityConsumerBehavior(IActivityEnricherFactory activityEnricherFactory)
         {
-            _logger = logger;
+            _activityEnricherFactory = activityEnricherFactory;
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Activity;
 
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task HandleAsync(
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next)
@@ -41,25 +37,10 @@ namespace Silverback.Messaging.Diagnostics
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            using var activity = new Activity(DiagnosticsConstants.ActivityNameMessageConsuming);
-
-            try
+            using (Activity activity = ActivitySources.StartConsumeActivity(context.Envelope))
             {
-                activity.InitFromMessageHeaders(context.Envelope.Headers);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogErrorInitializingActivity(context.Envelope, ex);
-            }
-
-            try
-            {
-                activity.Start();
+                _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint.GetType()).EnrichInboundActivity(activity, context);
                 await next(context).ConfigureAwait(false);
-            }
-            finally
-            {
-                activity.Stop();
             }
         }
     }

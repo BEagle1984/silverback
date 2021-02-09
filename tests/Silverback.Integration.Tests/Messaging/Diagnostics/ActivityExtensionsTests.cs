@@ -1,19 +1,19 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using FluentAssertions;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
+using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics
 {
-    public class ActivityHelperTests
+    public class ActivityExtensionsTests
     {
-        public ActivityHelperTests()
+        public ActivityExtensionsTests()
         {
             Activity.DefaultIdFormat = ActivityIdFormat.W3C;
         }
@@ -49,7 +49,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.Start();
             activity.SetMessageHeaders(headers);
 
-            headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id));
+            headers.Should()
+                .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.TraceId, activity.Id));
         }
 
         [Fact]
@@ -87,7 +88,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.AddBaggage("key1", "value1");
             activity.SetMessageHeaders(headers);
 
-            headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.TraceBaggage, "key1=value1"));
+            headers.Should().ContainEquivalentOf(
+                new MessageHeader(DefaultMessageHeaders.TraceBaggage, "key1=value1"));
         }
 
         [Fact]
@@ -103,90 +105,25 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         }
 
         [Fact]
-        public void SetMessageHeaders_NoCurrentActivity_ExceptionIsThrown()
+        public void SetTraceIdAndState_WithTraceIdHeader_ActivityParentIdIsSet()
         {
-            var headers = new MessageHeaderCollection();
-
-            Action act = () => Activity.Current!.SetMessageHeaders(headers);
-
-            act.Should().Throw<InvalidOperationException>();
-        }
-
-        [Fact]
-        public void InitFromMessageHeaders_WithTraceIdHeader_ActivityParentIdIsSet()
-        {
-            var headers = new MessageHeaderCollection
-            {
-                { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
-            };
-
             var activity = new Activity("test");
-            activity.InitFromMessageHeaders(headers);
+            activity.SetTraceIdAndState("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01", "state=1");
             activity.Start();
 
             activity.ParentId.Should().Be("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
             activity.Id.Should().StartWith("00-0af7651916cd43dd8448eb211c80319c");
+            activity.TraceStateString.Should().Be("state=1");
         }
 
         [Fact]
-        public void InitFromMessageHeaders_WithoutActivityHeaders_ActivityIsNotModified()
+        public void AddEndpointName_ActivityTagIsAdded()
         {
-            var headers = new MessageHeaderCollection();
-
             var activity = new Activity("test");
-            activity.InitFromMessageHeaders(headers);
-            activity.Start();
+            activity.AddEndpointName("MyEndpoint");
 
-            activity.TraceStateString.Should().BeNull();
-            activity.Baggage.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void InitFromMessageHeaders_WithoutStateAndBaggageHeaders_ActivityStateAndBaggageAreNotSet()
-        {
-            var headers = new MessageHeaderCollection
-            {
-                { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" }
-            };
-
-            var activity = new Activity("test");
-            activity.InitFromMessageHeaders(headers);
-            activity.Start();
-
-            activity.TraceStateString.Should().BeNull();
-            activity.Baggage.Should().BeEmpty();
-        }
-
-        [Fact]
-        public void InitFromMessageHeaders_WithBaggageHeader_ActivityBaggageIsSet()
-        {
-            var headers = new MessageHeaderCollection
-            {
-                { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" },
-                { DefaultMessageHeaders.TraceBaggage, "key1=value1" }
-            };
-
-            var activity = new Activity("test");
-            activity.InitFromMessageHeaders(headers);
-            activity.Start();
-
-            activity.Baggage.Should().ContainEquivalentOf(new KeyValuePair<string, string>("key1", "value1"));
-        }
-
-        [Fact]
-        public void InitFromMessageHeaders_WithStateHeader_ActivityStateIsSet()
-        {
-            var headers = new MessageHeaderCollection
-            {
-                { DefaultMessageHeaders.TraceId, "00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01" },
-                { DefaultMessageHeaders.TraceState, "key1=value1" }
-            };
-
-            var activity = new Activity("test");
-            activity.InitFromMessageHeaders(headers);
-            activity.Start();
-
-            activity.TraceStateString.Should().Be("key1=value1");
+            activity.Tags.Should().ContainSingle(
+                kv => kv.Key == ActivityTagNames.MessageDestination && kv.Value == "MyEndpoint");
         }
     }
 }

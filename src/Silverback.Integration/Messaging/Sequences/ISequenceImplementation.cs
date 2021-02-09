@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
@@ -25,6 +26,17 @@ namespace Silverback.Messaging.Sequences
         ///     commit/rollback of the transaction).
         /// </summary>
         Task ProcessingCompletedTask { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether this sequence should create a new activity. This should be true if the
+        ///     sequence contains independent messages.
+        /// </summary>
+        bool ShouldCreateNewActivity { get; }
+
+        /// <summary>
+        ///     Gets the Activity created for this sequence.
+        /// </summary>
+        Activity? Activity { get; }
 
         /// <summary>
         ///     Sets a value indicating whether the first message in the sequence was consumed and this instance was
@@ -64,5 +76,11 @@ namespace Silverback.Messaging.Sequences
         ///     The exception to be set.
         /// </param>
         void NotifyProcessingFailed(Exception exception);
+
+        /// <summary>
+        ///     Sets the Activity associated with this sequence.
+        /// </summary>
+        /// <param name="activity">The activity.</param>
+        void SetActivity(Activity activity);
     }
 }
