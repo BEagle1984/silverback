@@ -108,13 +108,13 @@
   
   
   <a id="Silverback_Messaging_Outbound_Routing_OutboundQueueProducer__ctor_" data-uid="Silverback.Messaging.Outbound.Routing.OutboundQueueProducer.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Outbound_Routing_OutboundQueueProducer__ctor_IOutboxWriter_TransactionalOutboxBroker_Silverback_Messaging_IProducerEndpoint_IBrokerBehaviorsProvider_IProducerBehavior__IServiceProvider_ISilverbackIntegrationLogger_Producer__" data-uid="Silverback.Messaging.Outbound.Routing.OutboundQueueProducer.#ctor(IOutboxWriter,TransactionalOutboxBroker,Silverback.Messaging.IProducerEndpoint,IBrokerBehaviorsProvider{IProducerBehavior},IServiceProvider,ISilverbackIntegrationLogger{Producer})">OutboundQueueProducer(IOutboxWriter, TransactionalOutboxBroker, IProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider, ISilverbackIntegrationLogger&lt;Producer&gt;)</h4>
+  <h4 id="Silverback_Messaging_Outbound_Routing_OutboundQueueProducer__ctor_IOutboxWriter_TransactionalOutboxBroker_Silverback_Messaging_IProducerEndpoint_IBrokerBehaviorsProvider_IProducerBehavior__System_IServiceProvider_IOutboundLogger_Producer__" data-uid="Silverback.Messaging.Outbound.Routing.OutboundQueueProducer.#ctor(IOutboxWriter,TransactionalOutboxBroker,Silverback.Messaging.IProducerEndpoint,IBrokerBehaviorsProvider{IProducerBehavior},System.IServiceProvider,IOutboundLogger{Producer})">OutboundQueueProducer(IOutboxWriter, TransactionalOutboxBroker, IProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider, IOutboundLogger&lt;Producer&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.OutboundQueueProducer.html">OutboundQueueProducer</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public OutboundQueueProducer(IOutboxWriter queueWriter, TransactionalOutboxBroker broker, IProducerEndpoint endpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt; behaviorsProvider, IServiceProvider serviceProvider, ISilverbackIntegrationLogger&lt;Producer&gt; logger)</code></pre>
+    <pre><code class="lang-csharp hljs">public OutboundQueueProducer(IOutboxWriter queueWriter, TransactionalOutboxBroker broker, IProducerEndpoint endpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt; behaviorsProvider, IServiceProvider serviceProvider, IOutboundLogger&lt;Producer&gt; logger)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -151,15 +151,15 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IServiceProvider</span></td>
+        <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <see cref="!:IServiceProvider"></see> to be used to resolve the needed services.</p>
+        <td><p>The <span class="xref">System.IServiceProvider</span> to be used to resolve the needed services.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">ISilverbackIntegrationLogger</span>&lt;<span class="xref">Producer</span>&gt;</td>
+        <td><span class="xref">IOutboundLogger</span>&lt;<span class="xref">Producer</span>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <see cref="!:ISilverbackIntegrationLogger"></see>.</p>
+        <td><p>The <see cref="!:IOutboundLogger&lt;TCategoryName>"></see>.</p>
 </td>
       </tr>
     </tbody>

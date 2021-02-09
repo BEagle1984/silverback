@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class EndpointConfigurationException
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -103,11 +103,15 @@
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.Runtime.Serialization.ISerializable</span></div>
+    <div><span class="xref">System.Runtime.InteropServices._Exception</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
       <span class="xref">System.Exception.GetBaseException()</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.ToString()</span>
     </div>
     <div>
       <span class="xref">System.Exception.GetObjectData(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)</span>
@@ -116,31 +120,28 @@
       <span class="xref">System.Exception.GetType()</span>
     </div>
     <div>
-      <span class="xref">System.Exception.ToString()</span>
+      <span class="xref">System.Exception.Message</span>
     </div>
     <div>
       <span class="xref">System.Exception.Data</span>
     </div>
     <div>
-      <span class="xref">System.Exception.HelpLink</span>
-    </div>
-    <div>
-      <span class="xref">System.Exception.HResult</span>
-    </div>
-    <div>
       <span class="xref">System.Exception.InnerException</span>
     </div>
     <div>
-      <span class="xref">System.Exception.Message</span>
-    </div>
-    <div>
-      <span class="xref">System.Exception.Source</span>
+      <span class="xref">System.Exception.TargetSite</span>
     </div>
     <div>
       <span class="xref">System.Exception.StackTrace</span>
     </div>
     <div>
-      <span class="xref">System.Exception.TargetSite</span>
+      <span class="xref">System.Exception.HelpLink</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.Source</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.HResult</span>
     </div>
     <div>
       <span class="xref">System.Exception.SerializeObjectState</span>
@@ -152,31 +153,26 @@
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
     </div>
     <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
       <span class="xref">System.Object.GetHashCode()</span>
     </div>
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.html">Silverback.Messaging</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_EndpointConfigurationException_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Serializable]
-public class EndpointConfigurationException : SilverbackException, ISerializable</code></pre>
+public class EndpointConfigurationException : SilverbackException, ISerializable, _Exception</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_EndpointConfigurationException__ctor.md&amp;value=---%0Auid%3A%20Silverback.Messaging.EndpointConfigurationException.%23ctor%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/EndpointConfigurationException.cs/#L20">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_EndpointConfigurationException__ctor_" data-uid="Silverback.Messaging.EndpointConfigurationException.#ctor*"></a>
   <h4 id="Silverback_Messaging_EndpointConfigurationException__ctor" data-uid="Silverback.Messaging.EndpointConfigurationException.#ctor">EndpointConfigurationException()</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> class.</p>
@@ -186,15 +182,10 @@ public class EndpointConfigurationException : SilverbackException, ISerializable
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public EndpointConfigurationException()</code></pre>
   </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_EndpointConfigurationException__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.EndpointConfigurationException.%23ctor(System.Runtime.Serialization.SerializationInfo%2CSystem.Runtime.Serialization.StreamingContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/EndpointConfigurationException.cs/#L63">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_EndpointConfigurationException__ctor_" data-uid="Silverback.Messaging.EndpointConfigurationException.#ctor*"></a>
-  <h4 id="Silverback_Messaging_EndpointConfigurationException__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Silverback.Messaging.EndpointConfigurationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">EndpointConfigurationException(SerializationInfo, StreamingContext)</h4>
+  <h4 id="Silverback_Messaging_EndpointConfigurationException__ctor_SerializationInfo_StreamingContext_" data-uid="Silverback.Messaging.EndpointConfigurationException.#ctor(SerializationInfo,StreamingContext)">EndpointConfigurationException(SerializationInfo, StreamingContext)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> class with the
 serialized data.</p>
 </div>
@@ -214,28 +205,23 @@ serialized data.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Runtime.Serialization.SerializationInfo</span></td>
+        <td><span class="xref">SerializationInfo</span></td>
         <td><span class="parametername">info</span></td>
-        <td><p>The <span class="xref">System.Runtime.Serialization.SerializationInfo</span> that holds the serialized object data about the exception being
+        <td><p>The <see cref="!:SerializationInfo"></see> that holds the serialized object data about the exception being
 thrown.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Runtime.Serialization.StreamingContext</span></td>
+        <td><span class="xref">StreamingContext</span></td>
         <td><span class="parametername">context</span></td>
-        <td><p>The <span class="xref">System.Runtime.Serialization.StreamingContext</span> that contains contextual information about the source or
+        <td><p>The <see cref="!:StreamingContext"></see> that contains contextual information about the source or
 destination.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_EndpointConfigurationException__ctor_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.EndpointConfigurationException.%23ctor(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/EndpointConfigurationException.cs/#L31">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_EndpointConfigurationException__ctor_" data-uid="Silverback.Messaging.EndpointConfigurationException.#ctor*"></a>
   <h4 id="Silverback_Messaging_EndpointConfigurationException__ctor_System_String_" data-uid="Silverback.Messaging.EndpointConfigurationException.#ctor(System.String)">EndpointConfigurationException(String)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> class with the
@@ -264,13 +250,8 @@ specified message.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_EndpointConfigurationException__ctor_System_String_System_Exception_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.EndpointConfigurationException.%23ctor(System.String%2CSystem.Exception)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/EndpointConfigurationException.cs/#L46">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_EndpointConfigurationException__ctor_" data-uid="Silverback.Messaging.EndpointConfigurationException.#ctor*"></a>
   <h4 id="Silverback_Messaging_EndpointConfigurationException__ctor_System_String_System_Exception_" data-uid="Silverback.Messaging.EndpointConfigurationException.#ctor(System.String,System.Exception)">EndpointConfigurationException(String, Exception)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> class with the
@@ -309,6 +290,9 @@ specified message and inner exception.</p>
   <div>
       <span class="xref">System.Runtime.Serialization.ISerializable</span>
   </div>
+  <div>
+      <span class="xref">System.Runtime.InteropServices._Exception</span>
+  </div>
 </article>
           </div>
           
@@ -316,12 +300,6 @@ specified message and inner exception.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_EndpointConfigurationException.md&amp;value=---%0Auid%3A%20Silverback.Messaging.EndpointConfigurationException%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/EndpointConfigurationException.cs/#L13" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

@@ -96,15 +96,79 @@
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><a class="xref" href="Silverback.SilverbackException.html">SilverbackException</a></div>
-    <div class="level2"><a class="xref" href="Silverback.Messaging.Broker.ProduceException.html">ProduceException</a></div>
-    <div class="level3"><span class="xref">MqttProduceException</span></div>
+    <div class="level1"><span class="xref">System.Exception</span></div>
+    <div class="level2"><a class="xref" href="Silverback.SilverbackException.html">SilverbackException</a></div>
+    <div class="level3"><a class="xref" href="Silverback.Messaging.Broker.ProduceException.html">ProduceException</a></div>
+    <div class="level4"><span class="xref">MqttProduceException</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.Runtime.Serialization.ISerializable</span></div>
+    <div><span class="xref">System.Runtime.InteropServices._Exception</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Exception.GetBaseException()</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.GetObjectData(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.Message</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.Data</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.InnerException</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.TargetSite</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.StackTrace</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.HelpLink</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.Source</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.HResult</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.SerializeObjectState</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Mqtt.html">Silverback.Messaging.Broker.Mqtt</a></h6>
   <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Broker_Mqtt_MqttProduceException_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class MqttProduceException : ProduceException</code></pre>
+    <pre><code class="lang-csharp hljs">[Serializable]
+public class MqttProduceException : ProduceException, ISerializable, _Exception</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -190,42 +254,6 @@ specified message.</p>
   
   
   <a id="Silverback_Messaging_Broker_Mqtt_MqttProduceException__ctor_" data-uid="Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Broker_Mqtt_MqttProduceException__ctor_System_String_Exception_" data-uid="Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor(System.String,Exception)">MqttProduceException(String, Exception)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.Mqtt.MqttProduceException.html">MqttProduceException</a> class with the
-specified message and inner exception.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public MqttProduceException(string message, Exception innerException)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">message</span></td>
-        <td><p>The exception message.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Exception</span></td>
-        <td><span class="parametername">innerException</span></td>
-        <td><p>The inner exception.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_Broker_Mqtt_MqttProduceException__ctor_" data-uid="Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor*"></a>
   <h4 id="Silverback_Messaging_Broker_Mqtt_MqttProduceException__ctor_System_String_MqttClientPublishResult_" data-uid="Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor(System.String,MqttClientPublishResult)">MqttProduceException(String, MqttClientPublishResult)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.Mqtt.MqttProduceException.html">MqttProduceException</a> class with the
 specified message.</p>
@@ -259,6 +287,42 @@ specified message.</p>
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="Silverback_Messaging_Broker_Mqtt_MqttProduceException__ctor_" data-uid="Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Broker_Mqtt_MqttProduceException__ctor_System_String_System_Exception_" data-uid="Silverback.Messaging.Broker.Mqtt.MqttProduceException.#ctor(System.String,System.Exception)">MqttProduceException(String, Exception)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.Mqtt.MqttProduceException.html">MqttProduceException</a> class with the
+specified message and inner exception.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MqttProduceException(string message, Exception innerException)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The exception message.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Exception</span></td>
+        <td><span class="parametername">innerException</span></td>
+        <td><p>The inner exception.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
   </h3>
   
@@ -287,6 +351,13 @@ specified message.</p>
       </tr>
     </tbody>
   </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.Runtime.Serialization.ISerializable</span>
+  </div>
+  <div>
+      <span class="xref">System.Runtime.InteropServices._Exception</span>
+  </div>
 </article>
           </div>
           

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Silverback.Messaging.Outbound.TransactionalOutbox
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -101,16 +101,16 @@ the database transaction applying the message side effects to the local database
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxTransactionManager.html">OutboxTransactionManager</a></h4>
       <section><p>Manages the consumer transaction calling <code>Commit</code> or <code>Rollback</code> on the
-<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter.html">IOutboxWriter</a> when the database transaction is being completed.</p>
+<see cref="!:IOutboxWriter"></see> when the database transaction is being completed.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a></h4>
       <section><p>Processes the outbox and produces the messages to the target message broker endpoint.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.html">OutboxWorkerService</a></h4>
-      <section><p>The <span class="xref">Microsoft.Extensions.Hosting.IHostedService</span> that triggers the outbound queue worker at regular intervals.</p>
+      <section><p>The <see cref="!:IHostedService"></see> that triggers the outbound queue worker at regular intervals.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.html">TransactionalOutboxBroker</a></h4>
-      <section><p>An <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementation that is used by the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a> to
+      <section><p>An <see cref="!:IBroker"></see> implementation that is used by the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a> to
 write into the outbox.</p>
 </section>
     <h3 id="interfaces">Interfaces

@@ -133,14 +133,14 @@
   
   
   <a id="Silverback_Messaging_Configuration_ErrorPolicyBuilderMoveToMqttTopicExtensions_MoveToMqttTopic_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilderMoveToMqttTopicExtensions.MoveToMqttTopic*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilderMoveToMqttTopicExtensions_MoveToMqttTopic_Silverback_Messaging_Configuration_IErrorPolicyBuilder_Action_IMqttProducerEndpointBuilder__System_Nullable_Action_MoveMessageErrorPolicy___" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilderMoveToMqttTopicExtensions.MoveToMqttTopic(Silverback.Messaging.Configuration.IErrorPolicyBuilder,Action{IMqttProducerEndpointBuilder},System.Nullable{Action{MoveMessageErrorPolicy}})">MoveToMqttTopic(IErrorPolicyBuilder, Action&lt;IMqttProducerEndpointBuilder&gt;, Nullable&lt;Action&lt;MoveMessageErrorPolicy&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilderMoveToMqttTopicExtensions_MoveToMqttTopic_Silverback_Messaging_Configuration_IErrorPolicyBuilder_System_Action_IMqttProducerEndpointBuilder__System_Action_MoveMessageErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilderMoveToMqttTopicExtensions.MoveToMqttTopic(Silverback.Messaging.Configuration.IErrorPolicyBuilder,System.Action{IMqttProducerEndpointBuilder},System.Action{MoveMessageErrorPolicy})">MoveToMqttTopic(IErrorPolicyBuilder, Action&lt;IMqttProducerEndpointBuilder&gt;, Action&lt;MoveMessageErrorPolicy&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a <see cref="!:MoveMessageErrorPolicy"></see> that moves the messages that fail to be processed to the
 configured endpoint.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IErrorPolicyChainBuilder MoveToMqttTopic(this IErrorPolicyBuilder builder, Action&lt;IMqttProducerEndpointBuilder&gt; endpointBuilderAction, Action&lt;MoveMessageErrorPolicy&gt;? policyConfigurationAction = default(Action&lt;MoveMessageErrorPolicy&gt;? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public static IErrorPolicyChainBuilder MoveToMqttTopic(this IErrorPolicyBuilder builder, Action&lt;IMqttProducerEndpointBuilder&gt; endpointBuilderAction, Action&lt;MoveMessageErrorPolicy&gt; policyConfigurationAction = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -159,14 +159,14 @@ configured endpoint.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">IMqttProducerEndpointBuilder</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">IMqttProducerEndpointBuilder</span>&gt;</td>
         <td><span class="parametername">endpointBuilderAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <see cref="!:IMqttProducerEndpointBuilder"></see> and configures
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <see cref="!:IMqttProducerEndpointBuilder"></see> and configures
 it.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<span class="xref">MoveMessageErrorPolicy</span>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">MoveMessageErrorPolicy</span>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
         <td><p>The (optional) additional configuration.</p>
 </td>

@@ -8,7 +8,7 @@
     <title>Broker behaviors pipeline | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Broker behaviors pipeline | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -121,7 +121,7 @@
 <tr>
 <td style="text-align: left;">BrokerKeyHeaderInitializer</td>
 <td style="text-align: right;">400</td>
-<td style="text-align: left;">Provided by the message broker implementation (e.g. <a class="xref" href="../../api/Silverback.Messaging.Behaviors.KafkaMessageKeyInitializerProducerBehavior.html">KafkaMessageKeyInitializerProducerBehavior</a> or &lt;Silverback.Messaging.Behaviors.RabbitRoutingKeyInitializerProducerBehavior&gt;), sets the message key header that will be used by the <a class="xref" href="../../api/Silverback.Messaging.Broker.IProducer.html">IProducer</a> implementation to set the actual message key.</td>
+<td style="text-align: left;">Provided by the message broker implementation (e.g. <a class="xref" href="../../api/Silverback.Messaging.Outbound.KafkaMessageKeyInitializerProducerBehavior.html">KafkaMessageKeyInitializerProducerBehavior</a> or <a class="xref" href="../../api/Silverback.Messaging.Outbound.RabbitRoutingKeyInitializerProducerBehavior.html">RabbitRoutingKeyInitializerProducerBehavior</a>), sets the message key header that will be used by the <a class="xref" href="../../api/Silverback.Messaging.Broker.IProducer.html">IProducer</a> implementation to set the actual message key.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior.html">BinaryFileHandlerProducerBehavior</a></td>
@@ -142,6 +142,16 @@
 <td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Sequences.SequencerProducerBehavior.html">SequencerProducerBehavior</a></td>
 <td style="text-align: right;">800</td>
 <td style="text-align: left;">Uses the available implementations of <a class="xref" href="../../api/Silverback.Messaging.Sequences.ISequenceWriter.html">ISequenceWriter</a> (e.g. <a class="xref" href="../../api/Silverback.Messaging.Sequences.Chunking.ChunkSequenceWriter.html">ChunkSequenceWriter</a>) to set the proper headers and split the published message or messages set to create the sequences.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Outbound.Routing.EndpointNameResolverProducerBehavior.html">EndpointNameResolverProducerBehavior</a></td>
+<td style="text-align: right;">900</td>
+<td style="text-align: left;">Resolves the actual target endpoint name for the message being published.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Outbound.Routing.KafkaPartitionResolverProducerBehavior.html">KafkaPartitionResolverProducerBehavior</a></td>
+<td style="text-align: right;">901</td>
+<td style="text-align: left;">Resolves the actual target endpoint name for the message being published.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><a class="xref" href="../../api/Silverback.Messaging.Headers.CustomHeadersMapperProducerBehavior.html">CustomHeadersMapperProducerBehavior</a></td>

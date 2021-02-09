@@ -331,7 +331,7 @@ builder.</p>
   
   
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnableBatchProcessing_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnableBatchProcessing*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnableBatchProcessing_System_Int32_System_Nullable_TimeSpan__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnableBatchProcessing(System.Int32,System.Nullable{TimeSpan})">EnableBatchProcessing(Int32, Nullable&lt;TimeSpan&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnableBatchProcessing_System_Int32_System_Nullable_System_TimeSpan__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnableBatchProcessing(System.Int32,System.Nullable{System.TimeSpan})">EnableBatchProcessing(Int32, Nullable&lt;TimeSpan&gt;)</h4>
   <div class="markdown level1 summary"><p>Enables batch processing.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -356,56 +356,10 @@ builder.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">TimeSpan</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">maxWaitTime</span></td>
         <td><p>The maximum amount of time to wait for the batch to be filled. After this time the batch will be
 completed even if the specified <code>batchSize</code> is not reached.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_Action_Silverback_Messaging_Configuration_IExactlyOnceStrategyBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce(Action{Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder})">EnsureExactlyOnce(Action&lt;IExactlyOnceStrategyBuilder&gt;)</h4>
-  <div class="markdown level1 summary"><p>Specifies the strategy to be used to ensure that each message is processed exactly once.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TBuilder EnsureExactlyOnce(Action&lt;IExactlyOnceStrategyBuilder&gt; strategyBuilderAction)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a>&gt;</td>
-        <td><span class="parametername">strategyBuilderAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a> and configures
-it.</p>
 </td>
       </tr>
     </tbody>
@@ -473,15 +427,34 @@ it.</p>
   </table>
   
   
-  <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_IgnoreUnhandledMessages_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.IgnoreUnhandledMessages*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_IgnoreUnhandledMessages" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.IgnoreUnhandledMessages">IgnoreUnhandledMessages()</h4>
-  <div class="markdown level1 summary"><p>Specifies that the message has to be silently ignored if no subscriber is handling it.</p>
+  <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_EnsureExactlyOnce_System_Action_Silverback_Messaging_Configuration_IExactlyOnceStrategyBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.EnsureExactlyOnce(System.Action{Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder})">EnsureExactlyOnce(Action&lt;IExactlyOnceStrategyBuilder&gt;)</h4>
+  <div class="markdown level1 summary"><p>Specifies the strategy to be used to ensure that each message is processed exactly once.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TBuilder IgnoreUnhandledMessages()</code></pre>
+    <pre><code class="lang-csharp hljs">public TBuilder EnsureExactlyOnce(Action&lt;IExactlyOnceStrategyBuilder&gt; strategyBuilderAction)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a>&gt;</td>
+        <td><span class="parametername">strategyBuilderAction</span></td>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a> and configures
+it.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -500,34 +473,15 @@ it.</p>
   </table>
   
   
-  <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_Action_Silverback_Messaging_Configuration_IErrorPolicyBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError(Action{Silverback.Messaging.Configuration.IErrorPolicyBuilder})">OnError(Action&lt;IErrorPolicyBuilder&gt;)</h4>
-  <div class="markdown level1 summary"><p>Specifies the error policy to be applied when an exception occurs during the processing of the
-consumed messages.</p>
+  <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_IgnoreUnhandledMessages_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.IgnoreUnhandledMessages*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_IgnoreUnhandledMessages" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.IgnoreUnhandledMessages">IgnoreUnhandledMessages()</h4>
+  <div class="markdown level1 summary"><p>Specifies that the message has to be silently ignored if no subscriber is handling it.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TBuilder OnError(Action&lt;IErrorPolicyBuilder&gt; errorPolicyBuilderAction)</code></pre>
+    <pre><code class="lang-csharp hljs">public TBuilder IgnoreUnhandledMessages()</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a>&gt;</td>
-        <td><span class="parametername">errorPolicyBuilderAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a> and configures it.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -592,6 +546,52 @@ consumed messages.</p>
   </table>
   
   
+  <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_System_Action_Silverback_Messaging_Configuration_IErrorPolicyBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError(System.Action{Silverback.Messaging.Configuration.IErrorPolicyBuilder})">OnError(Action&lt;IErrorPolicyBuilder&gt;)</h4>
+  <div class="markdown level1 summary"><p>Specifies the error policy to be applied when an exception occurs during the processing of the
+consumed messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TBuilder OnError(Action&lt;IErrorPolicyBuilder&gt; errorPolicyBuilderAction)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a>&gt;</td>
+        <td><span class="parametername">errorPolicyBuilderAction</span></td>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a> and configures it.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TBuilder</span></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_ThrowIfUnhandled_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.ThrowIfUnhandled*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_ThrowIfUnhandled" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.ThrowIfUnhandled">ThrowIfUnhandled()</h4>
   <div class="markdown level1 summary"><p>Specifies that an exception must be thrown if no subscriber is handling the received message. This
@@ -622,7 +622,7 @@ option is enabled by default. Use the
   
   
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.WithSequenceTimeout*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_TimeSpan_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.WithSequenceTimeout(TimeSpan)">WithSequenceTimeout(TimeSpan)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.WithSequenceTimeout(System.TimeSpan)">WithSequenceTimeout(TimeSpan)</h4>
   <div class="markdown level1 summary"><p>Sets the timeout after which an incomplete sequence that isn't pushed with new messages will
 be aborted and discarded. The default is a conservative 30 minutes.</p>
 </div>
@@ -642,7 +642,7 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">TimeSpan</span></td>
+        <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">timeout</span></td>
         <td><p>The timeout.</p>
 </td>
@@ -665,10 +665,10 @@ be aborted and discarded. The default is a conservative 30 minutes.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_TimeSpan__remarks">Remarks</h5>
+  <h5 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_WithSequenceTimeout_System_TimeSpan__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This setting is ignored for batches (<see cref="!:BatchSequence"></see>), use the
 <code>maxWaitTime</code> parameter of
-<a class="xref" href="Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_EnableBatchProcessing_System_Int32_System_Nullable_TimeSpan__">EnableBatchProcessing(Int32, Nullable&lt;TimeSpan&gt;)</a> instead.</p>
+<a class="xref" href="Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_EnableBatchProcessing_System_Int32_System_Nullable_System_TimeSpan__">EnableBatchProcessing(Int32, Nullable&lt;TimeSpan&gt;)</a> instead.</p>
 </div>
   <h3 id="implements">Implements</h3>
   <div>

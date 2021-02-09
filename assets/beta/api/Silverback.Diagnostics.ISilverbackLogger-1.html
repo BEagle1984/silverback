@@ -90,14 +90,23 @@
   
   <h1 id="Silverback_Diagnostics_ISilverbackLogger_1" data-uid="Silverback.Diagnostics.ISilverbackLogger`1" class="text-break">Interface ISilverbackLogger&lt;TCategoryName&gt;
   </h1>
-  <div class="markdown level0 summary"><p>Custom logger for Silverback.</p>
+  <div class="markdown level0 summary"><p>Used to perform logging in Silverback.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html#Silverback_Diagnostics_ISilverbackLogger_InnerLogger">ISilverbackLogger.InnerLogger</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html#Silverback_Diagnostics_ISilverbackLogger_IsEnabled_Silverback_Diagnostics_LogEvent_">ISilverbackLogger.IsEnabled(LogEvent)</a>
+    </div>
+  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Diagnostics.html">Silverback.Diagnostics</a></h6>
   <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Diagnostics_ISilverbackLogger_1_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface ISilverbackLogger&lt;out TCategoryName&gt; : ILogger&lt;TCategoryName&gt;, ISilverbackLogger, ILogger</code></pre>
+    <pre><code class="lang-csharp hljs">public interface ISilverbackLogger&lt;out TCategoryName&gt; : ISilverbackLogger</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

@@ -134,74 +134,7 @@ methods to the <see cref="!:ISilverbackBuilder"></see>.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddScopedSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddScopedSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddScopedSubscriber_ISilverbackBuilder_Type_Func_IServiceProvider_System_Object__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddScopedSubscriber(ISilverbackBuilder,Type,Func{IServiceProvider,System.Object},System.Boolean)">AddScopedSubscriber(ISilverbackBuilder, Type, Func&lt;IServiceProvider, Object&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="paramref" class="paramref">subscriberType</code> with a factory
-specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the <see cref="!:IServiceCollection"></see>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddScopedSubscriber(this ISilverbackBuilder silverbackBuilder, Type subscriberType, Func&lt;IServiceProvider, object&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
-        <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
-the subscriber to.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Type</span></td>
-        <td><span class="parametername">subscriberType</span></td>
-        <td><p>The type of the subscriber to register.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, <span class="xref">System.Object</span>&gt;</td>
-        <td><span class="parametername">implementationFactory</span></td>
-        <td><p>The factory that creates the service.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">autoSubscribeAllPublicMethods</span></td>
-        <td><p>A boolean value indicating whether all public methods of the specified type have to be automatically
-subscribed. When set to <code>false</code> only the methods decorated with the
-<see cref="!:SubscribeAttribute"></see> are subscribed.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddScopedSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddScopedSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddScopedSubscriber_ISilverbackBuilder_Type_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddScopedSubscriber(ISilverbackBuilder,Type,System.Boolean)">AddScopedSubscriber(ISilverbackBuilder, Type, Boolean)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddScopedSubscriber_ISilverbackBuilder_System_Type_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddScopedSubscriber(ISilverbackBuilder,System.Type,System.Boolean)">AddScopedSubscriber(ISilverbackBuilder, Type, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="paramref" class="paramref">subscriberType</code> to the
 <see cref="!:IServiceCollection"></see>.</p>
 </div>
@@ -228,7 +161,7 @@ the subscriber to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">subscriberType</span></td>
         <td><p>The type of the subscriber to register and the implementation to use.</p>
 </td>
@@ -262,15 +195,14 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddScopedSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddScopedSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddScopedSubscriber__1_ISilverbackBuilder_Func_IServiceProvider___0__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddScopedSubscriber``1(ISilverbackBuilder,Func{IServiceProvider,``0},System.Boolean)">AddScopedSubscriber&lt;TSubscriber&gt;(ISilverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="typeparamref" class="typeparamref">TSubscriber</code> with a factory
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddScopedSubscriber_ISilverbackBuilder_System_Type_System_Func_System_IServiceProvider_System_Object__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddScopedSubscriber(ISilverbackBuilder,System.Type,System.Func{System.IServiceProvider,System.Object},System.Boolean)">AddScopedSubscriber(ISilverbackBuilder, Type, Func&lt;IServiceProvider, Object&gt;, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="paramref" class="paramref">subscriberType</code> with a factory
 specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the <see cref="!:IServiceCollection"></see>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddScopedSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)
-    where TSubscriber : class</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddScopedSubscriber(this ISilverbackBuilder silverbackBuilder, Type subscriberType, Func&lt;IServiceProvider, object&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -290,7 +222,13 @@ the subscriber to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, TSubscriber&gt;</td>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">subscriberType</span></td>
+        <td><p>The type of the subscriber to register.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, <span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">implementationFactory</span></td>
         <td><p>The factory that creates the service.</p>
 </td>
@@ -317,22 +255,6 @@ subscribed. When set to <code>false</code> only the methods decorated with the
       <tr>
         <td><span class="xref">ISilverbackBuilder</span></td>
         <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TSubscriber</span></td>
-        <td><p>The type of the subscriber to add.</p>
 </td>
       </tr>
     </tbody>
@@ -411,16 +333,16 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   </table>
   
   
-  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_ISilverbackBuilder_Type_Func_IServiceProvider_System_Object__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber(ISilverbackBuilder,Type,Func{IServiceProvider,System.Object},System.Boolean)">AddSingletonSubscriber(ISilverbackBuilder, Type, Func&lt;IServiceProvider, Object&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds a singleton subscriber of the type specified in <code data-dev-comment-type="paramref" class="paramref">subscriberType</code> with a
-factory specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the
-<see cref="!:IServiceCollection"></see>.</p>
+  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddScopedSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddScopedSubscriber*"></a>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddScopedSubscriber__1_ISilverbackBuilder_System_Func_System_IServiceProvider___0__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddScopedSubscriber``1(ISilverbackBuilder,System.Func{System.IServiceProvider,``0},System.Boolean)">AddScopedSubscriber&lt;TSubscriber&gt;(ISilverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt;, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="typeparamref" class="typeparamref">TSubscriber</code> with a factory
+specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the <see cref="!:IServiceCollection"></see>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber(this ISilverbackBuilder silverbackBuilder, Type subscriberType, Func&lt;IServiceProvider, object&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddScopedSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)
+    where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -440,13 +362,7 @@ the subscriber to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
-        <td><span class="parametername">subscriberType</span></td>
-        <td><p>The type of the subscriber to register.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, TSubscriber&gt;</td>
         <td><span class="parametername">implementationFactory</span></td>
         <td><p>The factory that creates the service.</p>
 </td>
@@ -477,10 +393,26 @@ subscribed. When set to <code>false</code> only the methods decorated with the
       </tr>
     </tbody>
   </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TSubscriber</span></td>
+        <td><p>The type of the subscriber to add.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_ISilverbackBuilder_Type_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber(ISilverbackBuilder,Type,System.Boolean)">AddSingletonSubscriber(ISilverbackBuilder, Type, Boolean)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_ISilverbackBuilder_System_Type_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber(ISilverbackBuilder,System.Type,System.Boolean)">AddSingletonSubscriber(ISilverbackBuilder, Type, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds a singleton subscriber of the type specified in <code data-dev-comment-type="paramref" class="paramref">subscriberType</code> to the
 <see cref="!:IServiceCollection"></see>.</p>
 </div>
@@ -507,7 +439,7 @@ the subscriber to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">subscriberType</span></td>
         <td><p>The type of the subscriber to register and the implementation to use.</p>
 </td>
@@ -541,7 +473,75 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_ISilverbackBuilder_Type_System_Object_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber(ISilverbackBuilder,Type,System.Object,System.Boolean)">AddSingletonSubscriber(ISilverbackBuilder, Type, Object, Boolean)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_ISilverbackBuilder_System_Type_System_Func_System_IServiceProvider_System_Object__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber(ISilverbackBuilder,System.Type,System.Func{System.IServiceProvider,System.Object},System.Boolean)">AddSingletonSubscriber(ISilverbackBuilder, Type, Func&lt;IServiceProvider, Object&gt;, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds a singleton subscriber of the type specified in <code data-dev-comment-type="paramref" class="paramref">subscriberType</code> with a
+factory specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the
+<see cref="!:IServiceCollection"></see>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber(this ISilverbackBuilder silverbackBuilder, Type subscriberType, Func&lt;IServiceProvider, object&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><span class="parametername">silverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
+the subscriber to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">subscriberType</span></td>
+        <td><p>The type of the subscriber to register.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="parametername">implementationFactory</span></td>
+        <td><p>The factory that creates the service.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">autoSubscribeAllPublicMethods</span></td>
+        <td><p>A boolean value indicating whether all public methods of the specified type have to be automatically
+subscribed. When set to <code>false</code> only the methods decorated with the
+<see cref="!:SubscribeAttribute"></see> are subscribed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber*"></a>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_ISilverbackBuilder_System_Type_System_Object_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber(ISilverbackBuilder,System.Type,System.Object,System.Boolean)">AddSingletonSubscriber(ISilverbackBuilder, Type, Object, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds a singleton subscriber of the type specified in <code data-dev-comment-type="paramref" class="paramref">subscriberType</code> with an
 instance specified in <code data-dev-comment-type="paramref" class="paramref">implementationInstance</code> to the
 <see cref="!:IServiceCollection"></see>.</p>
@@ -569,7 +569,7 @@ the subscriber to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">subscriberType</span></td>
         <td><p>The type of the subscriber to register.</p>
 </td>
@@ -688,15 +688,14 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber__1_ISilverbackBuilder_Func_IServiceProvider___0__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber``1(ISilverbackBuilder,Func{IServiceProvider,``0},System.Boolean)">AddSingletonSubscriber&lt;TSubscriber&gt;(ISilverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds a singleton subscriber of the type specified in <code data-dev-comment-type="typeparamref" class="typeparamref">TSubscriber</code> with a
-factory specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the
-<see cref="!:IServiceCollection"></see>.</p>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber__1_ISilverbackBuilder_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber``1(ISilverbackBuilder,System.Boolean)">AddSingletonSubscriber&lt;TSubscriber&gt;(ISilverbackBuilder, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds a singleton subscriber of the type specified in <code data-dev-comment-type="typeparamref" class="typeparamref">TSubscriber</code> to this
+<see cref="!:ISilverbackBuilder"></see>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, bool autoSubscribeAllPublicMethods = true)
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -714,12 +713,6 @@ factory specified in <code data-dev-comment-type="paramref" class="paramref">imp
         <td><span class="parametername">silverbackBuilder</span></td>
         <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
 the subscriber to.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, TSubscriber&gt;</td>
-        <td><span class="parametername">implementationFactory</span></td>
-        <td><p>The factory that creates the service.</p>
 </td>
       </tr>
       <tr>
@@ -767,14 +760,15 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber__1_ISilverbackBuilder_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber``1(ISilverbackBuilder,System.Boolean)">AddSingletonSubscriber&lt;TSubscriber&gt;(ISilverbackBuilder, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds a singleton subscriber of the type specified in <code data-dev-comment-type="typeparamref" class="typeparamref">TSubscriber</code> to this
-<see cref="!:ISilverbackBuilder"></see>.</p>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddSingletonSubscriber__1_ISilverbackBuilder_System_Func_System_IServiceProvider___0__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddSingletonSubscriber``1(ISilverbackBuilder,System.Func{System.IServiceProvider,``0},System.Boolean)">AddSingletonSubscriber&lt;TSubscriber&gt;(ISilverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt;, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds a singleton subscriber of the type specified in <code data-dev-comment-type="typeparamref" class="typeparamref">TSubscriber</code> with a
+factory specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the
+<see cref="!:IServiceCollection"></see>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, bool autoSubscribeAllPublicMethods = true)
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -792,6 +786,12 @@ subscribed. When set to <code>false</code> only the methods decorated with the
         <td><span class="parametername">silverbackBuilder</span></td>
         <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
 the subscriber to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, TSubscriber&gt;</td>
+        <td><span class="parametername">implementationFactory</span></td>
+        <td><p>The factory that creates the service.</p>
 </td>
       </tr>
       <tr>
@@ -914,74 +914,7 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber_ISilverbackBuilder_Type_Func_IServiceProvider_System_Object__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber(ISilverbackBuilder,Type,Func{IServiceProvider,System.Object},System.Boolean)">AddTransientSubscriber(ISilverbackBuilder, Type, Func&lt;IServiceProvider, Object&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="paramref" class="paramref">subscriberType</code> with a factory
-specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the <see cref="!:IServiceCollection"></see>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddTransientSubscriber(this ISilverbackBuilder silverbackBuilder, Type subscriberType, Func&lt;IServiceProvider, object&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
-        <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
-the subscriber to.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Type</span></td>
-        <td><span class="parametername">subscriberType</span></td>
-        <td><p>The type of the subscriber to register.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, <span class="xref">System.Object</span>&gt;</td>
-        <td><span class="parametername">implementationFactory</span></td>
-        <td><p>The factory that creates the service.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">autoSubscribeAllPublicMethods</span></td>
-        <td><p>A boolean value indicating whether all public methods of the specified type have to be automatically
-subscribed. When set to <code>false</code> only the methods decorated with the
-<see cref="!:SubscribeAttribute"></see> are subscribed.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber_ISilverbackBuilder_Type_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber(ISilverbackBuilder,Type,System.Boolean)">AddTransientSubscriber(ISilverbackBuilder, Type, Boolean)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber_ISilverbackBuilder_System_Type_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber(ISilverbackBuilder,System.Type,System.Boolean)">AddTransientSubscriber(ISilverbackBuilder, Type, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="paramref" class="paramref">subscriberType</code> to the
 <see cref="!:IServiceCollection"></see>.</p>
 </div>
@@ -1008,7 +941,7 @@ the subscriber to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">subscriberType</span></td>
         <td><p>The type of the subscriber to register and the implementation to use.</p>
 </td>
@@ -1042,15 +975,14 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber__1_ISilverbackBuilder_Func_IServiceProvider___0__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber``1(ISilverbackBuilder,Func{IServiceProvider,``0},System.Boolean)">AddTransientSubscriber&lt;TSubscriber&gt;(ISilverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="typeparamref" class="typeparamref">TSubscriber</code> with a factory
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber_ISilverbackBuilder_System_Type_System_Func_System_IServiceProvider_System_Object__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber(ISilverbackBuilder,System.Type,System.Func{System.IServiceProvider,System.Object},System.Boolean)">AddTransientSubscriber(ISilverbackBuilder, Type, Func&lt;IServiceProvider, Object&gt;, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="paramref" class="paramref">subscriberType</code> with a factory
 specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the <see cref="!:IServiceCollection"></see>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddTransientSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)
-    where TSubscriber : class</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddTransientSubscriber(this ISilverbackBuilder silverbackBuilder, Type subscriberType, Func&lt;IServiceProvider, object&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1070,9 +1002,71 @@ the subscriber to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, TSubscriber&gt;</td>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">subscriberType</span></td>
+        <td><p>The type of the subscriber to register.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, <span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">implementationFactory</span></td>
         <td><p>The factory that creates the service.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">autoSubscribeAllPublicMethods</span></td>
+        <td><p>A boolean value indicating whether all public methods of the specified type have to be automatically
+subscribed. When set to <code>false</code> only the methods decorated with the
+<see cref="!:SubscribeAttribute"></see> are subscribed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber*"></a>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber__1_ISilverbackBuilder_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber``1(ISilverbackBuilder,System.Boolean)">AddTransientSubscriber&lt;TSubscriber&gt;(ISilverbackBuilder, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="typeparamref" class="typeparamref">TSubscriber</code> to the
+<see cref="!:IServiceCollection"></see>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddTransientSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, bool autoSubscribeAllPublicMethods = true)
+    where TSubscriber : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><span class="parametername">silverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
+the subscriber to.</p>
 </td>
       </tr>
       <tr>
@@ -1120,14 +1114,14 @@ subscribed. When set to <code>false</code> only the methods decorated with the
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber__1_ISilverbackBuilder_System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber``1(ISilverbackBuilder,System.Boolean)">AddTransientSubscriber&lt;TSubscriber&gt;(ISilverbackBuilder, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="typeparamref" class="typeparamref">TSubscriber</code> to the
-<see cref="!:IServiceCollection"></see>.</p>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSubscriberExtensions_AddTransientSubscriber__1_ISilverbackBuilder_System_Func_System_IServiceProvider___0__System_Boolean_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSubscriberExtensions.AddTransientSubscriber``1(ISilverbackBuilder,System.Func{System.IServiceProvider,``0},System.Boolean)">AddTransientSubscriber&lt;TSubscriber&gt;(ISilverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt;, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds a scoped subscriber of the type specified in <code data-dev-comment-type="typeparamref" class="typeparamref">TSubscriber</code> with a factory
+specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the <see cref="!:IServiceCollection"></see>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddTransientSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, bool autoSubscribeAllPublicMethods = true)
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddTransientSubscriber&lt;TSubscriber&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, TSubscriber&gt; implementationFactory, bool autoSubscribeAllPublicMethods = true)
     where TSubscriber : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -1145,6 +1139,12 @@ subscribed. When set to <code>false</code> only the methods decorated with the
         <td><span class="parametername">silverbackBuilder</span></td>
         <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
 the subscriber to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, TSubscriber&gt;</td>
+        <td><span class="parametername">implementationFactory</span></td>
+        <td><p>The factory that creates the service.</p>
 </td>
       </tr>
       <tr>

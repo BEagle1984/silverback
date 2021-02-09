@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class KafkaClientConfig
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfig" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig" class="text-break">Class KafkaClientConfig
   </h1>
-  <div class="markdown level0 summary"><p>Wraps the <span class="xref">Confluent.Kafka.ConsumerConfig</span> and contains the properties shared between the
+  <div class="markdown level0 summary"><p>Wraps the <see cref="!:Confluent.Kafka.ConsumerConfig"></see> and contains the properties shared between the
 <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html">KafkaProducerConfig</a> and <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -98,7 +98,7 @@
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxyBase.html">ConfluentClientConfigProxyBase</a></div>
-    <div class="level2"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html">ConfluentClientConfigProxy</a>&lt;<span class="xref">Confluent.Kafka.ClientConfig</span>&gt;</div>
+    <div class="level2"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html">ConfluentClientConfigProxy</a>&lt;<span class="xref">ClientConfig</span>&gt;</div>
     <div class="level3"><span class="xref">KafkaClientConfig</span></div>
   </div>
   <div classs="implements">
@@ -300,10 +300,16 @@
       <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_1_ConfluentConfig">ConfluentClientConfigProxy&lt;ClientConfig&gt;.ConfluentConfig</a>
     </div>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -314,28 +320,17 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.Kafka.html">Silverback.Messaging.Configuration.Kafka</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public sealed class KafkaClientConfig : ConfluentClientConfigProxy&lt;ClientConfig&gt;, IValidatableEndpointSettings</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaClientConfig__ctor.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.%23ctor%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaClientConfig.cs/#L17">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfig__ctor_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.#ctor*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfig__ctor" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.#ctor">KafkaClientConfig()</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a> class.</p>
@@ -347,13 +342,8 @@
   </div>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaClientConfig.cs/#L23">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_Validate_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.Validate*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_Validate" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.Validate">Validate()</h4>
   <div class="markdown level1 summary"><p>Throws an <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> if the current configuration is not valid.</p>
@@ -376,12 +366,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaClientConfig.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaClientConfig%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaClientConfig.cs/#L12" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

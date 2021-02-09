@@ -8,7 +8,7 @@
     <title>Logging | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Logging | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -86,7 +86,7 @@
             <article class="content wrap" id="_content" data-uid="logging">
 <h1 id="logging">Logging</h1>
 
-<p>Silverback logs quite a few events that may be very useful for troubleshooting. Of course <code>ILogger</code> is used for logging and will work with any logger you wired in the startup.</p>
+<p>Silverback logs quite a few events that may be very useful for troubleshooting. Of course <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.ilogger">ILogger</a> is used for logging and will work with any logger you wired in the startup.</p>
 <p>The <code>WithLogLevels</code> configuration method can be used to tweak the log levels of each particular event.</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
@@ -111,7 +111,14 @@
 </section>
 </div>
 
-<p>Each package (that logs some events) has a static class exposing the <code>EventId</code> constants. See <a class="xref" href="../api/Silverback.Diagnostics.CoreEventIds.html">CoreEventIds</a>, <a class="xref" href="../api/Silverback.Diagnostics.IntegrationEventIds.html">IntegrationEventIds</a>, <a class="xref" href="../api/Silverback.Diagnostics.KafkaEventIds.html">KafkaEventIds</a> and <a class="xref" href="../api/Silverback.Diagnostics.RabbitEventIds.html">RabbitEventIds</a> for details about the events being logged and their default log level.</p>
+<p>Each package (that writes any log) has a static class declaring each log event: default <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.loglevel">LogLevel</a>, <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.eventid">EventId</a> and message. Refer to those classes for details about the events being logged and their default log level.</p>
+<p>See:</p>
+<ul>
+<li><a class="xref" href="../api/Silverback.Diagnostics.CoreLogEvents.html">CoreLogEvents</a></li>
+<li><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html">IntegrationLogEvents</a></li>
+<li>&lt;xref:Silverback.Diagnostics.KafkaEvents&gt;</li>
+<li>&lt;xref:Silverback.Diagnostics.RabbitEvents&gt;</li>
+</ul>
 </article>
           </div>
           

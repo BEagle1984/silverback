@@ -133,7 +133,7 @@
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddScopedOutboundRouter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddScopedOutboundRouter*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddScopedOutboundRouter_ISilverbackBuilder_Func_IServiceProvider_IOutboundRouter__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddScopedOutboundRouter(ISilverbackBuilder,Func{IServiceProvider,IOutboundRouter})">AddScopedOutboundRouter(ISilverbackBuilder, Func&lt;IServiceProvider, IOutboundRouter&gt;)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddScopedOutboundRouter_ISilverbackBuilder_System_Func_System_IServiceProvider_IOutboundRouter__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddScopedOutboundRouter(ISilverbackBuilder,System.Func{System.IServiceProvider,IOutboundRouter})">AddScopedOutboundRouter(ISilverbackBuilder, Func&lt;IServiceProvider, IOutboundRouter&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a scoped outbound router with a factory specified in
 <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the
 <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
@@ -161,7 +161,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, <span class="xref">IOutboundRouter</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, <span class="xref">IOutboundRouter</span>&gt;</td>
         <td><span class="parametername">implementationFactory</span></td>
         <td><p>The factory that creates the service.</p>
 </td>
@@ -187,7 +187,7 @@ the services to.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddScopedOutboundRouter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddScopedOutboundRouter*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddScopedOutboundRouter_ISilverbackBuilder_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddScopedOutboundRouter(ISilverbackBuilder,Type)">AddScopedOutboundRouter(ISilverbackBuilder, Type)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddScopedOutboundRouter_ISilverbackBuilder_System_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddScopedOutboundRouter(ISilverbackBuilder,System.Type)">AddScopedOutboundRouter(ISilverbackBuilder, Type)</h4>
   <div class="markdown level1 summary"><p>Adds a scoped outbound router of the type specified in <code data-dev-comment-type="paramref" class="paramref">routerType</code> to the
 <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
 </div>
@@ -214,7 +214,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">routerType</span></td>
         <td><p>The type of the outbound router to register and the implementation to use.</p>
 </td>
@@ -304,60 +304,6 @@ the services to.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddSingletonOutboundRouter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddSingletonOutboundRouter*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddSingletonOutboundRouter_ISilverbackBuilder_Func_IServiceProvider_IOutboundRouter__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddSingletonOutboundRouter(ISilverbackBuilder,Func{IServiceProvider,IOutboundRouter})">AddSingletonOutboundRouter(ISilverbackBuilder, Func&lt;IServiceProvider, IOutboundRouter&gt;)</h4>
-  <div class="markdown level1 summary"><p>Adds a singleton outbound router with a factory specified in
-<code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the
-<see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonOutboundRouter(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, IOutboundRouter&gt; implementationFactory)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
-        <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
-the services to.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, <span class="xref">IOutboundRouter</span>&gt;</td>
-        <td><span class="parametername">implementationFactory</span></td>
-        <td><p>The factory that creates the service.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddSingletonOutboundRouter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddSingletonOutboundRouter*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddSingletonOutboundRouter_ISilverbackBuilder_IOutboundRouter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddSingletonOutboundRouter(ISilverbackBuilder,IOutboundRouter)">AddSingletonOutboundRouter(ISilverbackBuilder, IOutboundRouter)</h4>
   <div class="markdown level1 summary"><p>Adds a singleton outbound router with an instance specified in
 <code data-dev-comment-type="paramref" class="paramref">implementationInstance</code> to the
@@ -412,7 +358,61 @@ the services to.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddSingletonOutboundRouter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddSingletonOutboundRouter*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddSingletonOutboundRouter_ISilverbackBuilder_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddSingletonOutboundRouter(ISilverbackBuilder,Type)">AddSingletonOutboundRouter(ISilverbackBuilder, Type)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddSingletonOutboundRouter_ISilverbackBuilder_System_Func_System_IServiceProvider_IOutboundRouter__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddSingletonOutboundRouter(ISilverbackBuilder,System.Func{System.IServiceProvider,IOutboundRouter})">AddSingletonOutboundRouter(ISilverbackBuilder, Func&lt;IServiceProvider, IOutboundRouter&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a singleton outbound router with a factory specified in
+<code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the
+<see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonOutboundRouter(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, IOutboundRouter&gt; implementationFactory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><span class="parametername">silverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
+the services to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, <span class="xref">IOutboundRouter</span>&gt;</td>
+        <td><span class="parametername">implementationFactory</span></td>
+        <td><p>The factory that creates the service.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddSingletonOutboundRouter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddSingletonOutboundRouter*"></a>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddSingletonOutboundRouter_ISilverbackBuilder_System_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddSingletonOutboundRouter(ISilverbackBuilder,System.Type)">AddSingletonOutboundRouter(ISilverbackBuilder, Type)</h4>
   <div class="markdown level1 summary"><p>Adds a singleton outbound router of the type specified in <code data-dev-comment-type="paramref" class="paramref">routerType</code> to the
 <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
 </div>
@@ -439,7 +439,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">routerType</span></td>
         <td><p>The type of the outbound router to register and the implementation to use.</p>
 </td>
@@ -529,7 +529,7 @@ the services to.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddTransientOutboundRouter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddTransientOutboundRouter*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddTransientOutboundRouter_ISilverbackBuilder_Func_IServiceProvider_IOutboundRouter__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddTransientOutboundRouter(ISilverbackBuilder,Func{IServiceProvider,IOutboundRouter})">AddTransientOutboundRouter(ISilverbackBuilder, Func&lt;IServiceProvider, IOutboundRouter&gt;)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddTransientOutboundRouter_ISilverbackBuilder_System_Func_System_IServiceProvider_IOutboundRouter__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddTransientOutboundRouter(ISilverbackBuilder,System.Func{System.IServiceProvider,IOutboundRouter})">AddTransientOutboundRouter(ISilverbackBuilder, Func&lt;IServiceProvider, IOutboundRouter&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a transient outbound router with a factory specified in
 <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to the
 <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
@@ -557,7 +557,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, <span class="xref">IOutboundRouter</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, <span class="xref">IOutboundRouter</span>&gt;</td>
         <td><span class="parametername">implementationFactory</span></td>
         <td><p>The factory that creates the service.</p>
 </td>
@@ -583,7 +583,7 @@ the services to.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddTransientOutboundRouter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddTransientOutboundRouter*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddTransientOutboundRouter_ISilverbackBuilder_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddTransientOutboundRouter(ISilverbackBuilder,Type)">AddTransientOutboundRouter(ISilverbackBuilder, Type)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddOutboundRouterExtensions_AddTransientOutboundRouter_ISilverbackBuilder_System_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddOutboundRouterExtensions.AddTransientOutboundRouter(ISilverbackBuilder,System.Type)">AddTransientOutboundRouter(ISilverbackBuilder, Type)</h4>
   <div class="markdown level1 summary"><p>Adds a transient outbound router of the type specified in <code data-dev-comment-type="paramref" class="paramref">routerType</code> to the
 <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
 </div>
@@ -610,7 +610,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">routerType</span></td>
         <td><p>The type of the outbound router to register and the implementation to use.</p>
 </td>

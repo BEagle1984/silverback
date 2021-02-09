@@ -8,7 +8,7 @@
     <title>Connecting to a Message Broker | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Connecting to a Message Broker | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -420,9 +420,9 @@
 <p>The <a href="https://www.nuget.org/packages/Silverback.Integration.HealthChecks">Silverback.Integration.HealthChecks</a> package contains some extensions for <a href="https://www.nuget.org/packages/Microsoft.Extensions.Diagnostics.HealthChecks">Microsoft.Extensions.Diagnostics.HealthChecks</a> that can be used to monitor the connection to the message broker.</p>
 <p>Currently two checks exists:</p>
 <ul>
-<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddOutboundEndpointsCheck</a>: Adds an health check that sends a ping message to all the outbound endpoints.</li>
-<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddOutboxCheck</a>: Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.</li>
-<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddConsumersCheck</a>: Adds an health check that verifies that all consumers are connected.</li>
+<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___">AddOutboundEndpointsCheck</a>: Adds an health check that sends a ping message to all the outbound endpoints.</li>
+<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___">AddOutboxCheck</a>: Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.</li>
+<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___">AddConsumersCheck</a>: Adds an health check that verifies that all consumers are connected.</li>
 </ul>
 <p>The usage is very simple, you just need to configure the checks in the Startup.cs, as shown in the following example.</p>
 <pre><code class="lang-csharp">public class Startup
@@ -487,7 +487,7 @@
 </code></pre>
 <h2 id="samples">Samples</h2>
 <ul>
-<li><a class="xref" href="../../samples/kafka/basic.html">Kafka - Basic</a></li>
+<li><a class="xref" href="../../samples/samples.html">All</a></li>
 </ul>
 </article>
           </div>

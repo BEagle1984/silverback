@@ -133,60 +133,6 @@
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddSingletonSequenceWriter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddSingletonSequenceWriter*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddSingletonSequenceWriter_ISilverbackBuilder_Func_IServiceProvider_ISequenceWriter__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddSingletonSequenceWriter(ISilverbackBuilder,Func{IServiceProvider,ISequenceWriter})">AddSingletonSequenceWriter(ISilverbackBuilder, Func&lt;IServiceProvider, ISequenceWriter&gt;)</h4>
-  <div class="markdown level1 summary"><p>Adds a singleton sequence writer with a factory specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code>
-to
-the <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSequenceWriter(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, ISequenceWriter&gt; implementationFactory)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
-        <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
-the services to.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, <span class="xref">ISequenceWriter</span>&gt;</td>
-        <td><span class="parametername">implementationFactory</span></td>
-        <td><p>The factory that creates the service.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddSingletonSequenceWriter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddSingletonSequenceWriter*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddSingletonSequenceWriter_ISilverbackBuilder_ISequenceWriter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddSingletonSequenceWriter(ISilverbackBuilder,ISequenceWriter)">AddSingletonSequenceWriter(ISilverbackBuilder, ISequenceWriter)</h4>
   <div class="markdown level1 summary"><p>Adds a singleton sequence writer with an instance specified in
 <code data-dev-comment-type="paramref" class="paramref">implementationInstance</code>
@@ -241,7 +187,61 @@ the services to.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddSingletonSequenceWriter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddSingletonSequenceWriter*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddSingletonSequenceWriter_ISilverbackBuilder_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddSingletonSequenceWriter(ISilverbackBuilder,Type)">AddSingletonSequenceWriter(ISilverbackBuilder, Type)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddSingletonSequenceWriter_ISilverbackBuilder_System_Func_System_IServiceProvider_ISequenceWriter__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddSingletonSequenceWriter(ISilverbackBuilder,System.Func{System.IServiceProvider,ISequenceWriter})">AddSingletonSequenceWriter(ISilverbackBuilder, Func&lt;IServiceProvider, ISequenceWriter&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a singleton sequence writer with a factory specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code>
+to
+the <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonSequenceWriter(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, ISequenceWriter&gt; implementationFactory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><span class="parametername">silverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
+the services to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, <span class="xref">ISequenceWriter</span>&gt;</td>
+        <td><span class="parametername">implementationFactory</span></td>
+        <td><p>The factory that creates the service.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddSingletonSequenceWriter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddSingletonSequenceWriter*"></a>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddSingletonSequenceWriter_ISilverbackBuilder_System_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddSingletonSequenceWriter(ISilverbackBuilder,System.Type)">AddSingletonSequenceWriter(ISilverbackBuilder, Type)</h4>
   <div class="markdown level1 summary"><p>Adds a singleton sequence writer of the type specified in <code data-dev-comment-type="paramref" class="paramref">writerType</code> to the
 <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
 </div>
@@ -268,7 +268,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">writerType</span></td>
         <td><p>The type of the writer to register and the implementation to use.</p>
 </td>
@@ -358,7 +358,7 @@ the services to.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddTransientSequenceWriter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddTransientSequenceWriter*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddTransientSequenceWriter_ISilverbackBuilder_Func_IServiceProvider_ISequenceWriter__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddTransientSequenceWriter(ISilverbackBuilder,Func{IServiceProvider,ISequenceWriter})">AddTransientSequenceWriter(ISilverbackBuilder, Func&lt;IServiceProvider, ISequenceWriter&gt;)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddTransientSequenceWriter_ISilverbackBuilder_System_Func_System_IServiceProvider_ISequenceWriter__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddTransientSequenceWriter(ISilverbackBuilder,System.Func{System.IServiceProvider,ISequenceWriter})">AddTransientSequenceWriter(ISilverbackBuilder, Func&lt;IServiceProvider, ISequenceWriter&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a transient sequence writer with a factory specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code>
 to
 the <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
@@ -386,7 +386,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, <span class="xref">ISequenceWriter</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, <span class="xref">ISequenceWriter</span>&gt;</td>
         <td><span class="parametername">implementationFactory</span></td>
         <td><p>The factory that creates the service.</p>
 </td>
@@ -412,7 +412,7 @@ the services to.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddTransientSequenceWriter_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddTransientSequenceWriter*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddTransientSequenceWriter_ISilverbackBuilder_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddTransientSequenceWriter(ISilverbackBuilder,Type)">AddTransientSequenceWriter(ISilverbackBuilder, Type)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddSequenceWriterExtensions_AddTransientSequenceWriter_ISilverbackBuilder_System_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddSequenceWriterExtensions.AddTransientSequenceWriter(ISilverbackBuilder,System.Type)">AddTransientSequenceWriter(ISilverbackBuilder, Type)</h4>
   <div class="markdown level1 summary"><p>Adds a transient sequence writer of the type specified in <code data-dev-comment-type="paramref" class="paramref">writerType</code> to the
 <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
 </div>
@@ -439,7 +439,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">writerType</span></td>
         <td><p>The type of the writer to register and the implementation to use.</p>
 </td>

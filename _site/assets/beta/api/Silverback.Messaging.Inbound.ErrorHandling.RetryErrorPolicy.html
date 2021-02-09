@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class RetryErrorPolicy
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -91,15 +91,15 @@
   <h1 id="Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy" data-uid="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy" class="text-break">Class RetryErrorPolicy
   </h1>
   <div class="markdown level0 summary"><p>This policy retries to process the message that previously failed to be to processed. An optional
-delay can be
-specified.</p>
+delay can be specified.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html">ErrorPolicyBase</a></div>
-    <div class="level2"><span class="xref">RetryErrorPolicy</span></div>
+    <div class="level2"><a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryableErrorPolicyBase.html">RetryableErrorPolicyBase</a></div>
+    <div class="level3"><span class="xref">RetryErrorPolicy</span></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -107,6 +107,12 @@ specified.</p>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryableErrorPolicyBase.html#Silverback_Messaging_Inbound_ErrorHandling_RetryableErrorPolicyBase_MaxFailedAttempts_System_Nullable_System_Int32__">RetryableErrorPolicyBase.MaxFailedAttempts(Nullable&lt;Int32&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_MaxFailedAttemptsCount">ErrorPolicyBase.MaxFailedAttemptsCount</a>
+    </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ExcludedExceptions">ErrorPolicyBase.ExcludedExceptions</a>
     </div>
@@ -132,22 +138,25 @@ specified.</p>
       <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Exclude_System_Type_">ErrorPolicyBase.Exclude(Type)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyWhen_System_Func_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Boolean__">ErrorPolicyBase.ApplyWhen(Func&lt;IRawInboundEnvelope, Exception, Boolean&gt;)</a>
+      <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyWhen_System_Func_IRawInboundEnvelope_System_Exception_System_Boolean__">ErrorPolicyBase.ApplyWhen(Func&lt;IRawInboundEnvelope, Exception, Boolean&gt;)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_MaxFailedAttempts_System_Nullable_System_Int32__">ErrorPolicyBase.MaxFailedAttempts(Nullable&lt;Int32&gt;)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Publish_System_Func_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Object__">ErrorPolicyBase.Publish(Func&lt;IRawInboundEnvelope, Object&gt;)</a>
+      <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Publish_System_Func_IRawInboundEnvelope_System_Object__">ErrorPolicyBase.Publish(Func&lt;IRawInboundEnvelope, Object&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase.html#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Build_System_IServiceProvider_">ErrorPolicyBase.Build(IServiceProvider)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -158,28 +167,17 @@ specified.</p>
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.html">Silverback.Messaging.Inbound.ErrorHandling</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class RetryErrorPolicy : ErrorPolicyBase, IErrorPolicy</code></pre>
+    <pre><code class="lang-csharp hljs">public class RetryErrorPolicy : RetryableErrorPolicyBase, IErrorPolicy</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__ctor_System_Nullable_System_TimeSpan__System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.%23ctor(System.Nullable%7BSystem.TimeSpan%7D%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Inbound/ErrorHandling/RetryErrorPolicy.cs/#L32">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__ctor_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.#ctor*"></a>
   <h4 id="Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__ctor_System_Nullable_System_TimeSpan__System_Nullable_System_TimeSpan__" data-uid="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.#ctor(System.Nullable{System.TimeSpan},System.Nullable{System.TimeSpan})">RetryErrorPolicy(Nullable&lt;TimeSpan&gt;, Nullable&lt;TimeSpan&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> class.</p>
@@ -215,13 +213,8 @@ specified.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy_BuildCore_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.BuildCore(System.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Inbound/ErrorHandling/RetryErrorPolicy.cs/#L59">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy_BuildCore_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.BuildCore*"></a>
   <h4 id="Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy_BuildCore_System_IServiceProvider_" data-uid="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.BuildCore(System.IServiceProvider)">BuildCore(IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Returns the actual error policy implementation, built using the provided
@@ -280,12 +273,6 @@ error.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Inbound/ErrorHandling/RetryErrorPolicy.cs/#L21" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

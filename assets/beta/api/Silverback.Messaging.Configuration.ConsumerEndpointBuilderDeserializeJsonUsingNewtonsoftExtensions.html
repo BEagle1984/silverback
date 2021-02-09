@@ -134,7 +134,7 @@
   
   
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions_DeserializeJsonUsingNewtonsoft_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions.DeserializeJsonUsingNewtonsoft*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions_DeserializeJsonUsingNewtonsoft__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Nullable_Action_Silverback_Messaging_Configuration_INewtonsoftJsonMessageSerializerBuilder___" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions.DeserializeJsonUsingNewtonsoft``1(Silverback.Messaging.Configuration.IConsumerEndpointBuilder{``0},System.Nullable{Action{Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder}})">DeserializeJsonUsingNewtonsoft&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Nullable&lt;Action&lt;INewtonsoftJsonMessageSerializerBuilder&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions_DeserializeJsonUsingNewtonsoft__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Action_Silverback_Messaging_Configuration_INewtonsoftJsonMessageSerializerBuilder__" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeJsonUsingNewtonsoftExtensions.DeserializeJsonUsingNewtonsoft``1(Silverback.Messaging.Configuration.IConsumerEndpointBuilder{``0},System.Action{Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder})">DeserializeJsonUsingNewtonsoft&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Action&lt;INewtonsoftJsonMessageSerializerBuilder&gt;)</h4>
   <div class="markdown level1 summary"><p>
     Sets the serializer to an instance of <see cref="!:NewtonsoftJsonMessageSerializer"></see> (or
 <see cref="!:NewtonsoftJsonMessageSerializer&lt;TMessage>"></see>) to deserialize the consumed JSON.
@@ -148,7 +148,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static TBuilder DeserializeJsonUsingNewtonsoft&lt;TBuilder&gt;(this IConsumerEndpointBuilder&lt;TBuilder&gt; endpointBuilder, Action&lt;INewtonsoftJsonMessageSerializerBuilder&gt;? serializerBuilderAction = default(Action&lt;INewtonsoftJsonMessageSerializerBuilder&gt;? ))
+    <pre><code class="lang-csharp hljs">public static TBuilder DeserializeJsonUsingNewtonsoft&lt;TBuilder&gt;(this IConsumerEndpointBuilder&lt;TBuilder&gt; endpointBuilder, Action&lt;INewtonsoftJsonMessageSerializerBuilder&gt; serializerBuilderAction = null)
     where TBuilder : IConsumerEndpointBuilder&lt;TBuilder&gt;</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -168,9 +168,9 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.html">INewtonsoftJsonMessageSerializerBuilder</a>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.html">INewtonsoftJsonMessageSerializerBuilder</a>&gt;</td>
         <td><span class="parametername">serializerBuilderAction</span></td>
-        <td><p>An optional <see cref="!:Action&lt;T>"></see> that takes the
+        <td><p>An optional <span class="xref">System.Action&lt;T&gt;</span> that takes the
 <a class="xref" href="Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.html">INewtonsoftJsonMessageSerializerBuilder</a> and configures it.</p>
 </td>
       </tr>

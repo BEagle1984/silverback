@@ -106,6 +106,12 @@
 </p>
 </div>
   <div class="markdown level0 conceptual"></div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.IEquatable&lt;Silverback.Messaging.Broker.IBrokerMessageIdentifier&gt;.Equals(Silverback.Messaging.Broker.IBrokerMessageIdentifier)</span>
+    </div>
+  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.html">Silverback.Messaging.Broker</a></h6>
   <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Broker_IBrokerMessageIdentifier_syntax">Syntax</h5>
@@ -170,6 +176,69 @@ value as string arguments.</p>
       </tr>
     </tbody>
   </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Silverback_Messaging_Broker_IBrokerMessageIdentifier_ToLogString_" data-uid="Silverback.Messaging.Broker.IBrokerMessageIdentifier.ToLogString*"></a>
+  <h4 id="Silverback_Messaging_Broker_IBrokerMessageIdentifier_ToLogString" data-uid="Silverback.Messaging.Broker.IBrokerMessageIdentifier.ToLogString">ToLogString()</h4>
+  <div class="markdown level1 summary"><p>Gets a string that can be used to log the offset value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string ToLogString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>A <span class="xref">System.String</span> representing the offset value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Messaging_Broker_IBrokerMessageIdentifier_ToLogString_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This string should contain all identifiers except the endpoint name.</p>
+</div>
+  
+  
+  <a id="Silverback_Messaging_Broker_IBrokerMessageIdentifier_ToVerboseLogString_" data-uid="Silverback.Messaging.Broker.IBrokerMessageIdentifier.ToVerboseLogString*"></a>
+  <h4 id="Silverback_Messaging_Broker_IBrokerMessageIdentifier_ToVerboseLogString" data-uid="Silverback.Messaging.Broker.IBrokerMessageIdentifier.ToVerboseLogString">ToVerboseLogString()</h4>
+  <div class="markdown level1 summary"><p>Gets a string that can be used to log the offset value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">string ToVerboseLogString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>A <span class="xref">System.String</span> representing the offset value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Messaging_Broker_IBrokerMessageIdentifier_ToVerboseLogString_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This string must include the endpoint name, if the identifier value isn't unique across
+different endpoints.</p>
+</div>
 </article>
           </div>
           

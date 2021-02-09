@@ -137,13 +137,13 @@
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder__ctor_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder__ctor_System_Nullable_IServiceProvider__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.#ctor(System.Nullable{IServiceProvider})">MqttClientConfigBuilder(Nullable&lt;IServiceProvider&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder__ctor_System_IServiceProvider_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.#ctor(System.IServiceProvider)">MqttClientConfigBuilder(IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.html">MqttClientConfigBuilder</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public MqttClientConfigBuilder(IServiceProvider? serviceProvider = default(IServiceProvider? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public MqttClientConfigBuilder(IServiceProvider serviceProvider = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -156,9 +156,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IServiceProvider</span>&gt;</td>
+        <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <see cref="!:IServiceProvider"></see> to be used to resolve the required types (e.g. the
+        <td><p>The <span class="xref">System.IServiceProvider</span> to be used to resolve the required types (e.g. the
 <see cref="!:IMqttExtendedAuthenticationExchangeHandler"></see>).</p>
 </td>
       </tr>
@@ -248,7 +248,7 @@ related properties from the client to the server.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaTcp_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaTcp_Action_MqttClientTcpOptions__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp(Action{MqttClientTcpOptions})">ConnectViaTcp(Action&lt;MqttClientTcpOptions&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaTcp_System_Action_MqttClientTcpOptions__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaTcp(System.Action{MqttClientTcpOptions})">ConnectViaTcp(Action&lt;MqttClientTcpOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Specifies the TCP connection settings.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -267,9 +267,9 @@ related properties from the client to the server.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">MqttClientTcpOptions</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">MqttClientTcpOptions</span>&gt;</td>
         <td><span class="parametername">optionsAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <see cref="!:MqttClientTcpOptions"></see> and configures it.</p>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <see cref="!:MqttClientTcpOptions"></see> and configures it.</p>
 </td>
       </tr>
     </tbody>
@@ -344,7 +344,7 @@ related properties from the client to the server.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_Action_MqttClientWebSocketOptions__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(Action{MqttClientWebSocketOptions})">ConnectViaWebSocket(Action&lt;MqttClientWebSocketOptions&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_System_Action_MqttClientWebSocketOptions__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.Action{MqttClientWebSocketOptions})">ConnectViaWebSocket(Action&lt;MqttClientWebSocketOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Specifies the WebSocket connection settings.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -363,9 +363,9 @@ related properties from the client to the server.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">MqttClientWebSocketOptions</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">MqttClientWebSocketOptions</span>&gt;</td>
         <td><span class="parametername">optionsAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <see cref="!:MqttClientWebSocketOptions"></see> and configures
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <see cref="!:MqttClientWebSocketOptions"></see> and configures
 it.</p>
 </td>
       </tr>
@@ -390,7 +390,7 @@ it.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_System_String_Action_MqttClientOptionsBuilderWebSocketParameters__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String,Action{MqttClientOptionsBuilderWebSocketParameters})">ConnectViaWebSocket(String, Action&lt;MqttClientOptionsBuilderWebSocketParameters&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_ConnectViaWebSocket_System_String_System_Action_MqttClientOptionsBuilderWebSocketParameters__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.ConnectViaWebSocket(System.String,System.Action{MqttClientOptionsBuilderWebSocketParameters})">ConnectViaWebSocket(String, Action&lt;MqttClientOptionsBuilderWebSocketParameters&gt;)</h4>
   <div class="markdown level1 summary"><p>Specifies the WebSocket connection settings.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -415,9 +415,9 @@ it.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">MqttClientOptionsBuilderWebSocketParameters</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">MqttClientOptionsBuilderWebSocketParameters</span>&gt;</td>
         <td><span class="parametername">parametersAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <see cref="!:MqttClientOptionsBuilderWebSocketParameters"></see>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <see cref="!:MqttClientOptionsBuilderWebSocketParameters"></see>
 and configures it.</p>
 </td>
       </tr>
@@ -630,13 +630,13 @@ packet. This is usually the default.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_EnableTls_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_EnableTls_Action_MqttClientOptionsBuilderTlsParameters__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(Action{MqttClientOptionsBuilderTlsParameters})">EnableTls(Action&lt;MqttClientOptionsBuilderTlsParameters&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_EnableTls_MqttClientOptionsBuilderTlsParameters_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(MqttClientOptionsBuilderTlsParameters)">EnableTls(MqttClientOptionsBuilderTlsParameters)</h4>
   <div class="markdown level1 summary"><p>Specifies that TLS has to be used to encrypt the network traffic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IMqttClientConfigBuilder EnableTls(Action&lt;MqttClientOptionsBuilderTlsParameters&gt; parametersAction)</code></pre>
+    <pre><code class="lang-csharp hljs">public IMqttClientConfigBuilder EnableTls(MqttClientOptionsBuilderTlsParameters parameters)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -649,10 +649,9 @@ packet. This is usually the default.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">MqttClientOptionsBuilderTlsParameters</span>&gt;</td>
-        <td><span class="parametername">parametersAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <see cref="!:MqttClientOptionsBuilderTlsParameters"></see> and
-configures it.</p>
+        <td><span class="xref">MqttClientOptionsBuilderTlsParameters</span></td>
+        <td><span class="parametername">parameters</span></td>
+        <td><p>The <see cref="!:MqttClientOptionsBuilderTlsParameters"></see>.</p>
 </td>
       </tr>
     </tbody>
@@ -676,13 +675,13 @@ configures it.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_EnableTls_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_EnableTls_MqttClientOptionsBuilderTlsParameters_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(MqttClientOptionsBuilderTlsParameters)">EnableTls(MqttClientOptionsBuilderTlsParameters)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_EnableTls_System_Action_MqttClientOptionsBuilderTlsParameters__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.EnableTls(System.Action{MqttClientOptionsBuilderTlsParameters})">EnableTls(Action&lt;MqttClientOptionsBuilderTlsParameters&gt;)</h4>
   <div class="markdown level1 summary"><p>Specifies that TLS has to be used to encrypt the network traffic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IMqttClientConfigBuilder EnableTls(MqttClientOptionsBuilderTlsParameters parameters)</code></pre>
+    <pre><code class="lang-csharp hljs">public IMqttClientConfigBuilder EnableTls(Action&lt;MqttClientOptionsBuilderTlsParameters&gt; parametersAction)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -695,9 +694,10 @@ configures it.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MqttClientOptionsBuilderTlsParameters</span></td>
-        <td><span class="parametername">parameters</span></td>
-        <td><p>The <see cref="!:MqttClientOptionsBuilderTlsParameters"></see>.</p>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">MqttClientOptionsBuilderTlsParameters</span>&gt;</td>
+        <td><span class="parametername">parametersAction</span></td>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <see cref="!:MqttClientOptionsBuilderTlsParameters"></see> and
+configures it.</p>
 </td>
       </tr>
     </tbody>
@@ -971,7 +971,7 @@ default.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_SendKeepAlive_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.SendKeepAlive*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_SendKeepAlive_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.SendKeepAlive(TimeSpan)">SendKeepAlive(TimeSpan)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_SendKeepAlive_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.SendKeepAlive(System.TimeSpan)">SendKeepAlive(TimeSpan)</h4>
   <div class="markdown level1 summary"><p>Sets the maximum period that can elapse without a packet being sent to the message broker.
 When this period is elapsed a ping packet will be sent to keep the connection alive. The default is 15
 seconds.</p>
@@ -992,7 +992,7 @@ seconds.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">TimeSpan</span></td>
+        <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">interval</span></td>
         <td><p>The maximum period that can elapse without a packet being sent.</p>
 </td>
@@ -1018,7 +1018,7 @@ seconds.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_SendLastWillMessage_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.SendLastWillMessage*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_SendLastWillMessage_Action_Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.SendLastWillMessage(Action{Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder})">SendLastWillMessage(Action&lt;IMqttLastWillMessageBuilder&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_SendLastWillMessage_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttLastWillMessageBuilder__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.SendLastWillMessage(System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder})">SendLastWillMessage(Action&lt;IMqttLastWillMessageBuilder&gt;)</h4>
   <div class="markdown level1 summary"><p>Specifies the last will and testament (LWT) message to be sent when the client disconnects
 ungracefully.</p>
 </div>
@@ -1038,9 +1038,9 @@ ungracefully.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html">IMqttLastWillMessageBuilder</a>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html">IMqttLastWillMessageBuilder</a>&gt;</td>
         <td><span class="parametername">lastWillBuilderAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html">IMqttLastWillMessageBuilder</a> and
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttLastWillMessageBuilder.html">IMqttLastWillMessageBuilder</a> and
 configures it.</p>
 </td>
       </tr>
@@ -1110,7 +1110,7 @@ configures it.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_Type_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(Type)">UseExtendedAuthenticationExchangeHandler(Type)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_UseExtendedAuthenticationExchangeHandler_System_Type_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseExtendedAuthenticationExchangeHandler(System.Type)">UseExtendedAuthenticationExchangeHandler(Type)</h4>
   <div class="markdown level1 summary"><p>Sets the handler to be used to handle the custom authentication data exchange.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -1129,10 +1129,10 @@ configures it.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">handlerType</span></td>
         <td><p>The type of the <see cref="!:IMqttExtendedAuthenticationExchangeHandler"></see> to be used. The instance
-will be resolved via <see cref="!:IServiceProvider"></see>.</p>
+will be resolved via <span class="xref">System.IServiceProvider</span>.</p>
 </td>
       </tr>
     </tbody>
@@ -1193,7 +1193,7 @@ will be resolved via <see cref="!:IServiceProvider"></see>.</p>
       <tr>
         <td><span class="parametername">THandler</span></td>
         <td><p>The type of the <see cref="!:IMqttExtendedAuthenticationExchangeHandler"></see> to be used. The instance
-will be resolved via <see cref="!:IServiceProvider"></see>.</p>
+will be resolved via <span class="xref">System.IServiceProvider</span>.</p>
 </td>
       </tr>
     </tbody>
@@ -1246,7 +1246,7 @@ will be resolved via <see cref="!:IServiceProvider"></see>.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_UseProxy_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_UseProxy_Action_MqttClientWebSocketProxyOptions__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy(Action{MqttClientWebSocketProxyOptions})">UseProxy(Action&lt;MqttClientWebSocketProxyOptions&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_UseProxy_System_Action_MqttClientWebSocketProxyOptions__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.UseProxy(System.Action{MqttClientWebSocketProxyOptions})">UseProxy(Action&lt;MqttClientWebSocketProxyOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Specifies the WebSocket connection settings.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -1265,9 +1265,9 @@ will be resolved via <see cref="!:IServiceProvider"></see>.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">MqttClientWebSocketProxyOptions</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">MqttClientWebSocketProxyOptions</span>&gt;</td>
         <td><span class="parametername">optionsAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <see cref="!:MqttClientWebSocketProxyOptions"></see> and
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <see cref="!:MqttClientWebSocketProxyOptions"></see> and
 configures it.</p>
 </td>
       </tr>
@@ -1463,7 +1463,7 @@ configures it.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithCommunicationTimeout_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCommunicationTimeout*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithCommunicationTimeout_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCommunicationTimeout(TimeSpan)">WithCommunicationTimeout(TimeSpan)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithCommunicationTimeout_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithCommunicationTimeout(System.TimeSpan)">WithCommunicationTimeout(TimeSpan)</h4>
   <div class="markdown level1 summary"><p>Sets the communication timeout. The default is 10 seconds.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -1482,9 +1482,9 @@ configures it.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">TimeSpan</span></td>
+        <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">timeout</span></td>
-        <td><p>The <see cref="!:TimeSpan"></see> representing the timeout.</p>
+        <td><p>The <span class="xref">System.TimeSpan</span> representing the timeout.</p>
 </td>
       </tr>
     </tbody>
@@ -1655,9 +1655,9 @@ configures it.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithSessionExpiration_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithSessionExpiration*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithSessionExpiration_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithSessionExpiration(TimeSpan)">WithSessionExpiration(TimeSpan)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfigBuilder_WithSessionExpiration_System_TimeSpan_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfigBuilder.WithSessionExpiration(System.TimeSpan)">WithSessionExpiration(TimeSpan)</h4>
   <div class="markdown level1 summary"><p>Sets the session expiry interval. When set to 0 the session will expire when the connection is closed,
-while <see cref="!:TimeSpan.MaxValue"></see> indicates that the session will never expire. The default is 0.</p>
+while <span class="xref">System.TimeSpan.MaxValue</span> indicates that the session will never expire. The default is 0.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -1675,9 +1675,9 @@ while <see cref="!:TimeSpan.MaxValue"></see> indicates that the session will nev
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">TimeSpan</span></td>
+        <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">sessionExpiryInterval</span></td>
-        <td><p>The <see cref="!:TimeSpan"></see> representing the session expiry interval.</p>
+        <td><p>The <span class="xref">System.TimeSpan</span> representing the session expiry interval.</p>
 </td>
       </tr>
     </tbody>

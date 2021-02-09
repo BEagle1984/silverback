@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class DatabaseTableNotFoundException
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -104,11 +104,15 @@ layer (e.g. Entity Framework Core).</p>
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.Runtime.Serialization.ISerializable</span></div>
+    <div><span class="xref">System.Runtime.InteropServices._Exception</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
       <span class="xref">System.Exception.GetBaseException()</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.ToString()</span>
     </div>
     <div>
       <span class="xref">System.Exception.GetObjectData(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)</span>
@@ -117,31 +121,28 @@ layer (e.g. Entity Framework Core).</p>
       <span class="xref">System.Exception.GetType()</span>
     </div>
     <div>
-      <span class="xref">System.Exception.ToString()</span>
+      <span class="xref">System.Exception.Message</span>
     </div>
     <div>
       <span class="xref">System.Exception.Data</span>
     </div>
     <div>
-      <span class="xref">System.Exception.HelpLink</span>
-    </div>
-    <div>
-      <span class="xref">System.Exception.HResult</span>
-    </div>
-    <div>
       <span class="xref">System.Exception.InnerException</span>
     </div>
     <div>
-      <span class="xref">System.Exception.Message</span>
-    </div>
-    <div>
-      <span class="xref">System.Exception.Source</span>
+      <span class="xref">System.Exception.TargetSite</span>
     </div>
     <div>
       <span class="xref">System.Exception.StackTrace</span>
     </div>
     <div>
-      <span class="xref">System.Exception.TargetSite</span>
+      <span class="xref">System.Exception.HelpLink</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.Source</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.HResult</span>
     </div>
     <div>
       <span class="xref">System.Exception.SerializeObjectState</span>
@@ -153,31 +154,26 @@ layer (e.g. Entity Framework Core).</p>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
     </div>
     <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
       <span class="xref">System.Object.GetHashCode()</span>
     </div>
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Database.html">Silverback.Database</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Core.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Database_DatabaseTableNotFoundException_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Serializable]
-public class DatabaseTableNotFoundException : SilverbackException, ISerializable</code></pre>
+public class DatabaseTableNotFoundException : SilverbackException, ISerializable, _Exception</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_DatabaseTableNotFoundException__ctor.md&amp;value=---%0Auid%3A%20Silverback.Database.DatabaseTableNotFoundException.%23ctor%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Database/DatabaseTableNotFoundException.cs/#L21">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Database_DatabaseTableNotFoundException__ctor_" data-uid="Silverback.Database.DatabaseTableNotFoundException.#ctor*"></a>
   <h4 id="Silverback_Database_DatabaseTableNotFoundException__ctor" data-uid="Silverback.Database.DatabaseTableNotFoundException.#ctor">DatabaseTableNotFoundException()</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Database.DatabaseTableNotFoundException.html">DatabaseTableNotFoundException</a> class.</p>
@@ -187,15 +183,10 @@ public class DatabaseTableNotFoundException : SilverbackException, ISerializable
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public DatabaseTableNotFoundException()</code></pre>
   </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_DatabaseTableNotFoundException__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_.md&amp;value=---%0Auid%3A%20Silverback.Database.DatabaseTableNotFoundException.%23ctor(System.Runtime.Serialization.SerializationInfo%2CSystem.Runtime.Serialization.StreamingContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Database/DatabaseTableNotFoundException.cs/#L64">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Database_DatabaseTableNotFoundException__ctor_" data-uid="Silverback.Database.DatabaseTableNotFoundException.#ctor*"></a>
-  <h4 id="Silverback_Database_DatabaseTableNotFoundException__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Silverback.Database.DatabaseTableNotFoundException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">DatabaseTableNotFoundException(SerializationInfo, StreamingContext)</h4>
+  <h4 id="Silverback_Database_DatabaseTableNotFoundException__ctor_SerializationInfo_StreamingContext_" data-uid="Silverback.Database.DatabaseTableNotFoundException.#ctor(SerializationInfo,StreamingContext)">DatabaseTableNotFoundException(SerializationInfo, StreamingContext)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Database.DatabaseTableNotFoundException.html">DatabaseTableNotFoundException</a> class with the
 serialized data.</p>
 </div>
@@ -215,28 +206,23 @@ serialized data.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Runtime.Serialization.SerializationInfo</span></td>
+        <td><span class="xref">SerializationInfo</span></td>
         <td><span class="parametername">info</span></td>
-        <td><p>The <span class="xref">System.Runtime.Serialization.SerializationInfo</span> that holds the serialized object data about the exception being
+        <td><p>The <see cref="!:SerializationInfo"></see> that holds the serialized object data about the exception being
 thrown.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Runtime.Serialization.StreamingContext</span></td>
+        <td><span class="xref">StreamingContext</span></td>
         <td><span class="parametername">context</span></td>
-        <td><p>The <span class="xref">System.Runtime.Serialization.StreamingContext</span> that contains contextual information about the source or
+        <td><p>The <see cref="!:StreamingContext"></see> that contains contextual information about the source or
 destination.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_DatabaseTableNotFoundException__ctor_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Database.DatabaseTableNotFoundException.%23ctor(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Database/DatabaseTableNotFoundException.cs/#L32">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Database_DatabaseTableNotFoundException__ctor_" data-uid="Silverback.Database.DatabaseTableNotFoundException.#ctor*"></a>
   <h4 id="Silverback_Database_DatabaseTableNotFoundException__ctor_System_String_" data-uid="Silverback.Database.DatabaseTableNotFoundException.#ctor(System.String)">DatabaseTableNotFoundException(String)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Database.DatabaseTableNotFoundException.html">DatabaseTableNotFoundException</a> class with the
@@ -265,13 +251,8 @@ specified message.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_DatabaseTableNotFoundException__ctor_System_String_System_Exception_.md&amp;value=---%0Auid%3A%20Silverback.Database.DatabaseTableNotFoundException.%23ctor(System.String%2CSystem.Exception)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Database/DatabaseTableNotFoundException.cs/#L47">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Database_DatabaseTableNotFoundException__ctor_" data-uid="Silverback.Database.DatabaseTableNotFoundException.#ctor*"></a>
   <h4 id="Silverback_Database_DatabaseTableNotFoundException__ctor_System_String_System_Exception_" data-uid="Silverback.Database.DatabaseTableNotFoundException.#ctor(System.String,System.Exception)">DatabaseTableNotFoundException(String, Exception)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Database.DatabaseTableNotFoundException.html">DatabaseTableNotFoundException</a> class with the
@@ -310,6 +291,9 @@ specified message and inner exception.</p>
   <div>
       <span class="xref">System.Runtime.Serialization.ISerializable</span>
   </div>
+  <div>
+      <span class="xref">System.Runtime.InteropServices._Exception</span>
+  </div>
 </article>
           </div>
           
@@ -317,12 +301,6 @@ specified message and inner exception.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_DatabaseTableNotFoundException.md&amp;value=---%0Auid%3A%20Silverback.Database.DatabaseTableNotFoundException%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Database/DatabaseTableNotFoundException.cs/#L14" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

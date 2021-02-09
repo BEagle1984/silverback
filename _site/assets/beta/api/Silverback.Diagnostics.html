@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Silverback.Diagnostics
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -94,44 +94,46 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
   </h3>
-      <h4><a class="xref" href="Silverback.Diagnostics.CoreEventIds.html">CoreEventIds</a></h4>
-      <section><p>Contains the <span class="xref">Microsoft.Extensions.Logging.EventId</span> constants of all events logged by the Silverback.Core package.</p>
+      <h4><a class="xref" href="Silverback.Diagnostics.CoreLogEvents.html">CoreLogEvents</a></h4>
+      <section><p>Contains the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> constants of all events logged by the Silverback.Core package.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Diagnostics.IntegrationEventIds.html">IntegrationEventIds</a></h4>
-      <section><p>Contains the <span class="xref">Microsoft.Extensions.Logging.EventId</span> constants of all events logged by the Silverback.Integration
+      <h4><a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html">IntegrationLogEvents</a></h4>
+      <section><p>Contains the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> constants of all events logged by the Silverback.Integration
 package.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Diagnostics.KafkaEventIds.html">KafkaEventIds</a></h4>
-      <section><p>Contains the <span class="xref">Microsoft.Extensions.Logging.EventId</span> constants of all events logged by the Silverback.Integration.Kafka
-package.</p>
+      <h4><a class="xref" href="Silverback.Diagnostics.KafkaLogEvents.html">KafkaLogEvents</a></h4>
+      <section><p>Contains the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> constants of all events logged by the
+Silverback.Integration.Kafka package.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Diagnostics.RabbitEventIds.html">RabbitEventIds</a></h4>
-      <section><p>Contains the <span class="xref">Microsoft.Extensions.Logging.EventId</span> constants of all events logged by the Silverback.Integration.Kafka
-package.</p>
+      <h4><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></h4>
+      <section><p>Encapsulates the log level, id and message.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Diagnostics.MqttLogEvents.html">MqttLogEvents</a></h4>
+      <section><p>Contains the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> constants of all events logged by the
+Silverback.Integration.Mqtt package.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Diagnostics.RabbitLogEvents.html">RabbitLogEvents</a></h4>
+      <section><p>Contains the <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> constants of all events logged by the
+Silverback.Integration.RabbitMQ package.</p>
 </section>
     <h3 id="interfaces">Interfaces
   </h3>
+      <h4><a class="xref" href="Silverback.Diagnostics.IInboundLogger-1.html">IInboundLogger&lt;TCategoryName&gt;</a></h4>
+      <section><p>An <see cref="!:ILogger&lt;TCategoryName>"></see> with some specific methods to log inbound messages
+related events.</p>
+</section>
       <h4><a class="xref" href="Silverback.Diagnostics.ILogLevelDictionary.html">ILogLevelDictionary</a></h4>
-      <section><p>Maps <span class="xref">Microsoft.Extensions.Logging.EventId</span>s to the <span class="xref">Microsoft.Extensions.Logging.LogLevel</span> that should be used for it.</p>
+      <section><p>Maps <see cref="!:EventId"></see>s to the <span class="xref">System.LogLevel</span> that should be used for it.</p>
 </section>
-      <h4><a class="xref" href="Silverback.Diagnostics.ILogTemplates.html">ILogTemplates</a></h4>
-      <section><p>Handles the templates of the string appended to the log message by the
-<a class="xref" href="Silverback.Diagnostics.ISilverbackIntegrationLogger.html">ISilverbackIntegrationLogger</a> to log additional message data such as endpoint name,
-message type, etc.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Diagnostics.ISilverbackIntegrationLogger.html">ISilverbackIntegrationLogger</a></h4>
-      <section><p>Extends the <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger-1.html">ISilverbackLogger&lt;TCategoryName&gt;</a> adding some methods used to consistently
-enrich the log entry with the information about the message(s) being produced or consumed.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Diagnostics.ISilverbackIntegrationLogger-1.html">ISilverbackIntegrationLogger&lt;TCategoryName&gt;</a></h4>
-      <section><p>Extends the <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger-1.html">ISilverbackLogger&lt;TCategoryName&gt;</a> adding some methods used to consistently
-enrich the log entry with the information about the message(s) being produced or consumed.</p>
+      <h4><a class="xref" href="Silverback.Diagnostics.IOutboundLogger-1.html">IOutboundLogger&lt;TCategoryName&gt;</a></h4>
+      <section><p>An <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger-1.html">ISilverbackLogger&lt;TCategoryName&gt;</a> with some specific methods to log outbound messages
+related events.</p>
 </section>
       <h4><a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a></h4>
-      <section><p>Custom logger for Silverback.</p>
+      <section><p>Used to perform logging in Silverback.</p>
 </section>
       <h4><a class="xref" href="Silverback.Diagnostics.ISilverbackLogger-1.html">ISilverbackLogger&lt;TCategoryName&gt;</a></h4>
-      <section><p>Custom logger for Silverback.</p>
+      <section><p>Used to perform logging in Silverback.</p>
 </section>
 </article>
           </div>

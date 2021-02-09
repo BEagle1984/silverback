@@ -133,14 +133,14 @@
   
   
   <a id="Microsoft_Extensions_DependencyInjection_ServiceCollectionUseMockedKafkaExtensions_UseMockedKafka_" data-uid="Microsoft.Extensions.DependencyInjection.ServiceCollectionUseMockedKafkaExtensions.UseMockedKafka*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_ServiceCollectionUseMockedKafkaExtensions_UseMockedKafka_IServiceCollection_System_Nullable_Action_IMockedKafkaOptionsBuilder___" data-uid="Microsoft.Extensions.DependencyInjection.ServiceCollectionUseMockedKafkaExtensions.UseMockedKafka(IServiceCollection,System.Nullable{Action{IMockedKafkaOptionsBuilder}})">UseMockedKafka(IServiceCollection, Nullable&lt;Action&lt;IMockedKafkaOptionsBuilder&gt;&gt;)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_ServiceCollectionUseMockedKafkaExtensions_UseMockedKafka_IServiceCollection_System_Action_IMockedKafkaOptionsBuilder__" data-uid="Microsoft.Extensions.DependencyInjection.ServiceCollectionUseMockedKafkaExtensions.UseMockedKafka(IServiceCollection,System.Action{IMockedKafkaOptionsBuilder})">UseMockedKafka(IServiceCollection, Action&lt;IMockedKafkaOptionsBuilder&gt;)</h4>
   <div class="markdown level1 summary"><p>Replaces the Kafka connectivity based on Confluent.Kafka with a mocked in-memory message broker that
 <strong>more or less</strong> replicates the Kafka behavior.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IServiceCollection UseMockedKafka(this IServiceCollection services, Action&lt;IMockedKafkaOptionsBuilder&gt;? optionsAction = default(Action&lt;IMockedKafkaOptionsBuilder&gt;? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public static IServiceCollection UseMockedKafka(this IServiceCollection services, Action&lt;IMockedKafkaOptionsBuilder&gt; optionsAction = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -160,7 +160,7 @@ to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<span class="xref">IMockedKafkaOptionsBuilder</span>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">IMockedKafkaOptionsBuilder</span>&gt;</td>
         <td><span class="parametername">optionsAction</span></td>
         <td><p>Additional options (such as topics and partitions settings).</p>
 </td>

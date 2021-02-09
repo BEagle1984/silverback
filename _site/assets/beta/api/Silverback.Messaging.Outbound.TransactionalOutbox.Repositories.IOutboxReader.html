@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IOutboxReader
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -94,22 +94,17 @@
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.html">Silverback.Messaging.Outbound.TransactionalOutbox.Repositories</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public interface IOutboxReader</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_AcknowledgeAsync_Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.AcknowledgeAsync(Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/IOutboxReader.cs/#L56">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_AcknowledgeAsync_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.AcknowledgeAsync*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_AcknowledgeAsync_Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.AcknowledgeAsync(Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage)">AcknowledgeAsync(OutboxStoredMessage)</h4>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_AcknowledgeAsync_OutboxStoredMessage_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.AcknowledgeAsync(OutboxStoredMessage)">AcknowledgeAsync(OutboxStoredMessage)</h4>
   <div class="markdown level1 summary"><p>Called after the message has been successfully produced to remove it from the outbox.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -128,7 +123,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.html">OutboxStoredMessage</a></td>
+        <td><span class="xref">OutboxStoredMessage</span></td>
         <td><span class="parametername">outboxMessage</span></td>
         <td><p>The message that was processed.</p>
 </td>
@@ -145,19 +140,14 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the result of the asynchronous operation.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> representing the result of the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_GetLengthAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.GetLengthAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/IOutboxReader.cs/#L23">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_GetLengthAsync_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.GetLengthAsync*"></a>
   <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_GetLengthAsync" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.GetLengthAsync">GetLengthAsync()</h4>
   <div class="markdown level1 summary"><p>Returns the total number of messages in the outbox.</p>
@@ -177,20 +167,15 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+        <td><span class="xref">Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
 number of messages in the outbox.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_GetMaxAgeAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.GetMaxAgeAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/IOutboxReader.cs/#L32">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_GetMaxAgeAsync_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.GetMaxAgeAsync*"></a>
   <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_GetMaxAgeAsync" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.GetMaxAgeAsync">GetMaxAgeAsync()</h4>
   <div class="markdown level1 summary"><p>Gets a <span class="xref">System.TimeSpan</span> representing the time elapsed since the oldest message currently in
@@ -211,19 +196,14 @@ the outbox was written.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="xref">Task</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><p>The age of the oldest message.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_ReadAsync_System_Int32_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.ReadAsync(System.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/IOutboxReader.cs/#L45">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_ReadAsync_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.ReadAsync*"></a>
   <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_ReadAsync_System_Int32_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.ReadAsync(System.Int32)">ReadAsync(Int32)</h4>
   <div class="markdown level1 summary"><p>Reads the specified number of messages from the outbox (according to the FIFO rule). The operation
@@ -262,22 +242,17 @@ must be acknowledged for the messages to be removed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.html">OutboxStoredMessage</a>&gt;&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the result of the asynchronous operation. The task result
-contains the collection of <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.html">OutboxStoredMessage</a>.</p>
+        <td><span class="xref">Task</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">OutboxStoredMessage</span>&gt;&gt;</td>
+        <td><p>A <see cref="!:Task"></see> representing the result of the asynchronous operation. The task result
+contains the collection of <see cref="!:OutboxStoredMessage"></see>.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_RetryAsync_Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.RetryAsync(Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/IOutboxReader.cs/#L67">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_RetryAsync_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.RetryAsync*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_RetryAsync_Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.RetryAsync(Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage)">RetryAsync(OutboxStoredMessage)</h4>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader_RetryAsync_OutboxStoredMessage_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.RetryAsync(OutboxStoredMessage)">RetryAsync(OutboxStoredMessage)</h4>
   <div class="markdown level1 summary"><p>Called when an error occurs producing the message to re-enqueue it and retry later on.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -296,7 +271,7 @@ contains the collection of <a class="xref" href="Silverback.Messaging.Outbound.T
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.html">OutboxStoredMessage</a></td>
+        <td><span class="xref">OutboxStoredMessage</span></td>
         <td><span class="parametername">outboxMessage</span></td>
         <td><p>The message that was processed.</p>
 </td>
@@ -313,8 +288,8 @@ contains the collection of <a class="xref" href="Silverback.Messaging.Outbound.T
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the result of the asynchronous operation.</p>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> representing the result of the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
@@ -326,12 +301,6 @@ contains the collection of <a class="xref" href="Silverback.Messaging.Outbound.T
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxReader.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/IOutboxReader.cs/#L14" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

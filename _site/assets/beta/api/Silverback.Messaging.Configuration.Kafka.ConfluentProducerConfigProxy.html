@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ConfluentProducerConfigProxy
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,14 +90,14 @@
   
   <h1 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy" class="text-break">Class ConfluentProducerConfigProxy
   </h1>
-  <div class="markdown level0 summary"><p>Wraps the <span class="xref">Confluent.Kafka.ProducerConfig</span>.</p>
+  <div class="markdown level0 summary"><p>Wraps the <see cref="!:Confluent.Kafka.ProducerConfig"></see>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxyBase.html">ConfluentClientConfigProxyBase</a></div>
-    <div class="level2"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html">ConfluentClientConfigProxy</a>&lt;<span class="xref">Confluent.Kafka.ProducerConfig</span>&gt;</div>
+    <div class="level2"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy-1.html">ConfluentClientConfigProxy</a>&lt;<span class="xref">ProducerConfig</span>&gt;</div>
     <div class="level3"><span class="xref">ConfluentProducerConfigProxy</span></div>
       <div class="level4"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html">KafkaProducerConfig</a></div>
   </div>
@@ -303,10 +303,16 @@
       <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxyBase.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxyBase_Validate">ConfluentClientConfigProxyBase.Validate()</a>
     </div>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -317,36 +323,25 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.Kafka.html">Silverback.Messaging.Configuration.Kafka</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public abstract class ConfluentProducerConfigProxy : ConfluentClientConfigProxy&lt;ProducerConfig&gt;, IValidatableEndpointSettings</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy__ctor_Confluent_Kafka_ClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.%23ctor(Confluent.Kafka.ClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1003">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy__ctor_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy__ctor_Confluent_Kafka_ClientConfig_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.#ctor(Confluent.Kafka.ClientConfig)">ConfluentProducerConfigProxy(ClientConfig)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy__ctor_System_Nullable_ClientConfig__" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.#ctor(System.Nullable{ClientConfig})">ConfluentProducerConfigProxy(Nullable&lt;ClientConfig&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.html">ConfluentProducerConfigProxy</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected ConfluentProducerConfigProxy(ClientConfig clientConfig = null)</code></pre>
+    <pre><code class="lang-csharp hljs">protected ConfluentProducerConfigProxy(ClientConfig? clientConfig = default(ClientConfig? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -359,23 +354,18 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Confluent.Kafka.ClientConfig</span></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">ClientConfig</span>&gt;</td>
         <td><span class="parametername">clientConfig</span></td>
-        <td><p>The <span class="xref">Confluent.Kafka.ClientConfig</span> to be used to initialize the
-<span class="xref">Confluent.Kafka.ProducerConfig</span>.</p>
+        <td><p>The <see cref="!:Confluent.Kafka.ClientConfig"></see> to be used to initialize the
+<see cref="!:Confluent.Kafka.ProducerConfig"></see>.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h3 id="properties">Properties
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_BatchNumMessages.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.BatchNumMessages%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1230">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_BatchNumMessages_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.BatchNumMessages*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_BatchNumMessages" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.BatchNumMessages">BatchNumMessages</h4>
   <div class="markdown level1 summary"><p>Maximum number of messages batched in one MessageSet. The total MessageSet size is also limited by
@@ -401,13 +391,8 @@ batch.size and message.max.bytes. default: 10000 importance: medium</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_BatchSize.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.BatchSize%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1242">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_BatchSize_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.BatchSize*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_BatchSize" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.BatchSize">BatchSize</h4>
   <div class="markdown level1 summary"><p>Maximum size (in bytes) of all messages batched in one MessageSet, including protocol framing overhead.
@@ -435,13 +420,8 @@ size is also limited by batch.num.messages and message.max.bytes. default: 10000
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_CompressionLevel.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.CompressionLevel%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1089">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_CompressionLevel_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.CompressionLevel*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_CompressionLevel" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.CompressionLevel">CompressionLevel</h4>
   <div class="markdown level1 summary"><p>Compression level parameter for algorithm selected by configuration property <code>compression.codec</code>. Higher
@@ -469,13 +449,8 @@ compression level. default: -1 importance: medium</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_CompressionType.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.CompressionType%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1220">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_CompressionType_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.CompressionType*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_CompressionType" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.CompressionType">CompressionType</h4>
   <div class="markdown level1 summary"><p>compression codec to use for compressing message sets. This is the default value for all topics, may be
@@ -496,18 +471,13 @@ overridden by the topic configuration property <code>compression.codec</code>. d
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Confluent.Kafka.CompressionType</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">CompressionType</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_DeliveryReportFields.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.DeliveryReportFields%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1035">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_DeliveryReportFields_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.DeliveryReportFields*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_DeliveryReportFields" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.DeliveryReportFields">DeliveryReportFields</h4>
   <div class="markdown level1 summary"><p>A comma separated list of fields that may be optionally set in delivery reports. Disabling delivery
@@ -534,13 +504,8 @@ values: key, value, timestamp, headers, all, none. default: all importance: low<
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableBackgroundPoll.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableBackgroundPoll%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1013">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableBackgroundPoll_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableBackgroundPoll*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableBackgroundPoll" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableBackgroundPoll">EnableBackgroundPoll</h4>
   <div class="markdown level1 summary"><p>Specifies whether or not the producer should start a background poll thread to receive delivery reports
@@ -567,13 +532,8 @@ the Poll function manually. default: true importance: low</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableDeliveryReports.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableDeliveryReports%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1024">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableDeliveryReports_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableDeliveryReports*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableDeliveryReports" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableDeliveryReports">EnableDeliveryReports</h4>
   <div class="markdown level1 summary"><p>Specifies whether to enable notification of delivery reports. Typically you should set this parameter to
@@ -600,13 +560,8 @@ importance: low</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableGaplessGuarantee.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableGaplessGuarantee%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1145">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableGaplessGuarantee_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableGaplessGuarantee*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableGaplessGuarantee" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableGaplessGuarantee">EnableGaplessGuarantee</h4>
   <div class="markdown level1 summary"><p><strong>EXPERIMENTAL</strong>: subject to change or removal. When set to <code>true</code>, any error that could result in a gap
@@ -634,13 +589,8 @@ covered by this guarantee. Requires <code>enable.idempotence=true</code>. defaul
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableIdempotence.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableIdempotence%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1133">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableIdempotence_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableIdempotence*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_EnableIdempotence" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.EnableIdempotence">EnableIdempotence</h4>
   <div class="markdown level1 summary"><p>When set to <code>true</code>, the producer will ensure that messages are successfully produced exactly once and in
@@ -670,13 +620,8 @@ default: false importance: high</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_LingerMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.LingerMs%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1178">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_LingerMs_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.LingerMs*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_LingerMs" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.LingerMs">LingerMs</h4>
   <div class="markdown level1 summary"><p>Delay in milliseconds to wait for messages in the producer queue to accumulate before constructing
@@ -704,13 +649,8 @@ message delivery latency. default: 0.5 importance: high</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_MessageSendMaxRetries.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.MessageSendMaxRetries%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1188">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_MessageSendMaxRetries_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.MessageSendMaxRetries*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_MessageSendMaxRetries" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.MessageSendMaxRetries">MessageSendMaxRetries</h4>
   <div class="markdown level1 summary"><p>How many times to retry sending a failing Message. <strong>Note:</strong> retrying may cause reordering unless
@@ -736,13 +676,8 @@ message delivery latency. default: 0.5 importance: high</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_MessageTimeoutMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.MessageTimeoutMs%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1062">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_MessageTimeoutMs_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.MessageTimeoutMs*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_MessageTimeoutMs" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.MessageTimeoutMs">MessageTimeoutMs</h4>
   <div class="markdown level1 summary"><p>Local message timeout. This value is only enforced locally and limits the time a produced message waits
@@ -771,13 +706,8 @@ are exceeded. The message timeout is automatically adjusted to <code>transaction
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_Partitioner.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.Partitioner%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1077">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_Partitioner_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.Partitioner*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_Partitioner" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.Partitioner">Partitioner</h4>
   <div class="markdown level1 summary"><p>Partitioner: <code>random</code> - random distribution, <code>consistent</code> - CRC32 hash of key (Empty and NULL keys are
@@ -803,18 +733,13 @@ keys are randomly partitioned). default: consistent_random importance: high</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Confluent.Kafka.Partitioner</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Partitioner</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_QueueBufferingBackpressureThreshold.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.QueueBufferingBackpressureThreshold%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1210">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_QueueBufferingBackpressureThreshold_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.QueueBufferingBackpressureThreshold*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_QueueBufferingBackpressureThreshold" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.QueueBufferingBackpressureThreshold">QueueBufferingBackpressureThreshold</h4>
   <div class="markdown level1 summary"><p>The threshold of outstanding not yet transmitted broker requests needed to backpressure the producer's
@@ -843,13 +768,8 @@ latency when using compression on slow machines. default: 1 importance: low</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_QueueBufferingMaxKbytes.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.QueueBufferingMaxKbytes%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1166">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_QueueBufferingMaxKbytes_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.QueueBufferingMaxKbytes*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_QueueBufferingMaxKbytes" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.QueueBufferingMaxKbytes">QueueBufferingMaxKbytes</h4>
   <div class="markdown level1 summary"><p>Maximum total message size sum allowed on the producer queue. This queue is shared by all topics and
@@ -876,13 +796,8 @@ importance: high</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_QueueBufferingMaxMessages.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.QueueBufferingMaxMessages%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1155">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_QueueBufferingMaxMessages_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.QueueBufferingMaxMessages*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_QueueBufferingMaxMessages" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.QueueBufferingMaxMessages">QueueBufferingMaxMessages</h4>
   <div class="markdown level1 summary"><p>Maximum number of messages allowed on the producer queue. This queue is shared by all topics and
@@ -908,13 +823,8 @@ partitions. default: 100000 importance: high</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_RequestTimeoutMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.RequestTimeoutMs%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1049">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_RequestTimeoutMs_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.RequestTimeoutMs*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_RequestTimeoutMs" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.RequestTimeoutMs">RequestTimeoutMs</h4>
   <div class="markdown level1 summary"><p>The ack timeout of the producer request in milliseconds. This value is only enforced by the broker and
@@ -940,13 +850,8 @@ relies on <code>request.required.acks</code> being != 0. default: 5000 importanc
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_RetryBackoffMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.RetryBackoffMs%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1197">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_RetryBackoffMs_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.RetryBackoffMs*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_RetryBackoffMs" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.RetryBackoffMs">RetryBackoffMs</h4>
   <div class="markdown level1 summary"><p>The backoff time in milliseconds before retrying a protocol request. default: 100 importance: medium</p>
@@ -971,13 +876,8 @@ relies on <code>request.required.acks</code> being != 0. default: 5000 importanc
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_TransactionalId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.TransactionalId%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1103">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_TransactionalId_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.TransactionalId*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_TransactionalId" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.TransactionalId">TransactionalId</h4>
   <div class="markdown level1 summary"><p>Enables the transactional producer. The transactional.id is used to identify the same transactional
@@ -1007,13 +907,8 @@ producer is limited to idempotent delivery (if enable.idempotence is set). Requi
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_TransactionTimeoutMs.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.TransactionTimeoutMs%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L1119">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_TransactionTimeoutMs_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.TransactionTimeoutMs*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy_TransactionTimeoutMs" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy.TransactionTimeoutMs">TransactionTimeoutMs</h4>
   <div class="markdown level1 summary"><p>The maximum amount of time in milliseconds that the transaction coordinator will wait for a transaction
@@ -1056,12 +951,6 @@ transactional API methods. default: 60000 importance: medium</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentProducerConfigProxy.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentProducerConfigProxy%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L988" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

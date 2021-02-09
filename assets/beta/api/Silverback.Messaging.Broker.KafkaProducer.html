@@ -103,7 +103,7 @@
   <div classs="implements">
     <h5>Implements</h5>
     <div><a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a></div>
-    <div><span class="xref">IDisposable</span></div>
+    <div><span class="xref">System.IDisposable</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -124,6 +124,9 @@
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_IsConnected">Producer.IsConnected</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_IsConnecting">Producer.IsConnecting</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ConnectAsync">Producer.ConnectAsync()</a>
@@ -206,13 +209,13 @@
   
   
   <a id="Silverback_Messaging_Broker_KafkaProducer__ctor_" data-uid="Silverback.Messaging.Broker.KafkaProducer.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Broker_KafkaProducer__ctor_Silverback_Messaging_Broker_KafkaBroker_Silverback_Messaging_KafkaProducerEndpoint_IBrokerBehaviorsProvider_IProducerBehavior__IServiceProvider_ISilverbackIntegrationLogger_Silverback_Messaging_Broker_KafkaProducer__" data-uid="Silverback.Messaging.Broker.KafkaProducer.#ctor(Silverback.Messaging.Broker.KafkaBroker,Silverback.Messaging.KafkaProducerEndpoint,IBrokerBehaviorsProvider{IProducerBehavior},IServiceProvider,ISilverbackIntegrationLogger{Silverback.Messaging.Broker.KafkaProducer})">KafkaProducer(KafkaBroker, KafkaProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider, ISilverbackIntegrationLogger&lt;KafkaProducer&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_KafkaProducer__ctor_Silverback_Messaging_Broker_KafkaBroker_Silverback_Messaging_KafkaProducerEndpoint_IBrokerBehaviorsProvider_IProducerBehavior__System_IServiceProvider_IOutboundLogger_Silverback_Messaging_Broker_KafkaProducer__" data-uid="Silverback.Messaging.Broker.KafkaProducer.#ctor(Silverback.Messaging.Broker.KafkaBroker,Silverback.Messaging.KafkaProducerEndpoint,IBrokerBehaviorsProvider{IProducerBehavior},System.IServiceProvider,IOutboundLogger{Silverback.Messaging.Broker.KafkaProducer})">KafkaProducer(KafkaBroker, KafkaProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider, IOutboundLogger&lt;KafkaProducer&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.KafkaProducer.html">KafkaProducer</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt; behaviorsProvider, IServiceProvider serviceProvider, ISilverbackIntegrationLogger&lt;KafkaProducer&gt; logger)</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaProducer(KafkaBroker broker, KafkaProducerEndpoint endpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt; behaviorsProvider, IServiceProvider serviceProvider, IOutboundLogger&lt;KafkaProducer&gt; logger)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -243,15 +246,15 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IServiceProvider</span></td>
+        <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <see cref="!:IServiceProvider"></see> to be used to resolve the required services.</p>
+        <td><p>The <span class="xref">System.IServiceProvider</span> to be used to resolve the required services.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">ISilverbackIntegrationLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.KafkaProducer.html">KafkaProducer</a>&gt;</td>
+        <td><span class="xref">IOutboundLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.KafkaProducer.html">KafkaProducer</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <see cref="!:ISilverbackIntegrationLogger"></see>.</p>
+        <td><p>The <see cref="!:IOutboundLogger&lt;TCategoryName>"></see>.</p>
 </td>
       </tr>
     </tbody>
@@ -368,7 +371,7 @@ message identifier assigned by the broker (the Kafka offset or similar).</p>
       <a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>
   </div>
   <div>
-      <span class="xref">IDisposable</span>
+      <span class="xref">System.IDisposable</span>
   </div>
 </article>
           </div>

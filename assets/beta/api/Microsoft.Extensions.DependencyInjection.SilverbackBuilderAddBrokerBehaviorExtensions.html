@@ -133,59 +133,6 @@
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddSingletonBrokerBehavior_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddSingletonBrokerBehavior*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddSingletonBrokerBehavior_ISilverbackBuilder_Func_IServiceProvider_IBrokerBehavior__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddSingletonBrokerBehavior(ISilverbackBuilder,Func{IServiceProvider,IBrokerBehavior})">AddSingletonBrokerBehavior(ISilverbackBuilder, Func&lt;IServiceProvider, IBrokerBehavior&gt;)</h4>
-  <div class="markdown level1 summary"><p>Adds a singleton behavior with a factory specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to
-the <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonBrokerBehavior(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, IBrokerBehavior&gt; implementationFactory)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
-        <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
-the services to.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, <span class="xref">IBrokerBehavior</span>&gt;</td>
-        <td><span class="parametername">implementationFactory</span></td>
-        <td><p>The factory that creates the service.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddSingletonBrokerBehavior_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddSingletonBrokerBehavior*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddSingletonBrokerBehavior_ISilverbackBuilder_IBrokerBehavior_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddSingletonBrokerBehavior(ISilverbackBuilder,IBrokerBehavior)">AddSingletonBrokerBehavior(ISilverbackBuilder, IBrokerBehavior)</h4>
   <div class="markdown level1 summary"><p>Adds a singleton behavior with an instance specified in <code data-dev-comment-type="paramref" class="paramref">implementationInstance</code>
 to the <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
@@ -239,7 +186,60 @@ the services to.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddSingletonBrokerBehavior_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddSingletonBrokerBehavior*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddSingletonBrokerBehavior_ISilverbackBuilder_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddSingletonBrokerBehavior(ISilverbackBuilder,Type)">AddSingletonBrokerBehavior(ISilverbackBuilder, Type)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddSingletonBrokerBehavior_ISilverbackBuilder_System_Func_System_IServiceProvider_IBrokerBehavior__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddSingletonBrokerBehavior(ISilverbackBuilder,System.Func{System.IServiceProvider,IBrokerBehavior})">AddSingletonBrokerBehavior(ISilverbackBuilder, Func&lt;IServiceProvider, IBrokerBehavior&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a singleton behavior with a factory specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to
+the <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddSingletonBrokerBehavior(this ISilverbackBuilder silverbackBuilder, Func&lt;IServiceProvider, IBrokerBehavior&gt; implementationFactory)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><span class="parametername">silverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
+the services to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, <span class="xref">IBrokerBehavior</span>&gt;</td>
+        <td><span class="parametername">implementationFactory</span></td>
+        <td><p>The factory that creates the service.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddSingletonBrokerBehavior_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddSingletonBrokerBehavior*"></a>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddSingletonBrokerBehavior_ISilverbackBuilder_System_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddSingletonBrokerBehavior(ISilverbackBuilder,System.Type)">AddSingletonBrokerBehavior(ISilverbackBuilder, Type)</h4>
   <div class="markdown level1 summary"><p>Adds a singleton behavior of the type specified in <code data-dev-comment-type="paramref" class="paramref">behaviorType</code> to the
 <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
 </div>
@@ -266,7 +266,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">behaviorType</span></td>
         <td><p>The type of the behavior to register and the implementation to use.</p>
 </td>
@@ -356,7 +356,7 @@ the services to.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddTransientBrokerBehavior_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddTransientBrokerBehavior*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddTransientBrokerBehavior_ISilverbackBuilder_Func_IServiceProvider_IBrokerBehavior__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddTransientBrokerBehavior(ISilverbackBuilder,Func{IServiceProvider,IBrokerBehavior})">AddTransientBrokerBehavior(ISilverbackBuilder, Func&lt;IServiceProvider, IBrokerBehavior&gt;)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddTransientBrokerBehavior_ISilverbackBuilder_System_Func_System_IServiceProvider_IBrokerBehavior__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddTransientBrokerBehavior(ISilverbackBuilder,System.Func{System.IServiceProvider,IBrokerBehavior})">AddTransientBrokerBehavior(ISilverbackBuilder, Func&lt;IServiceProvider, IBrokerBehavior&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a transient behavior with a factory specified in <code data-dev-comment-type="paramref" class="paramref">implementationFactory</code> to
 the <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
 </div>
@@ -383,7 +383,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">IServiceProvider</span>, <span class="xref">IBrokerBehavior</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.IServiceProvider</span>, <span class="xref">IBrokerBehavior</span>&gt;</td>
         <td><span class="parametername">implementationFactory</span></td>
         <td><p>The factory that creates the service.</p>
 </td>
@@ -409,7 +409,7 @@ the services to.</p>
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddTransientBrokerBehavior_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddTransientBrokerBehavior*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddTransientBrokerBehavior_ISilverbackBuilder_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddTransientBrokerBehavior(ISilverbackBuilder,Type)">AddTransientBrokerBehavior(ISilverbackBuilder, Type)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddBrokerBehaviorExtensions_AddTransientBrokerBehavior_ISilverbackBuilder_System_Type_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddBrokerBehaviorExtensions.AddTransientBrokerBehavior(ISilverbackBuilder,System.Type)">AddTransientBrokerBehavior(ISilverbackBuilder, Type)</h4>
   <div class="markdown level1 summary"><p>Adds a transient behavior of the type specified in <code data-dev-comment-type="paramref" class="paramref">behaviorType</code> to the
 <see cref="!:Microsoft.Extensions.DependencyInjection.IServiceCollection"></see>.</p>
 </div>
@@ -436,7 +436,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">behaviorType</span></td>
         <td><p>The type of the behavior to register and the implementation to use.</p>
 </td>

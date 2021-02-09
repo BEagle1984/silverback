@@ -133,13 +133,13 @@
   
   
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderWithConnectionToExtensions_WithConnectionToMessageBroker_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderWithConnectionToExtensions.WithConnectionToMessageBroker*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderWithConnectionToExtensions_WithConnectionToMessageBroker_ISilverbackBuilder_System_Nullable_Action_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder___" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderWithConnectionToExtensions.WithConnectionToMessageBroker(ISilverbackBuilder,System.Nullable{Action{Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder}})">WithConnectionToMessageBroker(ISilverbackBuilder, Nullable&lt;Action&lt;IBrokerOptionsBuilder&gt;&gt;)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderWithConnectionToExtensions_WithConnectionToMessageBroker_ISilverbackBuilder_System_Action_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderWithConnectionToExtensions.WithConnectionToMessageBroker(ISilverbackBuilder,System.Action{Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder})">WithConnectionToMessageBroker(ISilverbackBuilder, Action&lt;IBrokerOptionsBuilder&gt;)</h4>
   <div class="markdown level1 summary"><p>Registers the types needed to connect with a message broker.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder WithConnectionToMessageBroker(this ISilverbackBuilder silverbackBuilder, Action&lt;IBrokerOptionsBuilder&gt;? optionsAction = default(Action&lt;IBrokerOptionsBuilder&gt;? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder WithConnectionToMessageBroker(this ISilverbackBuilder silverbackBuilder, Action&lt;IBrokerOptionsBuilder&gt; optionsAction = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -159,7 +159,7 @@ the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a>&gt;</td>
         <td><span class="parametername">optionsAction</span></td>
         <td><p>Additional options such as the actual message brokers to be used.</p>
 </td>

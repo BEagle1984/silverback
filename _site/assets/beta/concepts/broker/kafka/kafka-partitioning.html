@@ -8,7 +8,7 @@
     <title>Kafka Partitioning and Message Key | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Kafka Partitioning and Message Key | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../../images/icons/apple-touch-icon.png">
@@ -89,7 +89,7 @@
 <h2 id="producer">Producer</h2>
 <h3 id="destination-partition">Destination partition</h3>
 <p>If the destination topic contains multiple partitions, the destination partition is picked according to the hash of the <a href="#message-key">message key</a>. If no explicit message key was set, a random one is generated, resulting in the messages being randomly spread across the partitions.</p>
-<p>You can override this default behavior explicitly setting the target partition in the endpoint. The endpoint can be statically defined like in the following snippet or resolved via <a class="xref" href="../outbound.html#dynamic-custom-routing">dynamic routing</a>.</p>
+<p>You can override this default behavior explicitly setting the target partition in the endpoint. The endpoint can be statically defined like in the following snippet or resolved via <a class="xref" href="../outbound-routing.html">dynamic routing</a>.</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
 <li role="presentation">

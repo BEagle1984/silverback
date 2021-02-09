@@ -189,13 +189,13 @@ transactional services (see <a class="xref" href="Silverback.Messaging.Inbound.T
   
   
   <a id="Silverback_Messaging_Inbound_Transaction_IConsumerTransactionManager_RollbackAsync_" data-uid="Silverback.Messaging.Inbound.Transaction.IConsumerTransactionManager.RollbackAsync*"></a>
-  <h4 id="Silverback_Messaging_Inbound_Transaction_IConsumerTransactionManager_RollbackAsync_System_Nullable_Exception__System_Boolean_System_Boolean_System_Boolean_" data-uid="Silverback.Messaging.Inbound.Transaction.IConsumerTransactionManager.RollbackAsync(System.Nullable{Exception},System.Boolean,System.Boolean,System.Boolean)">RollbackAsync(Nullable&lt;Exception&gt;, Boolean, Boolean, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Inbound_Transaction_IConsumerTransactionManager_RollbackAsync_System_Exception_System_Boolean_System_Boolean_System_Boolean_" data-uid="Silverback.Messaging.Inbound.Transaction.IConsumerTransactionManager.RollbackAsync(System.Exception,System.Boolean,System.Boolean,System.Boolean)">RollbackAsync(Exception, Boolean, Boolean, Boolean)</h4>
   <div class="markdown level1 summary"><p>Aborts the transaction and causes the uncommitted changes to be rolled back.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;bool&gt; RollbackAsync(Exception? exception, bool commitConsumer = false, bool throwIfAlreadyCommitted = true, bool stopConsuming = true)</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;bool&gt; RollbackAsync(Exception exception, bool commitConsumer = false, bool throwIfAlreadyCommitted = true, bool stopConsuming = true)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -208,7 +208,7 @@ transactional services (see <a class="xref" href="Silverback.Messaging.Inbound.T
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Exception</span>&gt;</td>
+        <td><span class="xref">System.Exception</span></td>
         <td><span class="parametername">exception</span></td>
         <td><p>The exception that caused the rollback.</p>
 </td>

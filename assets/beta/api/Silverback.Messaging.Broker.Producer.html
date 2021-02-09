@@ -138,13 +138,13 @@
   
   
   <a id="Silverback_Messaging_Broker_Producer__ctor_" data-uid="Silverback.Messaging.Broker.Producer.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Broker_Producer__ctor_Silverback_Messaging_Broker_IBroker_Silverback_Messaging_IProducerEndpoint_IBrokerBehaviorsProvider_IProducerBehavior__IServiceProvider_ISilverbackIntegrationLogger_Silverback_Messaging_Broker_Producer__" data-uid="Silverback.Messaging.Broker.Producer.#ctor(Silverback.Messaging.Broker.IBroker,Silverback.Messaging.IProducerEndpoint,IBrokerBehaviorsProvider{IProducerBehavior},IServiceProvider,ISilverbackIntegrationLogger{Silverback.Messaging.Broker.Producer})">Producer(IBroker, IProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider, ISilverbackIntegrationLogger&lt;Producer&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_Producer__ctor_Silverback_Messaging_Broker_IBroker_Silverback_Messaging_IProducerEndpoint_IBrokerBehaviorsProvider_IProducerBehavior__System_IServiceProvider_IOutboundLogger_Silverback_Messaging_Broker_Producer__" data-uid="Silverback.Messaging.Broker.Producer.#ctor(Silverback.Messaging.Broker.IBroker,Silverback.Messaging.IProducerEndpoint,IBrokerBehaviorsProvider{IProducerBehavior},System.IServiceProvider,IOutboundLogger{Silverback.Messaging.Broker.Producer})">Producer(IBroker, IProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider, IOutboundLogger&lt;Producer&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.Producer.html">Producer</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected Producer(IBroker broker, IProducerEndpoint endpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt; behaviorsProvider, IServiceProvider serviceProvider, ISilverbackIntegrationLogger&lt;Producer&gt; logger)</code></pre>
+    <pre><code class="lang-csharp hljs">protected Producer(IBroker broker, IProducerEndpoint endpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt; behaviorsProvider, IServiceProvider serviceProvider, IOutboundLogger&lt;Producer&gt; logger)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -175,15 +175,15 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IServiceProvider</span></td>
+        <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <see cref="!:IServiceProvider"></see> to be used to resolve the needed services.</p>
+        <td><p>The <span class="xref">System.IServiceProvider</span> to be used to resolve the needed services.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">ISilverbackIntegrationLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.Producer.html">Producer</a>&gt;</td>
+        <td><span class="xref">IOutboundLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.Producer.html">Producer</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <see cref="!:ISilverbackIntegrationLogger"></see>.</p>
+        <td><p>The <see cref="!:IOutboundLogger&lt;TCategoryName>"></see>.</p>
 </td>
       </tr>
     </tbody>
@@ -246,12 +246,12 @@
   
   <a id="Silverback_Messaging_Broker_Producer_Id_" data-uid="Silverback.Messaging.Broker.Producer.Id*"></a>
   <h4 id="Silverback_Messaging_Broker_Producer_Id" data-uid="Silverback.Messaging.Broker.Producer.Id">Id</h4>
-  <div class="markdown level1 summary"><p>Gets the <see cref="!:Guid"></see> uniquely identifying the producer instance.</p>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.InstanceIdentifier.html">InstanceIdentifier</a> uniquely identifying the producer instance.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Guid Id { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public InstanceIdentifier Id { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -263,7 +263,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Guid</span></td>
+        <td><a class="xref" href="Silverback.InstanceIdentifier.html">InstanceIdentifier</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -279,6 +279,32 @@ messages.</p>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public bool IsConnected { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Silverback_Messaging_Broker_Producer_IsConnecting_" data-uid="Silverback.Messaging.Broker.Producer.IsConnecting*"></a>
+  <h4 id="Silverback_Messaging_Broker_Producer_IsConnecting" data-uid="Silverback.Messaging.Broker.Producer.IsConnecting">IsConnecting</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether this producer is trying to connect to the message broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsConnecting { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">

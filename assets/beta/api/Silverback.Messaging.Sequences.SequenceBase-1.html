@@ -104,7 +104,7 @@ messages in a dataset.</p>
   <div classs="implements">
     <h5>Implements</h5>
     <div><a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a></div>
-    <div><span class="xref">IDisposable</span></div>
+    <div><span class="xref">System.IDisposable</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -156,7 +156,7 @@ messages in a dataset.</p>
   
   
   <a id="Silverback_Messaging_Sequences_SequenceBase_1__ctor_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Sequences_SequenceBase_1__ctor_System_String_ConsumerPipelineContext_System_Boolean_System_Nullable_TimeSpan__System_Nullable_IMessageStreamProvider__" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.#ctor(System.String,ConsumerPipelineContext,System.Boolean,System.Nullable{TimeSpan},System.Nullable{IMessageStreamProvider})">SequenceBase(String, ConsumerPipelineContext, Boolean, Nullable&lt;TimeSpan&gt;, Nullable&lt;IMessageStreamProvider&gt;)</h4>
+  <h4 id="Silverback_Messaging_Sequences_SequenceBase_1__ctor_System_String_ConsumerPipelineContext_System_Boolean_System_Nullable_System_TimeSpan__System_Nullable_IMessageStreamProvider__" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.#ctor(System.String,ConsumerPipelineContext,System.Boolean,System.Nullable{System.TimeSpan},System.Nullable{IMessageStreamProvider})">SequenceBase(String, ConsumerPipelineContext, Boolean, Nullable&lt;TimeSpan&gt;, Nullable&lt;IMessageStreamProvider&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html">SequenceBase&lt;TEnvelope&gt;</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -194,7 +194,7 @@ sequence gets published to the internal bus.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">TimeSpan</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">timeout</span></td>
         <td><p>The timeout to be applied. If not specified the value of <code>Endpoint.Sequence.Timeout</code> will be
 used.</p>
@@ -219,7 +219,7 @@ used.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Exception? AbortException { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Exception AbortException { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -231,7 +231,7 @@ used.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Exception</span>&gt;</td>
+        <td><span class="xref">System.Exception</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -668,14 +668,14 @@ sequence.</p>
   
   
   <a id="Silverback_Messaging_Sequences_SequenceBase_1_AbortAsync_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AbortAsync*"></a>
-  <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_AbortAsync_Silverback_Messaging_Sequences_SequenceAbortReason_System_Nullable_Exception__" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AbortAsync(Silverback.Messaging.Sequences.SequenceAbortReason,System.Nullable{Exception})">AbortAsync(SequenceAbortReason, Nullable&lt;Exception&gt;)</h4>
+  <h4 id="Silverback_Messaging_Sequences_SequenceBase_1_AbortAsync_Silverback_Messaging_Sequences_SequenceAbortReason_System_Exception_" data-uid="Silverback.Messaging.Sequences.SequenceBase`1.AbortAsync(Silverback.Messaging.Sequences.SequenceAbortReason,System.Exception)">AbortAsync(SequenceAbortReason, Exception)</h4>
   <div class="markdown level1 summary"><p>Aborts the sequence processing. Used for example to signal that an exception occurred or the
 enumeration returned prematurely.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task AbortAsync(SequenceAbortReason reason, Exception? exception = default(Exception? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public Task AbortAsync(SequenceAbortReason reason, Exception exception = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -694,7 +694,7 @@ enumeration returned prematurely.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Exception</span>&gt;</td>
+        <td><span class="xref">System.Exception</span></td>
         <td><span class="parametername">exception</span></td>
         <td><p>The exception that caused the abort, if an exception was thrown.</p>
 </td>
@@ -1071,7 +1071,7 @@ aborts the sequence.</p>
       <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a>
   </div>
   <div>
-      <span class="xref">IDisposable</span>
+      <span class="xref">System.IDisposable</span>
   </div>
 </article>
           </div>

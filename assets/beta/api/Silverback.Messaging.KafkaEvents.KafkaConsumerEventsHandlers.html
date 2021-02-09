@@ -154,7 +154,7 @@ offsets committed.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Func&lt;Error, KafkaConsumer, bool&gt;? ErrorHandler { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Func&lt;Error, KafkaConsumer, bool&gt; ErrorHandler { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -166,7 +166,7 @@ offsets committed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Func</span>&lt;<span class="xref">Error</span>, <span class="xref">KafkaConsumer</span>, <span class="xref">System.Boolean</span>&gt;&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">Error</span>, <span class="xref">KafkaConsumer</span>, <span class="xref">System.Boolean</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -186,7 +186,7 @@ offsets committed.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Action&lt;CommittedOffsets, KafkaConsumer&gt;? OffsetsCommittedHandler { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Action&lt;CommittedOffsets, KafkaConsumer&gt; OffsetsCommittedHandler { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -198,7 +198,7 @@ offsets committed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<span class="xref">CommittedOffsets</span>, <span class="xref">KafkaConsumer</span>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">CommittedOffsets</span>, <span class="xref">KafkaConsumer</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -242,7 +242,7 @@ the <code>auto.offset.reset</code> configuration property.
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Func&lt;IReadOnlyCollection&lt;TopicPartition&gt;, KafkaConsumer, IEnumerable&lt;TopicPartitionOffset&gt;&gt;? PartitionsAssignedHandler { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Func&lt;IReadOnlyCollection&lt;TopicPartition&gt;, KafkaConsumer, IEnumerable&lt;TopicPartitionOffset&gt;&gt; PartitionsAssignedHandler { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -254,7 +254,7 @@ the <code>auto.offset.reset</code> configuration property.
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Func</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">TopicPartition</span>&gt;, <span class="xref">KafkaConsumer</span>, <span class="xref">IEnumerable</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;&gt;&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">TopicPartition</span>&gt;, <span class="xref">KafkaConsumer</span>, <span class="xref">IEnumerable</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -276,7 +276,7 @@ the <code>auto.offset.reset</code> configuration property.
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Action&lt;IReadOnlyCollection&lt;TopicPartitionOffset&gt;, KafkaConsumer&gt;? PartitionsRevokedHandler { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Action&lt;IReadOnlyCollection&lt;TopicPartitionOffset&gt;, KafkaConsumer&gt; PartitionsRevokedHandler { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -288,7 +288,7 @@ the <code>auto.offset.reset</code> configuration property.
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;, <span class="xref">KafkaConsumer</span>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;, <span class="xref">KafkaConsumer</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -308,7 +308,7 @@ the <code>auto.offset.reset</code> configuration property.
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Action&lt;KafkaStatistics, string, KafkaConsumer&gt;? StatisticsHandler { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public Action&lt;KafkaStatistics, string, KafkaConsumer&gt; StatisticsHandler { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -320,7 +320,7 @@ the <code>auto.offset.reset</code> configuration property.
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<span class="xref">KafkaStatistics</span>, <span class="xref">System.String</span>, <span class="xref">KafkaConsumer</span>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">KafkaStatistics</span>, <span class="xref">System.String</span>, <span class="xref">KafkaConsumer</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>

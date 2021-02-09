@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class UnhandledMessageException
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -104,11 +104,15 @@ subscriber.</p>
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.Runtime.Serialization.ISerializable</span></div>
+    <div><span class="xref">System.Runtime.InteropServices._Exception</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
       <span class="xref">System.Exception.GetBaseException()</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.ToString()</span>
     </div>
     <div>
       <span class="xref">System.Exception.GetObjectData(System.Runtime.Serialization.SerializationInfo, System.Runtime.Serialization.StreamingContext)</span>
@@ -117,31 +121,28 @@ subscriber.</p>
       <span class="xref">System.Exception.GetType()</span>
     </div>
     <div>
-      <span class="xref">System.Exception.ToString()</span>
+      <span class="xref">System.Exception.Message</span>
     </div>
     <div>
       <span class="xref">System.Exception.Data</span>
     </div>
     <div>
-      <span class="xref">System.Exception.HelpLink</span>
-    </div>
-    <div>
-      <span class="xref">System.Exception.HResult</span>
-    </div>
-    <div>
       <span class="xref">System.Exception.InnerException</span>
     </div>
     <div>
-      <span class="xref">System.Exception.Message</span>
-    </div>
-    <div>
-      <span class="xref">System.Exception.Source</span>
+      <span class="xref">System.Exception.TargetSite</span>
     </div>
     <div>
       <span class="xref">System.Exception.StackTrace</span>
     </div>
     <div>
-      <span class="xref">System.Exception.TargetSite</span>
+      <span class="xref">System.Exception.HelpLink</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.Source</span>
+    </div>
+    <div>
+      <span class="xref">System.Exception.HResult</span>
     </div>
     <div>
       <span class="xref">System.Exception.SerializeObjectState</span>
@@ -153,31 +154,26 @@ subscriber.</p>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
     </div>
     <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
       <span class="xref">System.Object.GetHashCode()</span>
     </div>
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Publishing.html">Silverback.Messaging.Publishing</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Core.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Publishing_UnhandledMessageException_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[Serializable]
-public class UnhandledMessageException : SilverbackException, ISerializable</code></pre>
+public class UnhandledMessageException : SilverbackException, ISerializable, _Exception</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_UnhandledMessageException__ctor.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.UnhandledMessageException.%23ctor%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/UnhandledMessageException.cs/#L23">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor*"></a>
   <h4 id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor">UnhandledMessageException()</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Publishing.UnhandledMessageException.html">UnhandledMessageException</a> class.</p>
@@ -187,15 +183,10 @@ public class UnhandledMessageException : SilverbackException, ISerializable</cod
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public UnhandledMessageException()</code></pre>
   </div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_Collections_Generic_IReadOnlyCollection_System_Object__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.UnhandledMessageException.%23ctor(System.Collections.Generic.IReadOnlyCollection%7BSystem.Object%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/UnhandledMessageException.cs/#L58">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_Collections_Generic_IReadOnlyCollection_System_Object__" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor(System.Collections.Generic.IReadOnlyCollection{System.Object})">UnhandledMessageException(IReadOnlyCollection&lt;Object&gt;)</h4>
+  <h4 id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_IReadOnlyCollection_System_Object__" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor(IReadOnlyCollection{System.Object})">UnhandledMessageException(IReadOnlyCollection&lt;Object&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Publishing.UnhandledMessageException.html">UnhandledMessageException</a> class with the
 specified message.</p>
 </div>
@@ -215,22 +206,17 @@ specified message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<span class="xref">System.Object</span>&gt;</td>
+        <td><span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">unhandledMessages</span></td>
         <td><p>The messages that weren't handled.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_Collections_Generic_IReadOnlyCollection_System_Object__System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.UnhandledMessageException.%23ctor(System.Collections.Generic.IReadOnlyCollection%7BSystem.Object%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/UnhandledMessageException.cs/#L74">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_Collections_Generic_IReadOnlyCollection_System_Object__System_String_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor(System.Collections.Generic.IReadOnlyCollection{System.Object},System.String)">UnhandledMessageException(IReadOnlyCollection&lt;Object&gt;, String)</h4>
+  <h4 id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_IReadOnlyCollection_System_Object__System_String_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor(IReadOnlyCollection{System.Object},System.String)">UnhandledMessageException(IReadOnlyCollection&lt;Object&gt;, String)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Publishing.UnhandledMessageException.html">UnhandledMessageException</a> class with the
 specified message.</p>
 </div>
@@ -250,7 +236,7 @@ specified message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<span class="xref">System.Object</span>&gt;</td>
+        <td><span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">unhandledMessages</span></td>
         <td><p>The messages that weren't handled.</p>
 </td>
@@ -263,13 +249,46 @@ specified message.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.UnhandledMessageException.%23ctor(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/UnhandledMessageException.cs/#L46">View source</a>
-  </span>
+  
+  
+  <a id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_SerializationInfo_StreamingContext_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor(SerializationInfo,StreamingContext)">UnhandledMessageException(SerializationInfo, StreamingContext)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Publishing.UnhandledMessageException.html">UnhandledMessageException</a> class with the
+serialized data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected UnhandledMessageException(SerializationInfo info, StreamingContext context)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">SerializationInfo</span></td>
+        <td><span class="parametername">info</span></td>
+        <td><p>The <see cref="!:SerializationInfo"></see> that holds the serialized object data about the exception being
+thrown.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">StreamingContext</span></td>
+        <td><span class="parametername">context</span></td>
+        <td><p>The <see cref="!:StreamingContext"></see> that contains contextual information about the source or
+destination.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor*"></a>
   <h4 id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_Object_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor(System.Object)">UnhandledMessageException(Object)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Publishing.UnhandledMessageException.html">UnhandledMessageException</a> class with the
@@ -298,56 +317,8 @@ specified message.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.UnhandledMessageException.%23ctor(System.Runtime.Serialization.SerializationInfo%2CSystem.Runtime.Serialization.StreamingContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/UnhandledMessageException.cs/#L107">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_Runtime_Serialization_SerializationInfo_System_Runtime_Serialization_StreamingContext_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">UnhandledMessageException(SerializationInfo, StreamingContext)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Publishing.UnhandledMessageException.html">UnhandledMessageException</a> class with the
-serialized data.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected UnhandledMessageException(SerializationInfo info, StreamingContext context)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Runtime.Serialization.SerializationInfo</span></td>
-        <td><span class="parametername">info</span></td>
-        <td><p>The <span class="xref">System.Runtime.Serialization.SerializationInfo</span> that holds the serialized object data about the exception being
-thrown.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Runtime.Serialization.StreamingContext</span></td>
-        <td><span class="parametername">context</span></td>
-        <td><p>The <span class="xref">System.Runtime.Serialization.StreamingContext</span> that contains contextual information about the source or
-destination.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.UnhandledMessageException.%23ctor(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/UnhandledMessageException.cs/#L34">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor*"></a>
   <h4 id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_String_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor(System.String)">UnhandledMessageException(String)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Publishing.UnhandledMessageException.html">UnhandledMessageException</a> class with the
@@ -376,13 +347,8 @@ specified message.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_String_System_Exception_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.UnhandledMessageException.%23ctor(System.String%2CSystem.Exception)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/UnhandledMessageException.cs/#L90">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor*"></a>
   <h4 id="Silverback_Messaging_Publishing_UnhandledMessageException__ctor_System_String_System_Exception_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.#ctor(System.String,System.Exception)">UnhandledMessageException(String, Exception)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Publishing.UnhandledMessageException.html">UnhandledMessageException</a> class with the
@@ -419,13 +385,8 @@ specified message and inner exception.</p>
   </table>
   <h3 id="properties">Properties
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_UnhandledMessageException_UnhandledMessages.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.UnhandledMessageException.UnhandledMessages%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/UnhandledMessageException.cs/#L115">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Publishing_UnhandledMessageException_UnhandledMessages_" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.UnhandledMessages*"></a>
   <h4 id="Silverback_Messaging_Publishing_UnhandledMessageException_UnhandledMessages" data-uid="Silverback.Messaging.Publishing.UnhandledMessageException.UnhandledMessages">UnhandledMessages</h4>
   <div class="markdown level1 summary"><p>Gets the messages that weren't handled.</p>
@@ -433,7 +394,7 @@ specified message and inner exception.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;object&gt; UnhandledMessages { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;object&gt;? UnhandledMessages { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -445,7 +406,7 @@ specified message and inner exception.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<span class="xref">System.Object</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">System.Object</span>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -454,6 +415,9 @@ specified message and inner exception.</p>
   <div>
       <span class="xref">System.Runtime.Serialization.ISerializable</span>
   </div>
+  <div>
+      <span class="xref">System.Runtime.InteropServices._Exception</span>
+  </div>
 </article>
           </div>
           
@@ -461,12 +425,6 @@ specified message and inner exception.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_UnhandledMessageException.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.UnhandledMessageException%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Publishing/UnhandledMessageException.cs/#L16" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

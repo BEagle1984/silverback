@@ -90,15 +90,91 @@
   
   <h1 id="Silverback_Diagnostics_ISilverbackLogger" data-uid="Silverback.Diagnostics.ISilverbackLogger" class="text-break">Interface ISilverbackLogger
   </h1>
-  <div class="markdown level0 summary"><p>Custom logger for Silverback.</p>
+  <div class="markdown level0 summary"><p>Used to perform logging in Silverback.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Diagnostics.html">Silverback.Diagnostics</a></h6>
   <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Diagnostics_ISilverbackLogger_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface ISilverbackLogger : ILogger</code></pre>
+    <pre><code class="lang-csharp hljs">public interface ISilverbackLogger</code></pre>
   </div>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Silverback_Diagnostics_ISilverbackLogger_InnerLogger_" data-uid="Silverback.Diagnostics.ISilverbackLogger.InnerLogger*"></a>
+  <h4 id="Silverback_Diagnostics_ISilverbackLogger_InnerLogger" data-uid="Silverback.Diagnostics.ISilverbackLogger.InnerLogger">InnerLogger</h4>
+  <div class="markdown level1 summary"><p>Gets the underlying <see cref="!:ILogger"></see>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ILogger InnerLogger { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ILogger</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Silverback_Diagnostics_ISilverbackLogger_IsEnabled_" data-uid="Silverback.Diagnostics.ISilverbackLogger.IsEnabled*"></a>
+  <h4 id="Silverback_Diagnostics_ISilverbackLogger_IsEnabled_Silverback_Diagnostics_LogEvent_" data-uid="Silverback.Diagnostics.ISilverbackLogger.IsEnabled(Silverback.Diagnostics.LogEvent)">IsEnabled(LogEvent)</h4>
+  <div class="markdown level1 summary"><p>Checks if the given <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> is enabled according to its default or overridden
+<span class="xref">System.LogLevel</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool IsEnabled(LogEvent logEvent)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a></td>
+        <td><span class="parametername">logEvent</span></td>
+        <td><p>The <a class="xref" href="Silverback.Diagnostics.LogEvent.html">LogEvent</a> to be checked.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if enabled.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
           

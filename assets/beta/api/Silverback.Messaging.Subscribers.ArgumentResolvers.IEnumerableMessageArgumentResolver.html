@@ -91,16 +91,16 @@
   <h1 id="Silverback_Messaging_Subscribers_ArgumentResolvers_IEnumerableMessageArgumentResolver" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.IEnumerableMessageArgumentResolver" class="text-break">Interface IEnumerableMessageArgumentResolver
   </h1>
   <div class="markdown level0 summary"><p>These resolvers are used to handle the messages collection parameter (<see cref="!:IEnumerable&lt;T>"></see>,
-<see cref="!:IObservable&lt;T>"></see>, etc.).</p>
+<span class="xref">System.IObservable&lt;T&gt;</span>, etc.).</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IMessageArgumentResolver.html#Silverback_Messaging_Subscribers_ArgumentResolvers_IMessageArgumentResolver_GetMessageType_Type_">IMessageArgumentResolver.GetMessageType(Type)</a>
+      <a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IMessageArgumentResolver.html#Silverback_Messaging_Subscribers_ArgumentResolvers_IMessageArgumentResolver_GetMessageType_System_Type_">IMessageArgumentResolver.GetMessageType(Type)</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IArgumentResolver.html#Silverback_Messaging_Subscribers_ArgumentResolvers_IArgumentResolver_CanResolve_Type_">IArgumentResolver.CanResolve(Type)</a>
+      <a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IArgumentResolver.html#Silverback_Messaging_Subscribers_ArgumentResolvers_IArgumentResolver_CanResolve_System_Type_">IArgumentResolver.CanResolve(Type)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.html">Silverback.Messaging.Subscribers.ArgumentResolvers</a></h6>
@@ -114,7 +114,7 @@
   
   
   <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_IEnumerableMessageArgumentResolver_GetValue_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.IEnumerableMessageArgumentResolver.GetValue*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_IEnumerableMessageArgumentResolver_GetValue_IReadOnlyCollection_System_Object__Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.IEnumerableMessageArgumentResolver.GetValue(IReadOnlyCollection{System.Object},Type)">GetValue(IReadOnlyCollection&lt;Object&gt;, Type)</h4>
+  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_IEnumerableMessageArgumentResolver_GetValue_IReadOnlyCollection_System_Object__System_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.IEnumerableMessageArgumentResolver.GetValue(IReadOnlyCollection{System.Object},System.Type)">GetValue(IReadOnlyCollection&lt;Object&gt;, Type)</h4>
   <div class="markdown level1 summary"><p>Returns the messages collection in a shape that is compatible with the subscribed method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -139,7 +139,7 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">targetMessageType</span></td>
         <td><p>The actual message type being declared by the subscribed method (e.g. <code>TMessage</code> for an
 <code>IEnumerable&lt;TMessage&gt;</code>).</p>

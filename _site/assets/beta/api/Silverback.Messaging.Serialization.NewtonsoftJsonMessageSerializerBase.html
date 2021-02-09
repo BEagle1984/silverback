@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class NewtonsoftJsonMessageSerializerBase
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -108,10 +108,16 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -122,28 +128,17 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Serialization.html">Silverback.Messaging.Serialization</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.Newtonsoft.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public abstract class NewtonsoftJsonMessageSerializerBase : IMessageSerializer</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_Encoding.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.Encoding%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Newtonsoft/Messaging/Serialization/NewtonsoftJsonMessageSerializerBase.cs/#L24">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_Encoding_" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.Encoding*"></a>
   <h4 id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_Encoding" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.Encoding">Encoding</h4>
   <div class="markdown level1 summary"><p>Gets or sets the message encoding. The default is UTF8.</p>
@@ -168,13 +163,35 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_Settings.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.Settings%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Newtonsoft/Messaging/Serialization/NewtonsoftJsonMessageSerializerBase.cs/#L30">View source</a>
-  </span>
+  
+  
+  <a id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_RequireHeaders_" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.RequireHeaders*"></a>
+  <h4 id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_RequireHeaders" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.RequireHeaders">RequireHeaders</h4>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether headers are mandatory for this serializer implementation or configuration
+to work properly.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract bool RequireHeaders { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_Settings_" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.Settings*"></a>
   <h4 id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_Settings" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.Settings">Settings</h4>
   <div class="markdown level1 summary"><p>Gets or sets the settings to be applied to the Json.NET serializer.</p>
@@ -194,18 +211,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Newtonsoft.Json.JsonSerializerSettings</span></td>
+        <td><span class="xref">JsonSerializerSettings</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_SystemEncoding.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.SystemEncoding%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Newtonsoft/Messaging/Serialization/NewtonsoftJsonMessageSerializerBase.cs/#L47">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_SystemEncoding_" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.SystemEncoding*"></a>
   <h4 id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_SystemEncoding" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.SystemEncoding">SystemEncoding</h4>
   <div class="markdown level1 summary"><p>Gets the <span class="xref">System.Text.Encoding</span> corresponding to the <a class="xref" href="Silverback.Messaging.Serialization.MessageEncoding.html">MessageEncoding</a>.</p>
@@ -225,7 +237,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Text.Encoding</span></td>
+        <td><span class="xref">Encoding</span></td>
         <td><p>A <span class="xref">System.Text.Encoding</span> that matches the current <a class="xref" href="Silverback.Messaging.Serialization.MessageEncoding.html">MessageEncoding</a>.</p>
 </td>
       </tr>
@@ -233,21 +245,16 @@
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_DeserializeAsync_System_IO_Stream_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.DeserializeAsync(System.IO.Stream%2CSilverback.Messaging.Messages.MessageHeaderCollection%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Newtonsoft/Messaging/Serialization/NewtonsoftJsonMessageSerializerBase.cs/#L65">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_DeserializeAsync_" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.DeserializeAsync*"></a>
-  <h4 id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_DeserializeAsync_System_IO_Stream_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.DeserializeAsync(System.IO.Stream,Silverback.Messaging.Messages.MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">DeserializeAsync(Stream, MessageHeaderCollection, MessageSerializationContext)</h4>
+  <h4 id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_DeserializeAsync_System_Nullable_Stream__MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.DeserializeAsync(System.Nullable{Stream},MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">DeserializeAsync(Nullable&lt;Stream&gt;, MessageHeaderCollection, MessageSerializationContext)</h4>
   <div class="markdown level1 summary"><p>Deserializes the byte array back into a message object.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract ValueTask&lt;(object Message, Type MessageType)&gt; DeserializeAsync(Stream messageStream, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract ValueTask&lt;(object Message, Type MessageType)&gt; DeserializeAsync(Stream? messageStream, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -260,13 +267,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.IO.Stream</span></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Stream</span>&gt;</td>
         <td><span class="parametername">messageStream</span></td>
-        <td><p>The <span class="xref">System.IO.Stream</span> containing the message to be deserialized.</p>
+        <td><p>The <see cref="!:Stream"></see> containing the message to be deserialized.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.MessageHeaderCollection.html">MessageHeaderCollection</a></td>
+        <td><span class="xref">MessageHeaderCollection</span></td>
         <td><span class="parametername">messageHeaders</span></td>
         <td><p>The message headers collection.</p>
 </td>
@@ -289,28 +296,23 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.ValueTask</span>&lt;<span class="xref">System.ValueTuple</span>&lt;<span class="xref">System.Object</span>, <span class="xref">System.Type</span>&gt;&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+        <td><span class="xref">ValueTask</span>&lt;<span class="xref">System.ValueTuple</span>&lt;<span class="xref">System.Object</span>, <span class="xref">System.Type</span>&gt;&gt;</td>
+        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
 deserialized message (or <code>null</code> when the input is null or empty) and the type of the message.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_SerializeAsync_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.SerializeAsync(System.Object%2CSilverback.Messaging.Messages.MessageHeaderCollection%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Newtonsoft/Messaging/Serialization/NewtonsoftJsonMessageSerializerBase.cs/#L59">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_SerializeAsync_" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.SerializeAsync*"></a>
-  <h4 id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_SerializeAsync_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.SerializeAsync(System.Object,Silverback.Messaging.Messages.MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">SerializeAsync(Object, MessageHeaderCollection, MessageSerializationContext)</h4>
+  <h4 id="Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase_SerializeAsync_System_Object_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase.SerializeAsync(System.Object,MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">SerializeAsync(Object, MessageHeaderCollection, MessageSerializationContext)</h4>
   <div class="markdown level1 summary"><p>Serializes the specified message object into a byte array.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract ValueTask&lt;Stream&gt; SerializeAsync(object message, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract ValueTask&lt;Stream?&gt; SerializeAsync(object message, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -329,7 +331,7 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.MessageHeaderCollection.html">MessageHeaderCollection</a></td>
+        <td><span class="xref">MessageHeaderCollection</span></td>
         <td><span class="parametername">messageHeaders</span></td>
         <td><p>The message headers collection.</p>
 </td>
@@ -352,9 +354,9 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.ValueTask</span>&lt;<span class="xref">System.IO.Stream</span>&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
-<span class="xref">System.IO.Stream</span> with the serialized message.</p>
+        <td><span class="xref">ValueTask</span>&lt;<span class="xref">System.Nullable</span>&lt;<span class="xref">Stream</span>&gt;&gt;</td>
+        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
+<see cref="!:Stream"></see> with the serialized message.</p>
 </td>
       </tr>
     </tbody>
@@ -370,12 +372,6 @@ deserialized message (or <code>null</code> when the input is null or empty) and 
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_NewtonsoftJsonMessageSerializerBase.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializerBase%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Newtonsoft/Messaging/Serialization/NewtonsoftJsonMessageSerializerBase.cs/#L19" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

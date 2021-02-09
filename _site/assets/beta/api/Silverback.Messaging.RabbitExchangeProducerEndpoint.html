@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class RabbitExchangeProducerEndpoint
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -125,6 +125,9 @@
       <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint_Chunk">ProducerEndpoint.Chunk</a>
     </div>
     <div>
+      <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint_GetActualName_IOutboundEnvelope_System_IServiceProvider_">ProducerEndpoint.GetActualName(IOutboundEnvelope, IServiceProvider)</a>
+    </div>
+    <div>
       <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_DefaultSerializer">Endpoint.DefaultSerializer</a>
     </div>
     <div>
@@ -137,7 +140,13 @@
       <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Encryption">Endpoint.Encryption</a>
     </div>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetType()</span>
@@ -145,28 +154,17 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.html">Silverback.Messaging</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.RabbitMQ.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_RabbitExchangeProducerEndpoint_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public sealed class RabbitExchangeProducerEndpoint : RabbitProducerEndpoint, IProducerEndpoint, IEndpoint, IEquatable&lt;RabbitExchangeProducerEndpoint&gt;</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitExchangeProducerEndpoint__ctor_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitExchangeProducerEndpoint.%23ctor(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitExchangeProducerEndpoint.cs/#L22">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_RabbitExchangeProducerEndpoint__ctor_" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_RabbitExchangeProducerEndpoint__ctor_System_String_" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.#ctor(System.String)">RabbitExchangeProducerEndpoint(String)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.RabbitExchangeProducerEndpoint.html">RabbitExchangeProducerEndpoint</a> class.</p>
@@ -196,13 +194,8 @@
   </table>
   <h3 id="properties">Properties
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitExchangeProducerEndpoint_Exchange.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitExchangeProducerEndpoint.Exchange%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitExchangeProducerEndpoint.cs/#L30">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_RabbitExchangeProducerEndpoint_Exchange_" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.Exchange*"></a>
   <h4 id="Silverback_Messaging_RabbitExchangeProducerEndpoint_Exchange" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.Exchange">Exchange</h4>
   <div class="markdown level1 summary"><p>Gets or sets the exchange configuration.</p>
@@ -222,20 +215,15 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.Rabbit.RabbitExchangeConfig.html">RabbitExchangeConfig</a></td>
+        <td><span class="xref">RabbitExchangeConfig</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitExchangeProducerEndpoint_Equals_Silverback_Messaging_RabbitExchangeProducerEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitExchangeProducerEndpoint.Equals(Silverback.Messaging.RabbitExchangeProducerEndpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitExchangeProducerEndpoint.cs/#L44">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_RabbitExchangeProducerEndpoint_Equals_" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.Equals*"></a>
   <h4 id="Silverback_Messaging_RabbitExchangeProducerEndpoint_Equals_Silverback_Messaging_RabbitExchangeProducerEndpoint_" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.Equals(Silverback.Messaging.RabbitExchangeProducerEndpoint)">Equals(RabbitExchangeProducerEndpoint)</h4>
   <div class="markdown level1 summary"></div>
@@ -276,13 +264,8 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitExchangeProducerEndpoint_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitExchangeProducerEndpoint.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitExchangeProducerEndpoint.cs/#L56">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_RabbitExchangeProducerEndpoint_Equals_" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.Equals*"></a>
   <h4 id="Silverback_Messaging_RabbitExchangeProducerEndpoint_Equals_System_Object_" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.Equals(System.Object)">Equals(Object)</h4>
   <div class="markdown level1 summary"></div>
@@ -325,13 +308,8 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.Object.Equals(System.Object)</span></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitExchangeProducerEndpoint_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitExchangeProducerEndpoint.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitExchangeProducerEndpoint.cs/#L71">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_RabbitExchangeProducerEndpoint_GetHashCode_" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.GetHashCode*"></a>
   <h4 id="Silverback_Messaging_RabbitExchangeProducerEndpoint_GetHashCode" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.GetHashCode">GetHashCode()</h4>
   <div class="markdown level1 summary"></div>
@@ -357,13 +335,8 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.Object.GetHashCode()</span></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitExchangeProducerEndpoint_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitExchangeProducerEndpoint.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitExchangeProducerEndpoint.cs/#L33">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_RabbitExchangeProducerEndpoint_Validate_" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.Validate*"></a>
   <h4 id="Silverback_Messaging_RabbitExchangeProducerEndpoint_Validate" data-uid="Silverback.Messaging.RabbitExchangeProducerEndpoint.Validate">Validate()</h4>
   <div class="markdown level1 summary"><p>Validates the endpoint configuration and throws an <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> if
@@ -393,12 +366,6 @@ not valid.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitExchangeProducerEndpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitExchangeProducerEndpoint%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitExchangeProducerEndpoint.cs/#L13" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

@@ -176,7 +176,7 @@
   
   
   <a id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetErrorHandler_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetErrorHandler*"></a>
-  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetErrorHandler_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____Error__" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetErrorHandler(Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},Error})">SetErrorHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, Error&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetErrorHandler_System_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____Error__" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetErrorHandler(System.Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},Error})">SetErrorHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, Error&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the handler to call on error events.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -195,7 +195,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">Error</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">Error</span>&gt;</td>
         <td><span class="parametername">errorHandler</span></td>
         <td><p>The event handler.</p>
 </td>
@@ -221,7 +221,7 @@
   
   
   <a id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetLogHandler_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetLogHandler*"></a>
-  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetLogHandler_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____LogMessage__" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetLogHandler(Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},LogMessage})">SetLogHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, LogMessage&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetLogHandler_System_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____LogMessage__" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetLogHandler(System.Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},LogMessage})">SetLogHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, LogMessage&gt;)</h4>
   <div class="markdown level1 summary"><p>Set the handler to call when there is information available to be logged. If not specified, a default
 callback that writes to stderr will be used.</p>
 </div>
@@ -241,7 +241,7 @@ callback that writes to stderr will be used.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">LogMessage</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">LogMessage</span>&gt;</td>
         <td><span class="parametername">logHandler</span></td>
         <td><p>The event handler.</p>
 </td>
@@ -267,7 +267,7 @@ callback that writes to stderr will be used.</p>
   
   
   <a id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetOffsetsCommittedHandler_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetOffsetsCommittedHandler*"></a>
-  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetOffsetsCommittedHandler_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____CommittedOffsets__" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetOffsetsCommittedHandler(Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},CommittedOffsets})">SetOffsetsCommittedHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, CommittedOffsets&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetOffsetsCommittedHandler_System_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____CommittedOffsets__" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetOffsetsCommittedHandler(System.Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},CommittedOffsets})">SetOffsetsCommittedHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, CommittedOffsets&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the handler to call on offsets committed events.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -286,7 +286,7 @@ callback that writes to stderr will be used.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">CommittedOffsets</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">CommittedOffsets</span>&gt;</td>
         <td><span class="parametername">offsetsCommittedHandler</span></td>
         <td><p>The event handler.</p>
 </td>
@@ -312,7 +312,7 @@ callback that writes to stderr will be used.</p>
   
   
   <a id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsAssignedHandler_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsAssignedHandler*"></a>
-  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsAssignedHandler_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____List_TopicPartition___" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsAssignedHandler(Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},List{TopicPartition}})">SetPartitionsAssignedHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, List&lt;TopicPartition&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsAssignedHandler_System_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____List_TopicPartition___" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsAssignedHandler(System.Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},List{TopicPartition}})">SetPartitionsAssignedHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, List&lt;TopicPartition&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the handler to call on partitions assigned events.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -331,7 +331,7 @@ callback that writes to stderr will be used.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">List</span>&lt;<span class="xref">TopicPartition</span>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">List</span>&lt;<span class="xref">TopicPartition</span>&gt;&gt;</td>
         <td><span class="parametername">partitionsAssignedHandler</span></td>
         <td><p>The event handler.</p>
 </td>
@@ -357,7 +357,7 @@ callback that writes to stderr will be used.</p>
   
   
   <a id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsAssignedHandler_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsAssignedHandler*"></a>
-  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsAssignedHandler_Func_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____List_TopicPartition__IEnumerable_TopicPartitionOffset___" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsAssignedHandler(Func{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},List{TopicPartition},IEnumerable{TopicPartitionOffset}})">SetPartitionsAssignedHandler(Func&lt;IConsumer&lt;Byte[], Byte[]&gt;, List&lt;TopicPartition&gt;, IEnumerable&lt;TopicPartitionOffset&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsAssignedHandler_System_Func_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____List_TopicPartition__IEnumerable_TopicPartitionOffset___" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsAssignedHandler(System.Func{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},List{TopicPartition},IEnumerable{TopicPartitionOffset}})">SetPartitionsAssignedHandler(Func&lt;IConsumer&lt;Byte[], Byte[]&gt;, List&lt;TopicPartition&gt;, IEnumerable&lt;TopicPartitionOffset&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the handler to call on partitions assigned events.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -376,7 +376,7 @@ callback that writes to stderr will be used.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">List</span>&lt;<span class="xref">TopicPartition</span>&gt;, <span class="xref">IEnumerable</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">List</span>&lt;<span class="xref">TopicPartition</span>&gt;, <span class="xref">IEnumerable</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;&gt;</td>
         <td><span class="parametername">partitionsAssignedHandler</span></td>
         <td><p>The event handler.</p>
 </td>
@@ -402,7 +402,7 @@ callback that writes to stderr will be used.</p>
   
   
   <a id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsRevokedHandler_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsRevokedHandler*"></a>
-  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsRevokedHandler_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____List_TopicPartitionOffset___" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsRevokedHandler(Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},List{TopicPartitionOffset}})">SetPartitionsRevokedHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, List&lt;TopicPartitionOffset&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsRevokedHandler_System_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____List_TopicPartitionOffset___" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsRevokedHandler(System.Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},List{TopicPartitionOffset}})">SetPartitionsRevokedHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, List&lt;TopicPartitionOffset&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the handler to call on partitions revoked events.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -421,7 +421,7 @@ callback that writes to stderr will be used.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">List</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">List</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;&gt;</td>
         <td><span class="parametername">partitionsRevokedHandler</span></td>
         <td><p>The event handler.</p>
 </td>
@@ -447,7 +447,7 @@ callback that writes to stderr will be used.</p>
   
   
   <a id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsRevokedHandler_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsRevokedHandler*"></a>
-  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsRevokedHandler_Func_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____List_TopicPartitionOffset__IEnumerable_TopicPartitionOffset___" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsRevokedHandler(Func{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},List{TopicPartitionOffset},IEnumerable{TopicPartitionOffset}})">SetPartitionsRevokedHandler(Func&lt;IConsumer&lt;Byte[], Byte[]&gt;, List&lt;TopicPartitionOffset&gt;, IEnumerable&lt;TopicPartitionOffset&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetPartitionsRevokedHandler_System_Func_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____List_TopicPartitionOffset__IEnumerable_TopicPartitionOffset___" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetPartitionsRevokedHandler(System.Func{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},List{TopicPartitionOffset},IEnumerable{TopicPartitionOffset}})">SetPartitionsRevokedHandler(Func&lt;IConsumer&lt;Byte[], Byte[]&gt;, List&lt;TopicPartitionOffset&gt;, IEnumerable&lt;TopicPartitionOffset&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the handler to call on partitions revoked events.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -466,7 +466,7 @@ callback that writes to stderr will be used.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">List</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;, <span class="xref">IEnumerable</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">List</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;, <span class="xref">IEnumerable</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;&gt;</td>
         <td><span class="parametername">partitionsRevokedHandler</span></td>
         <td><p>The event handler.</p>
 </td>
@@ -492,7 +492,7 @@ callback that writes to stderr will be used.</p>
   
   
   <a id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetStatisticsHandler_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetStatisticsHandler*"></a>
-  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetStatisticsHandler_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____System_String__" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetStatisticsHandler(Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},System.String})">SetStatisticsHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, String&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_SetStatisticsHandler_System_Action_Silverback_Messaging_Broker_IConsumer_System_Byte___System_Byte____System_String__" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.SetStatisticsHandler(System.Action{Silverback.Messaging.Broker.IConsumer{System.Byte[],System.Byte[]},System.String})">SetStatisticsHandler(Action&lt;IConsumer&lt;Byte[], Byte[]&gt;, String&gt;)</h4>
   <div class="markdown level1 summary"><p>Sets the handler to call on statistics events.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -511,7 +511,7 @@ callback that writes to stderr will be used.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">Silverback.Messaging.Broker.IConsumer</span>&lt;<span class="xref">System.Byte</span>[], <span class="xref">System.Byte</span>[]&gt;, <span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">statisticsHandler</span></td>
         <td><p>The event handler.</p>
 </td>

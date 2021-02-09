@@ -104,7 +104,7 @@
   <div classs="implements">
     <h5>Implements</h5>
     <div><a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a></div>
-    <div><span class="xref">IDisposable</span></div>
+    <div><span class="xref">System.IDisposable</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -164,7 +164,7 @@ implementation.</p>
   
   
   <a id="Silverback_Messaging_Broker_Broker_2__ctor_" data-uid="Silverback.Messaging.Broker.Broker`2.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Broker_Broker_2__ctor_IServiceProvider_" data-uid="Silverback.Messaging.Broker.Broker`2.#ctor(IServiceProvider)">Broker(IServiceProvider)</h4>
+  <h4 id="Silverback_Messaging_Broker_Broker_2__ctor_System_IServiceProvider_" data-uid="Silverback.Messaging.Broker.Broker`2.#ctor(System.IServiceProvider)">Broker(IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html">Broker&lt;TProducerEndpoint, TConsumerEndpoint&gt;</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -183,9 +183,9 @@ implementation.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IServiceProvider</span></td>
+        <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <see cref="!:IServiceProvider"></see> to be used to resolve the required services.</p>
+        <td><p>The <span class="xref">System.IServiceProvider</span> to be used to resolve the required services.</p>
 </td>
       </tr>
     </tbody>
@@ -214,7 +214,7 @@ implementation.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -293,7 +293,7 @@ implementation.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -617,7 +617,7 @@ finalizer.</p>
   
   
   <a id="Silverback_Messaging_Broker_Broker_2_InstantiateConsumer_" data-uid="Silverback.Messaging.Broker.Broker`2.InstantiateConsumer*"></a>
-  <h4 id="Silverback_Messaging_Broker_Broker_2_InstantiateConsumer__1_IBrokerBehaviorsProvider_IConsumerBehavior__IServiceProvider_" data-uid="Silverback.Messaging.Broker.Broker`2.InstantiateConsumer(`1,IBrokerBehaviorsProvider{IConsumerBehavior},IServiceProvider)">InstantiateConsumer(TConsumerEndpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IServiceProvider)</h4>
+  <h4 id="Silverback_Messaging_Broker_Broker_2_InstantiateConsumer__1_IBrokerBehaviorsProvider_IConsumerBehavior__System_IServiceProvider_" data-uid="Silverback.Messaging.Broker.Broker`2.InstantiateConsumer(`1,IBrokerBehaviorsProvider{IConsumerBehavior},System.IServiceProvider)">InstantiateConsumer(TConsumerEndpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Returns a new instance of <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> to subscribe to the specified endpoint.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -648,9 +648,9 @@ finalizer.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IServiceProvider</span></td>
+        <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <see cref="!:IServiceProvider"></see> instance to be used to resolve the needed types or to be
+        <td><p>The <span class="xref">System.IServiceProvider</span> instance to be used to resolve the needed types or to be
 forwarded to the consumer.</p>
 </td>
       </tr>
@@ -675,7 +675,7 @@ forwarded to the consumer.</p>
   
   
   <a id="Silverback_Messaging_Broker_Broker_2_InstantiateProducer_" data-uid="Silverback.Messaging.Broker.Broker`2.InstantiateProducer*"></a>
-  <h4 id="Silverback_Messaging_Broker_Broker_2_InstantiateProducer__0_IBrokerBehaviorsProvider_IProducerBehavior__IServiceProvider_" data-uid="Silverback.Messaging.Broker.Broker`2.InstantiateProducer(`0,IBrokerBehaviorsProvider{IProducerBehavior},IServiceProvider)">InstantiateProducer(TProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider)</h4>
+  <h4 id="Silverback_Messaging_Broker_Broker_2_InstantiateProducer__0_IBrokerBehaviorsProvider_IProducerBehavior__System_IServiceProvider_" data-uid="Silverback.Messaging.Broker.Broker`2.InstantiateProducer(`0,IBrokerBehaviorsProvider{IProducerBehavior},System.IServiceProvider)">InstantiateProducer(TProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Returns a new instance of <a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> to publish to the specified endpoint. The
 returned instance will be cached and reused for the same endpoint.</p>
 </div>
@@ -707,9 +707,9 @@ returned instance will be cached and reused for the same endpoint.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IServiceProvider</span></td>
+        <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <see cref="!:IServiceProvider"></see> instance to be used to resolve the needed types or to be
+        <td><p>The <span class="xref">System.IServiceProvider</span> instance to be used to resolve the needed types or to be
 forwarded to the consumer.</p>
 </td>
       </tr>
@@ -736,7 +736,7 @@ forwarded to the consumer.</p>
       <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a>
   </div>
   <div>
-      <span class="xref">IDisposable</span>
+      <span class="xref">System.IDisposable</span>
   </div>
 </article>
           </div>

@@ -133,53 +133,6 @@
   
   
   <a id="Silverback_EntityFrameworkCore_DbContextEventsPublisher__ctor_" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.#ctor*"></a>
-  <h4 id="Silverback_EntityFrameworkCore_DbContextEventsPublisher__ctor_Func_System_Object_System_Nullable_IEnumerable_System_Object____Action_System_Object__IPublisher_DbContext_" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.#ctor(Func{System.Object,System.Nullable{IEnumerable{System.Object}}},Action{System.Object},IPublisher,DbContext)">DbContextEventsPublisher(Func&lt;Object, Nullable&lt;IEnumerable&lt;Object&gt;&gt;&gt;, Action&lt;Object&gt;, IPublisher, DbContext)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.EntityFrameworkCore.DbContextEventsPublisher.html">DbContextEventsPublisher</a> class.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public DbContextEventsPublisher(Func&lt;object, IEnumerable&lt;object&gt;?&gt; eventsSelector, Action&lt;object&gt; clearEventsAction, IPublisher publisher, DbContext dbContext)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">System.Object</span>, <span class="xref">System.Nullable</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">System.Object</span>&gt;&gt;&gt;</td>
-        <td><span class="parametername">eventsSelector</span></td>
-        <td><p>The custom delegate to be used to get the events out of the entities being saved.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">System.Object</span>&gt;</td>
-        <td><span class="parametername">clearEventsAction</span></td>
-        <td><p>The custom delegate to be used to clear the events from the entities after they have been published.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">IPublisher</span></td>
-        <td><span class="parametername">publisher</span></td>
-        <td><p>The <see cref="!:IPublisher"></see> to be used to publish the events to the internal bus.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">DbContext</span></td>
-        <td><span class="parametername">dbContext</span></td>
-        <td><p>The <see cref="!:DbContext"></see> to be scanned for domain events.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_EntityFrameworkCore_DbContextEventsPublisher__ctor_" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.#ctor*"></a>
   <h4 id="Silverback_EntityFrameworkCore_DbContextEventsPublisher__ctor_IPublisher_DbContext_" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.#ctor(IPublisher,DbContext)">DbContextEventsPublisher(IPublisher, DbContext)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.EntityFrameworkCore.DbContextEventsPublisher.html">DbContextEventsPublisher</a> class.</p>
 </div>
@@ -212,12 +165,59 @@
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="Silverback_EntityFrameworkCore_DbContextEventsPublisher__ctor_" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.#ctor*"></a>
+  <h4 id="Silverback_EntityFrameworkCore_DbContextEventsPublisher__ctor_System_Func_System_Object_System_Nullable_IEnumerable_System_Object____System_Action_System_Object__IPublisher_DbContext_" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.#ctor(System.Func{System.Object,System.Nullable{IEnumerable{System.Object}}},System.Action{System.Object},IPublisher,DbContext)">DbContextEventsPublisher(Func&lt;Object, Nullable&lt;IEnumerable&lt;Object&gt;&gt;&gt;, Action&lt;Object&gt;, IPublisher, DbContext)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.EntityFrameworkCore.DbContextEventsPublisher.html">DbContextEventsPublisher</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DbContextEventsPublisher(Func&lt;object, IEnumerable&lt;object&gt;?&gt; eventsSelector, Action&lt;object&gt; clearEventsAction, IPublisher publisher, DbContext dbContext)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Object</span>, <span class="xref">System.Nullable</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">System.Object</span>&gt;&gt;&gt;</td>
+        <td><span class="parametername">eventsSelector</span></td>
+        <td><p>The custom delegate to be used to get the events out of the entities being saved.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Object</span>&gt;</td>
+        <td><span class="parametername">clearEventsAction</span></td>
+        <td><p>The custom delegate to be used to clear the events from the entities after they have been published.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">IPublisher</span></td>
+        <td><span class="parametername">publisher</span></td>
+        <td><p>The <see cref="!:IPublisher"></see> to be used to publish the events to the internal bus.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">DbContext</span></td>
+        <td><span class="parametername">dbContext</span></td>
+        <td><p>The <see cref="!:DbContext"></see> to be scanned for domain events.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
   </h3>
   
   
   <a id="Silverback_EntityFrameworkCore_DbContextEventsPublisher_ExecuteSaveTransaction_" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.ExecuteSaveTransaction*"></a>
-  <h4 id="Silverback_EntityFrameworkCore_DbContextEventsPublisher_ExecuteSaveTransaction_Func_System_Int32__" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.ExecuteSaveTransaction(Func{System.Int32})">ExecuteSaveTransaction(Func&lt;Int32&gt;)</h4>
+  <h4 id="Silverback_EntityFrameworkCore_DbContextEventsPublisher_ExecuteSaveTransaction_System_Func_System_Int32__" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.ExecuteSaveTransaction(System.Func{System.Int32})">ExecuteSaveTransaction(Func&lt;Int32&gt;)</h4>
   <div class="markdown level1 summary"><p>Publishes the domain events generated by the tracked entities and then executes the provided save
 changes procedure.</p>
 </div>
@@ -237,7 +237,7 @@ changes procedure.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
         <td><span class="parametername">saveChanges</span></td>
         <td><p>The delegate to the original <code>SaveChanges</code> method.</p>
 </td>
@@ -263,7 +263,7 @@ changes procedure.</p>
   
   
   <a id="Silverback_EntityFrameworkCore_DbContextEventsPublisher_ExecuteSaveTransactionAsync_" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.ExecuteSaveTransactionAsync*"></a>
-  <h4 id="Silverback_EntityFrameworkCore_DbContextEventsPublisher_ExecuteSaveTransactionAsync_Func_Task_System_Int32___" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.ExecuteSaveTransactionAsync(Func{Task{System.Int32}})">ExecuteSaveTransactionAsync(Func&lt;Task&lt;Int32&gt;&gt;)</h4>
+  <h4 id="Silverback_EntityFrameworkCore_DbContextEventsPublisher_ExecuteSaveTransactionAsync_System_Func_Task_System_Int32___" data-uid="Silverback.EntityFrameworkCore.DbContextEventsPublisher.ExecuteSaveTransactionAsync(System.Func{Task{System.Int32}})">ExecuteSaveTransactionAsync(Func&lt;Task&lt;Int32&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>Publishes the domain events generated by the tracked entities and then executes the provided save
 changes procedure.</p>
 </div>
@@ -283,7 +283,7 @@ changes procedure.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Func</span>&lt;<span class="xref">Task</span>&lt;<span class="xref">System.Int32</span>&gt;&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">Task</span>&lt;<span class="xref">System.Int32</span>&gt;&gt;</td>
         <td><span class="parametername">saveChangesAsync</span></td>
         <td><p>The delegate to the original <code>SaveChangesAsync</code> method.</p>
 </td>

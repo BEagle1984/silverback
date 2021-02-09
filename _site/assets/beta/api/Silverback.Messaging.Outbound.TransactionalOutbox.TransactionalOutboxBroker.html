@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class TransactionalOutboxBroker
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,107 +90,27 @@
   
   <h1 id="Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker" class="text-break">Class TransactionalOutboxBroker
   </h1>
-  <div class="markdown level0 summary"><p>An <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementation that is used by the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a> to
+  <div class="markdown level0 summary"><p>An <see cref="!:IBroker"></see> implementation that is used by the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a> to
 write into the outbox.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><a class="xref" href="Silverback.Messaging.Broker.Broker-2.html">Broker</a>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>, <a class="xref" href="Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a>&gt;</div>
-    <div class="level2"><span class="xref">TransactionalOutboxBroker</span></div>
-  </div>
-  <div classs="implements">
-    <h5>Implements</h5>
-    <div><a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a></div>
-    <div><span class="xref">System.IDisposable</span></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_ProducerEndpointType">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.ProducerEndpointType</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_ConsumerEndpointType">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.ConsumerEndpointType</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_Producers">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.Producers</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_Consumers">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.Consumers</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_IsConnected">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.IsConnected</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_GetProducer_Silverback_Messaging_IProducerEndpoint_">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.GetProducer(IProducerEndpoint)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_AddConsumer_Silverback_Messaging_IConsumerEndpoint_">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.AddConsumer(IConsumerEndpoint)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_ConnectAsync">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.ConnectAsync()</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_DisconnectAsync">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.DisconnectAsync()</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_Dispose">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.Dispose()</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_InstantiateProducer__0_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IProducerBehavior__System_IServiceProvider_">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.InstantiateProducer(IProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_InstantiateConsumer__1_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.InstantiateConsumer(IConsumerEndpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IServiceProvider)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_ConnectAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IConsumer__">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.ConnectAsync(IReadOnlyCollection&lt;IProducer&gt;, IReadOnlyCollection&lt;IConsumer&gt;)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_DisconnectAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IProducer__System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_IConsumer__">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.DisconnectAsync(IReadOnlyCollection&lt;IProducer&gt;, IReadOnlyCollection&lt;IConsumer&gt;)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Broker.Broker-2.html#Silverback_Messaging_Broker_Broker_2_Dispose_System_Boolean_">Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;.Dispose(Boolean)</a>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
+    <div class="level1"><span class="xref">TransactionalOutboxBroker</span></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.html">Silverback.Messaging.Outbound.TransactionalOutbox</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class TransactionalOutboxBroker : Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;, IBroker, IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public class TransactionalOutboxBroker : Broker&lt;IProducerEndpoint, IConsumerEndpoint&gt;</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker__ctor_Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxWriter_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.%23ctor(Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/TransactionalOutboxBroker.cs/#L31">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker__ctor_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker__ctor_Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_IOutboxWriter_System_IServiceProvider_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.#ctor(Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter,System.IServiceProvider)">TransactionalOutboxBroker(IOutboxWriter, IServiceProvider)</h4>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker__ctor_IOutboxWriter_System_IServiceProvider_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.#ctor(IOutboxWriter,System.IServiceProvider)">TransactionalOutboxBroker(IOutboxWriter, IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.html">TransactionalOutboxBroker</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -209,9 +129,9 @@ write into the outbox.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter.html">IOutboxWriter</a></td>
+        <td><span class="xref">IOutboxWriter</span></td>
         <td><span class="parametername">queueWriter</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter.html">IOutboxWriter</a> to be used to write to the queue.</p>
+        <td><p>The <see cref="!:IOutboxWriter"></see> to be used to write to the queue.</p>
 </td>
       </tr>
       <tr>
@@ -224,17 +144,11 @@ write into the outbox.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker_InstantiateConsumer_Silverback_Messaging_IConsumerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.InstantiateConsumer(Silverback.Messaging.IConsumerEndpoint%2CSilverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider%7BSilverback.Messaging.Broker.Behaviors.IConsumerBehavior%7D%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/TransactionalOutboxBroker.cs/#L53">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker_InstantiateConsumer_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.InstantiateConsumer*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker_InstantiateConsumer_Silverback_Messaging_IConsumerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__System_IServiceProvider_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.InstantiateConsumer(Silverback.Messaging.IConsumerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IConsumerBehavior},System.IServiceProvider)">InstantiateConsumer(IConsumerEndpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IServiceProvider)</h4>
-  <div class="markdown level1 summary"><p>Returns a new instance of <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a> to subscribe to the specified endpoint.</p>
-</div>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker_InstantiateConsumer_Silverback_Messaging_IConsumerEndpoint_IBrokerBehaviorsProvider_IConsumerBehavior__System_IServiceProvider_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.InstantiateConsumer(Silverback.Messaging.IConsumerEndpoint,IBrokerBehaviorsProvider{IConsumerBehavior},System.IServiceProvider)">InstantiateConsumer(IConsumerEndpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IServiceProvider)</h4>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -256,17 +170,14 @@ write into the outbox.</p>
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider-1.html">IBrokerBehaviorsProvider</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a>&gt;</td>
+        <td><span class="xref">IBrokerBehaviorsProvider</span>&lt;<span class="xref">IConsumerBehavior</span>&gt;</td>
         <td><span class="parametername">behaviorsProvider</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider-1.html">IBrokerBehaviorsProvider&lt;TBehavior&gt;</a>.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <span class="xref">System.IServiceProvider</span> instance to be used to resolve the needed types or to be
-forwarded to the consumer.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -280,26 +191,16 @@ forwarded to the consumer.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a></td>
-        <td><p>The instantiated <a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a>.</p>
-</td>
+        <td><span class="xref">IConsumer</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">Silverback.Messaging.Broker.Broker&lt;Silverback.Messaging.IProducerEndpoint, Silverback.Messaging.IConsumerEndpoint&gt;.InstantiateConsumer(Silverback.Messaging.IConsumerEndpoint, Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider&lt;Silverback.Messaging.Broker.Behaviors.IConsumerBehavior&gt;, System.IServiceProvider)</span></div>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker_InstantiateProducer_Silverback_Messaging_IProducerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IProducerBehavior__System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.InstantiateProducer(Silverback.Messaging.IProducerEndpoint%2CSilverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider%7BSilverback.Messaging.Broker.Behaviors.IProducerBehavior%7D%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/TransactionalOutboxBroker.cs/#L40">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker_InstantiateProducer_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.InstantiateProducer*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker_InstantiateProducer_Silverback_Messaging_IProducerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IProducerBehavior__System_IServiceProvider_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.InstantiateProducer(Silverback.Messaging.IProducerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IProducerBehavior},System.IServiceProvider)">InstantiateProducer(IProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider)</h4>
-  <div class="markdown level1 summary"><p>Returns a new instance of <a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> to publish to the specified endpoint. The
-returned instance will be cached and reused for the same endpoint.</p>
-</div>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker_InstantiateProducer_Silverback_Messaging_IProducerEndpoint_IBrokerBehaviorsProvider_IProducerBehavior__System_IServiceProvider_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker.InstantiateProducer(Silverback.Messaging.IProducerEndpoint,IBrokerBehaviorsProvider{IProducerBehavior},System.IServiceProvider)">InstantiateProducer(IProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider)</h4>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -321,17 +222,14 @@ returned instance will be cached and reused for the same endpoint.</p>
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider-1.html">IBrokerBehaviorsProvider</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a>&gt;</td>
+        <td><span class="xref">IBrokerBehaviorsProvider</span>&lt;<span class="xref">IProducerBehavior</span>&gt;</td>
         <td><span class="parametername">behaviorsProvider</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider-1.html">IBrokerBehaviorsProvider&lt;TBehavior&gt;</a>.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <span class="xref">System.IServiceProvider</span> instance to be used to resolve the needed types or to be
-forwarded to the consumer.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -345,21 +243,11 @@ forwarded to the consumer.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a></td>
-        <td><p>The instantiated <a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>.</p>
-</td>
+        <td><span class="xref">IProducer</span></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">Silverback.Messaging.Broker.Broker&lt;Silverback.Messaging.IProducerEndpoint, Silverback.Messaging.IConsumerEndpoint&gt;.InstantiateProducer(Silverback.Messaging.IProducerEndpoint, Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider&lt;Silverback.Messaging.Broker.Behaviors.IProducerBehavior&gt;, System.IServiceProvider)</span></div>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a>
-  </div>
-  <div>
-      <span class="xref">System.IDisposable</span>
-  </div>
 </article>
           </div>
           
@@ -367,12 +255,6 @@ forwarded to the consumer.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_TransactionalOutboxBroker.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.TransactionalOutboxBroker%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/TransactionalOutboxBroker.cs/#L18" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

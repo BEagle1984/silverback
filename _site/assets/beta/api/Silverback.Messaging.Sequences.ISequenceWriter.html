@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface ISequenceWriter
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -96,22 +96,17 @@ split a single message into multiple messages.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Sequences.html">Silverback.Messaging.Sequences</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Silverback_Messaging_Sequences_ISequenceWriter_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public interface ISequenceWriter</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_ISequenceWriter_CanHandle_Silverback_Messaging_Messages_IOutboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.ISequenceWriter.CanHandle(Silverback.Messaging.Messages.IOutboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/ISequenceWriter.cs/#L25">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_ISequenceWriter_CanHandle_" data-uid="Silverback.Messaging.Sequences.ISequenceWriter.CanHandle*"></a>
-  <h4 id="Silverback_Messaging_Sequences_ISequenceWriter_CanHandle_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.ISequenceWriter.CanHandle(Silverback.Messaging.Messages.IOutboundEnvelope)">CanHandle(IOutboundEnvelope)</h4>
+  <h4 id="Silverback_Messaging_Sequences_ISequenceWriter_CanHandle_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.ISequenceWriter.CanHandle(IOutboundEnvelope)">CanHandle(IOutboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Checks whether this writer can and must handle the specified message.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -130,7 +125,7 @@ split a single message into multiple messages.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
+        <td><span class="xref">IOutboundEnvelope</span></td>
         <td><span class="parametername">envelope</span></td>
         <td><p>The envelope containing the message to be handled.</p>
 </td>
@@ -153,15 +148,10 @@ split a single message into multiple messages.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_ISequenceWriter_ProcessMessageAsync_Silverback_Messaging_Messages_IOutboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.ISequenceWriter.ProcessMessageAsync(Silverback.Messaging.Messages.IOutboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/ISequenceWriter.cs/#L38">View source</a>
-  </span>
+  
+  
   <a id="Silverback_Messaging_Sequences_ISequenceWriter_ProcessMessageAsync_" data-uid="Silverback.Messaging.Sequences.ISequenceWriter.ProcessMessageAsync*"></a>
-  <h4 id="Silverback_Messaging_Sequences_ISequenceWriter_ProcessMessageAsync_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.ISequenceWriter.ProcessMessageAsync(Silverback.Messaging.Messages.IOutboundEnvelope)">ProcessMessageAsync(IOutboundEnvelope)</h4>
+  <h4 id="Silverback_Messaging_Sequences_ISequenceWriter_ProcessMessageAsync_IOutboundEnvelope_" data-uid="Silverback.Messaging.Sequences.ISequenceWriter.ProcessMessageAsync(IOutboundEnvelope)">ProcessMessageAsync(IOutboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Sets the headers used to match the message with the sequence it belongs to. If needed it can
 also split a single message into multiple messages.</p>
 </div>
@@ -181,7 +171,7 @@ also split a single message into multiple messages.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
+        <td><span class="xref">IOutboundEnvelope</span></td>
         <td><span class="parametername">envelope</span></td>
         <td><p>The envelope containing the message to be handled.</p>
 </td>
@@ -198,8 +188,8 @@ also split a single message into multiple messages.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IAsyncEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>&gt;</td>
-        <td><p>An <span class="xref">System.Collections.Generic.IAsyncEnumerable&lt;T&gt;</span> with the envelopes containing the messages to be
+        <td><span class="xref">IAsyncEnumerable</span>&lt;<span class="xref">IOutboundEnvelope</span>&gt;</td>
+        <td><p>An <see cref="!:IAsyncEnumerable&lt;T>"></see> with the envelopes containing the messages to be
 produced.</p>
 </td>
       </tr>
@@ -212,12 +202,6 @@ produced.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_ISequenceWriter.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.ISequenceWriter%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Sequences/ISequenceWriter.cs/#L14" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

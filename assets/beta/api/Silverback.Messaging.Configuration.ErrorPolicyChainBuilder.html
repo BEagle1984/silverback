@@ -224,14 +224,14 @@ builder.</p>
   
   
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenMove_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenMove*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenMove_Silverback_Messaging_IProducerEndpoint_System_Nullable_Action_MoveMessageErrorPolicy___" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenMove(Silverback.Messaging.IProducerEndpoint,System.Nullable{Action{MoveMessageErrorPolicy}})">ThenMove(IProducerEndpoint, Nullable&lt;Action&lt;MoveMessageErrorPolicy&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenMove_Silverback_Messaging_IProducerEndpoint_System_Action_MoveMessageErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenMove(Silverback.Messaging.IProducerEndpoint,System.Action{MoveMessageErrorPolicy})">ThenMove(IProducerEndpoint, Action&lt;MoveMessageErrorPolicy&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a <see cref="!:MoveMessageErrorPolicy"></see> that moves the messages that fail to  be processed to the
 configured endpoint.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder ThenMove(IProducerEndpoint endpoint, Action&lt;MoveMessageErrorPolicy&gt;? policyConfigurationAction = default(Action&lt;MoveMessageErrorPolicy&gt;? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder ThenMove(IProducerEndpoint endpoint, Action&lt;MoveMessageErrorPolicy&gt; policyConfigurationAction = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -250,7 +250,7 @@ configured endpoint.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<span class="xref">MoveMessageErrorPolicy</span>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">MoveMessageErrorPolicy</span>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
         <td><p>The (optional) additional configuration.</p>
 </td>
@@ -276,7 +276,7 @@ configured endpoint.</p>
   
   
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_Action_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(Action{RetryErrorPolicy})">ThenRetry(Action&lt;RetryErrorPolicy&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_System_Action_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(System.Action{RetryErrorPolicy})">ThenRetry(Action&lt;RetryErrorPolicy&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a <see cref="!:RetryErrorPolicy"></see> that retries to process the messages that previously failed to
 be to processed.</p>
 </div>
@@ -296,7 +296,7 @@ be to processed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">RetryErrorPolicy</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">RetryErrorPolicy</span>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
         <td><p>The (optional) additional configuration.</p>
 </td>
@@ -322,7 +322,7 @@ be to processed.</p>
   
   
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_System_Int32_Action_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(System.Int32,Action{RetryErrorPolicy})">ThenRetry(Int32, Action&lt;RetryErrorPolicy&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_System_Int32_System_Action_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(System.Int32,System.Action{RetryErrorPolicy})">ThenRetry(Int32, Action&lt;RetryErrorPolicy&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a <see cref="!:RetryErrorPolicy"></see> that retries to process the messages that previously failed to
 be to processed.</p>
 </div>
@@ -348,7 +348,7 @@ be to processed.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">RetryErrorPolicy</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">RetryErrorPolicy</span>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
         <td><p>The (optional) additional configuration.</p>
 </td>
@@ -374,7 +374,7 @@ be to processed.</p>
   
   
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_System_Int32_TimeSpan_Action_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(System.Int32,TimeSpan,Action{RetryErrorPolicy})">ThenRetry(Int32, TimeSpan, Action&lt;RetryErrorPolicy&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_System_Int32_System_TimeSpan_System_Action_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(System.Int32,System.TimeSpan,System.Action{RetryErrorPolicy})">ThenRetry(Int32, TimeSpan, Action&lt;RetryErrorPolicy&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a <see cref="!:RetryErrorPolicy"></see> that retries to process the messages that previously failed to
 be to processed.</p>
 </div>
@@ -400,13 +400,13 @@ be to processed.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">TimeSpan</span></td>
+        <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">initialDelay</span></td>
         <td><p>The optional delay to be applied to the first retry.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Action</span>&lt;<span class="xref">RetryErrorPolicy</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">RetryErrorPolicy</span>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
         <td><p>The (optional) additional configuration.</p>
 </td>
@@ -432,14 +432,14 @@ be to processed.</p>
   
   
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_System_Nullable_System_Int32__System_Nullable_TimeSpan__System_Nullable_TimeSpan__System_Nullable_Action_RetryErrorPolicy___" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(System.Nullable{System.Int32},System.Nullable{TimeSpan},System.Nullable{TimeSpan},System.Nullable{Action{RetryErrorPolicy}})">ThenRetry(Nullable&lt;Int32&gt;, Nullable&lt;TimeSpan&gt;, Nullable&lt;TimeSpan&gt;, Nullable&lt;Action&lt;RetryErrorPolicy&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenRetry_System_Nullable_System_Int32__System_Nullable_System_TimeSpan__System_Nullable_System_TimeSpan__System_Action_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenRetry(System.Nullable{System.Int32},System.Nullable{System.TimeSpan},System.Nullable{System.TimeSpan},System.Action{RetryErrorPolicy})">ThenRetry(Nullable&lt;Int32&gt;, Nullable&lt;TimeSpan&gt;, Nullable&lt;TimeSpan&gt;, Action&lt;RetryErrorPolicy&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a <see cref="!:RetryErrorPolicy"></see> that retries to process the messages that previously failed to
 be to processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder ThenRetry(int? retriesCount = default(int? ), TimeSpan? initialDelay = default(TimeSpan? ), TimeSpan? delayIncrement = default(TimeSpan? ), Action&lt;RetryErrorPolicy&gt;? policyConfigurationAction = default(Action&lt;RetryErrorPolicy&gt;? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder ThenRetry(int? retriesCount = default(int? ), TimeSpan? initialDelay = default(TimeSpan? ), TimeSpan? delayIncrement = default(TimeSpan? ), Action&lt;RetryErrorPolicy&gt; policyConfigurationAction = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -458,19 +458,19 @@ be to processed.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">TimeSpan</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">initialDelay</span></td>
         <td><p>The optional delay to be applied to the first retry.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">TimeSpan</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">delayIncrement</span></td>
         <td><p>The optional increment to the delay to be applied at each retry.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<span class="xref">RetryErrorPolicy</span>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">RetryErrorPolicy</span>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
         <td><p>The (optional) additional configuration.</p>
 </td>
@@ -496,13 +496,13 @@ be to processed.</p>
   
   
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenSkip_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenSkip*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenSkip_System_Nullable_Action_SkipMessageErrorPolicy___" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenSkip(System.Nullable{Action{SkipMessageErrorPolicy}})">ThenSkip(Nullable&lt;Action&lt;SkipMessageErrorPolicy&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenSkip_System_Action_SkipMessageErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenSkip(System.Action{SkipMessageErrorPolicy})">ThenSkip(Action&lt;SkipMessageErrorPolicy&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a <see cref="!:SkipMessageErrorPolicy"></see> that skips the messages that fail to be processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder ThenSkip(Action&lt;SkipMessageErrorPolicy&gt;? policyConfigurationAction = default(Action&lt;SkipMessageErrorPolicy&gt;? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder ThenSkip(Action&lt;SkipMessageErrorPolicy&gt; policyConfigurationAction = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -515,7 +515,7 @@ be to processed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<span class="xref">SkipMessageErrorPolicy</span>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">SkipMessageErrorPolicy</span>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
         <td><p>The (optional) additional configuration.</p>
 </td>
@@ -541,14 +541,14 @@ be to processed.</p>
   
   
   <a id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenStop_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenStop*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenStop_System_Nullable_Action_StopConsumerErrorPolicy___" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenStop(System.Nullable{Action{StopConsumerErrorPolicy}})">ThenStop(Nullable&lt;Action&lt;StopConsumerErrorPolicy&gt;&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyChainBuilder_ThenStop_System_Action_StopConsumerErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.ThenStop(System.Action{StopConsumerErrorPolicy})">ThenStop(Action&lt;StopConsumerErrorPolicy&gt;)</h4>
   <div class="markdown level1 summary"><p>Adds a <see cref="!:StopConsumerErrorPolicy"></see> that stops the consumer when an exception is thrown
 during the message processing.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder ThenStop(Action&lt;StopConsumerErrorPolicy&gt;? policyConfigurationAction = default(Action&lt;StopConsumerErrorPolicy&gt;? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder ThenStop(Action&lt;StopConsumerErrorPolicy&gt; policyConfigurationAction = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -561,7 +561,7 @@ during the message processing.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Action</span>&lt;<span class="xref">StopConsumerErrorPolicy</span>&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">StopConsumerErrorPolicy</span>&gt;</td>
         <td><span class="parametername">policyConfigurationAction</span></td>
         <td><p>The (optional) additional configuration.</p>
 </td>

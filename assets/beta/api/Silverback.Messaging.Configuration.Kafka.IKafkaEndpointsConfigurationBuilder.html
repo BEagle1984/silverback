@@ -110,7 +110,7 @@
   
   
   <a id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddInbound_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddInbound_Action_Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder__System_Int32_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound(Action{Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder},System.Int32)">AddInbound(Action&lt;IKafkaConsumerEndpointBuilder&gt;, Int32)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddInbound_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder__System_Int32_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound(System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder},System.Int32)">AddInbound(Action&lt;IKafkaConsumerEndpointBuilder&gt;, Int32)</h4>
   <div class="markdown level1 summary"><p>Adds an inbound endpoint and instantiates a <see cref="!:KafkaConsumer"></see> to consume from a Kafka topic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -129,9 +129,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html">IKafkaConsumerEndpointBuilder</a>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html">IKafkaConsumerEndpointBuilder</a>&gt;</td>
         <td><span class="parametername">endpointBuilderAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html">IKafkaConsumerEndpointBuilder</a> and configures
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html">IKafkaConsumerEndpointBuilder</a> and configures
 it.</p>
 </td>
       </tr>
@@ -159,7 +159,7 @@ it.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddInbound_Action_Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder__System_Int32__remarks">Remarks</h5>
+  <h5 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddInbound_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder__System_Int32__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Multiple calls to this methods will cause multiple consumers to be instantiated, which means
 multiple connections being issues and more resources being used. The <a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a>
 allows to define multiple topics to be consumed, to efficiently instantiate a single consumer for all of
@@ -168,66 +168,7 @@ them.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_Type_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder__System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound(Type,Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder},System.Boolean)">AddOutbound(Type, Action&lt;IKafkaProducerEndpointBuilder&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Kafka topic.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IKafkaEndpointsConfigurationBuilder AddOutbound(Type messageType, Action&lt;IKafkaProducerEndpointBuilder&gt; endpointBuilderAction, bool preloadProducers = true)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Type</span></td>
-        <td><span class="parametername">messageType</span></td>
-        <td><p>The type of the messages to be published to this endpoint.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;</td>
-        <td><span class="parametername">endpointBuilderAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a> and configures
-it.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">preloadProducers</span></td>
-        <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.html">IKafkaEndpointsConfigurationBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.html">IKafkaEndpointsConfigurationBuilder</a> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_Type_DictionaryOutboundRouter_System_Object_Silverback_Messaging_KafkaProducerEndpoint__RouterFunction_IReadOnlyDictionary_System_String_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound(Type,DictionaryOutboundRouter{System.Object,Silverback.Messaging.KafkaProducerEndpoint}.RouterFunction,IReadOnlyDictionary{System.String,Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder}},System.Boolean)">AddOutbound(Type, DictionaryOutboundRouter&lt;Object, KafkaProducerEndpoint&gt;.RouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IKafkaProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_System_Type_DictionaryOutboundRouter_System_Object_Silverback_Messaging_KafkaProducerEndpoint__RouterFunction_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound(System.Type,DictionaryOutboundRouter{System.Object,Silverback.Messaging.KafkaProducerEndpoint}.RouterFunction,IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder}},System.Boolean)">AddOutbound(Type, DictionaryOutboundRouter&lt;Object, KafkaProducerEndpoint&gt;.RouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IKafkaProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Kafka topic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -246,7 +187,7 @@ it.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">messageType</span></td>
         <td><p>The type of the messages to be published to this endpoint.</p>
 </td>
@@ -258,10 +199,10 @@ it.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;&gt;</td>
+        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;&gt;</td>
         <td><span class="parametername">endpointBuilderActions</span></td>
         <td><p>The <see cref="!:IReadOnlyDictionary&lt;TKey,TValue>"></see> containing the key of each endpoint and the
-<see cref="!:Action&lt;T>"></see> to be invoked to build them.</p>
+<span class="xref">System.Action&lt;T&gt;</span> to be invoked to build them.</p>
 </td>
       </tr>
       <tr>
@@ -292,7 +233,7 @@ it.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_Type_DictionaryOutboundRouter_System_Object_Silverback_Messaging_KafkaProducerEndpoint__SingleEndpointRouterFunction_IReadOnlyDictionary_System_String_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound(Type,DictionaryOutboundRouter{System.Object,Silverback.Messaging.KafkaProducerEndpoint}.SingleEndpointRouterFunction,IReadOnlyDictionary{System.String,Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder}},System.Boolean)">AddOutbound(Type, DictionaryOutboundRouter&lt;Object, KafkaProducerEndpoint&gt;.SingleEndpointRouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IKafkaProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_System_Type_DictionaryOutboundRouter_System_Object_Silverback_Messaging_KafkaProducerEndpoint__SingleEndpointRouterFunction_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound(System.Type,DictionaryOutboundRouter{System.Object,Silverback.Messaging.KafkaProducerEndpoint}.SingleEndpointRouterFunction,IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder}},System.Boolean)">AddOutbound(Type, DictionaryOutboundRouter&lt;Object, KafkaProducerEndpoint&gt;.SingleEndpointRouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IKafkaProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Kafka topic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -311,7 +252,7 @@ it.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">messageType</span></td>
         <td><p>The type of the messages to be published to this endpoint.</p>
 </td>
@@ -323,10 +264,10 @@ it.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;&gt;</td>
+        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;&gt;</td>
         <td><span class="parametername">endpointBuilderActions</span></td>
         <td><p>The <see cref="!:IReadOnlyDictionary&lt;TKey,TValue>"></see> containing the key of each endpoint and the
-<see cref="!:Action&lt;T>"></see> to be invoked to build them.</p>
+<span class="xref">System.Action&lt;T&gt;</span> to be invoked to build them.</p>
 </td>
       </tr>
       <tr>
@@ -357,13 +298,13 @@ it.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound__1_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder__System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound``1(Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder},System.Boolean)">AddOutbound&lt;TMessage&gt;(Action&lt;IKafkaProducerEndpointBuilder&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_System_Type_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder__System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound(System.Type,System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder},System.Boolean)">AddOutbound(Type, Action&lt;IKafkaProducerEndpointBuilder&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Kafka topic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IKafkaEndpointsConfigurationBuilder AddOutbound&lt;TMessage&gt;(Action&lt;IKafkaProducerEndpointBuilder&gt; endpointBuilderAction, bool preloadProducers = true)</code></pre>
+    <pre><code class="lang-csharp hljs">IKafkaEndpointsConfigurationBuilder AddOutbound(Type messageType, Action&lt;IKafkaProducerEndpointBuilder&gt; endpointBuilderAction, bool preloadProducers = true)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -376,9 +317,15 @@ it.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;</td>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">messageType</span></td>
+        <td><p>The type of the messages to be published to this endpoint.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;</td>
         <td><span class="parametername">endpointBuilderAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a> and configures
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a> and configures
 it.</p>
 </td>
       </tr>
@@ -407,26 +354,10 @@ it.</p>
       </tr>
     </tbody>
   </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TMessage</span></td>
-        <td><p>The type of the messages to be published to this endpoint.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   
   
   <a id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound__1_DictionaryOutboundRouter___0_Silverback_Messaging_KafkaProducerEndpoint__RouterFunction_IReadOnlyDictionary_System_String_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound``1(DictionaryOutboundRouter{``0,Silverback.Messaging.KafkaProducerEndpoint}.RouterFunction,IReadOnlyDictionary{System.String,Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder}},System.Boolean)">AddOutbound&lt;TMessage&gt;(DictionaryOutboundRouter&lt;TMessage, KafkaProducerEndpoint&gt;.RouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IKafkaProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound__1_DictionaryOutboundRouter___0_Silverback_Messaging_KafkaProducerEndpoint__RouterFunction_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound``1(DictionaryOutboundRouter{``0,Silverback.Messaging.KafkaProducerEndpoint}.RouterFunction,IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder}},System.Boolean)">AddOutbound&lt;TMessage&gt;(DictionaryOutboundRouter&lt;TMessage, KafkaProducerEndpoint&gt;.RouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IKafkaProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Kafka topic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -451,10 +382,10 @@ it.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;&gt;</td>
+        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;&gt;</td>
         <td><span class="parametername">endpointBuilderActions</span></td>
         <td><p>The <see cref="!:IReadOnlyDictionary&lt;TKey,TValue>"></see> containing the key of each endpoint and the
-<see cref="!:Action&lt;T>"></see> to be invoked to build them.</p>
+<span class="xref">System.Action&lt;T&gt;</span> to be invoked to build them.</p>
 </td>
       </tr>
       <tr>
@@ -501,7 +432,7 @@ it.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound__1_DictionaryOutboundRouter___0_Silverback_Messaging_KafkaProducerEndpoint__SingleEndpointRouterFunction_IReadOnlyDictionary_System_String_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound``1(DictionaryOutboundRouter{``0,Silverback.Messaging.KafkaProducerEndpoint}.SingleEndpointRouterFunction,IReadOnlyDictionary{System.String,Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder}},System.Boolean)">AddOutbound&lt;TMessage&gt;(DictionaryOutboundRouter&lt;TMessage, KafkaProducerEndpoint&gt;.SingleEndpointRouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IKafkaProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound__1_DictionaryOutboundRouter___0_Silverback_Messaging_KafkaProducerEndpoint__SingleEndpointRouterFunction_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound``1(DictionaryOutboundRouter{``0,Silverback.Messaging.KafkaProducerEndpoint}.SingleEndpointRouterFunction,IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder}},System.Boolean)">AddOutbound&lt;TMessage&gt;(DictionaryOutboundRouter&lt;TMessage, KafkaProducerEndpoint&gt;.SingleEndpointRouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IKafkaProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Kafka topic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -526,10 +457,79 @@ it.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;&gt;</td>
+        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;&gt;</td>
         <td><span class="parametername">endpointBuilderActions</span></td>
         <td><p>The <see cref="!:IReadOnlyDictionary&lt;TKey,TValue>"></see> containing the key of each endpoint and the
-<see cref="!:Action&lt;T>"></see> to be invoked to build them.</p>
+<span class="xref">System.Action&lt;T&gt;</span> to be invoked to build them.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">preloadProducers</span></td>
+        <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
+<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.html">IKafkaEndpointsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.html">IKafkaEndpointsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be published to this endpoint.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound__1_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder__System_Boolean_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound``1(System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder},System.Boolean)">AddOutbound&lt;TMessage&gt;(Action&lt;IKafkaProducerEndpointBuilder&gt;, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Kafka topic.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IKafkaEndpointsConfigurationBuilder AddOutbound&lt;TMessage&gt;(Action&lt;IKafkaProducerEndpointBuilder&gt; endpointBuilderAction, bool preloadProducers = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a>&gt;</td>
+        <td><span class="parametername">endpointBuilderAction</span></td>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a> and configures
+it.</p>
 </td>
       </tr>
       <tr>
@@ -576,7 +576,7 @@ it.</p>
   
   
   <a id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_Configure_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.Configure*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_Configure_Action_Silverback_Messaging_Configuration_Kafka_KafkaClientConfig__" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.Configure(Action{Silverback.Messaging.Configuration.Kafka.KafkaClientConfig})">Configure(Action&lt;KafkaClientConfig&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaClientConfig__" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.Configure(System.Action{Silverback.Messaging.Configuration.Kafka.KafkaClientConfig})">Configure(Action&lt;KafkaClientConfig&gt;)</h4>
   <div class="markdown level1 summary"><p>Configures the Kafka client properties that are shared between the producers and consumers.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -595,9 +595,9 @@ it.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a>&gt;</td>
         <td><span class="parametername">configAction</span></td>
-        <td><p>An <see cref="!:Action&lt;T>"></see> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a> and configures it.</p>
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a> and configures it.</p>
 </td>
       </tr>
     </tbody>

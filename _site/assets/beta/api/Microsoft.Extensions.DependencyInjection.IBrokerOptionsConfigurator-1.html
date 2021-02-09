@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IBrokerOptionsConfigurator&lt;TBroker&gt;
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -91,12 +91,12 @@
   <h1 id="Microsoft_Extensions_DependencyInjection_IBrokerOptionsConfigurator_1" data-uid="Microsoft.Extensions.DependencyInjection.IBrokerOptionsConfigurator`1" class="text-break">Interface IBrokerOptionsConfigurator&lt;TBroker&gt;
   </h1>
   <div class="markdown level0 summary"><p>The implementations of this class will be located via assembly scanning and invoked when a broker of
-the matching type <code data-dev-comment-type="typeparamref" class="typeparamref">TBroker</code> is added to the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span>
+the matching type <code data-dev-comment-type="typeparamref" class="typeparamref">TBroker</code> is added to the <see cref="!:IServiceCollection"></see>
 ..</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Microsoft.Extensions.DependencyInjection.html">Microsoft.Extensions.DependencyInjection</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Microsoft_Extensions_DependencyInjection_IBrokerOptionsConfigurator_1_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public interface IBrokerOptionsConfigurator&lt;TBroker&gt;
@@ -113,20 +113,15 @@ the matching type <code data-dev-comment-type="typeparamref" class="typeparamref
     <tbody>
       <tr>
         <td><span class="parametername">TBroker</span></td>
-        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementation being configured.</p>
+        <td><p>The type of the <see cref="!:IBroker"></see> implementation being configured.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_IBrokerOptionsConfigurator_1_Configure_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.IBrokerOptionsConfigurator%601.Configure(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/IBrokerOptionsConfigurator`1.cs/#L33">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_IBrokerOptionsConfigurator_1_Configure_" data-uid="Microsoft.Extensions.DependencyInjection.IBrokerOptionsConfigurator`1.Configure*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_IBrokerOptionsConfigurator_1_Configure_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_" data-uid="Microsoft.Extensions.DependencyInjection.IBrokerOptionsConfigurator`1.Configure(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)">Configure(IBrokerOptionsBuilder)</h4>
   <div class="markdown level1 summary"><p>Called while registering the broker to configure the broker-specific services and options (e.g.
@@ -150,7 +145,7 @@ behaviors).</p>
       <tr>
         <td><a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a></td>
         <td><span class="parametername">brokerOptionsBuilder</span></td>
-        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span> to
+        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <see cref="!:IServiceCollection"></see> to
 add the services to.</p>
 </td>
       </tr>
@@ -163,12 +158,6 @@ add the services to.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_IBrokerOptionsConfigurator_1.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.IBrokerOptionsConfigurator%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/IBrokerOptionsConfigurator`1.cs/#L18" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

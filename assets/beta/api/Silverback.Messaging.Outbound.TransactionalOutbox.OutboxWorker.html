@@ -137,13 +137,13 @@
   
   
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__ctor_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__ctor_IServiceScopeFactory_IBrokerCollection_IOutboundRoutingConfiguration_ISilverbackIntegrationLogger_Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__System_Boolean_System_Int32_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.#ctor(IServiceScopeFactory,IBrokerCollection,IOutboundRoutingConfiguration,ISilverbackIntegrationLogger{Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker},System.Boolean,System.Int32)">OutboxWorker(IServiceScopeFactory, IBrokerCollection, IOutboundRoutingConfiguration, ISilverbackIntegrationLogger&lt;OutboxWorker&gt;, Boolean, Int32)</h4>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__ctor_IServiceScopeFactory_IBrokerCollection_IOutboundRoutingConfiguration_IOutboundLogger_Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorker__System_Boolean_System_Int32_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.#ctor(IServiceScopeFactory,IBrokerCollection,IOutboundRoutingConfiguration,IOutboundLogger{Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker},System.Boolean,System.Int32)">OutboxWorker(IServiceScopeFactory, IBrokerCollection, IOutboundRoutingConfiguration, IOutboundLogger&lt;OutboxWorker&gt;, Boolean, Int32)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public OutboxWorker(IServiceScopeFactory serviceScopeFactory, IBrokerCollection brokerCollection, IOutboundRoutingConfiguration routingConfiguration, ISilverbackIntegrationLogger&lt;OutboxWorker&gt; logger, bool enforceMessageOrder, int readBatchSize)</code></pre>
+    <pre><code class="lang-csharp hljs">public OutboxWorker(IServiceScopeFactory serviceScopeFactory, IBrokerCollection brokerCollection, IOutboundRoutingConfiguration routingConfiguration, IOutboundLogger&lt;OutboxWorker&gt; logger, bool enforceMessageOrder, int readBatchSize)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -174,9 +174,9 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">ISilverbackIntegrationLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a>&gt;</td>
+        <td><span class="xref">IOutboundLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <see cref="!:ISilverbackIntegrationLogger"></see>.</p>
+        <td><p>The <see cref="!:IOutboundLogger&lt;TCategoryName>"></see>.</p>
 </td>
       </tr>
       <tr>

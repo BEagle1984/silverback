@@ -141,7 +141,7 @@ the type of the message being published.</p>
   
   
   <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_CanResolve_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.CanResolve*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_CanResolve_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.CanResolve(Type)">CanResolve(Type)</h4>
+  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_CanResolve_System_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.CanResolve(System.Type)">CanResolve(Type)</h4>
   <div class="markdown level1 summary"><p>Returns a boolean value indicating whether this resolver instance can handle the parameter of the
 specified type.</p>
 </div>
@@ -161,7 +161,7 @@ specified type.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">parameterType</span></td>
         <td><p>The type of the parameter to be resolved.</p>
 </td>
@@ -187,7 +187,7 @@ specified type.</p>
   
   
   <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetMessageType_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetMessageType*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetMessageType_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetMessageType(Type)">GetMessageType(Type)</h4>
+  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetMessageType_System_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetMessageType(System.Type)">GetMessageType(Type)</h4>
   <div class="markdown level1 summary"><p>Returns the actual message type in the specified parameter type (e.g. <code>TMessage</code> for a parameter
 declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
 </div>
@@ -207,7 +207,7 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">parameterType</span></td>
         <td><p>The type of the parameter to be resolved.</p>
 </td>
@@ -224,7 +224,7 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><p>The actual message type.</p>
 </td>
       </tr>
@@ -233,7 +233,7 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
   
   
   <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_IMessageStreamProvider_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue(IMessageStreamProvider,Type)">GetValue(IMessageStreamProvider, Type)</h4>
+  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_IMessageStreamProvider_System_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue(IMessageStreamProvider,System.Type)">GetValue(IMessageStreamProvider, Type)</h4>
   <div class="markdown level1 summary"><p>Returns the messages stream in a shape that is compatible with the subscribed method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -258,7 +258,7 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">targetMessageType</span></td>
         <td><p>The actual message type being declared by the subscribed method (e.g. <code>TMessage</code> for an
 <code>IMessageStreamEnumerable&lt;TMessage&gt;</code>).</p>
@@ -285,7 +285,7 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
   
   
   <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_IReadOnlyCollection_System_Object__Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue(IReadOnlyCollection{System.Object},Type)">GetValue(IReadOnlyCollection&lt;Object&gt;, Type)</h4>
+  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_EnumerableMessageArgumentResolver_GetValue_IReadOnlyCollection_System_Object__System_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.EnumerableMessageArgumentResolver.GetValue(IReadOnlyCollection{System.Object},System.Type)">GetValue(IReadOnlyCollection&lt;Object&gt;, Type)</h4>
   <div class="markdown level1 summary"><p>Returns the messages collection in a shape that is compatible with the subscribed method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -310,7 +310,7 @@ declared as <code>IEnumerable&lt;TMessage&gt;</code>.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Type</span></td>
+        <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">targetMessageType</span></td>
         <td><p>The actual message type being declared by the subscribed method (e.g. <code>TMessage</code> for an
 <code>IEnumerable&lt;TMessage&gt;</code>).</p>

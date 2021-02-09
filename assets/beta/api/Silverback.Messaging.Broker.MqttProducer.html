@@ -125,6 +125,9 @@
       <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_IsConnected">Producer.IsConnected</a>
     </div>
     <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_IsConnecting">Producer.IsConnecting</a>
+    </div>
+    <div>
       <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ConnectAsync">Producer.ConnectAsync()</a>
     </div>
     <div>
@@ -199,13 +202,13 @@
   
   
   <a id="Silverback_Messaging_Broker_MqttProducer__ctor_" data-uid="Silverback.Messaging.Broker.MqttProducer.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Broker_MqttProducer__ctor_Silverback_Messaging_Broker_MqttBroker_Silverback_Messaging_MqttProducerEndpoint_IBrokerBehaviorsProvider_IProducerBehavior__IServiceProvider_ISilverbackIntegrationLogger_Silverback_Messaging_Broker_MqttProducer__" data-uid="Silverback.Messaging.Broker.MqttProducer.#ctor(Silverback.Messaging.Broker.MqttBroker,Silverback.Messaging.MqttProducerEndpoint,IBrokerBehaviorsProvider{IProducerBehavior},IServiceProvider,ISilverbackIntegrationLogger{Silverback.Messaging.Broker.MqttProducer})">MqttProducer(MqttBroker, MqttProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider, ISilverbackIntegrationLogger&lt;MqttProducer&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer__ctor_Silverback_Messaging_Broker_MqttBroker_Silverback_Messaging_MqttProducerEndpoint_IBrokerBehaviorsProvider_IProducerBehavior__System_IServiceProvider_IOutboundLogger_Silverback_Messaging_Broker_MqttProducer__" data-uid="Silverback.Messaging.Broker.MqttProducer.#ctor(Silverback.Messaging.Broker.MqttBroker,Silverback.Messaging.MqttProducerEndpoint,IBrokerBehaviorsProvider{IProducerBehavior},System.IServiceProvider,IOutboundLogger{Silverback.Messaging.Broker.MqttProducer})">MqttProducer(MqttBroker, MqttProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider, IOutboundLogger&lt;MqttProducer&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.MqttProducer.html">MqttProducer</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public MqttProducer(MqttBroker broker, MqttProducerEndpoint endpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt; behaviorsProvider, IServiceProvider serviceProvider, ISilverbackIntegrationLogger&lt;MqttProducer&gt; logger)</code></pre>
+    <pre><code class="lang-csharp hljs">public MqttProducer(MqttBroker broker, MqttProducerEndpoint endpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt; behaviorsProvider, IServiceProvider serviceProvider, IOutboundLogger&lt;MqttProducer&gt; logger)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -236,15 +239,15 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IServiceProvider</span></td>
+        <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <see cref="!:IServiceProvider"></see> to be used to resolve the required services.</p>
+        <td><p>The <span class="xref">System.IServiceProvider</span> to be used to resolve the required services.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">ISilverbackIntegrationLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.MqttProducer.html">MqttProducer</a>&gt;</td>
+        <td><span class="xref">IOutboundLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.MqttProducer.html">MqttProducer</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <see cref="!:ISilverbackIntegrationLogger"></see>.</p>
+        <td><p>The <see cref="!:IOutboundLogger&lt;TCategoryName>"></see>.</p>
 </td>
       </tr>
     </tbody>

@@ -155,13 +155,13 @@
   
   
   <a id="Silverback_Testing_TestingHelper_1__ctor_" data-uid="Silverback.Testing.TestingHelper`1.#ctor*"></a>
-  <h4 id="Silverback_Testing_TestingHelper_1__ctor_IServiceProvider_" data-uid="Silverback.Testing.TestingHelper`1.#ctor(IServiceProvider)">TestingHelper(IServiceProvider)</h4>
+  <h4 id="Silverback_Testing_TestingHelper_1__ctor_System_IServiceProvider_ILogger_Silverback_Testing_TestingHelper__0___" data-uid="Silverback.Testing.TestingHelper`1.#ctor(System.IServiceProvider,ILogger{Silverback.Testing.TestingHelper{`0}})">TestingHelper(IServiceProvider, ILogger&lt;TestingHelper&lt;TBroker&gt;&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Testing.TestingHelper-1.html">TestingHelper&lt;TBroker&gt;</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected TestingHelper(IServiceProvider serviceProvider)</code></pre>
+    <pre><code class="lang-csharp hljs">protected TestingHelper(IServiceProvider serviceProvider, ILogger&lt;TestingHelper&lt;TBroker&gt;&gt; logger)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -174,9 +174,15 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IServiceProvider</span></td>
+        <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">serviceProvider</span></td>
-        <td><p>The <see cref="!:IServiceProvider"></see>.</p>
+        <td><p>The <span class="xref">System.IServiceProvider</span>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">ILogger</span>&lt;<a class="xref" href="Silverback.Testing.TestingHelper-1.html">TestingHelper</a>&lt;TBroker&gt;&gt;</td>
+        <td><span class="parametername">logger</span></td>
+        <td><p>The <see cref="!:ILogger&lt;TCategoryName>"></see>.</p>
 </td>
       </tr>
     </tbody>
@@ -272,7 +278,7 @@
   
   
   <a id="Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync*"></a>
-  <h4 id="Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_TimeSpan__" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{TimeSpan})">WaitUntilAllMessagesAreConsumedAsync(Nullable&lt;TimeSpan&gt;)</h4>
+  <h4 id="Silverback_Testing_TestingHelper_1_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan})">WaitUntilAllMessagesAreConsumedAsync(Nullable&lt;TimeSpan&gt;)</h4>
   <div class="markdown level1 summary"><p>Returns a <see cref="!:Task"></see> that completes when all messages routed to the consumers have been
 processed and committed.</p>
 </div>
@@ -292,10 +298,54 @@ processed and committed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">TimeSpan</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">timeout</span></td>
-        <td><p>The timeout after which the method will return even if the messages haven't been
-processed. The default is 30 seconds.</p>
+        <td><p>The time to wait for the messages to be consumed and processed. The default is 30 seconds.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span></td>
+        <td><p>A <see cref="!:Task"></see> that completes when all messages have been processed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Silverback_Testing_TestingHelper_1_WaitUntilConnectedAsync_" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilConnectedAsync*"></a>
+  <h4 id="Silverback_Testing_TestingHelper_1_WaitUntilConnectedAsync_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.TestingHelper`1.WaitUntilConnectedAsync(System.Nullable{System.TimeSpan})">WaitUntilConnectedAsync(Nullable&lt;TimeSpan&gt;)</h4>
+  <div class="markdown level1 summary"><p>Returns a <see cref="!:Task"></see> that completes when all consumers have connected.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task WaitUntilConnectedAsync(TimeSpan? timeout = default(TimeSpan? ))</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">timeout</span></td>
+        <td><p>The time to wait for the consumers to connect. The default is 30 seconds.</p>
 </td>
       </tr>
     </tbody>

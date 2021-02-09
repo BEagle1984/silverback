@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Silverback.Messaging.Configuration
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -95,14 +95,17 @@
     <h3 id="classes">Classes
   </h3>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.AvroMessageSerializerBuilder.html">AvroMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a>.</p>
+      <section><p>Builds the <see cref="!:AvroMessageSerializer&lt;TMessage>"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.BinaryFileMessageSerializerBuilder.html">BinaryFileMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.html">BinaryFileMessageSerializer</a> or
-<a class="xref" href="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer-1.html">BinaryFileMessageSerializer&lt;TModel&gt;</a>.</p>
+      <section><p>Builds the <see cref="!:BinaryFileMessageSerializer"></see> or
+<see cref="!:BinaryFileMessageSerializer&lt;TMessage>"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerConnectionOptions.html">BrokerConnectionOptions</a></h4>
       <section><p>The options specifying if and when the message broker has to be automatically connected.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Configuration.BrokerOptionsBuilderAllowDuplicateEndpointsExtensions.html">BrokerOptionsBuilderAllowDuplicateEndpointsExtensions</a></h4>
+      <section><p>Adds the <code>AllowDuplicateEndpointRegistrations</code> method to the <see cref="!:IBrokerOptionsBuilder"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html">ConsumerEndpointBuilder&lt;TEndpoint, TBuilder&gt;</a></h4>
       <section><p>The base class for the builders of the types inheriting from <a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html">ConsumerEndpoint</a>.</p>
@@ -143,7 +146,7 @@
       <section><p>Adds the <code>AddOutbound</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.ErrorPolicyBuilder.html">ErrorPolicyBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>.</p>
+      <section><p>Builds the <see cref="!:IErrorPolicy"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.ErrorPolicyBuilderMoveToKafkaTopicExtensions.html">ErrorPolicyBuilderMoveToKafkaTopicExtensions</a></h4>
       <section><p>Adds the <code>MoveToKafkaTopic</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a>.</p>
@@ -152,7 +155,7 @@
       <section><p>Adds the <code>MoveToMqttTopic</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.ErrorPolicyChainBuilder.html">ErrorPolicyChainBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>.</p>
+      <section><p>Builds the <see cref="!:IErrorPolicy"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.ErrorPolicyChainBuilderMoveToKafkaTopicExtensions.html">ErrorPolicyChainBuilderMoveToKafkaTopicExtensions</a></h4>
       <section><p>Adds the <code>ThenMoveToKafkaTopic</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a>.</p>
@@ -164,17 +167,17 @@
       <section><p>Contains some helper methods used to build the exactly-once strategies.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.ExactlyOnceStrategyBuilder.html">ExactlyOnceStrategyBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy.html">IExactlyOnceStrategy</a>.</p>
+      <section><p>Builds the <see cref="!:IExactlyOnceStrategy"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.html">JsonMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> or <a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer-1.html">JsonMessageSerializer&lt;TMessage&gt;</a>.</p>
+      <section><p>Builds the <see cref="!:JsonMessageSerializer"></see> or <see cref="!:JsonMessageSerializer&lt;TMessage>"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.KafkaBrokerOptionsConfigurator.html">KafkaBrokerOptionsConfigurator</a></h4>
-      <section><p>This class will be located via assembly scanning and invoked when a <a class="xref" href="Silverback.Messaging.Broker.KafkaBroker.html">KafkaBroker</a> is
-added to the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span>.</p>
+      <section><p>This class will be located via assembly scanning and invoked when a <see cref="!:KafkaBroker"></see> is
+added to the <see cref="!:IServiceCollection"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.html">NewtonsoftJsonMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a> or <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer-1.html">NewtonsoftJsonMessageSerializer&lt;TMessage&gt;</a>.</p>
+      <section><p>Builds the <see cref="!:NewtonsoftJsonMessageSerializer"></see> or <see cref="!:NewtonsoftJsonMessageSerializer&lt;TMessage>"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html">ProducerEndpointBuilder&lt;TEndpoint, TBuilder&gt;</a></h4>
       <section><p>The base class for the builders of the types inheriting from <a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html">ConsumerEndpoint</a>.</p>
@@ -197,8 +200,8 @@ added to the <span class="xref">Microsoft.Extensions.DependencyInjection.IServic
       <section><p>Adds the <code>SerializeAsJsonUsingNewtonsoft</code> method to the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.RabbitBrokerOptionsConfigurator.html">RabbitBrokerOptionsConfigurator</a></h4>
-      <section><p>This class will be located via assembly scanning and invoked when a <a class="xref" href="Silverback.Messaging.Broker.RabbitBroker.html">RabbitBroker</a> is
-added to the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span>.</p>
+      <section><p>This class will be located via assembly scanning and invoked when a <see cref="!:RabbitBroker"></see> is
+added to the <see cref="!:IServiceCollection"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.SilverbackBuilderHandleMessageOfTypeExtensions.html">SilverbackBuilderHandleMessageOfTypeExtensions</a></h4>
       <section><p>Adds the <code>HandleMessageOfType</code> methods to the <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a>.</p>
@@ -212,11 +215,11 @@ added to the <span class="xref">Microsoft.Extensions.DependencyInjection.IServic
     <h3 id="interfaces">Interfaces
   </h3>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.IAvroMessageSerializerBuilder.html">IAvroMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.AvroMessageSerializer-1.html">AvroMessageSerializer&lt;TMessage&gt;</a>.</p>
+      <section><p>Builds the <see cref="!:AvroMessageSerializer&lt;TMessage>"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder.html">IBinaryFileMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer-1.html">BinaryFileMessageSerializer&lt;TModel&gt;</a> or
-<a class="xref" href="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer-1.html">BinaryFileMessageSerializer&lt;TModel&gt;</a>.</p>
+      <section><p>Builds the <see cref="!:BinaryFileMessageSerializer&lt;TModel>"></see> or
+<see cref="!:BinaryFileMessageSerializer&lt;TMessage>"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a></h4>
       <section><p>Stores the internal bus configuration (subscribers, etc.).</p>
@@ -236,29 +239,29 @@ different types. The types implementing <a class="xref" href="Silverback.Messagi
 using <code>RegisterConfigurator</code> or <code>AddEndpointConfigurator</code>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>.</p>
+      <section><p>Builds the <see cref="!:IErrorPolicy"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>.</p>
+      <section><p>Builds the <see cref="!:IErrorPolicy"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.IExactlyOnceStrategyBuilder.html">IExactlyOnceStrategyBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.IExactlyOnceStrategy.html">IExactlyOnceStrategy</a>.</p>
+      <section><p>Builds the <see cref="!:IExactlyOnceStrategy"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.IJsonMessageSerializerBuilder.html">IJsonMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer.html">JsonMessageSerializer</a> or <a class="xref" href="Silverback.Messaging.Serialization.JsonMessageSerializer-1.html">JsonMessageSerializer&lt;TMessage&gt;</a>.</p>
+      <section><p>Builds the <see cref="!:JsonMessageSerializer"></see> or <see cref="!:JsonMessageSerializer&lt;TMessage>"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.ILogLevelConfigurator.html">ILogLevelConfigurator</a></h4>
-      <section><p>Configure the loglevels that should be used to log events.</p>
+      <section><p>Configure and stores the <span class="xref">System.LogLevel</span> overrides.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.html">INewtonsoftJsonMessageSerializerBuilder</a></h4>
-      <section><p>Builds the <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer.html">NewtonsoftJsonMessageSerializer</a> or <a class="xref" href="Silverback.Messaging.Serialization.NewtonsoftJsonMessageSerializer-1.html">NewtonsoftJsonMessageSerializer&lt;TMessage&gt;</a>.</p>
+      <section><p>Builds the <see cref="!:NewtonsoftJsonMessageSerializer"></see> or <see cref="!:NewtonsoftJsonMessageSerializer&lt;TMessage>"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html">IProducerEndpointBuilder&lt;TBuilder&gt;</a></h4>
       <section><p>Builds the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></h4>
       <section><p>Exposes the methods to configure Silverback and enable its optional features adding the needed
-services to the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span>.</p>
+services to the <see cref="!:IServiceCollection"></see>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Configuration.IValidatableEndpointSettings.html">IValidatableEndpointSettings</a></h4>
       <section><p>Declares the <code>Validate</code> method that is used to check the provided settings.</p>

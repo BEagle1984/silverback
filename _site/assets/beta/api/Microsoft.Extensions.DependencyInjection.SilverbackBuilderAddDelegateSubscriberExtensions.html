@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class SilverbackBuilderAddDelegateSubscriberExtensions
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.5.0">
+    <meta name="generator" content="docfx 2.56.6.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -90,7 +90,7 @@
   
   <h1 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions" class="text-break">Class SilverbackBuilderAddDelegateSubscriberExtensions
   </h1>
-  <div class="markdown level0 summary"><p>Adds the <code>AddDelegateSubscriber</code> methods to the <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a>.</p>
+  <div class="markdown level0 summary"><p>Adds the <code>AddDelegateSubscriber</code> methods to the <see cref="!:ISilverbackBuilder"></see>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -101,10 +101,16 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -115,36 +121,25 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Microsoft.Extensions.DependencyInjection.html">Microsoft.Extensions.DependencyInjection</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Core.dll</h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
   <h5 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static class SilverbackBuilderAddDelegateSubscriberExtensions</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Delegate_Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Delegate%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L34">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Delegate_Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Delegate,Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber(ISilverbackBuilder, Delegate, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_ISilverbackBuilder_System_Delegate_System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber(ISilverbackBuilder,System.Delegate,System.Nullable{SubscriptionOptions})">AddDelegateSubscriber(ISilverbackBuilder, Delegate, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber(this ISilverbackBuilder silverbackBuilder, Delegate handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber(this ISilverbackBuilder silverbackBuilder, Delegate handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -157,9 +152,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
@@ -169,9 +164,9 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -186,27 +181,22 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action___0_System_IServiceProvider__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Action%7B%60%600%2CSystem.IServiceProvider%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L304">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action___0_System_IServiceProvider__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Action{``0,System.IServiceProvider},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Action&lt;TMessage, IServiceProvider&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Action___0_System_IServiceProvider__System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Action{``0,System.IServiceProvider},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Action&lt;TMessage, IServiceProvider&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Action&lt;TMessage, IServiceProvider&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Action&lt;TMessage, IServiceProvider&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -219,9 +209,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
@@ -231,9 +221,9 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -248,8 +238,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -270,21 +260,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action___0__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Action%7B%60%600%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L64">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action___0__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Action{``0},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Action&lt;TMessage&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Action___0__System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Action{``0},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Action&lt;TMessage&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Action&lt;TMessage&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Action&lt;TMessage&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -297,9 +282,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
@@ -309,9 +294,9 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -326,8 +311,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -348,21 +333,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_System_Collections_Generic_IEnumerable___0__System_IServiceProvider__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Action%7BSystem.Collections.Generic.IEnumerable%7B%60%600%7D%2CSystem.IServiceProvider%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L394">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_System_Collections_Generic_IEnumerable___0__System_IServiceProvider__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Action{System.Collections.Generic.IEnumerable{``0},System.IServiceProvider},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Action&lt;IEnumerable&lt;TMessage&gt;, IServiceProvider&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Action_IEnumerable___0__System_IServiceProvider__System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Action{IEnumerable{``0},System.IServiceProvider},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Action&lt;IEnumerable&lt;TMessage&gt;, IServiceProvider&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Action&lt;IEnumerable&lt;TMessage&gt;, IServiceProvider&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Action&lt;IEnumerable&lt;TMessage&gt;, IServiceProvider&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -375,21 +355,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Collections.Generic.IEnumerable</span>&lt;TMessage&gt;, <span class="xref">System.IServiceProvider</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">IEnumerable</span>&lt;TMessage&gt;, <span class="xref">System.IServiceProvider</span>&gt;</td>
         <td><span class="parametername">handler</span></td>
         <td><p>The message handler delegate.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -404,8 +384,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -426,21 +406,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_System_Collections_Generic_IEnumerable___0___Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Action%7BSystem.Collections.Generic.IEnumerable%7B%60%600%7D%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L184">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_System_Collections_Generic_IEnumerable___0___Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Action{System.Collections.Generic.IEnumerable{``0}},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Action&lt;IEnumerable&lt;TMessage&gt;&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Action_IEnumerable___0___System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Action{IEnumerable{``0}},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Action&lt;IEnumerable&lt;TMessage&gt;&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Action&lt;IEnumerable&lt;TMessage&gt;&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Action&lt;IEnumerable&lt;TMessage&gt;&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -453,21 +428,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Collections.Generic.IEnumerable</span>&lt;TMessage&gt;&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">IEnumerable</span>&lt;TMessage&gt;&gt;</td>
         <td><span class="parametername">handler</span></td>
         <td><p>The message handler delegate.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -482,8 +457,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -504,21 +479,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func___0_System_IServiceProvider_System_Object__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Func%7B%60%600%2CSystem.IServiceProvider%2CSystem.Object%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L364">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func___0_System_IServiceProvider_System_Object__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Func{``0,System.IServiceProvider,System.Object},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;TMessage, IServiceProvider, Object&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Func___0_System_IServiceProvider_System_Object__System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Func{``0,System.IServiceProvider,System.Object},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;TMessage, IServiceProvider, Object&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;TMessage, IServiceProvider, object&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;TMessage, IServiceProvider, object&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -531,9 +501,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
@@ -543,9 +513,9 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -560,8 +530,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -582,21 +552,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func___0_System_IServiceProvider_System_Threading_Tasks_Task__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Func%7B%60%600%2CSystem.IServiceProvider%2CSystem.Threading.Tasks.Task%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L334">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func___0_System_IServiceProvider_System_Threading_Tasks_Task__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Func{``0,System.IServiceProvider,System.Threading.Tasks.Task},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;TMessage, IServiceProvider, Task&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Func___0_System_IServiceProvider_Task__System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Func{``0,System.IServiceProvider,Task},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;TMessage, IServiceProvider, Task&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;TMessage, IServiceProvider, Task&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;TMessage, IServiceProvider, Task&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -609,21 +574,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;TMessage, <span class="xref">System.IServiceProvider</span>, <span class="xref">System.Threading.Tasks.Task</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;TMessage, <span class="xref">System.IServiceProvider</span>, <span class="xref">Task</span>&gt;</td>
         <td><span class="parametername">handler</span></td>
         <td><p>The message handler delegate.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -638,8 +603,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -660,21 +625,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func___0_System_Object__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Func%7B%60%600%2CSystem.Object%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L124">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func___0_System_Object__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Func{``0,System.Object},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;TMessage, Object&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Func___0_System_Object__System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Func{``0,System.Object},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;TMessage, Object&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;TMessage, object&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;TMessage, object&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -687,9 +647,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
@@ -699,9 +659,9 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -716,8 +676,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -738,21 +698,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func___0_System_Threading_Tasks_Task_System_Object___Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Func%7B%60%600%2CSystem.Threading.Tasks.Task%7BSystem.Object%7D%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L154">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func___0_System_Threading_Tasks_Task_System_Object___Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Func{``0,System.Threading.Tasks.Task{System.Object}},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;TMessage, Task&lt;Object&gt;&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Func___0_Task_System_Object___System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Func{``0,Task{System.Object}},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;TMessage, Task&lt;Object&gt;&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;TMessage, Task&lt;object&gt;&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;TMessage, Task&lt;object&gt;&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -765,21 +720,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;TMessage, <span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Object</span>&gt;&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;TMessage, <span class="xref">Task</span>&lt;<span class="xref">System.Object</span>&gt;&gt;</td>
         <td><span class="parametername">handler</span></td>
         <td><p>The message handler delegate.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -794,8 +749,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -816,21 +771,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func___0_System_Threading_Tasks_Task__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Func%7B%60%600%2CSystem.Threading.Tasks.Task%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L94">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func___0_System_Threading_Tasks_Task__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Func{``0,System.Threading.Tasks.Task},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;TMessage, Task&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Func___0_Task__System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Func{``0,Task},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;TMessage, Task&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;TMessage, Task&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;TMessage, Task&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -843,21 +793,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;TMessage, <span class="xref">System.Threading.Tasks.Task</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;TMessage, <span class="xref">Task</span>&gt;</td>
         <td><span class="parametername">handler</span></td>
         <td><p>The message handler delegate.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -872,8 +822,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -894,21 +844,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func_System_Collections_Generic_IEnumerable___0__System_IServiceProvider_System_Object__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7B%60%600%7D%2CSystem.IServiceProvider%2CSystem.Object%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L424">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func_System_Collections_Generic_IEnumerable___0__System_IServiceProvider_System_Object__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Func{System.Collections.Generic.IEnumerable{``0},System.IServiceProvider,System.Object},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, IServiceProvider, Object&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Func_IEnumerable___0__System_IServiceProvider_System_Object__System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Func{IEnumerable{``0},System.IServiceProvider,System.Object},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, IServiceProvider, Object&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, IServiceProvider, object&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, IServiceProvider, object&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -921,21 +866,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Collections.Generic.IEnumerable</span>&lt;TMessage&gt;, <span class="xref">System.IServiceProvider</span>, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">IEnumerable</span>&lt;TMessage&gt;, <span class="xref">System.IServiceProvider</span>, <span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">handler</span></td>
         <td><p>The message handler delegate.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -950,8 +895,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -972,21 +917,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func_System_Collections_Generic_IEnumerable___0__System_Object__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7B%60%600%7D%2CSystem.Object%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L244">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func_System_Collections_Generic_IEnumerable___0__System_Object__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Func{System.Collections.Generic.IEnumerable{``0},System.Object},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, Object&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Func_IEnumerable___0__System_Object__System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Func{IEnumerable{``0},System.Object},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, Object&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, object&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, object&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -999,21 +939,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Collections.Generic.IEnumerable</span>&lt;TMessage&gt;, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">IEnumerable</span>&lt;TMessage&gt;, <span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">handler</span></td>
         <td><p>The message handler delegate.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -1028,8 +968,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -1050,21 +990,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func_System_Collections_Generic_IEnumerable___0__System_Threading_Tasks_Task_System_Object___Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7B%60%600%7D%2CSystem.Threading.Tasks.Task%7BSystem.Object%7D%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L274">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func_System_Collections_Generic_IEnumerable___0__System_Threading_Tasks_Task_System_Object___Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Func{System.Collections.Generic.IEnumerable{``0},System.Threading.Tasks.Task{System.Object}},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, Task&lt;Object&gt;&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Func_IEnumerable___0__Task_System_Object___System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Func{IEnumerable{``0},Task{System.Object}},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, Task&lt;Object&gt;&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, Task&lt;object&gt;&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, Task&lt;object&gt;&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1077,21 +1012,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Collections.Generic.IEnumerable</span>&lt;TMessage&gt;, <span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Object</span>&gt;&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">IEnumerable</span>&lt;TMessage&gt;, <span class="xref">Task</span>&lt;<span class="xref">System.Object</span>&gt;&gt;</td>
         <td><span class="parametername">handler</span></td>
         <td><p>The message handler delegate.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -1106,8 +1041,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -1128,21 +1063,16 @@
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func_System_Collections_Generic_IEnumerable___0__System_Threading_Tasks_Task__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber%60%601(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Func%7BSystem.Collections.Generic.IEnumerable%7B%60%600%7D%2CSystem.Threading.Tasks.Task%7D%2CSilverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L214">View source</a>
-  </span>
+  
+  
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Func_System_Collections_Generic_IEnumerable___0__System_Threading_Tasks_Task__Silverback_Messaging_Subscribers_Subscriptions_SubscriptionOptions_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Func{System.Collections.Generic.IEnumerable{``0},System.Threading.Tasks.Task},Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions)">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, Task&gt;, SubscriptionOptions)</h4>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions_AddDelegateSubscriber__1_ISilverbackBuilder_System_Func_IEnumerable___0__Task__System_Nullable_SubscriptionOptions__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions.AddDelegateSubscriber``1(ISilverbackBuilder,System.Func{IEnumerable{``0},Task},System.Nullable{SubscriptionOptions})">AddDelegateSubscriber&lt;TMessage&gt;(ISilverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, Task&gt;, Nullable&lt;SubscriptionOptions&gt;)</h4>
   <div class="markdown level1 summary"><p>Subscribes the specified delegate to the messages being published into the bus.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, Task&gt; handler, SubscriptionOptions options = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static ISilverbackBuilder AddDelegateSubscriber&lt;TMessage&gt;(this ISilverbackBuilder silverbackBuilder, Func&lt;IEnumerable&lt;TMessage&gt;, Task&gt; handler, SubscriptionOptions? options = default(SubscriptionOptions? ))</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -1155,21 +1085,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><span class="xref">ISilverbackBuilder</span></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <a class="xref" href="Silverback.Messaging.Configuration.IBusOptions.html">IBusOptions</a> to be configured.</p>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IBusOptions"></see> to be configured.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Collections.Generic.IEnumerable</span>&lt;TMessage&gt;, <span class="xref">System.Threading.Tasks.Task</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">IEnumerable</span>&lt;TMessage&gt;, <span class="xref">Task</span>&gt;</td>
         <td><span class="parametername">handler</span></td>
         <td><p>The message handler delegate.</p>
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a></td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">SubscriptionOptions</span>&gt;</td>
         <td><span class="parametername">options</span></td>
-        <td><p>A <a class="xref" href="Silverback.Messaging.Subscribers.Subscriptions.SubscriptionOptions.html">SubscriptionOptions</a> specifying parallelism options.</p>
+        <td><p>A <see cref="!:SubscriptionOptions"></see> specifying parallelism options.</p>
 </td>
       </tr>
     </tbody>
@@ -1184,8 +1114,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
+        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -1213,12 +1143,6 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
-                  <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddDelegateSubscriberExtensions.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
-                  </li>
-                  <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Core/Messaging/Configuration/SilverbackBuilderAddDelegateSubscriberExtensions.cs/#L17" class="contribution-link">View source</a>
-                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
