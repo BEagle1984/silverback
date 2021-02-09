@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.Start();
             var envelope = new OutboundEnvelope(null, null, TestProducerEndpoint.GetDefault());
 
-            await new ActivityProducerBehavior().HandleAsync(
+            await new ActivityProducerBehavior(Substitute.For<IActivityEnricherFactory>()).HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 
@@ -50,7 +50,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var envelope = new OutboundEnvelope(null, null, TestProducerEndpoint.GetDefault());
 
-            await new ActivityProducerBehavior().HandleAsync(
+            await new ActivityProducerBehavior(Substitute.For<IActivityEnricherFactory>()).HandleAsync(
                 new ProducerPipelineContext(envelope, Substitute.For<IProducer>(), Substitute.For<IServiceProvider>()),
                 _ => Task.CompletedTask);
 

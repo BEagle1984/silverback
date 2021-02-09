@@ -137,38 +137,6 @@ namespace Silverback.Messaging.Subscribers
             }
         }
 
-        private static Task<object?> InvokeAsync(
-            object target,
-            MethodInfo methodInfo,
-            object?[] parameters,
-            bool executeAsync) =>
-            executeAsync
-                ? InvokeAsync(target, methodInfo, parameters)
-                : Task.FromResult(InvokeSync(target, methodInfo, parameters));
-
-        private static Task<object?> InvokeAsync(object target, MethodInfo methodInfo, object?[] parameters) =>
-            methodInfo.ReturnsTask()
-                ? ((Task)methodInfo.Invoke(target, parameters)).GetReturnValueAsync()
-                : Task.FromResult((object?)methodInfo.Invoke(target, parameters));
-
-        private static object? InvokeSync(object target, MethodInfo methodInfo, object?[] parameters) =>
-            methodInfo.ReturnsTask()
-                ? AsyncHelper.RunSynchronously(
-                    () =>
-                    {
-                        var result = (Task)methodInfo.Invoke(target, parameters);
-                        return result.GetReturnValueAsync();
-                    })
-                : methodInfo.Invoke(target, parameters);
-
-        private static Task InvokeWithoutBlockingAsync(
-            object target,
-            MethodInfo methodInfo,
-            object?[] parameters) =>
-            methodInfo.ReturnsTask()
-                ? Task.Run(() => (Task)methodInfo.Invoke(target, parameters))
-                : Task.Run(() => (object?)methodInfo.Invoke(target, parameters));
-
         private object?[] GetArgumentValuesArray(SubscribedMethod method)
         {
             var values = new object?[method.Parameters.Count];
@@ -203,7 +171,7 @@ namespace Silverback.Messaging.Subscribers
                     message =>
                     {
                         arguments[0] = singleResolver.GetValue(message);
-                        return InvokeAsync(target, subscribedMethod.MethodInfo, arguments, executeAsync);
+                        return subscribedMethod.MethodInfo.InvokeWithActivityAsync(target, arguments, executeAsync);
                     })
                 .ConfigureAwait(false);
 
@@ -238,7 +206,7 @@ namespace Silverback.Messaging.Subscribers
 
             arguments[0] = enumerableResolver.GetValue(messages, subscribedMethod.MessageType);
 
-            var returnValue = await InvokeAsync(target, subscribedMethod.MethodInfo, arguments, executeAsync)
+            var returnValue = await subscribedMethod.MethodInfo.InvokeWithActivityAsync(target, arguments, executeAsync)
                 .ConfigureAwait(false);
 
             return (messages, new[] { returnValue });
@@ -280,7 +248,7 @@ namespace Silverback.Messaging.Subscribers
                                     return;
                                 }
 
-                                await InvokeWithoutBlockingAsync(target, subscribedMethod.MethodInfo, arguments)
+                                await subscribedMethod.MethodInfo.InvokeWithActivityWithoutBlockingAsync(target, arguments)
                                     .ConfigureAwait(false);
                             });
                     });

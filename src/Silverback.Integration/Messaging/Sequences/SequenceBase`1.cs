@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -116,6 +117,12 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequenceImplementation.ProcessingCompletedTask" />
         public Task ProcessingCompletedTask => _processingCompleteTaskCompletionSource.Task;
 
+        /// <inheritdoc />
+        public bool ShouldCreateNewActivity => true;
+
+        /// <inheritdoc />
+        public Activity? Activity { get; private set; }
+
         /// <inheritdoc cref="ISequence.StreamProvider" />
         public IMessageStreamProvider StreamProvider => _streamProvider;
 
@@ -171,6 +178,12 @@ namespace Silverback.Messaging.Sequences
             _sequences?.OfType<ISequenceImplementation>()
                 .ForEach(sequence => sequence.NotifyProcessingCompleted());
             _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
+        }
+
+        /// <inheritdoc />
+        public void SetActivity(Activity activity)
+        {
+            Activity = activity;
         }
 
         /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />

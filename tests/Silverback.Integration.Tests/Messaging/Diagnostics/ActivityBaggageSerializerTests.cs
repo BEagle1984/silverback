@@ -28,18 +28,22 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         [Fact]
         public void TryDeserialize_ValidString_CorrectlyDeserializedItems()
         {
-            var value = "key1=value1, key2 = value2, invalidPair";
+            var value = "key1=value1, key2 = value2, invalidPair,=valueonly,keyonly=,,=,";
 
             var result = ActivityBaggageSerializer.Deserialize(value);
 
             result.Should().ContainEquivalentOf(new KeyValuePair<string, string>("key1", "value1"));
             result.Should().ContainEquivalentOf(new KeyValuePair<string, string>("key2", "value2"));
+            result.Should().ContainEquivalentOf(new KeyValuePair<string, string>("keyonly", string.Empty));
+            result.Should().ContainEquivalentOf(new KeyValuePair<string, string>(string.Empty, "valueonly"));
         }
 
         [Theory]
         [InlineData("")]
         [InlineData(null)]
-        public void TryDeserialize_NullOrEmpty_EmptyCollectionReturned(string deserializeValue)
+        [InlineData(",")]
+        [InlineData("(null)")]
+        public void TryDeserialize_InvalidString_EmptyCollectionReturned(string deserializeValue)
         {
             var result = ActivityBaggageSerializer.Deserialize(deserializeValue);
 

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -27,7 +28,7 @@ namespace Silverback.Messaging.Diagnostics
 
         public static void SetMessageHeaders(this Activity activity, MessageHeaderCollection headers)
         {
-            if (activity?.Id == null)
+            if (activity.Id == null)
             {
                 throw new InvalidOperationException(
                     "Activity.Id is null. Consider to start a new activity, before calling this method.");
@@ -49,33 +50,42 @@ namespace Silverback.Messaging.Diagnostics
             }
         }
 
-        // See https://github.com/aspnet/AspNetCore/blob/master/src/Hosting/Hosting/src/Internal/HostingApplicationDiagnostics.cs
-        public static void InitFromMessageHeaders(this Activity activity, MessageHeaderCollection headers)
+        public static void SetTraceIdAndState(this Activity activity, string? traceId, string? traceState)
         {
-            string? traceId = headers.GetValue(DefaultMessageHeaders.TraceId);
-
             if (!string.IsNullOrEmpty(traceId))
             {
-                // This will reflect, that the current activity is a child of the activity
-                // which is represented in the message.
                 activity.SetParentId(traceId);
 
-                string? traceState = headers.GetValue(DefaultMessageHeaders.TraceState);
                 if (!string.IsNullOrEmpty(traceState))
                 {
                     activity.TraceStateString = traceState;
                 }
-
-                // The baggage is parsed last, so if it fails to be deserialized the rest is still setup.
-                // We expect baggage to be empty by default.
-                // Only very advanced users will be using it in near future, we encourage them to keep baggage small (few items).
-                string? baggage = headers.GetValue(DefaultMessageHeaders.TraceBaggage);
-                if (baggage != null)
-                {
-                    var baggageItems = ActivityBaggageSerializer.Deserialize(baggage);
-                    AddBaggageRange(activity, baggageItems);
-                }
             }
+        }
+
+        public static void AddEndpointName(this Activity activity, string endpointName)
+        {
+            activity.SetTag(ActivityTagNames.MessageDestination, endpointName);
+        }
+
+        public static Activity? StartWithTraceId(
+            this ActivitySource activitySource,
+            string name,
+            ActivityKind activityKind,
+            string? traceId,
+            string? traceState)
+        {
+            if (!activitySource.HasListeners())
+            {
+                return null;
+            }
+
+            if (traceId != null && ActivityContext.TryParse(traceId, traceState, out ActivityContext context))
+            {
+                return activitySource.StartActivity(name, activityKind, context);
+            }
+
+            return activitySource.StartActivity(name, activityKind);
         }
     }
 }

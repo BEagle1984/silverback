@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Diagnostics;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
@@ -85,6 +87,9 @@ namespace Silverback.Messaging.Sequences
                     continue;
 
                 await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
+
+                AddSequenceTagToActivity(sequence);
+
                 break;
             }
 
@@ -135,6 +140,19 @@ namespace Silverback.Messaging.Sequences
         /// </returns>
         protected virtual Task AwaitOtherBehaviorIfNeededAsync(ISequence sequence) => Task.CompletedTask;
 
+        private static void AddSequenceTagToActivity(ISequence sequence)
+        {
+            if (Activity.Current != null &&
+                sequence is ISequenceImplementation sequenceImplementation &&
+                sequenceImplementation.Activity != null &&
+                sequenceImplementation.ShouldCreateNewActivity)
+            {
+                Activity.Current.SetTag(
+                    ActivityTagNames.SequenceActivity,
+                    sequenceImplementation.Activity.Id);
+            }
+        }
+
         [SuppressMessage(
             "",
             "CA1031",
@@ -171,7 +189,28 @@ namespace Silverback.Messaging.Sequences
                         await sequence.AbortAsync(SequenceAbortReason.Error, exception)
                             .ConfigureAwait(false);
                     }
+                    finally
+                    {
+                        if (sequence is ISequenceImplementation sequenceImplementation &&
+                            sequenceImplementation.ShouldCreateNewActivity)
+                        {
+                            sequenceImplementation.Activity?.Stop();
+                        }
+                    }
                 });
+        }
+
+        private static void StartActivityIfNeeded(ISequence sequence)
+        {
+            if (sequence is ISequenceImplementation sequenceImplementation &&
+                sequenceImplementation.ShouldCreateNewActivity)
+            {
+                Activity? sequenceActivity = Diagnostics.ActivitySources.StartSequenceActivity();
+                if (sequenceActivity != null)
+                {
+                    sequenceImplementation.SetActivity(sequenceActivity);
+                }
+            }
         }
 
         private async Task<ISequence?> GetSequenceAsync(
@@ -194,6 +233,8 @@ namespace Silverback.Messaging.Sequences
 
             if (sequence.IsNew)
             {
+                StartActivityIfNeeded(sequence);
+
                 await PublishSequenceAsync(context, next).ConfigureAwait(false);
 
                 if (context.ProcessingTask != null)

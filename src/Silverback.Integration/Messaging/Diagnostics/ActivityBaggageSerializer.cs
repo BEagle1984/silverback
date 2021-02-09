@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 
@@ -15,7 +14,6 @@ namespace Silverback.Messaging.Diagnostics
 
         private const char ItemKeyValueSeparator = '=';
 
-        [SuppressMessage("", "CA1822", Justification = "Uniform to Deserialize")]
         public static string Serialize(IEnumerable<KeyValuePair<string, string?>> baggage) =>
             string.Join(
                 BaggageItemSeparator.ToString(CultureInfo.InvariantCulture),

@@ -2,8 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka;
+using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.Routing;
@@ -47,6 +49,9 @@ namespace Silverback.Messaging.Configuration
                         : null,
                 "kafkaKey",
                 envelope => envelope.Headers.GetValue(KafkaMessageHeaders.KafkaMessageKey));
+
+            brokerOptionsBuilder.SilverbackBuilder.Services.AddSingleton<IBrokerActivityEnricher<KafkaProducerEndpoint>, KafkaActivityEnricher>();
+            brokerOptionsBuilder.SilverbackBuilder.Services.AddSingleton<IBrokerActivityEnricher<KafkaConsumerEndpoint>, KafkaActivityEnricher>();
         }
     }
 }

@@ -53,10 +53,6 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
-        public void LogErrorInitializingActivity(IRawInboundEnvelope envelope, Exception exception)
-        {
-        }
-
         public void LogAlreadyProcessed(IRawInboundEnvelope envelope)
         {
         }

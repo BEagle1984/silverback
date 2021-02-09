@@ -255,24 +255,6 @@ namespace Silverback.Diagnostics
                 exception);
         }
 
-        public void LogErrorInitializingActivity(
-            ISilverbackLogger logger,
-            IRawInboundEnvelope envelope,
-            Exception exception)
-        {
-            if (!logger.IsEnabled(IntegrationLogEvents.ErrorInitializingActivity))
-                return;
-
-            _errorInitializingActivity.Invoke(
-                logger.InnerLogger,
-                envelope.ActualEndpointName,
-                envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
-                envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
-                exception);
-        }
-
         public void LogAlreadyProcessed(ISilverbackLogger logger, IRawInboundEnvelope envelope)
         {
             if (!logger.IsEnabled(IntegrationLogEvents.MessageAlreadyProcessed))
