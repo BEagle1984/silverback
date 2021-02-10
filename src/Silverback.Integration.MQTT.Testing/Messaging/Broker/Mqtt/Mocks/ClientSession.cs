@@ -107,6 +107,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
         public void Dispose()
         {
+            Disconnect();
+
             _readCancellationTokenSource.Dispose();
         }
 
