@@ -373,16 +373,16 @@ namespace Silverback.Messaging.Sequences
             if (_disposed)
                 return;
 
-            _logger.LogLowLevelTrace(
-                "Disposing {sequenceType} '{sequenceId}'...",
-                () => new object[]
-                {
-                    GetType().Name,
-                    SequenceId
-                });
-
             if (disposing)
             {
+                _logger.LogLowLevelTrace(
+                    "Disposing {sequenceType} '{sequenceId}'...",
+                    () => new object[]
+                    {
+                        GetType().Name,
+                        SequenceId
+                    });
+
                 _abortingTaskCompletionSource?.Task.Wait();
 
                 _streamProvider.Dispose();
@@ -392,6 +392,14 @@ namespace Silverback.Messaging.Sequences
                 _timeoutCancellationTokenSource = null;
 
                 _sequences?.ForEach(sequence => sequence.Dispose());
+
+                _logger.LogLowLevelTrace(
+                    "Waiting adding semaphore ({sequenceType} '{sequenceId}')...",
+                    () => new object[]
+                    {
+                        GetType().Name,
+                        SequenceId
+                    });
 
                 _addingSemaphoreSlim.Wait();
                 _addingSemaphoreSlim.Dispose();
@@ -403,6 +411,14 @@ namespace Silverback.Messaging.Sequences
                     _sequencerBehaviorsTaskCompletionSource.TrySetCanceled();
 
                 _disposed = true;
+
+                _logger.LogLowLevelTrace(
+                    "Disposed {sequenceType} '{sequenceId}'.",
+                    () => new object[]
+                    {
+                        GetType().Name,
+                        SequenceId
+                    });
             }
         }
 

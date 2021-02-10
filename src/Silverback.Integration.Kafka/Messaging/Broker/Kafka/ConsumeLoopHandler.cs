@@ -96,6 +96,8 @@ namespace Silverback.Messaging.Broker.Kafka
                     break;
             }
 
+            _logger.LogConsumerLowLevelTrace(_consumer, "Consume loop stopped.");
+
             taskCompletionSource.TrySetResult(true);
 
             // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run

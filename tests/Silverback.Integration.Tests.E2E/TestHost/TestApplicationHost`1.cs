@@ -125,11 +125,13 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         public void Dispose()
         {
-            ScopedServiceProvider.GetService<ILogger<TestApplicationHost<THelper>>>()
-                ?.LogInformation($"Disposing test host ({_testMethodName}).");
+            var logger = ScopedServiceProvider.GetService<ILogger<TestApplicationHost<THelper>>>();
+            logger?.LogInformation($"Disposing test host ({_testMethodName}).");
 
             _sqliteConnection?.Dispose();
             _applicationFactory?.Dispose();
+
+            logger?.LogInformation($"Test host disposed ({_testMethodName}).");
         }
 
         private void WaitUntilBrokerIsConnected()

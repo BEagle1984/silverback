@@ -386,6 +386,8 @@ namespace Silverback.Messaging.Broker
             if (_consumeLoopHandler != null)
                 await _consumeLoopHandler.Stopping.ConfigureAwait(false);
 
+            _logger.LogConsumerLowLevelTrace(this, "ConsumeLoopHandler stopped.");
+
             _consumeLoopHandler?.Dispose();
             _consumeLoopHandler = null;
         }
@@ -398,6 +400,8 @@ namespace Silverback.Messaging.Broker
         {
             if (_channelsManager != null)
                 await _channelsManager.Stopping.ConfigureAwait(false);
+
+            _logger.LogConsumerLowLevelTrace(this, "ChannelsManager stopped.");
 
             _channelsManager?.Dispose();
             _channelsManager = null;
