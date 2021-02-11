@@ -119,7 +119,7 @@ namespace Silverback.Messaging.Broker
             // OnPartitionsRevoked callback, before the partitions are revoked because the Consume method is
             // "frozen" during that operation and will never return, therefore the stopping Task would never
             // complete. Therefore, let's start an async Task to await it and restart the ChannelManager.
-            Task.Run(RestartConsumeLoopHandler);
+            Task.Run(RestartConsumeLoopHandlerAsync);
         }
 
         internal async Task HandleMessageAsync(
@@ -361,9 +361,9 @@ namespace Silverback.Messaging.Broker
                 _channelsManager.StartReading();
         }
 
-        private void RestartConsumeLoopHandler()
+        private async Task RestartConsumeLoopHandlerAsync()
         {
-            AsyncHelper.RunSynchronously(WaitUntilConsumeLoopHandlerStopsAsync);
+            await WaitUntilConsumeLoopHandlerStopsAsync().ConfigureAwait(false);
 
             InitAndStartConsumeLoopHandler();
         }
