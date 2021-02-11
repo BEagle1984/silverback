@@ -118,6 +118,8 @@ namespace Silverback.Messaging.Broker.Kafka
                     return false;
                 }
 
+                _logger.LogConsumerLowLevelTrace(_consumer, "Consume next message.");
+
                 var consumeResult = _consumer.ConfluentConsumer.Consume(cancellationToken);
 
                 if (consumeResult == null)
