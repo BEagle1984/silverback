@@ -660,7 +660,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })
                                         .EnableBatchProcessing(10)))
                         .AddDelegateSubscriber(
@@ -735,7 +734,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })
                                         .EnableBatchProcessing(10)))
                         .AddDelegateSubscriber(
@@ -992,7 +990,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })
                                         .LimitParallelism(2)
                                         .EnableBatchProcessing(2)))

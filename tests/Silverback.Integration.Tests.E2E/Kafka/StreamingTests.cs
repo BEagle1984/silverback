@@ -161,7 +161,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber(
                             (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
@@ -226,7 +225,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber(
                             (IMessageStreamObservable<TestEventOne> observable) =>
@@ -527,7 +525,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber(
                             async (IMessageStreamEnumerable<TestEventWithKafkaKey> eventsStream) =>

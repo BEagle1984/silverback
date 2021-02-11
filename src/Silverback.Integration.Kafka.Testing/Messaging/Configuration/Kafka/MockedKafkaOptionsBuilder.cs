@@ -25,5 +25,11 @@ namespace Silverback.Messaging.Configuration.Kafka
             BusOptions.DefaultPartitionsCount = partitionsCount;
             return this;
         }
+
+        public IMockedKafkaOptionsBuilder OverrideAutoCommitIntervalMs(int? intervalMs)
+        {
+            BusOptions.OverriddenAutoCommitIntervalMs = intervalMs;
+            return this;
+        }
     }
 }

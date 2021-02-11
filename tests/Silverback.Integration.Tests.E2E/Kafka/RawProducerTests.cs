@@ -55,7 +55,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddIntegrationSpy())
                 .Run();
@@ -106,7 +105,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddIntegrationSpy())
                 .Run();

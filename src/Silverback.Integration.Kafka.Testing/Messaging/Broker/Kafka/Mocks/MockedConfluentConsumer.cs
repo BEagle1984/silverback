@@ -9,14 +9,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
     internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
-        private readonly ConsumerConfig _config;
-
         private readonly IInMemoryTopicCollection _topics;
 
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _currentOffsets
@@ -29,10 +28,15 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         private readonly List<string> _topicAssignments = new();
 
+        private readonly int _autoCommitIntervalMs;
+
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
-        public MockedConfluentConsumer(ConsumerConfig config, IInMemoryTopicCollection topics)
+        public MockedConfluentConsumer(
+            ConsumerConfig config,
+            IInMemoryTopicCollection topics,
+            IMockedKafkaOptions options)
         {
-            _config = Check.NotNull(config, nameof(config));
+            Check.NotNull(config, nameof(config));
             _topics = Check.NotNull(topics, nameof(topics));
 
             if (string.IsNullOrEmpty(config.GroupId))
@@ -45,8 +49,14 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             GroupId = config.GroupId;
             MemberId = Guid.NewGuid().ToString("N");
 
-            if (_config.EnableAutoCommit ?? true)
+            if (config.EnableAutoCommit ?? true)
+            {
+                _autoCommitIntervalMs = options.OverriddenAutoCommitIntervalMs ??
+                                        config.AutoCommitIntervalMs ??
+                                        5000;
+
                 Task.Run(AutoCommitAsync);
+            }
         }
 
         public Handle Handle => throw new NotSupportedException();
@@ -75,7 +85,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             PartitionsAssignedHandler { get; set; }
 
         internal Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>,
-                IEnumerable<TopicPartitionOffset>>? PartitionsRevokedHandler { get; set; }
+            IEnumerable<TopicPartitionOffset>>? PartitionsRevokedHandler { get; set; }
 
         internal Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? OffsetsCommittedHandler { get; set; }
 
@@ -397,7 +407,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                     // Ignore
                 }
 
-                await Task.Delay(_config.AutoCommitIntervalMs ?? 5000).ConfigureAwait(false);
+                await Task.Delay(_autoCommitIntervalMs).ConfigureAwait(false);
             }
         }
     }

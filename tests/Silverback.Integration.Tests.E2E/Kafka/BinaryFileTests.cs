@@ -75,8 +75,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config =>
                                                 {
                                                     config.GroupId = "consumer1";
-                                                    config.AutoCommitIntervalMs = 50;
-                                                })))
+                                                    })))
                             .AddDelegateSubscriber(
                                 (BinaryFileMessage binaryFile) =>
                                 {
@@ -153,7 +152,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })
                                         .ConsumeBinaryFiles()))
                         .AddDelegateSubscriber(
@@ -227,7 +225,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })
                                         .ConsumeBinaryFiles()))
                         .AddDelegateSubscriber(
@@ -310,7 +307,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })
                                         .ConsumeBinaryFiles(
                                             serializer => serializer
@@ -396,7 +392,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })
                                         .ConsumeBinaryFiles(
                                             serializer => serializer
@@ -483,7 +478,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })
                                         .ConsumeBinaryFiles(
                                             serializer => serializer.UseModel<CustomBinaryFileMessage>())))

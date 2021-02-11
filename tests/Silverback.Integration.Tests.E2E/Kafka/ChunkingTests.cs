@@ -61,7 +61,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -167,7 +166,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) => { receivedFiles.Add(binaryFile.Content.ReadAll()); })
@@ -849,7 +847,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -940,7 +937,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -1005,7 +1001,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -1066,7 +1061,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber((BinaryFileMessage _) => throw new InvalidOperationException("Test"))
                         .AddIntegrationSpy())
@@ -2089,7 +2083,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -2155,7 +2148,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -2258,7 +2250,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -2332,7 +2323,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -2407,7 +2397,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>

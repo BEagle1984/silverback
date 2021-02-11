@@ -55,7 +55,6 @@ namespace Silverback.Tests.Integration.E2E.KafkaAndMQTT
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                                config.AutoCommitIntervalMs = 50;
                                             })))
                         .AddDelegateSubscriber(
                             (TestEventOne eventOne) =>

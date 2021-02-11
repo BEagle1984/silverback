@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using Silverback.Testing;
+
 namespace Silverback.Messaging.Configuration.Kafka
 {
     /// <summary>
@@ -18,5 +20,23 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IMockedKafkaOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
         IMockedKafkaOptionsBuilder WithDefaultPartitionsCount(int partitionsCount);
+
+        /// <summary>
+        ///     Specifies the value to be used instead of the default 5 seconds or the configured
+        ///     <see cref="ConfluentConsumerConfigProxy.AutoCommitIntervalMs" /> for the inbound topics. Set it to
+        ///     <c>null</c> to disable the feature. The default is 10 milliseconds.
+        /// </summary>
+        /// <remarks>
+        ///     This is necessary to speed up the tests, since the
+        ///     <see cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync" /> method waits until the
+        ///     offsets are committed.
+        /// </remarks>
+        /// <param name="intervalMs">
+        ///     The desired auto commit interval in milliseconds.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMockedKafkaOptionsBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMockedKafkaOptionsBuilder OverrideAutoCommitIntervalMs(int? intervalMs);
     }
 }
