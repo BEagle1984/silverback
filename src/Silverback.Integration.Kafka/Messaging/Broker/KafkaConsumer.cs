@@ -25,8 +25,6 @@ namespace Silverback.Messaging.Broker
     {
         private static readonly TimeSpan RecoveryDelay = TimeSpan.FromSeconds(5);
 
-        private static readonly TimeSpan CloseTimeout = TimeSpan.FromSeconds(30);
-
         private readonly IConfluentConsumerBuilder _confluentConsumerBuilder;
 
         private readonly IInboundLogger<KafkaConsumer> _logger;
@@ -413,20 +411,10 @@ namespace Silverback.Messaging.Broker
             if (ConfluentConsumer == null)
                 return;
 
-            var timeoutCancellationTokenSource = new CancellationTokenSource(CloseTimeout);
-
             try
             {
-                // Workaround for Close getting stuck
-                Task.Run(
-                        () =>
-                        {
-                            ConfluentConsumer?.Close();
-                            ConfluentConsumer?.Dispose();
-                            ConfluentConsumer = null;
-                        },
-                        timeoutCancellationTokenSource.Token)
-                    .Wait(timeoutCancellationTokenSource.Token);
+                ConfluentConsumer.Close();
+                ConfluentConsumer.Dispose();
             }
             catch (OperationCanceledException)
             {
@@ -435,10 +423,6 @@ namespace Silverback.Messaging.Broker
             catch (Exception ex)
             {
                 _logger.LogConsumerDisconnectError(this, ex);
-            }
-            finally
-            {
-                timeoutCancellationTokenSource.Dispose();
             }
 
             ConfluentConsumer = null;
