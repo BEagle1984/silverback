@@ -103,5 +103,25 @@ namespace Silverback.Util
 
             return await task.ConfigureAwait(false);
         }
+
+        public static void FireAndForget(this ValueTask task)
+        {
+            // This method is used just to trick the compiler and avoid CS4014
+        }
+
+        public static void FireAndForget(this Task task)
+        {
+            // This method is used just to trick the compiler and avoid CS4014
+        }
+
+        public static void FireAndForget<T>(this ValueTask<T> task)
+        {
+            // This method is used just to trick the compiler and avoid CS4014
+        }
+
+        public static void FireAndForget<T>(this Task<T> task)
+        {
+            // This method is used just to trick the compiler and avoid CS4014
+        }
     }
 }

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -106,14 +107,34 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
 
-                await context.TransactionManager.RollbackAsync(exception, stopConsuming: false)
-                    .ConfigureAwait(false);
+                if (!await TryRollbackAsync(context, exception).ConfigureAwait(false))
+                {
+                    await context.Consumer.TriggerReconnectAsync().ConfigureAwait(false);
+                    return true;
+                }
 
                 await ApplyDelayAsync(context).ConfigureAwait(false);
 
                 _logger.LogRetryProcessing(context.Envelope);
 
                 return true;
+            }
+
+            [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+            private async Task<bool> TryRollbackAsync(ConsumerPipelineContext context, Exception exception)
+            {
+                try
+                {
+                    await context.TransactionManager.RollbackAsync(exception, stopConsuming: false)
+                        .ConfigureAwait(false);
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogRollbackToRetryFailed(context.Envelope, ex);
+                    return false;
+                }
             }
 
             private async Task ApplyDelayAsync(ConsumerPipelineContext context)

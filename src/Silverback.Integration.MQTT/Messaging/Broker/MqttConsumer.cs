@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
@@ -129,7 +128,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />
-        protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) =>
+        protected override Task WaitUntilConsumingStoppedAsync() =>
             _channelManager?.Stopping ?? Task.CompletedTask;
 
         /// <inheritdoc cref="Consumer.CommitCoreAsync" />

@@ -337,7 +337,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var factory = new MqttClientsCache(
                 new MqttNetClientFactory(),
                 _logger);
-            var client1 = factory.GetClient(producer);
+            factory.GetClient(producer);
             Action act = () => factory.GetClient(consumer);
 
             act.Should().Throw<InvalidOperationException>();

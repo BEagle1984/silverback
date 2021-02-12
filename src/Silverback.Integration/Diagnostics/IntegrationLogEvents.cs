@@ -284,7 +284,8 @@ namespace Silverback.Diagnostics
         public static LogEvent PolicyExceptionNotIncluded { get; } = new(
             LogLevel.Trace,
             GetEventId(42, nameof(PolicyExceptionNotIncluded)),
-            "The {policyType} will be skipped because the {exceptionType} is not in the list of handled exceptions.");
+            "The {policyType} will be skipped because the {exceptionType} is not in the list of handled " +
+            "exceptions.");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written during the evaluation of an error
@@ -293,7 +294,8 @@ namespace Silverback.Diagnostics
         public static LogEvent PolicyExceptionExcluded { get; } = new(
             LogLevel.Trace,
             GetEventId(43, nameof(PolicyExceptionExcluded)),
-            "The {policyType} will be skipped because the {exceptionType} is in the list of excluded exceptions.");
+            "The {policyType} will be skipped because the {exceptionType} is in the list of excluded " +
+            "exceptions.");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written during the evaluation of an error
@@ -361,6 +363,28 @@ namespace Silverback.Diagnostics
             LogLevel.Warning,
             GetEventId(50, nameof(CannotMoveSequences)),
             "The message belongs to a {sequenceType} and cannot be moved.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a the rollback initiated by
+        ///     the <see cref="RetryErrorPolicy" /> fails with an exception. This will cause the consumer to be
+        ///     disconnected and reconnected.
+        /// </summary>
+        public static LogEvent RollbackToRetryFailed { get; } = new(
+            LogLevel.Warning,
+            GetEventId(51, nameof(RollbackToRetryFailed)),
+            "An error occurred while rolling back, the retry error policy cannot be applied. " +
+            "The consumer will be reset.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a the rollback initiated by
+        ///     the <see cref="SkipMessageErrorPolicy" /> fails with an exception. This will cause the consumer to be
+        ///     disconnected and reconnected.
+        /// </summary>
+        public static LogEvent RollbackToSkipFailed { get; } = new(
+            LogLevel.Warning,
+            GetEventId(52, nameof(RollbackToSkipFailed)),
+            "An error occurred while rolling back or committing, the skip message error policy " +
+            "cannot be applied. The consumer will be reset.");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while trying
@@ -435,7 +459,8 @@ namespace Silverback.Diagnostics
             "Error occurred processing the outbox.");
 
         /// <summary>
-        ///     Gets the <see cref="LogEvent" /> representing the log that is written when trying to connect an endpoint with an invalid configuration.
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when trying to connect an endpoint
+        ///     with an invalid configuration.
         /// </summary>
         public static LogEvent InvalidEndpointConfiguration { get; } = new(
             LogLevel.Critical,
@@ -443,7 +468,8 @@ namespace Silverback.Diagnostics
             "Invalid configuration for endpoint '{endpointName}'.");
 
         /// <summary>
-        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown from within an <see cref="IEndpointsConfigurator"/>.
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown from
+        ///     within an <see cref="IEndpointsConfigurator" />.
         /// </summary>
         public static LogEvent EndpointConfiguratorError { get; } = new(
             LogLevel.Critical,

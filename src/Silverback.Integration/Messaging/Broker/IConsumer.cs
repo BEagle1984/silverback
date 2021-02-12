@@ -67,6 +67,16 @@ namespace Silverback.Messaging.Broker
         Task DisconnectAsync();
 
         /// <summary>
+        ///     Stops the consumer and starts an asynchronous <see cref="Task" /> to disconnect and reconnect it.
+        /// </summary>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> will complete as
+        ///     soon as the stopping signal has been sent, while the process will be completed in another asynchronous
+        ///     <see cref="Task" />.
+        /// </returns>
+        Task TriggerReconnectAsync();
+
+        /// <summary>
         ///     Starts consuming. Used after <see cref="StopAsync" /> has been called to resume consuming.
         /// </summary>
         /// <returns>
@@ -78,7 +88,8 @@ namespace Silverback.Messaging.Broker
         ///     Stops the consumer without disconnecting. Can be used to pause and resume consuming.
         /// </summary>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
+        ///     A <see cref="Task" /> representing the asynchronous operation. This <see cref="Task" /> will complete as
+        ///     soon as the stopping signal has been sent.
         /// </returns>
         Task StopAsync();
 

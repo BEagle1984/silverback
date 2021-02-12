@@ -14,6 +14,7 @@ using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.Rx.TestTypes.Messages;
 using Silverback.Tests.Core.Rx.TestTypes.Messages.Base;
 using Silverback.Tests.Types;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Core.Rx.Messaging.Publishing
@@ -201,11 +202,11 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 
             var tasks = streamPublisher.Publish(streamProvider);
 
-            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
-            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
-            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).FireAndForget();
+            streamProvider.PushAsync(new TestEventOne()).FireAndForget();
+            streamProvider.PushAsync(new TestEventOne()).FireAndForget();
 
-            await AsyncTestingUtil.WaitAsync(() => received >= 5);
+            await AsyncTestingUtil.WaitAsync(() => received >= 3);
 
             Func<Task> act = async () => await await Task.WhenAny(tasks);
 
@@ -240,9 +241,9 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 
             var tasks = await streamPublisher.PublishAsync(streamProvider);
 
-            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
-            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
-            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).FireAndForget();
+            streamProvider.PushAsync(new TestEventOne()).FireAndForget();
+            streamProvider.PushAsync(new TestEventOne()).FireAndForget();
 
             Func<Task> act = async () => await await Task.WhenAny(tasks);
 
@@ -277,9 +278,9 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 
             var tasks = await streamPublisher.PublishAsync(streamProvider);
 
-            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
-            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
-            streamProvider.PushAsync(new TestEventOne()).RunWithoutBlocking();
+            streamProvider.PushAsync(new TestEventOne()).FireAndForget();
+            streamProvider.PushAsync(new TestEventOne()).FireAndForget();
+            streamProvider.PushAsync(new TestEventOne()).FireAndForget();
 
             var whenAnyTask = await Task.WhenAny(tasks);
 

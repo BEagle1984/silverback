@@ -40,6 +40,12 @@ namespace Silverback.Diagnostics
             _cannotMoveSequences;
 
         private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
+            _rollbackToRetryFailed;
+
+        private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
+            _rollbackToSkipFailed;
+
+        private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
             _errorInitializingActivity;
 
         private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
@@ -76,6 +82,14 @@ namespace Silverback.Diagnostics
             _cannotMoveSequences =
                 SilverbackLoggerMessage.Define<string, string, string?, string?, string?, string?>(
                     EnrichLogEvent(IntegrationLogEvents.CannotMoveSequences));
+
+            _rollbackToRetryFailed =
+                SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
+                    EnrichLogEvent(IntegrationLogEvents.RollbackToRetryFailed));
+
+            _rollbackToSkipFailed =
+                SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
+                    EnrichLogEvent(IntegrationLogEvents.RollbackToSkipFailed));
 
             _errorInitializingActivity =
                 SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
@@ -203,6 +217,42 @@ namespace Silverback.Diagnostics
                 _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
                 _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
                 null);
+        }
+
+        public void LogRollbackToRetryFailed(
+            ISilverbackLogger logger,
+            IRawInboundEnvelope envelope,
+            Exception exception)
+        {
+            if (!logger.IsEnabled(IntegrationLogEvents.CannotMoveSequences))
+                return;
+
+            _rollbackToRetryFailed.Invoke(
+                logger.InnerLogger,
+                envelope.ActualEndpointName,
+                envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
+                envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
+                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
+                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                exception);
+        }
+
+        public void LogRollbackToSkipFailed(
+            ISilverbackLogger logger,
+            IRawInboundEnvelope envelope,
+            Exception exception)
+        {
+            if (!logger.IsEnabled(IntegrationLogEvents.CannotMoveSequences))
+                return;
+
+            _rollbackToSkipFailed.Invoke(
+                logger.InnerLogger,
+                envelope.ActualEndpointName,
+                envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
+                envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
+                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
+                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                exception);
         }
 
         public void LogErrorInitializingActivity(

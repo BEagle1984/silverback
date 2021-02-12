@@ -10,6 +10,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Messages
@@ -58,7 +59,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
                     await Task.Delay(50);
                     processed = true;
                     stream.GetEnumerator().MoveNext();
-                }).RunWithoutBlocking();
+                }).FireAndForget();
 
             await provider.PushAsync(new TestEventOne());
 
@@ -71,7 +72,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             var provider = new MessageStreamProvider<IMessage>();
             var stream = provider.CreateStream<TestEventOne>();
 
-            Task.Run(() => stream.ToList()).RunWithoutBlocking();
+            Task.Run(() => stream.ToList()).FireAndForget();
 
             await provider.PushAsync(new TestEventOne());
             Func<Task> act = () => provider.PushAsync(new TestEventTwo());
@@ -85,7 +86,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             var provider = new MessageStreamProvider<IMessage>();
             var stream = provider.CreateStream<TestEventOne>();
 
-            Task.Run(() => stream.ToList()).RunWithoutBlocking();
+            Task.Run(() => stream.ToList()).FireAndForget();
 
             await provider.PushAsync(new TestEventOne());
             Func<Task> act = () => provider.PushAsync(new TestEventTwo(), false);
@@ -145,7 +146,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             var provider = new MessageStreamProvider<IEnvelope>();
             var stream = provider.CreateStream<TestEventOne>();
 
-            Task.Run(() => stream.ToList()).RunWithoutBlocking();
+            Task.Run(() => stream.ToList()).FireAndForget();
 
             await provider.PushAsync(new TestEnvelope(new TestEventOne()));
             Func<Task> act = () => provider.PushAsync(new TestEnvelope(new TestEventTwo()));
@@ -228,7 +229,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             var pushTask1 = provider.PushAsync(1);
             var pushTask2 = provider.PushAsync(2);
-            provider.PushAsync(3).RunWithoutBlocking();
+            provider.PushAsync(3).FireAndForget();
 
             enumerator1.MoveNext();
             enumerator2.MoveNext();
@@ -271,7 +272,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             var pushTask1 = provider.PushAsync(1);
             var pushTask2 = provider.PushAsync(2);
-            provider.PushAsync(3).RunWithoutBlocking();
+            provider.PushAsync(3).FireAndForget();
 
             await enumerator1.MoveNextAsync();
             await enumerator2.MoveNextAsync();
@@ -406,7 +407,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
                     {
                         receivedTwos.Add(message);
                     }
-                }).RunWithoutBlocking();
+                }).FireAndForget();
 
             var createStreamTask = lazyStream.WaitUntilCreatedAsync();
 

@@ -45,6 +45,14 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
+        public void LogRollbackToRetryFailed(IRawInboundEnvelope envelope, Exception exception)
+        {
+        }
+
+        public void LogRollbackToSkipFailed(IRawInboundEnvelope envelope, Exception exception)
+        {
+        }
+
         public void LogErrorInitializingActivity(IRawInboundEnvelope envelope, Exception exception)
         {
         }

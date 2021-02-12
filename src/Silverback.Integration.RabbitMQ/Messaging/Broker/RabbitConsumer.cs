@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -137,7 +136,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />
-        protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken)
+        protected override Task WaitUntilConsumingStoppedAsync()
         {
             // TODO: How to handle this?
             return Task.CompletedTask;

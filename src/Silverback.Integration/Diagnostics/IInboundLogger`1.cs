@@ -76,7 +76,7 @@ namespace Silverback.Diagnostics
         void LogSkipped(IRawInboundEnvelope envelope);
 
         /// <summary>
-        ///     Logs the <see cref="IntegrationLogEvents.MessageSkipped" /> event.
+        ///     Logs the <see cref="IntegrationLogEvents.CannotMoveSequences" /> event.
         /// </summary>
         /// <param name="envelope">
         ///     The <see cref="IRawInboundEnvelope" />.
@@ -85,6 +85,28 @@ namespace Silverback.Diagnostics
         ///     The <see cref="ISequence" />.
         /// </param>
         void LogCannotMoveSequences(IRawInboundEnvelope envelope, ISequence sequence);
+
+        /// <summary>
+        ///     Logs the <see cref="IntegrationLogEvents.RollbackToRetryFailed" /> event.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The <see cref="IRawInboundEnvelope" />.
+        /// </param>
+        /// <param name="exception">
+        ///     The <see cref="Exception" />.
+        /// </param>
+        void LogRollbackToRetryFailed(IRawInboundEnvelope envelope, Exception exception);
+
+        /// <summary>
+        ///     Logs the <see cref="IntegrationLogEvents.RollbackToSkipFailed" /> event.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The <see cref="IRawInboundEnvelope" />.
+        /// </param>
+        /// <param name="exception">
+        ///     The <see cref="Exception" />.
+        /// </param>
+        void LogRollbackToSkipFailed(IRawInboundEnvelope envelope, Exception exception);
 
         /// <summary>
         ///     Logs the <see cref="IntegrationLogEvents.ErrorInitializingActivity" /> event.

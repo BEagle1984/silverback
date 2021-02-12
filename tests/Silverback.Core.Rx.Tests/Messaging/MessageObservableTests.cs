@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Core.Rx.Messaging
@@ -66,7 +67,7 @@ namespace Silverback.Tests.Core.Rx.Messaging
             await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted, TimeSpan.FromMilliseconds(100));
             pushTask.IsCompleted.Should().BeFalse();
 
-            Task.Run(() => _observable.Subscribe(_ => count++)).RunWithoutBlocking();
+            Task.Run(() => _observable.Subscribe(_ => count++)).FireAndForget();
 
             await AsyncTestingUtil.WaitAsync(() => pushTask.IsCompleted);
             pushTask.IsCompleted.Should().BeTrue();

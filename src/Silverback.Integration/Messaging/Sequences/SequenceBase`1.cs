@@ -103,6 +103,7 @@ namespace Silverback.Messaging.Sequences
         public bool IsBeingConsumed => _streamProvider.StreamsCount > 0;
 
         /// <inheritdoc cref="ISequence.Sequences" />
+        [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global", Justification = "It works!")]
         public IReadOnlyCollection<ISequence> Sequences =>
             (IReadOnlyCollection<ISequence>?)_sequences ?? Array.Empty<ISequence>();
 

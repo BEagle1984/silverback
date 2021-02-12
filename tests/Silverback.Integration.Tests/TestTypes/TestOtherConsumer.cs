@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -39,7 +38,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         protected override Task StopCoreAsync() => Task.CompletedTask;
 
-        protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) =>
+        protected override Task WaitUntilConsumingStoppedAsync() =>
             Task.CompletedTask;
 
         protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers)

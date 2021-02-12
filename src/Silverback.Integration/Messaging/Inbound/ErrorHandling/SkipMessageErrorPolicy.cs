@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -61,9 +62,27 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
                 _logger.LogSkipped(context.Envelope);
 
-                await context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
+                if (!await TryRollbackAsync(context, exception).ConfigureAwait(false))
+                    await context.Consumer.TriggerReconnectAsync().ConfigureAwait(false);
 
                 return true;
+            }
+
+            [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+            private async Task<bool> TryRollbackAsync(ConsumerPipelineContext context, Exception exception)
+            {
+                try
+                {
+                    await context.TransactionManager.RollbackAsync(exception, true)
+                        .ConfigureAwait(false);
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogRollbackToSkipFailed(context.Envelope, ex);
+                    return false;
+                }
             }
         }
     }

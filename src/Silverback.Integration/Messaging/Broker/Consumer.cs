@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -20,8 +19,6 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IConsumer" />
     public abstract class Consumer : IConsumer, IDisposable
     {
-        private static readonly TimeSpan ConsumerStopWaitTimeout = TimeSpan.FromMinutes(1);
-
         private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
 
         private readonly ISilverbackLogger<Consumer> _logger;
@@ -158,26 +155,13 @@ namespace Silverback.Messaging.Broker
                     .ConfigureAwait(false);
             }
 
-            using (var cancellationTokenSource = new CancellationTokenSource(ConsumerStopWaitTimeout))
-            {
-                _logger.LogLowLevelTrace(
-                    "Waiting until consumer stops... (consumerId: {consumerId})",
-                    () => new object[] { Id });
-
-                try
-                {
-                    await WaitUntilConsumingStoppedAsync(cancellationTokenSource.Token).ConfigureAwait(false);
-                    _logger.LogLowLevelTrace(
-                        "Consumer stopped. (consumerId: {consumerId})",
-                        () => new object[] { Id });
-                }
-                catch (OperationCanceledException)
-                {
-                    _logger.LogLowLevelTrace(
-                        "The timeout elapsed before the consumer stopped. (consumerId: {consumerId})",
-                        () => new object[] { Id });
-                }
-            }
+            _logger.LogLowLevelTrace(
+                "Waiting until consumer stops... (consumerId: {consumerId})",
+                () => new object[] { Id });
+            await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
+            _logger.LogLowLevelTrace(
+                "Consumer stopped. (consumerId: {consumerId})",
+                () => new object[] { Id });
 
             await DisconnectCoreAsync().ConfigureAwait(false);
 
@@ -189,6 +173,35 @@ namespace Silverback.Messaging.Broker
             _logger.LogConsumerDisconnected(this);
 
             IsDisconnecting = false;
+        }
+
+        /// <inheritdoc cref="IConsumer.DisconnectAsync" />
+        public async Task TriggerReconnectAsync()
+        {
+            IsDisconnecting = true;
+
+            // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
+            // but not started)
+            if (IsConsuming)
+                await StopAsync().ConfigureAwait(false);
+            else
+                await StopCoreAsync().ConfigureAwait(false);
+
+            Task.Run(
+                    async () =>
+                    {
+                        _logger.LogLowLevelTrace(
+                            "Waiting until consumer stops... (consumerId: {consumerId})",
+                            () => new object[] { Id });
+                        await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
+                        _logger.LogLowLevelTrace(
+                            "Consumer stopped. (consumerId: {consumerId})",
+                            () => new object[] { Id });
+
+                        await DisconnectAsync().ConfigureAwait(false);
+                        await ConnectAsync().ConfigureAwait(false);
+                    })
+                .FireAndForget();
         }
 
         /// <inheritdoc cref="IConsumer.StartAsync" />
@@ -344,13 +357,10 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Waits until the consuming is stopped.
         /// </summary>
-        /// <param name="cancellationToken">
-        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
-        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected abstract Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken);
+        protected abstract Task WaitUntilConsumingStoppedAsync();
 
         /// <summary>
         ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.

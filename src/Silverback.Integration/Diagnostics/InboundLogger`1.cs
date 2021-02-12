@@ -42,6 +42,12 @@ namespace Silverback.Diagnostics
         public void LogCannotMoveSequences(IRawInboundEnvelope envelope, ISequence sequence) =>
             GetLogger(envelope).LogCannotMoveSequences(this, envelope, sequence);
 
+        public void LogRollbackToRetryFailed(IRawInboundEnvelope envelope, Exception exception) =>
+            GetLogger(envelope).LogRollbackToRetryFailed(this, envelope, exception);
+
+        public void LogRollbackToSkipFailed(IRawInboundEnvelope envelope, Exception exception) =>
+            GetLogger(envelope).LogRollbackToSkipFailed(this, envelope, exception);
+
         public void LogErrorInitializingActivity(IRawInboundEnvelope envelope, Exception exception) =>
             GetLogger(envelope).LogErrorInitializingActivity(this, envelope, exception);
 

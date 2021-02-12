@@ -254,7 +254,7 @@ namespace Silverback.Messaging.Broker
             "ReSharper",
             "InconsistentlySynchronizedField",
             Justification = "Sync start/stop only")]
-        protected override Task WaitUntilConsumingStoppedAsync(CancellationToken cancellationToken) =>
+        protected override Task WaitUntilConsumingStoppedAsync() =>
             Task.WhenAll(
                 WaitUntilChannelsManagerStopsAsync(),
                 WaitUntilConsumeLoopHandlerStopsAsync());

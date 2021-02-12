@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
 using Confluent.Kafka;
 using Silverback.Messaging.Broker.Kafka.Mocks;

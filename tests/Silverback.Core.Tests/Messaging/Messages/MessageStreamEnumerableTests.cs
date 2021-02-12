@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Core.Messaging.Messages
@@ -150,7 +151,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
                 {
                     enumerator.MoveNext();
                     completed = true;
-                }).RunWithoutBlocking();
+                }).FireAndForget();
 
             completed.Should().BeFalse();
 
@@ -175,7 +176,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
                 {
                     await enumerator.MoveNextAsync();
                     completed = true;
-                }).RunWithoutBlocking();
+                }).FireAndForget();
 
             completed.Should().BeFalse();
 

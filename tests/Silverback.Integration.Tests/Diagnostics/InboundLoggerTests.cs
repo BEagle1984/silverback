@@ -229,6 +229,62 @@ namespace Silverback.Tests.Integration.Diagnostics
         }
 
         [Fact]
+        public void LogRollbackToRetryFailed_Logged()
+        {
+            var envelope = new RawInboundEnvelope(
+                Stream.Null,
+                new MessageHeaderCollection
+                {
+                    { DefaultMessageHeaders.MessageType, "Message.Type" },
+                    { DefaultMessageHeaders.MessageId, "1234" }
+                },
+                new TestConsumerEndpoint("test1, test2"),
+                "test1",
+                new TestOffset("a", "42"));
+
+            var expectedMessage =
+                "An error occurred while rolling back, the retry error policy cannot be applied. " +
+                "The consumer will be reset. | " +
+                "endpointName: test1, " +
+                "messageType: Message.Type, " +
+                "messageId: 1234, " +
+                "unused1: (null), " +
+                "unused2: (null)";
+
+            _inboundLogger.LogRollbackToRetryFailed(envelope, new TimeoutException());
+
+            _loggerSubstitute.Received(LogLevel.Warning, typeof(TimeoutException), expectedMessage, 1051);
+        }
+
+        [Fact]
+        public void LogRollbackToSkipFailed_Logged()
+        {
+            var envelope = new RawInboundEnvelope(
+                Stream.Null,
+                new MessageHeaderCollection
+                {
+                    { DefaultMessageHeaders.MessageType, "Message.Type" },
+                    { DefaultMessageHeaders.MessageId, "1234" }
+                },
+                new TestConsumerEndpoint("test1, test2"),
+                "test1",
+                new TestOffset("a", "42"));
+
+            var expectedMessage =
+                "An error occurred while rolling back or committing, the skip message error policy " +
+                "cannot be applied. The consumer will be reset. | " +
+                "endpointName: test1, " +
+                "messageType: Message.Type, " +
+                "messageId: 1234, " +
+                "unused1: (null), " +
+                "unused2: (null)";
+
+            _inboundLogger.LogRollbackToSkipFailed(envelope, new TimeoutException());
+
+            _loggerSubstitute.Received(LogLevel.Warning, typeof(TimeoutException), expectedMessage, 1052);
+        }
+
+        [Fact]
         public void LogErrorInitializingActivity_Logged()
         {
             var envelope = new RawInboundEnvelope(
