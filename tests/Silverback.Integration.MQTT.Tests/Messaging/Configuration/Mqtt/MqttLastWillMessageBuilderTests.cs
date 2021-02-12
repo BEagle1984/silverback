@@ -54,7 +54,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             var willMessage = builder.Build();
             willMessage.Payload.Should().NotBeNullOrEmpty();
 
-            (object? deserializedMessage, var _) = await new JsonMessageSerializer<TestEventOne>().DeserializeAsync(
+            (object? deserializedMessage, Type _) = await new JsonMessageSerializer<TestEventOne>().DeserializeAsync(
                 new MemoryStream(willMessage.Payload),
                 new MessageHeaderCollection(),
                 MessageSerializationContext.Empty);

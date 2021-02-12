@@ -11,7 +11,7 @@
       <!-- Workaround for xml documentation not being copied to output folder -->
       <CopyToOutputDirectory>lib/netcoreapp2.1/*.xml</CopyToOutputDirectory>
     </PackageReference>
-    <PackageReference Include="System.CodeDom" Version="4.7.0" />
+    <PackageReference Include="System.CodeDom" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>

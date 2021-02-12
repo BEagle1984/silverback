@@ -35,11 +35,11 @@ This core package provides a very simple in-memory message bus.</Description>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
-    <PackageReference Include="System.Threading.Channels" Version="4.7.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Threading.Channels" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

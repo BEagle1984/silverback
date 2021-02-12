@@ -59,7 +59,7 @@ namespace Silverback.Tests.Performance
                 new MessageHeaderCollection
                 {
                     new("Test", "Test"),
-                    new(DefaultMessageHeaders.FailedAttempts, 1),
+                    new(DefaultMessageHeaders.FailedAttempts, "1"),
                     new(DefaultMessageHeaders.MessageType, "Something.Xy"),
                     new(DefaultMessageHeaders.MessageId, "1234"),
                     new(KafkaMessageHeaders.KafkaMessageKey, "key1234")

@@ -27,8 +27,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
 
         public Type SubscribedType { get; }
 
-        public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(
-            IServiceProvider serviceProvider) =>
+        public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
             _subscribedMethods ??= serviceProvider
                 .GetServices(SubscribedType)
                 .SelectMany(subscriber => GetSubscribedMethods(subscriber, serviceProvider))
@@ -45,9 +44,12 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
         }
 
         private IEnumerable<SubscribedMethod> GetSubscribedMethods(
-            object subscriber,
+            object? subscriber,
             IServiceProvider serviceProvider)
         {
+            if (subscriber == null)
+                return Enumerable.Empty<SubscribedMethod>();
+
             var targetType = subscriber.GetType();
 
             return GetMethods(targetType)

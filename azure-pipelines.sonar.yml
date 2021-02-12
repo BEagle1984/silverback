@@ -21,8 +21,8 @@ steps:
   # Install .net core sdk
   - task: UseDotNet@2
     inputs:
-      packageType: 'sdk'
-      version: '2.2.x'
+        packageType: 'sdk'
+        version: '2.2.x'
     displayName: 'Install sdk 2.2.x'
   - task: UseDotNet@2
     inputs:

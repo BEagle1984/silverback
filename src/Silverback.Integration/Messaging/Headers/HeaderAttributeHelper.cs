@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Headers
                 if (value != null && !value.Equals(property.PropertyInfo.PropertyType.GetDefaultValue()) ||
                     property.Attribute.PublishDefaultValue)
                 {
-                    yield return new MessageHeader(property.Attribute.HeaderName, value);
+                    yield return new MessageHeader(property.Attribute.HeaderName, value?.ToString());
                 }
             }
         }

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -51,7 +52,9 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var rawMessage = new MemoryStream();
             var headers = new[]
             {
-                new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts)
+                new MessageHeader(
+                    DefaultMessageHeaders.FailedAttempts,
+                    failedAttempts.ToString(CultureInfo.InvariantCulture))
             };
 
             var envelope = new InboundEnvelope(
@@ -102,7 +105,10 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var transactionManager = Substitute.For<IConsumerTransactionManager>();
 
             await policy.HandleErrorAsync(
-                ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider, transactionManager),
+                ConsumerPipelineContextHelper.CreateSubstitute(
+                    envelope,
+                    _serviceProvider,
+                    transactionManager),
                 new InvalidOperationException("test"));
 
             await transactionManager.Received(1).RollbackAsync(

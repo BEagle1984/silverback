@@ -99,8 +99,8 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
             {
                 var legacyOffset = JsonSerializer.Deserialize<LegacyOffsetModel>(storedOffsetEntity.Offset);
 
-                if (legacyOffset.TypeName == null || legacyOffset.Value == null)
-                    throw new InvalidOperationException("Unable to deserialize legacy offset.");
+                if (legacyOffset?.TypeName == null || legacyOffset.Value == null)
+                    throw new InvalidOperationException("Failed to deserialize legacy offset.");
 
                 return InstantiateOffset(legacyOffset.TypeName, storedOffsetEntity.Key, legacyOffset.Value);
             }

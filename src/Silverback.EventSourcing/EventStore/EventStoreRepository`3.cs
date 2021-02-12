@@ -116,7 +116,9 @@ namespace Silverback.EventStore
         /// <returns>
         ///     The event store entity.
         /// </returns>
-        protected virtual TEventStoreEntity GetEventStoreEntity(TDomainEntity domainEntity, bool addIfNotFound)
+        protected virtual TEventStoreEntity GetEventStoreEntity(
+            TDomainEntity domainEntity,
+            bool addIfNotFound)
         {
             var eventStore = GetEventStoreEntity(domainEntity);
 
@@ -192,7 +194,9 @@ namespace Silverback.EventStore
         /// <param name="eventStoreEntity">
         ///     The event store entity to be initialized after the domain entity.
         /// </param>
-        protected virtual void MapEventStoreEntity(TDomainEntity domainEntity, TEventStoreEntity eventStoreEntity)
+        protected virtual void MapEventStoreEntity(
+            TDomainEntity domainEntity,
+            TEventStoreEntity eventStoreEntity)
         {
             Check.NotNull(domainEntity, nameof(domainEntity));
             Check.NotNull(eventStoreEntity, nameof(eventStoreEntity));
@@ -267,17 +271,23 @@ namespace Silverback.EventStore
         {
             Check.NotNull(eventEntity, nameof(eventEntity));
 
-            IEntityEvent entityEvent;
+            IEntityEvent? entityEvent;
 
             if (eventEntity.ClrType != null)
             {
                 var eventType = TypesCache.GetType(eventEntity.ClrType);
-                entityEvent = (IEntityEvent)JsonSerializer.Deserialize(eventEntity.SerializedEvent, eventType);
+                entityEvent = (IEntityEvent?)JsonSerializer.Deserialize(
+                    eventEntity.SerializedEvent,
+                    eventType);
             }
             else
             {
-                entityEvent = (IEntityEvent)PolymorphicJsonSerializer.Deserialize(eventEntity.SerializedEvent);
+                entityEvent =
+                    (IEntityEvent?)PolymorphicJsonSerializer.Deserialize(eventEntity.SerializedEvent);
             }
+
+            if (entityEvent == null)
+                throw new InvalidOperationException("Failed to deserialize the persisted event.");
 
             entityEvent.Sequence = eventEntity.Sequence;
             entityEvent.Timestamp = eventEntity.Timestamp;
@@ -315,7 +325,9 @@ namespace Silverback.EventStore
             return eventStore;
         }
 
-        private TEventStoreEntity StoreAndPublishEvents(TDomainEntity domainEntity, TEventStoreEntity eventStore)
+        private TEventStoreEntity StoreAndPublishEvents(
+            TDomainEntity domainEntity,
+            TEventStoreEntity eventStore)
         {
             var newEvents = domainEntity.GetNewEvents().ToList();
 

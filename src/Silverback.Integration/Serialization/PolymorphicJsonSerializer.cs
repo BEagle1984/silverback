@@ -18,7 +18,7 @@ namespace Silverback.Serialization
     {
         private const string TypePropertyName = "$type";
 
-        public static object Deserialize(string json, JsonSerializerOptions? options = null)
+        public static object? Deserialize(string json, JsonSerializerOptions? options = null)
         {
             var typeInformation = JsonSerializer.Deserialize<TypeInformation>(json, options);
 

@@ -229,6 +229,7 @@ namespace Silverback.Tests.Core.Background
         }
 
         private TestDbContext GetDbContext() =>
-            _serviceProvider.CreateScope().ServiceProvider.GetService<TestDbContext>();
+            _serviceProvider.CreateScope().ServiceProvider.GetService<TestDbContext>() ??
+            throw new InvalidOperationException("TestDbContext not resolved.");
     }
 }

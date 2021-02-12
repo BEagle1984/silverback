@@ -107,13 +107,16 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
         {
             if (outboxMessage.SerializedHeaders != null)
             {
-                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(outboxMessage.SerializedHeaders);
+                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(
+                           outboxMessage.SerializedHeaders) ??
+                       throw new InvalidOperationException("Failed to deserialize message headers.");
             }
 
 #pragma warning disable CS0618 // Obsolete
             if (outboxMessage.Headers != null)
             {
-                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(outboxMessage.Headers);
+                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(outboxMessage.Headers) ??
+                       throw new InvalidOperationException("Failed to deserialize message headers.");
             }
 #pragma warning restore CS0618 // Obsolete
 

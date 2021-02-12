@@ -11,7 +11,9 @@ namespace Silverback.Util
     {
         private static readonly ConcurrentDictionary<string, Type?> Cache = new();
 
-        public static Type? GetType(string typeName, bool throwOnError = true)
+        public static Type GetType(string typeName) => GetType(typeName, true)!;
+
+        public static Type? GetType(string typeName, bool throwOnError)
         {
             Check.NotNull(typeName, nameof(typeName));
 

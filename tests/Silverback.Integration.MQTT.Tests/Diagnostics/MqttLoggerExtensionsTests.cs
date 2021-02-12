@@ -28,7 +28,7 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
 
         private readonly ISilverbackLogger<MqttLoggerExtensionsTests> _silverbackLogger;
 
-        private readonly IServiceProvider? _serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
 
         private readonly MqttConsumerEndpoint _consumerEndpoint = new("test")
         {

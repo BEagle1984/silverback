@@ -209,7 +209,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await producer.ProduceAsync(rawContent);
 
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()!).Should()
                 .BeEquivalentTo(rawContent);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.Should().BeAssignableTo<IBinaryFileMessage>();
@@ -242,7 +242,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await producer.ProduceAsync(rawContent);
 
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()!).Should()
                 .BeEquivalentTo(rawContent);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.Should().BeAssignableTo<IBinaryFileMessage>();
@@ -279,7 +279,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await producer.ProduceAsync(rawContent, headers);
 
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
-            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()!).Should()
                 .BeEquivalentTo(rawContent);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<CustomBinaryFileMessage>();
@@ -339,7 +339,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await publisher.PublishAsync(message);
 
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(5);
-            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()!).Should()
                 .NotBeEquivalentTo(message.Content.ReadAll());
             Helper.Spy.OutboundEnvelopes.ForEach(
                 envelope =>
@@ -401,7 +401,7 @@ namespace Silverback.Tests.Integration.E2E.Old.Broker
             await publisher.PublishAsync(message);
 
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(5);
-            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()).Should()
+            Helper.Spy.OutboundEnvelopes.SelectMany(envelope => envelope.RawMessage.ReadAll()!).Should()
                 .NotBeEquivalentTo(message.Content.ReadAll());
             Helper.Spy.OutboundEnvelopes.ForEach(
                 envelope =>

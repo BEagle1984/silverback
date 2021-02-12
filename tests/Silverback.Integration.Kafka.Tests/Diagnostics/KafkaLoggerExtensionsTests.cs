@@ -21,7 +21,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
 
         private readonly ISilverbackLogger<KafkaLoggerExtensionsTests> _silverbackLogger;
 
-        private readonly IServiceProvider? _serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
 
         private readonly KafkaConsumerEndpoint _consumerEndpoint = new("test")
         {

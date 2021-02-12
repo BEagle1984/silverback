@@ -42,7 +42,7 @@ namespace Silverback.Tests.Integration.Messaging.Headers
             var result = HeaderAttributeHelper.GetHeaders(message).ToList();
 
             result.Should().ContainEquivalentOf(new MessageHeader("x-string-default", null));
-            result.Should().ContainEquivalentOf(new MessageHeader("x-int-default", 0));
+            result.Should().ContainEquivalentOf(new MessageHeader("x-int-default", "0"));
         }
 
         [Fact]

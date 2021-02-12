@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -141,7 +142,9 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
         [Theory]
         [MemberData(nameof(ApplyToAndExclude_TestData))]
-        public void CanHandle_WithApplyToAndExclude_ExpectedResultReturned(Exception exception, bool mustApply)
+        public void CanHandle_WithApplyToAndExclude_ExpectedResultReturned(
+            Exception exception,
+            bool mustApply)
         {
             var policy = new TestErrorPolicy()
                 .ApplyTo<ArgumentException>()
@@ -172,7 +175,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var policy = new TestErrorPolicy()
                 .ApplyWhen(
                     (msg, ex) =>
-                        msg.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts) <= 5 && ex.Message != "no")
+                        msg.Headers.GetValue<int>(DefaultMessageHeaders.FailedAttempts) <= 5 &&
+                        ex.Message != "no")
                 .Build(Substitute.For<IServiceProvider>());
 
             var canHandle = policy.CanHandle(
@@ -187,11 +191,18 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
         [InlineData(3, true)]
         [InlineData(4, false)]
         [InlineData(7, false)]
-        public void CanHandle_WithMaxFailedAttempts_ExpectedResultReturned(int failedAttempts, bool expectedResult)
+        public void CanHandle_WithMaxFailedAttempts_ExpectedResultReturned(
+            int failedAttempts,
+            bool expectedResult)
         {
             var envelope = new InboundEnvelope(
                 new MemoryStream(),
-                new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, failedAttempts) },
+                new[]
+                {
+                    new MessageHeader(
+                        DefaultMessageHeaders.FailedAttempts,
+                        failedAttempts.ToString(CultureInfo.InvariantCulture))
+                },
                 new TestOffset(),
                 TestConsumerEndpoint.GetDefault(),
                 TestConsumerEndpoint.GetDefault().Name);

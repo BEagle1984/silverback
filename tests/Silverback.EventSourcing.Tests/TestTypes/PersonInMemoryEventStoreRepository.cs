@@ -26,12 +26,12 @@ namespace Silverback.Tests.EventSourcing.TestTypes
             eventStoreEntities.ForEach(personEventStore => EventStores.Add(personEventStore));
         }
 
-        public Person GetById(int id) => GetDomainEntity(EventStores.FirstOrDefault(x => x.Id == id));
+        public Person GetById(int id) => GetDomainEntity(EventStores.First(x => x.Id == id));
 
-        public Person GetBySsn(string ssn) => GetDomainEntity(EventStores.FirstOrDefault(x => x.Ssn == ssn));
+        public Person GetBySsn(string ssn) => GetDomainEntity(EventStores.First(x => x.Ssn == ssn));
 
         public Person GetSnapshotById(int id, DateTime snapshot) =>
-            GetDomainEntity(EventStores.FirstOrDefault(x => x.Id == id), snapshot);
+            GetDomainEntity(EventStores.First(x => x.Id == id), snapshot);
 
         protected override void AddEventStoreEntity(PersonEventStore eventStoreEntity) =>
             EventStores.Add(eventStoreEntity);

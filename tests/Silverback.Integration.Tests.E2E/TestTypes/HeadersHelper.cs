@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Silverback.Messaging.Messages;
 
@@ -65,7 +66,11 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
                 yield return new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, kafkaKey);
 
             if (messageType != null)
-                yield return new MessageHeader(DefaultMessageHeaders.MessageType, messageType.AssemblyQualifiedName);
+            {
+                yield return new MessageHeader(
+                    DefaultMessageHeaders.MessageType,
+                    messageType.AssemblyQualifiedName);
+            }
         }
 
         private static IEnumerable<MessageHeader> GetChunkHeadersCore(
@@ -81,10 +86,16 @@ namespace Silverback.Tests.Integration.E2E.TestTypes
                 yield return header;
             }
 
-            yield return new MessageHeader(DefaultMessageHeaders.ChunkIndex, chunkIndex);
+            yield return new MessageHeader(
+                DefaultMessageHeaders.ChunkIndex,
+                chunkIndex.ToString(CultureInfo.InvariantCulture));
 
             if (chunksCount != null)
-                yield return new MessageHeader(DefaultMessageHeaders.ChunksCount, chunksCount);
+            {
+                yield return new MessageHeader(
+                    DefaultMessageHeaders.ChunksCount,
+                    chunksCount.ToString());
+            }
 
             if (isLastChunk != null)
                 yield return new MessageHeader(DefaultMessageHeaders.IsLastChunk, isLastChunk.ToString());

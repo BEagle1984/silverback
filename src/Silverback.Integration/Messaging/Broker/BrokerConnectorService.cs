@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Broker
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        private readonly IApplicationLifetime _applicationLifetime;
+        private readonly IHostApplicationLifetime _applicationLifetime;
 
         private readonly IBrokerCollection _brokerCollection;
 
@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Broker
         /// </param>
         public BrokerConnectorService(
             IServiceScopeFactory serviceScopeFactory,
-            IApplicationLifetime applicationLifetime,
+            IHostApplicationLifetime applicationLifetime,
             IBrokerCollection brokersCollection,
             BrokerConnectionOptions connectionOptions,
             ISilverbackLogger<BrokerConnectorService> logger)

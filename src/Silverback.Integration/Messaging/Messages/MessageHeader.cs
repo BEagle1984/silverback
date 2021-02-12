@@ -22,20 +22,6 @@ namespace Silverback.Messaging.Messages
         ///     The header name.
         /// </param>
         /// <param name="value">
-        ///     The header value to be converted to a string.
-        /// </param>
-        public MessageHeader(string name, object? value)
-            : this(name, value?.ToString())
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="MessageHeader" /> class.
-        /// </summary>
-        /// <param name="name">
-        ///     The header name.
-        /// </param>
-        /// <param name="value">
         ///     The header value.
         /// </param>
         public MessageHeader(string name, string? value)
@@ -44,7 +30,7 @@ namespace Silverback.Messaging.Messages
             Value = value ?? string.Empty;
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Used to deserialize")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Used to be used to deserialize")]
         private MessageHeader()
         {
         }

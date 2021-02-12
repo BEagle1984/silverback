@@ -174,6 +174,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 }
                                 catch (OperationCanceledException)
                                 {
+                                    Task.Delay(300).Wait();
                                     aborted = true;
                                 }
                             }))

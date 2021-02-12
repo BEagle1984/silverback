@@ -25,7 +25,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
         private readonly ISilverbackLogger<IntegrationLoggerExtensionsTests> _silverbackLogger;
 
-        private readonly IServiceProvider? _serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
 
         public IntegrationLoggerExtensionsTests()
         {

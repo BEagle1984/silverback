@@ -15,7 +15,8 @@ namespace Silverback.Messaging.KafkaEvents.Statistics
         {
             try
             {
-                return JsonSerializer.Deserialize<KafkaStatistics>(json);
+                return JsonSerializer.Deserialize<KafkaStatistics>(json) ??
+                       throw new InvalidOperationException("Failed to deserialize Kafka statistics.");
             }
             catch (Exception ex)
             {

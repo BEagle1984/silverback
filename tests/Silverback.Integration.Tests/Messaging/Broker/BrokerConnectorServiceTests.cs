@@ -25,7 +25,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
-                    .AddTransient(_ => Substitute.For<IApplicationLifetime>())
+                    .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
                     .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
@@ -50,7 +50,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
-                    .AddTransient(_ => Substitute.For<IApplicationLifetime>())
+                    .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
                     .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
@@ -82,7 +82,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
-                    .AddTransient(_ => Substitute.For<IApplicationLifetime>())
+                    .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
                     .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
@@ -108,7 +108,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         public async Task StartAsync_ConnectAfterStartup_BrokerConnectedAfterLifetimeEvent()
         {
             var appStartedTokenSource = new CancellationTokenSource();
-            var lifetimeEvents = Substitute.For<IApplicationLifetime>();
+            var lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
             lifetimeEvents.ApplicationStarted.Returns(appStartedTokenSource.Token);
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
@@ -141,7 +141,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
-                    .AddTransient(_ => Substitute.For<IApplicationLifetime>())
+                    .AddTransient(_ => Substitute.For<IHostApplicationLifetime>())
                     .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(
@@ -169,7 +169,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             BrokerConnectionMode mode)
         {
             var appStoppingTokenSource = new CancellationTokenSource();
-            var lifetimeEvents = Substitute.For<IApplicationLifetime>();
+            var lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
             lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
