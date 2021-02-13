@@ -92,11 +92,21 @@ namespace Silverback.Testing
         }
 
         /// <inheritdoc cref="ITestingHelper{TBroker}.IsOutboxEmptyAsync" />
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task<bool> IsOutboxEmptyAsync()
         {
-            using var scope = _serviceProvider.CreateScope();
-            var outboxReader = scope.ServiceProvider.GetRequiredService<IOutboxReader>();
-            return await outboxReader.GetLengthAsync().ConfigureAwait(false) == 0;
+            try
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var outboxReader = scope.ServiceProvider.GetRequiredService<IOutboxReader>();
+                return await outboxReader.GetLengthAsync().ConfigureAwait(false) == 0;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "An error occurred while checking whether the Outbox is empty.");
+
+                return false;
+            }
         }
     }
 }
