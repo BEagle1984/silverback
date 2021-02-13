@@ -155,14 +155,7 @@ namespace Silverback.Messaging.Broker
                     .ConfigureAwait(false);
             }
 
-            _logger.LogLowLevelTrace(
-                "Waiting until consumer stops... (consumerId: {consumerId})",
-                () => new object[] { Id });
             await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
-            _logger.LogLowLevelTrace(
-                "Consumer stopped. (consumerId: {consumerId})",
-                () => new object[] { Id });
-
             await DisconnectCoreAsync().ConfigureAwait(false);
 
             SequenceStores.ForEach(store => store.Dispose());
@@ -190,14 +183,7 @@ namespace Silverback.Messaging.Broker
             Task.Run(
                     async () =>
                     {
-                        _logger.LogLowLevelTrace(
-                            "Waiting until consumer stops... (consumerId: {consumerId})",
-                            () => new object[] { Id });
                         await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
-                        _logger.LogLowLevelTrace(
-                            "Consumer stopped. (consumerId: {consumerId})",
-                            () => new object[] { Id });
-
                         await DisconnectAsync().ConfigureAwait(false);
                         await ConnectAsync().ConfigureAwait(false);
                     })
@@ -360,7 +346,7 @@ namespace Silverback.Messaging.Broker
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected abstract Task WaitUntilConsumingStoppedAsync();
+        protected abstract Task WaitUntilConsumingStoppedCoreAsync();
 
         /// <summary>
         ///     Returns the <see cref="ISequenceStore" /> to be used to store the pending sequences.
@@ -451,6 +437,17 @@ namespace Silverback.Messaging.Broker
             {
                 _logger.LogConsumerDisposingError(this, ex);
             }
+        }
+
+        private async Task WaitUntilConsumingStoppedAsync()
+        {
+            _logger.LogLowLevelTrace(
+                "Waiting until consumer stops... (consumerId: {consumerId})",
+                () => new object[] { Id });
+            await WaitUntilConsumingStoppedCoreAsync().ConfigureAwait(false);
+            _logger.LogLowLevelTrace(
+                "Consumer stopped. (consumerId: {consumerId})",
+                () => new object[] { Id });
         }
 
         private Task ExecutePipelineAsync(ConsumerPipelineContext context, int stepIndex = 0)

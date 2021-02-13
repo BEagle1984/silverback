@@ -414,7 +414,7 @@ namespace Silverback.Messaging.Sequences
                 _disposed = true;
 
                 _logger.LogLowLevelTrace(
-                    "Disposed {sequenceType} '{sequenceId}'.",
+                    "{sequenceType} '{sequenceId}' disposed.",
                     () => new object[]
                     {
                         GetType().Name,

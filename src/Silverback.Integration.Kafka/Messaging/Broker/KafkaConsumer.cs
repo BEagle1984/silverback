@@ -249,12 +249,11 @@ namespace Silverback.Messaging.Broker
             return _channelsManager!.GetSequenceStore(brokerMessageIdentifier.AsTopicPartition());
         }
 
-        /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />
-        protected override async Task WaitUntilConsumingStoppedAsync()
-        {
-            await WaitUntilConsumeLoopHandlerStopsAsync().ConfigureAwait(false);
-            await WaitUntilChannelsManagerStopsAsync().ConfigureAwait(false);
-        }
+        /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedCoreAsync" />
+        protected override Task WaitUntilConsumingStoppedCoreAsync() =>
+            Task.WhenAll(
+                WaitUntilChannelsManagerStopsAsync(),
+                WaitUntilConsumeLoopHandlerStopsAsync());
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
         protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
@@ -376,6 +375,7 @@ namespace Silverback.Messaging.Broker
             "ReSharper",
             "InconsistentlySynchronizedField",
             Justification = "Sync start/stop only")]
+        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Synchronously called")]
         private async Task WaitUntilConsumeLoopHandlerStopsAsync()
         {
             if (_consumeLoopHandler == null)
@@ -384,14 +384,26 @@ namespace Silverback.Messaging.Broker
                 return;
             }
 
+            _logger.LogConsumerLowLevelTrace(
+                this,
+                "Waiting until ConsumeLoopHandler stops... | instanceId: {instanceId}, taskId: {taskId}",
+                () => new object[]
+                {
+                    _consumeLoopHandler.Id,
+                    _consumeLoopHandler.Stopping.Id
+                });
             await _consumeLoopHandler.Stopping.ConfigureAwait(false);
-
-            _logger.LogConsumerLowLevelTrace(this, "ConsumeLoopHandler stopped.");
+            _logger.LogConsumerLowLevelTrace(
+                this,
+                "ConsumeLoopHandler stopped | instanceId: {instanceId}, taskId: {taskId}.",
+                () => new object[]
+                {
+                    _consumeLoopHandler.Id,
+                    _consumeLoopHandler.Stopping.Id
+                });
 
             _consumeLoopHandler?.Dispose();
             _consumeLoopHandler = null;
-
-            _logger.LogConsumerLowLevelTrace(this, "ConsumeLoopHandler disposed.");
         }
 
         [SuppressMessage(
@@ -406,8 +418,8 @@ namespace Silverback.Messaging.Broker
                 return;
             }
 
+            _logger.LogConsumerLowLevelTrace(this, "Waiting until ChannelsManager stops...");
             await _channelsManager.Stopping.ConfigureAwait(false);
-
             _logger.LogConsumerLowLevelTrace(this, "ChannelsManager stopped.");
 
             _channelsManager?.Dispose();

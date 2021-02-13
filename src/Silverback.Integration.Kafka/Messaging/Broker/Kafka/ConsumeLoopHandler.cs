@@ -34,7 +34,9 @@ namespace Silverback.Messaging.Broker.Kafka
             _logger = Check.NotNull(logger, nameof(logger));
         }
 
-        public Task Stopping => _consumeTaskCompletionSource.Task;
+        public InstanceIdentifier Id { get; } = new();
+
+        public Task Stopping => IsConsuming ? _consumeTaskCompletionSource.Task : Task.CompletedTask;
 
         public bool IsConsuming { get; private set; }
 
@@ -67,6 +69,11 @@ namespace Silverback.Messaging.Broker.Kafka
 
         public Task StopAsync()
         {
+            _logger.LogConsumerLowLevelTrace(
+                _consumer,
+                "Stopping ConsumeLoopHandler... | instanceId: {instanceId}",
+                () => new object[] { Id });
+
             _cancellationTokenSource.Cancel();
 
             if (!IsConsuming)
@@ -82,30 +89,54 @@ namespace Silverback.Messaging.Broker.Kafka
 
         public void Dispose()
         {
-            _logger.LogConsumerLowLevelTrace(_consumer, "Disposing ConsumeLoopHandler...");
+            _logger.LogConsumerLowLevelTrace(
+                _consumer,
+                "Disposing ConsumeLoopHandler... | instanceId: {instanceId}",
+                () => new object[] { Id });
 
             AsyncHelper.RunSynchronously(StopAsync);
             _cancellationTokenSource.Dispose();
 
-            _logger.LogConsumerLowLevelTrace(_consumer, "Disposed ConsumeLoopHandler.");
+            _logger.LogConsumerLowLevelTrace(
+                _consumer,
+                "ConsumeLoopHandler disposed. | instanceId: {instanceId}",
+                () => new object[] { Id });
         }
 
         private async Task ConsumeAsync(
             TaskCompletionSource<bool> taskCompletionSource,
             CancellationToken cancellationToken)
         {
+            _logger.LogConsumerLowLevelTrace(
+                _consumer,
+                "Starting consume loop... | instanceId: {instanceId}, taskId: {taskId}",
+                () => new object[]
+                {
+                    Id,
+                    taskCompletionSource.Task.Id
+                });
+
             while (!cancellationToken.IsCancellationRequested)
             {
                 if (!ConsumeOnce(cancellationToken))
                     break;
             }
 
-            _logger.LogConsumerLowLevelTrace(_consumer, "Consume loop stopped.");
+            _logger.LogConsumerLowLevelTrace(
+                _consumer,
+                "Consume loop stopped. | instanceId: {instanceId}, taskId: {taskId}",
+                () => new object[]
+                {
+                    Id,
+                    taskCompletionSource.Task.Id
+                });
 
             taskCompletionSource.TrySetResult(true);
 
             // There's unfortunately no async version of Confluent.Kafka.IConsumer.Consume() so we need to run
             // synchronously to stay within a single long-running thread with the Consume loop.
+            // The call to DisconnectAsync is the only exception since we are exiting anyway and Consume will
+            // not be called anymore.
             if (!cancellationToken.IsCancellationRequested)
                 await _consumer.DisconnectAsync().ConfigureAwait(false);
         }
@@ -121,8 +152,6 @@ namespace Silverback.Messaging.Broker.Kafka
                     _logger.LogConsumerLowLevelTrace(_consumer, "KafkaConsumer.ConfluentConsumer is null.");
                     return false;
                 }
-
-                _logger.LogConsumerLowLevelTrace(_consumer, "Consume next message.");
 
                 var consumeResult = _consumer.ConfluentConsumer.Consume(cancellationToken);
 

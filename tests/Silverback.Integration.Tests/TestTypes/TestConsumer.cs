@@ -89,7 +89,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         protected override Task StopCoreAsync() => Task.CompletedTask;
 
-        protected override Task WaitUntilConsumingStoppedAsync() =>
+        protected override Task WaitUntilConsumingStoppedCoreAsync() =>
             Task.CompletedTask;
 
         protected override Task CommitCoreAsync(IReadOnlyCollection<TestOffset> brokerMessageIdentifiers)

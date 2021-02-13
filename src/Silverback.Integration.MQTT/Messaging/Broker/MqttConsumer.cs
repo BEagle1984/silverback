@@ -127,8 +127,8 @@ namespace Silverback.Messaging.Broker
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />
-        protected override Task WaitUntilConsumingStoppedAsync() =>
+        /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedCoreAsync" />
+        protected override Task WaitUntilConsumingStoppedCoreAsync() =>
             _channelManager?.Stopping ?? Task.CompletedTask;
 
         /// <inheritdoc cref="Consumer.CommitCoreAsync" />
