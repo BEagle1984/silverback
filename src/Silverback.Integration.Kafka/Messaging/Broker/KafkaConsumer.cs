@@ -252,23 +252,8 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedAsync" />
         protected override async Task WaitUntilConsumingStoppedAsync()
         {
-            var timeoutTask = Task.Delay(TimeSpan.FromSeconds(10));
-
-            var channelsManagerTask = Task.Run(WaitUntilChannelsManagerStopsAsync);
-            var consumeLoopHandlerTask = Task.Run(WaitUntilConsumeLoopHandlerStopsAsync);
-
-            await Task.WhenAny(
-                Task.WhenAll(channelsManagerTask, consumeLoopHandlerTask),
-                timeoutTask).ConfigureAwait(false);
-
-            if (timeoutTask.IsCompleted)
-            {
-                var logMessage =
-                    "Timeout elapsed while waiting until consuming stops. | " +
-                    $"channelsManagerTask: {channelsManagerTask.Status}, " +
-                    $"consumeLoopHandlerTask: {consumeLoopHandlerTask.Status}";
-                _logger.LogConsumerLowLevelTrace(this, logMessage);
-            }
+            await WaitUntilConsumeLoopHandlerStopsAsync().ConfigureAwait(false);
+            await WaitUntilChannelsManagerStopsAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
