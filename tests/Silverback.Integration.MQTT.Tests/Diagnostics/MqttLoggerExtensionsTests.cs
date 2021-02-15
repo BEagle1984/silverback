@@ -119,7 +119,7 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                 _silverbackLogger);
 
             var expectedMessage =
-                "Error occurred connecting to the MQTT broker. | clientId: test-client";
+                "Error occurred retrying to connect to the MQTT broker. | clientId: test-client";
 
             _silverbackLogger.LogConnectRetryError(mqttClientWrapper, new MqttCommunicationException("test"));
 

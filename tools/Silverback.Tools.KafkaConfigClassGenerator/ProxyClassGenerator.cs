@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace Silverback.Integration.Kafka.ConfigClassGenerator
+namespace Silverback.Tools.KafkaConfigClassGenerator
 {
     internal class ProxyClassGenerator
     {
@@ -213,12 +213,12 @@ namespace Silverback.Integration.Kafka.ConfigClassGenerator
             return writer.GetStringBuilder().ToString();
         }
 
-        private string? GetSummary(PropertyInfo memberInfo)
+        private string? GetSummary(PropertyInfo propertyInfo)
         {
             if (_xmlDoc == null)
                 LoadXmlDoc();
 
-            var path = "P:" + memberInfo.DeclaringType?.FullName + "." + memberInfo.Name;
+            var path = "P:" + propertyInfo.DeclaringType?.FullName + "." + propertyInfo.Name;
             var node = _xmlDoc?.SelectSingleNode("//member[starts-with(@name, '" + path + "')]");
 
             if (node == null)

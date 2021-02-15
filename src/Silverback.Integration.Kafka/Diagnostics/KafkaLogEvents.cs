@@ -182,7 +182,7 @@ namespace Silverback.Diagnostics
             "Kafka producer statistics received: {statistics}");
 
         /// <summary>
-        ///     Gets the <see cref="LogEvent" /> representing the log that is written when the statistics JSOn cannot be
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when the statistics JSON cannot be
         ///     deserialized.
         /// </summary>
         public static LogEvent StatisticsDeserializationError { get; } = new(

@@ -36,7 +36,7 @@ namespace Silverback.Diagnostics
         public static LogEvent ConnectRetryError { get; } = new(
             LogLevel.Debug,
             GetEventId(22, nameof(ConnectRetryError)),
-            "Error occurred connecting to the MQTT broker. | clientId: {clientId}");
+            "Error occurred retrying to connect to the MQTT broker. | clientId: {clientId}");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when the connection to the MQTT broker is lost.

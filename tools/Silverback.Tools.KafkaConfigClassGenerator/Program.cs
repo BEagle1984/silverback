@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using Confluent.Kafka;
 
-namespace Silverback.Integration.Kafka.ConfigClassGenerator
+namespace Silverback.Tools.KafkaConfigClassGenerator
 {
     internal static class Program
     {
