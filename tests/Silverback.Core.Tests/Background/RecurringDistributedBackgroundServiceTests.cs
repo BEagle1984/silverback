@@ -142,6 +142,7 @@ namespace Silverback.Tests.Core.Background
         }
 
         [Fact]
+        [Trait("CI", "false")]
         public async Task StopAsync_SimpleTask_ExecutionStopped()
         {
             int executions = 0;
