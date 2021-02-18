@@ -2,9 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Text.Json;
 
 namespace Silverback.Tests.Performance.TestTypes
 {
@@ -62,9 +60,6 @@ namespace Silverback.Tests.Performance.TestTypes
                 WindSpeed = 8
             }
         };
-
-        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        public static byte[] SerializedSample { get; } = JsonSerializer.SerializeToUtf8Bytes(Sample);
 
         public WhetherForecast? Monday { get; set; }
 

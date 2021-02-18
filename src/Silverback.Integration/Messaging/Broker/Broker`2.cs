@@ -101,7 +101,7 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IBroker.IsConnected" />
         public bool IsConnected { get; private set; }
 
-        /// <inheritdoc cref="IBroker.GetProducer" />
+        /// <inheritdoc cref="IBroker.GetProducer(IProducerEndpoint)" />
         public virtual IProducer GetProducer(IProducerEndpoint endpoint)
         {
             Check.NotNull(endpoint, nameof(endpoint));
@@ -115,6 +115,17 @@ namespace Silverback.Messaging.Broker
                 AsyncHelper.RunSynchronously(() => producer.ConnectAsync());
 
             return producer;
+        }
+
+        /// <inheritdoc cref="IBroker.GetProducer(IProducerEndpoint)" />
+        public virtual IProducer GetProducer(string endpointName)
+        {
+            Check.NotEmpty(endpointName, nameof(endpointName));
+
+            if (_producers == null)
+                throw new ObjectDisposedException(GetType().FullName);
+
+            return _producers.First(producer => producer.Endpoint.Name == endpointName);
         }
 
         /// <inheritdoc cref="IBroker.AddConsumer" />

@@ -13,5 +13,6 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Silverback.Integration.MQTT.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration.RabbitMQ.Tests")]
 [assembly: InternalsVisibleTo("Silverback.Integration.Newtonsoft")]
+[assembly: InternalsVisibleTo("Silverback.Tests.Benchmarks")]
 [assembly: InternalsVisibleTo("Silverback.Tests.Performance")]
 [assembly: InternalsVisibleTo("Silverback.Tests.Common.Integration")]

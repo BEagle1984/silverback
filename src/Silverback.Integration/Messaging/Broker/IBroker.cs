@@ -51,6 +51,17 @@ namespace Silverback.Messaging.Broker
         IProducer GetProducer(IProducerEndpoint endpoint);
 
         /// <summary>
+        ///     Returns an existing <see cref="IProducer" /> to be used to produce to the specified endpoint.
+        /// </summary>
+        /// <param name="endpointName">
+        ///     The target endpoint name.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IProducer" /> for the specified endpoint.
+        /// </returns>
+        IProducer GetProducer(string endpointName);
+
+        /// <summary>
         ///     Adds an <see cref="IConsumer" /> that will consume from the specified endpoint as soon as the broker
         ///     is connected. The received messages will be forwarded to the specified callback delegate.
         /// </summary>

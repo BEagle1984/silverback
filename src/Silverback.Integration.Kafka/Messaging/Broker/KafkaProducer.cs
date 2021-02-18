@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -65,11 +66,64 @@ namespace Silverback.Messaging.Broker
             DisposeConfluentProducer();
         }
 
-        /// <inheritdoc cref="Producer.ProduceCore" />
+        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
         protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync" />
+        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action,Action{Exception})" />
+        [SuppressMessage("", "CA1031", Justification = "Exception logged/forward")]
+        protected override void ProduceCore(
+            IOutboundEnvelope envelope,
+            Action onSuccess,
+            Action<Exception> onError)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+            Check.NotNull(onSuccess, nameof(onSuccess));
+            Check.NotNull(onError, nameof(onError));
+
+            var kafkaMessage = new Message<byte[]?, byte[]?>
+            {
+                Key = GetKafkaKeyAndRemoveHeader(envelope.Headers),
+                Value = envelope.RawMessage.ReadAll()
+            };
+
+            if (envelope.Headers.Count >= 1)
+                kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
+
+            var topicPartition = new TopicPartition(
+                envelope.ActualEndpointName,
+                GetPartitionAndRemoveHeader(envelope.Headers));
+
+            GetConfluentProducer().Produce(
+                topicPartition,
+                kafkaMessage,
+                deliveryReport =>
+                {
+                    try
+                    {
+                        if (deliveryReport.Error != null && deliveryReport.Error.IsError)
+                        {
+                            // Disposing and re-creating the producer will maybe fix the issue
+                            if (Endpoint.Configuration.DisposeOnException)
+                                DisposeConfluentProducer();
+
+                            throw new ProduceException(
+                                $"Error occurred producing the message. (error code {deliveryReport.Error.Code})");
+                        }
+
+                        if (Endpoint.Configuration.ArePersistenceStatusReportsEnabled)
+                            CheckPersistenceStatus(deliveryReport);
+
+                        onSuccess.Invoke();
+                    }
+                    catch (Exception ex)
+                    {
+                        onError.Invoke(ex);
+                    }
+                });
+        }
+
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
         protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
@@ -83,9 +137,7 @@ namespace Silverback.Messaging.Broker
                 };
 
                 if (envelope.Headers.Count >= 1)
-                {
                     kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
-                }
 
                 var topicPartition = new TopicPartition(
                     envelope.ActualEndpointName,
@@ -95,9 +147,7 @@ namespace Silverback.Messaging.Broker
                     .ConfigureAwait(false);
 
                 if (Endpoint.Configuration.ArePersistenceStatusReportsEnabled)
-                {
                     CheckPersistenceStatus(deliveryResult);
-                }
 
                 return new KafkaOffset(deliveryResult.TopicPartitionOffset);
             }
@@ -111,6 +161,59 @@ namespace Silverback.Messaging.Broker
                     "Error occurred producing the message. See inner exception for details.",
                     ex);
             }
+        }
+
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope,Action,Action{Exception})" />
+        [SuppressMessage("", "CA1031", Justification = "Exception logged/forward")]
+        protected override async Task ProduceCoreAsync(
+            IOutboundEnvelope envelope,
+            Action onSuccess,
+            Action<Exception> onError)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+            Check.NotNull(onSuccess, nameof(onSuccess));
+            Check.NotNull(onError, nameof(onError));
+
+            var kafkaMessage = new Message<byte[]?, byte[]?>
+            {
+                Key = GetKafkaKeyAndRemoveHeader(envelope.Headers),
+                Value = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false)
+            };
+
+            if (envelope.Headers.Count >= 1)
+                kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
+
+            var topicPartition = new TopicPartition(
+                envelope.ActualEndpointName,
+                GetPartitionAndRemoveHeader(envelope.Headers));
+
+            GetConfluentProducer().Produce(
+                topicPartition,
+                kafkaMessage,
+                deliveryReport =>
+                {
+                    try
+                    {
+                        if (deliveryReport.Error != null && deliveryReport.Error.IsError)
+                        {
+                            // Disposing and re-creating the producer will maybe fix the issue
+                            if (Endpoint.Configuration.DisposeOnException)
+                                DisposeConfluentProducer();
+
+                            throw new ProduceException(
+                                $"Error occurred producing the message. (error code {deliveryReport.Error.Code})");
+                        }
+
+                        if (Endpoint.Configuration.ArePersistenceStatusReportsEnabled)
+                            CheckPersistenceStatus(deliveryReport);
+
+                        onSuccess.Invoke();
+                    }
+                    catch (Exception ex)
+                    {
+                        onError.Invoke(ex);
+                    }
+                });
         }
 
         private static Partition GetPartitionAndRemoveHeader(MessageHeaderCollection headers)

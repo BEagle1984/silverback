@@ -28,7 +28,7 @@ namespace Silverback.Testing
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Consumer.Publisher - 1;
+        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Publisher - 1;
 
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
         public Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)

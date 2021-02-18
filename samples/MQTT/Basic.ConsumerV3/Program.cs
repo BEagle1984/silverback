@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Silverback.Samples.Mqtt.Basic.Consumer
+namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
 {
     public static class Program
     {

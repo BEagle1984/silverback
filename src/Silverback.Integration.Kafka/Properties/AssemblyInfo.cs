@@ -4,4 +4,5 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Silverback.Integration.Kafka.Tests")]
+[assembly: InternalsVisibleTo("Silverback.Tests.Benchmarks")]
 [assembly: InternalsVisibleTo("Silverback.Tests.Performance")]

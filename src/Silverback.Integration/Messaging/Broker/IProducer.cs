@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -75,6 +76,49 @@ namespace Silverback.Messaging.Broker
         void Produce(IOutboundEnvelope envelope);
 
         /// <summary>
+        ///     Publishes the specified message.
+        /// </summary>
+        /// <remarks>
+        ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="message">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        void Produce(
+            object? message,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Action onSuccess,
+            Action<Exception> onError);
+
+        /// <summary>
+        ///     Publishes the specified message.
+        /// </summary>
+        /// <remarks>
+        ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="envelope">
+        ///     The envelope containing the message to be delivered.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        void Produce(IOutboundEnvelope envelope, Action onSuccess, Action<Exception> onError);
+
+        /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
         /// </summary>
         /// <param name="messageContent">
@@ -131,6 +175,114 @@ namespace Silverback.Messaging.Broker
             IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <remarks>
+        ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="messageContent">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        void RawProduce(
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Action onSuccess,
+            Action<Exception> onError);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <remarks>
+        ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="messageStream">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        void RawProduce(
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Action onSuccess,
+            Action<Exception> onError);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <remarks>
+        ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="actualEndpointName">
+        ///     The actual target endpoint name.
+        /// </param>
+        /// <param name="messageContent">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        void RawProduce(
+            string actualEndpointName,
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Action onSuccess,
+            Action<Exception> onError);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <remarks>
+        ///     In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="actualEndpointName">
+        ///     The actual target endpoint name.
+        /// </param>
+        /// <param name="messageStream">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        void RawProduce(
+            string actualEndpointName,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Action onSuccess,
+            Action<Exception> onError);
+
+        /// <summary>
         ///     Publishes the specified message.
         /// </summary>
         /// <param name="message">
@@ -158,6 +310,57 @@ namespace Silverback.Messaging.Broker
         Task ProduceAsync(IOutboundEnvelope envelope);
 
         /// <summary>
+        ///     Publishes the specified message.
+        /// </summary>
+        /// <remarks>
+        ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="message">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+        ///     soon as the message is enqueued.
+        /// </returns>
+        Task ProduceAsync(
+            object? message,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Action onSuccess,
+            Action<Exception> onError);
+
+        /// <summary>
+        ///     Publishes the specified message.
+        /// </summary>
+        /// <remarks>
+        ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="envelope">
+        ///     The envelope containing the message to be delivered.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+        ///     soon as the message is enqueued.
+        /// </returns>
+        Task ProduceAsync(IOutboundEnvelope envelope, Action onSuccess, Action<Exception> onError);
+
+        /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
         /// </summary>
         /// <param name="messageContent">
@@ -228,5 +431,129 @@ namespace Silverback.Messaging.Broker
             string actualEndpointName,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers = null);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <remarks>
+        ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="messageContent">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+        ///     soon as the message is enqueued.
+        /// </returns>
+        Task RawProduceAsync(
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Action onSuccess,
+            Action<Exception> onError);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <remarks>
+        ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="messageStream">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+        ///     soon as the message is enqueued.
+        /// </returns>
+        Task RawProduceAsync(
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Action onSuccess,
+            Action<Exception> onError);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <remarks>
+        ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="actualEndpointName">
+        ///     The actual target endpoint name.
+        /// </param>
+        /// <param name="messageContent">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+        ///     soon as the message is enqueued.
+        /// </returns>
+        Task RawProduceAsync(
+            string actualEndpointName,
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Action onSuccess,
+            Action<Exception> onError);
+
+        /// <summary>
+        ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
+        /// </summary>
+        /// <remarks>
+        ///     The returned <see cref="Task" /> completes when the message is enqueued while the callbacks
+        ///     are called when the message is actually produced (or the produce failed).
+        /// </remarks>
+        /// <param name="actualEndpointName">
+        ///     The actual target endpoint name.
+        /// </param>
+        /// <param name="messageStream">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The optional message headers.
+        /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
+        ///     soon as the message is enqueued.
+        /// </returns>
+        Task RawProduceAsync(
+            string actualEndpointName,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Action onSuccess,
+            Action<Exception> onError);
     }
 }

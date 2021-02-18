@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Silverback.Samples.Mqtt.Basic.Consumer
+namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
 {
     public class Startup
     {

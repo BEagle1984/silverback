@@ -1,27 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <RootNamespace>Silverback.Tests.Performance</RootNamespace>
-        <LangVersion>9.0</LangVersion>
-        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-        <OutputType>exe</OutputType>
-        <TargetFramework>net5.0</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Silverback.Tests.Performance</RootNamespace>
+    <LangVersion>$(LangVersion)</LangVersion>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <OutputType>exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
-        <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-        <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.Testing\Silverback.Integration.Kafka.Testing.csproj" />
-        <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
-        <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj" />
-        <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj" />
-        <ProjectReference Include="..\Silverback.Tests.Common.Integration\Silverback.Tests.Common.Integration.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.Testing\Silverback.Integration.Kafka.Testing.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj" />
+    <ProjectReference Include="..\Silverback.Tests.Common.Integration\Silverback.Tests.Common.Integration.csproj" />
+  </ItemGroup>
 
 </Project>

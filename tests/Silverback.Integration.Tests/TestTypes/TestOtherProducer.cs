@@ -37,10 +37,23 @@ namespace Silverback.Tests.Integration.TestTypes
             return null;
         }
 
+        protected override void ProduceCore(IOutboundEnvelope envelope, Action onSuccess, Action<Exception> onError)
+        {
+            ProducedMessages.Add(new ProducedMessage(envelope.RawMessage, envelope.Headers, Endpoint));
+            onSuccess.Invoke();
+        }
+
         protected override Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
-            Produce(envelope.RawMessage, envelope.Headers);
+            ProducedMessages.Add(new ProducedMessage(envelope.RawMessage, envelope.Headers, Endpoint));
             return Task.FromResult<IBrokerMessageIdentifier?>(null);
+        }
+
+        protected override Task ProduceCoreAsync(IOutboundEnvelope envelope, Action onSuccess, Action<Exception> onError)
+        {
+            ProducedMessages.Add(new ProducedMessage(envelope.RawMessage, envelope.Headers, Endpoint));
+            onSuccess.Invoke();
+            return Task.CompletedTask;
         }
     }
 }

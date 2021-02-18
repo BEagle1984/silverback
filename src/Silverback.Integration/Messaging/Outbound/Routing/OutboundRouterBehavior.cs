@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Outbound.Routing
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex { get; } = IntegrationBehaviorsSortIndexes.OutboundRouter;
+        public int SortIndex => IntegrationBehaviorsSortIndexes.OutboundRouter;
 
         /// <inheritdoc cref="IBehavior.HandleAsync" />
         public async Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)

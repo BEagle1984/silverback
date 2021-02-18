@@ -34,8 +34,8 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     successfully
         ///     produced.
         /// </param>
-        /// <param name="readBatchSize">
-        ///     The number of messages to be loaded from the queue at once.
+        /// <param name="batchSize">
+        ///     The number of messages to be loaded and processed at once.
         /// </param>
         /// <param name="distributedLockSettings">
         ///     The settings for the locking mechanism. The default settings will be used if not specified.
@@ -47,7 +47,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IBrokerOptionsBuilder brokerOptionsBuilder,
             TimeSpan? interval = null,
             bool enforceMessageOrder = true,
-            int readBatchSize = 100,
+            int batchSize = 1000,
             DistributedLockSettings? distributedLockSettings = null)
         {
             Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
@@ -63,7 +63,7 @@ namespace Microsoft.Extensions.DependencyInjection
                         serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>(),
                         serviceProvider.GetRequiredService<IOutboundLogger<OutboxWorker>>(),
                         enforceMessageOrder,
-                        readBatchSize))
+                        batchSize))
                 .AddSingleton<IHostedService>(
                     serviceProvider => new OutboxWorkerService(
                         interval ?? TimeSpan.FromMilliseconds(500),

@@ -48,6 +48,8 @@
           href: broker/streaming.md
         - name: Behaviors pipeline
           href: broker/behaviors.md
+        - name: Producer
+          href: broker/producer.md
     - name: Kafka Specific
       items:
         - name: Partitioning and Key

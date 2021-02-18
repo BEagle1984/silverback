@@ -46,6 +46,15 @@ namespace Silverback.Diagnostics
             GetEventId(23, nameof(ConnectionLost)),
             "Connection with the MQTT broker lost. The client will try to reconnect. | clientId: {clientId}");
 
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when the processing of the producer
+        ///     queue is being stopped (usually because the application is exiting).
+        /// </summary>
+        public static LogEvent ProducerQueueProcessingCanceled { get; } = new(
+            LogLevel.Debug,
+            GetEventId(31, nameof(ProducerQueueProcessingCanceled)),
+            "Producer queue processing was canceled.");
+
         private static EventId GetEventId(int id, string name) =>
             new(4000 + id, $"Silverback.Integration.Kafka_{name}");
     }

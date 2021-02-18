@@ -193,7 +193,7 @@ dotnet_diagnostic.CA1820.severity = warning
 # CA1821: Remove empty Finalizers
 dotnet_diagnostic.CA1821.severity = warning
 # CA1822: Mark members as static
-dotnet_diagnostic.CA1822.severity = warning
+dotnet_diagnostic.CA1822.severity = info
 # CA1823: Avoid unused private fields
 dotnet_diagnostic.CA1823.severity = warning
 # CA1824: Mark assemblies with NeutralResourcesLanguageAttribute

@@ -69,27 +69,39 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
                     message.ActualEndpointName))
             .ToList();
 
-        /// <inheritdoc cref="IOutboxReader.RetryAsync" />
+        /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync(OutboxStoredMessage)" />
+        public async Task AcknowledgeAsync(OutboxStoredMessage outboxMessage)
+        {
+            if (await RemoveMessageAsync(outboxMessage).ConfigureAwait(false))
+                await DbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync(IEnumerable{OutboxStoredMessage})" />
+        public async Task AcknowledgeAsync(IEnumerable<OutboxStoredMessage> outboxMessages)
+        {
+            bool removed = false;
+
+            foreach (var message in outboxMessages)
+            {
+                removed |= await RemoveMessageAsync(message).ConfigureAwait(false);
+            }
+
+            if (removed)
+                await DbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        /// <inheritdoc cref="IOutboxReader.RetryAsync(OutboxStoredMessage)" />
         public Task RetryAsync(OutboxStoredMessage outboxMessage)
         {
             // Nothing to do, the message is retried if not acknowledged
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
-        public async Task AcknowledgeAsync(OutboxStoredMessage outboxMessage)
+        /// <inheritdoc cref="IOutboxReader.RetryAsync(IEnumerable{OutboxStoredMessage})" />
+        public Task RetryAsync(IEnumerable<OutboxStoredMessage> outboxMessages)
         {
-            if (outboxMessage is not DbOutboxStoredMessage dbOutboxMessage)
-                throw new InvalidOperationException("A DbOutboxStoredMessage is expected.");
-
-            var entity = await DbSet.FindAsync(dbOutboxMessage.Id).ConfigureAwait(false);
-
-            if (entity == null)
-                return;
-
-            DbSet.Remove(entity);
-
-            await DbContext.SaveChangesAsync().ConfigureAwait(false);
+            // Nothing to do, the message is retried if not acknowledged
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
@@ -121,6 +133,20 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
 #pragma warning restore CS0618 // Obsolete
 
             throw new InvalidOperationException("Both SerializedHeaders and Headers are null.");
+        }
+
+        private async Task<bool> RemoveMessageAsync(OutboxStoredMessage outboxMessage)
+        {
+            if (outboxMessage is not DbOutboxStoredMessage dbOutboxMessage)
+                throw new InvalidOperationException("A DbOutboxStoredMessage is expected.");
+
+            var entity = await DbSet.FindAsync(dbOutboxMessage.Id).ConfigureAwait(false);
+
+            if (entity == null)
+                return false;
+
+            DbSet.Remove(entity);
+            return true;
         }
     }
 }

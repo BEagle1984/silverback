@@ -62,7 +62,7 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when the processing of the producer
-        ///     queue is being stopped (usually because the broker is being disconnected or the application is exiting).
+        ///     queue is being stopped (usually because the application is exiting).
         /// </summary>
         public static LogEvent ProducerQueueProcessingCanceled { get; } = new(
                 LogLevel.Debug,

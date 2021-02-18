@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Broker.Rabbit
     ///     The factory that creates and stores the connections to Rabbit in order to create a single connection
     ///     per each <see cref="RabbitConnectionConfig" />.
     /// </summary>
-    public interface IRabbitConnectionFactory : IDisposable
+    internal interface IRabbitConnectionFactory : IDisposable
     {
         /// <summary>
         ///     Returns a channel to produce to the specified endpoint.

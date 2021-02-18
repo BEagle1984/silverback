@@ -28,7 +28,7 @@ namespace Silverback.Testing
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex { get; } = int.MaxValue;
+        public int SortIndex => int.MaxValue;
 
         /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
         public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)

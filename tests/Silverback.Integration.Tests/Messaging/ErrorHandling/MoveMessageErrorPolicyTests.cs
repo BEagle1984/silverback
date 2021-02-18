@@ -271,7 +271,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
             var newHeaders = producer.ProducedMessages[0].Headers;
-            newHeaders.Should().HaveCount(6); // message-id, message-type, key, traceid, error, source-endpoint
+            newHeaders.Should().HaveCount(5); // key, x-source-endpoint, error, traceparent, message-id
         }
 
         [Fact]

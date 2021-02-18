@@ -28,7 +28,7 @@ namespace Silverback.Testing
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex { get; } = int.MinValue;
+        public int SortIndex => int.MinValue;
 
         /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
         public Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)

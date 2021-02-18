@@ -2,7 +2,7 @@
 using Silverback.Messaging.Configuration;
 using Silverback.Samples.Mqtt.Basic.Common;
 
-namespace Silverback.Samples.Mqtt.Basic.Consumer
+namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
 {
     public class EndpointsConfigurator : IEndpointsConfigurator
     {

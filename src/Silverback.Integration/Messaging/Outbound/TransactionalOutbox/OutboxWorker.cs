@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -28,9 +29,11 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
 
         private readonly IOutboundLogger<OutboxWorker> _logger;
 
-        private readonly int _readBatchSize;
+        private readonly int _batchSize;
 
         private readonly bool _enforceMessageOrder;
+
+        private int _pendingProduceOperations;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="OutboxWorker" /> class.
@@ -53,8 +56,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         ///     successfully
         ///     produced.
         /// </param>
-        /// <param name="readBatchSize">
-        ///     The number of messages to be loaded from the queue at once.
+        /// <param name="batchSize">
+        ///     The number of messages to be loaded and processed at once.
         /// </param>
         public OutboxWorker(
             IServiceScopeFactory serviceScopeFactory,
@@ -62,13 +65,13 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             IOutboundRoutingConfiguration routingConfiguration,
             IOutboundLogger<OutboxWorker> logger,
             bool enforceMessageOrder,
-            int readBatchSize)
+            int batchSize)
         {
             _serviceScopeFactory = serviceScopeFactory;
             _brokerCollection = brokerCollection;
             _logger = logger;
             _enforceMessageOrder = enforceMessageOrder;
-            _readBatchSize = readBatchSize;
+            _batchSize = batchSize;
             _routingConfiguration = routingConfiguration;
         }
 
@@ -102,6 +105,12 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         /// <param name="actualEndpointName">
         ///     The actual endpoint name that was resolved for the message.
         /// </param>
+        /// <param name="onSuccess">
+        ///     The callback to be invoked when the message is successfully produced.
+        /// </param>
+        /// <param name="onError">
+        ///     The callback to be invoked when the produce fails.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
@@ -109,53 +118,106 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             byte[]? content,
             IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint,
-            string actualEndpointName) =>
-            _brokerCollection.GetProducer(endpoint).RawProduceAsync(actualEndpointName, content, headers);
+            string actualEndpointName,
+            Action onSuccess,
+            Action<Exception> onError) =>
+            _brokerCollection.GetProducer(endpoint).RawProduceAsync(
+                actualEndpointName,
+                content,
+                headers,
+                onSuccess,
+                onError);
+
+        private static async Task AcknowledgeAllAsync(
+            IOutboxReader outboxReader,
+            List<OutboxStoredMessage> messages,
+            ConcurrentBag<OutboxStoredMessage> failedMessages)
+        {
+            await outboxReader.RetryAsync(failedMessages).ConfigureAwait(false);
+
+            await outboxReader.AcknowledgeAsync(messages.Where(message => !failedMessages.Contains(message)))
+                .ConfigureAwait(false);
+        }
 
         private async Task ProcessQueueAsync(
             IServiceProvider serviceProvider,
             CancellationToken stoppingToken)
         {
-            _logger.LogReadingMessagesFromOutbox(_readBatchSize);
+            _logger.LogReadingMessagesFromOutbox(_batchSize);
+
+            var failedMessages = new ConcurrentBag<OutboxStoredMessage>();
 
             var outboxReader = serviceProvider.GetRequiredService<IOutboxReader>();
             var outboxMessages =
-                (await outboxReader.ReadAsync(_readBatchSize).ConfigureAwait(false)).ToList();
+                (await outboxReader.ReadAsync(_batchSize).ConfigureAwait(false)).ToList();
 
             if (outboxMessages.Count == 0)
-                _logger.LogOutboxEmpty();
-
-            for (var i = 0; i < outboxMessages.Count; i++)
             {
-                _logger.LogProcessingOutboxStoredMessage(i + 1, outboxMessages.Count);
+                _logger.LogOutboxEmpty();
+                return;
+            }
 
-                await ProcessMessageAsync(outboxMessages[i], outboxReader, serviceProvider)
-                    .ConfigureAwait(false);
+            try
+            {
+                Interlocked.Add(ref _pendingProduceOperations, outboxMessages.Count);
 
-                if (stoppingToken.IsCancellationRequested)
-                    break;
+                for (var i = 0; i < outboxMessages.Count; i++)
+                {
+                    _logger.LogProcessingOutboxStoredMessage(i + 1, outboxMessages.Count);
+
+                    await ProcessMessageAsync(
+                            outboxMessages[i],
+                            failedMessages,
+                            outboxReader,
+                            serviceProvider)
+                        .ConfigureAwait(false);
+
+                    if (stoppingToken.IsCancellationRequested)
+                        break;
+                }
+            }
+            finally
+            {
+                await WaitAllAsync().ConfigureAwait(false);
+                await AcknowledgeAllAsync(outboxReader, outboxMessages, failedMessages).ConfigureAwait(false);
             }
         }
 
         private async Task ProcessMessageAsync(
             OutboxStoredMessage message,
+            ConcurrentBag<OutboxStoredMessage> failedMessages,
             IOutboxReader outboxReader,
             IServiceProvider serviceProvider)
         {
             try
             {
                 var endpoint = GetTargetEndpoint(message.MessageType, message.EndpointName, serviceProvider);
-                await ProduceMessageAsync(
-                    message.Content,
-                    message.Headers,
-                    endpoint,
-                    message.ActualEndpointName ?? endpoint.Name)
-                    .ConfigureAwait(false);
 
-                await outboxReader.AcknowledgeAsync(message).ConfigureAwait(false);
+                await ProduceMessageAsync(
+                        message.Content,
+                        message.Headers,
+                        endpoint,
+                        message.ActualEndpointName ?? endpoint.Name,
+                        () => { Interlocked.Decrement(ref _pendingProduceOperations); },
+                        exception =>
+                        {
+                            failedMessages.Add(message);
+                            Interlocked.Decrement(ref _pendingProduceOperations);
+
+                            _logger.LogErrorProducingOutboxStoredMessage(
+                                new OutboundEnvelope(
+                                    message.Content,
+                                    message.Headers,
+                                    new LoggingEndpoint(message.EndpointName)),
+                                exception);
+                        })
+                    .ConfigureAwait(false);
             }
             catch (Exception ex)
             {
+                failedMessages.Add(message);
+                Interlocked.Decrement(ref _pendingProduceOperations);
+
                 _logger.LogErrorProducingOutboxStoredMessage(
                     new OutboundEnvelope(
                         message.Content,
@@ -192,6 +254,14 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             }
 
             return targetEndpoint;
+        }
+
+        private async Task WaitAllAsync()
+        {
+            while (_pendingProduceOperations > 0)
+            {
+                await Task.Delay(10).ConfigureAwait(false);
+            }
         }
 
         private class LoggingEndpoint : ProducerEndpoint

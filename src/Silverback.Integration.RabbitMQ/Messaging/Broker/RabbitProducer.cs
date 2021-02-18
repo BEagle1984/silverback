@@ -2,12 +2,13 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -20,15 +21,16 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
     public sealed class RabbitProducer : Producer<RabbitBroker, RabbitProducerEndpoint>, IDisposable
     {
+        [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
         private readonly IRabbitConnectionFactory _connectionFactory;
 
         private readonly IOutboundLogger<Producer> _logger;
 
-        private readonly BlockingCollection<QueuedMessage> _queue = new();
+        private readonly Channel<QueuedMessage> _queueChannel = Channel.CreateUnbounded<QueuedMessage>();
 
         private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-        private readonly Dictionary<string, IModel> _channels = new();
+        private readonly Dictionary<string, IModel> _rabbitChannels = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitProducer" /> class.
@@ -45,10 +47,6 @@ namespace Silverback.Messaging.Broker
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
-        /// <param name="connectionFactory">
-        ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
-        ///     endpoint.
-        /// </param>
         /// <param name="logger">
         ///     The <see cref="ISilverbackLogger" />.
         /// </param>
@@ -57,19 +55,16 @@ namespace Silverback.Messaging.Broker
             RabbitBroker broker,
             RabbitProducerEndpoint endpoint,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
-            IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
             IOutboundLogger<Producer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
-            _connectionFactory = connectionFactory;
-            _logger = logger;
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
+            _connectionFactory = serviceProvider.GetRequiredService<IRabbitConnectionFactory>();
 
-            Task.Factory.StartNew(
-                () => ProcessQueue(_cancellationTokenSource.Token),
-                CancellationToken.None,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
+            _logger = Check.NotNull(logger, nameof(logger));
+
+            Task.Run(() => ProcessQueueAsync(_cancellationTokenSource.Token));
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -77,41 +72,93 @@ namespace Silverback.Messaging.Broker
         {
             Flush();
 
-            _cancellationTokenSource.Cancel();
-            _cancellationTokenSource.Dispose();
+            if (!_cancellationTokenSource.IsCancellationRequested)
+            {
+                _cancellationTokenSource.Cancel();
+                _cancellationTokenSource.Dispose();
+            }
 
-            _queue.Dispose();
-
-            _channels.Values.ForEach(channel => channel.Dispose());
-            _channels.Clear();
+            _rabbitChannels.Values.ForEach(channel => channel.Dispose());
+            _rabbitChannels.Clear();
         }
 
-        /// <inheritdoc cref="Producer.ProduceCore" />
+        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
         protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
             AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync" />
-        protected override Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
+        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action,Action{Exception})" />
+        [SuppressMessage("", "VSTHRD110", Justification = "Result observed via ContinueWith")]
+        protected override void ProduceCore(
+            IOutboundEnvelope envelope,
+            Action onSuccess,
+            Action<Exception> onError)
         {
+            Check.NotNull(envelope, nameof(envelope));
+
             var queuedMessage = new QueuedMessage(envelope);
 
-            _queue.Add(queuedMessage);
+            AsyncHelper.RunValueTaskSynchronously(() => _queueChannel.Writer.WriteAsync(queuedMessage));
 
-            return queuedMessage.TaskCompletionSource.Task;
+            queuedMessage.TaskCompletionSource.Task.ContinueWith(
+                task =>
+                {
+                    if (task.IsCompletedSuccessfully)
+                        onSuccess.Invoke();
+                    else
+                        onError.Invoke(task.Exception);
+                },
+                TaskScheduler.Default);
+        }
+
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
+        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+
+            var queuedMessage = new QueuedMessage(envelope);
+
+            await _queueChannel.Writer.WriteAsync(queuedMessage).ConfigureAwait(false);
+            await queuedMessage.TaskCompletionSource.Task.ConfigureAwait(false);
+
+            return null;
+        }
+
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope,Action,Action{Exception})" />
+        protected override async Task ProduceCoreAsync(
+            IOutboundEnvelope envelope,
+            Action onSuccess,
+            Action<Exception> onError)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+
+            var queuedMessage = new QueuedMessage(envelope);
+
+            await _queueChannel.Writer.WriteAsync(queuedMessage).ConfigureAwait(false);
+
+            queuedMessage.TaskCompletionSource.Task.ContinueWith(
+                task =>
+                {
+                    if (task.IsCompletedSuccessfully)
+                        onSuccess.Invoke();
+                    else
+                        onError.Invoke(task.Exception);
+                },
+                TaskScheduler.Default)
+                .FireAndForget();
         }
 
         private static string GetRoutingKey(IEnumerable<MessageHeader> headers) =>
             headers?.FirstOrDefault(header => header.Name == RabbitMessageHeaders.RoutingKey)?.Value ??
             string.Empty;
 
-        [SuppressMessage("", "CA1031", Justification = "Exception is returned")]
-        private void ProcessQueue(CancellationToken cancellationToken)
+        [SuppressMessage("", "CA1031", Justification = "Exception logged/returned")]
+        private async Task ProcessQueueAsync(CancellationToken cancellationToken)
         {
             try
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    var queuedMessage = _queue.Take(cancellationToken);
+                    var queuedMessage = await _queueChannel.Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
 
                     try
                     {
@@ -136,9 +183,9 @@ namespace Silverback.Messaging.Broker
 
         private void PublishToChannel(IRawOutboundEnvelope envelope)
         {
-            var channel = _channels.TryGetValue(envelope.ActualEndpointName, out var value)
+            var channel = _rabbitChannels.TryGetValue(envelope.ActualEndpointName, out var value)
                 ? value!
-                : _channels[envelope.ActualEndpointName] =
+                : _rabbitChannels[envelope.ActualEndpointName] =
                     _connectionFactory.GetChannel(Endpoint, envelope.ActualEndpointName);
 
             var properties = channel.CreateBasicProperties();
@@ -177,12 +224,8 @@ namespace Silverback.Messaging.Broker
 
         private void Flush()
         {
-            _queue.CompleteAdding();
-
-            while (!_queue.IsCompleted)
-            {
-                AsyncHelper.RunSynchronously(() => Task.Delay(100));
-            }
+            _queueChannel.Writer.Complete();
+            _queueChannel.Reader.Completion.Wait();
         }
 
         private class QueuedMessage

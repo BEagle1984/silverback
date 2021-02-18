@@ -51,13 +51,15 @@ namespace Silverback.Messaging.Outbound.Routing
             _queueWriter = queueWriter;
         }
 
-        /// <inheritdoc cref="Producer.ProduceCore" />
-        protected override IBrokerMessageIdentifier ProduceCore(IOutboundEnvelope envelope)
-        {
+        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
+        protected override IBrokerMessageIdentifier ProduceCore(IOutboundEnvelope envelope) =>
             throw new InvalidOperationException("Only asynchronous operations are supported.");
-        }
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync" />
+        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action,Action{Exception})" />
+        protected override void ProduceCore(IOutboundEnvelope envelope, Action onSuccess, Action<Exception> onError) =>
+            throw new InvalidOperationException("Only asynchronous operations are supported.");
+
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
         protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
         {
             Check.NotNull(envelope, nameof(envelope));
@@ -65,6 +67,18 @@ namespace Silverback.Messaging.Outbound.Routing
             await _queueWriter.WriteAsync(envelope).ConfigureAwait(false);
 
             return null;
+        }
+
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope,Action,Action{Exception})" />
+        protected override async Task ProduceCoreAsync(IOutboundEnvelope envelope, Action onSuccess, Action<Exception> onError)
+        {
+            Check.NotNull(envelope, nameof(envelope));
+            Check.NotNull(onSuccess, nameof(onSuccess));
+            Check.NotNull(onError, nameof(onError));
+
+            await _queueWriter.WriteAsync(envelope).ConfigureAwait(false);
+
+            onSuccess.Invoke();
         }
     }
 }

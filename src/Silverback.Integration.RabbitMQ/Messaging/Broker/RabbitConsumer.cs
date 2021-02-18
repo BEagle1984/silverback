@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Silverback.Diagnostics;
@@ -14,6 +15,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Rabbit;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
@@ -52,10 +54,6 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviorsProvider">
         ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
-        /// <param name="connectionFactory">
-        ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
-        ///     endpoint.
-        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
@@ -66,12 +64,13 @@ namespace Silverback.Messaging.Broker
             RabbitBroker broker,
             RabbitConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider,
             IInboundLogger<RabbitConsumer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
-            _connectionFactory = connectionFactory;
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
+            _connectionFactory = serviceProvider.GetRequiredService<IRabbitConnectionFactory>();
+
             _logger = logger;
         }
 

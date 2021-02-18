@@ -1,14 +1,14 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using BenchmarkDotNet.Running;
+using System.Threading.Tasks;
 using Silverback.Tests.Performance.Broker;
 
 namespace Silverback.Tests.Performance
 {
     public static class Program
     {
-        public static void Main()
+        public static async Task Main()
         {
             /*
              * BenchmarkRunner.Run(typeof(JsonMessageSerializerBenchmark));
@@ -19,7 +19,8 @@ namespace Silverback.Tests.Performance
              * BenchmarkRunner.Run(typeof(IntegrationLoggingBenchmark));
              */
 
-            BenchmarkRunner.Run(typeof(ProduceBenchmark));
+            await ProduceStrategiesComparisonRunner.Run(100, 1, 2);
+            await ProduceStrategiesComparisonRunner.Run(50_000, 3, 5);
         }
     }
 }

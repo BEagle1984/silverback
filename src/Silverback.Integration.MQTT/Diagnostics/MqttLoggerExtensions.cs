@@ -27,6 +27,12 @@ namespace Silverback.Diagnostics
             ConnectionLost =
                 SilverbackLoggerMessage.Define<string>(MqttLogEvents.ConnectionLost);
 
+        private static readonly Action<ILogger, string, string, Exception?>
+            ProducerQueueProcessingCanceled =
+                SilverbackLoggerMessage.Define<string, string>(
+                    IntegrationLoggerExtensions.EnrichProducerLogEvent(
+                        MqttLogEvents.ProducerQueueProcessingCanceled));
+
         public static void LogConsuming(
             this ISilverbackLogger logger,
             ConsumedApplicationMessage applicationMessage,
@@ -64,5 +70,10 @@ namespace Silverback.Diagnostics
                 logger.InnerLogger,
                 client.ClientConfig.ClientId,
                 null);
+
+        public static void LogProducerQueueProcessingCanceled(
+            this ISilverbackLogger logger,
+            MqttProducer producer) =>
+            ProducerQueueProcessingCanceled(logger.InnerLogger, producer.Id, producer.Endpoint.Name, null);
     }
 }

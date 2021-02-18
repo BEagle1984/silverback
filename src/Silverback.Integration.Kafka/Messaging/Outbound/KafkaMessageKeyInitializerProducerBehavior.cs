@@ -17,7 +17,7 @@ namespace Silverback.Messaging.Outbound
     public class KafkaMessageKeyInitializerProducerBehavior : IProducerBehavior
     {
         /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex { get; } = BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;
+        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.BrokerKeyHeaderInitializer;
 
         /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
         public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)

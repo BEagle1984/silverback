@@ -55,7 +55,15 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
             Task.FromResult(
                 (IReadOnlyCollection<OutboxStoredMessage>)Items.Take(count).Select(item => item.Item).ToList());
 
-        /// <inheritdoc cref="IOutboxReader.RetryAsync" />
+        /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync(OutboxStoredMessage)" />
+        public Task AcknowledgeAsync(OutboxStoredMessage outboxMessage) =>
+            RemoveAsync(outboxMessage);
+
+        /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync(IEnumerable{OutboxStoredMessage})" />
+        public Task AcknowledgeAsync(IEnumerable<OutboxStoredMessage> outboxMessages) =>
+            outboxMessages.ForEachAsync(RemoveAsync);
+
+        /// <inheritdoc cref="IOutboxReader.RetryAsync(OutboxStoredMessage)" />
         public Task RetryAsync(OutboxStoredMessage outboxMessage)
         {
             // Nothing to do in the current implementation
@@ -64,8 +72,13 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
             return Task.CompletedTask;
         }
 
-        /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync" />
-        public Task AcknowledgeAsync(OutboxStoredMessage outboxMessage) =>
-            RemoveAsync(outboxMessage);
+        /// <inheritdoc cref="IOutboxReader.RetryAsync(IEnumerable{OutboxStoredMessage})" />
+        public Task RetryAsync(IEnumerable<OutboxStoredMessage> outboxMessages)
+        {
+            // Nothing to do in the current implementation
+            // --> the messages just stay in the queue until acknowledged
+            // --> that's why reading is not thread-safe
+            return Task.CompletedTask;
+        }
     }
 }

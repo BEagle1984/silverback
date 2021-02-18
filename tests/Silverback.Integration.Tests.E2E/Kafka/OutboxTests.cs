@@ -70,6 +70,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
+            (await Helper.IsOutboxEmptyAsync()).Should().Be(true);
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
             Helper.Spy.InboundEnvelopes

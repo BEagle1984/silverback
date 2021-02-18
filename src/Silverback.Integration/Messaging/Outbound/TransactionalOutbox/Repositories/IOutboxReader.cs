@@ -56,6 +56,17 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
         Task AcknowledgeAsync(OutboxStoredMessage outboxMessage);
 
         /// <summary>
+        ///     Called after the message has been successfully produced to remove it from the outbox.
+        /// </summary>
+        /// <param name="outboxMessages">
+        ///     The messages that have been processed.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the result of the asynchronous operation.
+        /// </returns>
+        Task AcknowledgeAsync(IEnumerable<OutboxStoredMessage> outboxMessages);
+
+        /// <summary>
         ///     Called when an error occurs producing the message to re-enqueue it and retry later on.
         /// </summary>
         /// <param name="outboxMessage">
@@ -65,5 +76,16 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
         ///     A <see cref="Task" /> representing the result of the asynchronous operation.
         /// </returns>
         Task RetryAsync(OutboxStoredMessage outboxMessage);
+
+        /// <summary>
+        ///     Called when an error occurs producing the message to re-enqueue it and retry later on.
+        /// </summary>
+        /// <param name="outboxMessages">
+        ///     The messages that have been processed.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the result of the asynchronous operation.
+        /// </returns>
+        Task RetryAsync(IEnumerable<OutboxStoredMessage> outboxMessages);
     }
 }

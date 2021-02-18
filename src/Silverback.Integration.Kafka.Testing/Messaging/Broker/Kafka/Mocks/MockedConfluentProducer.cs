@@ -44,14 +44,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         {
             Check.NotNull(message, nameof(message));
 
-            var inMemoryTopic = _topics[topicPartition.Topic];
-
-            var partitionIndex =
-                topicPartition.Partition == Partition.Any
-                    ? GetPartitionIndex(inMemoryTopic, message.Key)
-                    : topicPartition.Partition.Value;
-
-            var offset = inMemoryTopic.Push(partitionIndex, message);
+            int partitionIndex = PushToTopic(topicPartition, message, out Offset offset);
 
             return Task.FromResult(
                 new DeliveryResult<byte[]?, byte[]?>
@@ -74,8 +67,45 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public void Produce(
             TopicPartition topicPartition,
             Message<byte[]?, byte[]?> message,
-            Action<DeliveryReport<byte[]?, byte[]?>>? deliveryHandler = null) =>
-            throw new NotSupportedException();
+            Action<DeliveryReport<byte[]?, byte[]?>>? deliveryHandler = null)
+        {
+            Check.NotNull(message, nameof(message));
+
+            try
+            {
+                var partitionIndex = PushToTopic(topicPartition, message, out Offset offset);
+
+                Task.Run(
+                        async () =>
+                        {
+                            await Task.Delay(10);
+
+                            deliveryHandler?.Invoke(
+                                new DeliveryReport<byte[]?, byte[]?>
+                                {
+                                    Message = message,
+                                    Error = new Error(ErrorCode.NoError),
+                                    Topic = topicPartition.Topic,
+                                    Partition = new Partition(partitionIndex),
+                                    Offset = offset,
+                                    Timestamp = new Timestamp(DateTime.Now),
+                                    Status = PersistenceStatus.Persisted
+                                });
+                        })
+                    .FireAndForget();
+            }
+            catch (Exception ex)
+            {
+                deliveryHandler?.Invoke(
+                    new DeliveryReport<byte[]?, byte[]?>
+                    {
+                        Message = message,
+                        Error = new Error(ErrorCode.Unknown, ex.ToString(), false),
+                        Topic = topicPartition.Topic,
+                        Status = PersistenceStatus.NotPersisted
+                    });
+            }
+        }
 
         public int Poll(TimeSpan timeout) => throw new NotSupportedException();
 
@@ -113,6 +143,22 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 return 0;
 
             return messageKey.Last() % topic.Partitions.Count;
+        }
+
+        private int PushToTopic(
+            TopicPartition topicPartition,
+            Message<byte[]?, byte[]?> message,
+            out Offset offset)
+        {
+            var inMemoryTopic = _topics[topicPartition.Topic];
+
+            var partitionIndex =
+                topicPartition.Partition == Partition.Any
+                    ? GetPartitionIndex(inMemoryTopic, message.Key)
+                    : topicPartition.Partition.Value;
+
+            offset = inMemoryTopic.Push(partitionIndex, message);
+            return partitionIndex;
         }
     }
 }

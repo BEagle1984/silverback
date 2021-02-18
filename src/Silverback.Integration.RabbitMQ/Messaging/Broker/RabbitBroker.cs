@@ -5,8 +5,6 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Broker.Rabbit;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
 {
@@ -15,24 +13,16 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public class RabbitBroker : Broker<RabbitProducerEndpoint, RabbitConsumerEndpoint>
     {
-        private readonly IRabbitConnectionFactory _connectionFactory;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="RabbitBroker" /> class.
         /// </summary>
-        /// <param name="connectionFactory">
-        ///     The <see cref="IRabbitConnectionFactory" /> to be used to create the channels to connect to the
-        ///     endpoints.
-        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
         public RabbitBroker(
-            IRabbitConnectionFactory connectionFactory,
             IServiceProvider serviceProvider)
             : base(serviceProvider)
         {
-            _connectionFactory = Check.NotNull(connectionFactory, nameof(connectionFactory));
         }
 
         /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.InstantiateProducer" />
@@ -44,7 +34,6 @@ namespace Silverback.Messaging.Broker
                 this,
                 endpoint,
                 behaviorsProvider,
-                _connectionFactory,
                 serviceProvider,
                 serviceProvider.GetRequiredService<IOutboundLogger<RabbitProducer>>());
 
@@ -57,19 +46,7 @@ namespace Silverback.Messaging.Broker
                 this,
                 endpoint,
                 behaviorsProvider,
-                _connectionFactory,
                 serviceProvider,
                 serviceProvider.GetRequiredService<IInboundLogger<RabbitConsumer>>());
-
-        /// <inheritdoc cref="Broker{TProducerEndpoint,TConsumerEndpoint}.Dispose(bool)" />
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if (!disposing)
-                return;
-
-            _connectionFactory.Dispose();
-        }
     }
 }

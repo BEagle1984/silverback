@@ -36,4 +36,5 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Silverback.Integration.RabbitMQ.Tests")]
 
 [assembly: InternalsVisibleTo("Silverback.Tests.Common")]
+[assembly: InternalsVisibleTo("Silverback.Tests.Benchmarks")]
 [assembly: InternalsVisibleTo("Silverback.Tests.Performance")]

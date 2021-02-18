@@ -39,7 +39,7 @@ namespace Silverback.Samples.Kafka.Basic.Producer
             {
                 // Check whether the connection has been established, since the
                 // BackgroundService will start immediately, before the application
-                // is completely bootstrapped.
+                // is completely bootstrapped
                 if (!broker.IsConnected)
                 {
                     await Task.Delay(100, stoppingToken);
@@ -59,7 +59,7 @@ namespace Silverback.Samples.Kafka.Basic.Producer
                 await publisher.PublishAsync(
                     new SampleMessage
                     {
-                        Number = ++number
+                        Number = number
                     });
 
                 _logger.LogInformation($"Produced {number}");
