@@ -3,7 +3,7 @@
 
 namespace Silverback.Tests.Core.TestTypes.Messages
 {
-    public class TestEventOne : TestEvent
+    public class TestEventThree : TestEvent
     {
     }
 }

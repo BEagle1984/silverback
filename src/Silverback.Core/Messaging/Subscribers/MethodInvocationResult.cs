@@ -1,26 +1,31 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Collections.Generic;
-
 namespace Silverback.Messaging.Subscribers
 {
     internal class MethodInvocationResult
     {
-        public MethodInvocationResult(
-            IReadOnlyCollection<object> handledMessages,
-            IReadOnlyCollection<object?>? returnValues = null)
+        private MethodInvocationResult(bool wasInvoked)
         {
-            HandledMessages = handledMessages;
-            ReturnValues = returnValues ?? Array.Empty<object>();
+            WasInvoked = wasInvoked;
         }
 
-        public static MethodInvocationResult Empty { get; } =
-            new(Array.Empty<object>(), Array.Empty<object>());
+        private MethodInvocationResult(object returnValue)
+        {
+            WasInvoked = true;
+            ReturnValue = returnValue;
+        }
 
-        public IReadOnlyCollection<object> HandledMessages { get; }
+        public static MethodInvocationResult NotInvoked { get; } =
+            new(false);
 
-        public IReadOnlyCollection<object?> ReturnValues { get; }
+        public static MethodInvocationResult Invoked { get; } =
+            new(true);
+
+        public bool WasInvoked { get; }
+
+        public object? ReturnValue { get; }
+
+        public static MethodInvocationResult WithReturnValue(object returnValue) => new(returnValue);
     }
 }

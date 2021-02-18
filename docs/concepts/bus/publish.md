@@ -48,32 +48,6 @@ public async Task<Report> PublishSomething()
 > [!Important]
 > Please note the required call to `Single()`, because Silverback allows you to have multiple subscribers for the same message and therefore collect multiple return values. This is not needed if using <xref:Silverback.Messaging.Publishing.IQueryPublisher> or <xref:Silverback.Messaging.Publishing.ICommandPublisher> described in the <xref:model> page.
 
-## Batches
-
-It is possible to publish multiple messages with a single call to [Publish](xref:Silverback.Messaging.Publishing.IPublisher#Silverback_Messaging_Publishing_IPublisher_Publish_IEnumerable_System_Object__System_Boolean_) or [PublishAsync](xref:Silverback.Messaging.Publishing.IPublisher#Silverback_Messaging_Publishing_IPublisher_PublishAsync_IEnumerable_System_Object__). The effect is very different than looping and calling the publish for each message since the collection will be handled as a batch, enabling parallel processing. It is usually suggested to publish multiple messages with the overloads accepting an [IEnumerable](https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable) and let the subscribers decide between parallel or sequential processing.
-
-# [Publisher](#tab/batch-publisher)
-```csharp
-public async Task PublishBatch()
-{
-    await _publisher.PublishAsync(new [] 
-    {
-        new SomeEvent() { ... },
-        new SomeEvent() { ... },
-        new SomeEvent() { ... }
-    });
-}
-```
-# [Subscriber](#tab/batch-subscriber)
-```csharp
-public async Task OnSomeEvent(IEnumerable<SomeEvent> events)
-{
-    // Process events in batch
-}
-```
-***
-
-
 ## Silverback.Core.Model
 
 [Silverback.Core.Model](https://www.nuget.org/packages/Silverback.Core.Model) has been introduced in the previous page <xref:model>.

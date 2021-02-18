@@ -45,11 +45,19 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
                              messageType.IsAssignableFrom(i.GenericTypeArguments[0])));
 
         /// <inheritdoc cref="IReturnValueHandler.Handle" />
-        public void Handle(object returnValue) =>
-            _publisher.Publish<object?>(((IEnumerable<object?>)returnValue).WhereNotNull());
+        public void Handle(object returnValue)
+        {
+            Check.NotNull(returnValue, nameof(returnValue));
+
+            ((IEnumerable<object>)returnValue).ForEach(_publisher.Publish);
+        }
 
         /// <inheritdoc cref="IReturnValueHandler.HandleAsync" />
-        public Task HandleAsync(object returnValue) =>
-            _publisher.PublishAsync<object>(((IEnumerable<object?>)returnValue).WhereNotNull());
+        public Task HandleAsync(object returnValue)
+        {
+            Check.NotNull(returnValue, nameof(returnValue));
+
+            return ((IEnumerable<object>)returnValue).ForEachAsync(_publisher.PublishAsync);
+        }
     }
 }

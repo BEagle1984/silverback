@@ -23,32 +23,24 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
         }
 
         [SuppressMessage("", "VSTHRD103", Justification = Justifications.ExecutesSyncOrAsync)]
-        public async Task<IReadOnlyCollection<object>> HandleReturnValuesAsync(
-            IReadOnlyCollection<object?> returnValues,
-            bool executeAsync)
+        public async Task<bool> HandleReturnValuesAsync(object? returnValue, bool executeAsync)
         {
-            var unhandledReturnValues = new List<object>();
-            foreach (var returnValue in returnValues)
+            if (returnValue == null || returnValue.GetType().Name == "VoidTaskResult")
+                return false;
+
+            var handler = _returnValueHandlers.FirstOrDefault(h => h.CanHandle(returnValue));
+
+            if (handler != null)
             {
-                if (returnValue == null || returnValue.GetType().Name == "VoidTaskResult")
-                    continue;
-
-                var handler = _returnValueHandlers.FirstOrDefault(h => h.CanHandle(returnValue));
-
-                if (handler != null)
-                {
-                    if (executeAsync)
-                        await handler.HandleAsync(returnValue).ConfigureAwait(false);
-                    else
-                        handler.Handle(returnValue);
-                }
+                if (executeAsync)
+                    await handler.HandleAsync(returnValue).ConfigureAwait(false);
                 else
-                {
-                    unhandledReturnValues.Add(returnValue);
-                }
+                    handler.Handle(returnValue);
+
+                return true;
             }
 
-            return unhandledReturnValues;
+            return false;
         }
     }
 }

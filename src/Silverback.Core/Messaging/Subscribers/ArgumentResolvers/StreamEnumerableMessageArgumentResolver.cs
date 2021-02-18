@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -18,8 +19,14 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         {
             Check.NotNull(parameterType, nameof(parameterType));
 
-            return parameterType.IsGenericType &&
-                   parameterType.GetGenericTypeDefinition() == typeof(IMessageStreamEnumerable<>);
+            if (!parameterType.IsGenericType)
+                return false;
+
+            var genericTypeDefinition = parameterType.GetGenericTypeDefinition();
+
+            return genericTypeDefinition == typeof(IMessageStreamEnumerable<>) ||
+                   genericTypeDefinition == typeof(IAsyncEnumerable<>) ||
+                   genericTypeDefinition == typeof(IEnumerable<>);
         }
 
         /// <inheritdoc cref="IMessageArgumentResolver.GetMessageType" />

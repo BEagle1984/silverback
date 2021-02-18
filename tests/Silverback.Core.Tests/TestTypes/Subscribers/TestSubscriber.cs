@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Core.TestTypes.Messages;
 
@@ -44,16 +45,18 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        private void OnTestMessageReceived2(ITestMessage message)
+        private async Task OnTestMessageReceived2(ITestMessage message)
         {
+            await Task.Delay(1);
             ReceivedCallsCount++;
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-        private void OnTestMessageReceived4(ITestMessage message)
+        private async Task OnTestMessageReceived4(ITestMessage message)
         {
+            await Task.Delay(1);
             ReceivedCallsCount++;
         }
     }

@@ -10,26 +10,16 @@ namespace Silverback.Tests.Core.TestTypes.Behaviors
 {
     public class ChangeMessageBehavior<TSourceType> : IBehavior
     {
-        private readonly Func<object, IEnumerable<object>> _changedMessageFactory;
+        private readonly Func<object, object> _changedMessageFactory;
 
-        public ChangeMessageBehavior(Func<object, IEnumerable<object>> changedMessageFactory)
+        public ChangeMessageBehavior(Func<object, object> changedMessageFactory)
         {
             _changedMessageFactory = changedMessageFactory;
         }
 
-        public Task<IReadOnlyCollection<object>> HandleAsync(IReadOnlyCollection<object> messages, MessagesHandler next)
-        {
-            var newList = new List<object>();
-
-            foreach (var msg in messages)
-            {
-                newList.AddRange(
-                    msg is TSourceType
-                        ? _changedMessageFactory(msg)
-                        : new[] { msg });
-            }
-
-            return next(newList);
-        }
+        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next) =>
+            next(message is TSourceType
+                ? _changedMessageFactory(message)
+                : message);
     }
 }

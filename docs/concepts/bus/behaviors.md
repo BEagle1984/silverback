@@ -27,13 +27,13 @@ public class TracingBehavior : IBehavior
         _tracer = tracer;
     }
 
-    public async Task<IReadOnlyCollection<object>> HandleAsync(
-        IReadOnlyCollection<object> messages, 
-        MessagesHandler next)
+    public async Task<IReadOnlyCollection<object?>> HandleAsync(
+        object message, 
+        MessageHandler next)
     {
-        tracer.TraceProcessing(messages);
-        var result = await next(messages);
-        tracer.TraceProcessed(messages);
+        tracer.TraceProcessing(message);
+        var result = await next(message);
+        tracer.TraceProcessed(message);
 
         return result;
     }
@@ -54,9 +54,6 @@ public class Startup
 ***
 
 > [!Note]
-> The [HandleAsync](xref:Silverback.Messaging.Publishing.IBehavior#Silverback_Messaging_Publishing_IBehavior_HandleAsync_IReadOnlyCollection_System_Object__Silverback_Messaging_Publishing_MessagesHandler_) method receives a collection of `object` because a bunch of messages can be published at once via <xref:Silverback.Messaging.Publishing.IPublisher> or the consumer can be configured to process the messages in batch.
-
-> [!Note]
 > <xref:Silverback.Messaging.Messages.IInboundEnvelope> and <xref:Silverback.Messaging.Messages.IOutboundEnvelope> are internally used by Silverback to wrap the messages being sent to or received from the message broker and will be received by the <xref:Silverback.Messaging.Broker.IBroker>. Those interfaces contains the message plus the additional data like endpoint, headers, offset, etc.
 
 ### Sorting
@@ -68,13 +65,13 @@ public class SortedBehavior : IBehavior, ISorted
 {
     public int SortIndex => 120;
 
-    public Task<IReadOnlyCollection<object>> HandleAsync(
-        IReadOnlyCollection<object> messages, 
-        MessagesHandler next)
+    public Task<IReadOnlyCollection<object?>> HandleAsync(
+        object message, 
+        MessageHandler next)
     {
         // ...your logic...
 
-        return next(messages);
+        return next(message);
     }
 }
 ```

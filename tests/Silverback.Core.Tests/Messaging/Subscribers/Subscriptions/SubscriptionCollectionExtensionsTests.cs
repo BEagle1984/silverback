@@ -17,7 +17,7 @@ namespace Silverback.Tests.Core.Messaging.Subscribers.Subscriptions
             var collection = new List<ISubscription>();
 
             collection.AddTypedSubscriptionIfNotExists(typeof(TestSubscriber), true);
-            collection.AddTypedSubscriptionIfNotExists(typeof(TestAsyncSubscriber), true);
+            collection.AddTypedSubscriptionIfNotExists(typeof(TestCommandReplier), true);
 
             collection.Should().HaveCount(2);
         }

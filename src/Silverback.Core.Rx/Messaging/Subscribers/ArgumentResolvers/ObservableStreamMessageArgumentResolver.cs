@@ -22,8 +22,13 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         {
             Check.NotNull(parameterType, nameof(parameterType));
 
-            return parameterType.IsGenericType &&
-                   parameterType.GetGenericTypeDefinition() == typeof(IMessageStreamObservable<>);
+            if (!parameterType.IsGenericType)
+                return false;
+
+            var genericTypeDefinition = parameterType.GetGenericTypeDefinition();
+
+            return genericTypeDefinition == typeof(IMessageStreamObservable<>) ||
+                   genericTypeDefinition == typeof(IObservable<>);
         }
 
         /// <inheritdoc cref="IMessageArgumentResolver.GetMessageType" />

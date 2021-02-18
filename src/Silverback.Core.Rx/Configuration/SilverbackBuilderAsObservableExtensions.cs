@@ -32,7 +32,6 @@ namespace Microsoft.Extensions.DependencyInjection
             Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
 
             silverbackBuilder.Services
-                .AddSingleton<IArgumentResolver, ObservableMessageArgumentResolver>()
                 .AddSingleton<IArgumentResolver, ObservableStreamMessageArgumentResolver>()
                 .AddScoped<IReturnValueHandler, ObservableMessagesReturnValueHandler>();
 

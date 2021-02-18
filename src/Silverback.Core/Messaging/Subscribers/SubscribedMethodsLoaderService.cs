@@ -28,7 +28,8 @@ namespace Silverback.Messaging.Subscribers
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var scope = _serviceScopeFactory.CreateScope();
-            scope.ServiceProvider.GetRequiredService<SubscribedMethodsLoader>().GetSubscribedMethods();
+            scope.ServiceProvider.GetRequiredService<SubscribedMethodsCacheSingleton>()
+                .Preload(scope.ServiceProvider);
 
             return Task.CompletedTask;
         }

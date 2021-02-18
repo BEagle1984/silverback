@@ -2,9 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.Serialization;
 
 namespace Silverback.Messaging.Publishing
@@ -44,37 +42,9 @@ namespace Silverback.Messaging.Publishing
         ///     The message that wasn't handled.
         /// </param>
         public UnhandledMessageException(object unhandledMessage)
-            : this(new[] { unhandledMessage })
+            : base(GetErrorMessage(unhandledMessage))
         {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="UnhandledMessageException" /> class with the
-        ///     specified message.
-        /// </summary>
-        /// <param name="unhandledMessages">
-        ///     The messages that weren't handled.
-        /// </param>
-        public UnhandledMessageException(IReadOnlyCollection<object> unhandledMessages)
-            : base(GetErrorMessage(unhandledMessages))
-        {
-            UnhandledMessages = unhandledMessages;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="UnhandledMessageException" /> class with the
-        ///     specified message.
-        /// </summary>
-        /// <param name="unhandledMessages">
-        ///     The messages that weren't handled.
-        /// </param>
-        /// <param name="message">
-        ///     The exception message.
-        /// </param>
-        public UnhandledMessageException(IReadOnlyCollection<object> unhandledMessages, string message)
-            : base(message)
-        {
-            UnhandledMessages = unhandledMessages;
+            UnhandledMessage = unhandledMessage;
         }
 
         /// <summary>
@@ -110,14 +80,11 @@ namespace Silverback.Messaging.Publishing
         }
 
         /// <summary>
-        ///     Gets the messages that weren't handled.
+        ///     Gets the message that wasn't handled.
         /// </summary>
-        public IReadOnlyCollection<object>? UnhandledMessages { get; }
+        public object? UnhandledMessage { get; }
 
-        private static string GetErrorMessage(IReadOnlyCollection<object> unhandledMessages) =>
-            unhandledMessages.Count == 1
-                ? $"No subscriber could be found to handle the message of type {unhandledMessages.First().GetType().FullName}."
-                : "No subscriber could be found to handle some of the published messages " +
-                  $"({string.Join(", ", unhandledMessages.Select(message => message.GetType().FullName).Distinct())}).";
+        private static string GetErrorMessage(object unhandledMessage) =>
+            $"No subscriber could be found to handle the message of type {unhandledMessage.GetType().FullName}.";
     }
 }

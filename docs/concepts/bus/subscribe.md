@@ -111,60 +111,9 @@ public class Startup
 
 The subscribed method can either be synchronous or asynchronous (returning a `Task`).
 
-The first parameter must be the message or the collection of messages that are being handled. The parameter type can be the specific message, a base class or an implemented interface.
+The first parameter must be the message and the parameter type can be the specific message, a base class or an implemented interface.
 
-The following collection are supported:
-* [IEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1) or [IReadOnlyCollection<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1): To be able to handle a batch of messages at once. It will receive also the single messages (in a collection with a single item). (Silverback will in any case always forward a materialized list of messages, but explicitly declaring the parameter as [IReadOnlyCollection<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1) avoids any false positive _"possible multiple enumeration of IEnumerable"_ issue that may be detected by a static code analysis tool.)
-* [IObservable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.iobservable-1): [Silverback.Core.Rx](https://www.nuget.org/packages/Silverback.Core.Rx) allows you to handle your messages in a reactive programming fashion.
-* <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1>: Used specifically to handle the messages consumed from the message broker in a streaming fashion. See <xref:streaming> for details. 
-
-Using a collection as parameter allows you to handle a batch of messages at once. The methods with a collection as parameter will still be called for single messages and methods with a single message as input parameter will be called for each message in a batch.
-
-# [Enumerable](#tab/methods-subscribingservice1)
-```csharp
-public class SubscribingService
-{
-    public async Task OnMessageReceived(IEnumerable<SampleMessage> messages)
-    {
-        // TODO: Process messages
-    }
-}
-```
-# [Collection](#tab/methods-subscribingservice2)
-```csharp
-public class SubscribingService
-{
-    public async Task OnMessageReceived(IReadOnlyCollection<SampleMessage> messages)
-    {
-        // TODO: Process messages
-    }
-}
-```
-# [Observable](#tab/methods-subscribingservice3)
-```csharp
-public class SubscribingService
-{
-    public async Task OnMessageReceived(Observable<SampleMessage> stream) =>
-        stream...Subscribe(...);
-}
-```
-# [Delegate subscription](#tab/params-delegate)
-```csharp
-public class Startup
-{
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services
-            .AddSilverback()
-            .AddDelegateSubscriber(
-                (IReadOnlyCollection<SampleMessage> messages) =>
-                {
-                    // TODO: Process messages
-                });
-    }
-}
-```
-***
+Furthermore, when consuming from a message broker, it is possible to subscribe to the message stream and asynchronously enumerate through the messages, as shown in the <xref:streaming> chapter. 
 
 The method can have other parameters that will be resolved using the service provider. Most useful to integrate existing code subscribing via a delegate.
 

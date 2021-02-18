@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
@@ -19,70 +18,74 @@ namespace Silverback.Messaging.Outbound.Routing
     /// </summary>
     public class OutboundRouterBehavior : IBehavior, ISorted
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IPublisher _publisher;
 
-        private readonly IOutboundRoutingConfiguration _routing;
+        private readonly IOutboundRoutingConfiguration _routingConfiguration;
+
+        private readonly IServiceProvider _serviceProvider;
 
         private readonly ConcurrentDictionary<IOutboundRoute, IOutboundRouter> _routers = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="OutboundRouterBehavior" /> class.
         /// </summary>
+        /// <param name="publisher">
+        ///     The <see cref="IPublisher" />.
+        /// </param>
+        /// <param name="routingConfiguration">
+        ///     The <see cref="IOutboundRoutingConfiguration" />.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" />.
         /// </param>
-        public OutboundRouterBehavior(IServiceProvider serviceProvider)
+        public OutboundRouterBehavior(
+            IPublisher publisher,
+            IOutboundRoutingConfiguration routingConfiguration,
+            IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
-            _routing = serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
+            _publisher = Check.NotNull(publisher, nameof(publisher));
+            _routingConfiguration = Check.NotNull(routingConfiguration, nameof(routingConfiguration));
+            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex { get; } = IntegrationBehaviorsSortIndexes.OutboundRouter;
 
         /// <inheritdoc cref="IBehavior.HandleAsync" />
-        public async Task<IReadOnlyCollection<object>> HandleAsync(
-            IReadOnlyCollection<object> messages,
-            MessagesHandler next)
+        public async Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
         {
             Check.NotNull(next, nameof(next));
 
-            var routedMessages = await WrapAndRepublishRoutedMessagesAsync(messages).ConfigureAwait(false);
+            var wasRouted = await WrapAndRepublishRoutedMessageAsync(message).ConfigureAwait(false);
 
-            // The routed messages are discarded because they have been republished
-            // as OutboundEnvelope and they will be normally subscribable
-            // (if PublishOutboundMessagesToInternalBus is true).
-            messages = messages.Where(message => !routedMessages.Contains(message)).ToList();
+            // The routed message is discarded because it has been republished
+            // as OutboundEnvelope and will be normally subscribable
+            // (if PublishOutboundMessagesToInternalBus is true)
+            if (wasRouted)
+                return Array.Empty<object?>();
 
-            return await next(messages).ConfigureAwait(false);
+            return await next(message).ConfigureAwait(false);
         }
 
-        private async Task<IReadOnlyCollection<object>> WrapAndRepublishRoutedMessagesAsync(
-            IEnumerable<object> messages)
+        private async Task<bool> WrapAndRepublishRoutedMessageAsync(object message)
         {
-            var envelopesToRepublish = messages
-                .Where(message => message is not IOutboundEnvelope)
-                .SelectMany(
-                    message =>
-                        _routing
-                            .GetRoutesForMessage(message)
-                            .SelectMany(
-                                route =>
-                                    CreateOutboundEnvelope(message, route)))
-                .ToList();
+            if (message is IOutboundEnvelope)
+                return false;
 
-            if (envelopesToRepublish.Any())
-            {
-                await _serviceProvider
-                    .GetRequiredService<IPublisher>()
-                    .PublishAsync(envelopesToRepublish)
-                    .ConfigureAwait(false);
-            }
+            var routesCollection = _routingConfiguration.GetRoutesForMessage(message);
 
-            return envelopesToRepublish.Select(m => m.Message).ToList()!;
+            if (routesCollection.Count == 0)
+                return false;
+
+            await routesCollection
+                .SelectMany(route => CreateOutboundEnvelopes(message, route))
+                .ForEachAsync(envelope => _publisher.PublishAsync(envelope))
+                .ConfigureAwait(false);
+
+            return true;
         }
 
-        private IEnumerable<IOutboundEnvelope> CreateOutboundEnvelope(object message, IOutboundRoute route)
+        private IEnumerable<IOutboundEnvelope> CreateOutboundEnvelopes(object message, IOutboundRoute route)
         {
             var headers = new MessageHeaderCollection();
             var router = _routers.GetOrAdd(route, _ => route.GetOutboundRouter(_serviceProvider));
@@ -95,7 +98,7 @@ namespace Silverback.Messaging.Outbound.Routing
                     message,
                     headers,
                     endpoint,
-                    _routing.PublishOutboundMessagesToInternalBus);
+                    _routingConfiguration.PublishOutboundMessagesToInternalBus);
             }
         }
     }

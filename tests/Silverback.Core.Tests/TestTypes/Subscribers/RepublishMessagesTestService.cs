@@ -16,14 +16,14 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
-        private TestCommandOne OnCommandReceived(TestEventOne message) => new();
+        private TestCommandOne OnEventOne(TestEventOne message) => new();
 
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
-        private IEnumerable<ICommand> OnCommandReceived(TestEventTwo message) =>
+        private IEnumerable<ICommand> OnEventTwo(TestEventTwo message) =>
             new ICommand[] { new TestCommandOne(), new TestCommandTwo() };
     }
 }

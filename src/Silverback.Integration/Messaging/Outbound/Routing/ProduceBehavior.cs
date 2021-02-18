@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
@@ -35,19 +34,17 @@ namespace Silverback.Messaging.Outbound.Routing
         public int SortIndex => IntegrationBehaviorsSortIndexes.OutboundProducer;
 
         /// <inheritdoc cref="IBehavior.HandleAsync" />
-        public async Task<IReadOnlyCollection<object>> HandleAsync(
-            IReadOnlyCollection<object> messages,
-            MessagesHandler next)
+        public async Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
         {
             Check.NotNull(next, nameof(next));
 
-            await messages.OfType<IOutboundEnvelope>()
-                .ForEachAsync(
-                    envelope =>
-                        envelope.Endpoint.Strategy.Build(_serviceProvider).ProduceAsync(envelope))
-                .ConfigureAwait(false);
+            if (message is IOutboundEnvelope envelope)
+            {
+                await envelope.Endpoint.Strategy.Build(_serviceProvider).ProduceAsync(envelope)
+                    .ConfigureAwait(false);
+            }
 
-            return await next(messages).ConfigureAwait(false);
+            return await next(message).ConfigureAwait(false);
         }
     }
 }

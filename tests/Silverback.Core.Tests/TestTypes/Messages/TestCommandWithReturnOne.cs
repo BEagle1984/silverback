@@ -5,7 +5,7 @@ using Silverback.Tests.Core.TestTypes.Messages.Base;
 
 namespace Silverback.Tests.Core.TestTypes.Messages
 {
-    public class TestCommandWitReturnOne : ICommand<string>, ITestMessage
+    public class TestCommandWithReturnOne : ICommand<string>, ITestMessage
     {
         public string? Message { get; set; }
     }

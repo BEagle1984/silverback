@@ -20,11 +20,11 @@ namespace Silverback.Tests.Core.TestTypes.Behaviors
 
         public int SortIndex { get; }
 
-        public Task<IReadOnlyCollection<object>> HandleAsync(IReadOnlyCollection<object> messages, MessagesHandler next)
+        public Task<IReadOnlyCollection<object?>> HandleAsync(object message, MessageHandler next)
         {
             _calls.Add(SortIndex.ToString(CultureInfo.InvariantCulture));
 
-            return next(messages);
+            return next(message);
         }
     }
 }

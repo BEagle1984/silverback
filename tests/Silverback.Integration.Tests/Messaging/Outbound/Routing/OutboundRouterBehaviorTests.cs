@@ -15,6 +15,7 @@ using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
@@ -53,13 +54,14 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             _behavior = (OutboundRouterBehavior)_serviceProvider.GetServices<IBehavior>()
                 .First(s => s is OutboundRouterBehavior);
             _routingConfiguration =
-                (OutboundRoutingConfiguration)_serviceProvider.GetRequiredService<IOutboundRoutingConfiguration>();
+                (OutboundRoutingConfiguration)_serviceProvider
+                    .GetRequiredService<IOutboundRoutingConfiguration>();
             _broker = _serviceProvider.GetRequiredService<TestBroker>();
             _otherBroker = _serviceProvider.GetRequiredService<TestOtherBroker>();
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
-        public static IEnumerable<object[]> HandleAsync_MultipleMessages_CorrectlyRoutedToEndpoints_TestData =>
+        public static IEnumerable<object[]> HandleAsync_Message_CorrectlyRoutedToEndpoints_TestData =>
             new[]
             {
                 new object[] { new TestEventOne(), new[] { "allMessages", "allEvents", "eventOne" } },
@@ -67,8 +69,8 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             };
 
         [Theory]
-        [MemberData(nameof(HandleAsync_MultipleMessages_CorrectlyRoutedToEndpoints_TestData))]
-        public async Task HandleAsync_MultipleMessages_CorrectlyRoutedToStaticEndpoint(
+        [MemberData(nameof(HandleAsync_Message_CorrectlyRoutedToEndpoints_TestData))]
+        public async Task HandleAsync_Message_CorrectlyRoutedToStaticEndpoint(
             IIntegrationMessage message,
             string[] expectedEndpointNames)
         {
@@ -81,11 +83,14 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             _routingConfiguration.Add<TestEventTwo>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventTwo")));
 
-            await _behavior.HandleAsync(new[] { message }, Task.FromResult!);
+            await _behavior.HandleAsync(
+                message,
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
 
             foreach (var expectedEndpointName in expectedEndpointNames)
             {
-                _broker.ProducedMessages.Count(envelope => envelope.Endpoint.Name == expectedEndpointName).Should()
+                _broker.ProducedMessages.Count(envelope => envelope.Endpoint.Name == expectedEndpointName)
+                    .Should()
                     .Be(1);
             }
 
@@ -95,7 +100,8 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
             foreach (var notExpectedEndpointName in notExpectedEndpointNames)
             {
-                _broker.ProducedMessages.Count(envelope => envelope.Endpoint.Name == notExpectedEndpointName).Should()
+                _broker.ProducedMessages.Count(envelope => envelope.Endpoint.Name == notExpectedEndpointName)
+                    .Should()
                     .Be(0);
             }
         }
@@ -106,33 +112,42 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
-            await _behavior.HandleAsync(new[] { new TestEventOne() }, Task.FromResult!);
+            await _behavior.HandleAsync(
+                new TestEventOne(),
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
 
             _broker.ProducedMessages.Should().HaveCount(1);
         }
 
         [Fact]
-        public async Task HandleAsync_Messages_RoutedMessageIsFiltered()
+        public async Task HandleAsync_Message_RoutedMessageIsFiltered()
         {
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
-            var messages =
-                await _behavior.HandleAsync(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
+            var messages = await _behavior.HandleAsync(
+                new TestEventOne(),
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+            messages.Should().BeEmpty();
 
-            messages.Should().HaveCount(1);
-            messages.First().Should().NotBeOfType<TestEventOne>();
+            messages = await _behavior.HandleAsync(
+                new TestEventTwo(),
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+            messages.Should().NotBeEmpty();
         }
 
         [Fact]
-        public async Task HandleAsync_Messages_RoutedMessageIsRepublishedWithoutAutoUnwrap()
+        public async Task HandleAsync_Message_RoutedMessageIsRepublishedWithoutAutoUnwrap()
         {
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
-            await _behavior.HandleAsync(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
+            await _behavior.HandleAsync(
+                new TestEventOne(),
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
 
-            _testSubscriber.ReceivedMessages.Should().BeEmpty(); // Because TestSubscriber discards the envelopes
+            _testSubscriber.ReceivedMessages.Should()
+                .BeEmpty(); // Because TestSubscriber discards the envelopes
         }
 
         [Fact]
@@ -142,43 +157,46 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
-            var messages =
-                await _behavior.HandleAsync(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
+            var messages = await _behavior.HandleAsync(
+                new TestEventOne(),
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+            messages.Should().BeEmpty();
 
-            messages.Should().HaveCount(1);
-            messages.First().Should().NotBeOfType<TestEventOne>();
+            messages = await _behavior.HandleAsync(
+                new TestEventTwo(),
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+            messages.Should().NotBeEmpty();
         }
 
         [Fact]
-        public async Task HandleAsync_MessagesWithPublishToInternBusOption_RoutedMessageIsRepublishedWithAutoUnwrap()
+        public async Task
+            HandleAsync_MessagesWithPublishToInternBusOption_RoutedMessageIsRepublishedWithAutoUnwrap()
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
-            await _behavior.HandleAsync(new object[] { new TestEventOne(), new TestEventTwo() }, Task.FromResult!);
+            await _behavior.HandleAsync(
+                new TestEventOne(),
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
 
             _testSubscriber.ReceivedMessages.Should().HaveCount(1);
             _testSubscriber.ReceivedMessages.First().Should().BeOfType<TestEventOne>();
         }
 
         [Fact]
-        public async Task HandleAsync_OutboundEnvelopeWithPublishToInternBusOption_OutboundEnvelopeIsNotFiltered()
+        public async Task HandleAsync_EnvelopeWithPublishToInternBusOption_OutboundEnvelopeIsNotFiltered()
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
             _routingConfiguration.Add<TestEventOne>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
-            var messages =
-                await _behavior.HandleAsync(
-                    new object[]
-                    {
-                        new OutboundEnvelope<TestEventOne>(
-                            new TestEventOne(),
-                            null,
-                            new TestProducerEndpoint("eventOne"))
-                    },
-                    Task.FromResult!);
+            var messages = await _behavior.HandleAsync(
+                new OutboundEnvelope<TestEventOne>(
+                    new TestEventOne(),
+                    null,
+                    new TestProducerEndpoint("eventOne")),
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
 
             messages.Should().HaveCount(1);
         }
@@ -193,7 +211,9 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             _routingConfiguration.Add<SomeUnhandledMessage>(
                 _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
 
-            await _behavior.HandleAsync(new[] { message }, Task.FromResult!);
+            await _behavior.HandleAsync(
+                message,
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
 
             _broker.ProducedMessages.Should().HaveCount(1);
         }
@@ -206,9 +226,15 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                 .Add<TestEventTwo>(_ => new StaticOutboundRouter(new TestOtherProducerEndpoint("eventTwo")))
                 .Add<TestEventThree>(_ => new StaticOutboundRouter(new TestProducerEndpoint("eventThree")));
 
-            await _behavior.HandleAsync(new[] { new TestEventOne() }, Task.FromResult!);
-            await _behavior.HandleAsync(new[] { new TestEventThree() }, Task.FromResult!);
-            await _behavior.HandleAsync(new[] { new TestEventTwo() }, Task.FromResult!);
+            await _behavior.HandleAsync(
+                new TestEventOne(),
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+            await _behavior.HandleAsync(
+                new TestEventThree(),
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
+            await _behavior.HandleAsync(
+                new TestEventTwo(),
+                nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
 
             _broker.ProducedMessages.Should().HaveCount(2);
             _otherBroker.ProducedMessages.Should().HaveCount(1);

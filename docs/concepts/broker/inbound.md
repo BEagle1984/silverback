@@ -281,7 +281,7 @@ In some scenario, when having to deal with huge amounts of messages, processing 
 
 Refer to the <xref:Silverback.Messaging.Sequences.Batch.BatchSettings> documentation for details about the configuration.
 
-The batch must be subscribed as <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1>, see also <xref:streaming> for details.
+The batch can be subscribed either as [IEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1), [IAsyncEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1) or <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1>. See also <xref:streaming> for details.
 
 # [EndpointsConfigurator (fluent)](#tab/batch-fluent)
 ```csharp
@@ -336,7 +336,7 @@ public class InventoryService
         _db = db;
     }
 
-    public async Task OnUpdateBatchReceived(IMessageStreamEnumerable<InventoryUpdateEvent> events)
+    public async Task OnUpdateBatchReceived(IAsyncEnumerable<InventoryUpdateEvent> events)
     {
         async foreach (var event in events)
         {

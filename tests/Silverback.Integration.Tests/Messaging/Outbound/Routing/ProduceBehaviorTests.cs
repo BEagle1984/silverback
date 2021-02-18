@@ -15,6 +15,7 @@ using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
@@ -56,8 +57,14 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                 new TestProducerEndpoint("test"));
 
             await _behavior.HandleAsync(
-                new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope },
-                Task.FromResult!);
+                outboundEnvelope,
+                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+            await _behavior.HandleAsync(
+                outboundEnvelope,
+                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+            await _behavior.HandleAsync(
+                outboundEnvelope,
+                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
             await _outbox.CommitAsync();
 
             var queued = await _outbox.ReadAsync(10);
@@ -77,8 +84,14 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                 });
 
             await _behavior.HandleAsync(
-                new[] { outboundEnvelope, outboundEnvelope, outboundEnvelope },
-                Task.FromResult!);
+                outboundEnvelope,
+                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+            await _behavior.HandleAsync(
+                outboundEnvelope,
+                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
+            await _behavior.HandleAsync(
+                outboundEnvelope,
+                message => Task.FromResult(new[] { message }.AsReadOnlyCollection())!);
             await _outbox.CommitAsync();
 
             var queued = await _outbox.ReadAsync(10);

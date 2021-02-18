@@ -90,7 +90,7 @@ namespace Silverback.Messaging.Subscribers
             _messageArgumentType ?? throw new InvalidOperationException("Not initialized.");
 
         /// <summary>
-        ///     Gets the type of the message being subscribed.
+        ///     Gets the type of the message (or envelope) being subscribe.
         /// </summary>
         public Type MessageType =>
             _messageType ?? throw new InvalidOperationException("Not initialized.");

@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Inbound
     {
         private readonly IInboundLogger<PublisherConsumerBehavior> _logger;
 
-        private bool? _enableMessageStreamEnumerable;
+        private bool? _hasAnyMessageStreamSubscriber;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="PublisherConsumerBehavior" /> class.
@@ -65,7 +65,7 @@ namespace Silverback.Messaging.Inbound
             {
                 var throwIfUnhandled = context.Envelope.Endpoint.ThrowIfUnhandled;
 
-                if (IsMessageStreamEnabled(context) && context.Envelope is IInboundEnvelope envelope)
+                if (HasAnyMessageStreamSubscriber(context) && context.Envelope is IInboundEnvelope envelope)
                 {
                     var unboundedSequence = await GetUnboundedSequenceAsync(context).ConfigureAwait(false);
 
@@ -206,9 +206,9 @@ namespace Silverback.Messaging.Inbound
                 });
         }
 
-        private bool IsMessageStreamEnabled(ConsumerPipelineContext context) =>
-            _enableMessageStreamEnumerable ??=
-                context.ServiceProvider.GetRequiredService<SubscribedMethodsLoader>()
-                    .EnableMessageStreamEnumerable;
+        private bool HasAnyMessageStreamSubscriber(ConsumerPipelineContext context) =>
+            _hasAnyMessageStreamSubscriber ??=
+                context.ServiceProvider.GetRequiredService<ISubscribedMethodsCache>()
+                    .HasAnyMessageStreamSubscriber;
     }
 }

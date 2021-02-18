@@ -13,6 +13,7 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.Rx.TestTypes.Messages;
 using Silverback.Tests.Core.Rx.TestTypes.Messages.Base;
+using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
@@ -28,21 +29,24 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             var receivedEvents = 0;
             var receivedTestEventOnes = 0;
 
-            var streamPublisher = new StreamPublisher(
-                PublisherTestsHelper.GetPublisher(
-                    builder => builder
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<IEvent> observable) =>
-                            {
-                                Interlocked.Increment(ref receivedStreams);
-                                observable.Subscribe(_ => Interlocked.Increment(ref receivedEvents));
-                            })
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<TestEventOne> observable) =>
-                            {
-                                Interlocked.Increment(ref receivedStreams);
-                                observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEventOnes));
-                            })));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AsObservable()
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<IEvent> observable) =>
+                        {
+                            Interlocked.Increment(ref receivedStreams);
+                            observable.Subscribe(_ => Interlocked.Increment(ref receivedEvents));
+                        })
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<TestEventOne> observable) =>
+                        {
+                            Interlocked.Increment(ref receivedStreams);
+                            observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEventOnes));
+                        }));
+            var streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
             var streamProvider1 = new MessageStreamProvider<IEvent>();
             var streamProvider2 = new MessageStreamProvider<IEvent>();
@@ -67,16 +71,19 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             var receivedEnumeratedStreams = 0;
 
-            var streamPublisher = new StreamPublisher(
-                PublisherTestsHelper.GetPublisher(
-                    builder => builder
-                        .AddDelegateSubscriber(
-                            (IReadOnlyCollection<IEvent> _) =>
-                            {
-                                Interlocked.Increment(ref receivedEnumeratedStreams);
-                            })
-                        .AddDelegateSubscriber(
-                            (List<TestEventOne> _) => { Interlocked.Increment(ref receivedEnumeratedStreams); })));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AsObservable()
+                    .AddDelegateSubscriber(
+                        (IReadOnlyCollection<IEvent> _) =>
+                        {
+                            Interlocked.Increment(ref receivedEnumeratedStreams);
+                        })
+                    .AddDelegateSubscriber(
+                        (List<TestEventOne> _) => { Interlocked.Increment(ref receivedEnumeratedStreams); }));
+            var streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
             var streamProvider = new MessageStreamProvider<IEvent>();
 
@@ -87,17 +94,22 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
 
             await streamProvider.CompleteAsync();
 
-            await AsyncTestingUtil.WaitAsync(() => receivedEnumeratedStreams >= 1, TimeSpan.FromMilliseconds(500));
+            await AsyncTestingUtil.WaitAsync(
+                () => receivedEnumeratedStreams >= 1,
+                TimeSpan.FromMilliseconds(500));
             receivedEnumeratedStreams.Should().Be(0);
         }
 
         [Fact]
-        public async Task Publish_SimpleMessageAndobservableOfMessages_StreamSubscribersNotInvoked()
+        public async Task Publish_SimpleMessageAndObservableOfMessages_StreamSubscribersNotInvoked()
         {
             var receivedStreams = 0;
 
-            var publisher = PublisherTestsHelper.GetPublisher(
-                builder => builder
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AsObservable()
                     .AddDelegateSubscriber(
                         (IMessageStreamObservable<IEvent> observable) =>
                         {
@@ -110,9 +122,10 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
                             Interlocked.Increment(ref receivedStreams);
                             observable.Subscribe(_ => { });
                         }));
+            var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
             publisher.Publish(new TestEventOne());
-            await publisher.PublishAsync(new IEvent[] { new TestEventOne(), new TestEventTwo() });
+            await publisher.PublishAsync(new TestEventTwo());
 
             await Task.Delay(200);
 
@@ -124,27 +137,30 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             var receivedStreams = 0;
 
-            var streamPublisher = new StreamPublisher(
-                PublisherTestsHelper.GetPublisher(
-                    builder => builder
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<IEvent> observable) =>
-                            {
-                                Interlocked.Increment(ref receivedStreams);
-                                observable.Subscribe(_ => { });
-                            })
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<TestEventOne> observable) =>
-                            {
-                                Interlocked.Increment(ref receivedStreams);
-                                observable.Subscribe(_ => { });
-                            })
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<TestCommandOne> observable) =>
-                            {
-                                Interlocked.Increment(ref receivedStreams);
-                                observable.Subscribe(_ => { });
-                            })));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AsObservable()
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<IEvent> observable) =>
+                        {
+                            Interlocked.Increment(ref receivedStreams);
+                            observable.Subscribe(_ => { });
+                        })
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<TestEventOne> observable) =>
+                        {
+                            Interlocked.Increment(ref receivedStreams);
+                            observable.Subscribe(_ => { });
+                        })
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<TestCommandOne> observable) =>
+                        {
+                            Interlocked.Increment(ref receivedStreams);
+                            observable.Subscribe(_ => { });
+                        }));
+            var streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
             var streamProvider1 = new MessageStreamProvider<IEvent>();
             var streamProvider2 = new MessageStreamProvider<IEvent>();
@@ -177,26 +193,29 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             var receivedStreams = 0;
             var received = 0;
 
-            var streamPublisher = new StreamPublisher(
-                PublisherTestsHelper.GetPublisher(
-                    builder => builder
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<IEvent> observable) =>
-                            {
-                                Interlocked.Increment(ref receivedStreams);
-                                observable.Subscribe(
-                                    _ =>
-                                    {
-                                        if (Interlocked.Increment(ref received) >= 3)
-                                            throw new TestException();
-                                    });
-                            })
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<TestEventOne> observable) =>
-                            {
-                                Interlocked.Increment(ref receivedStreams);
-                                observable.Subscribe(_ => Interlocked.Increment(ref received));
-                            })));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AsObservable()
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<IEvent> observable) =>
+                        {
+                            Interlocked.Increment(ref receivedStreams);
+                            observable.Subscribe(
+                                _ =>
+                                {
+                                    if (Interlocked.Increment(ref received) >= 3)
+                                        throw new TestException();
+                                });
+                        })
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<TestEventOne> observable) =>
+                        {
+                            Interlocked.Increment(ref receivedStreams);
+                            observable.Subscribe(_ => Interlocked.Increment(ref received));
+                        }));
+            var streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
             var streamProvider = new MessageStreamProvider<IEvent>();
 
@@ -218,24 +237,27 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             var received = 0;
 
-            var streamPublisher = new StreamPublisher(
-                PublisherTestsHelper.GetPublisher(
-                    builder => builder
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<IEvent> observable) =>
-                            {
-                                observable.Subscribe(
-                                    _ =>
-                                    {
-                                        if (Interlocked.Increment(ref received) >= 3)
-                                            throw new TestException();
-                                    });
-                            })
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<TestEventOne> observable) =>
-                            {
-                                observable.Subscribe(_ => { });
-                            })));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AsObservable()
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<IEvent> observable) =>
+                        {
+                            observable.Subscribe(
+                                _ =>
+                                {
+                                    if (Interlocked.Increment(ref received) >= 3)
+                                        throw new TestException();
+                                });
+                        })
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<TestEventOne> observable) =>
+                        {
+                            observable.Subscribe(_ => { });
+                        }));
+            var streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
             var streamProvider = new MessageStreamProvider<IEvent>();
 
@@ -255,24 +277,27 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             var received = 0;
 
-            var streamPublisher = new StreamPublisher(
-                PublisherTestsHelper.GetPublisher(
-                    builder => builder
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<IEvent> observable) =>
-                            {
-                                observable.Subscribe(
-                                    _ =>
-                                    {
-                                        if (Interlocked.Increment(ref received) >= 3)
-                                            throw new TestException();
-                                    });
-                            })
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<TestEventOne> observable) =>
-                            {
-                                observable.Subscribe(_ => { });
-                            })));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AsObservable()
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<IEvent> observable) =>
+                        {
+                            observable.Subscribe(
+                                _ =>
+                                {
+                                    if (Interlocked.Increment(ref received) >= 3)
+                                        throw new TestException();
+                                });
+                        })
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<TestEventOne> observable) =>
+                        {
+                            observable.Subscribe(_ => { });
+                        }));
+            var streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
             var streamProvider = new MessageStreamProvider<IEvent>();
 
@@ -299,21 +324,24 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             var receivedEnvelopes = 0;
             var receivedTestEnvelopes = 0;
 
-            var streamPublisher = new StreamPublisher(
-                PublisherTestsHelper.GetPublisher(
-                    builder => builder
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<IEnvelope> observable) =>
-                            {
-                                Interlocked.Increment(ref receivedStreams);
-                                observable.Subscribe(_ => Interlocked.Increment(ref receivedEnvelopes));
-                            })
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<TestEnvelope> observable) =>
-                            {
-                                Interlocked.Increment(ref receivedStreams);
-                                observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEnvelopes));
-                            })));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AsObservable()
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<IEnvelope> observable) =>
+                        {
+                            Interlocked.Increment(ref receivedStreams);
+                            observable.Subscribe(_ => Interlocked.Increment(ref receivedEnvelopes));
+                        })
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<TestEnvelope> observable) =>
+                        {
+                            Interlocked.Increment(ref receivedStreams);
+                            observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEnvelopes));
+                        }));
+            var streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
             var streamProvider = new MessageStreamProvider<IEnvelope>();
 
@@ -336,21 +364,24 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
             var receivedTestEventOnes = 0;
             var receivedTestEnvelopes = 0;
 
-            var streamPublisher = new StreamPublisher(
-                PublisherTestsHelper.GetPublisher(
-                    builder => builder
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<TestEventOne> observable) =>
-                            {
-                                Interlocked.Increment(ref receivedStreams);
-                                observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEventOnes));
-                            })
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<TestEnvelope> observable) =>
-                            {
-                                Interlocked.Increment(ref receivedStreams);
-                                observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEnvelopes));
-                            })));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AsObservable()
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<TestEventOne> observable) =>
+                        {
+                            Interlocked.Increment(ref receivedStreams);
+                            observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEventOnes));
+                        })
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<TestEnvelope> observable) =>
+                        {
+                            Interlocked.Increment(ref receivedStreams);
+                            observable.Subscribe(_ => Interlocked.Increment(ref receivedTestEnvelopes));
+                        }));
+            var streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
             var stream = new MessageStreamProvider<IEnvelope>();
             await streamPublisher.PublishAsync(stream);
@@ -372,14 +403,17 @@ namespace Silverback.Tests.Core.Rx.Messaging.Publishing
         {
             var receivedEvents = new List<IEvent>();
 
-            var streamPublisher = new StreamPublisher(
-                PublisherTestsHelper.GetPublisher(
-                    builder => builder
-                        .AddDelegateSubscriber(
-                            (IMessageStreamObservable<IEvent> observable) =>
-                            {
-                                observable.Subscribe(message => receivedEvents.Add(message));
-                            })));
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .AsObservable()
+                    .AddDelegateSubscriber(
+                        (IMessageStreamObservable<IEvent> observable) =>
+                        {
+                            observable.Subscribe(message => receivedEvents.Add(message));
+                        }));
+            var streamPublisher = serviceProvider.GetRequiredService<IStreamPublisher>();
 
             var streamProvider = new MessageStreamProvider<IEnvelope>();
             await streamPublisher.PublishAsync(streamProvider);

@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Publishing;
@@ -308,7 +309,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         }
 
         [Fact]
-        public void AddSubscribers_Interface_MessagesReceived()
+        public async Task AddSubscribers_Interface_MessagesReceived()
         {
             var testService1 = new TestServiceOne();
             var testService2 = new TestServiceTwo();
@@ -326,7 +327,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
-            publisher.Publish(new object[] { new TestCommandOne(), new TestCommandTwo() });
+            publisher.Publish(new TestCommandOne());
+            await publisher.PublishAsync(new TestCommandTwo());
 
             testService1.ReceivedMessagesCount.Should().BeGreaterThan(0);
             testService2.ReceivedMessagesCount.Should().BeGreaterThan(0);

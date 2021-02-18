@@ -39,8 +39,10 @@ namespace Microsoft.Extensions.DependencyInjection
                     .AddScoped<IPublisher, Publisher>()
                     .AddScoped<IStreamPublisher, StreamPublisher>()
                     .AddScoped<IBehaviorsProvider, BehaviorsProvider>()
-                    .AddScoped<SubscribedMethodInvoker>()
-                    .AddScoped<SubscribedMethodsLoader>()
+                    .AddSingleton<SubscribedMethodsCacheSingleton>()
+                    .AddScoped<SubscribedMethodsCache>()
+                    .AddScoped<ISubscribedMethodsCache>(
+                        serviceProvider => serviceProvider.GetRequiredService<SubscribedMethodsCache>())
                     .AddLogger()
                     .AddArgumentResolvers()
                     .AddReturnValueHandlers()
@@ -60,8 +62,6 @@ namespace Microsoft.Extensions.DependencyInjection
             .AddSingleton<ArgumentsResolversRepository>()
             .AddSingleton<IArgumentResolver, DefaultAdditionalArgumentResolver>()
             .AddSingleton<IArgumentResolver, SingleMessageArgumentResolver>()
-            .AddSingleton<IArgumentResolver, EnumerableMessageArgumentResolver>()
-            .AddSingleton<IArgumentResolver, ReadOnlyCollectionMessageArgumentResolver>()
             .AddSingleton<IArgumentResolver, StreamEnumerableMessageArgumentResolver>();
 
         // Note: resolvers and handlers will be evaluated in reverse order

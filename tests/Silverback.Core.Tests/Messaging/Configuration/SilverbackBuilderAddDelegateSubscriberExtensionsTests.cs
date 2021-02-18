@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -178,74 +177,7 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         }
 
         [Fact]
-        public void AddDelegateSubscriber_ActionOfEnumerable_MatchingMessagesReceived()
-        {
-            int received = 0;
-
-            void Receive(IEnumerable<TestEventOne> messages) => received += messages.Count();
-
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((Action<IEnumerable<TestEventOne>>)Receive));
-
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
-            publisher.Publish(new[] { new TestEventOne(), new TestEventOne() });
-            publisher.Publish(new TestEventTwo());
-            publisher.Publish(new TestEventOne());
-
-            received.Should().Be(3);
-        }
-
-        [Fact]
-        public void AddDelegateSubscriber_ActionOfReadOnlyCollection_MatchingMessagesReceived()
-        {
-            int received = 0;
-
-            void Receive(IReadOnlyCollection<TestEventOne> messages) => received += messages.Count;
-
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((Action<IReadOnlyCollection<TestEventOne>>)Receive));
-
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
-            publisher.Publish(new[] { new TestEventOne(), new TestEventOne() });
-            publisher.Publish(new TestEventTwo());
-            publisher.Publish(new TestEventOne());
-
-            received.Should().Be(3);
-        }
-
-        [Fact]
-        public void AddDelegateSubscriber_FuncOfEnumerableReturningTask_MatchingMessagesReceived()
-        {
-            int received = 0;
-
-            Task Receive(IEnumerable<TestEventOne> messages)
-            {
-                received += messages.Count();
-                return Task.CompletedTask;
-            }
-
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, Task>)Receive));
-
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
-            publisher.Publish(new[] { new TestEventOne(), new TestEventOne() });
-            publisher.Publish(new TestEventTwo());
-            publisher.Publish(new TestEventOne());
-
-            received.Should().Be(3);
-        }
-
-        [Fact]
-        public void AddDelegateSubscriber_FuncOfEnumerableReturningMessage_MessagesRepublished()
+        public async Task AddDelegateSubscriber_FuncOfEnumerableReturningMessage_MessagesRepublished()
         {
             int received = 0;
 
@@ -260,14 +192,16 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                     .AddDelegateSubscriber((Action<TestEventTwo>)ReceiveTwo));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
-            publisher.Publish(new[] { new TestEventOne(), new TestEventOne() });
             publisher.Publish(new TestEventOne());
+            publisher.Publish(new TestEventTwo());
+            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishAsync(new TestEventTwo());
 
             received.Should().Be(2);
         }
 
         [Fact]
-        public void AddDelegateSubscriber_FuncOfEnumerableReturningTaskWithMessage_MessagesRepublished()
+        public async Task AddDelegateSubscriber_FuncOfEnumerableReturningTaskWithMessage_MessagesRepublished()
         {
             int received = 0;
 
@@ -284,14 +218,17 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                     .AddDelegateSubscriber((Action<TestEventTwo>)ReceiveTwo));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
-            publisher.Publish(new[] { new TestEventOne(), new TestEventOne() });
             publisher.Publish(new TestEventOne());
+            publisher.Publish(new TestEventTwo());
+            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishAsync(new TestEventTwo());
 
             received.Should().Be(2);
         }
 
         [Fact]
-        public void AddDelegateSubscriber_ActionWithServiceProvider_MessagesAndServiceProviderInstanceReceived()
+        public void
+            AddDelegateSubscriber_ActionWithServiceProvider_MessagesAndServiceProviderInstanceReceived()
         {
             int received = 0;
 
@@ -306,30 +243,6 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((Action<TestEventOne, IServiceProvider>)Receive));
-
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
-            publisher.Publish(new TestEventOne());
-
-            received.Should().BeGreaterThan(0);
-        }
-
-        [Fact]
-        public void
-            AddDelegateSubscriber_ActionOfEnumerableWithServiceProvider_MessagesAndServiceProviderInstanceReceived()
-        {
-            int received = 0;
-
-            void Receive(IEnumerable<TestEventOne> messages, IServiceProvider provider)
-            {
-                received += messages.Count();
-                provider.Should().NotBeNull();
-            }
-
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((Action<IEnumerable<TestEventOne>, IServiceProvider>)Receive));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
             publisher.Publish(new TestEventOne());
@@ -363,7 +276,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
         }
 
         [Fact]
-        public void AddDelegateSubscriber_FuncWithServiceProviderReturningMessage_ServiceProviderInstanceReceived()
+        public void
+            AddDelegateSubscriber_FuncWithServiceProviderReturningMessage_ServiceProviderInstanceReceived()
         {
             int received = 0;
 
@@ -403,83 +317,8 @@ namespace Silverback.Tests.Core.Messaging.Configuration
                 services => services
                     .AddFakeLogger()
                     .AddSilverback()
-                    .AddDelegateSubscriber((Func<TestEventOne, IServiceProvider, Task<TestEventTwo>>)Receive));
-
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
-            publisher.Publish(new TestEventOne());
-
-            received.Should().BeGreaterThan(0);
-        }
-
-        [Fact]
-        public void
-            AddDelegateSubscriber_FuncOfEnumerableWithServiceProviderReturningTask_MessagesAndServiceProviderInstanceReceived()
-        {
-            int received = 0;
-
-            Task Receive(IEnumerable<TestEventOne> messages, IServiceProvider provider)
-            {
-                received += messages.Count();
-                provider.Should().NotBeNull();
-                return Task.CompletedTask;
-            }
-
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, IServiceProvider, Task>)Receive));
-
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
-            publisher.Publish(new TestEventOne());
-
-            received.Should().BeGreaterThan(0);
-        }
-
-        [Fact]
-        public void
-            AddDelegateSubscriber_FuncOfEnumerableWithServiceProviderReturningMessage_ServiceProviderInstanceReceived()
-        {
-            int received = 0;
-
-            TestEventTwo Receive(IEnumerable<TestEventOne> messages, IServiceProvider provider)
-            {
-                received += messages.Count();
-                provider.Should().NotBeNull();
-                return new TestEventTwo();
-            }
-
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
-                    .AddDelegateSubscriber((Func<IEnumerable<TestEventOne>, IServiceProvider, TestEventTwo>)Receive));
-
-            var publisher = serviceProvider.GetRequiredService<IPublisher>();
-            publisher.Publish(new TestEventOne());
-
-            received.Should().BeGreaterThan(0);
-        }
-
-        [Fact]
-        public void
-            AddDelegateSubscriber_FuncOfEnumerableWithServiceProviderReturningTaskWithMessage_ServiceProviderInstanceReceived()
-        {
-            int received = 0;
-
-            Task<TestEventTwo> Receive(IEnumerable<TestEventOne> messages, IServiceProvider provider)
-            {
-                received += messages.Count();
-                provider.Should().NotBeNull();
-                return Task.FromResult(new TestEventTwo());
-            }
-
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
-                services => services
-                    .AddFakeLogger()
-                    .AddSilverback()
                     .AddDelegateSubscriber(
-                        (Func<IEnumerable<TestEventOne>, IServiceProvider, Task<TestEventTwo>>)Receive));
+                        (Func<TestEventOne, IServiceProvider, Task<TestEventTwo>>)Receive));
 
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
             publisher.Publish(new TestEventOne());
