@@ -58,7 +58,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.CommitOffsetEach = 1;
                                             })))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> streamEnumerable) =>
+                            async (IAsyncEnumerable<TestEventOne> streamEnumerable) =>
                             {
                                 var list = new List<TestEventOne>();
                                 batches.Add(list);
@@ -151,7 +151,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.CommitOffsetEach = 1;
                                             })))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<BinaryFileMessage> streamEnumerable) =>
+                            async (IAsyncEnumerable<BinaryFileMessage> streamEnumerable) =>
                             {
                                 var list = new List<string?>();
                                 batches.Add(list);
@@ -251,7 +251,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.CommitOffsetEach = 1;
                                             })))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> streamEnumerable) =>
+                            async (IAsyncEnumerable<TestEventOne> streamEnumerable) =>
                             {
                                 var list = new List<TestEventOne>();
                                 batches.Add(list);
@@ -344,7 +344,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.CommitOffsetEach = 1;
                                             })))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<BinaryFileMessage> streamEnumerable) =>
+                            async (IAsyncEnumerable<BinaryFileMessage> streamEnumerable) =>
                             {
                                 var list = new List<string?>();
                                 batches.Add(list);

@@ -35,11 +35,8 @@ namespace Silverback.Tests.Core.EFCore30.TestTypes
 
         public void Dispose()
         {
-            if (_connection == null)
-                return;
-
-            _connection.Close();
-            _connection.Dispose();
+            _connection?.SafeClose();
+            _connection?.Dispose();
         }
     }
 }

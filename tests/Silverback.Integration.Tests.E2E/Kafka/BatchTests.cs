@@ -361,12 +361,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(10)))
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
                                 receivedBatches.Add(list);
 
-                                foreach (var message in eventsStream)
+                                await foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
@@ -439,8 +439,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.CommitOffsetEach = 1;
                                             })
                                         .EnableBatchProcessing(10)))
-                        .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventOne> _) => { receivedBatches++; }))
+                        .AddDelegateSubscriber((IEnumerable<TestEventOne> _) => { receivedBatches++; }))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -488,13 +487,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(3)))
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            (IEnumerable<TestEventOne> eventsStream) =>
                             {
                                 receivedBatches1++;
                                 var dummy = eventsStream.ToList();
                             })
-                        .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventTwo> _) => receivedBatches2++))
+                        .AddDelegateSubscriber((IEnumerable<TestEventTwo> _) => receivedBatches2++))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -540,10 +538,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.CommitOffsetEach = 1;
                                             })
                                         .EnableBatchProcessing(3)))
-                        .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventOne> _) => receivedBatches1++)
-                        .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventTwo> _) => receivedBatches2++))
+                        .AddDelegateSubscriber((IEnumerable<TestEventOne> _) => receivedBatches1++)
+                        .AddDelegateSubscriber((IEnumerable<TestEventTwo> _) => receivedBatches2++))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -592,7 +588,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(3, TimeSpan.FromMilliseconds(300))))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 if (completedBatches != exitedSubscribers)
                                     areOverlapping = true;
@@ -659,7 +655,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(500))))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
                                 receivedBatches.Add(list);
@@ -732,7 +728,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(10, TimeSpan.FromMilliseconds(200))))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 if (completedBatches != exitedSubscribers)
                                     areOverlapping = true;
@@ -809,7 +805,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(config => { config.GroupId = "consumer1"; })
                                         .EnableBatchProcessing(10)))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 Interlocked.Increment(ref batchesCount);
 
@@ -879,7 +875,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(config => { config.GroupId = "consumer1"; })
                                         .EnableBatchProcessing(10)))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IEnumerable<TestEventOne> eventsStream) =>
                             {
                                 Interlocked.Increment(ref batchesCount);
 
@@ -950,7 +946,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(10)))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 await foreach (var message in eventsStream)
                                 {
@@ -1012,7 +1008,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(3)))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 await foreach (var message in eventsStream)
                                 {
@@ -1078,7 +1074,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(10)))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
                                 lock (receivedBatches)
@@ -1132,7 +1128,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .LimitParallelism(2)
                                         .EnableBatchProcessing(2)))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventWithKafkaKey> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventWithKafkaKey> eventsStream) =>
                             {
                                 await foreach (var message in eventsStream)
                                 {
@@ -1224,7 +1220,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(10)))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<IInboundEnvelope<TestEventOne>> eventsStream) =>
+                            async (IAsyncEnumerable<IInboundEnvelope<TestEventOne>> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
                                 receivedBatches.Add(list);
@@ -1303,7 +1299,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .EnableBatchProcessing(10)
                                         .ConsumeBinaryFiles()))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<IBinaryFileMessage> eventsStream) =>
+                            async (IAsyncEnumerable<IBinaryFileMessage> eventsStream) =>
                             {
                                 var list = new List<IBinaryFileMessage>();
                                 receivedBatches.Add(list);
@@ -1393,9 +1389,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .EnableBatchProcessing(10)
                                         .ConsumeBinaryFiles()))
                         .AddDelegateSubscriber(
-                            async (
-                                IMessageStreamEnumerable<IInboundEnvelope<IBinaryFileMessage>>
-                                    eventsStream) =>
+                            async (IAsyncEnumerable<IInboundEnvelope<IBinaryFileMessage>> eventsStream) =>
                             {
                                 var list = new List<IBinaryFileMessage>();
                                 receivedBatches.Add(list);
@@ -1481,7 +1475,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(1)))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
                                 receivedBatches.Add(list);
@@ -1540,7 +1534,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(20)))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
                                 receivedBatches.Add(list);
@@ -1596,7 +1590,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .EnableBatchProcessing(20)
                                         .ProcessAllPartitionsTogether()))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
                                 receivedBatches.Add(list);

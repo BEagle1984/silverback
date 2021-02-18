@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 }
                             })
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventThree> stream) =>
+                            async (IAsyncEnumerable<TestEventThree> stream) =>
                             {
                                 await foreach (var message in stream)
                                 {
@@ -124,7 +124,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 }
                             })
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventThree> stream) =>
+                            async (IAsyncEnumerable<TestEventThree> stream) =>
                             {
                                 await foreach (var message in stream)
                                 {
@@ -191,7 +191,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 }
                             })
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventTwo> stream) =>
+                            async (IAsyncEnumerable<TestEventTwo> stream) =>
                             {
                                 await foreach (var message in stream)
                                 {

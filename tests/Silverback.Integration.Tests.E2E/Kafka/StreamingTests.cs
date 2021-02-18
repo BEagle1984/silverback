@@ -25,6 +25,63 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
+        public async Task Streaming_UnboundedAsyncEnumerable_MessagesReceivedAndCommitted()
+        {
+            var receivedMessages = new List<TestEventOne>();
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
+                        .AddDelegateSubscriber(
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
+                            {
+                                await foreach (var message in eventsStream)
+                                {
+                                    DefaultTopic.GetCommittedOffsetsCount("consumer1")
+                                        .Should().Be(receivedMessages.Count);
+
+                                    receivedMessages.Add(message);
+                                }
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 15; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            receivedMessages.Should().HaveCount(15);
+            receivedMessages.Select(message => message.Content)
+                .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(15);
+        }
+
+        [Fact]
         public async Task Streaming_UnboundedEnumerable_MessagesReceivedAndCommitted()
         {
             var receivedMessages = new List<TestEventOne>();
@@ -40,7 +97,65 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
+                        .AddDelegateSubscriber(
+                            (IEnumerable<TestEventOne> eventsStream) =>
+                            {
+                                foreach (var message in eventsStream)
+                                {
+                                    DefaultTopic.GetCommittedOffsetsCount("consumer1")
+                                        .Should().Be(receivedMessages.Count);
+
+                                    receivedMessages.Add(message);
+                                }
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+            for (int i = 1; i <= 15; i++)
+            {
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+            }
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            receivedMessages.Should().HaveCount(15);
+            receivedMessages.Select(message => message.Content)
+                .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(15);
+        }
+
+        [Fact]
+        public async Task Streaming_UnboundedStream_MessagesReceivedAndCommitted()
+        {
+            var receivedMessages = new List<TestEventOne>();
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -97,7 +212,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -153,17 +269,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            })))
+                                        .Configure(config => { config.GroupId = "consumer1"; })))
                         .AddDelegateSubscriber(
-                            (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            (IEnumerable<TestEventOne> eventsStream) =>
                             {
                                 try
                                 {
@@ -218,15 +331,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            })))
+                                        .Configure(config => { config.GroupId = "consumer1"; })))
                         .AddDelegateSubscriber(
                             (IMessageStreamObservable<TestEventOne> observable) =>
                                 observable.Subscribe(
@@ -274,7 +384,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -286,7 +397,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.CommitOffsetEach = 1;
                                             })))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventOne> enumerable) =>
+                            async (IAsyncEnumerable<TestEventOne> enumerable) =>
                             {
                                 await foreach (var message in enumerable)
                                 {
@@ -339,7 +450,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -404,7 +516,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -460,7 +573,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -517,18 +631,15 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .LimitParallelism(2)
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            })))
+                                        .Configure(config => { config.GroupId = "consumer1"; })))
                         .AddDelegateSubscriber(
-                            async (IMessageStreamEnumerable<TestEventWithKafkaKey> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventWithKafkaKey> eventsStream) =>
                             {
                                 await foreach (var message in eventsStream)
                                 {

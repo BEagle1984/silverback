@@ -674,7 +674,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
         public void Dispose()
         {
-            _connection.Close();
+            _connection.SafeClose();
             _connection.Dispose();
             _dbContext.Dispose();
         }

@@ -128,6 +128,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost
             var logger = ScopedServiceProvider.GetService<ILogger<TestApplicationHost<THelper>>>();
             logger?.LogInformation($"Disposing test host ({_testMethodName}).");
 
+            _sqliteConnection?.SafeClose();
             _sqliteConnection?.Dispose();
             _applicationFactory?.Dispose();
 

@@ -224,7 +224,7 @@ namespace Silverback.Tests.Core.Background
 
         public void Dispose()
         {
-            _connection.Close();
+            _connection.SafeClose();
             _connection.Dispose();
         }
 
