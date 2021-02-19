@@ -117,10 +117,10 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequenceImplementation.ProcessingCompletedTask" />
         public Task ProcessingCompletedTask => _processingCompleteTaskCompletionSource.Task;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISequenceImplementation.ShouldCreateNewActivity" />
         public bool ShouldCreateNewActivity => true;
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="ISequenceImplementation.Activity" />
         public Activity? Activity { get; private set; }
 
         /// <inheritdoc cref="ISequence.StreamProvider" />
@@ -180,8 +180,8 @@ namespace Silverback.Messaging.Sequences
             _sequencerBehaviorsTaskCompletionSource.TrySetResult(true);
         }
 
-        /// <inheritdoc />
-        public void SetActivity(Activity activity)
+        /// <inheritdoc cref="ISequenceImplementation.SetActivity" />
+        void ISequenceImplementation.SetActivity(Activity activity)
         {
             Activity = activity;
         }

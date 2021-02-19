@@ -15,15 +15,23 @@ namespace Silverback.Messaging.Diagnostics
         /// <summary>
         ///     Enriches Activities created by the <see cref="ActivityProducerBehavior" />.
         /// </summary>
-        /// <param name="activity">The Activity to be enriched.</param>
-        /// <param name="producerContext">The context of the current pipeline.</param>
+        /// <param name="activity">
+        ///     The <see cref="Activity"/> to be enriched.
+        /// </param>
+        /// <param name="producerContext">
+        ///     The <see cref="ProducerPipelineContext" />.
+        /// </param>
         public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext);
 
         /// <summary>
         ///     Enriches Activities created by the <see cref="ActivityConsumerBehavior" />.
         /// </summary>
-        /// <param name="activity">The Activity to be enriched.</param>
-        /// <param name="consumerContext">The context of the current pipeline.</param>
+        /// <param name="activity">
+        ///     The <see cref="Activity"/> to be enriched.
+        /// </param>
+        /// <param name="consumerContext">
+        ///     The <see cref="ConsumerPipelineContext" />.
+        /// </param>
         public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext);
     }
 }

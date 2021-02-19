@@ -20,7 +20,9 @@ namespace Silverback.Messaging.Diagnostics
         /// <summary>
         ///     Initializes a new instance of the <see cref="FatalExceptionLoggerConsumerBehavior" /> class.
         /// </summary>
-        /// <param name="logger">The <see cref="IInboundLogger{TCategoryName}" />.</param>
+        /// <param name="logger">
+        ///     The <see cref="IInboundLogger{TCategoryName}" />.
+        /// </param>
         public FatalExceptionLoggerConsumerBehavior(
             IInboundLogger<FatalExceptionLoggerConsumerBehavior> logger)
         {

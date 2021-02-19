@@ -18,7 +18,9 @@ namespace Silverback.Messaging.Diagnostics
         /// <summary>
         ///     Initializes a new instance of the <see cref="ActivityProducerBehavior" /> class.
         /// </summary>
-        /// <param name="activityEnricherFactory">The Factory to create the activity enrichers.</param>
+        /// <param name="activityEnricherFactory">
+        ///     The Factory to create the activity enrichers.
+        /// </param>
         public ActivityProducerBehavior(IActivityEnricherFactory activityEnricherFactory)
         {
             _activityEnricherFactory = activityEnricherFactory;
@@ -33,7 +35,7 @@ namespace Silverback.Messaging.Diagnostics
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            using (Activity activity = ActivitySources.StartProduceActivity(context.Envelope))
+            using (var activity = ActivitySources.StartProduceActivity(context.Envelope))
             {
                 _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint.GetType())
                     .EnrichOutboundActivity(activity, context);

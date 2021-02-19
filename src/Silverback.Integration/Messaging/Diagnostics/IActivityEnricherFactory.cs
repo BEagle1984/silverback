@@ -13,8 +13,12 @@ namespace Silverback.Messaging.Diagnostics
         /// <summary>
         ///     Returns a <see cref="IBrokerActivityEnricher" /> for the given endpoint type.
         /// </summary>
-        /// <param name="endpointType">The endpoint type.</param>
-        /// <returns>The IBrokerActivityEnricher that matches the given endpoint type.</returns>
+        /// <param name="endpointType">
+        ///     The endpoint type.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IBrokerActivityEnricher" /> that matches the specified endpoint type.
+        /// </returns>
         IBrokerActivityEnricher GetActivityEnricher(Type endpointType);
     }
 }

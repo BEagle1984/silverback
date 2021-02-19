@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
-using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;

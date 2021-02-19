@@ -12,7 +12,7 @@ using Silverback.Util;
 namespace Silverback.Diagnostics
 {
     /// <summary>
-    ///     Enriches Activities with Kafka specific tags.
+    ///     Enriches the <see cref="Activity"/> with Kafka specific tags.
     /// </summary>
     public class KafkaActivityEnricher
         : IBrokerActivityEnricher<KafkaConsumerEndpoint>, IBrokerActivityEnricher<KafkaProducerEndpoint>
@@ -21,7 +21,7 @@ namespace Silverback.Diagnostics
 
         internal const string KafkaPartition = "messaging.kafka.partition";
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBrokerActivityEnricher.EnrichOutboundActivity" />
         public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext)
         {
             Check.NotNull(activity, nameof(activity));
@@ -31,7 +31,7 @@ namespace Silverback.Diagnostics
             SetMessageKey(activity, producerContext.Envelope.Headers);
         }
 
-        /// <inheritdoc />
+        /// <inheritdoc cref="IBrokerActivityEnricher.EnrichInboundActivity" />
         public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext)
         {
             Check.NotNull(activity, nameof(activity));
@@ -45,7 +45,7 @@ namespace Silverback.Diagnostics
         {
             if (messageId != null)
             {
-                activity.SetTag(ActivityTagNames.MessageId, string.Join('@', messageId.Key, messageId.Value));
+                activity.SetTag(ActivityTagNames.MessageId, messageId.ToVerboseLogString());
                 activity.SetTag(KafkaPartition, messageId.Key);
             }
         }

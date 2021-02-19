@@ -28,7 +28,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddSilverback()
                     .AddSingletonSubscriber<TestSubscriber>());
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
-            var subscriber = serviceProvider.GetRequiredService<TestSubscriber>();
+            serviceProvider.GetRequiredService<TestSubscriber>();
 
             publisher.Publish(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandOne());
@@ -36,7 +36,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             await publisher.PublishAsync(new TestCommandTwo());
 
             activityListener.Activites.Should().Contain(
-                a => a.OperationName == "Silverback.Core.Subscribers.InvokeSubscriber");
+                activity => activity.OperationName == "Silverback.Core.Subscribers.InvokeSubscriber");
         }
 
         private class TestActivityListener : IDisposable
@@ -48,8 +48,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             public TestActivityListener()
             {
                 _listener = new ActivityListener();
-                _listener.ShouldListenTo = s => true;
-                _listener.Sample = (ref ActivityCreationOptions<ActivityContext> o) =>
+                _listener.ShouldListenTo = _ => true;
+                _listener.Sample = (ref ActivityCreationOptions<ActivityContext> _) =>
                     ActivitySamplingResult.AllDataAndRecorded;
                 _listener.ActivityStarted = a => _activites.Add(a);
                 ActivitySource.AddActivityListener(_listener);

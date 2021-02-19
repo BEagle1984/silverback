@@ -1,10 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
@@ -20,7 +18,10 @@ namespace Silverback.Messaging.Diagnostics
         /// <summary>
         ///     Initializes a new instance of the <see cref="ActivityConsumerBehavior" /> class.
         /// </summary>
-        /// <param name="activityEnricherFactory">The <see cref="IActivityEnricherFactory"/> to resolve the ActivityEnricher.</param>
+        /// <param name="activityEnricherFactory">
+        ///     The <see cref="IActivityEnricherFactory" /> to resolve the
+        ///     ActivityEnricher.
+        /// </param>
         public ActivityConsumerBehavior(IActivityEnricherFactory activityEnricherFactory)
         {
             _activityEnricherFactory = activityEnricherFactory;
@@ -37,9 +38,10 @@ namespace Silverback.Messaging.Diagnostics
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            using (Activity activity = ActivitySources.StartConsumeActivity(context.Envelope))
+            using (var activity = ActivitySources.StartConsumeActivity(context.Envelope))
             {
-                _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint.GetType()).EnrichInboundActivity(activity, context);
+                _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint.GetType())
+                    .EnrichInboundActivity(activity, context);
                 await next(context).ConfigureAwait(false);
             }
         }

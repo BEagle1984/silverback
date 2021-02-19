@@ -101,8 +101,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             public TestActivityListener()
             {
                 _listener = new ActivityListener();
-                _listener.ShouldListenTo = s => true;
-                _listener.ActivityStarted = a => _activites.Add(a);
+                _listener.ShouldListenTo = _ => true;
+                _listener.ActivityStarted = activity => _activites.Add(activity);
                 _listener.Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded;
                 ActivitySource.AddActivityListener(_listener);
             }

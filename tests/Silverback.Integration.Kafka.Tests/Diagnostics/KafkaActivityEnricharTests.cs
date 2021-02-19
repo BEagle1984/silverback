@@ -59,10 +59,8 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
             Activity activity = new("Test Activity");
             enricher.EnrichOutboundActivity(activity, context);
 
-            IBrokerMessageIdentifier? identifier = context.Envelope.BrokerMessageIdentifier;
-
             activity.Tags.Should().Contain(
-                t => t.Key == KafkaActivityEnricher.KafkaMessageKey && t.Value == "MyKey");
+                pair => pair.Key == KafkaActivityEnricher.KafkaMessageKey && pair.Value == "MyKey");
         }
     }
 }

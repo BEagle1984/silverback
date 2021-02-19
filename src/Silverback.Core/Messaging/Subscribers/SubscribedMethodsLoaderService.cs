@@ -18,7 +18,9 @@ namespace Silverback.Messaging.Subscribers
         /// <summary>
         ///     Initializes a new instance of the <see cref="SubscribedMethodsLoaderService" /> class.
         /// </summary>
-        /// <param name="serviceScopeFactory">The <see cref="IServiceScopeFactory" />.</param>
+        /// <param name="serviceScopeFactory">
+        ///     The <see cref="IServiceScopeFactory" />.
+        /// </param>
         public SubscribedMethodsLoaderService(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;

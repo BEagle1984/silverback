@@ -50,8 +50,9 @@ namespace Silverback.Messaging.Configuration
                 "kafkaKey",
                 envelope => envelope.Headers.GetValue(KafkaMessageHeaders.KafkaMessageKey));
 
-            brokerOptionsBuilder.SilverbackBuilder.Services.AddSingleton<IBrokerActivityEnricher<KafkaProducerEndpoint>, KafkaActivityEnricher>();
-            brokerOptionsBuilder.SilverbackBuilder.Services.AddSingleton<IBrokerActivityEnricher<KafkaConsumerEndpoint>, KafkaActivityEnricher>();
+            brokerOptionsBuilder.SilverbackBuilder.Services
+                .AddSingleton<IBrokerActivityEnricher<KafkaProducerEndpoint>, KafkaActivityEnricher>()
+                .AddSingleton<IBrokerActivityEnricher<KafkaConsumerEndpoint>, KafkaActivityEnricher>();
         }
     }
 }

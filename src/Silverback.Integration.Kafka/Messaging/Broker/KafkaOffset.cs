@@ -178,10 +178,10 @@ namespace Silverback.Messaging.Broker
         public static bool operator !=(KafkaOffset left, KafkaOffset right) => !(left == right);
 
         /// <inheritdoc cref="IBrokerMessageIdentifier.ToLogString" />
-        public string ToLogString() => $"{Partition}@{Offset}";
+        public string ToLogString() => $"[{Partition}]@{Offset}";
 
         /// <inheritdoc cref="IBrokerMessageIdentifier.ToVerboseLogString" />
-        public string ToVerboseLogString() => $"{Topic}{Partition}@{Offset}";
+        public string ToVerboseLogString() => $"{Topic}[{Partition}]@{Offset}";
 
         /// <summary>
         ///     Compares the current instance with another object of the same type and returns an integer that

@@ -46,9 +46,6 @@ namespace Silverback.Diagnostics
             _rollbackToSkipFailed;
 
         private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
-            _errorInitializingActivity;
-
-        private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
             _messageAlreadyProcessed;
 
         public InboundLogger(LogAdditionalArguments<IRawInboundEnvelope> additionalArguments)
@@ -90,10 +87,6 @@ namespace Silverback.Diagnostics
             _rollbackToSkipFailed =
                 SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
                     EnrichLogEvent(IntegrationLogEvents.RollbackToSkipFailed));
-
-            _errorInitializingActivity =
-                SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
-                    EnrichLogEvent(IntegrationLogEvents.ErrorInitializingActivity));
 
             _messageAlreadyProcessed =
                 SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(

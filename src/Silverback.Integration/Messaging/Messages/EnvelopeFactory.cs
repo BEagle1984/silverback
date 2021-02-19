@@ -64,7 +64,7 @@ namespace Silverback.Messaging.Messages
                 rawMessage,
                 headers?.AsReadOnlyCollection(),
                 endpoint,
-                endpoint.Name,
+                Check.NotNull(endpoint, nameof(endpoint)).Name,
                 identifier);
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Silverback.Messaging.Messages
                 rawMessageStream,
                 headers?.AsReadOnlyCollection(),
                 endpoint,
-                endpoint.Name,
+                Check.NotNull(endpoint, nameof(endpoint)).Name,
                 identifier);
 
         /// <summary>

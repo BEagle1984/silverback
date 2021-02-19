@@ -71,7 +71,7 @@ namespace Silverback.Messaging.Broker
             AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
 
         /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action,Action{Exception})" />
-        [SuppressMessage("", "CA1031", Justification = "Exception logged/forward")]
+        [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
         protected override void ProduceCore(
             IOutboundEnvelope envelope,
             Action onSuccess,
@@ -164,7 +164,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope,Action,Action{Exception})" />
-        [SuppressMessage("", "CA1031", Justification = "Exception logged/forward")]
+        [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
         protected override async Task ProduceCoreAsync(
             IOutboundEnvelope envelope,
             Action onSuccess,

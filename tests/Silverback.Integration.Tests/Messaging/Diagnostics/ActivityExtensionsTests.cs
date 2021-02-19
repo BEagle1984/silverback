@@ -6,7 +6,6 @@ using System.Diagnostics;
 using FluentAssertions;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Messages;
-using Silverback.Tests.Types;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Diagnostics

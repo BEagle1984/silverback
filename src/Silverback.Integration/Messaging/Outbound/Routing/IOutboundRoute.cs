@@ -20,8 +20,12 @@ namespace Silverback.Messaging.Outbound.Routing
         ///     Returns the instance of <see cref="IOutboundRouter" /> to be used to determine the destination
         ///     endpoint.
         /// </summary>
-        /// <param name="serviceProvider">The <see cref="IServiceProvider" /> to be used to resolve the router.</param>
-        /// <returns>The instance of <see cref="IOutboundRouter{TMessage}" />.</returns>
+        /// <param name="serviceProvider">
+        ///     The <see cref="IServiceProvider" /> to be used to resolve the router.
+        /// </param>
+        /// <returns>
+        ///     The instance of <see cref="IOutboundRouter{TMessage}" />.
+        /// </returns>
         IOutboundRouter GetOutboundRouter(IServiceProvider serviceProvider);
     }
 }

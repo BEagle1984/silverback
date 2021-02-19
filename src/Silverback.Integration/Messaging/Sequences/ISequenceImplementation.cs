@@ -80,7 +80,9 @@ namespace Silverback.Messaging.Sequences
         /// <summary>
         ///     Sets the Activity associated with this sequence.
         /// </summary>
-        /// <param name="activity">The activity.</param>
+        /// <param name="activity">
+        ///     The activity.
+        /// </param>
         void SetActivity(Activity activity);
     }
 }

@@ -15,7 +15,9 @@ namespace Silverback.Messaging.Publishing
         ///     Creates a new <see cref="Stack{T}" /> of <see cref="IBehavior" /> to be used in the
         ///     <see cref="IPublisher" /> pipeline.
         /// </summary>
-        /// <returns>The ready-to-use <see cref="Stack{T}" /> of <see cref="IBehavior" />.</returns>
+        /// <returns>
+        ///     The ready-to-use <see cref="Stack{T}" /> of <see cref="IBehavior" />.
+        /// </returns>
         Stack<IBehavior> CreateStack();
     }
 }

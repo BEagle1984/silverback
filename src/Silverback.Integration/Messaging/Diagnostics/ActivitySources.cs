@@ -91,9 +91,7 @@ namespace Silverback.Messaging.Diagnostics
                 activity = new Activity(activityName);
 
                 if (traceIdFromHeader != null)
-                {
                     activity.SetTraceIdAndState(traceIdFromHeader, traceState);
-                }
 
                 activity.Start();
             }

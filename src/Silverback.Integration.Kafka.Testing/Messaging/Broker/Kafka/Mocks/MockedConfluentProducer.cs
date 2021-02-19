@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,6 +65,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             Action<DeliveryReport<byte[]?, byte[]?>>? deliveryHandler = null) =>
             throw new NotSupportedException();
 
+        [SuppressMessage("", "CA1031", Justification = "Exception forwarded to callback")]
         public void Produce(
             TopicPartition topicPartition,
             Message<byte[]?, byte[]?> message,
@@ -78,7 +80,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 Task.Run(
                         async () =>
                         {
-                            await Task.Delay(10);
+                            await Task.Delay(10).ConfigureAwait(false);
 
                             deliveryHandler?.Invoke(
                                 new DeliveryReport<byte[]?, byte[]?>

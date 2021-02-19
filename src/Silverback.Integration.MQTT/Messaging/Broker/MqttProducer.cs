@@ -152,7 +152,7 @@ namespace Silverback.Messaging.Broker
                 .FireAndForget();
         }
 
-        [SuppressMessage("", "CA1031", Justification = "Exception logged/forward")]
+        [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
         private async Task ProcessQueueAsync(CancellationToken cancellationToken)
         {
             try

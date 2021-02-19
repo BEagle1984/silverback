@@ -79,6 +79,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
         /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync(IEnumerable{OutboxStoredMessage})" />
         public async Task AcknowledgeAsync(IEnumerable<OutboxStoredMessage> outboxMessages)
         {
+            Check.NotNull(outboxMessages, nameof(outboxMessages));
+
             bool removed = false;
 
             foreach (var message in outboxMessages)

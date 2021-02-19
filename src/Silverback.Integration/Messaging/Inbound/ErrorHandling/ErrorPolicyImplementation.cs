@@ -44,7 +44,9 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         /// <param name="includedExceptions">
         ///     The collection of exception types this policy have to be applied to.
         /// </param>
-        /// <param name="applyRule">The custom apply rule function.</param>
+        /// <param name="applyRule">
+        ///     The custom apply rule function.
+        /// </param>
         /// <param name="messageToPublishFactory">
         ///     The factory that builds the message to be published after the policy
         ///     is applied.
