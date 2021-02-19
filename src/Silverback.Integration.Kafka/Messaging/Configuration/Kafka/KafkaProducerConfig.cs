@@ -69,7 +69,7 @@ namespace Silverback.Messaging.Configuration.Kafka
                 throw new EndpointConfigurationException(
                     "Configuration.ThrowIfNotAcknowledged cannot be set to true if delivery reports " +
                     "are not enabled and the status field isn't included. " +
-                    "Set Configuration.EnableDeliveryReports and Configuration.DeliveryReportFields" +
+                    "Set Configuration.EnableDeliveryReports and Configuration.DeliveryReportFields " +
                     "accordingly or set Configuration.ThrowIfNotAcknowledged to false.");
             }
         }
