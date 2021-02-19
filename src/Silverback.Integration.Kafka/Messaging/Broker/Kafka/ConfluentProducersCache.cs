@@ -40,7 +40,7 @@ namespace Silverback.Messaging.Broker.Kafka
             if (!_producersCache.TryRemove(config.GetConfluentConfig(), out var producer))
                 return;
 
-            producer.Flush(TimeSpan.FromSeconds(10));
+            producer.Flush(config.FlushTimeout);
             producer.Dispose();
         }
 

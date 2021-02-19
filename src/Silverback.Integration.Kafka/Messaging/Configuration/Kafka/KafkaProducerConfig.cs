@@ -46,6 +46,11 @@ namespace Silverback.Messaging.Configuration.Kafka
         public bool DisposeOnException { get; set; } = true;
 
         /// <summary>
+        ///     Specifies the flush operation timeout. The default is 30 seconds.
+        /// </summary>
+        public TimeSpan FlushTimeout { get; set; } = TimeSpan.FromSeconds(30);
+
+        /// <summary>
         ///     Gets a value indicating whether the persistence status will be returned as part of the
         ///     delivery reports according to the explicit configuration and Kafka defaults.
         /// </summary>
