@@ -183,10 +183,11 @@ namespace Silverback.Messaging.Broker
 
         private void PublishToChannel(IRawOutboundEnvelope envelope)
         {
-            var channel = _rabbitChannels.TryGetValue(envelope.ActualEndpointName, out var value)
-                ? value!
-                : _rabbitChannels[envelope.ActualEndpointName] =
-                    _connectionFactory.GetChannel(Endpoint, envelope.ActualEndpointName);
+            if (!_rabbitChannels.TryGetValue(envelope.ActualEndpointName, out var channel))
+            {
+                channel = _connectionFactory.GetChannel(Endpoint, envelope.ActualEndpointName);
+                _rabbitChannels[envelope.ActualEndpointName] = channel;
+            }
 
             var properties = channel.CreateBasicProperties();
             properties.Persistent = true; // TODO: Make it configurable?
