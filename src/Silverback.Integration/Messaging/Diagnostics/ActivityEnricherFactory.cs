@@ -35,12 +35,14 @@ namespace Silverback.Messaging.Diagnostics
 
         private class NullEnricher : IBrokerActivityEnricher
         {
-            public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext outboundEnvelope)
+            public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext)
             {
+                // Do nothing
             }
 
-            public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext inboundEnvelope)
+            public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext)
             {
+                // Do nothing
             }
         }
     }

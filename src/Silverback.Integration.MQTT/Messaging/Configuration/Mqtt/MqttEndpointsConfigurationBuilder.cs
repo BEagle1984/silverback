@@ -32,19 +32,6 @@ namespace Silverback.Messaging.Configuration.Mqtt
             return this;
         }
 
-        public IMqttEndpointsConfigurationBuilder BindEvents(
-            Action<IMqttEventsHandlersBuilder> eventsHandlersBuilderAction)
-        {
-            Check.NotNull(eventsHandlersBuilderAction, nameof(eventsHandlersBuilderAction));
-
-            var builder = new MqttEventsHandlersBuilder();
-            eventsHandlersBuilderAction.Invoke(builder);
-
-            MqttEventsHandlers = builder.Build();
-
-            return this;
-        }
-
         public IMqttEndpointsConfigurationBuilder Configure(
             Action<IMqttClientConfigBuilder> configBuilderAction)
         {
@@ -54,6 +41,19 @@ namespace Silverback.Messaging.Configuration.Mqtt
             configBuilderAction.Invoke(configBuilder);
 
             ClientConfig = configBuilder.Build();
+
+            return this;
+        }
+
+        public IMqttEndpointsConfigurationBuilder BindEvents(
+            Action<IMqttEventsHandlersBuilder> eventsHandlersBuilderAction)
+        {
+            Check.NotNull(eventsHandlersBuilderAction, nameof(eventsHandlersBuilderAction));
+
+            var builder = new MqttEventsHandlersBuilder();
+            eventsHandlersBuilderAction.Invoke(builder);
+
+            MqttEventsHandlers = builder.Build();
 
             return this;
         }
