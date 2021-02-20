@@ -6,8 +6,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Core.Model.TestTypes.Messages
 {
-    public class ListQuery : IQuery<IEnumerable<int>>
+    public class TestCommandWithResult : ICommand<IEnumerable<int>>
     {
-        public int Count { get; set; }
     }
 }

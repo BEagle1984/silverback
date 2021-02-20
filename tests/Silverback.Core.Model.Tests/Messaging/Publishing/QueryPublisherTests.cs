@@ -1,12 +1,12 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.Model.TestTypes.Messages;
-using Silverback.Tests.Core.Model.TestTypes.Subscribers;
 using Silverback.Tests.Logging;
 using Xunit;
 
@@ -18,33 +18,46 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
 
         public QueryPublisherTests()
         {
-            var services = new ServiceCollection();
-            services
-                .AddSilverback()
-                .UseModel()
-                .AddSingletonSubscriber(_ => new QueriesHandler());
-
-            services.AddLoggerSubstitute();
-
-            var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .UseModel()
+                    .AddDelegateSubscriber((TestQuery _) => new[] { 1, 2, 3 }));
 
             _publisher = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<IQueryPublisher>();
         }
 
         [Fact]
-        public async Task ExecuteAsync_ListQuery_EnumerableReturned()
+        public async Task ExecuteAsync_Query_ResultReturned()
         {
-            var result = await _publisher.ExecuteAsync(new ListQuery { Count = 3 });
+            var result = await _publisher.ExecuteAsync(new TestQuery());
 
             result.Should().BeEquivalentTo(1, 2, 3);
         }
 
         [Fact]
-        public void Execute_ListQuery_EnumerableReturned()
+        public void Execute_Query_ResultReturned()
         {
-            var result = _publisher.Execute(new ListQuery { Count = 3 });
+            var result = _publisher.Execute(new TestQuery());
 
             result.Should().BeEquivalentTo(1, 2, 3);
+        }
+
+        [Fact]
+        public void ExecuteAsync_UnhandledQuery_ExceptionThrown()
+        {
+            Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledQuery(), true);
+
+            act.Should().Throw<UnhandledMessageException>();
+        }
+
+        [Fact]
+        public void Execute_UnhandledQuery_ExceptionThrown()
+        {
+            Action act = () => _publisher.Execute(new UnhandledQuery(), true);
+
+            act.Should().Throw<UnhandledMessageException>();
         }
     }
 }

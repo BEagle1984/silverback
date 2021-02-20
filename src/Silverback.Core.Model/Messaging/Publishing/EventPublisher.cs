@@ -30,25 +30,11 @@ namespace Silverback.Messaging.Publishing
         public void Publish(IEvent eventMessage, bool throwIfUnhandled) =>
             _publisher.Publish(eventMessage, throwIfUnhandled);
 
-        /// <inheritdoc cref="IEventPublisher.Publish(IEnumerable{IEvent})" />
-        public void Publish(IEnumerable<IEvent> eventMessages) => _publisher.Publish(eventMessages);
-
-        /// <inheritdoc cref="IEventPublisher.Publish(IEnumerable{IEvent}, bool)" />
-        public void Publish(IEnumerable<IEvent> eventMessages, bool throwIfUnhandled) =>
-            _publisher.Publish(eventMessages, throwIfUnhandled);
-
         /// <inheritdoc cref="IEventPublisher.PublishAsync(IEvent)" />
         public Task PublishAsync(IEvent eventMessage) => _publisher.PublishAsync(eventMessage);
 
         /// <inheritdoc cref="IEventPublisher.PublishAsync(IEvent, bool)" />
         public Task PublishAsync(IEvent eventMessage, bool throwIfUnhandled) =>
             _publisher.PublishAsync(eventMessage, throwIfUnhandled);
-
-        /// <inheritdoc cref="IEventPublisher.PublishAsync(IEnumerable{IEvent})" />
-        public Task PublishAsync(IEnumerable<IEvent> eventMessages) => _publisher.PublishAsync(eventMessages);
-
-        /// <inheritdoc cref="IEventPublisher.PublishAsync(IEnumerable{IEvent}, bool)" />
-        public Task PublishAsync(IEnumerable<IEvent> eventMessages, bool throwIfUnhandled) =>
-            _publisher.PublishAsync(eventMessages, throwIfUnhandled);
     }
 }
