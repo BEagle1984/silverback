@@ -11,6 +11,7 @@ using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
 using NSubstitute;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
 using Xunit;
@@ -25,7 +26,6 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var sender1 = new object();
             var sender2 = new object();
             var mqttClientConfig = new MqttClientConfig();
-            var mqttEventsHandlers = new MqttEventsHandlers();
 
             var mqttClient = Substitute.For<IMqttClient>();
             mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var clientWrapper = new MqttClientWrapper(
                 mqttClient,
                 mqttClientConfig,
-                mqttEventsHandlers,
+                Substitute.For<IBrokerCallbacksInvoker>(),
                 Substitute.For<ISilverbackLogger>());
 
             var task1 = clientWrapper.ConnectAsync(sender1);
@@ -82,7 +82,6 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var sender1 = new object();
             var sender2 = new object();
             var mqttClientConfig = new MqttClientConfig();
-            var mqttEventsHandlers = new MqttEventsHandlers();
 
             var mqttClient = Substitute.For<IMqttClient>();
             mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
@@ -91,7 +90,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var clientWrapper = new MqttClientWrapper(
                 mqttClient,
                 mqttClientConfig,
-                mqttEventsHandlers,
+                Substitute.For<IBrokerCallbacksInvoker>(),
                 Substitute.For<ISilverbackLogger>());
 
             await clientWrapper.ConnectAsync(sender1);
@@ -123,7 +122,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
             var clientWrapper = new MqttClientWrapper(
                 mqttClient,
                 new MqttClientConfig(),
-                new MqttEventsHandlers(),
+                Substitute.For<IBrokerCallbacksInvoker>(),
                 Substitute.For<ISilverbackLogger>());
 
             await clientWrapper.DisconnectAsync(new object());

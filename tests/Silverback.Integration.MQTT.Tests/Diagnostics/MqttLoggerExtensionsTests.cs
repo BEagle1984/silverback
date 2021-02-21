@@ -14,6 +14,7 @@ using NSubstitute;
 using Silverback.Diagnostics;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Mqtt;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Messages;
@@ -91,7 +92,7 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                 {
                     ClientId = "test-client"
                 },
-                new MqttEventsHandlers(),
+                Substitute.For<IBrokerCallbacksInvoker>(),
                 _silverbackLogger);
 
             var expectedMessage =
@@ -115,7 +116,7 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                 {
                     ClientId = "test-client"
                 },
-                new MqttEventsHandlers(),
+                Substitute.For<IBrokerCallbacksInvoker>(),
                 _silverbackLogger);
 
             var expectedMessage =
@@ -139,7 +140,7 @@ namespace Silverback.Tests.Integration.Mqtt.Diagnostics
                 {
                     ClientId = "test-client"
                 },
-                new MqttEventsHandlers(),
+                Substitute.For<IBrokerCallbacksInvoker>(),
                 _silverbackLogger);
 
             var expectedMessage =

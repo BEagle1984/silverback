@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration.Kafka;
-using Silverback.Messaging.KafkaEvents;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
 
@@ -257,11 +256,6 @@ namespace Silverback.Messaging
                 ((IKafkaProducerEndpointNameResolver)serviceProvider.GetRequiredService(nameResolverType))
                 .GetPartition(envelope) ?? Partition.Any;
         }
-
-        /// <summary>
-        ///     Gets the Kafka event handlers configuration.
-        /// </summary>
-        public KafkaProducerEventsHandlers Events { get; } = new();
 
         /// <summary>
         ///     Gets or sets the Kafka client configuration. This is actually an extension of the configuration

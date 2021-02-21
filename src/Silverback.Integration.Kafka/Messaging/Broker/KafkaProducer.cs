@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Confluent.Kafka;
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Broker.Kafka;
@@ -39,6 +38,9 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviorsProvider">
         ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
+        /// <param name="producersCache">
+        ///     The <see cref="IConfluentProducersCache" />.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
         /// </param>
@@ -49,6 +51,7 @@ namespace Silverback.Messaging.Broker
             KafkaBroker broker,
             KafkaProducerEndpoint endpoint,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
+            IConfluentProducersCache producersCache,
             IServiceProvider serviceProvider,
             IOutboundLogger<KafkaProducer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
@@ -56,8 +59,8 @@ namespace Silverback.Messaging.Broker
             Check.NotNull(endpoint, nameof(endpoint));
             Check.NotNull(serviceProvider, nameof(serviceProvider));
 
-            _confluentClientsCache = serviceProvider.GetRequiredService<IConfluentProducersCache>();
-            _logger = logger;
+            _confluentClientsCache = Check.NotNull(producersCache, nameof(producersCache));
+            _logger = Check.NotNull(logger, nameof(logger));
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />

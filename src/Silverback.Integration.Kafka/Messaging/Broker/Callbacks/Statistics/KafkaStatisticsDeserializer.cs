@@ -6,12 +6,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Silverback.Diagnostics;
 
-namespace Silverback.Messaging.KafkaEvents.Statistics
+namespace Silverback.Messaging.Broker.Callbacks.Statistics
 {
     internal static class KafkaStatisticsDeserializer
     {
         [SuppressMessage("", "CA1031", Justification = "Exception logged")]
-        public static KafkaStatistics TryDeserialize(string json, ISilverbackLogger logger)
+        public static KafkaStatistics? TryDeserialize(string json, ISilverbackLogger logger)
         {
             try
             {
@@ -21,7 +21,7 @@ namespace Silverback.Messaging.KafkaEvents.Statistics
             catch (Exception ex)
             {
                 logger.LogStatisticsDeserializationError(ex);
-                return new KafkaStatistics();
+                return null;
             }
         }
     }

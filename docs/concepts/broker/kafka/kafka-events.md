@@ -5,64 +5,51 @@ uid: kafka-events
 # Kafka Events
 
 The underlying library ([Confluent.Kafka](https://github.com/confluentinc/confluent-kafka-dotnet)) uses some events to let you catch important information and interact with the partitions assignment process.
+
 Silverback proxies those events to give you full access to those features.
 
 ## Consumer events
 
-The event handlers are configured via the <xref:Silverback.Messaging.KafkaEvents.KafkaConsumerEventsHandlers> and the related methods in the <xref:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder>.
+These callbacks are available:
+* <xref:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback>
+* <xref:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsRevokedCallback>
+* <xref:Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback>
+* <xref:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback>
+* <xref:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerStatisticsCallback>
 
 ### Offset reset example
 
 In the following example the partitions assigned event is subscribed in order to reset the start offsets and replay the past messages.
 
-# [EndpointsConfigurator (fluent)](#tab/offset-reset-fluent)
+# [Startup](#tab/offset-reset-startup)
 ```csharp
-public class MyEndpointsConfigurator : IEndpointsConfigurator
+public class Startup
 {
-    public void Configure(IEndpointsConfigurationBuilder builder) =>
-        builder
-            .AddKafkaEndpoints(endpoints => endpoints
-                .Configure(config => 
-                    {
-                        config.BootstrapServers = "PLAINTEXT://kafka:9092"; 
-                    })
-                .AddInbound(endpoint => endpoint
-                    .ConsumeFrom("some-topic")
-                    .OnPartitionsAssigned(
-                        (partitions, _) =>
-                            partitions.Select(
-                                topicPartition => new TopicPartitionOffset(
-                                    topicPartition,
-                                    Offset.Beginning)))));
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddKafka())
+            .AddSingletonBrokerCallbacksHandler<ResetOffsetPartitionsAssignedCallbackHandler>();
+    }
 }
 ```
-# [EndpointsConfigurator (legacy)](#tab/offset-reset-legacy)
+# [ResetOffsetPartitionsAssignedCallbackHandler](#tab/offset-reset-legacy)
 ```csharp
-public class MyEndpointsConfigurator : IEndpointsConfigurator
-{
-    public void Configure(IEndpointsConfigurationBuilder builder) =>
-        builder
-            .AddInbound(
-                new KafkaConsumerEndpoint("some-topic")
-                {
-                    Configuration = new KafkaConsumerConfig
-                    {
-                        BootstrapServers = "PLAINTEXT://kafka:9092"
-                    },
-                    Events =
-                    {
-                        PartitionsAssignedHandler =
-                            (partitions, _) =>
-                                partitions.Select(
-                                    topicPartition => new TopicPartitionOffset(
-                                        topicPartition,
-                                        Offset.Beginning))
-                    }
-                });
-}
+  public class ResetOffsetPartitionsAssignedCallbackHandler
+    : IKafkaPartitionsAssignedCallback
+  {
+      public IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
+          IReadOnlyCollection<TopicPartition> topicPartitions,
+          KafkaConsumer consumer) =>
+          topicPartitions.Select(
+              topicPartition => new TopicPartitionOffset(topicPartition, Offset.Beginning));
+  }
 ```
 ***
 
 ## Producer events
 
-The event handlers are configured via the <xref:Silverback.Messaging.KafkaEvents.KafkaProducerEventsHandlers> and the related methods in the <xref:Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder>.
+These callbacks are available:
+* <xref:Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback>

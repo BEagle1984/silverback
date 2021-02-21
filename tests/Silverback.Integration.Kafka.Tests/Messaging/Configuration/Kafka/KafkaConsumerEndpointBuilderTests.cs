@@ -2,13 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using Confluent.Kafka;
 using FluentAssertions;
 using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Kafka;
-using Silverback.Messaging.KafkaEvents.Statistics;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
@@ -263,98 +260,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             var endpoint = builder.Build();
 
             endpoint.BackpressureLimit.Should().Be(42);
-        }
-
-        [Fact]
-        public void OnKafkaError_Handler_HandlerSet()
-        {
-            var builder = new KafkaConsumerEndpointBuilder(
-                new KafkaClientConfig
-                {
-                    BootstrapServers = "PLAINTEXT://tests"
-                });
-            Func<Error, KafkaConsumer, bool> handler = (_, _) => true;
-
-            builder
-                .ConsumeFrom("topic")
-                .OnKafkaError(handler);
-            var endpoint = builder.Build();
-
-            endpoint.Events.ErrorHandler.Should().BeSameAs(handler);
-        }
-
-        [Fact]
-        public void OnOffsetsCommitted_Handler_HandlerSet()
-        {
-            var builder = new KafkaConsumerEndpointBuilder(
-                new KafkaClientConfig
-                {
-                    BootstrapServers = "PLAINTEXT://tests"
-                });
-            Action<CommittedOffsets, KafkaConsumer> handler = (_, _) => { };
-
-            builder
-                .ConsumeFrom("topic")
-                .OnOffsetsCommitted(handler);
-            var endpoint = builder.Build();
-
-            endpoint.Events.OffsetsCommittedHandler.Should().BeSameAs(handler);
-        }
-
-        [Fact]
-        public void OnPartitionsAssigned_Handler_HandlerSet()
-        {
-            var builder = new KafkaConsumerEndpointBuilder(
-                new KafkaClientConfig
-                {
-                    BootstrapServers = "PLAINTEXT://tests"
-                });
-            Func<IReadOnlyCollection<TopicPartition>, KafkaConsumer, IEnumerable<TopicPartitionOffset>>
-                handler =
-                    (_, _) => null!;
-
-            builder
-                .ConsumeFrom("topic")
-                .OnPartitionsAssigned(handler);
-            var endpoint = builder.Build();
-
-            endpoint.Events.PartitionsAssignedHandler.Should().BeSameAs(handler);
-        }
-
-        [Fact]
-        public void OnPartitionsRevoked_Handler_HandlerSet()
-        {
-            var builder = new KafkaConsumerEndpointBuilder(
-                new KafkaClientConfig
-                {
-                    BootstrapServers = "PLAINTEXT://tests"
-                });
-            Action<IReadOnlyCollection<TopicPartitionOffset>, KafkaConsumer> handler = (_, _) => { };
-
-            builder
-                .ConsumeFrom("topic")
-                .OnPartitionsRevoked(handler);
-            var endpoint = builder.Build();
-
-            endpoint.Events.PartitionsRevokedHandler.Should().BeSameAs(handler);
-        }
-
-        [Fact]
-        public void OnStatisticsReceived_Handler_HandlerSet()
-        {
-            var builder = new KafkaConsumerEndpointBuilder(
-                new KafkaClientConfig
-                {
-                    BootstrapServers = "PLAINTEXT://tests"
-                });
-            Action<KafkaStatistics, string, KafkaConsumer> handler = (_, _, _) => { };
-
-            builder
-                .ConsumeFrom("topic")
-                .OnStatisticsReceived(handler);
-            var endpoint = builder.Build();
-
-            endpoint.Events.StatisticsHandler.Should().BeSameAs(handler);
         }
     }
 }

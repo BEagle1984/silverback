@@ -4,7 +4,7 @@
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Diagnostics;
-using Silverback.Messaging.KafkaEvents.Statistics;
+using Silverback.Messaging.Broker.Callbacks.Statistics;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging.KafkaEvents.Statistics
@@ -23,7 +23,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.KafkaEvents.Statistics
                 Substitute.For<ISilverbackLogger>());
 
             // Global fields
-            statistics.Name.Should().Be("Test#consumer-1");
+            statistics!.Name.Should().Be("Test#consumer-1");
             statistics.ClientId.Should().Be("Test");
             statistics.Type.Should().Be("consumer");
             statistics.Ts.Should().Be(7817348490);
@@ -301,7 +301,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.KafkaEvents.Statistics
         }
 
         [Fact]
-        public void TryDeserialize_InvalidStatisticsJson_EmptyStatisticsReturned()
+        public void TryDeserialize_InvalidStatisticsJson_NullStatisticsReturned()
         {
             var json = "{ WTF?! }";
 
@@ -309,7 +309,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.KafkaEvents.Statistics
                 json,
                 Substitute.For<ISilverbackLogger>());
 
-            statistics.Should().NotBeNull();
+            statistics.Should().BeNull();
         }
     }
 }

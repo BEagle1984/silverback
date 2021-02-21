@@ -413,7 +413,8 @@ namespace Silverback.Tests.Integration.Diagnostics
         [Fact]
         public void LogEndpointConfiguratorError_Logged()
         {
-            var expectedMessage = "Error occurred configuring the endpoints. | configurator: GenericEndpointsConfigurator";
+            var expectedMessage =
+                "Error occurred configuring the endpoints. | configurator: GenericEndpointsConfigurator";
 
             _silverbackLogger.LogEndpointConfiguratorError(
                 new GenericEndpointsConfigurator(_ => { }),

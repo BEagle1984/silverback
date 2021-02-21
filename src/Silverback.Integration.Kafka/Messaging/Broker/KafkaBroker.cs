@@ -5,6 +5,8 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.Callbacks;
+using Silverback.Messaging.Broker.Kafka;
 
 namespace Silverback.Messaging.Broker
 {
@@ -33,6 +35,7 @@ namespace Silverback.Messaging.Broker
                 this,
                 endpoint,
                 behaviorsProvider,
+                serviceProvider.GetRequiredService<IConfluentProducersCache>(),
                 serviceProvider,
                 serviceProvider.GetRequiredService<IOutboundLogger<KafkaProducer>>());
 
@@ -45,6 +48,8 @@ namespace Silverback.Messaging.Broker
                 this,
                 endpoint,
                 behaviorsProvider,
+                serviceProvider.GetRequiredService<IConfluentConsumerBuilder>(),
+                serviceProvider.GetRequiredService<IBrokerCallbacksInvoker>(),
                 serviceProvider,
                 serviceProvider.GetRequiredService<IInboundLogger<KafkaConsumer>>());
     }

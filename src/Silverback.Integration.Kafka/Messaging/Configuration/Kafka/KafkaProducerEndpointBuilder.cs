@@ -2,8 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.KafkaEvents.Statistics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
@@ -20,8 +18,6 @@ namespace Silverback.Messaging.Configuration.Kafka
         private Func<KafkaProducerEndpoint>? _endpointFactory;
 
         private Action<KafkaProducerConfig>? _configAction;
-
-        private Action<KafkaStatistics, string, KafkaProducer>? _statisticsHandler;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpointBuilder" /> class.
@@ -198,17 +194,6 @@ namespace Silverback.Messaging.Configuration.Kafka
             return this;
         }
 
-        /// <inheritdoc cref="IKafkaProducerEndpointBuilder.OnStatisticsReceived" />
-        public IKafkaProducerEndpointBuilder OnStatisticsReceived(
-            Action<KafkaStatistics, string, KafkaProducer> handler)
-        {
-            Check.NotNull(handler, nameof(handler));
-
-            _statisticsHandler = handler;
-
-            return this;
-        }
-
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.CreateEndpoint" />
         protected override KafkaProducerEndpoint CreateEndpoint()
         {
@@ -221,8 +206,6 @@ namespace Silverback.Messaging.Configuration.Kafka
             var endpoint = _endpointFactory.Invoke();
 
             _configAction?.Invoke(endpoint.Configuration);
-
-            endpoint.Events.StatisticsHandler = _statisticsHandler;
 
             return endpoint;
         }

@@ -6,8 +6,8 @@ using System.Collections.Concurrent;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Kafka;
-using Silverback.Messaging.KafkaEvents;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka
@@ -17,16 +17,20 @@ namespace Silverback.Messaging.Broker.Kafka
         private readonly ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>> _producersCache =
             new(new ConfigurationDictionaryEqualityComparer<string, string>());
 
+        private readonly IBrokerCallbacksInvoker _callbacksInvoker;
+
         private readonly IServiceProvider _serviceProvider;
 
         private readonly ISilverbackLogger _logger;
 
         public ConfluentProducersCache(
             IServiceProvider serviceProvider,
+            IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger<ConfluentProducersCache> logger)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
+            _callbacksInvoker = callbacksInvoker;
         }
 
         public IProducer<byte[]?, byte[]?> GetProducer(KafkaProducerConfig config, KafkaProducer owner) =>
@@ -52,7 +56,7 @@ namespace Silverback.Messaging.Broker.Kafka
 
             var builder = _serviceProvider.GetRequiredService<IConfluentProducerBuilder>();
             builder.SetConfig(config.GetConfluentConfig());
-            builder.SetEventsHandlers(ownerProducer, _logger);
+            builder.SetEventsHandlers(ownerProducer, _callbacksInvoker, _logger);
             return builder.Build();
         }
     }

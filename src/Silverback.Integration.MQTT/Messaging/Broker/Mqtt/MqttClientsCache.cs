@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
@@ -15,24 +16,28 @@ namespace Silverback.Messaging.Broker.Mqtt
     {
         private readonly IMqttNetClientFactory _mqttClientFactory;
 
+        private readonly IBrokerCallbacksInvoker _callbacksInvoker;
+
         private readonly ISilverbackLogger _logger;
 
         private readonly Dictionary<string, MqttClientWrapper> _clients = new();
 
         public MqttClientsCache(
             IMqttNetClientFactory mqttClientFactory,
+            IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger<MqttClientsCache> logger)
         {
-            _mqttClientFactory = mqttClientFactory;
-            _logger = logger;
+            _mqttClientFactory = Check.NotNull(mqttClientFactory, nameof(mqttClientFactory));
+            _callbacksInvoker = Check.NotNull(callbacksInvoker, nameof(callbacksInvoker));
+            _logger = Check.NotNull(logger, nameof(logger));
         }
 
         public MqttClientWrapper GetClient(MqttProducer producer) =>
-            GetClient(producer.Endpoint.Configuration, producer.Endpoint.EventsHandlers, false);
+            GetClient(producer.Endpoint.Configuration, false);
 
         public MqttClientWrapper GetClient(MqttConsumer consumer)
         {
-            var client = GetClient(consumer.Endpoint.Configuration, consumer.Endpoint.EventsHandlers, true);
+            var client = GetClient(consumer.Endpoint.Configuration, true);
 
             client.Consumer = consumer;
 
@@ -49,7 +54,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             "ReSharper",
             "ParameterOnlyUsedForPreconditionCheck.Local",
             Justification = "Different checks for consumer")]
-        private MqttClientWrapper GetClient(MqttClientConfig clientConfig, MqttEventsHandlers eventsHandlers, bool isForConsumer)
+        private MqttClientWrapper GetClient(MqttClientConfig clientConfig, bool isForConsumer)
         {
             Check.NotNull(clientConfig, nameof(clientConfig));
 
@@ -70,12 +75,6 @@ namespace Silverback.Messaging.Broker.Mqtt
                             "A client with the same id is already connected but with a different configuration.");
                     }
 
-                    if (!client.EventsHandlers.Equals(eventsHandlers))
-                    {
-                        throw new InvalidOperationException(
-                            "A client with the same id is already connected but with different event handlers.");
-                    }
-
                     if (isForConsumer && client.Consumer != null)
                     {
                         throw new InvalidOperationException(
@@ -87,7 +86,7 @@ namespace Silverback.Messaging.Broker.Mqtt
                     client = new MqttClientWrapper(
                         _mqttClientFactory.CreateClient(),
                         clientConfig,
-                        eventsHandlers,
+                        _callbacksInvoker,
                         _logger);
                     _clients.Add(clientConfig.ClientId, client);
                 }

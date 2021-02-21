@@ -14,6 +14,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
             _configAction = configAction;
         }
 
-        public void Configure(IEndpointsConfigurationBuilder builder) => builder.AddMqttEndpoints(_configAction);
+        public void Configure(IEndpointsConfigurationBuilder builder) =>
+            builder.AddMqttEndpoints(_configAction);
     }
 }

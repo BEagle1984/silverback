@@ -45,11 +45,6 @@ namespace Silverback.Messaging
         public MqttClientConfig Configuration { get; set; } = new();
 
         /// <summary>
-        ///     Gets or sets the MQTT events handlers.
-        /// </summary>
-        public MqttEventsHandlers EventsHandlers { get; set; } = new();
-
-        /// <summary>
         ///     Gets or sets the quality of service level (at most once, at least once or exactly once).
         /// </summary>
         public MqttQualityOfServiceLevel QualityOfServiceLevel { get; set; }

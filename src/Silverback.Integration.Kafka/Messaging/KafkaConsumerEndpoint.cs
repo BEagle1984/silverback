@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
-using Silverback.Messaging.KafkaEvents;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 
@@ -136,12 +135,6 @@ namespace Silverback.Messaging
 
             Init(topicNames, clientConfig);
         }
-
-        /// <summary>
-        ///     Gets the event handlers configuration. Can be used to bind some handlers to the Kafka events
-        ///     such as partitions revoked/assigned, error, statistics and offsets committed.
-        /// </summary>
-        public KafkaConsumerEventsHandlers Events { get; } = new();
 
         /// <summary>
         ///     Gets the topic and partitions to be consumed. If the collection is <c>null</c> the topics from the

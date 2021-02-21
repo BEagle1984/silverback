@@ -8,10 +8,9 @@ namespace Silverback.Messaging.Broker.Kafka
 {
     /// <summary>
     ///     Creates and stores the <see cref="IProducer{TKey,TValue}" /> instances in order to reuse them for the
-    ///     same
-    ///     <see cref="KafkaProducerConfig" /> configuration.
+    ///     same <see cref="KafkaProducerConfig" /> configuration.
     /// </summary>
-    internal interface IConfluentProducersCache
+    public interface IConfluentProducersCache
     {
         /// <summary>
         ///     Gets an <see cref="IProducer{TKey,TValue}" /> compatible with the specified

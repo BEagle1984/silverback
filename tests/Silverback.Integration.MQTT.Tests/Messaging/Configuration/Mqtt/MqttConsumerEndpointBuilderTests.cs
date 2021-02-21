@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Threading.Tasks;
 using FluentAssertions;
 using MQTTnet.Client.Options;
 using MQTTnet.Protocol;
@@ -22,16 +21,10 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             }
         };
 
-        private readonly MqttEventsHandlers _mqttEventsHandlers = new()
-        {
-            ConnectedHandler = _ => Task.CompletedTask,
-            DisconnectingHandler = _ => Task.CompletedTask
-        };
-
         [Fact]
         public void Build_WithoutTopicName_ExceptionThrown()
         {
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
+            var builder = new MqttConsumerEndpointBuilder(_clientConfig);
 
             Action act = () => builder.Build();
 
@@ -41,7 +34,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void Build_WithoutServer_ExceptionThrown()
         {
-            var builder = new MqttConsumerEndpointBuilder(new MqttClientConfig(), _mqttEventsHandlers);
+            var builder = new MqttConsumerEndpointBuilder(new MqttClientConfig());
 
             Action act = () =>
             {
@@ -55,7 +48,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void ConsumeFrom_SingleTopic_TopicSet()
         {
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
+            var builder = new MqttConsumerEndpointBuilder(_clientConfig);
             builder.ConsumeFrom("some-topic");
             var endpoint = builder.Build();
 
@@ -65,7 +58,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void ConsumeFrom_MultipleTopics_TopicsSet()
         {
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
+            var builder = new MqttConsumerEndpointBuilder(_clientConfig);
             builder.ConsumeFrom("some-topic", "some-other-topic");
             var endpoint = builder.Build();
 
@@ -75,7 +68,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void Configure_ConfigAction_ConfigurationMergedWithBase()
         {
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
+            var builder = new MqttConsumerEndpointBuilder(_clientConfig);
             builder
                 .ConsumeFrom("some-topic")
                 .Configure(config => config.ClientId = "client42");
@@ -89,7 +82,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void Configure_BuilderAction_ConfigurationMergedWithBase()
         {
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
+            var builder = new MqttConsumerEndpointBuilder(_clientConfig);
             builder
                 .ConsumeFrom("some-topic")
                 .Configure(config => config.WithClientId("client42"));
@@ -101,41 +94,9 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         }
 
         [Fact]
-        public void BindEvents_EventsHandlerAction_HandlersMergedWithBase()
-        {
-            Func<MqttClientConfig, Task> callback = _ => Task.CompletedTask;
-
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
-            builder
-                .ConsumeFrom("some-topic")
-                .BindEvents(handlers => handlers.ConnectedHandler = callback);
-            var endpoint = builder.Build();
-
-            endpoint.EventsHandlers.ConnectedHandler.Should().BeSameAs(callback);
-            endpoint.EventsHandlers.DisconnectingHandler.Should()
-                .BeSameAs(_mqttEventsHandlers.DisconnectingHandler); // Reference comparison
-        }
-
-        [Fact]
-        public void BindEvents_EventsHandlerBuilderAction_HandlersMergedWithBase()
-        {
-            Func<MqttClientConfig, Task> callback = _ => Task.CompletedTask;
-
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
-            builder
-                .ConsumeFrom("some-topic")
-                .BindEvents(b => b.OnConnected(callback));
-            var endpoint = builder.Build();
-
-            endpoint.EventsHandlers.ConnectedHandler.Should().BeSameAs(callback);
-            endpoint.EventsHandlers.DisconnectingHandler.Should()
-                .Be(_mqttEventsHandlers.DisconnectingHandler); // Value comparison
-        }
-
-        [Fact]
         public void WithQualityOfServiceLevel_QualityOfServiceLevelSet()
         {
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
+            var builder = new MqttConsumerEndpointBuilder(_clientConfig);
             builder
                 .ConsumeFrom("some-topic")
                 .WithQualityOfServiceLevel(MqttQualityOfServiceLevel.AtLeastOnce);
@@ -147,7 +108,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void WithAtMostOnceQoS_QualityOfServiceLevelSet()
         {
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
+            var builder = new MqttConsumerEndpointBuilder(_clientConfig);
             builder
                 .ConsumeFrom("some-topic")
                 .WithAtMostOnceQoS();
@@ -159,7 +120,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void WithAtLeastOnceQoS_QualityOfServiceLevelSet()
         {
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
+            var builder = new MqttConsumerEndpointBuilder(_clientConfig);
             builder
                 .ConsumeFrom("some-topic")
                 .WithAtLeastOnceQoS();
@@ -171,24 +132,13 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
         [Fact]
         public void WithExactlyOnceQoS_QualityOfServiceLevelSet()
         {
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
+            var builder = new MqttConsumerEndpointBuilder(_clientConfig);
             builder
                 .ConsumeFrom("some-topic")
                 .WithExactlyOnceQoS();
             var endpoint = builder.Build();
 
             endpoint.QualityOfServiceLevel.Should().Be(MqttQualityOfServiceLevel.ExactlyOnce);
-        }
-
-        [Fact]
-        public void WithEventsHandlers_EventsHandlersSet()
-        {
-            var builder = new MqttConsumerEndpointBuilder(_clientConfig, _mqttEventsHandlers);
-            builder
-                .ConsumeFrom("some-topic");
-            var endpoint = builder.Build();
-
-            endpoint.EventsHandlers.Should().BeSameAs(_mqttEventsHandlers);
         }
     }
 }

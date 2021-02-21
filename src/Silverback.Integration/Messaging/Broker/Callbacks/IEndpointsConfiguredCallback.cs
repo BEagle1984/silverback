@@ -3,16 +3,15 @@
 
 using System.Threading.Tasks;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Broker.Callbacks
 {
     /// <summary>
-    ///     Exposes some event hooks that are being called during configuration and initialization
-    ///     of brokers.
+    ///     Declares the <see cref="OnEndpointsConfiguredAsync" /> callback.
     /// </summary>
-    public interface IBrokerEventsHandler
+    public interface IEndpointsConfiguredCallback : IBrokerCallback
     {
         /// <summary>
-        ///     Is triggered when all endpoints were configured.
+        ///     Called when all endpoints have been configured.
         /// </summary>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.

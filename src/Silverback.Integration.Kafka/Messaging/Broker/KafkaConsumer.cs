@@ -11,8 +11,8 @@ using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Broker.Kafka;
-using Silverback.Messaging.KafkaEvents;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
@@ -26,6 +26,8 @@ namespace Silverback.Messaging.Broker
         private static readonly TimeSpan RecoveryDelay = TimeSpan.FromSeconds(5);
 
         private readonly IConfluentConsumerBuilder _confluentConsumerBuilder;
+
+        private readonly IBrokerCallbacksInvoker _callbacksInvoker;
 
         private readonly IInboundLogger<KafkaConsumer> _logger;
 
@@ -53,6 +55,12 @@ namespace Silverback.Messaging.Broker
         /// <param name="behaviorsProvider">
         ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
         /// </param>
+        /// <param name="confluentConsumerBuilder">
+        ///     The <see cref="IConfluentConsumerBuilder" />.
+        /// </param>
+        /// <param name="callbacksInvoker">
+        ///     The <see cref="IBrokerCallbacksInvoker" />.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
         /// </param>
@@ -63,6 +71,8 @@ namespace Silverback.Messaging.Broker
             KafkaBroker broker,
             KafkaConsumerEndpoint endpoint,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+            IConfluentConsumerBuilder confluentConsumerBuilder,
+            IBrokerCallbacksInvoker callbacksInvoker,
             IServiceProvider serviceProvider,
             IInboundLogger<KafkaConsumer> logger)
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
@@ -70,11 +80,14 @@ namespace Silverback.Messaging.Broker
             Check.NotNull(endpoint, nameof(endpoint));
             Check.NotNull(serviceProvider, nameof(serviceProvider));
 
-            _logger = Check.NotNull(logger, nameof(logger));
-
-            _confluentConsumerBuilder = serviceProvider.GetRequiredService<IConfluentConsumerBuilder>();
+            _confluentConsumerBuilder = Check.NotNull(
+                confluentConsumerBuilder,
+                nameof(confluentConsumerBuilder));
             _confluentConsumerBuilder.SetConfig(endpoint.Configuration.GetConfluentConfig());
-            _confluentConsumerBuilder.SetEventsHandlers(this, logger);
+            _confluentConsumerBuilder.SetEventsHandlers(this, callbacksInvoker, logger);
+
+            _callbacksInvoker = Check.NotNull(callbacksInvoker, nameof(callbacksInvoker));
+            _logger = Check.NotNull(logger, nameof(logger));
         }
 
         /// <summary>
@@ -514,30 +527,33 @@ namespace Silverback.Messaging.Broker
             {
                 var offsets = ConfluentConsumer!.Commit();
 
-                Endpoint.Events.OffsetsCommittedHandler?.Invoke(
-                    new CommittedOffsets(
-                        offsets.Select(
-                                offset =>
-                                    new TopicPartitionOffsetError(
-                                        offset,
-                                        new Error(ErrorCode.NoError)))
-                            .ToList(),
-                        new Error(ErrorCode.NoError)),
-                    this);
+                _callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
+                    handler => handler.OnOffsetsCommitted(
+                        new CommittedOffsets(
+                            offsets.Select(
+                                    offset =>
+                                        new TopicPartitionOffsetError(
+                                            offset,
+                                            new Error(ErrorCode.NoError)))
+                                .ToList(),
+                            new Error(ErrorCode.NoError)),
+                        this));
             }
             catch (TopicPartitionOffsetException ex)
             {
-                Endpoint.Events.OffsetsCommittedHandler?.Invoke(
-                    new CommittedOffsets(ex.Results, ex.Error),
-                    this);
+                _callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
+                    handler => handler.OnOffsetsCommitted(
+                        new CommittedOffsets(ex.Results, ex.Error),
+                        this));
 
                 throw;
             }
             catch (KafkaException ex)
             {
-                Endpoint.Events.OffsetsCommittedHandler?.Invoke(
-                    new CommittedOffsets(null, ex.Error),
-                    this);
+                _callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
+                    handler => handler.OnOffsetsCommitted(
+                        new CommittedOffsets(null, ex.Error),
+                        this));
             }
         }
     }

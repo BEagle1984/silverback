@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Silverback.Messaging.Configuration;
+using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Testing;
@@ -17,22 +17,22 @@ using Xunit.Abstractions;
 
 namespace Silverback.Tests.Integration.E2E.Kafka
 {
-    public class KafkaBrokerEventsTests : KafkaTestFixture
+    public class CallbacksTests : KafkaTestFixture
     {
-        public KafkaBrokerEventsTests(ITestOutputHelper testOutputHelper)
+        public CallbacksTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
         {
         }
 
         [Fact]
-        public async Task BrokerEventsRegistered_EndpointsConfiguredHandlerCalled()
+        public async Task EndpointsConfiguredCallback_Invoked()
         {
             Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .AddSingletonBrokerEventsHandler<SimpleBrokerEventsHandler>()
+                        .AddSingletonBrokerCallbackHandler<SimpleCallbackHandler>()
                         .WithConnectionToMessageBroker(
                             options => options
                                 .AddMockedKafka())
@@ -51,30 +51,27 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            }))))
+                                        .Configure(config => { config.GroupId = "consumer1"; }))))
                 .Run();
 
             var kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
             await kafkaTestingHelper.WaitUntilConnectedAsync();
 
-            var eventsHandler = (SimpleBrokerEventsHandler)Host.ServiceProvider.GetRequiredService<IBrokerEventsHandler>();
-            eventsHandler.CallCount.Should().Be(1);
+            var callbackHandler =
+                (SimpleCallbackHandler)Host.ServiceProvider.GetRequiredService<IBrokerCallback>();
+            callbackHandler.CallCount.Should().Be(1);
         }
 
         [Fact]
-        public async Task BrokerEventsRegistered_AllEndpointsConfiguredHandlersCalled()
+        public async Task EndpointsConfiguredCallback_AllHandlersInvoked()
         {
             Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .AddSingletonBrokerEventsHandler<SimpleBrokerEventsHandler>()
-                        .AddSingletonBrokerEventsHandler<AnotherSimpleBrokerEventsHandler>()
+                        .AddSingletonBrokerCallbackHandler<SimpleCallbackHandler>()
+                        .AddSingletonBrokerCallbackHandler<AnotherSimpleCallbackHandler>()
                         .WithConnectionToMessageBroker(
                             options => options
                                 .AddMockedKafka())
@@ -85,31 +82,27 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            }))))
+                                        .Configure(config => { config.GroupId = "consumer1"; }))))
                 .Run();
 
             var kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
             await kafkaTestingHelper.WaitUntilConnectedAsync();
 
-            var eventsHandlers = Host.ServiceProvider.GetServices<IBrokerEventsHandler>().ToList();
-            eventsHandlers.Should().HaveCount(2);
-            eventsHandlers.Should().AllBeAssignableTo<SimpleBrokerEventsHandler>();
-            eventsHandlers.Cast<SimpleBrokerEventsHandler>().Should().OnlyContain(b => b.CallCount == 1);
+            var callbackHandlers = Host.ServiceProvider.GetServices<IBrokerCallback>().ToList();
+            callbackHandlers.Should().HaveCount(2);
+            callbackHandlers.Should().AllBeAssignableTo<SimpleCallbackHandler>();
+            callbackHandlers.Cast<SimpleCallbackHandler>().Should().OnlyContain(b => b.CallCount == 1);
         }
 
         [Fact]
-        public async Task BrokerEventsRegistered_MessagePublished()
+        public async Task EndpointsConfiguredCallback_MessagePublished()
         {
             Host.ConfigureServices(
                     services => services
                         .AddLogging()
                         .AddSilverback()
                         .UseModel()
-                        .AddScopedBrokerEventsHandler<MessageSendingBrokerEventsHandler>()
+                        .AddScopedBrokerCallbackHandler<MessageSendingCallbackHandler>()
                         .WithConnectionToMessageBroker(
                             options => options
                                 .AddMockedKafka())
@@ -121,11 +114,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            })))
+                                        .Configure(config => { config.GroupId = "consumer1"; })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -135,11 +124,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             kafkaTestingHelper.Spy.OutboundEnvelopes.Should().HaveCount(1);
         }
 
-        private class SimpleBrokerEventsHandler : BrokerEventsHandler
+        private class SimpleCallbackHandler : IEndpointsConfiguredCallback
         {
             public int CallCount { get; private set; }
 
-            public override Task OnEndpointsConfiguredAsync()
+            public Task OnEndpointsConfiguredAsync()
             {
                 CallCount++;
                 return Task.CompletedTask;
@@ -147,23 +136,29 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-        private class AnotherSimpleBrokerEventsHandler : SimpleBrokerEventsHandler
+        [SuppressMessage(
+            "ReSharper",
+            "ClassNeverInstantiated.Local",
+            Justification = Justifications.CalledBySilverback)]
+        private class AnotherSimpleCallbackHandler : SimpleCallbackHandler
         {
         }
 
         [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = Justifications.CalledBySilverback)]
-        private class MessageSendingBrokerEventsHandler : BrokerEventsHandler
+        [SuppressMessage(
+            "ReSharper",
+            "ClassNeverInstantiated.Local",
+            Justification = Justifications.CalledBySilverback)]
+        private class MessageSendingCallbackHandler : IEndpointsConfiguredCallback
         {
             private readonly IPublisher _publisher;
 
-            public MessageSendingBrokerEventsHandler(IPublisher publisher)
+            public MessageSendingCallbackHandler(IPublisher publisher)
             {
                 _publisher = publisher;
             }
 
-            public override async Task OnEndpointsConfiguredAsync()
+            public async Task OnEndpointsConfiguredAsync()
             {
                 var message = new TestEventOne();
                 await _publisher.PublishAsync(message);

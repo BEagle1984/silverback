@@ -15,6 +15,7 @@ namespace Silverback.Messaging.Configuration
             _configAction = configAction;
         }
 
-        public void Configure(IEndpointsConfigurationBuilder builder) => builder.AddKafkaEndpoints(_configAction);
+        public void Configure(IEndpointsConfigurationBuilder builder) =>
+            builder.AddKafkaEndpoints(_configAction);
     }
 }

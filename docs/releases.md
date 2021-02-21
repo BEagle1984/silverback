@@ -26,6 +26,7 @@ uid: releases
 * Replace [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json) with [System.Text.Json](https://www.nuget.org/packages/System.Text.Json) to improve serialization and deserialization performance (the old serializers have been moved into the [Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft) package, see <xref:serialization>)
 * Improve outbound routing customization options with endpoint name resolvers (see <xref:outbound-routing>)
 * Add non-blocking `Produce`/`ProduceAsync`/`RawProduce`/`RawProduceAsync` overloads to <xref:Silverback.Messaging.Broker.IProducer>, suitable for higher throughput (see <xref:producer>)
+* Refactor broker event handlers (see <xref:broker-callbacks>)
 * Add log levels configuration (see <xref:logging>)
 * Allow header names customization (see <xref:headers>)
 * Add consumer status information and statistics (see <xref:message-broker#consumer-management-api>)
@@ -79,7 +80,7 @@ uid: releases
 * Complete redesign of the error policies
 * Removed _IMessageIdProvider_ and all related logic: the `Id` or `MessageId` property will not be automatically initialized anymore and its value will not be used as identifier for the outbound message anymore (refer to the <xref:message-id> page for further details on how to set a custom message id, if needed)
 * _WithConnectionTo<>_, _WithConnectionToKafka_, _WithConnectionToRabbitMQ_ and _WithInMemoryBroker_ have been removed, please use the new [WithConnectionToMessageBroker](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderWithConnectionToExtensions) and [AddKafka](xref:Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddKafkaExtensions)/[AddRabbit](xref:Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddRabbitExtensions) methods (see <xref:message-broker>)
-* Replaced the internal messages for the Kafka events such as partitions revoked/assigned, offset commit, error, log and statistics with some callbacks defined at <xref:Silverback.Integration.Messaging.KafkaProducerEndpoint> and <xref:Silverback.Integration.Messaging.KafkaConsumerEndpoint> level (see <xref:kafka-events>)
+* Replaced the internal messages for the Kafka events such as partitions revoked/assigned, offset commit, error, log and statistics with event handler interfaces (see <xref:kafka-events>)
 * Deprecated [Silverback.Integration.InMemory](https://www.nuget.org/packages/Silverback.Integration.InMemory), use [Silverback.Integration.Kafka.Testing](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing), [Silverback.Integration.RabbitMQ.Testing](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ.Testing), etc. instead
 * Renamed _PartitioningKeyMemberAttribute_ to <xref:Silverback.Messaging.Messages.KafkaKeyMemberAttribute>
 * [Silverback.Integration.Configuration](https://www.nuget.org/packages/Silverback.Integration.Configuration) has been discontinued

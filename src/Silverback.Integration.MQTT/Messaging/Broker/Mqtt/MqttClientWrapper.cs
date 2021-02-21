@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker.Callbacks;
+using Silverback.Messaging.Broker.Events;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
@@ -21,6 +23,8 @@ namespace Silverback.Messaging.Broker.Mqtt
     internal sealed class MqttClientWrapper : IDisposable
     {
         private const int ConnectionMonitorMillisecondsInterval = 500;
+
+        private readonly IBrokerCallbacksInvoker _brokerCallbacksInvoker;
 
         private readonly ISilverbackLogger _logger;
 
@@ -39,18 +43,16 @@ namespace Silverback.Messaging.Broker.Mqtt
         public MqttClientWrapper(
             IMqttClient mqttClient,
             MqttClientConfig clientConfig,
-            MqttEventsHandlers eventsHandlers,
+            IBrokerCallbacksInvoker brokerCallbacksInvoker,
             ISilverbackLogger logger)
         {
             ClientConfig = clientConfig;
-            EventsHandlers = eventsHandlers;
             MqttClient = mqttClient;
+            _brokerCallbacksInvoker = brokerCallbacksInvoker;
             _logger = logger;
         }
 
         public MqttClientConfig ClientConfig { get; }
-
-        public MqttEventsHandlers EventsHandlers { get; }
 
         public IMqttClient MqttClient { get; }
 
@@ -90,7 +92,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             return MqttClient.SubscribeAsync(topicFilters);
         }
 
-        public Task DisconnectAsync(object sender)
+        public async Task DisconnectAsync(object sender)
         {
             Check.NotNull(sender, nameof(sender));
 
@@ -103,12 +105,14 @@ namespace Silverback.Messaging.Broker.Mqtt
                 _connectCancellationTokenSource = null;
 
                 if (_connectedObjects.Count > 0 || !MqttClient.IsConnected)
-                    return Task.CompletedTask;
+                    return;
             }
 
-            EventsHandlers.DisconnectingHandler?.Invoke(ClientConfig);
+            await _brokerCallbacksInvoker.InvokeAsync<IMqttClientDisconnectingCallback>(
+                handler => handler.OnClientDisconnectingAsync(ClientConfig))
+                .ConfigureAwait(false);
 
-            return MqttClient.DisconnectAsync();
+            await MqttClient.DisconnectAsync().ConfigureAwait(false);
         }
 
         public void Dispose()
@@ -171,7 +175,9 @@ namespace Silverback.Messaging.Broker.Mqtt
 
             _connectingTaskCompletionSource.SetResult(true);
 
-            EventsHandlers.ConnectedHandler?.Invoke(ClientConfig);
+            await _brokerCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(
+                handler => handler.OnClientConnectedAsync(ClientConfig))
+                .ConfigureAwait(false);
 
             return true;
         }

@@ -163,7 +163,7 @@ namespace Silverback.Messaging.Broker
             if (_producers == null || _consumers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            _endpointsConfiguratorsInvoker.Invoke();
+            await _endpointsConfiguratorsInvoker.InvokeAsync().ConfigureAwait(false);
 
             _logger.LogBrokerConnecting(this);
 

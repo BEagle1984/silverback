@@ -2,11 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Confluent.Kafka;
-using Silverback.Messaging.Broker;
-using Silverback.Messaging.KafkaEvents.Statistics;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka
@@ -29,17 +26,6 @@ namespace Silverback.Messaging.Configuration.Kafka
         private int? _maxDegreeOfParallelism;
 
         private int? _backpressureLimit;
-
-        private Func<Error, KafkaConsumer, bool>? _kafkaErrorHandler;
-
-        private Action<CommittedOffsets, KafkaConsumer>? _offsetsCommittedHandler;
-
-        private Func<IReadOnlyCollection<TopicPartition>, KafkaConsumer, IEnumerable<TopicPartitionOffset>>?
-            _partitionsAssignedHandler;
-
-        private Action<IReadOnlyCollection<TopicPartitionOffset>, KafkaConsumer>? _partitionsRevokedHandler;
-
-        private Action<KafkaStatistics, string, KafkaConsumer>? _statisticsHandler;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaConsumerEndpointBuilder" /> class.
@@ -139,61 +125,6 @@ namespace Silverback.Messaging.Configuration.Kafka
             return this;
         }
 
-        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.OnKafkaError" />
-        public IKafkaConsumerEndpointBuilder OnKafkaError(Func<Error, KafkaConsumer, bool> handler)
-        {
-            Check.NotNull(handler, nameof(handler));
-
-            _kafkaErrorHandler = handler;
-
-            return this;
-        }
-
-        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.OnOffsetsCommitted" />
-        public IKafkaConsumerEndpointBuilder OnOffsetsCommitted(
-            Action<CommittedOffsets, KafkaConsumer> handler)
-        {
-            Check.NotNull(handler, nameof(handler));
-
-            _offsetsCommittedHandler = handler;
-
-            return this;
-        }
-
-        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.OnPartitionsAssigned" />
-        public IKafkaConsumerEndpointBuilder OnPartitionsAssigned(
-            Func<IReadOnlyCollection<TopicPartition>, KafkaConsumer, IEnumerable<TopicPartitionOffset>>
-                handler)
-        {
-            Check.NotNull(handler, nameof(handler));
-
-            _partitionsAssignedHandler = handler;
-
-            return this;
-        }
-
-        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.OnPartitionsRevoked" />
-        public IKafkaConsumerEndpointBuilder OnPartitionsRevoked(
-            Action<IReadOnlyCollection<TopicPartitionOffset>, KafkaConsumer> handler)
-        {
-            Check.NotNull(handler, nameof(handler));
-
-            _partitionsRevokedHandler = handler;
-
-            return this;
-        }
-
-        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.OnStatisticsReceived" />
-        public IKafkaConsumerEndpointBuilder OnStatisticsReceived(
-            Action<KafkaStatistics, string, KafkaConsumer> handler)
-        {
-            Check.NotNull(handler, nameof(handler));
-
-            _statisticsHandler = handler;
-
-            return this;
-        }
-
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.CreateEndpoint" />
         protected override KafkaConsumerEndpoint CreateEndpoint()
         {
@@ -211,12 +142,6 @@ namespace Silverback.Messaging.Configuration.Kafka
 
             if (_backpressureLimit != null)
                 endpoint.BackpressureLimit = _backpressureLimit.Value;
-
-            endpoint.Events.ErrorHandler = _kafkaErrorHandler;
-            endpoint.Events.OffsetsCommittedHandler = _offsetsCommittedHandler;
-            endpoint.Events.PartitionsAssignedHandler = _partitionsAssignedHandler;
-            endpoint.Events.PartitionsRevokedHandler = _partitionsRevokedHandler;
-            endpoint.Events.StatisticsHandler = _statisticsHandler;
 
             return endpoint;
         }

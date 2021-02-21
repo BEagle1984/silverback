@@ -36,18 +36,6 @@ namespace Silverback.Messaging.Configuration.Mqtt
         IMqttEndpointsConfigurationBuilder Configure(Action<IMqttClientConfigBuilder> configBuilderAction);
 
         /// <summary>
-        ///     Configures event handlers for MQTT client events.
-        /// </summary>
-        /// <param name="eventsHandlersBuilderAction">
-        ///     An <see cref="Action{T}"/> that takes the <see cref="IMqttEventsHandlersBuilder"/> and configures it.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IMqttEndpointsConfigurationBuilder"/> so that additional calls can be chained.
-        /// </returns>
-        IMqttEndpointsConfigurationBuilder BindEvents(
-            Action<IMqttEventsHandlersBuilder> eventsHandlersBuilderAction);
-
-        /// <summary>
         ///     Adds an outbound endpoint to produce the specified message type to a Mqtt topic.
         /// </summary>
         /// <typeparam name="TMessage">

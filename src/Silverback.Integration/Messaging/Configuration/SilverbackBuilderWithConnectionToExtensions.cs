@@ -4,6 +4,7 @@
 using System;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Outbound.Routing;
@@ -60,6 +61,9 @@ namespace Microsoft.Extensions.DependencyInjection
             silverbackBuilder.Services
                 .AddSingleton(typeof(TransactionalListSharedItems<>))
                 .AddSingleton(typeof(TransactionalDictionarySharedItems<,>));
+
+            // Event Handlers
+            silverbackBuilder.Services.AddSingleton<IBrokerCallbacksInvoker, BrokerCallbackInvoker>();
 
             var optionsBuilder = new BrokerOptionsBuilder(silverbackBuilder);
             optionsAction?.Invoke(optionsBuilder);

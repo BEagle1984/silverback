@@ -6,9 +6,7 @@ using Confluent.Kafka;
 using FluentAssertions;
 using NSubstitute;
 using Silverback.Messaging;
-using Silverback.Messaging.Broker;
 using Silverback.Messaging.Configuration.Kafka;
-using Silverback.Messaging.KafkaEvents.Statistics;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Tests.Types.Domain;
@@ -339,24 +337,6 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             endpoint.Configuration.MessageTimeoutMs.Should().Be(42);
             endpoint.Configuration.MessageMaxBytes.Should().Be(4242);
             baseConfig.MessageMaxBytes.Should().Be(42);
-        }
-
-        [Fact]
-        public void OnStatisticsReceived_Handler_HandlerSet()
-        {
-            var builder = new KafkaProducerEndpointBuilder(
-                new KafkaClientConfig
-                {
-                    BootstrapServers = "PLAINTEXT://tests"
-                });
-            Action<KafkaStatistics, string, KafkaProducer> handler = (_, _, _) => { };
-
-            builder
-                .ProduceTo("some-topic")
-                .OnStatisticsReceived(handler);
-            var endpoint = builder.Build();
-
-            endpoint.Events.StatisticsHandler.Should().BeSameAs(handler);
         }
 
         private class TestEndpointNameResolver : IKafkaProducerEndpointNameResolver

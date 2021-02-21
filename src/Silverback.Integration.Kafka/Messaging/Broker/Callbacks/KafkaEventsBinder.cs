@@ -7,66 +7,107 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
-using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Callbacks.Statistics;
 using Silverback.Messaging.Broker.Kafka;
-using Silverback.Messaging.KafkaEvents.Statistics;
 
-namespace Silverback.Messaging.KafkaEvents
+namespace Silverback.Messaging.Broker.Callbacks
 {
     internal static class KafkaEventsBinder
     {
         public static void SetEventsHandlers(
             this IConfluentProducerBuilder producerBuilder,
             KafkaProducer producer,
+            IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger logger) =>
             producerBuilder
-                .SetStatisticsHandler((_, statistics) => OnStatistics(statistics, producer, logger))
+                .SetStatisticsHandler(
+                    (_, statistics) => OnStatistics(statistics, producer, callbacksInvoker, logger))
                 .SetLogHandler((_, logMessage) => OnLog(logMessage, producer, logger));
 
         public static void SetEventsHandlers(
             this IConfluentConsumerBuilder consumerBuilder,
             KafkaConsumer consumer,
+            IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger logger) =>
             consumerBuilder
-                .SetStatisticsHandler((_, statistics) => OnStatistics(statistics, consumer, logger))
+                .SetStatisticsHandler(
+                    (_, statistics) => OnStatistics(statistics, consumer, callbacksInvoker, logger))
                 .SetPartitionsAssignedHandler(
-                    (_, partitions) => OnPartitionsAssigned(partitions, consumer, logger))
+                    (_, partitions) => OnPartitionsAssigned(
+                        partitions,
+                        consumer,
+                        callbacksInvoker,
+                        logger))
                 .SetPartitionsRevokedHandler(
-                    (_, partitions) => OnPartitionsRevoked(partitions, consumer, logger))
-                .SetOffsetsCommittedHandler((_, offsets) => OnOffsetsCommitted(offsets, consumer, logger))
-                .SetErrorHandler((_, error) => OnError(error, consumer, logger))
+                    (_, partitions) => OnPartitionsRevoked(
+                        partitions,
+                        consumer,
+                        callbacksInvoker,
+                        logger))
+                .SetOffsetsCommittedHandler(
+                    (_, offsets) => OnOffsetsCommitted(offsets, consumer, callbacksInvoker, logger))
+                .SetErrorHandler((_, error) => OnError(error, consumer, callbacksInvoker, logger))
                 .SetLogHandler((_, logMessage) => OnLog(logMessage, consumer, logger));
 
-        private static void OnStatistics(string statistics, KafkaProducer producer, ISilverbackLogger logger)
+        private static void OnStatistics(
+            string statistics,
+            KafkaProducer producer,
+            IBrokerCallbacksInvoker callbacksInvoker,
+            ISilverbackLogger logger)
         {
             logger.LogProducerStatisticsReceived(statistics, producer);
 
-            producer.Endpoint.Events.StatisticsHandler?.Invoke(
-                KafkaStatisticsDeserializer.TryDeserialize(statistics, logger),
-                statistics,
-                producer);
+            callbacksInvoker.Invoke<IKafkaProducerStatisticsCallback>(
+                handler => handler.OnProducerStatistics(
+                    KafkaStatisticsDeserializer.TryDeserialize(statistics, logger),
+                    statistics,
+                    producer));
         }
 
-        private static void OnStatistics(string statistics, KafkaConsumer consumer, ISilverbackLogger logger)
+        private static void OnStatistics(
+            string statistics,
+            KafkaConsumer consumer,
+            IBrokerCallbacksInvoker callbacksInvoker,
+            ISilverbackLogger logger)
         {
             logger.LogConsumerStatisticsReceived(statistics, consumer);
 
-            consumer.Endpoint.Events.StatisticsHandler?.Invoke(
-                KafkaStatisticsDeserializer.TryDeserialize(statistics, logger),
-                statistics,
-                consumer);
+            callbacksInvoker.Invoke<IKafkaConsumerStatisticsCallback>(
+                handler => handler.OnConsumerStatistics(
+                    KafkaStatisticsDeserializer.TryDeserialize(statistics, logger),
+                    statistics,
+                    consumer));
         }
 
+        [SuppressMessage(
+            "",
+            "CA1508",
+            Justification = "False positive: topicPartitionOffsets set in handler action")]
         private static IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
             List<TopicPartition> partitions,
             KafkaConsumer consumer,
+            IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger logger)
         {
             partitions.ForEach(topicPartition => logger.LogPartitionAssigned(topicPartition, consumer));
 
-            var topicPartitionOffsets =
-                consumer.Endpoint.Events.PartitionsAssignedHandler?.Invoke(partitions, consumer).ToList() ??
-                partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Unset)).ToList();
+            List<TopicPartitionOffset>? topicPartitionOffsets = null;
+
+            callbacksInvoker.Invoke<IKafkaPartitionsAssignedCallback>(
+                handler =>
+                {
+                    var result = handler.OnPartitionsAssigned(partitions, consumer);
+
+                    if (result != null)
+                        topicPartitionOffsets = result.ToList();
+                });
+
+            if (topicPartitionOffsets == null)
+            {
+                topicPartitionOffsets = partitions
+                    .Select(partition => new TopicPartitionOffset(partition, Offset.Unset))
+                    .ToList();
+            }
 
             foreach (var topicPartitionOffset in topicPartitionOffsets)
             {
@@ -85,6 +126,7 @@ namespace Silverback.Messaging.KafkaEvents
         private static void OnPartitionsRevoked(
             List<TopicPartitionOffset> partitions,
             KafkaConsumer consumer,
+            IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger logger)
         {
             consumer.OnPartitionsRevoked();
@@ -92,12 +134,14 @@ namespace Silverback.Messaging.KafkaEvents
             partitions.ForEach(
                 topicPartitionOffset => logger.LogPartitionRevoked(topicPartitionOffset, consumer));
 
-            consumer.Endpoint.Events.PartitionsRevokedHandler?.Invoke(partitions, consumer);
+            callbacksInvoker.Invoke<IKafkaPartitionsRevokedCallback>(
+                handler => handler.OnPartitionsRevoked(partitions, consumer));
         }
 
         private static void OnOffsetsCommitted(
             CommittedOffsets offsets,
             KafkaConsumer consumer,
+            IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger logger)
         {
             foreach (var topicPartitionOffsetError in offsets.Offsets)
@@ -116,11 +160,16 @@ namespace Silverback.Messaging.KafkaEvents
                 }
             }
 
-            consumer.Endpoint.Events.OffsetsCommittedHandler?.Invoke(offsets, consumer);
+            callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
+                handler => handler.OnOffsetsCommitted(offsets, consumer));
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private static void OnError(Error error, KafkaConsumer consumer, ISilverbackLogger logger)
+        private static void OnError(
+            Error error,
+            KafkaConsumer consumer,
+            IBrokerCallbacksInvoker callbacksInvoker,
+            ISilverbackLogger logger)
         {
             // Ignore errors if not consuming anymore
             // (lidrdkafka randomly throws some "brokers are down" while disconnecting)
@@ -129,8 +178,12 @@ namespace Silverback.Messaging.KafkaEvents
 
             try
             {
-                if (consumer.Endpoint.Events.ErrorHandler != null &&
-                    consumer.Endpoint.Events.ErrorHandler.Invoke(error, consumer))
+                bool handled = false;
+
+                callbacksInvoker.Invoke<IKafkaConsumerErrorCallback>(
+                    handler => { handled &= handler.OnConsumerError(error, consumer); });
+
+                if (handled)
                     return;
             }
             catch (Exception ex)
@@ -144,7 +197,10 @@ namespace Silverback.Messaging.KafkaEvents
                 logger.LogConfluentConsumerError(error, consumer);
         }
 
-        private static void OnLog(LogMessage logMessage, KafkaProducer producer, ISilverbackLogger logger)
+        private static void OnLog(
+            LogMessage logMessage,
+            KafkaProducer producer,
+            ISilverbackLogger logger)
         {
             switch (logMessage.Level)
             {
@@ -169,7 +225,10 @@ namespace Silverback.Messaging.KafkaEvents
             }
         }
 
-        private static void OnLog(LogMessage logMessage, KafkaConsumer consumer, ISilverbackLogger logger)
+        private static void OnLog(
+            LogMessage logMessage,
+            KafkaConsumer consumer,
+            ISilverbackLogger logger)
         {
             switch (logMessage.Level)
             {

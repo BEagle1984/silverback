@@ -21,8 +21,6 @@ namespace Silverback.Messaging.Configuration.Mqtt
 
         internal MqttClientConfig ClientConfig { get; private set; } = new();
 
-        internal MqttEventsHandlers MqttEventsHandlers { get; private set; } = new();
-
         public IMqttEndpointsConfigurationBuilder Configure(Action<MqttClientConfig> configAction)
         {
             Check.NotNull(configAction, nameof(configAction));
@@ -45,19 +43,6 @@ namespace Silverback.Messaging.Configuration.Mqtt
             return this;
         }
 
-        public IMqttEndpointsConfigurationBuilder BindEvents(
-            Action<IMqttEventsHandlersBuilder> eventsHandlersBuilderAction)
-        {
-            Check.NotNull(eventsHandlersBuilderAction, nameof(eventsHandlersBuilderAction));
-
-            var builder = new MqttEventsHandlersBuilder();
-            eventsHandlersBuilderAction.Invoke(builder);
-
-            MqttEventsHandlers = builder.Build();
-
-            return this;
-        }
-
         public IMqttEndpointsConfigurationBuilder AddOutbound<TMessage>(
             Action<IMqttProducerEndpointBuilder> endpointBuilderAction,
             bool preloadProducers = true) =>
@@ -72,8 +57,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
             var router = new MqttOutboundEndpointRouter<object>(
                 routerFunction,
                 endpointBuilderActions,
-                ClientConfig,
-                MqttEventsHandlers);
+                ClientConfig);
             this.AddOutbound(messageType, router, preloadProducers);
 
             return this;
@@ -87,8 +71,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
             var router = new MqttOutboundEndpointRouter<TMessage>(
                 routerFunction,
                 endpointBuilderActions,
-                ClientConfig,
-                MqttEventsHandlers);
+                ClientConfig);
             this.AddOutbound(router, preloadProducers);
 
             return this;
@@ -103,8 +86,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
             var router = new MqttOutboundEndpointRouter<object>(
                 routerFunction,
                 endpointBuilderActions,
-                ClientConfig,
-                MqttEventsHandlers);
+                ClientConfig);
             this.AddOutbound(messageType, router, preloadProducers);
 
             return this;
@@ -118,8 +100,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
             var router = new MqttOutboundEndpointRouter<TMessage>(
                 routerFunction,
                 endpointBuilderActions,
-                ClientConfig,
-                MqttEventsHandlers);
+                ClientConfig);
             this.AddOutbound(router, preloadProducers);
 
             return this;
@@ -133,7 +114,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
             Check.NotNull(messageType, nameof(messageType));
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
 
-            var builder = new MqttProducerEndpointBuilder(ClientConfig, MqttEventsHandlers, this);
+            var builder = new MqttProducerEndpointBuilder(ClientConfig, this);
             endpointBuilderAction.Invoke(builder);
 
             _endpointsConfigurationBuilder.AddOutbound(messageType, builder.Build(), preloadProducers);
@@ -146,7 +127,7 @@ namespace Silverback.Messaging.Configuration.Mqtt
         {
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
 
-            var builder = new MqttConsumerEndpointBuilder(ClientConfig, MqttEventsHandlers, this);
+            var builder = new MqttConsumerEndpointBuilder(ClientConfig, this);
             endpointBuilderAction.Invoke(builder);
 
             _endpointsConfigurationBuilder.AddInbound(builder.Build());

@@ -31,15 +31,11 @@ namespace Silverback.Messaging.Outbound.Routing
         /// <param name="clientConfig">
         ///     The <see cref="MqttClientConfig" />.
         /// </param>
-        /// <param name="mqttEventsHandlers">
-        ///     The <see cref="MqttEventsHandlers"/>.
-        /// </param>
         public MqttOutboundEndpointRouter(
             SingleEndpointRouterFunction routerFunction,
             IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions,
-            MqttClientConfig clientConfig,
-            MqttEventsHandlers mqttEventsHandlers)
-            : base(routerFunction, BuildEndpointsDictionary(endpointBuilderActions, clientConfig, mqttEventsHandlers))
+            MqttClientConfig clientConfig)
+            : base(routerFunction, BuildEndpointsDictionary(endpointBuilderActions, clientConfig))
         {
         }
 
@@ -56,35 +52,29 @@ namespace Silverback.Messaging.Outbound.Routing
         /// <param name="clientConfig">
         ///     The <see cref="MqttClientConfig" />.
         /// </param>
-        /// <param name="mqttEventsHandlers">
-        ///     The <see cref="MqttEventsHandlers"/>.
-        /// </param>
         public MqttOutboundEndpointRouter(
             RouterFunction routerFunction,
             IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions,
-            MqttClientConfig clientConfig,
-            MqttEventsHandlers mqttEventsHandlers)
-            : base(routerFunction, BuildEndpointsDictionary(endpointBuilderActions, clientConfig, mqttEventsHandlers))
+            MqttClientConfig clientConfig)
+            : base(routerFunction, BuildEndpointsDictionary(endpointBuilderActions, clientConfig))
         {
         }
 
         private static Dictionary<string, MqttProducerEndpoint> BuildEndpointsDictionary(
             IReadOnlyDictionary<string, Action<IMqttProducerEndpointBuilder>> endpointBuilderActions,
-            MqttClientConfig clientConfig,
-            MqttEventsHandlers mqttEventsHandlers)
+            MqttClientConfig clientConfig)
         {
             return Check.NotNull(endpointBuilderActions, nameof(endpointBuilderActions))
                 .ToDictionary(
                     pair => pair.Key,
-                    pair => BuildEndpoint(pair.Value, clientConfig, mqttEventsHandlers));
+                    pair => BuildEndpoint(pair.Value, clientConfig));
         }
 
         private static MqttProducerEndpoint BuildEndpoint(
             Action<IMqttProducerEndpointBuilder> builderAction,
-            MqttClientConfig clientConfig,
-            MqttEventsHandlers mqttEventsHandlers)
+            MqttClientConfig clientConfig)
         {
-            var builder = new MqttProducerEndpointBuilder(clientConfig, mqttEventsHandlers);
+            var builder = new MqttProducerEndpointBuilder(clientConfig);
 
             builderAction.Invoke(builder);
 
