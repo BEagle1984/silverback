@@ -1,7 +1,6 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using MQTTnet.Client;
 using Silverback.Messaging.Broker.Callbacks;
