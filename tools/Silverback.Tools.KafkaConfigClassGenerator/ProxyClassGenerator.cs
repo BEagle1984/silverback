@@ -7,7 +7,6 @@ using System.CodeDom.Compiler;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace Silverback.Tools.KafkaConfigClassGenerator
@@ -97,14 +96,17 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
 
             if (_baseClassName == null)
             {
-                _builder.AppendLine($"    public abstract class {_generatedClassName}<TConfig> : ConfluentClientConfigProxyBase");
+                _builder.AppendLine(
+                    $"    public abstract class {_generatedClassName}<TConfig> : ConfluentClientConfigProxyBase");
                 _builder.AppendLine("        where TConfig : Confluent.Kafka.ClientConfig");
                 _builder.AppendLine("    {");
                 _builder.AppendLine("        /// <summary>");
-                _builder.AppendLine($"        ///     Initializes a new instance of the <see cref=\"{_generatedClassName}{{TConfig}}\" /> class.");
+                _builder.AppendLine(
+                    $"        ///     Initializes a new instance of the <see cref=\"{_generatedClassName}{{TConfig}}\" /> class.");
                 _builder.AppendLine("        /// </summary>");
                 _builder.AppendLine("        /// <param name=\"confluentConfig\">");
-                _builder.AppendLine("        ///     The <see cref=\"Confluent.Kafka.ClientConfig\"/> to wrap.");
+                _builder.AppendLine(
+                    "        ///     The <see cref=\"Confluent.Kafka.ClientConfig\"/> to wrap.");
                 _builder.AppendLine("        /// </param>");
                 _builder.AppendLine($"        protected {_generatedClassName}(TConfig confluentConfig)");
                 _builder.AppendLine("        {");
@@ -117,13 +119,17 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
                 _builder.AppendLine($"    public abstract class {_generatedClassName} : {_baseClassName}");
                 _builder.AppendLine("    {");
                 _builder.AppendLine("        /// <summary>");
-                _builder.AppendLine($"        ///     Initializes a new instance of the <see cref=\"{_generatedClassName}\" /> class.");
+                _builder.AppendLine(
+                    $"        ///     Initializes a new instance of the <see cref=\"{_generatedClassName}\" /> class.");
                 _builder.AppendLine("        /// </summary>");
                 _builder.AppendLine("        /// <param name=\"clientConfig\">");
-                _builder.AppendLine($"        ///     The <see cref=\"Confluent.Kafka.ClientConfig\" /> to be used to initialize the <see cref=\"{_clientConfigType}\" />.");
+                _builder.AppendLine(
+                    $"        ///     The <see cref=\"Confluent.Kafka.ClientConfig\" /> to be used to initialize the <see cref=\"{_clientConfigType}\" />.");
                 _builder.AppendLine("        /// </param>");
-                _builder.AppendLine($"        protected {_generatedClassName}(Confluent.Kafka.ClientConfig? clientConfig = null)");
-                _builder.AppendLine($"            : base(clientConfig != null ? new {_clientConfigType}(clientConfig.Clone()) : new {_clientConfigType}())");
+                _builder.AppendLine(
+                    $"        protected {_generatedClassName}(Confluent.Kafka.ClientConfig? clientConfig = null)");
+                _builder.AppendLine(
+                    $"            : base(clientConfig != null ? new {_clientConfigType}(clientConfig.Clone()) : new {_clientConfigType}())");
                 _builder.AppendLine("        {");
                 _builder.AppendLine("        }");
             }
@@ -134,10 +140,7 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
             foreach (var property in GetProperties())
             {
                 var propertyType = GetPropertyTypeString(property.PropertyType);
-                var summary = GetSummary(property);
-
-                if (summary != null)
-                    _builder.AppendLine($"        /// {summary}");
+                WriteSummary(property);
 
                 _builder.AppendLine($"        public {propertyType} {property.Name}");
                 _builder.AppendLine("        {");
@@ -178,7 +181,8 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
             if (_baseClassName == null)
             {
                 _builder.AppendLine("        /// <summary>");
-                _builder.AppendLine("        ///     Gets the <see cref=\"Confluent.Kafka.ClientConfig\" /> instance being wrapped.");
+                _builder.AppendLine(
+                    "        ///     Gets the <see cref=\"Confluent.Kafka.ClientConfig\" /> instance being wrapped.");
                 _builder.AppendLine("        /// </summary>");
                 _builder.AppendLine("        protected TConfig ConfluentConfig { get; }");
                 _builder.AppendLine();
@@ -213,7 +217,7 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
             return writer.GetStringBuilder().ToString();
         }
 
-        private string? GetSummary(PropertyInfo propertyInfo)
+        private void WriteSummary(PropertyInfo propertyInfo)
         {
             if (_xmlDoc == null)
                 LoadXmlDoc();
@@ -222,9 +226,19 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
             var node = _xmlDoc?.SelectSingleNode("//member[starts-with(@name, '" + path + "')]");
 
             if (node == null)
-                return null;
+                return;
 
-            return Regex.Replace(node.InnerXml, @"\s+", " ");
+            foreach (var line in node.InnerXml.Split("\r\n", StringSplitOptions.TrimEntries))
+            {
+                if (line.StartsWith("default: ", StringComparison.Ordinal))
+                    _builder.AppendLine($"        /// <br/><br/>{line}");
+                else if (line.StartsWith("importance: ", StringComparison.Ordinal))
+                    _builder.AppendLine($"        /// <br/>{line}");
+                else
+                    _builder.AppendLine($"        /// {line}");
+            }
+
+            WriteCustomRemarks(propertyInfo.Name);
         }
 
         private void LoadXmlDoc()
@@ -234,6 +248,18 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
 
             _xmlDoc = new XmlDocument();
             _xmlDoc.Load(_xmlDocumentationPath);
+        }
+
+        private void WriteCustomRemarks(string propertyName)
+        {
+            if (propertyName == "DeliveryReportFields")
+            {
+                _builder.AppendLine("            /// <remarks>");
+                _builder.AppendLine(
+                    "            ///     Silverback overrides this value by default setting it to &quot;key,status&quot; as an optimization,");
+                _builder.AppendLine("            ///     since the other fields aren't used.");
+                _builder.AppendLine("            /// </remarks>");
+            }
         }
     }
 }

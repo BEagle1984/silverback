@@ -25,6 +25,9 @@ namespace Silverback.Messaging.Configuration.Kafka
         public KafkaProducerConfig(KafkaClientConfig? clientConfig = null)
             : base(clientConfig?.GetConfluentConfig())
         {
+            // Optimization: by default limit delivery report to just key and status since no other field
+            // is needed
+            DeliveryReportFields = "key,status";
         }
 
         /// <summary>

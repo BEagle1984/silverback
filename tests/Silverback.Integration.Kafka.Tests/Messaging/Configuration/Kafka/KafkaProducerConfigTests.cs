@@ -11,6 +11,14 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
 {
     public class KafkaProducerConfigTests
     {
+        [Fact]
+        public void Constructor_DeliveryReportFieldsSet()
+        {
+            var config = new KafkaProducerConfig();
+
+            config.DeliveryReportFields.Should().Be("key,status");
+        }
+
         [Theory]
         [InlineData(true, true)]
         [InlineData(null, true)]
