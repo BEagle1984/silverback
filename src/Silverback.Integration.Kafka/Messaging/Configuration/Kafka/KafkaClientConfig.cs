@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Configuration.Kafka
     ///     Wraps the <see cref="Confluent.Kafka.ConsumerConfig" /> and contains the properties shared between the
     ///     <see cref="KafkaProducerConfig" /> and <see cref="KafkaConsumerConfig" />.
     /// </summary>
-    public sealed class KafkaClientConfig : ConfluentClientConfigProxy<ClientConfig>
+    public sealed class KafkaClientConfig : ConfluentClientConfigProxy
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaClientConfig" /> class.
