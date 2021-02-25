@@ -95,10 +95,13 @@
     <h3 id="classes">Classes
   </h3>
       <h4><a class="xref" href="Silverback.Messaging.Diagnostics.ActivityConsumerBehavior.html">ActivityConsumerBehavior</a></h4>
-      <section><p>Starts an <see cref="!:Activity"></see> with the tracing information from the message headers.</p>
+      <section><p>Starts an <span class="xref">System.Diagnostics.Activity</span> with the tracing information from the message headers.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Diagnostics.ActivityProducerBehavior.html">ActivityProducerBehavior</a></h4>
-      <section><p>Starts an <see cref="!:Activity"></see> and adds the tracing information to the message headers.</p>
+      <section><p>Starts an <span class="xref">System.Diagnostics.Activity</span> and adds the tracing information to the message headers.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Diagnostics.ActivityTagNames.html">ActivityTagNames</a></h4>
+      <section><p>Contains the name of tags added to the <span class="xref">System.Diagnostics.Activity</span>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Diagnostics.ConsumerPipelineFatalException.html">ConsumerPipelineFatalException</a></h4>
       <section><p>The exception that is rethrown by the <a class="xref" href="Silverback.Messaging.Diagnostics.FatalExceptionLoggerConsumerBehavior.html">FatalExceptionLoggerConsumerBehavior</a> when a fatal
@@ -107,6 +110,19 @@ exception occurs down the consumer pipeline.</p>
       <h4><a class="xref" href="Silverback.Messaging.Diagnostics.FatalExceptionLoggerConsumerBehavior.html">FatalExceptionLoggerConsumerBehavior</a></h4>
       <section><p>Logs the unhandled exceptions thrown while processing the message. These exceptions are fatal since
 they will usually cause the consumer to stop.</p>
+</section>
+    <h3 id="interfaces">Interfaces
+  </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Diagnostics.IActivityEnricherFactory.html">IActivityEnricherFactory</a></h4>
+      <section><p>Creates a <a class="xref" href="Silverback.Messaging.Diagnostics.IBrokerActivityEnricher.html">IBrokerActivityEnricher</a> for a given endpoint.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Diagnostics.IBrokerActivityEnricher.html">IBrokerActivityEnricher</a></h4>
+      <section><p>Provides enrichment for activities produced by the <a class="xref" href="Silverback.Messaging.Diagnostics.ActivityProducerBehavior.html">ActivityProducerBehavior</a> and
+<a class="xref" href="Silverback.Messaging.Diagnostics.ActivityConsumerBehavior.html">ActivityConsumerBehavior</a>.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Diagnostics.IBrokerActivityEnricher-1.html">IBrokerActivityEnricher&lt;TEndpoint&gt;</a></h4>
+      <section><p>Provides enrichment for activities produced by the <a class="xref" href="Silverback.Messaging.Diagnostics.ActivityProducerBehavior.html">ActivityProducerBehavior</a> and
+<a class="xref" href="Silverback.Messaging.Diagnostics.ActivityConsumerBehavior.html">ActivityConsumerBehavior</a> for the specified endpoint type.</p>
 </section>
 </article>
           </div>

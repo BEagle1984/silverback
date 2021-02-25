@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_Publishing_QueryPublisher" data-uid="Silverback.Messaging.Publishing.QueryPublisher" class="text-break">Class QueryPublisher
   </h1>
-  <div class="markdown level0 summary"><p>Publishes the messages implementing <see cref="!:IQuery&lt;TResult>"></see>.</p>
+  <div class="markdown level0 summary"><p>Publishes the messages implementing <a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery&lt;TResult&gt;</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -105,16 +105,10 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -125,17 +119,28 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Publishing.html">Silverback.Messaging.Publishing</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Core.Model.dll</h6>
   <h5 id="Silverback_Messaging_Publishing_QueryPublisher_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class QueryPublisher : IQueryPublisher</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_QueryPublisher__ctor_Silverback_Messaging_Publishing_IPublisher_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.QueryPublisher.%23ctor(Silverback.Messaging.Publishing.IPublisher)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Core.Model/Messaging/Publishing/QueryPublisher.cs/#L21">View source</a>
+  </span>
   <a id="Silverback_Messaging_Publishing_QueryPublisher__ctor_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.#ctor*"></a>
   <h4 id="Silverback_Messaging_Publishing_QueryPublisher__ctor_Silverback_Messaging_Publishing_IPublisher_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.#ctor(Silverback.Messaging.Publishing.IPublisher)">QueryPublisher(IPublisher)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Publishing.QueryPublisher.html">QueryPublisher</a> class.</p>
@@ -165,145 +170,15 @@
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_QueryPublisher_Execute__1_Silverback_Messaging_Messages_IQuery___0__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.QueryPublisher.Execute%60%601(Silverback.Messaging.Messages.IQuery%7B%60%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Core.Model/Messaging/Publishing/QueryPublisher.cs/#L27">View source</a>
+  </span>
   <a id="Silverback_Messaging_Publishing_QueryPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_Execute__1_IEnumerable_IQuery___0___" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute``1(IEnumerable{IQuery{``0}})">Execute&lt;TResult&gt;(IEnumerable&lt;IQuery&lt;TResult&gt;&gt;)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified queries publishing them to the internal bus. The messages will be forwarded
-to their subscribers and the method will not complete until all subscribers have processed all
-messages (unless using Silverback.Integration to produce and consume the messages through a message
-broker).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;TResult&gt; Execute&lt;TResult&gt;(IEnumerable&lt;IQuery&lt;TResult&gt;&gt; queryMessages)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">IQuery</span>&lt;TResult&gt;&gt;</td>
-        <td><span class="parametername">queryMessages</span></td>
-        <td><p>The queries to be executed.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">IReadOnlyCollection</span>&lt;TResult&gt;</td>
-        <td><p>The queries result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the expected query result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_Publishing_QueryPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_Execute__1_IEnumerable_IQuery___0___System_Boolean_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute``1(IEnumerable{IQuery{``0}},System.Boolean)">Execute&lt;TResult&gt;(IEnumerable&lt;IQuery&lt;TResult&gt;&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified queries publishing them to the internal bus. The messages will be forwarded
-to their subscribers and the method will not complete until all subscribers have processed all
-messages (unless using Silverback.Integration to produce and consume the messages through a message
-broker).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;TResult&gt; Execute&lt;TResult&gt;(IEnumerable&lt;IQuery&lt;TResult&gt;&gt; queryMessages, bool throwIfUnhandled)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">IQuery</span>&lt;TResult&gt;&gt;</td>
-        <td><span class="parametername">queryMessages</span></td>
-        <td><p>The queries to be executed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
-message.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">IReadOnlyCollection</span>&lt;TResult&gt;</td>
-        <td><p>The queries result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the expected query result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_Publishing_QueryPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_Execute__1_IQuery___0__" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute``1(IQuery{``0})">Execute&lt;TResult&gt;(IQuery&lt;TResult&gt;)</h4>
+  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_Execute__1_Silverback_Messaging_Messages_IQuery___0__" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute``1(Silverback.Messaging.Messages.IQuery{``0})">Execute&lt;TResult&gt;(IQuery&lt;TResult&gt;)</h4>
   <div class="markdown level1 summary"><p>Executes the specified query publishing it to the internal bus. The message will be forwarded to its
 subscribers and the method will not complete until all subscribers have processed it (unless using
 Silverback.Integration to produce and consume the message through a message broker).</p>
@@ -324,7 +199,7 @@ Silverback.Integration to produce and consume the message through a message brok
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IQuery</span>&lt;TResult&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</td>
         <td><span class="parametername">queryMessage</span></td>
         <td><p>The query to be executed.</p>
 </td>
@@ -363,10 +238,15 @@ Silverback.Integration to produce and consume the message through a message brok
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_QueryPublisher_Execute__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.QueryPublisher.Execute%60%601(Silverback.Messaging.Messages.IQuery%7B%60%600%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Core.Model/Messaging/Publishing/QueryPublisher.cs/#L31">View source</a>
+  </span>
   <a id="Silverback_Messaging_Publishing_QueryPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute*"></a>
-  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_Execute__1_IQuery___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute``1(IQuery{``0},System.Boolean)">Execute&lt;TResult&gt;(IQuery&lt;TResult&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_Execute__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.Execute``1(Silverback.Messaging.Messages.IQuery{``0},System.Boolean)">Execute&lt;TResult&gt;(IQuery&lt;TResult&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Executes the specified query publishing it to the internal bus. The message will be forwarded to its
 subscribers and the method will not complete until all subscribers have processed it (unless using
 Silverback.Integration to produce and consume the message through a message broker).</p>
@@ -387,7 +267,7 @@ Silverback.Integration to produce and consume the message through a message brok
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IQuery</span>&lt;TResult&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</td>
         <td><span class="parametername">queryMessage</span></td>
         <td><p>The query to be executed.</p>
 </td>
@@ -433,147 +313,17 @@ message.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_IQuery___0__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync%60%601(Silverback.Messaging.Messages.IQuery%7B%60%600%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Core.Model/Messaging/Publishing/QueryPublisher.cs/#L35">View source</a>
+  </span>
   <a id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync__1_IEnumerable_IQuery___0___" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync``1(IEnumerable{IQuery{``0}})">ExecuteAsync&lt;TResult&gt;(IEnumerable&lt;IQuery&lt;TResult&gt;&gt;)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified queries publishing them to the internal bus. The messages will be forwarded
-to their subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have
-processed all messages (unless using Silverback.Integration to produce and consume the messages
-through a message broker).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;IReadOnlyCollection&lt;TResult&gt;&gt; ExecuteAsync&lt;TResult&gt;(IEnumerable&lt;IQuery&lt;TResult&gt;&gt; queryMessages)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">IQuery</span>&lt;TResult&gt;&gt;</td>
-        <td><span class="parametername">queryMessages</span></td>
-        <td><p>The queries to be executed.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Task</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;TResult&gt;&gt;</td>
-        <td><p>A <see cref="!:Task"></see> representing the asynchronous operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the expected query result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync__1_IEnumerable_IQuery___0___System_Boolean_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync``1(IEnumerable{IQuery{``0}},System.Boolean)">ExecuteAsync&lt;TResult&gt;(IEnumerable&lt;IQuery&lt;TResult&gt;&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified queries publishing them to the internal bus. The messages will be forwarded
-to their subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have
-processed all messages (unless using Silverback.Integration to produce and consume the messages
-through a message broker).</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task&lt;IReadOnlyCollection&lt;TResult&gt;&gt; ExecuteAsync&lt;TResult&gt;(IEnumerable&lt;IQuery&lt;TResult&gt;&gt; queryMessages, bool throwIfUnhandled)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">IQuery</span>&lt;TResult&gt;&gt;</td>
-        <td><span class="parametername">queryMessages</span></td>
-        <td><p>The queries to be executed.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
-message.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Task</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;TResult&gt;&gt;</td>
-        <td><p>A <see cref="!:Task"></see> representing the asynchronous operation.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the expected query result.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync__1_IQuery___0__" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync``1(IQuery{``0})">ExecuteAsync&lt;TResult&gt;(IQuery&lt;TResult&gt;)</h4>
+  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_IQuery___0__" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync``1(Silverback.Messaging.Messages.IQuery{``0})">ExecuteAsync&lt;TResult&gt;(IQuery&lt;TResult&gt;)</h4>
   <div class="markdown level1 summary"><p>Executes the specified query publishing it to the internal bus. The message will be forwarded to its
-subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have processed it
+subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed it
 (unless using Silverback.Integration to produce and consume the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -592,7 +342,7 @@ subscribers and the <see cref="!:Task"></see> will not complete until all subscr
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IQuery</span>&lt;TResult&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</td>
         <td><span class="parametername">queryMessage</span></td>
         <td><p>The query to be executed.</p>
 </td>
@@ -609,8 +359,8 @@ subscribers and the <see cref="!:Task"></see> will not complete until all subscr
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;TResult&gt;</td>
-        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TResult&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
 query result.</p>
 </td>
       </tr>
@@ -632,12 +382,17 @@ query result.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync%60%601(Silverback.Messaging.Messages.IQuery%7B%60%600%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Core.Model/Messaging/Publishing/QueryPublisher.cs/#L41">View source</a>
+  </span>
   <a id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync__1_IQuery___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync``1(IQuery{``0},System.Boolean)">ExecuteAsync&lt;TResult&gt;(IQuery&lt;TResult&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Publishing_QueryPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_IQuery___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.QueryPublisher.ExecuteAsync``1(Silverback.Messaging.Messages.IQuery{``0},System.Boolean)">ExecuteAsync&lt;TResult&gt;(IQuery&lt;TResult&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Executes the specified query publishing it to the internal bus. The message will be forwarded to its
-subscribers and the <see cref="!:Task"></see> will not complete until all subscribers have processed it
+subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed it
 (unless using Silverback.Integration to produce and consume the message through a message broker).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -656,7 +411,7 @@ subscribers and the <see cref="!:Task"></see> will not complete until all subscr
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IQuery</span>&lt;TResult&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IQuery-1.html">IQuery</a>&lt;TResult&gt;</td>
         <td><span class="parametername">queryMessage</span></td>
         <td><p>The query to be executed.</p>
 </td>
@@ -680,8 +435,8 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;TResult&gt;</td>
-        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TResult&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
 query result.</p>
 </td>
       </tr>
@@ -714,6 +469,12 @@ query result.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Publishing_QueryPublisher.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Publishing.QueryPublisher%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Core.Model/Messaging/Publishing/QueryPublisher.cs/#L11" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

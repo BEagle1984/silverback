@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer" class="text-break">Class BinaryFileMessageSerializer
   </h1>
-  <div class="markdown level0 summary"><p>Handles the default implementation of <see cref="!:IBinaryFileMessage"></see>. It's not really a
+  <div class="markdown level0 summary"><p>Handles the default implementation of <a class="xref" href="Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a>. It's not really a
 serializer, since the raw binary content is transmitted as-is.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -99,16 +99,49 @@ serializer, since the raw binary content is transmitted as-is.</p>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">BinaryFileMessageSerializer</span></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.BinaryFiles.html">Silverback.Messaging.BinaryFiles</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class BinaryFileMessageSerializer : IMessageSerializer</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_Default.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.Default%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/BinaryFiles/BinaryFileMessageSerializer.cs/#L23">View source</a>
+  </span>
   <a id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_Default_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.Default*"></a>
   <h4 id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_Default" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.Default">Default</h4>
   <div class="markdown level1 summary"><p>Gets the default static instance of <a class="xref" href="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.html">BinaryFileMessageSerializer</a>.</p>
@@ -133,11 +166,18 @@ serializer, since the raw binary content is transmitted as-is.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_RequireHeaders.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.RequireHeaders%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/BinaryFiles/BinaryFileMessageSerializer.cs/#L26">View source</a>
+  </span>
   <a id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_RequireHeaders_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.RequireHeaders*"></a>
   <h4 id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_RequireHeaders" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.RequireHeaders">RequireHeaders</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets a value indicating whether headers are mandatory for this serializer implementation or configuration
+to work properly.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -160,15 +200,21 @@ serializer, since the raw binary content is transmitted as-is.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_DeserializeAsync_System_IO_Stream_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.DeserializeAsync(System.IO.Stream%2CSilverback.Messaging.Messages.MessageHeaderCollection%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/BinaryFiles/BinaryFileMessageSerializer.cs/#L62">View source</a>
+  </span>
   <a id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_DeserializeAsync_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.DeserializeAsync*"></a>
-  <h4 id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_DeserializeAsync_System_Nullable_Stream__MessageHeaderCollection_MessageSerializationContext_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.DeserializeAsync(System.Nullable{Stream},MessageHeaderCollection,MessageSerializationContext)">DeserializeAsync(Nullable&lt;Stream&gt;, MessageHeaderCollection, MessageSerializationContext)</h4>
-  <div class="markdown level1 summary"></div>
+  <h4 id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_DeserializeAsync_System_IO_Stream_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.DeserializeAsync(System.IO.Stream,Silverback.Messaging.Messages.MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">DeserializeAsync(Stream, MessageHeaderCollection, MessageSerializationContext)</h4>
+  <div class="markdown level1 summary"><p>Deserializes the byte array back into a message object.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ValueTask&lt;(object Message, Type MessageType)&gt; DeserializeAsync(Stream? messageStream, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">public ValueTask&lt;(object Message, Type MessageType)&gt; DeserializeAsync(Stream messageStream, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -181,19 +227,22 @@ serializer, since the raw binary content is transmitted as-is.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Stream</span>&gt;</td>
+        <td><span class="xref">System.IO.Stream</span></td>
         <td><span class="parametername">messageStream</span></td>
-        <td></td>
+        <td><p>The <span class="xref">System.IO.Stream</span> containing the message to be deserialized.</p>
+</td>
       </tr>
       <tr>
-        <td><span class="xref">MessageHeaderCollection</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.MessageHeaderCollection.html">MessageHeaderCollection</a></td>
         <td><span class="parametername">messageHeaders</span></td>
-        <td></td>
+        <td><p>The message headers collection.</p>
+</td>
       </tr>
       <tr>
-        <td><span class="xref">MessageSerializationContext</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Serialization.MessageSerializationContext.html">MessageSerializationContext</a></td>
         <td><span class="parametername">context</span></td>
-        <td></td>
+        <td><p>The context information.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -207,20 +256,28 @@ serializer, since the raw binary content is transmitted as-is.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">ValueTask</span>&lt;<span class="xref">System.ValueTuple</span>&lt;<span class="xref">System.Object</span>, <span class="xref">System.Type</span>&gt;&gt;</td>
-        <td></td>
+        <td><span class="xref">System.Threading.Tasks.ValueTask</span>&lt;<span class="xref">System.ValueTuple</span>&lt;<span class="xref">System.Object</span>, <span class="xref">System.Type</span>&gt;&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+deserialized message (or <code>null</code> when the input is null or empty) and the type of the message.</p>
+</td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_SerializeAsync_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.SerializeAsync(System.Object%2CSilverback.Messaging.Messages.MessageHeaderCollection%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/BinaryFiles/BinaryFileMessageSerializer.cs/#L29">View source</a>
+  </span>
   <a id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_SerializeAsync_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.SerializeAsync*"></a>
-  <h4 id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_SerializeAsync_System_Object_MessageHeaderCollection_MessageSerializationContext_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.SerializeAsync(System.Object,MessageHeaderCollection,MessageSerializationContext)">SerializeAsync(Object, MessageHeaderCollection, MessageSerializationContext)</h4>
-  <div class="markdown level1 summary"></div>
+  <h4 id="Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer_SerializeAsync_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.SerializeAsync(System.Object,Silverback.Messaging.Messages.MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">SerializeAsync(Object, MessageHeaderCollection, MessageSerializationContext)</h4>
+  <div class="markdown level1 summary"><p>Serializes the specified message object into a byte array.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ValueTask&lt;Stream?&gt; SerializeAsync(object message, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">public ValueTask&lt;Stream&gt; SerializeAsync(object message, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -235,17 +292,20 @@ serializer, since the raw binary content is transmitted as-is.</p>
       <tr>
         <td><span class="xref">System.Object</span></td>
         <td><span class="parametername">message</span></td>
-        <td></td>
+        <td><p>The message object to be serialized.</p>
+</td>
       </tr>
       <tr>
-        <td><span class="xref">MessageHeaderCollection</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.MessageHeaderCollection.html">MessageHeaderCollection</a></td>
         <td><span class="parametername">messageHeaders</span></td>
-        <td></td>
+        <td><p>The message headers collection.</p>
+</td>
       </tr>
       <tr>
-        <td><span class="xref">MessageSerializationContext</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Serialization.MessageSerializationContext.html">MessageSerializationContext</a></td>
         <td><span class="parametername">context</span></td>
-        <td></td>
+        <td><p>The context information.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -259,11 +319,17 @@ serializer, since the raw binary content is transmitted as-is.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">ValueTask</span>&lt;<span class="xref">System.Nullable</span>&lt;<span class="xref">Stream</span>&gt;&gt;</td>
-        <td></td>
+        <td><span class="xref">System.Threading.Tasks.ValueTask</span>&lt;<span class="xref">System.IO.Stream</span>&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+<span class="xref">System.IO.Stream</span> with the serialized message.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>
+  </div>
 </article>
           </div>
           
@@ -271,6 +337,12 @@ serializer, since the raw binary content is transmitted as-is.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryFiles_BinaryFileMessageSerializer.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/BinaryFiles/BinaryFileMessageSerializer.cs/#L18" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

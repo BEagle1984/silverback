@@ -100,18 +100,23 @@
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.html">Silverback.Messaging.Configuration.Mqtt</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.dll</h6>
   <h5 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public interface IMqttEndpointsConfigurationBuilder : IEndpointsConfigurationBuilder</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddInbound_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttConsumerEndpointBuilder__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound(System.Action%7BSilverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttEndpointsConfigurationBuilder.cs/#L201">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddInbound_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddInbound_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttConsumerEndpointBuilder__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound(System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder})">AddInbound(Action&lt;IMqttConsumerEndpointBuilder&gt;)</h4>
-  <div class="markdown level1 summary"><p>Adds an inbound endpoint and instantiates a <see cref="!:MqttConsumer"></see> to consume from a Mqtt topic.</p>
+  <div class="markdown level1 summary"><p>Adds an inbound endpoint and instantiates a <a class="xref" href="Silverback.Messaging.Broker.MqttConsumer.html">MqttConsumer</a> to consume from a Mqtt topic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -159,10 +164,15 @@ multiple connections being issues and more resources being used. The <a class="x
 allows to define multiple topics to be consumed, to efficiently instantiate a single consumer for all of
 them.</p>
 </div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_System_Type_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_System_Object_Silverback_Messaging_MqttProducerEndpoint__RouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound(System.Type%2CSilverback.Messaging.Outbound.Routing.DictionaryOutboundRouter%7BSystem.Object%2CSilverback.Messaging.MqttProducerEndpoint%7D.RouterFunction%2CSystem.Collections.Generic.IReadOnlyDictionary%7BSystem.String%2CSystem.Action%7BSilverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder%7D%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttEndpointsConfigurationBuilder.cs/#L79">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_System_Type_DictionaryOutboundRouter_System_Object_Silverback_Messaging_MqttProducerEndpoint__RouterFunction_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound(System.Type,DictionaryOutboundRouter{System.Object,Silverback.Messaging.MqttProducerEndpoint}.RouterFunction,IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder}},System.Boolean)">AddOutbound(Type, DictionaryOutboundRouter&lt;Object, MqttProducerEndpoint&gt;.RouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IMqttProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_System_Type_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_System_Object_Silverback_Messaging_MqttProducerEndpoint__RouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound(System.Type,Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter{System.Object,Silverback.Messaging.MqttProducerEndpoint}.RouterFunction,System.Collections.Generic.IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder}},System.Boolean)">AddOutbound(Type, DictionaryOutboundRouter&lt;Object, MqttProducerEndpoint&gt;.RouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IMqttProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Mqtt topic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -187,15 +197,15 @@ them.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">DictionaryOutboundRouter.RouterFunction</span>&lt;&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.RouterFunction.html">DictionaryOutboundRouter.RouterFunction</a>&lt;&gt;</td>
         <td><span class="parametername">routerFunction</span></td>
-        <td><p>The <see cref="!:DictionaryOutboundRouter&lt;TMessage, TEndpoint>.RouterFunction"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.RouterFunction.html">DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;.RouterFunction</a>.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html">IMqttProducerEndpointBuilder</a>&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html">IMqttProducerEndpointBuilder</a>&gt;&gt;</td>
         <td><span class="parametername">endpointBuilderActions</span></td>
-        <td><p>The <see cref="!:IReadOnlyDictionary&lt;TKey,TValue>"></see> containing the key of each endpoint and the
+        <td><p>The <span class="xref">System.Collections.Generic.IReadOnlyDictionary&lt;TKey, TValue&gt;</span> containing the key of each endpoint and the
 <span class="xref">System.Action&lt;T&gt;</span> to be invoked to build them.</p>
 </td>
       </tr>
@@ -203,7 +213,7 @@ them.</p>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">preloadProducers</span></td>
         <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -224,10 +234,15 @@ them.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_System_Type_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_System_Object_Silverback_Messaging_MqttProducerEndpoint__SingleEndpointRouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound(System.Type%2CSilverback.Messaging.Outbound.Routing.DictionaryOutboundRouter%7BSystem.Object%2CSilverback.Messaging.MqttProducerEndpoint%7D.SingleEndpointRouterFunction%2CSystem.Collections.Generic.IReadOnlyDictionary%7BSystem.String%2CSystem.Action%7BSilverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder%7D%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttEndpointsConfigurationBuilder.cs/#L130">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_System_Type_DictionaryOutboundRouter_System_Object_Silverback_Messaging_MqttProducerEndpoint__SingleEndpointRouterFunction_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound(System.Type,DictionaryOutboundRouter{System.Object,Silverback.Messaging.MqttProducerEndpoint}.SingleEndpointRouterFunction,IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder}},System.Boolean)">AddOutbound(Type, DictionaryOutboundRouter&lt;Object, MqttProducerEndpoint&gt;.SingleEndpointRouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IMqttProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_System_Type_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_System_Object_Silverback_Messaging_MqttProducerEndpoint__SingleEndpointRouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound(System.Type,Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter{System.Object,Silverback.Messaging.MqttProducerEndpoint}.SingleEndpointRouterFunction,System.Collections.Generic.IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder}},System.Boolean)">AddOutbound(Type, DictionaryOutboundRouter&lt;Object, MqttProducerEndpoint&gt;.SingleEndpointRouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IMqttProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Mqtt topic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -252,15 +267,15 @@ them.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">DictionaryOutboundRouter.SingleEndpointRouterFunction</span>&lt;&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.SingleEndpointRouterFunction.html">DictionaryOutboundRouter.SingleEndpointRouterFunction</a>&lt;&gt;</td>
         <td><span class="parametername">routerFunction</span></td>
-        <td><p>The <see cref="!:DictionaryOutboundRouter&lt;TMessage, TEndpoint>.SingleEndpointRouterFunction"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.SingleEndpointRouterFunction.html">DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;.SingleEndpointRouterFunction</a>.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html">IMqttProducerEndpointBuilder</a>&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html">IMqttProducerEndpointBuilder</a>&gt;&gt;</td>
         <td><span class="parametername">endpointBuilderActions</span></td>
-        <td><p>The <see cref="!:IReadOnlyDictionary&lt;TKey,TValue>"></see> containing the key of each endpoint and the
+        <td><p>The <span class="xref">System.Collections.Generic.IReadOnlyDictionary&lt;TKey, TValue&gt;</span> containing the key of each endpoint and the
 <span class="xref">System.Action&lt;T&gt;</span> to be invoked to build them.</p>
 </td>
       </tr>
@@ -268,7 +283,7 @@ them.</p>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">preloadProducers</span></td>
         <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -289,8 +304,13 @@ them.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_System_Type_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder__System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound(System.Type%2CSystem.Action%7BSilverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttEndpointsConfigurationBuilder.cs/#L180">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_System_Type_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder__System_Boolean_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound(System.Type,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder},System.Boolean)">AddOutbound(Type, Action&lt;IMqttProducerEndpointBuilder&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Mqtt topic.</p>
@@ -327,7 +347,7 @@ it.</p>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">preloadProducers</span></td>
         <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -348,10 +368,15 @@ it.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound__1_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter___0_Silverback_Messaging_MqttProducerEndpoint__RouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound%60%601(Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter%7B%60%600%2CSilverback.Messaging.MqttProducerEndpoint%7D.RouterFunction%2CSystem.Collections.Generic.IReadOnlyDictionary%7BSystem.String%2CSystem.Action%7BSilverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder%7D%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttEndpointsConfigurationBuilder.cs/#L105">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound__1_DictionaryOutboundRouter___0_Silverback_Messaging_MqttProducerEndpoint__RouterFunction_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound``1(DictionaryOutboundRouter{``0,Silverback.Messaging.MqttProducerEndpoint}.RouterFunction,IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder}},System.Boolean)">AddOutbound&lt;TMessage&gt;(DictionaryOutboundRouter&lt;TMessage, MqttProducerEndpoint&gt;.RouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IMqttProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound__1_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter___0_Silverback_Messaging_MqttProducerEndpoint__RouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound``1(Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter{``0,Silverback.Messaging.MqttProducerEndpoint}.RouterFunction,System.Collections.Generic.IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder}},System.Boolean)">AddOutbound&lt;TMessage&gt;(DictionaryOutboundRouter&lt;TMessage, MqttProducerEndpoint&gt;.RouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IMqttProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Mqtt topic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -370,15 +395,15 @@ it.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">DictionaryOutboundRouter.RouterFunction</span>&lt;&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.RouterFunction.html">DictionaryOutboundRouter.RouterFunction</a>&lt;&gt;</td>
         <td><span class="parametername">routerFunction</span></td>
-        <td><p>The <see cref="!:DictionaryOutboundRouter&lt;TMessage, TEndpoint>.RouterFunction"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.RouterFunction.html">DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;.RouterFunction</a>.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html">IMqttProducerEndpointBuilder</a>&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html">IMqttProducerEndpointBuilder</a>&gt;&gt;</td>
         <td><span class="parametername">endpointBuilderActions</span></td>
-        <td><p>The <see cref="!:IReadOnlyDictionary&lt;TKey,TValue>"></see> containing the key of each endpoint and the
+        <td><p>The <span class="xref">System.Collections.Generic.IReadOnlyDictionary&lt;TKey, TValue&gt;</span> containing the key of each endpoint and the
 <span class="xref">System.Action&lt;T&gt;</span> to be invoked to build them.</p>
 </td>
       </tr>
@@ -386,7 +411,7 @@ it.</p>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">preloadProducers</span></td>
         <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -423,10 +448,15 @@ it.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound__1_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter___0_Silverback_Messaging_MqttProducerEndpoint__SingleEndpointRouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound%60%601(Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter%7B%60%600%2CSilverback.Messaging.MqttProducerEndpoint%7D.SingleEndpointRouterFunction%2CSystem.Collections.Generic.IReadOnlyDictionary%7BSystem.String%2CSystem.Action%7BSilverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder%7D%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttEndpointsConfigurationBuilder.cs/#L157">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound__1_DictionaryOutboundRouter___0_Silverback_Messaging_MqttProducerEndpoint__SingleEndpointRouterFunction_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound``1(DictionaryOutboundRouter{``0,Silverback.Messaging.MqttProducerEndpoint}.SingleEndpointRouterFunction,IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder}},System.Boolean)">AddOutbound&lt;TMessage&gt;(DictionaryOutboundRouter&lt;TMessage, MqttProducerEndpoint&gt;.SingleEndpointRouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IMqttProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound__1_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter___0_Silverback_Messaging_MqttProducerEndpoint__SingleEndpointRouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound``1(Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter{``0,Silverback.Messaging.MqttProducerEndpoint}.SingleEndpointRouterFunction,System.Collections.Generic.IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder}},System.Boolean)">AddOutbound&lt;TMessage&gt;(DictionaryOutboundRouter&lt;TMessage, MqttProducerEndpoint&gt;.SingleEndpointRouterFunction, IReadOnlyDictionary&lt;String, Action&lt;IMqttProducerEndpointBuilder&gt;&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Mqtt topic.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -445,15 +475,15 @@ it.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">DictionaryOutboundRouter.SingleEndpointRouterFunction</span>&lt;&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.SingleEndpointRouterFunction.html">DictionaryOutboundRouter.SingleEndpointRouterFunction</a>&lt;&gt;</td>
         <td><span class="parametername">routerFunction</span></td>
-        <td><p>The <see cref="!:DictionaryOutboundRouter&lt;TMessage, TEndpoint>.SingleEndpointRouterFunction"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.SingleEndpointRouterFunction.html">DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;.SingleEndpointRouterFunction</a>.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html">IMqttProducerEndpointBuilder</a>&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder.html">IMqttProducerEndpointBuilder</a>&gt;&gt;</td>
         <td><span class="parametername">endpointBuilderActions</span></td>
-        <td><p>The <see cref="!:IReadOnlyDictionary&lt;TKey,TValue>"></see> containing the key of each endpoint and the
+        <td><p>The <span class="xref">System.Collections.Generic.IReadOnlyDictionary&lt;TKey, TValue&gt;</span> containing the key of each endpoint and the
 <span class="xref">System.Action&lt;T&gt;</span> to be invoked to build them.</p>
 </td>
       </tr>
@@ -461,7 +491,7 @@ it.</p>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">preloadProducers</span></td>
         <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -498,8 +528,13 @@ it.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound__1_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder__System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound%60%601(System.Action%7BSilverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttEndpointsConfigurationBuilder.cs/#L55">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound__1_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder__System_Boolean_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound``1(System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder},System.Boolean)">AddOutbound&lt;TMessage&gt;(Action&lt;IMqttProducerEndpointBuilder&gt;, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint to produce the specified message type to a Mqtt topic.</p>
@@ -530,7 +565,7 @@ it.</p>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">preloadProducers</span></td>
         <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -567,8 +602,13 @@ it.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.Configure(System.Action%7BSilverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttEndpointsConfigurationBuilder.cs/#L36">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_Configure_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.Configure*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttClientConfigBuilder__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.Configure(System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder})">Configure(Action&lt;IMqttClientConfigBuilder&gt;)</h4>
   <div class="markdown level1 summary"><p>Configures the MQTT client properties that are shared between the producers and consumers.</p>
@@ -612,8 +652,13 @@ it.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.Configure(System.Action%7BSilverback.Messaging.Configuration.Mqtt.MqttClientConfig%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttEndpointsConfigurationBuilder.cs/#L25">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_Configure_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.Configure*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.Configure(System.Action{Silverback.Messaging.Configuration.Mqtt.MqttClientConfig})">Configure(Action&lt;MqttClientConfig&gt;)</h4>
   <div class="markdown level1 summary"><p>Configures the MQTT client properties that are shared between the producers and consumers.</p>
@@ -657,6 +702,13 @@ it.</p>
       </tr>
     </tbody>
   </table>
+  <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddMqttEndpointsExtensions.html#Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddMqttEndpointsExtensions_AddMqttEndpoints_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder__">EndpointsConfigurationBuilderAddMqttEndpointsExtensions.AddMqttEndpoints(IEndpointsConfigurationBuilder, Action&lt;IMqttEndpointsConfigurationBuilder&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddKafkaEndpointsExtensions.html#Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddKafkaEndpointsExtensions_AddKafkaEndpoints_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder__">EndpointsConfigurationBuilderAddKafkaEndpointsExtensions.AddKafkaEndpoints(IEndpointsConfigurationBuilder, Action&lt;IKafkaEndpointsConfigurationBuilder&gt;)</a>
+  </div>
 </article>
           </div>
           
@@ -664,6 +716,12 @@ it.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/IMqttEndpointsConfigurationBuilder.cs/#L14" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

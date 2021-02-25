@@ -101,16 +101,10 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -121,17 +115,28 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Database.Model.html">Silverback.Database.Model</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Database_Model_OutboxMessage_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class OutboxMessage</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_Model_OutboxMessage_ActualEndpointName.md&amp;value=---%0Auid%3A%20Silverback.Database.Model.OutboxMessage.ActualEndpointName%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Database/Model/OutboxMessage.cs/#L59">View source</a>
+  </span>
   <a id="Silverback_Database_Model_OutboxMessage_ActualEndpointName_" data-uid="Silverback.Database.Model.OutboxMessage.ActualEndpointName*"></a>
   <h4 id="Silverback_Database_Model_OutboxMessage_ActualEndpointName" data-uid="Silverback.Database.Model.OutboxMessage.ActualEndpointName">ActualEndpointName</h4>
   <div class="markdown level1 summary"><p>Gets or sets the name of the actual target endpoint that was resolved for the message.</p>
@@ -139,7 +144,8 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string ActualEndpointName { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">[MaxLength(300)]
+public string ActualEndpointName { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -156,8 +162,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_Model_OutboxMessage_Content.md&amp;value=---%0Auid%3A%20Silverback.Database.Model.OutboxMessage.Content%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Database/Model/OutboxMessage.cs/#L31">View source</a>
+  </span>
   <a id="Silverback_Database_Model_OutboxMessage_Content_" data-uid="Silverback.Database.Model.OutboxMessage.Content*"></a>
   <h4 id="Silverback_Database_Model_OutboxMessage_Content" data-uid="Silverback.Database.Model.OutboxMessage.Content">Content</h4>
   <div class="markdown level1 summary"><p>Gets or sets the message content (body).</p>
@@ -182,8 +193,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_Model_OutboxMessage_Created.md&amp;value=---%0Auid%3A%20Silverback.Database.Model.OutboxMessage.Created%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Database/Model/OutboxMessage.cs/#L65">View source</a>
+  </span>
   <a id="Silverback_Database_Model_OutboxMessage_Created_" data-uid="Silverback.Database.Model.OutboxMessage.Created*"></a>
   <h4 id="Silverback_Database_Model_OutboxMessage_Created" data-uid="Silverback.Database.Model.OutboxMessage.Created">Created</h4>
   <div class="markdown level1 summary"><p>Gets or sets the datetime when the message was stored in the queue.</p>
@@ -208,8 +224,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_Model_OutboxMessage_EndpointName.md&amp;value=---%0Auid%3A%20Silverback.Database.Model.OutboxMessage.EndpointName%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Database/Model/OutboxMessage.cs/#L53">View source</a>
+  </span>
   <a id="Silverback_Database_Model_OutboxMessage_EndpointName_" data-uid="Silverback.Database.Model.OutboxMessage.EndpointName*"></a>
   <h4 id="Silverback_Database_Model_OutboxMessage_EndpointName" data-uid="Silverback.Database.Model.OutboxMessage.EndpointName">EndpointName</h4>
   <div class="markdown level1 summary"><p>Gets or sets the name of the producer endpoint.</p>
@@ -217,7 +238,8 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string EndpointName { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">[MaxLength(300)]
+public string EndpointName { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -234,8 +256,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_Model_OutboxMessage_Headers.md&amp;value=---%0Auid%3A%20Silverback.Database.Model.OutboxMessage.Headers%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Database/Model/OutboxMessage.cs/#L41">View source</a>
+  </span>
   <a id="Silverback_Database_Model_OutboxMessage_Headers_" data-uid="Silverback.Database.Model.OutboxMessage.Headers*"></a>
   <h4 id="Silverback_Database_Model_OutboxMessage_Headers" data-uid="Silverback.Database.Model.OutboxMessage.Headers">Headers</h4>
   <div class="markdown level1 summary"><p>Gets or sets the serialized message headers.</p>
@@ -265,8 +292,13 @@ public string Headers { get; set; }</code></pre>
   <div class="markdown level1 remarks"><p>This field is no longer used (replaced by SerializedHeaders) and will be removed
 with the next major release.</p>
 </div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_Model_OutboxMessage_Id.md&amp;value=---%0Auid%3A%20Silverback.Database.Model.OutboxMessage.Id%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Database/Model/OutboxMessage.cs/#L19">View source</a>
+  </span>
   <a id="Silverback_Database_Model_OutboxMessage_Id_" data-uid="Silverback.Database.Model.OutboxMessage.Id*"></a>
   <h4 id="Silverback_Database_Model_OutboxMessage_Id" data-uid="Silverback.Database.Model.OutboxMessage.Id">Id</h4>
   <div class="markdown level1 summary"><p>Gets or sets the primary key (identity).</p>
@@ -274,7 +306,9 @@ with the next major release.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int Id { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">[Key]
+[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+public int Id { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -291,8 +325,13 @@ with the next major release.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_Model_OutboxMessage_MessageType.md&amp;value=---%0Auid%3A%20Silverback.Database.Model.OutboxMessage.MessageType%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Database/Model/OutboxMessage.cs/#L26">View source</a>
+  </span>
   <a id="Silverback_Database_Model_OutboxMessage_MessageType_" data-uid="Silverback.Database.Model.OutboxMessage.MessageType*"></a>
   <h4 id="Silverback_Database_Model_OutboxMessage_MessageType" data-uid="Silverback.Database.Model.OutboxMessage.MessageType">MessageType</h4>
   <div class="markdown level1 summary"><p>Gets or sets the assembly qualified name of the message class.</p>
@@ -317,8 +356,13 @@ with the next major release.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_Model_OutboxMessage_SerializedHeaders.md&amp;value=---%0Auid%3A%20Silverback.Database.Model.OutboxMessage.SerializedHeaders%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Database/Model/OutboxMessage.cs/#L47">View source</a>
+  </span>
   <a id="Silverback_Database_Model_OutboxMessage_SerializedHeaders_" data-uid="Silverback.Database.Model.OutboxMessage.SerializedHeaders*"></a>
   <h4 id="Silverback_Database_Model_OutboxMessage_SerializedHeaders" data-uid="Silverback.Database.Model.OutboxMessage.SerializedHeaders">SerializedHeaders</h4>
   <div class="markdown level1 summary"><p>Gets or sets the serialized message headers.</p>
@@ -350,6 +394,12 @@ with the next major release.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Database_Model_OutboxMessage.md&amp;value=---%0Auid%3A%20Silverback.Database.Model.OutboxMessage%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Database/Model/OutboxMessage.cs/#L14" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

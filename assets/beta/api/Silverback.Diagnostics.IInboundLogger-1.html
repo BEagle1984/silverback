@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Diagnostics_IInboundLogger_1" data-uid="Silverback.Diagnostics.IInboundLogger`1" class="text-break">Interface IInboundLogger&lt;TCategoryName&gt;
   </h1>
-  <div class="markdown level0 summary"><p>An <see cref="!:ILogger&lt;TCategoryName>"></see> with some specific methods to log inbound messages
+  <div class="markdown level0 summary"><p>An <span class="xref">Microsoft.Extensions.Logging.ILogger&lt;TCategoryName&gt;</span> with some specific methods to log inbound messages
 related events.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -104,7 +104,7 @@ related events.</p>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Diagnostics.html">Silverback.Diagnostics</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Diagnostics_IInboundLogger_1_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public interface IInboundLogger&lt;out TCategoryName&gt; : ISilverbackLogger&lt;TCategoryName&gt;, ISilverbackLogger</code></pre>
@@ -127,10 +127,15 @@ related events.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogAlreadyProcessed_Silverback_Messaging_Messages_IRawInboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogAlreadyProcessed(Silverback.Messaging.Messages.IRawInboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L117">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogAlreadyProcessed_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogAlreadyProcessed*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogAlreadyProcessed_IRawInboundEnvelope_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogAlreadyProcessed(IRawInboundEnvelope)">LogAlreadyProcessed(IRawInboundEnvelope)</h4>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogAlreadyProcessed_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogAlreadyProcessed(Silverback.Messaging.Messages.IRawInboundEnvelope)">LogAlreadyProcessed(IRawInboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_MessageAlreadyProcessed">MessageAlreadyProcessed</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -149,18 +154,23 @@ related events.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogCannotMoveSequences_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogCannotMoveSequences(Silverback.Messaging.Messages.IRawInboundEnvelope%2CSilverback.Messaging.Sequences.ISequence)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L87">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogCannotMoveSequences_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogCannotMoveSequences*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogCannotMoveSequences_IRawInboundEnvelope_ISequence_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogCannotMoveSequences(IRawInboundEnvelope,ISequence)">LogCannotMoveSequences(IRawInboundEnvelope, ISequence)</h4>
-  <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_MessageSkipped">MessageSkipped</a> event.</p>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogCannotMoveSequences_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogCannotMoveSequences(Silverback.Messaging.Messages.IRawInboundEnvelope,Silverback.Messaging.Sequences.ISequence)">LogCannotMoveSequences(IRawInboundEnvelope, ISequence)</h4>
+  <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_CannotMoveSequences">CannotMoveSequences</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -178,58 +188,28 @@ related events.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">ISequence</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a></td>
         <td><span class="parametername">sequence</span></td>
-        <td><p>The <see cref="!:ISequence"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="Silverback_Diagnostics_IInboundLogger_1_LogErrorInitializingActivity_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogErrorInitializingActivity*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogErrorInitializingActivity_IRawInboundEnvelope_System_Exception_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogErrorInitializingActivity(IRawInboundEnvelope,System.Exception)">LogErrorInitializingActivity(IRawInboundEnvelope, Exception)</h4>
-  <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorInitializingActivity">ErrorInitializingActivity</a> event.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void LogErrorInitializingActivity(IRawInboundEnvelope envelope, Exception exception)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
-        <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Exception</span></td>
-        <td><span class="parametername">exception</span></td>
-        <td><p>The <span class="xref">System.Exception</span>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogInboundLowLevelTrace_System_String_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Func_System_Object____.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogInboundLowLevelTrace(System.String%2CSilverback.Messaging.Messages.IRawInboundEnvelope%2CSystem.Exception%2CSystem.Func%7BSystem.Object%5B%5D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L197">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogInboundLowLevelTrace_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundLowLevelTrace*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundLowLevelTrace_System_String_IRawInboundEnvelope_System_Exception_System_Func_System_Object____" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundLowLevelTrace(System.String,IRawInboundEnvelope,System.Exception,System.Func{System.Object[]})">LogInboundLowLevelTrace(String, IRawInboundEnvelope, Exception, Func&lt;Object[]&gt;)</h4>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundLowLevelTrace_System_String_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Func_System_Object____" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundLowLevelTrace(System.String,Silverback.Messaging.Messages.IRawInboundEnvelope,System.Exception,System.Func{System.Object[]})">LogInboundLowLevelTrace(String, IRawInboundEnvelope, Exception, Func&lt;Object[]&gt;)</h4>
   <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_LowLevelTracing">LowLevelTracing</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -254,9 +234,9 @@ related events.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
       <tr>
@@ -273,10 +253,15 @@ related events.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogInboundLowLevelTrace_System_String_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Func_System_Object____.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogInboundLowLevelTrace(System.String%2CSilverback.Messaging.Messages.IRawInboundEnvelope%2CSystem.Func%7BSystem.Object%5B%5D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L177">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogInboundLowLevelTrace_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundLowLevelTrace*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundLowLevelTrace_System_String_IRawInboundEnvelope_System_Func_System_Object____" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundLowLevelTrace(System.String,IRawInboundEnvelope,System.Func{System.Object[]})">LogInboundLowLevelTrace(String, IRawInboundEnvelope, Func&lt;Object[]&gt;)</h4>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundLowLevelTrace_System_String_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Func_System_Object____" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundLowLevelTrace(System.String,Silverback.Messaging.Messages.IRawInboundEnvelope,System.Func{System.Object[]})">LogInboundLowLevelTrace(String, IRawInboundEnvelope, Func&lt;Object[]&gt;)</h4>
   <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_LowLevelTracing">LowLevelTracing</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -301,9 +286,9 @@ related events.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
       <tr>
@@ -314,10 +299,15 @@ related events.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_Silverback_Diagnostics_LogEvent_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Func_System_Object____.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogInboundTrace(Silverback.Diagnostics.LogEvent%2CSilverback.Messaging.Messages.IRawInboundEnvelope%2CSystem.Exception%2CSystem.Func%7BSystem.Object%5B%5D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L159">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundTrace*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_Silverback_Diagnostics_LogEvent_IRawInboundEnvelope_System_Exception_System_Func_System_Object____" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundTrace(Silverback.Diagnostics.LogEvent,IRawInboundEnvelope,System.Exception,System.Func{System.Object[]})">LogInboundTrace(LogEvent, IRawInboundEnvelope, Exception, Func&lt;Object[]&gt;)</h4>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_Silverback_Diagnostics_LogEvent_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Func_System_Object____" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundTrace(Silverback.Diagnostics.LogEvent,Silverback.Messaging.Messages.IRawInboundEnvelope,System.Exception,System.Func{System.Object[]})">LogInboundTrace(LogEvent, IRawInboundEnvelope, Exception, Func&lt;Object[]&gt;)</h4>
   <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_LowLevelTracing">LowLevelTracing</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -342,9 +332,9 @@ related events.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
       <tr>
@@ -361,14 +351,19 @@ related events.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_Silverback_Diagnostics_LogEvent_IRawInboundEnvelope_System_Exception_System_Func_System_Object_____remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method is less performing and therefore only events with <span class="xref">System.LogLevel.Trace</span> level are
+  <h5 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_Silverback_Diagnostics_LogEvent_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Func_System_Object_____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method is less performing and therefore only events with <span class="xref">Microsoft.Extensions.Logging.LogLevel.Trace</span> level are
 allowed.</p>
 </div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_Silverback_Diagnostics_LogEvent_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Func_System_Object____.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogInboundTrace(Silverback.Diagnostics.LogEvent%2CSilverback.Messaging.Messages.IRawInboundEnvelope%2CSystem.Func%7BSystem.Object%5B%5D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L135">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundTrace*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_Silverback_Diagnostics_LogEvent_IRawInboundEnvelope_System_Func_System_Object____" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundTrace(Silverback.Diagnostics.LogEvent,IRawInboundEnvelope,System.Func{System.Object[]})">LogInboundTrace(LogEvent, IRawInboundEnvelope, Func&lt;Object[]&gt;)</h4>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_Silverback_Diagnostics_LogEvent_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Func_System_Object____" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogInboundTrace(Silverback.Diagnostics.LogEvent,Silverback.Messaging.Messages.IRawInboundEnvelope,System.Func{System.Object[]})">LogInboundTrace(LogEvent, IRawInboundEnvelope, Func&lt;Object[]&gt;)</h4>
   <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_LowLevelTracing">LowLevelTracing</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -393,9 +388,9 @@ allowed.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
       <tr>
@@ -406,14 +401,19 @@ allowed.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_Silverback_Diagnostics_LogEvent_IRawInboundEnvelope_System_Func_System_Object_____remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method is less performing and therefore only events with <span class="xref">System.LogLevel.Trace</span> level are
+  <h5 id="Silverback_Diagnostics_IInboundLogger_1_LogInboundTrace_Silverback_Diagnostics_LogEvent_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Func_System_Object_____remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method is less performing and therefore only events with <span class="xref">Microsoft.Extensions.Logging.LogLevel.Trace</span> level are
 allowed.</p>
 </div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogMoved_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_IProducerEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogMoved(Silverback.Messaging.Messages.IRawInboundEnvelope%2CSilverback.Messaging.IProducerEndpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L68">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogMoved_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogMoved*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogMoved_IRawInboundEnvelope_IProducerEndpoint_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogMoved(IRawInboundEnvelope,IProducerEndpoint)">LogMoved(IRawInboundEnvelope, IProducerEndpoint)</h4>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogMoved_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_IProducerEndpoint_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogMoved(Silverback.Messaging.Messages.IRawInboundEnvelope,Silverback.Messaging.IProducerEndpoint)">LogMoved(IRawInboundEnvelope, IProducerEndpoint)</h4>
   <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_MessageMoved">MessageMoved</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -432,23 +432,28 @@ allowed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IProducerEndpoint</span></td>
+        <td><a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a></td>
         <td><span class="parametername">targetEndpoint</span></td>
-        <td><p>The target <see cref="!:IProducerEndpoint"></see>.</p>
+        <td><p>The target <a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogProcessing_Silverback_Messaging_Messages_IRawInboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogProcessing(Silverback.Messaging.Messages.IRawInboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L27">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogProcessing_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogProcessing*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogProcessing_IRawInboundEnvelope_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogProcessing(IRawInboundEnvelope)">LogProcessing(IRawInboundEnvelope)</h4>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogProcessing_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogProcessing(Silverback.Messaging.Messages.IRawInboundEnvelope)">LogProcessing(IRawInboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ProcessingInboundMessage">ProcessingInboundMessage</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -467,17 +472,22 @@ allowed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogProcessingError_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogProcessingError(Silverback.Messaging.Messages.IRawInboundEnvelope%2CSystem.Exception)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L38">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogProcessingError_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogProcessingError*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogProcessingError_IRawInboundEnvelope_System_Exception_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogProcessingError(IRawInboundEnvelope,System.Exception)">LogProcessingError(IRawInboundEnvelope, Exception)</h4>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogProcessingError_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogProcessingError(Silverback.Messaging.Messages.IRawInboundEnvelope,System.Exception)">LogProcessingError(IRawInboundEnvelope, Exception)</h4>
   <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundMessage">ErrorProcessingInboundMessage</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -496,9 +506,9 @@ allowed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
       <tr>
@@ -509,10 +519,15 @@ allowed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogProcessingFatalError_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogProcessingFatalError(Silverback.Messaging.Messages.IRawInboundEnvelope%2CSystem.Exception)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L49">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogProcessingFatalError_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogProcessingFatalError*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogProcessingFatalError_IRawInboundEnvelope_System_Exception_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogProcessingFatalError(IRawInboundEnvelope,System.Exception)">LogProcessingFatalError(IRawInboundEnvelope, Exception)</h4>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogProcessingFatalError_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogProcessingFatalError(Silverback.Messaging.Messages.IRawInboundEnvelope,System.Exception)">LogProcessingFatalError(IRawInboundEnvelope, Exception)</h4>
   <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerFatalError">ConsumerFatalError</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -531,9 +546,9 @@ allowed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
       <tr>
@@ -544,10 +559,15 @@ allowed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogRetryProcessing_Silverback_Messaging_Messages_IRawInboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogRetryProcessing(Silverback.Messaging.Messages.IRawInboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L57">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogRetryProcessing_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogRetryProcessing*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogRetryProcessing_IRawInboundEnvelope_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogRetryProcessing(IRawInboundEnvelope)">LogRetryProcessing(IRawInboundEnvelope)</h4>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogRetryProcessing_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogRetryProcessing(Silverback.Messaging.Messages.IRawInboundEnvelope)">LogRetryProcessing(IRawInboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_RetryMessageProcessing">RetryMessageProcessing</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -566,17 +586,102 @@ allowed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogRollbackToRetryFailed_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogRollbackToRetryFailed(Silverback.Messaging.Messages.IRawInboundEnvelope%2CSystem.Exception)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L98">View source</a>
+  </span>
+  <a id="Silverback_Diagnostics_IInboundLogger_1_LogRollbackToRetryFailed_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogRollbackToRetryFailed*"></a>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogRollbackToRetryFailed_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogRollbackToRetryFailed(Silverback.Messaging.Messages.IRawInboundEnvelope,System.Exception)">LogRollbackToRetryFailed(IRawInboundEnvelope, Exception)</h4>
+  <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_RollbackToRetryFailed">RollbackToRetryFailed</a> event.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void LogRollbackToRetryFailed(IRawInboundEnvelope envelope, Exception exception)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
+        <td><span class="parametername">envelope</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Exception</span></td>
+        <td><span class="parametername">exception</span></td>
+        <td><p>The <span class="xref">System.Exception</span>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogRollbackToSkipFailed_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogRollbackToSkipFailed(Silverback.Messaging.Messages.IRawInboundEnvelope%2CSystem.Exception)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L109">View source</a>
+  </span>
+  <a id="Silverback_Diagnostics_IInboundLogger_1_LogRollbackToSkipFailed_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogRollbackToSkipFailed*"></a>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogRollbackToSkipFailed_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogRollbackToSkipFailed(Silverback.Messaging.Messages.IRawInboundEnvelope,System.Exception)">LogRollbackToSkipFailed(IRawInboundEnvelope, Exception)</h4>
+  <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_RollbackToSkipFailed">RollbackToSkipFailed</a> event.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void LogRollbackToSkipFailed(IRawInboundEnvelope envelope, Exception exception)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
+        <td><span class="parametername">envelope</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Exception</span></td>
+        <td><span class="parametername">exception</span></td>
+        <td><p>The <span class="xref">System.Exception</span>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1_LogSkipped_Silverback_Messaging_Messages_IRawInboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601.LogSkipped(Silverback.Messaging.Messages.IRawInboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L76">View source</a>
+  </span>
   <a id="Silverback_Diagnostics_IInboundLogger_1_LogSkipped_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogSkipped*"></a>
-  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogSkipped_IRawInboundEnvelope_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogSkipped(IRawInboundEnvelope)">LogSkipped(IRawInboundEnvelope)</h4>
+  <h4 id="Silverback_Diagnostics_IInboundLogger_1_LogSkipped_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Diagnostics.IInboundLogger`1.LogSkipped(Silverback.Messaging.Messages.IRawInboundEnvelope)">LogSkipped(IRawInboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Logs the <a class="xref" href="Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_MessageSkipped">MessageSkipped</a> event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -595,9 +700,9 @@ allowed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>.</p>
 </td>
       </tr>
     </tbody>
@@ -609,6 +714,12 @@ allowed.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Diagnostics_IInboundLogger_1.md&amp;value=---%0Auid%3A%20Silverback.Diagnostics.IInboundLogger%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Diagnostics/IInboundLogger`1.cs/#L19" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

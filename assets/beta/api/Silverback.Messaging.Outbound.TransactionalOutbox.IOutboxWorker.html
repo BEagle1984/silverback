@@ -94,17 +94,22 @@
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.html">Silverback.Messaging.Outbound.TransactionalOutbox</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Outbound_TransactionalOutbox_IOutboxWorker_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public interface IOutboxWorker</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_IOutboxWorker_ProcessQueueAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.ProcessQueueAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/IOutboxWorker.cs/#L23">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_IOutboxWorker_ProcessQueueAsync_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.ProcessQueueAsync*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_IOutboxWorker_ProcessQueueAsync_CancellationToken_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.ProcessQueueAsync(CancellationToken)">ProcessQueueAsync(CancellationToken)</h4>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_IOutboxWorker_ProcessQueueAsync_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.ProcessQueueAsync(System.Threading.CancellationToken)">ProcessQueueAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Processes the outbox.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -123,9 +128,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">stoppingToken</span></td>
-        <td><p>A <see cref="!:CancellationToken"></see> to observe while waiting for the task to complete.</p>
+        <td><p>A <span class="xref">System.Threading.CancellationToken</span> to observe while waiting for the task to complete.</p>
 </td>
       </tr>
     </tbody>
@@ -140,8 +145,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span></td>
-        <td><p>A <see cref="!:Task"></see> that represents the long running operations.</p>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that represents the long running operations.</p>
 </td>
       </tr>
     </tbody>
@@ -153,6 +158,12 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_IOutboxWorker.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/IOutboxWorker.cs/#L12" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

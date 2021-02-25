@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Interface IRabbitConnectionFactory
+    <title>Interface IKafkaProducerStatisticsCallback
    | Silverback </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Interface IRabbitConnectionFactory
+    <meta name="title" content="Interface IKafkaProducerStatisticsCallback
    | Silverback ">
     <meta name="generator" content="docfx 2.56.6.0">
     
@@ -85,39 +85,37 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback">
   
   
-  <h1 id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory" class="text-break">Interface IRabbitConnectionFactory
+  <h1 id="Silverback_Messaging_Broker_Callbacks_IKafkaProducerStatisticsCallback" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback" class="text-break">Interface IKafkaProducerStatisticsCallback
   </h1>
-  <div class="markdown level0 summary"><p>The factory that creates and stores the connections to Rabbit in order to create a single connection
-per each <see cref="!:RabbitConnectionConfig"></see>.</p>
+  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaProducerStatisticsCallback_OnProducerStatistics_Silverback_Messaging_Broker_Callbacks_Statistics_KafkaStatistics_System_String_Silverback_Messaging_Broker_KafkaProducer_">OnProducerStatistics(KafkaStatistics, String, KafkaProducer)</a> event handler.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.IDisposable.Dispose()</span>
-    </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Rabbit.html">Silverback.Messaging.Broker.Rabbit</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
-  <h5 id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_syntax">Syntax</h5>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Callbacks.html">Silverback.Messaging.Broker.Callbacks</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
+  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaProducerStatisticsCallback_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IRabbitConnectionFactory : IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public interface IKafkaProducerStatisticsCallback : IBrokerCallback</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  
-  
-  <a id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_GetChannel_" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.GetChannel*"></a>
-  <h4 id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_GetChannel_Silverback_Messaging_RabbitConsumerEndpoint_" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.GetChannel(Silverback.Messaging.RabbitConsumerEndpoint)">GetChannel(RabbitConsumerEndpoint)</h4>
-  <div class="markdown level1 summary"><p>Returns a channel to consume from the specified endpoint.</p>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaProducerStatisticsCallback_OnProducerStatistics_Silverback_Messaging_Broker_Callbacks_Statistics_KafkaStatistics_System_String_Silverback_Messaging_Broker_KafkaProducer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback.OnProducerStatistics(Silverback.Messaging.Broker.Callbacks.Statistics.KafkaStatistics%2CSystem.String%2CSilverback.Messaging.Broker.KafkaProducer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaProducerStatisticsCallback.cs/#L29">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Callbacks_IKafkaProducerStatisticsCallback_OnProducerStatistics_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback.OnProducerStatistics*"></a>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_IKafkaProducerStatisticsCallback_OnProducerStatistics_Silverback_Messaging_Broker_Callbacks_Statistics_KafkaStatistics_System_String_Silverback_Messaging_Broker_KafkaProducer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback.OnProducerStatistics(Silverback.Messaging.Broker.Callbacks.Statistics.KafkaStatistics,System.String,Silverback.Messaging.Broker.KafkaProducer)">OnProducerStatistics(KafkaStatistics, String, KafkaProducer)</h4>
+  <div class="markdown level1 summary"><p>Called on statistics events.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">(IModel Channel, string QueueName) GetChannel(RabbitConsumerEndpoint endpoint)</code></pre>
+    <pre><code class="lang-csharp hljs">void OnProducerStatistics(KafkaStatistics statistics, string rawStatistics, KafkaProducer producer)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -130,80 +128,29 @@ per each <see cref="!:RabbitConnectionConfig"></see>.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.RabbitConsumerEndpoint.html">RabbitConsumerEndpoint</a></td>
-        <td><span class="parametername">endpoint</span></td>
-        <td><p>The endpoint to be consumed from.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.ValueTuple</span>&lt;<span class="xref">IModel</span>, <span class="xref">System.String</span>&gt;</td>
-        <td><p>The <see cref="!:IModel"></see> representing the channel.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_GetChannel_" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.GetChannel*"></a>
-  <h4 id="Silverback_Messaging_Broker_Rabbit_IRabbitConnectionFactory_GetChannel_Silverback_Messaging_RabbitProducerEndpoint_System_String_" data-uid="Silverback.Messaging.Broker.Rabbit.IRabbitConnectionFactory.GetChannel(Silverback.Messaging.RabbitProducerEndpoint,System.String)">GetChannel(RabbitProducerEndpoint, String)</h4>
-  <div class="markdown level1 summary"><p>Returns a channel to produce to the specified endpoint.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IModel GetChannel(RabbitProducerEndpoint endpoint, string actualEndpointName)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.RabbitProducerEndpoint.html">RabbitProducerEndpoint</a></td>
-        <td><span class="parametername">endpoint</span></td>
-        <td><p>The endpoint to be produced to.</p>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Callbacks.Statistics.KafkaStatistics.html">KafkaStatistics</a></td>
+        <td><span class="parametername">statistics</span></td>
+        <td><p>The deserialized statistics.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">actualEndpointName</span></td>
-        <td><p>The actual target endpoint name.</p>
+        <td><span class="parametername">rawStatistics</span></td>
+        <td><p>The raw statistics string.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.KafkaProducer.html">KafkaProducer</a></td>
+        <td><span class="parametername">producer</span></td>
+        <td><p>The related producer instance.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">IModel</span></td>
-        <td><p>The <see cref="!:IModel"></see> representing the channel.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
+  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaProducerStatisticsCallback_OnProducerStatistics_Silverback_Messaging_Broker_Callbacks_Statistics_KafkaStatistics_System_String_Silverback_Messaging_Broker_KafkaProducer__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>You can enable statistics and set the statistics interval using the <code>StatisticsIntervalMs</code>
+configuration property (disabled by default).</p>
+</div>
 </article>
           </div>
           
@@ -211,6 +158,12 @@ per each <see cref="!:RabbitConnectionConfig"></see>.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaProducerStatisticsCallback.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaProducerStatisticsCallback.cs/#L11" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

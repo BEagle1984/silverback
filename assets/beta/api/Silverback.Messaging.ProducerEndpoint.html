@@ -123,16 +123,10 @@ exchange).</p>
       <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Encryption">Endpoint.Encryption</a>
     </div>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -143,19 +137,30 @@ exchange).</p>
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.html">Silverback.Messaging</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_ProducerEndpoint_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public abstract class ProducerEndpoint : Endpoint, IProducerEndpoint, IEndpoint</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.%23ctor(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.IServiceProvider%2CSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L47">View source</a>
+  </span>
   <a id="Silverback_Messaging_ProducerEndpoint__ctor_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_Func_IOutboundEnvelope_System_IServiceProvider_System_String__" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.Func{IOutboundEnvelope,System.IServiceProvider,System.String})">ProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, String&gt;)</h4>
+  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_String__" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.IServiceProvider,System.String})">ProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, String&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -174,17 +179,22 @@ exchange).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">IOutboundEnvelope</span>, <span class="xref">System.IServiceProvider</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.IServiceProvider</span>, <span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">nameFunction</span></td>
         <td><p>The function returning the endpoint name for the message being produced.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.%23ctor(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L37">View source</a>
+  </span>
   <a id="Silverback_Messaging_ProducerEndpoint__ctor_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_Func_IOutboundEnvelope_System_String__" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.Func{IOutboundEnvelope,System.String})">ProducerEndpoint(Func&lt;IOutboundEnvelope, String&gt;)</h4>
+  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String__" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.String})">ProducerEndpoint(Func&lt;IOutboundEnvelope, String&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -203,15 +213,20 @@ exchange).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">IOutboundEnvelope</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">nameFunction</span></td>
         <td><p>The function returning the endpoint name for the message being produced.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint__ctor_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.%23ctor(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L27">View source</a>
+  </span>
   <a id="Silverback_Messaging_ProducerEndpoint__ctor_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_String_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.String)">ProducerEndpoint(String)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> class.</p>
@@ -239,10 +254,15 @@ exchange).</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String____.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.%23ctor(System.String%2CSystem.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.String%5B%5D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L65">View source</a>
+  </span>
   <a id="Silverback_Messaging_ProducerEndpoint__ctor_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_String_System_Func_IOutboundEnvelope_System_String____" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.String,System.Func{IOutboundEnvelope,System.String[]})">ProducerEndpoint(String, Func&lt;IOutboundEnvelope, String[]&gt;)</h4>
+  <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String____" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.String[]})">ProducerEndpoint(String, Func&lt;IOutboundEnvelope, String[]&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -268,15 +288,20 @@ exchange).</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">IOutboundEnvelope</span>, <span class="xref">System.String</span>[]&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.String</span>[]&gt;</td>
         <td><span class="parametername">argumentsFunction</span></td>
         <td><p>The function returning the arguments to be used to format the string.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint__ctor_System_Type_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.%23ctor(System.Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L79">View source</a>
+  </span>
   <a id="Silverback_Messaging_ProducerEndpoint__ctor_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_ProducerEndpoint__ctor_System_Type_" data-uid="Silverback.Messaging.ProducerEndpoint.#ctor(System.Type)">ProducerEndpoint(Type)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html">ProducerEndpoint</a> class.</p>
@@ -299,15 +324,20 @@ exchange).</p>
       <tr>
         <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">nameResolverType</span></td>
-        <td><p>The type of the <see cref="!:IProducerEndpointNameResolver"></see> to be used to resolve the actual endpoint name.</p>
+        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.IProducerEndpointNameResolver.html">IProducerEndpointNameResolver</a> to be used to resolve the actual endpoint name.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint_Chunk.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.Chunk%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L104">View source</a>
+  </span>
   <a id="Silverback_Messaging_ProducerEndpoint_Chunk_" data-uid="Silverback.Messaging.ProducerEndpoint.Chunk*"></a>
   <h4 id="Silverback_Messaging_ProducerEndpoint_Chunk" data-uid="Silverback.Messaging.ProducerEndpoint.Chunk">Chunk</h4>
   <div class="markdown level1 summary"><p>Gets or sets the message chunking settings. This option can be used to split large messages into
@@ -316,7 +346,7 @@ smaller chunks.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ChunkSettings? Chunk { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ChunkSettings Chunk { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -328,13 +358,18 @@ smaller chunks.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">ChunkSettings</span>&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSettings.html">ChunkSettings</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint_Strategy.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.Strategy%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L98">View source</a>
+  </span>
   <a id="Silverback_Messaging_ProducerEndpoint_Strategy_" data-uid="Silverback.Messaging.ProducerEndpoint.Strategy*"></a>
   <h4 id="Silverback_Messaging_ProducerEndpoint_Strategy" data-uid="Silverback.Messaging.ProducerEndpoint.Strategy">Strategy</h4>
   <div class="markdown level1 summary"><p>Gets or sets the strategy to be used to produce the messages. If no strategy is specified, the
@@ -355,15 +390,20 @@ messages will be sent to the message broker directly.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IProduceStrategy</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Outbound.IProduceStrategy.html">IProduceStrategy</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint_BaseEquals_Silverback_Messaging_Endpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.BaseEquals(Silverback.Messaging.Endpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L122">View source</a>
+  </span>
   <a id="Silverback_Messaging_ProducerEndpoint_BaseEquals_" data-uid="Silverback.Messaging.ProducerEndpoint.BaseEquals*"></a>
   <h4 id="Silverback_Messaging_ProducerEndpoint_BaseEquals_Silverback_Messaging_Endpoint_" data-uid="Silverback.Messaging.ProducerEndpoint.BaseEquals(Silverback.Messaging.Endpoint)">BaseEquals(Endpoint)</h4>
   <div class="markdown level1 summary"><p>Determines whether the specified <a class="xref" href="Silverback.Messaging.Endpoint.html">Endpoint</a> is equal to the current
@@ -410,10 +450,15 @@ messages will be sent to the message broker directly.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_BaseEquals_Silverback_Messaging_Endpoint_">Endpoint.BaseEquals(Endpoint)</a></div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint_GetActualName_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.GetActualName(Silverback.Messaging.Messages.IOutboundEnvelope%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L107">View source</a>
+  </span>
   <a id="Silverback_Messaging_ProducerEndpoint_GetActualName_" data-uid="Silverback.Messaging.ProducerEndpoint.GetActualName*"></a>
-  <h4 id="Silverback_Messaging_ProducerEndpoint_GetActualName_IOutboundEnvelope_System_IServiceProvider_" data-uid="Silverback.Messaging.ProducerEndpoint.GetActualName(IOutboundEnvelope,System.IServiceProvider)">GetActualName(IOutboundEnvelope, IServiceProvider)</h4>
+  <h4 id="Silverback_Messaging_ProducerEndpoint_GetActualName_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_" data-uid="Silverback.Messaging.ProducerEndpoint.GetActualName(Silverback.Messaging.Messages.IOutboundEnvelope,System.IServiceProvider)">GetActualName(IOutboundEnvelope, IServiceProvider)</h4>
   <div class="markdown level1 summary"><p>Gets the actual target endpoint name for the message being produced.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -432,7 +477,7 @@ messages will be sent to the message broker directly.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IOutboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
         <td><p>The envelope containing the message being produced.</p>
 </td>
@@ -461,8 +506,13 @@ messages will be sent to the message broker directly.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L111">View source</a>
+  </span>
   <a id="Silverback_Messaging_ProducerEndpoint_Validate_" data-uid="Silverback.Messaging.ProducerEndpoint.Validate*"></a>
   <h4 id="Silverback_Messaging_ProducerEndpoint_Validate" data-uid="Silverback.Messaging.ProducerEndpoint.Validate">Validate()</h4>
   <div class="markdown level1 summary"><p>Validates the endpoint configuration and throws an <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> if
@@ -489,6 +539,12 @@ not valid.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_ProducerEndpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.ProducerEndpoint%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/ProducerEndpoint.cs/#L17" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

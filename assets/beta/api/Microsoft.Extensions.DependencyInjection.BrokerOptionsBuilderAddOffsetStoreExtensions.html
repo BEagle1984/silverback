@@ -101,16 +101,10 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -121,25 +115,36 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Microsoft.Extensions.DependencyInjection.html">Microsoft.Extensions.DependencyInjection</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOffsetStoreExtensions_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static class BrokerOptionsBuilderAddOffsetStoreExtensions</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOffsetStoreExtensions_AddInMemoryOffsetStore_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOffsetStoreExtensions.AddInMemoryOffsetStore(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/BrokerOptionsBuilderAddOffsetStoreExtensions.cs/#L64">View source</a>
+  </span>
   <a id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOffsetStoreExtensions_AddInMemoryOffsetStore_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOffsetStoreExtensions.AddInMemoryOffsetStore*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOffsetStoreExtensions_AddInMemoryOffsetStore_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOffsetStoreExtensions.AddInMemoryOffsetStore(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)">AddInMemoryOffsetStore(IBrokerOptionsBuilder)</h4>
   <div class="markdown level1 summary"><p>
-    Adds the necessary services to enable the <see cref="!:OffsetStoreExactlyOnceStrategy"></see> storing
+    Adds the necessary services to enable the <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.OffsetStoreExactlyOnceStrategy.html">OffsetStoreExactlyOnceStrategy</a> storing
     the offsets in memory.
 </p>
 <p>
-    The <see cref="!:OffsetStoreExactlyOnceStrategy"></see> stores uses an <see cref="!:IOffsetStore"></see> to
+    The <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.OffsetStoreExactlyOnceStrategy.html">OffsetStoreExactlyOnceStrategy</a> stores uses an <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.IOffsetStore.html">IOffsetStore</a> to
     keep track of the latest processed offsets and guarantee that each message is processed only once.
 </p>
 </div>
@@ -161,7 +166,7 @@
       <tr>
         <td><a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a></td>
         <td><span class="parametername">brokerOptionsBuilder</span></td>
-        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <see cref="!:IServiceCollection"></see> to
+        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span> to
 add the services to.</p>
 </td>
       </tr>
@@ -183,15 +188,20 @@ add the services to.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOffsetStoreExtensions_AddOffsetStore__1_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOffsetStoreExtensions.AddOffsetStore%60%601(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/BrokerOptionsBuilderAddOffsetStoreExtensions.cs/#L35">View source</a>
+  </span>
   <a id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOffsetStoreExtensions_AddOffsetStore_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOffsetStoreExtensions.AddOffsetStore*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOffsetStoreExtensions_AddOffsetStore__1_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOffsetStoreExtensions.AddOffsetStore``1(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)">AddOffsetStore&lt;TOffsetStore&gt;(IBrokerOptionsBuilder)</h4>
   <div class="markdown level1 summary"><p>
-    Adds the necessary services to enable the <see cref="!:OffsetStoreExactlyOnceStrategy"></see>.
+    Adds the necessary services to enable the <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.OffsetStoreExactlyOnceStrategy.html">OffsetStoreExactlyOnceStrategy</a>.
 </p>
 <p>
-    The <see cref="!:OffsetStoreExactlyOnceStrategy"></see> stores uses an <see cref="!:IOffsetStore"></see> to
+    The <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.OffsetStoreExactlyOnceStrategy.html">OffsetStoreExactlyOnceStrategy</a> stores uses an <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.IOffsetStore.html">IOffsetStore</a> to
     keep track of the latest processed offsets and guarantee that each message is processed only once.
 </p>
 </div>
@@ -214,7 +224,7 @@ add the services to.</p>
       <tr>
         <td><a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a></td>
         <td><span class="parametername">brokerOptionsBuilder</span></td>
-        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <see cref="!:IServiceCollection"></see> to
+        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span> to
 add the services to.</p>
 </td>
       </tr>
@@ -247,21 +257,26 @@ add the services to.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TOffsetStore</span></td>
-        <td><p>The type of the <see cref="!:IOffsetStore"></see> to be used.</p>
+        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.IOffsetStore.html">IOffsetStore</a> to be used.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOffsetStoreExtensions_AddOffsetStoreDatabaseTable_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOffsetStoreExtensions.AddOffsetStoreDatabaseTable(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/BrokerOptionsBuilderAddOffsetStoreExtensions.cs/#L88">View source</a>
+  </span>
   <a id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOffsetStoreExtensions_AddOffsetStoreDatabaseTable_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOffsetStoreExtensions.AddOffsetStoreDatabaseTable*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOffsetStoreExtensions_AddOffsetStoreDatabaseTable_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOffsetStoreExtensions.AddOffsetStoreDatabaseTable(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)">AddOffsetStoreDatabaseTable(IBrokerOptionsBuilder)</h4>
   <div class="markdown level1 summary"><p>
-    Adds the necessary services to enable the <see cref="!:OffsetStoreExactlyOnceStrategy"></see> using a
+    Adds the necessary services to enable the <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.OffsetStoreExactlyOnceStrategy.html">OffsetStoreExactlyOnceStrategy</a> using a
     database table as store.
 </p>
 <p>
-    The <see cref="!:OffsetStoreExactlyOnceStrategy"></see> stores uses an <see cref="!:IOffsetStore"></see> to
+    The <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.OffsetStoreExactlyOnceStrategy.html">OffsetStoreExactlyOnceStrategy</a> stores uses an <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.IOffsetStore.html">IOffsetStore</a> to
     keep track of the latest processed offsets and guarantee that each message is processed only once.
 </p>
 </div>
@@ -283,7 +298,7 @@ add the services to.</p>
       <tr>
         <td><a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a></td>
         <td><span class="parametername">brokerOptionsBuilder</span></td>
-        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <see cref="!:IServiceCollection"></see> to
+        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span> to
 add the services to.</p>
 </td>
       </tr>
@@ -312,6 +327,12 @@ add the services to.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOffsetStoreExtensions.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOffsetStoreExtensions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/BrokerOptionsBuilderAddOffsetStoreExtensions.cs/#L14" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

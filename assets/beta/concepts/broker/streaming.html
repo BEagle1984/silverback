@@ -86,12 +86,13 @@
             <article class="content wrap" id="_content" data-uid="streaming">
 <h1 id="streaming">Streaming</h1>
 
-<p><a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> is an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a> and <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> that will be asynchronously pushed with the consumed messages.</p>
-<p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> can be used to consume the entire topic in a streaming fashion and it's the only way to consume sequences (see for example <a class="xref" href="inbound.html#batch-processing">batch consuming</a>).</p>
+<p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> can be used to consume an endpoint in a streaming fashion and it is the only way to consume sequences (see for example <a class="xref" href="inbound.html#batch-processing">batch consuming</a>). This stream will be forwarded to the subscribed method as soon as the first message is consumed and it is then asynchronously pushed with the next messages.</p>
+<p><a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> implements both <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a> and <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> and the subscriber method can either declare an <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a>, an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a> or an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> as argument.</p>
+<p>Since the asynchronous and I/O bound nature of this stream it is recommended to take advantage of the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> capabilities to asynchronously loop through the messages.</p>
 <pre><code class="lang-csharp">public class StreamSubscriber
 {
     public async Task OnOrderStreamReceived(
-        IMessageStreamEnumerable&lt;OrderEvent&gt; eventsStream)
+        IAsyncEnumerable&lt;OrderEvent&gt; eventsStream)
     {
         await foreach(var orderEvent in eventsStream)
         {
@@ -100,7 +101,7 @@
     }
 }
 </code></pre>
-<p>A single instance of <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> is created and published per each topic/partition and the messages are acknowledged (committed) after a single iteration completes, unless sequencing (e.g. batch consuming) is configured or a sequence is automatically recognized by Silverback (e.g. a dataset). In that case an instance is published per each sequence and the entire sequence is atomically committed.</p>
+<p>A single instance of <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> is created and published per each queue/topic/partition and the messages are acknowledged (committed) after a single iteration completes, unless sequencing (e.g. <a class="xref" href="inbound.html#batch-processing">batch consuming</a>) is configured or a sequence is automatically recognized by Silverback (e.g. a dataset). In that case an instance is published per each sequence and the entire sequence is atomically committed.</p>
 <h1 id="rx-observable">Rx (Observable)</h1>
 <p>The <a href="https://www.nuget.org/packages/Silverback.Core.Rx">Silverback.Core.Rx</a> package adds the <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamObservable-1.html">IMessageStreamObservable&lt;TMessage&gt;</a> that works like the <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a> but implements <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iobservable-1">IObservable<t></t></a> enabling the usage of <a href="https://github.com/dotnet/reactive">Rx.NET</a>.</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
@@ -128,7 +129,7 @@
 <pre><code class="lang-csharp">public class StreamSubscriber
 {
     public async Task OnOrderStreamReceived(
-        IMessageStreamObservable&lt;OrderEvent&gt; eventsStream)
+        IObservable&lt;OrderEvent&gt; eventsStream)
     {
         stream.Subscribe(...);
     }

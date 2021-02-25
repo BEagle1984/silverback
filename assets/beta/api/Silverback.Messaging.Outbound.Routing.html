@@ -99,14 +99,14 @@
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.EndpointNameResolverProducerBehavior.html">EndpointNameResolverProducerBehavior</a></h4>
       <section><p>Resolves the actual target endpoint name for the message being published using the
-<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html#Silverback_Messaging_IProducerEndpoint_GetActualName_IOutboundEnvelope_System_IServiceProvider_">GetActualName(IOutboundEnvelope, IServiceProvider)</a> method.</p>
+<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html#Silverback_Messaging_IProducerEndpoint_GetActualName_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_">GetActualName(IOutboundEnvelope, IServiceProvider)</a> method.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.KafkaOutboundEndpointRouter-1.html">KafkaOutboundEndpointRouter&lt;TMessage&gt;</a></h4>
       <section><p>Routes the outbound messages to one or multiple Kafka endpoints.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.KafkaPartitionResolverProducerBehavior.html">KafkaPartitionResolverProducerBehavior</a></h4>
       <section><p>Resolves the target partition for the message being published using the
-<a class="xref" href="Silverback.Messaging.KafkaProducerEndpoint.html#Silverback_Messaging_KafkaProducerEndpoint_GetPartition_IOutboundEnvelope_System_IServiceProvider_">GetPartition(IOutboundEnvelope, IServiceProvider)</a> method.</p>
+<a class="xref" href="Silverback.Messaging.KafkaProducerEndpoint.html#Silverback_Messaging_KafkaProducerEndpoint_GetPartition_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_">GetPartition(IOutboundEnvelope, IServiceProvider)</a> method.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.KafkaProducerEndpointNameResolver-1.html">KafkaProducerEndpointNameResolver&lt;TMessage&gt;</a></h4>
       <section><p>The base class for a type used to resolve the actual target endpoint name for the outbound message.</p>
@@ -115,7 +115,8 @@
       <section><p>Routes the outbound messages to one or multiple MQTT endpoints.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.OutboundQueueProducer.html">OutboundQueueProducer</a></h4>
-      <section></section>
+      <section><p>Produces to an endpoint.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.OutboundRoute.html">OutboundRoute</a></h4>
       <section><p>Defines the <a class="xref" href="Silverback.Messaging.Outbound.Routing.IOutboundRouter.html">IOutboundRouter</a> to be used to get the destination endpoints to produce
 the messages of the specified type to.</p>
@@ -125,10 +126,10 @@ the messages of the specified type to.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.OutboundRouterBehavior.html">OutboundRouterBehavior</a></h4>
       <section><p>Routes the messages to the outbound endpoint by wrapping them in an
-<see cref="!:IOutboundEnvelope&lt;TMessage>"></see> that is republished to the bus.</p>
+<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> that is republished to the bus.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.ProduceBehavior.html">ProduceBehavior</a></h4>
-      <section><p>Produces the <see cref="!:IOutboundEnvelope&lt;TMessage>"></see> using the <a class="xref" href="Silverback.Messaging.Outbound.IProduceStrategy.html">IProduceStrategy</a>
+      <section><p>Produces the <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope&lt;TMessage&gt;</a> using the <a class="xref" href="Silverback.Messaging.Outbound.IProduceStrategy.html">IProduceStrategy</a>
 configured in the endpoint.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Outbound.Routing.ProducerEndpointNameResolver-1.html">ProducerEndpointNameResolver&lt;TMessage&gt;</a></h4>

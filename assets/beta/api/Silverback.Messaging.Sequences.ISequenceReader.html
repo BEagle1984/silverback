@@ -95,15 +95,20 @@
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Sequences.html">Silverback.Messaging.Sequences</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Sequences_ISequenceReader_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public interface ISequenceReader</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_ISequenceReader_HandlesRawMessages.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.ISequenceReader.HandlesRawMessages%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/ISequenceReader.cs/#L19">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_ISequenceReader_HandlesRawMessages_" data-uid="Silverback.Messaging.Sequences.ISequenceReader.HandlesRawMessages*"></a>
   <h4 id="Silverback_Messaging_Sequences_ISequenceReader_HandlesRawMessages" data-uid="Silverback.Messaging.Sequences.ISequenceReader.HandlesRawMessages">HandlesRawMessages</h4>
   <div class="markdown level1 summary"><p>Gets a value indicating whether this reader handles the raw messages, before they are being
@@ -131,10 +136,15 @@ deserialized, decrypted, etc.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_ISequenceReader_CanHandleAsync_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.ISequenceReader.CanHandleAsync(Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/ISequenceReader.cs/#L31">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_ISequenceReader_CanHandleAsync_" data-uid="Silverback.Messaging.Sequences.ISequenceReader.CanHandleAsync*"></a>
-  <h4 id="Silverback_Messaging_Sequences_ISequenceReader_CanHandleAsync_ConsumerPipelineContext_" data-uid="Silverback.Messaging.Sequences.ISequenceReader.CanHandleAsync(ConsumerPipelineContext)">CanHandleAsync(ConsumerPipelineContext)</h4>
+  <h4 id="Silverback_Messaging_Sequences_ISequenceReader_CanHandleAsync_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_" data-uid="Silverback.Messaging.Sequences.ISequenceReader.CanHandleAsync(Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext)">CanHandleAsync(ConsumerPipelineContext)</h4>
   <div class="markdown level1 summary"><p>Checks whether this reader can and must handle the message being processed in the specified context.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -153,9 +163,9 @@ deserialized, decrypted, etc.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">ConsumerPipelineContext</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></td>
         <td><span class="parametername">context</span></td>
-        <td><p>The current <see cref="!:ConsumerPipelineContext"></see>.</p>
+        <td><p>The current <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a>.</p>
 </td>
       </tr>
     </tbody>
@@ -170,17 +180,22 @@ deserialized, decrypted, etc.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains a
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains a
 value indicating whether this reader can and must handle the message.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_ISequenceReader_GetSequenceAsync_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.ISequenceReader.GetSequenceAsync(Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/ISequenceReader.cs/#L43">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_ISequenceReader_GetSequenceAsync_" data-uid="Silverback.Messaging.Sequences.ISequenceReader.GetSequenceAsync*"></a>
-  <h4 id="Silverback_Messaging_Sequences_ISequenceReader_GetSequenceAsync_ConsumerPipelineContext_" data-uid="Silverback.Messaging.Sequences.ISequenceReader.GetSequenceAsync(ConsumerPipelineContext)">GetSequenceAsync(ConsumerPipelineContext)</h4>
+  <h4 id="Silverback_Messaging_Sequences_ISequenceReader_GetSequenceAsync_Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_" data-uid="Silverback.Messaging.Sequences.ISequenceReader.GetSequenceAsync(Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext)">GetSequenceAsync(ConsumerPipelineContext)</h4>
   <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a> related to the message being processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -199,9 +214,9 @@ value indicating whether this reader can and must handle the message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">ConsumerPipelineContext</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></td>
         <td><span class="parametername">context</span></td>
-        <td><p>The current <see cref="!:ConsumerPipelineContext"></see>.</p>
+        <td><p>The current <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a>.</p>
 </td>
       </tr>
     </tbody>
@@ -216,8 +231,8 @@ value indicating whether this reader can and must handle the message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;<a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a>&gt;</td>
-        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a>&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
 <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a>.</p>
 </td>
       </tr>
@@ -230,6 +245,12 @@ value indicating whether this reader can and must handle the message.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_ISequenceReader.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.ISequenceReader%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/ISequenceReader.cs/#L13" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

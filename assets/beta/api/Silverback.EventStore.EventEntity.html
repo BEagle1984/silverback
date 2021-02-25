@@ -105,16 +105,10 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -125,17 +119,28 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.EventStore.html">Silverback.EventStore</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.EventSourcing.dll</h6>
   <h5 id="Silverback_EventStore_EventEntity_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public abstract class EventEntity : IEventEntity</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventEntity_ClrType.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventEntity.ClrType%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.EventSourcing/EventStore/EventEntity.cs/#L22">View source</a>
+  </span>
   <a id="Silverback_EventStore_EventEntity_ClrType_" data-uid="Silverback.EventStore.EventEntity.ClrType*"></a>
   <h4 id="Silverback_EventStore_EventEntity_ClrType" data-uid="Silverback.EventStore.EventEntity.ClrType">ClrType</h4>
   <div class="markdown level1 summary"><p>Gets or sets the assembly qualified name of the event class.</p>
@@ -143,7 +148,8 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string ClrType { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">[MaxLength(500)]
+public string ClrType { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -160,8 +166,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventEntity_Sequence.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventEntity.Sequence%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.EventSourcing/EventStore/EventEntity.cs/#L16">View source</a>
+  </span>
   <a id="Silverback_EventStore_EventEntity_Sequence_" data-uid="Silverback.EventStore.EventEntity.Sequence*"></a>
   <h4 id="Silverback_EventStore_EventEntity_Sequence" data-uid="Silverback.EventStore.EventEntity.Sequence">Sequence</h4>
   <div class="markdown level1 summary"><p>Gets or sets the sequence number that is used to replay the messages in the right order.</p>
@@ -186,8 +197,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventEntity_SerializedEvent.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventEntity.SerializedEvent%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.EventSourcing/EventStore/EventEntity.cs/#L19">View source</a>
+  </span>
   <a id="Silverback_EventStore_EventEntity_SerializedEvent_" data-uid="Silverback.EventStore.EventEntity.SerializedEvent*"></a>
   <h4 id="Silverback_EventStore_EventEntity_SerializedEvent" data-uid="Silverback.EventStore.EventEntity.SerializedEvent">SerializedEvent</h4>
   <div class="markdown level1 summary"><p>Gets or sets the serialized event.</p>
@@ -212,8 +228,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventEntity_Timestamp.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventEntity.Timestamp%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.EventSourcing/EventStore/EventEntity.cs/#L13">View source</a>
+  </span>
   <a id="Silverback_EventStore_EventEntity_Timestamp_" data-uid="Silverback.EventStore.EventEntity.Timestamp*"></a>
   <h4 id="Silverback_EventStore_EventEntity_Timestamp" data-uid="Silverback.EventStore.EventEntity.Timestamp">Timestamp</h4>
   <div class="markdown level1 summary"><p>Gets or sets the datetime when the event occured.</p>
@@ -249,6 +270,12 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_EventEntity.md&amp;value=---%0Auid%3A%20Silverback.EventStore.EventEntity%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.EventSourcing/EventStore/EventEntity.cs/#L10" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

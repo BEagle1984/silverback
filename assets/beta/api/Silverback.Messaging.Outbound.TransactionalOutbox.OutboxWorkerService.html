@@ -90,26 +90,87 @@
   
   <h1 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService" class="text-break">Class OutboxWorkerService
   </h1>
-  <div class="markdown level0 summary"><p>The <see cref="!:IHostedService"></see> that triggers the outbound queue worker at regular intervals.</p>
+  <div class="markdown level0 summary"><p>The <span class="xref">Microsoft.Extensions.Hosting.IHostedService</span> that triggers the outbound queue worker at regular intervals.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">OutboxWorkerService</span></div>
+    <div class="level1"><span class="xref">Microsoft.Extensions.Hosting.BackgroundService</span></div>
+    <div class="level2"><a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a></div>
+    <div class="level3"><a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a></div>
+    <div class="level4"><span class="xref">OutboxWorkerService</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">Microsoft.Extensions.Hosting.IHostedService</span></div>
+    <div><span class="xref">System.IDisposable</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html#Silverback_Background_RecurringDistributedBackgroundService_Pause">RecurringDistributedBackgroundService.Pause()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html#Silverback_Background_RecurringDistributedBackgroundService_Resume">RecurringDistributedBackgroundService.Resume()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html#Silverback_Background_RecurringDistributedBackgroundService_ExecuteLockedAsync_System_Threading_CancellationToken_">RecurringDistributedBackgroundService.ExecuteLockedAsync(CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Background.DistributedBackgroundService.html#Silverback_Background_DistributedBackgroundService_Lock">DistributedBackgroundService.Lock</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Background.DistributedBackgroundService.html#Silverback_Background_DistributedBackgroundService_ExecuteAsync_System_Threading_CancellationToken_">DistributedBackgroundService.ExecuteAsync(CancellationToken)</a>
+    </div>
+    <div>
+      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.StartAsync(System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.StopAsync(System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.Dispose()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.html">Silverback.Messaging.Outbound.TransactionalOutbox</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class OutboxWorkerService : RecurringDistributedBackgroundService</code></pre>
+    <pre><code class="lang-csharp hljs">public class OutboxWorkerService : RecurringDistributedBackgroundService, IHostedService, IDisposable</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService__ctor_System_TimeSpan_Silverback_Messaging_Outbound_TransactionalOutbox_IOutboxWorker_Silverback_Background_DistributedLockSettings_Silverback_Background_IDistributedLockManager_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.%23ctor(System.TimeSpan%2CSilverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker%2CSilverback.Background.DistributedLockSettings%2CSilverback.Background.IDistributedLockManager%2CSilverback.Diagnostics.ISilverbackLogger%7BSilverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/OutboxWorkerService.cs/#L38">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService__ctor_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService__ctor_System_TimeSpan_Silverback_Messaging_Outbound_TransactionalOutbox_IOutboxWorker_DistributedLockSettings_IDistributedLockManager_ISilverbackLogger_Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService__" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.#ctor(System.TimeSpan,Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker,DistributedLockSettings,IDistributedLockManager,ISilverbackLogger{Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService})">OutboxWorkerService(TimeSpan, IOutboxWorker, DistributedLockSettings, IDistributedLockManager, ISilverbackLogger&lt;OutboxWorkerService&gt;)</h4>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService__ctor_System_TimeSpan_Silverback_Messaging_Outbound_TransactionalOutbox_IOutboxWorker_Silverback_Background_DistributedLockSettings_Silverback_Background_IDistributedLockManager_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService__" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.#ctor(System.TimeSpan,Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker,Silverback.Background.DistributedLockSettings,Silverback.Background.IDistributedLockManager,Silverback.Diagnostics.ISilverbackLogger{Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService})">OutboxWorkerService(TimeSpan, IOutboxWorker, DistributedLockSettings, IDistributedLockManager, ISilverbackLogger&lt;OutboxWorkerService&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.html">OutboxWorkerService</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -140,31 +201,36 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">DistributedLockSettings</span></td>
+        <td><a class="xref" href="Silverback.Background.DistributedLockSettings.html">DistributedLockSettings</a></td>
         <td><span class="parametername">distributedLockSettings</span></td>
         <td><p>Customizes the lock mechanism settings.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IDistributedLockManager</span></td>
+        <td><a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a></td>
         <td><span class="parametername">distributedLockManager</span></td>
-        <td><p>The <see cref="!:IDistributedLockManager"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Background.IDistributedLockManager.html">IDistributedLockManager</a>.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">ISilverbackLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.html">OutboxWorkerService</a>&gt;</td>
+        <td><a class="xref" href="Silverback.Diagnostics.ISilverbackLogger-1.html">ISilverbackLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.html">OutboxWorkerService</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <see cref="!:ISilverbackLogger"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService_ExecuteRecurringAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.ExecuteRecurringAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/OutboxWorkerService.cs/#L53">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService_ExecuteRecurringAsync_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.ExecuteRecurringAsync*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService_ExecuteRecurringAsync_CancellationToken_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.ExecuteRecurringAsync(CancellationToken)">ExecuteRecurringAsync(CancellationToken)</h4>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService_ExecuteRecurringAsync_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService.ExecuteRecurringAsync(System.Threading.CancellationToken)">ExecuteRecurringAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Calls the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> to process the queue at regular intervals.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -183,9 +249,10 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">stoppingToken</span></td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.CancellationToken</span> to observe while waiting for the task to complete.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -199,11 +266,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span></td>
-        <td></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> that represents the long running operations.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html#Silverback_Background_RecurringDistributedBackgroundService_ExecuteRecurringAsync_System_Threading_CancellationToken_">RecurringDistributedBackgroundService.ExecuteRecurringAsync(CancellationToken)</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">Microsoft.Extensions.Hosting.IHostedService</span>
+  </div>
+  <div>
+      <span class="xref">System.IDisposable</span>
+  </div>
 </article>
           </div>
           
@@ -211,6 +288,12 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/OutboxWorkerService.cs/#L16" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

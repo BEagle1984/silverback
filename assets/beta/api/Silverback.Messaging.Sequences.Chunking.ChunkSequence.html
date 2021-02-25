@@ -96,7 +96,7 @@
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html">SequenceBase</a>&lt;<span class="xref">IRawInboundEnvelope</span>&gt;</div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html">SequenceBase</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>&gt;</div>
     <div class="level2"><a class="xref" href="Silverback.Messaging.Sequences.RawSequence.html">RawSequence</a></div>
     <div class="level3"><span class="xref">ChunkSequence</span></div>
   </div>
@@ -132,6 +132,12 @@
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_ProcessingCompletedTask">SequenceBase&lt;IRawInboundEnvelope&gt;.ProcessingCompletedTask</a>
     </div>
     <div>
+      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_ShouldCreateNewActivity">SequenceBase&lt;IRawInboundEnvelope&gt;.ShouldCreateNewActivity</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_Activity">SequenceBase&lt;IRawInboundEnvelope&gt;.Activity</a>
+    </div>
+    <div>
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_StreamProvider">SequenceBase&lt;IRawInboundEnvelope&gt;.StreamProvider</a>
     </div>
     <div>
@@ -162,7 +168,7 @@
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_CreateStream__1">SequenceBase&lt;IRawInboundEnvelope&gt;.CreateStream&lt;TMessage&gt;()</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_AddAsync_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_System_Boolean_">SequenceBase&lt;IRawInboundEnvelope&gt;.AddAsync(IRawInboundEnvelope, ISequence, Boolean)</a>
+      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_AddAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_System_Boolean_">SequenceBase&lt;IRawInboundEnvelope&gt;.AddAsync(IRawInboundEnvelope, ISequence, Boolean)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_AbortAsync_Silverback_Messaging_Sequences_SequenceAbortReason_System_Exception_">SequenceBase&lt;IRawInboundEnvelope&gt;.AbortAsync(SequenceAbortReason, Exception)</a>
@@ -174,7 +180,7 @@
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_Dispose">SequenceBase&lt;IRawInboundEnvelope&gt;.Dispose()</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_CompleteAsync_CancellationToken_">SequenceBase&lt;IRawInboundEnvelope&gt;.CompleteAsync(CancellationToken)</a>
+      <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_CompleteAsync_System_Threading_CancellationToken_">SequenceBase&lt;IRawInboundEnvelope&gt;.CompleteAsync(CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_Dispose_System_Boolean_">SequenceBase&lt;IRawInboundEnvelope&gt;.Dispose(Boolean)</a>
@@ -183,16 +189,10 @@
       <a class="xref" href="Silverback.Messaging.Sequences.SequenceBase-1.html#Silverback_Messaging_Sequences_SequenceBase_1_OnTimeoutElapsedAsync">SequenceBase&lt;IRawInboundEnvelope&gt;.OnTimeoutElapsedAsync()</a>
     </div>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -203,19 +203,30 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Sequences.Chunking.html">Silverback.Messaging.Sequences.Chunking</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Sequences_Chunking_ChunkSequence_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class ChunkSequence : RawSequence, ISequenceImplementation, ISequence, IDisposable</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkSequence__ctor_System_String_System_Nullable_System_Int32__Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkSequence.%23ctor(System.String%2CSystem.Nullable%7BSystem.Int32%7D%2CSilverback.Messaging.Broker.Behaviors.ConsumerPipelineContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkSequence.cs/#L32">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkSequence__ctor_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequence.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkSequence__ctor_System_String_System_Nullable_System_Int32__ConsumerPipelineContext_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequence.#ctor(System.String,System.Nullable{System.Int32},ConsumerPipelineContext)">ChunkSequence(String, Nullable&lt;Int32&gt;, ConsumerPipelineContext)</h4>
+  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkSequence__ctor_System_String_System_Nullable_System_Int32__Silverback_Messaging_Broker_Behaviors_ConsumerPipelineContext_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequence.#ctor(System.String,System.Nullable{System.Int32},Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext)">ChunkSequence(String, Nullable&lt;Int32&gt;, ConsumerPipelineContext)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequence.html">ChunkSequence</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -246,9 +257,9 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">ConsumerPipelineContext</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a></td>
         <td><span class="parametername">context</span></td>
-        <td><p>The current <see cref="!:ConsumerPipelineContext"></see>, assuming that it will be the one from which the
+        <td><p>The current <a class="xref" href="Silverback.Messaging.Broker.Behaviors.ConsumerPipelineContext.html">ConsumerPipelineContext</a>, assuming that it will be the one from which the
 sequence gets published to the internal bus.</p>
 </td>
       </tr>
@@ -256,10 +267,15 @@ sequence gets published to the internal bus.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkSequence_AddCoreAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkSequence.AddCoreAsync(Silverback.Messaging.Messages.IRawInboundEnvelope%2CSilverback.Messaging.Sequences.ISequence%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkSequence.cs/#L39">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkSequence_AddCoreAsync_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequence.AddCoreAsync*"></a>
-  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkSequence_AddCoreAsync_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_System_Boolean_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequence.AddCoreAsync(IRawInboundEnvelope,Silverback.Messaging.Sequences.ISequence,System.Boolean)">AddCoreAsync(IRawInboundEnvelope, ISequence, Boolean)</h4>
+  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkSequence_AddCoreAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_Silverback_Messaging_Sequences_ISequence_System_Boolean_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequence.AddCoreAsync(Silverback.Messaging.Messages.IRawInboundEnvelope,Silverback.Messaging.Sequences.ISequence,System.Boolean)">AddCoreAsync(IRawInboundEnvelope, ISequence, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds the message to the sequence.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -278,7 +294,7 @@ sequence gets published to the internal bus.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
         <td></td>
       </tr>
@@ -307,19 +323,24 @@ message.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
-        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains the
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
 number of streams that have been pushed.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">Silverback.Messaging.Sequences.SequenceBase&lt;IRawInboundEnvelope&gt;.AddCoreAsync(IRawInboundEnvelope, Silverback.Messaging.Sequences.ISequence, System.Boolean)</span></div>
-  
-  
+  <div><span class="xref">Silverback.Messaging.Sequences.SequenceBase&lt;Silverback.Messaging.Messages.IRawInboundEnvelope&gt;.AddCoreAsync(Silverback.Messaging.Messages.IRawInboundEnvelope, Silverback.Messaging.Sequences.ISequence, System.Boolean)</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkSequence_IsLastMessage_Silverback_Messaging_Messages_IRawInboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkSequence.IsLastMessage(Silverback.Messaging.Messages.IRawInboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkSequence.cs/#L56">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkSequence_IsLastMessage_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequence.IsLastMessage*"></a>
-  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkSequence_IsLastMessage_IRawInboundEnvelope_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequence.IsLastMessage(IRawInboundEnvelope)">IsLastMessage(IRawInboundEnvelope)</h4>
+  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkSequence_IsLastMessage_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkSequence.IsLastMessage(Silverback.Messaging.Messages.IRawInboundEnvelope)">IsLastMessage(IRawInboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Implements the logic to recognize the last message in the sequence without relying on the TotalCount
 property.</p>
 </div>
@@ -339,7 +360,7 @@ property.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
         <td></td>
       </tr>
@@ -362,7 +383,7 @@ property.</p>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">Silverback.Messaging.Sequences.SequenceBase&lt;IRawInboundEnvelope&gt;.IsLastMessage(IRawInboundEnvelope)</span></div>
+  <div><span class="xref">Silverback.Messaging.Sequences.SequenceBase&lt;Silverback.Messaging.Messages.IRawInboundEnvelope&gt;.IsLastMessage(Silverback.Messaging.Messages.IRawInboundEnvelope)</span></div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Messaging.Sequences.ISequence.html">ISequence</a>
@@ -377,6 +398,12 @@ property.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkSequence.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkSequence%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkSequence.cs/#L15" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

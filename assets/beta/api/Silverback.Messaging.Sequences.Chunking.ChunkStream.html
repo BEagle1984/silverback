@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_Sequences_Chunking_ChunkStream" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream" class="text-break">Class ChunkStream
   </h1>
-  <div class="markdown level0 summary"><p>The <see cref="!:Stream"></see> implementation used to read the chunked messages. This stream is used by the
+  <div class="markdown level0 summary"><p>The <span class="xref">System.IO.Stream</span> implementation used to read the chunked messages. This stream is used by the
 <a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequenceReader.html">ChunkSequenceReader</a> and it is asynchronously pushed with the chunks being
 consumed.</p>
 </div>
@@ -98,20 +98,149 @@ consumed.</p>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">ChunkStream</span></div>
+    <div class="level1"><span class="xref">System.MarshalByRefObject</span></div>
+    <div class="level2"><span class="xref">System.IO.Stream</span></div>
+    <div class="level3"><span class="xref">ChunkStream</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.IAsyncDisposable</span></div>
+    <div><span class="xref">System.IDisposable</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.IO.Stream.Null</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.BeginRead(System.Byte[], System.Int32, System.Int32, System.AsyncCallback, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.BeginWrite(System.Byte[], System.Int32, System.Int32, System.AsyncCallback, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.CopyTo(System.IO.Stream)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.CopyTo(System.IO.Stream, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.CopyToAsync(System.IO.Stream)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.CopyToAsync(System.IO.Stream, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.CopyToAsync(System.IO.Stream, System.Int32, System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.CopyToAsync(System.IO.Stream, System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.CreateWaitHandle()</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.Dispose()</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.EndRead(System.IAsyncResult)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.EndWrite(System.IAsyncResult)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.FlushAsync()</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.FlushAsync(System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.ObjectInvariant()</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.Read(System.Span&lt;System.Byte&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.ReadAsync(System.Byte[], System.Int32, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.ReadAsync(System.Memory&lt;System.Byte&gt;, System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.ReadByte()</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.Synchronized(System.IO.Stream)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.Write(System.ReadOnlySpan&lt;System.Byte&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.WriteAsync(System.Byte[], System.Int32, System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.WriteAsync(System.Byte[], System.Int32, System.Int32, System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.WriteAsync(System.ReadOnlyMemory&lt;System.Byte&gt;, System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.WriteByte(System.Byte)</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.ReadTimeout</span>
+    </div>
+    <div>
+      <span class="xref">System.IO.Stream.WriteTimeout</span>
+    </div>
+    <div>
+      <span class="xref">System.MarshalByRefObject.GetLifetimeService()</span>
+    </div>
+    <div>
+      <span class="xref">System.MarshalByRefObject.InitializeLifetimeService()</span>
+    </div>
+    <div>
+      <span class="xref">System.MarshalByRefObject.MemberwiseClone(System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Sequences.Chunking.html">Silverback.Messaging.Sequences.Chunking</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class ChunkStream : Stream</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class ChunkStream : Stream, IAsyncDisposable, IDisposable</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream__ctor_Silverback_Messaging_Messages_IMessageStreamEnumerable_Silverback_Messaging_Messages_IRawInboundEnvelope__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.%23ctor(Silverback.Messaging.Messages.IMessageStreamEnumerable%7BSilverback.Messaging.Messages.IRawInboundEnvelope%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L37">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream__ctor_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream__ctor_IMessageStreamEnumerable_IRawInboundEnvelope__" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.#ctor(IMessageStreamEnumerable{IRawInboundEnvelope})">ChunkStream(IMessageStreamEnumerable&lt;IRawInboundEnvelope&gt;)</h4>
+  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream__ctor_Silverback_Messaging_Messages_IMessageStreamEnumerable_Silverback_Messaging_Messages_IRawInboundEnvelope__" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.#ctor(Silverback.Messaging.Messages.IMessageStreamEnumerable{Silverback.Messaging.Messages.IRawInboundEnvelope})">ChunkStream(IMessageStreamEnumerable&lt;IRawInboundEnvelope&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkStream.html">ChunkStream</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -130,7 +259,7 @@ consumed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IMessageStreamEnumerable</span>&lt;<span class="xref">IRawInboundEnvelope</span>&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable</a>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>&gt;</td>
         <td><span class="parametername">source</span></td>
         <td><p>The chunks composing this stream.</p>
 </td>
@@ -139,8 +268,13 @@ consumed.</p>
   </table>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_CanRead.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.CanRead%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L45">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanRead_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanRead*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanRead" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanRead">CanRead</h4>
   <div class="markdown level1 summary"></div>
@@ -164,8 +298,15 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.CanRead</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_CanSeek.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.CanSeek%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L48">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanSeek_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanSeek*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanSeek" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanSeek">CanSeek</h4>
   <div class="markdown level1 summary"></div>
@@ -189,8 +330,15 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.CanSeek</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_CanTimeout.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.CanTimeout%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L51">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanTimeout_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanTimeout*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanTimeout" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanTimeout">CanTimeout</h4>
   <div class="markdown level1 summary"></div>
@@ -214,8 +362,15 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.CanTimeout</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_CanWrite.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.CanWrite%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L54">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanWrite_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanWrite*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_CanWrite" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.CanWrite">CanWrite</h4>
   <div class="markdown level1 summary"></div>
@@ -239,8 +394,15 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.CanWrite</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_Length.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.Length%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L57">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Length_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Length*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Length" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Length">Length</h4>
   <div class="markdown level1 summary"></div>
@@ -264,8 +426,15 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.Length</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_Position.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.Position%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L60">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Position_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Position*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Position" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Position">Position</h4>
   <div class="markdown level1 summary"></div>
@@ -289,10 +458,17 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.Position</span></div>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_Close.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.Close%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L142">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Close_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Close*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Close" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Close">Close()</h4>
   <div class="markdown level1 summary"></div>
@@ -301,8 +477,15 @@ consumed.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public override void Close()</code></pre>
   </div>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.Close()</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.Dispose(System.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L160">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Dispose_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Dispose*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Dispose_System_Boolean_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Dispose(System.Boolean)">Dispose(Boolean)</h4>
   <div class="markdown level1 summary"></div>
@@ -328,8 +511,15 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.Dispose(System.Boolean)</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_DisposeAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.DisposeAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L148">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_DisposeAsync_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.DisposeAsync*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_DisposeAsync" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.DisposeAsync">DisposeAsync()</h4>
   <div class="markdown level1 summary"></div>
@@ -348,13 +538,20 @@ consumed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">ValueTask</span></td>
+        <td><span class="xref">System.Threading.Tasks.ValueTask</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.DisposeAsync()</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_Flush.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.Flush%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L67">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Flush_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Flush*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Flush" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Flush">Flush()</h4>
   <div class="markdown level1 summary"></div>
@@ -363,8 +560,15 @@ consumed.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public override void Flush()</code></pre>
   </div>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.Flush()</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_Read_System_Byte___System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.Read(System.Byte%5B%5D%2CSystem.Int32%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L70">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Read_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Read*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Read_System_Byte___System_Int32_System_Int32_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Read(System.Byte[],System.Int32,System.Int32)">Read(Byte[], Int32, Int32)</h4>
   <div class="markdown level1 summary"></div>
@@ -415,10 +619,17 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.Read(System.Byte[], System.Int32, System.Int32)</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_ReadAsync_System_Byte___System_Int32_System_Int32_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.ReadAsync(System.Byte%5B%5D%2CSystem.Int32%2CSystem.Int32%2CSystem.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L93">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_ReadAsync_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.ReadAsync*"></a>
-  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_ReadAsync_System_Byte___System_Int32_System_Int32_CancellationToken_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.ReadAsync(System.Byte[],System.Int32,System.Int32,CancellationToken)">ReadAsync(Byte[], Int32, Int32, CancellationToken)</h4>
+  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_ReadAsync_System_Byte___System_Int32_System_Int32_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.ReadAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)">ReadAsync(Byte[], Int32, Int32, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -451,7 +662,7 @@ consumed.</p>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
         <td></td>
       </tr>
@@ -467,15 +678,22 @@ consumed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.ReadAsync(System.Byte[], System.Int32, System.Int32, System.Threading.CancellationToken)</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_Seek_System_Int64_System_IO_SeekOrigin_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.Seek(System.Int64%2CSystem.IO.SeekOrigin)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L124">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Seek_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Seek*"></a>
-  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Seek_System_Int64_SeekOrigin_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Seek(System.Int64,SeekOrigin)">Seek(Int64, SeekOrigin)</h4>
+  <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Seek_System_Int64_System_IO_SeekOrigin_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Seek(System.Int64,System.IO.SeekOrigin)">Seek(Int64, SeekOrigin)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -498,7 +716,7 @@ consumed.</p>
         <td></td>
       </tr>
       <tr>
-        <td><span class="xref">SeekOrigin</span></td>
+        <td><span class="xref">System.IO.SeekOrigin</span></td>
         <td><span class="parametername">origin</span></td>
         <td></td>
       </tr>
@@ -519,8 +737,15 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.Seek(System.Int64, System.IO.SeekOrigin)</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_SetLength_System_Int64_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.SetLength(System.Int64)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L130">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_SetLength_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.SetLength*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_SetLength_System_Int64_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.SetLength(System.Int64)">SetLength(Int64)</h4>
   <div class="markdown level1 summary"></div>
@@ -546,8 +771,15 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.SetLength(System.Int64)</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream_Write_System_Byte___System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream.Write(System.Byte%5B%5D%2CSystem.Int32%2CSystem.Int32)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L136">View source</a>
+  </span>
   <a id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Write_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Write*"></a>
   <h4 id="Silverback_Messaging_Sequences_Chunking_ChunkStream_Write_System_Byte___System_Int32_System_Int32_" data-uid="Silverback.Messaging.Sequences.Chunking.ChunkStream.Write(System.Byte[],System.Int32,System.Int32)">Write(Byte[], Int32, Int32)</h4>
   <div class="markdown level1 summary"></div>
@@ -583,6 +815,15 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.IO.Stream.Write(System.Byte[], System.Int32, System.Int32)</span></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.IAsyncDisposable</span>
+  </div>
+  <div>
+      <span class="xref">System.IDisposable</span>
+  </div>
 </article>
           </div>
           
@@ -590,6 +831,12 @@ consumed.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Sequences_Chunking_ChunkStream.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Sequences.Chunking.ChunkStream%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Sequences/Chunking/ChunkStream.cs/#L19" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

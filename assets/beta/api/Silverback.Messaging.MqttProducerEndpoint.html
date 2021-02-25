@@ -115,7 +115,7 @@
       <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint_Chunk">ProducerEndpoint.Chunk</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint_GetActualName_IOutboundEnvelope_System_IServiceProvider_">ProducerEndpoint.GetActualName(IOutboundEnvelope, IServiceProvider)</a>
+      <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint_GetActualName_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_">ProducerEndpoint.GetActualName(IOutboundEnvelope, IServiceProvider)</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint_BaseEquals_Silverback_Messaging_Endpoint_">ProducerEndpoint.BaseEquals(Endpoint)</a>
@@ -133,13 +133,7 @@
       <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Encryption">Endpoint.Encryption</a>
     </div>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetType()</span>
@@ -147,19 +141,30 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.html">Silverback.Messaging</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.dll</h6>
   <h5 id="Silverback_Messaging_MqttProducerEndpoint_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public sealed class MqttProducerEndpoint : ProducerEndpoint, IProducerEndpoint, IEndpoint, IEquatable&lt;MqttProducerEndpoint&gt;</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.%23ctor(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.IServiceProvider%2CSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L47">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint__ctor_" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_MqttProducerEndpoint__ctor_System_Func_IOutboundEnvelope_System_IServiceProvider_System_String__" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor(System.Func{IOutboundEnvelope,System.IServiceProvider,System.String})">MqttProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, String&gt;)</h4>
+  <h4 id="Silverback_Messaging_MqttProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_System_String__" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.IServiceProvider,System.String})">MqttProducerEndpoint(Func&lt;IOutboundEnvelope, IServiceProvider, String&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -178,17 +183,22 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">IOutboundEnvelope</span>, <span class="xref">System.IServiceProvider</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.IServiceProvider</span>, <span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">nameFunction</span></td>
         <td><p>The function returning the endpoint name for the message being produced.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.%23ctor(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L36">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint__ctor_" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_MqttProducerEndpoint__ctor_System_Func_IOutboundEnvelope_System_String__" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor(System.Func{IOutboundEnvelope,System.String})">MqttProducerEndpoint(Func&lt;IOutboundEnvelope, String&gt;)</h4>
+  <h4 id="Silverback_Messaging_MqttProducerEndpoint__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String__" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.String})">MqttProducerEndpoint(Func&lt;IOutboundEnvelope, String&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -207,15 +217,20 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">IOutboundEnvelope</span>, <span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">nameFunction</span></td>
         <td><p>The function returning the endpoint name for the message being produced.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint__ctor_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.%23ctor(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L25">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint__ctor_" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_MqttProducerEndpoint__ctor_System_String_" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor(System.String)">MqttProducerEndpoint(String)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a> class.</p>
@@ -243,10 +258,15 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String____.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.%23ctor(System.String%2CSystem.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%2CSystem.String%5B%5D%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L62">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint__ctor_" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_MqttProducerEndpoint__ctor_System_String_System_Func_IOutboundEnvelope_System_String____" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor(System.String,System.Func{IOutboundEnvelope,System.String[]})">MqttProducerEndpoint(String, Func&lt;IOutboundEnvelope, String[]&gt;)</h4>
+  <h4 id="Silverback_Messaging_MqttProducerEndpoint__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_String____" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope,System.String[]})">MqttProducerEndpoint(String, Func&lt;IOutboundEnvelope, String[]&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -272,15 +292,20 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">IOutboundEnvelope</span>, <span class="xref">System.String</span>[]&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>, <span class="xref">System.String</span>[]&gt;</td>
         <td><span class="parametername">argumentsFunction</span></td>
         <td><p>The function returning the arguments to be used to format the string.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint__ctor_System_Type_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.%23ctor(System.Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L76">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint__ctor_" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_MqttProducerEndpoint__ctor_System_Type_" data-uid="Silverback.Messaging.MqttProducerEndpoint.#ctor(System.Type)">MqttProducerEndpoint(Type)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a> class.</p>
@@ -303,7 +328,7 @@
       <tr>
         <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">nameResolverType</span></td>
-        <td><p>The type of the <see cref="!:IProducerEndpointNameResolver"></see> to be used to resolve the actual
+        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.IProducerEndpointNameResolver.html">IProducerEndpointNameResolver</a> to be used to resolve the actual
 endpoint name.</p>
 </td>
       </tr>
@@ -311,12 +336,17 @@ endpoint name.</p>
   </table>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint_Configuration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.Configuration%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L85">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint_Configuration_" data-uid="Silverback.Messaging.MqttProducerEndpoint.Configuration*"></a>
   <h4 id="Silverback_Messaging_MqttProducerEndpoint_Configuration" data-uid="Silverback.Messaging.MqttProducerEndpoint.Configuration">Configuration</h4>
   <div class="markdown level1 summary"><p>Gets or sets the MQTT client configuration. This is actually a wrapper around the
-<see cref="!:MqttClientOptions"></see> from the MQTTnet library.</p>
+<span class="xref">MQTTnet.Client.Options.MqttClientOptions</span> from the MQTTnet library.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -333,13 +363,18 @@ endpoint name.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MqttClientConfig</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html">MqttClientConfig</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint_MessageExpiryInterval.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.MessageExpiryInterval%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L105">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint_MessageExpiryInterval_" data-uid="Silverback.Messaging.MqttProducerEndpoint.MessageExpiryInterval*"></a>
   <h4 id="Silverback_Messaging_MqttProducerEndpoint_MessageExpiryInterval" data-uid="Silverback.Messaging.MqttProducerEndpoint.MessageExpiryInterval">MessageExpiryInterval</h4>
   <div class="markdown level1 summary"><p>Gets or sets the message expiry interval in seconds. This interval defines the period of time that the
@@ -368,8 +403,13 @@ indefinitely.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint_QualityOfServiceLevel.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.QualityOfServiceLevel%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L90">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint_QualityOfServiceLevel_" data-uid="Silverback.Messaging.MqttProducerEndpoint.QualityOfServiceLevel*"></a>
   <h4 id="Silverback_Messaging_MqttProducerEndpoint_QualityOfServiceLevel" data-uid="Silverback.Messaging.MqttProducerEndpoint.QualityOfServiceLevel">QualityOfServiceLevel</h4>
   <div class="markdown level1 summary"><p>Gets or sets the quality of service level (at most once, at least once or exactly once).</p>
@@ -389,13 +429,18 @@ indefinitely.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MqttQualityOfServiceLevel</span></td>
+        <td><span class="xref">MQTTnet.Protocol.MqttQualityOfServiceLevel</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint_Retain.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.Retain%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L96">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint_Retain_" data-uid="Silverback.Messaging.MqttProducerEndpoint.Retain*"></a>
   <h4 id="Silverback_Messaging_MqttProducerEndpoint_Retain" data-uid="Silverback.Messaging.MqttProducerEndpoint.Retain">Retain</h4>
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the message have to be sent with the retain flag, causing them
@@ -423,8 +468,13 @@ to be persisted on the broker.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint_Equals_Silverback_Messaging_MqttProducerEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.Equals(Silverback.Messaging.MqttProducerEndpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L122">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint_Equals_" data-uid="Silverback.Messaging.MqttProducerEndpoint.Equals*"></a>
   <h4 id="Silverback_Messaging_MqttProducerEndpoint_Equals_Silverback_Messaging_MqttProducerEndpoint_" data-uid="Silverback.Messaging.MqttProducerEndpoint.Equals(Silverback.Messaging.MqttProducerEndpoint)">Equals(MqttProducerEndpoint)</h4>
   <div class="markdown level1 summary"></div>
@@ -465,8 +515,13 @@ to be persisted on the broker.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L136">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint_Equals_" data-uid="Silverback.Messaging.MqttProducerEndpoint.Equals*"></a>
   <h4 id="Silverback_Messaging_MqttProducerEndpoint_Equals_System_Object_" data-uid="Silverback.Messaging.MqttProducerEndpoint.Equals(System.Object)">Equals(Object)</h4>
   <div class="markdown level1 summary"></div>
@@ -509,8 +564,13 @@ to be persisted on the broker.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.Object.Equals(System.Object)</span></div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L151">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint_GetHashCode_" data-uid="Silverback.Messaging.MqttProducerEndpoint.GetHashCode*"></a>
   <h4 id="Silverback_Messaging_MqttProducerEndpoint_GetHashCode" data-uid="Silverback.Messaging.MqttProducerEndpoint.GetHashCode">GetHashCode()</h4>
   <div class="markdown level1 summary"></div>
@@ -536,8 +596,13 @@ to be persisted on the broker.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.Object.GetHashCode()</span></div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L108">View source</a>
+  </span>
   <a id="Silverback_Messaging_MqttProducerEndpoint_Validate_" data-uid="Silverback.Messaging.MqttProducerEndpoint.Validate*"></a>
   <h4 id="Silverback_Messaging_MqttProducerEndpoint_Validate" data-uid="Silverback.Messaging.MqttProducerEndpoint.Validate">Validate()</h4>
   <div class="markdown level1 summary"><p>Validates the endpoint configuration and throws an <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> if
@@ -567,6 +632,12 @@ not valid.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_MqttProducerEndpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.MqttProducerEndpoint%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/MqttProducerEndpoint.cs/#L17" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

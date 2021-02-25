@@ -79,7 +79,7 @@
             <article class="content wrap" id="_content" data-uid="releases">
 <h1 id="releases">Releases</h1>
 
-<h2 id="300-beta16"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.16">3.0.0-beta.16</a></h2>
+<h2 id="300-beta20"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.20">3.0.0-beta.20</a></h2>
 <h3 id="whats-new">What's new</h3>
 <ul>
 <li>Simplify configuration and reduce boiler plate (see <a class="xref" href="concepts/bus/subscribe.html">Subscribing</a> and <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)
@@ -108,6 +108,8 @@
 <li>Add option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see <code>throwIfUnhandled</code> argument in the <a class="xref" href="api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> methods and <a class="xref" href="api/Silverback.Messaging.IConsumerEndpoint.html#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled">ThrowIfUnhandled</a> property in the <a class="xref" href="api/Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a>)</li>
 <li>Replace <a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a> with <a href="https://www.nuget.org/packages/System.Text.Json">System.Text.Json</a> to improve serialization and deserialization performance (the old serializers have been moved into the <a href="https://www.nuget.org/packages/Silverback.Integration.Newtonsoft">Silverback.Integration.Newtonsoft</a> package, see <a class="xref" href="concepts/broker/serialization.html">Serialization</a>)</li>
 <li>Improve outbound routing customization options with endpoint name resolvers (see <a class="xref" href="concepts/broker/outbound-routing.html">Outbound Messages Routing</a>)</li>
+<li>Add non-blocking <code>Produce</code>/<code>ProduceAsync</code>/<code>RawProduce</code>/<code>RawProduceAsync</code> overloads to <a class="xref" href="api/Silverback.Messaging.Broker.IProducer.html">IProducer</a>, suitable for higher throughput (see <a class="xref" href="concepts/broker/producer.html">Producer</a>)</li>
+<li>Refactor broker event handlers (see &lt;xref:broker-callbacks&gt;)</li>
 <li>Add log levels configuration (see <a class="xref" href="concepts/logging.html">Logging</a>)</li>
 <li>Allow header names customization (see <a class="xref" href="concepts/broker/headers.html">Message Headers</a>)</li>
 <li>Add consumer status information and statistics (see <a class="xref" href="concepts/broker/connecting.html#consumer-management-api">Connecting to a Message Broker</a>)</li>
@@ -133,6 +135,12 @@
 </ul>
 <h3 id="breaking-changes">Breaking Changes</h3>
 <ul>
+<li>Refactored <a class="xref" href="api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a>
+<ul>
+<li>Removed the overloads to publish a batch of messages (see <a class="xref" href="concepts/bus/publish.html">Publishing</a>)</li>
+<li>Cannot subscribe to collection of messages anymore (see <a class="xref" href="concepts/bus/subscribe.html">Subscribing</a>), unless they are consumed from a message broker (see <a class="xref" href="concepts/broker/streaming.html">Streaming</a>)</li>
+</ul>
+</li>
 <li>The chunks belonging to the same message must be contiguous (interleaved messages are at the moment not supported anymore)</li>
 <li>Removed <em>ISubscriber</em> interface</li>
 <li>Removed <em>BusConfigurator</em> (moved all the configuration into the <a class="xref" href="api/Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> extension methods)
@@ -167,7 +175,7 @@
 <li>Complete redesign of the error policies</li>
 <li>Removed <em>IMessageIdProvider</em> and all related logic: the <code>Id</code> or <code>MessageId</code> property will not be automatically initialized anymore and its value will not be used as identifier for the outbound message anymore (refer to the <a class="xref" href="concepts/broker/message-id.html">Message Identifier</a> page for further details on how to set a custom message id, if needed)</li>
 <li><em>WithConnectionTo&lt;&gt;</em>, <em>WithConnectionToKafka</em>, <em>WithConnectionToRabbitMQ</em> and <em>WithInMemoryBroker</em> have been removed, please use the new <a class="xref" href="api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderWithConnectionToExtensions.html">WithConnectionToMessageBroker</a> and <a class="xref" href="api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddKafkaExtensions.html">AddKafka</a>/<a class="xref" href="api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddRabbitExtensions.html">AddRabbit</a> methods (see <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)</li>
-<li>Replaced the internal messages for the Kafka events such as partitions revoked/assigned, offset commit, error, log and statistics with some callbacks defined at &lt;xref:Silverback.Integration.Messaging.KafkaProducerEndpoint&gt; and &lt;xref:Silverback.Integration.Messaging.KafkaConsumerEndpoint&gt; level (see <a class="xref" href="concepts/broker/kafka/kafka-events.html">Kafka Events</a>)</li>
+<li>Replaced the internal messages for the Kafka events such as partitions revoked/assigned, offset commit, error, log and statistics with event handler interfaces (see <a class="xref" href="concepts/broker/kafka/kafka-events.html">Kafka Events</a>)</li>
 <li>Deprecated <a href="https://www.nuget.org/packages/Silverback.Integration.InMemory">Silverback.Integration.InMemory</a>, use <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing">Silverback.Integration.Kafka.Testing</a>, <a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ.Testing">Silverback.Integration.RabbitMQ.Testing</a>, etc. instead</li>
 <li>Renamed <em>PartitioningKeyMemberAttribute</em> to <a class="xref" href="api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a></li>
 <li><a href="https://www.nuget.org/packages/Silverback.Integration.Configuration">Silverback.Integration.Configuration</a> has been discontinued</li>
@@ -178,7 +186,7 @@
 <li>Some changes to the behaviors:
 <ul>
 <li>Renamed <code>Handle</code> to <code>HandleAsync</code> in the <a class="xref" href="api/Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a>, <a class="xref" href="api/Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a> and <a class="xref" href="api/Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a></li>
-<li>Changed signature of the <code>HandleAsync</code> method in both the <a class="xref" href="api/Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a> and <a class="xref" href="api/Silverback.Messaging.Broker.Behaviors.IConsumerBehavior.html">IConsumerBehavior</a> (see <a class="xref" href="concepts/broker/behaviors.html">Broker behaviors pipeline</a>)</li>
+<li>Changed signature of the <code>HandleAsync</code> method (see <a class="xref" href="concepts/bus/behaviors.html">Behaviors</a> and <a class="xref" href="concepts/broker/behaviors.html">Broker behaviors pipeline</a>)</li>
 <li>Changed some sort indexes and introduced some new broker behaviors, you may need to adjust the sort index of your custom behaviors (see <a class="xref" href="concepts/broker/behaviors.html">Broker behaviors pipeline</a> for the updated list of built-in behaviors)</li>
 </ul>
 </li>

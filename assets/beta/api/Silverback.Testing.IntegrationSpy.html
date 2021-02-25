@@ -105,16 +105,10 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -125,20 +119,31 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Testing.html">Silverback.Testing</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Testing.dll</h6>
   <h5 id="Silverback_Testing_IntegrationSpy_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class IntegrationSpy : IIntegrationSpy</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_IntegrationSpy_InboundEnvelopes.md&amp;value=---%0Auid%3A%20Silverback.Testing.IntegrationSpy.InboundEnvelopes%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Testing/Testing/IntegrationSpy.cs/#L34">View source</a>
+  </span>
   <a id="Silverback_Testing_IntegrationSpy_InboundEnvelopes_" data-uid="Silverback.Testing.IntegrationSpy.InboundEnvelopes*"></a>
   <h4 id="Silverback_Testing_IntegrationSpy_InboundEnvelopes" data-uid="Silverback.Testing.IntegrationSpy.InboundEnvelopes">InboundEnvelopes</h4>
-  <div class="markdown level1 summary"><p>Gets the list of <see cref="!:IInboundEnvelope"></see> corresponding to all the inbound messages that have been
+  <div class="markdown level1 summary"><p>Gets the list of <a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> corresponding to all the inbound messages that have been
 processed by the consumer pipeline (except the ones that couldn't be deserialized, e.g. the ones with an
 empty body).</p>
 </div>
@@ -157,16 +162,21 @@ empty body).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IReadOnlyList</span>&lt;<span class="xref">IInboundEnvelope</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_IntegrationSpy_OutboundEnvelopes.md&amp;value=---%0Auid%3A%20Silverback.Testing.IntegrationSpy.OutboundEnvelopes%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Testing/Testing/IntegrationSpy.cs/#L22">View source</a>
+  </span>
   <a id="Silverback_Testing_IntegrationSpy_OutboundEnvelopes_" data-uid="Silverback.Testing.IntegrationSpy.OutboundEnvelopes*"></a>
   <h4 id="Silverback_Testing_IntegrationSpy_OutboundEnvelopes" data-uid="Silverback.Testing.IntegrationSpy.OutboundEnvelopes">OutboundEnvelopes</h4>
-  <div class="markdown level1 summary"><p>Gets the list of <see cref="!:IOutboundEnvelope"></see> corresponding to all the outbound messages.</p>
+  <div class="markdown level1 summary"><p>Gets the list of <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> corresponding to all the outbound messages.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -183,16 +193,21 @@ empty body).</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IReadOnlyList</span>&lt;<span class="xref">IOutboundEnvelope</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_IntegrationSpy_RawInboundEnvelopes.md&amp;value=---%0Auid%3A%20Silverback.Testing.IntegrationSpy.RawInboundEnvelopes%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Testing/Testing/IntegrationSpy.cs/#L30">View source</a>
+  </span>
   <a id="Silverback_Testing_IntegrationSpy_RawInboundEnvelopes_" data-uid="Silverback.Testing.IntegrationSpy.RawInboundEnvelopes*"></a>
   <h4 id="Silverback_Testing_IntegrationSpy_RawInboundEnvelopes" data-uid="Silverback.Testing.IntegrationSpy.RawInboundEnvelopes">RawInboundEnvelopes</h4>
-  <div class="markdown level1 summary"><p>Gets the list of <see cref="!:IRawInboundEnvelope"></see> corresponding to all the inbound messages, before
+  <div class="markdown level1 summary"><p>Gets the list of <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a> corresponding to all the inbound messages, before
 they are even processed by the consumer pipeline.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -210,16 +225,21 @@ they are even processed by the consumer pipeline.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IReadOnlyList</span>&lt;<span class="xref">IRawInboundEnvelope</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_IntegrationSpy_RawOutboundEnvelopes.md&amp;value=---%0Auid%3A%20Silverback.Testing.IntegrationSpy.RawOutboundEnvelopes%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Testing/Testing/IntegrationSpy.cs/#L26">View source</a>
+  </span>
   <a id="Silverback_Testing_IntegrationSpy_RawOutboundEnvelopes_" data-uid="Silverback.Testing.IntegrationSpy.RawOutboundEnvelopes*"></a>
   <h4 id="Silverback_Testing_IntegrationSpy_RawOutboundEnvelopes" data-uid="Silverback.Testing.IntegrationSpy.RawOutboundEnvelopes">RawOutboundEnvelopes</h4>
-  <div class="markdown level1 summary"><p>Gets the list of <see cref="!:IRawOutboundEnvelope"></see> corresponding to all the actual outbound messages
+  <div class="markdown level1 summary"><p>Gets the list of <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html">IRawOutboundEnvelope</a> corresponding to all the actual outbound messages
 being produced (these may differ from the <a class="xref" href="Silverback.Testing.IIntegrationSpy.html#Silverback_Testing_IIntegrationSpy_OutboundEnvelopes">OutboundEnvelopes</a>, e.g. if chunking is applied).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -237,17 +257,22 @@ being produced (these may differ from the <a class="xref" href="Silverback.Testi
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IReadOnlyList</span>&lt;<span class="xref">IRawOutboundEnvelope</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyList</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html">IRawOutboundEnvelope</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_IntegrationSpy_AddInboundEnvelope_Silverback_Messaging_Messages_IInboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Testing.IntegrationSpy.AddInboundEnvelope(Silverback.Messaging.Messages.IInboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Testing/Testing/IntegrationSpy.cs/#L85">View source</a>
+  </span>
   <a id="Silverback_Testing_IntegrationSpy_AddInboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddInboundEnvelope*"></a>
-  <h4 id="Silverback_Testing_IntegrationSpy_AddInboundEnvelope_IInboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddInboundEnvelope(IInboundEnvelope)">AddInboundEnvelope(IInboundEnvelope)</h4>
+  <h4 id="Silverback_Testing_IntegrationSpy_AddInboundEnvelope_Silverback_Messaging_Messages_IInboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddInboundEnvelope(Silverback.Messaging.Messages.IInboundEnvelope)">AddInboundEnvelope(IInboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Adds an item to the <a class="xref" href="Silverback.Testing.IntegrationSpy.html#Silverback_Testing_IntegrationSpy_InboundEnvelopes">InboundEnvelopes</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -266,17 +291,22 @@ being produced (these may differ from the <a class="xref" href="Silverback.Testi
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IInboundEnvelope"></see> to add.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> to add.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_IntegrationSpy_AddOutboundEnvelope_Silverback_Messaging_Messages_IOutboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Testing.IntegrationSpy.AddOutboundEnvelope(Silverback.Messaging.Messages.IOutboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Testing/Testing/IntegrationSpy.cs/#L43">View source</a>
+  </span>
   <a id="Silverback_Testing_IntegrationSpy_AddOutboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddOutboundEnvelope*"></a>
-  <h4 id="Silverback_Testing_IntegrationSpy_AddOutboundEnvelope_IOutboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddOutboundEnvelope(IOutboundEnvelope)">AddOutboundEnvelope(IOutboundEnvelope)</h4>
+  <h4 id="Silverback_Testing_IntegrationSpy_AddOutboundEnvelope_Silverback_Messaging_Messages_IOutboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddOutboundEnvelope(Silverback.Messaging.Messages.IOutboundEnvelope)">AddOutboundEnvelope(IOutboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Adds an item to the <a class="xref" href="Silverback.Testing.IntegrationSpy.html#Silverback_Testing_IntegrationSpy_OutboundEnvelopes">OutboundEnvelopes</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -295,18 +325,23 @@ being produced (these may differ from the <a class="xref" href="Silverback.Testi
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IOutboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IOutboundEnvelope"></see> to add.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> to add.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_IntegrationSpy_AddRawInboundEnvelope_Silverback_Messaging_Messages_IRawInboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Testing.IntegrationSpy.AddRawInboundEnvelope(Silverback.Messaging.Messages.IRawInboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Testing/Testing/IntegrationSpy.cs/#L71">View source</a>
+  </span>
   <a id="Silverback_Testing_IntegrationSpy_AddRawInboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddRawInboundEnvelope*"></a>
-  <h4 id="Silverback_Testing_IntegrationSpy_AddRawInboundEnvelope_IRawInboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddRawInboundEnvelope(IRawInboundEnvelope)">AddRawInboundEnvelope(IRawInboundEnvelope)</h4>
-  <div class="markdown level1 summary"><p>Adds an item to the <see cref="!:RawInboundEnvelope"></see>.</p>
+  <h4 id="Silverback_Testing_IntegrationSpy_AddRawInboundEnvelope_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddRawInboundEnvelope(Silverback.Messaging.Messages.IRawInboundEnvelope)">AddRawInboundEnvelope(IRawInboundEnvelope)</h4>
+  <div class="markdown level1 summary"><p>Adds an item to the <span class="xref">Silverback.Messaging.Messages.RawInboundEnvelope</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -324,18 +359,23 @@ being produced (these may differ from the <a class="xref" href="Silverback.Testi
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawInboundEnvelope"></see> to add.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a> to add.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_IntegrationSpy_AddRawOutboundEnvelope_Silverback_Messaging_Messages_IRawOutboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Testing.IntegrationSpy.AddRawOutboundEnvelope(Silverback.Messaging.Messages.IRawOutboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Testing/Testing/IntegrationSpy.cs/#L57">View source</a>
+  </span>
   <a id="Silverback_Testing_IntegrationSpy_AddRawOutboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddRawOutboundEnvelope*"></a>
-  <h4 id="Silverback_Testing_IntegrationSpy_AddRawOutboundEnvelope_IRawOutboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddRawOutboundEnvelope(IRawOutboundEnvelope)">AddRawOutboundEnvelope(IRawOutboundEnvelope)</h4>
-  <div class="markdown level1 summary"><p>Adds an item to the <see cref="!:RawOutboundEnvelope"></see>.</p>
+  <h4 id="Silverback_Testing_IntegrationSpy_AddRawOutboundEnvelope_Silverback_Messaging_Messages_IRawOutboundEnvelope_" data-uid="Silverback.Testing.IntegrationSpy.AddRawOutboundEnvelope(Silverback.Messaging.Messages.IRawOutboundEnvelope)">AddRawOutboundEnvelope(IRawOutboundEnvelope)</h4>
+  <div class="markdown level1 summary"><p>Adds an item to the <span class="xref">Silverback.Messaging.Messages.RawOutboundEnvelope</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -353,9 +393,9 @@ being produced (these may differ from the <a class="xref" href="Silverback.Testi
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawOutboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html">IRawOutboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
-        <td><p>The <see cref="!:IRawOutboundEnvelope"></see> to add.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Messages.IRawOutboundEnvelope.html">IRawOutboundEnvelope</a> to add.</p>
 </td>
       </tr>
     </tbody>
@@ -371,6 +411,12 @@ being produced (these may differ from the <a class="xref" href="Silverback.Testi
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_IntegrationSpy.md&amp;value=---%0Auid%3A%20Silverback.Testing.IntegrationSpy%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Testing/Testing/IntegrationSpy.cs/#L11" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

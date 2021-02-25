@@ -90,22 +90,27 @@
   
   <h1 id="Silverback_Messaging_Configuration_ILogLevelConfigurator" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator" class="text-break">Interface ILogLevelConfigurator
   </h1>
-  <div class="markdown level0 summary"><p>Configure and stores the <span class="xref">System.LogLevel</span> overrides.</p>
+  <div class="markdown level0 summary"><p>Configure and stores the <span class="xref">Microsoft.Extensions.Logging.LogLevel</span> overrides.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.html">Silverback.Messaging.Configuration</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Core.dll</h6>
   <h5 id="Silverback_Messaging_Configuration_ILogLevelConfigurator_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public interface ILogLevelConfigurator</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ILogLevelConfigurator_Build.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ILogLevelConfigurator.Build%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Core/Messaging/Configuration/ILogLevelConfigurator.cs/#L68">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_ILogLevelConfigurator_Build_" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator.Build*"></a>
   <h4 id="Silverback_Messaging_Configuration_ILogLevelConfigurator_Build" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator.Build">Build()</h4>
-  <div class="markdown level1 summary"><p>Builds the <see cref="!:ILogLevelDictionary"></see> based on the current state of the configurator.</p>
+  <div class="markdown level1 summary"><p>Builds the <a class="xref" href="Silverback.Diagnostics.ILogLevelDictionary.html">ILogLevelDictionary</a> based on the current state of the configurator.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -122,22 +127,27 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">ILogLevelDictionary</span></td>
-        <td><p>The <see cref="!:ILogLevelDictionary"></see>.</p>
+        <td><a class="xref" href="Silverback.Diagnostics.ILogLevelDictionary.html">ILogLevelDictionary</a></td>
+        <td><p>The <a class="xref" href="Silverback.Diagnostics.ILogLevelDictionary.html">ILogLevelDictionary</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_Microsoft_Extensions_Logging_EventId_Microsoft_Extensions_Logging_LogLevel_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel(Microsoft.Extensions.Logging.EventId%2CMicrosoft.Extensions.Logging.LogLevel)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Core/Messaging/Configuration/ILogLevelConfigurator.cs/#L27">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_EventId_System_Func_System_Exception_System_LogLevel_System_Lazy_System_String__System_LogLevel__" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel(EventId,System.Func{System.Exception,System.LogLevel,System.Lazy{System.String},System.LogLevel})">SetLogLevel(EventId, Func&lt;Exception, LogLevel, Lazy&lt;String&gt;, LogLevel&gt;)</h4>
-  <div class="markdown level1 summary"><p>Configure a delegate that determines the log level that should be applied to the specified event.</p>
+  <h4 id="Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_Microsoft_Extensions_Logging_EventId_Microsoft_Extensions_Logging_LogLevel_" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel(Microsoft.Extensions.Logging.EventId,Microsoft.Extensions.Logging.LogLevel)">SetLogLevel(EventId, LogLevel)</h4>
+  <div class="markdown level1 summary"><p>Configure the log level that should be applied to the specified event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ILogLevelConfigurator SetLogLevel(EventId eventId, Func&lt;Exception, LogLevel, Lazy&lt;string&gt;, LogLevel&gt; logLevelFunc)</code></pre>
+    <pre><code class="lang-csharp hljs">ILogLevelConfigurator SetLogLevel(EventId eventId, LogLevel logLevel)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -150,17 +160,15 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">EventId</span></td>
+        <td><span class="xref">Microsoft.Extensions.Logging.EventId</span></td>
         <td><span class="parametername">eventId</span></td>
         <td><p>The event id.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Exception</span>, <span class="xref">System.LogLevel</span>, <span class="xref">System.Lazy</span>&lt;<span class="xref">System.String</span>&gt;, <span class="xref">System.LogLevel</span>&gt;</td>
-        <td><span class="parametername">logLevelFunc</span></td>
-        <td><p>The function that returns the log level. It takes the logged exception, the message and the default
-log level as
-parameters.</p>
+        <td><span class="xref">Microsoft.Extensions.Logging.LogLevel</span></td>
+        <td><span class="parametername">logLevel</span></td>
+        <td><p>The log level to apply.</p>
 </td>
       </tr>
     </tbody>
@@ -181,10 +189,15 @@ parameters.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_Microsoft_Extensions_Logging_EventId_System_Func_System_Exception_Microsoft_Extensions_Logging_LogLevel_Microsoft_Extensions_Logging_LogLevel__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel(Microsoft.Extensions.Logging.EventId%2CSystem.Func%7BSystem.Exception%2CMicrosoft.Extensions.Logging.LogLevel%2CMicrosoft.Extensions.Logging.LogLevel%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Core/Messaging/Configuration/ILogLevelConfigurator.cs/#L42">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_EventId_System_Func_System_Exception_System_LogLevel_System_LogLevel__" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel(EventId,System.Func{System.Exception,System.LogLevel,System.LogLevel})">SetLogLevel(EventId, Func&lt;Exception, LogLevel, LogLevel&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_Microsoft_Extensions_Logging_EventId_System_Func_System_Exception_Microsoft_Extensions_Logging_LogLevel_Microsoft_Extensions_Logging_LogLevel__" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel(Microsoft.Extensions.Logging.EventId,System.Func{System.Exception,Microsoft.Extensions.Logging.LogLevel,Microsoft.Extensions.Logging.LogLevel})">SetLogLevel(EventId, Func&lt;Exception, LogLevel, LogLevel&gt;)</h4>
   <div class="markdown level1 summary"><p>Configure a delegate that determines the log level that should be applied to the specified event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -203,13 +216,13 @@ parameters.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">EventId</span></td>
+        <td><span class="xref">Microsoft.Extensions.Logging.EventId</span></td>
         <td><span class="parametername">eventId</span></td>
         <td><p>The event id.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Exception</span>, <span class="xref">System.LogLevel</span>, <span class="xref">System.LogLevel</span>&gt;</td>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Exception</span>, <span class="xref">Microsoft.Extensions.Logging.LogLevel</span>, <span class="xref">Microsoft.Extensions.Logging.LogLevel</span>&gt;</td>
         <td><span class="parametername">logLevelFunc</span></td>
         <td><p>The function that returns the log level. It takes the logged exception and the default log level as
 parameters.</p>
@@ -233,16 +246,21 @@ parameters.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_Microsoft_Extensions_Logging_EventId_System_Func_System_Exception_Microsoft_Extensions_Logging_LogLevel_System_Lazy_System_String__Microsoft_Extensions_Logging_LogLevel__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel(Microsoft.Extensions.Logging.EventId%2CSystem.Func%7BSystem.Exception%2CMicrosoft.Extensions.Logging.LogLevel%2CSystem.Lazy%7BSystem.String%7D%2CMicrosoft.Extensions.Logging.LogLevel%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Core/Messaging/Configuration/ILogLevelConfigurator.cs/#L58">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel*"></a>
-  <h4 id="Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_EventId_System_LogLevel_" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel(EventId,System.LogLevel)">SetLogLevel(EventId, LogLevel)</h4>
-  <div class="markdown level1 summary"><p>Configure the log level that should be applied to the specified event.</p>
+  <h4 id="Silverback_Messaging_Configuration_ILogLevelConfigurator_SetLogLevel_Microsoft_Extensions_Logging_EventId_System_Func_System_Exception_Microsoft_Extensions_Logging_LogLevel_System_Lazy_System_String__Microsoft_Extensions_Logging_LogLevel__" data-uid="Silverback.Messaging.Configuration.ILogLevelConfigurator.SetLogLevel(Microsoft.Extensions.Logging.EventId,System.Func{System.Exception,Microsoft.Extensions.Logging.LogLevel,System.Lazy{System.String},Microsoft.Extensions.Logging.LogLevel})">SetLogLevel(EventId, Func&lt;Exception, LogLevel, Lazy&lt;String&gt;, LogLevel&gt;)</h4>
+  <div class="markdown level1 summary"><p>Configure a delegate that determines the log level that should be applied to the specified event.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ILogLevelConfigurator SetLogLevel(EventId eventId, LogLevel logLevel)</code></pre>
+    <pre><code class="lang-csharp hljs">ILogLevelConfigurator SetLogLevel(EventId eventId, Func&lt;Exception, LogLevel, Lazy&lt;string&gt;, LogLevel&gt; logLevelFunc)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -255,15 +273,17 @@ parameters.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">EventId</span></td>
+        <td><span class="xref">Microsoft.Extensions.Logging.EventId</span></td>
         <td><span class="parametername">eventId</span></td>
         <td><p>The event id.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.LogLevel</span></td>
-        <td><span class="parametername">logLevel</span></td>
-        <td><p>The log level to apply.</p>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.Exception</span>, <span class="xref">Microsoft.Extensions.Logging.LogLevel</span>, <span class="xref">System.Lazy</span>&lt;<span class="xref">System.String</span>&gt;, <span class="xref">Microsoft.Extensions.Logging.LogLevel</span>&gt;</td>
+        <td><span class="parametername">logLevelFunc</span></td>
+        <td><p>The function that returns the log level. It takes the logged exception, the message and the default
+log level as
+parameters.</p>
 </td>
       </tr>
     </tbody>
@@ -291,6 +311,12 @@ parameters.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ILogLevelConfigurator.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ILogLevelConfigurator%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Core/Messaging/Configuration/ILogLevelConfigurator.cs/#L13" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

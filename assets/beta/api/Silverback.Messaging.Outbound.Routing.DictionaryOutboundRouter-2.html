@@ -109,19 +109,13 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Silverback.Messaging.Outbound.Routing.OutboundRouter-1.html#Silverback_Messaging_Outbound_Routing_OutboundRouter_1_Silverback_Messaging_Outbound_Routing_IOutboundRouter_GetDestinationEndpoints_System_Object_MessageHeaderCollection_">OutboundRouter&lt;TMessage&gt;.IOutboundRouter.GetDestinationEndpoints(Object, MessageHeaderCollection)</a>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
+      <a class="xref" href="Silverback.Messaging.Outbound.Routing.OutboundRouter-1.html#Silverback_Messaging_Outbound_Routing_OutboundRouter_1_Silverback_Messaging_Outbound_Routing_IOutboundRouter_GetDestinationEndpoints_System_Object_Silverback_Messaging_Messages_MessageHeaderCollection_">OutboundRouter&lt;TMessage&gt;.IOutboundRouter.GetDestinationEndpoints(Object, MessageHeaderCollection)</a>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -132,9 +126,15 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Outbound.Routing.html">Silverback.Messaging.Outbound.Routing</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt; : OutboundRouter&lt;TMessage&gt;, IOutboundRouter&lt;TMessage&gt;, IOutboundRouter where TEndpoint : IProducerEndpoint</code></pre>
@@ -162,10 +162,15 @@
   </table>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2__ctor_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter__0__1__RouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String__1__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter%602.%23ctor(Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter%7B%600%2C%601%7D.RouterFunction%2CSystem.Collections.Generic.IReadOnlyDictionary%7BSystem.String%2C%601%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/Routing/DictionaryOutboundRouter`2.cs/#L54">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2__ctor_" data-uid="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter`2.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2__ctor_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter__0__1__RouterFunction_IReadOnlyDictionary_System_String__1__" data-uid="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter`2.#ctor(Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter{`0,`1}.RouterFunction,IReadOnlyDictionary{System.String,`1})">DictionaryOutboundRouter(DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;.RouterFunction, IReadOnlyDictionary&lt;String, TEndpoint&gt;)</h4>
+  <h4 id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2__ctor_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter__0__1__RouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String__1__" data-uid="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter`2.#ctor(Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter{`0,`1}.RouterFunction,System.Collections.Generic.IReadOnlyDictionary{System.String,`1})">DictionaryOutboundRouter(DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;.RouterFunction, IReadOnlyDictionary&lt;String, TEndpoint&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.html">DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -190,17 +195,22 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, TEndpoint&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, TEndpoint&gt;</td>
         <td><span class="parametername">endpoints</span></td>
-        <td><p>The <see cref="!:IReadOnlyDictionary&lt;TKey,TValue>"></see> containing the endpoints and their key.</p>
+        <td><p>The <span class="xref">System.Collections.Generic.IReadOnlyDictionary&lt;TKey, TValue&gt;</span> containing the endpoints and their key.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2__ctor_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter__0__1__SingleEndpointRouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String__1__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter%602.%23ctor(Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter%7B%600%2C%601%7D.SingleEndpointRouterFunction%2CSystem.Collections.Generic.IReadOnlyDictionary%7BSystem.String%2C%601%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/Routing/DictionaryOutboundRouter`2.cs/#L35">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2__ctor_" data-uid="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter`2.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2__ctor_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter__0__1__SingleEndpointRouterFunction_IReadOnlyDictionary_System_String__1__" data-uid="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter`2.#ctor(Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter{`0,`1}.SingleEndpointRouterFunction,IReadOnlyDictionary{System.String,`1})">DictionaryOutboundRouter(DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;.SingleEndpointRouterFunction, IReadOnlyDictionary&lt;String, TEndpoint&gt;)</h4>
+  <h4 id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2__ctor_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter__0__1__SingleEndpointRouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String__1__" data-uid="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter`2.#ctor(Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter{`0,`1}.SingleEndpointRouterFunction,System.Collections.Generic.IReadOnlyDictionary{System.String,`1})">DictionaryOutboundRouter(DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;.SingleEndpointRouterFunction, IReadOnlyDictionary&lt;String, TEndpoint&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter-2.html">DictionaryOutboundRouter&lt;TMessage, TEndpoint&gt;</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -225,22 +235,27 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, TEndpoint&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyDictionary</span>&lt;<span class="xref">System.String</span>, TEndpoint&gt;</td>
         <td><span class="parametername">endpoints</span></td>
-        <td><p>The <see cref="!:IReadOnlyDictionary&lt;TKey,TValue>"></see> containing the endpoints and their key.</p>
+        <td><p>The <span class="xref">System.Collections.Generic.IReadOnlyDictionary&lt;TKey, TValue&gt;</span> containing the endpoints and their key.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2_Endpoints.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter%602.Endpoints%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/Routing/DictionaryOutboundRouter`2.cs/#L105">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2_Endpoints_" data-uid="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter`2.Endpoints*"></a>
   <h4 id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2_Endpoints" data-uid="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter`2.Endpoints">Endpoints</h4>
   <div class="markdown level1 summary"><p>Gets the endpoints that are potentially targeted by this router. This collection could be built over
 time in case of a dynamic <a class="xref" href="Silverback.Messaging.Outbound.Routing.IOutboundRouter.html">IOutboundRouter</a> but that will prevent the
-<see cref="!:IOutboxWorker"></see> to work properly and it's not optimal as it used for example by the
+<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> to work properly and it's not optimal as it used for example by the
 health checks to ping all possible endpoints.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -258,7 +273,7 @@ health checks to ping all possible endpoints.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -267,10 +282,15 @@ health checks to ping all possible endpoints.</p>
   <div><span class="xref">Silverback.Messaging.Outbound.Routing.OutboundRouter&lt;TMessage&gt;.Endpoints</span></div>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2_GetDestinationEndpoints__0_Silverback_Messaging_Messages_MessageHeaderCollection_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter%602.GetDestinationEndpoints(%600%2CSilverback.Messaging.Messages.MessageHeaderCollection)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/Routing/DictionaryOutboundRouter`2.cs/#L109">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2_GetDestinationEndpoints_" data-uid="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter`2.GetDestinationEndpoints*"></a>
-  <h4 id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2_GetDestinationEndpoints__0_MessageHeaderCollection_" data-uid="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter`2.GetDestinationEndpoints(`0,MessageHeaderCollection)">GetDestinationEndpoints(TMessage, MessageHeaderCollection)</h4>
+  <h4 id="Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2_GetDestinationEndpoints__0_Silverback_Messaging_Messages_MessageHeaderCollection_" data-uid="Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter`2.GetDestinationEndpoints(`0,Silverback.Messaging.Messages.MessageHeaderCollection)">GetDestinationEndpoints(TMessage, MessageHeaderCollection)</h4>
   <div class="markdown level1 summary"><p>Returns the collection of <a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> representing the endpoints where the
 specified message must be produced.</p>
 </div>
@@ -296,7 +316,7 @@ specified message must be produced.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">MessageHeaderCollection</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.MessageHeaderCollection.html">MessageHeaderCollection</a></td>
         <td><span class="parametername">headers</span></td>
         <td><p>The message headers collection.</p>
 </td>
@@ -313,14 +333,14 @@ specified message must be produced.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
         <td><p>The endpoints to route the message to.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><span class="xref">Silverback.Messaging.Outbound.Routing.OutboundRouter&lt;TMessage&gt;.GetDestinationEndpoints(TMessage, MessageHeaderCollection)</span></div>
+  <div><span class="xref">Silverback.Messaging.Outbound.Routing.OutboundRouter&lt;TMessage&gt;.GetDestinationEndpoints(TMessage, Silverback.Messaging.Messages.MessageHeaderCollection)</span></div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Messaging.Outbound.Routing.IOutboundRouter-1.html">IOutboundRouter&lt;TMessage&gt;</a>
@@ -335,6 +355,12 @@ specified message must be produced.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_2.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter%602%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/Routing/DictionaryOutboundRouter`2.cs/#L19" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

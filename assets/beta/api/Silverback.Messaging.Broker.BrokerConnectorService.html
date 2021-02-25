@@ -97,26 +97,70 @@ application is being stopped.</p>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">BrokerConnectorService</span></div>
+    <div class="level1"><span class="xref">Microsoft.Extensions.Hosting.BackgroundService</span></div>
+    <div class="level2"><span class="xref">BrokerConnectorService</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">Microsoft.Extensions.Hosting.IHostedService</span></div>
+    <div><span class="xref">System.IDisposable</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.StartAsync(System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.StopAsync(System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.Dispose()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.html">Silverback.Messaging.Broker</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Broker_BrokerConnectorService_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class BrokerConnectorService : BackgroundService</code></pre>
+    <pre><code class="lang-csharp hljs">public class BrokerConnectorService : BackgroundService, IHostedService, IDisposable</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerConnectorService__ctor_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Microsoft_Extensions_Hosting_IHostApplicationLifetime_Silverback_Messaging_Broker_IBrokerCollection_Silverback_Messaging_Configuration_BrokerConnectionOptions_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Broker_BrokerConnectorService__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerConnectorService.%23ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory%2CMicrosoft.Extensions.Hosting.IHostApplicationLifetime%2CSilverback.Messaging.Broker.IBrokerCollection%2CSilverback.Messaging.Configuration.BrokerConnectionOptions%2CSilverback.Diagnostics.ISilverbackLogger%7BSilverback.Messaging.Broker.BrokerConnectorService%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Broker/BrokerConnectorService.cs/#L50">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_BrokerConnectorService__ctor_" data-uid="Silverback.Messaging.Broker.BrokerConnectorService.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Broker_BrokerConnectorService__ctor_IServiceScopeFactory_IApplicationLifetime_Silverback_Messaging_Broker_IBrokerCollection_BrokerConnectionOptions_ISilverbackLogger_Silverback_Messaging_Broker_BrokerConnectorService__" data-uid="Silverback.Messaging.Broker.BrokerConnectorService.#ctor(IServiceScopeFactory,IApplicationLifetime,Silverback.Messaging.Broker.IBrokerCollection,BrokerConnectionOptions,ISilverbackLogger{Silverback.Messaging.Broker.BrokerConnectorService})">BrokerConnectorService(IServiceScopeFactory, IApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger&lt;BrokerConnectorService&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_BrokerConnectorService__ctor_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Microsoft_Extensions_Hosting_IHostApplicationLifetime_Silverback_Messaging_Broker_IBrokerCollection_Silverback_Messaging_Configuration_BrokerConnectionOptions_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Broker_BrokerConnectorService__" data-uid="Silverback.Messaging.Broker.BrokerConnectorService.#ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Hosting.IHostApplicationLifetime,Silverback.Messaging.Broker.IBrokerCollection,Silverback.Messaging.Configuration.BrokerConnectionOptions,Silverback.Diagnostics.ISilverbackLogger{Silverback.Messaging.Broker.BrokerConnectorService})">BrokerConnectorService(IServiceScopeFactory, IHostApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger&lt;BrokerConnectorService&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.BrokerConnectorService.html">BrokerConnectorService</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public BrokerConnectorService(IServiceScopeFactory serviceScopeFactory, IApplicationLifetime applicationLifetime, IBrokerCollection brokersCollection, BrokerConnectionOptions connectionOptions, ISilverbackLogger&lt;BrokerConnectorService&gt; logger)</code></pre>
+    <pre><code class="lang-csharp hljs">public BrokerConnectorService(IServiceScopeFactory serviceScopeFactory, IHostApplicationLifetime applicationLifetime, IBrokerCollection brokersCollection, BrokerConnectionOptions connectionOptions, ISilverbackLogger&lt;BrokerConnectorService&gt; logger)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -129,15 +173,15 @@ application is being stopped.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IServiceScopeFactory</span></td>
+        <td><span class="xref">Microsoft.Extensions.DependencyInjection.IServiceScopeFactory</span></td>
         <td><span class="parametername">serviceScopeFactory</span></td>
-        <td><p>The <see cref="!:IServiceScopeFactory"></see>.</p>
+        <td><p>The <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceScopeFactory</span>.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">IApplicationLifetime</span></td>
+        <td><span class="xref">Microsoft.Extensions.Hosting.IHostApplicationLifetime</span></td>
         <td><span class="parametername">applicationLifetime</span></td>
-        <td><p>The <see cref="!:IApplicationLifetime"></see>.</p>
+        <td><p>The <span class="xref">Microsoft.Extensions.Hosting.IApplicationLifetime</span>.</p>
 </td>
       </tr>
       <tr>
@@ -147,25 +191,30 @@ application is being stopped.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">BrokerConnectionOptions</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.BrokerConnectionOptions.html">BrokerConnectionOptions</a></td>
         <td><span class="parametername">connectionOptions</span></td>
-        <td><p>The <see cref="!:BrokerConnectionOptions"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.BrokerConnectionOptions.html">BrokerConnectionOptions</a>.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">ISilverbackLogger</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.BrokerConnectorService.html">BrokerConnectorService</a>&gt;</td>
+        <td><a class="xref" href="Silverback.Diagnostics.ISilverbackLogger-1.html">ISilverbackLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.BrokerConnectorService.html">BrokerConnectorService</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <see cref="!:ISilverbackLogger"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerConnectorService_ExecuteAsync_System_Threading_CancellationToken_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerConnectorService.ExecuteAsync(System.Threading.CancellationToken)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Broker/BrokerConnectorService.cs/#L65">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_BrokerConnectorService_ExecuteAsync_" data-uid="Silverback.Messaging.Broker.BrokerConnectorService.ExecuteAsync*"></a>
-  <h4 id="Silverback_Messaging_Broker_BrokerConnectorService_ExecuteAsync_CancellationToken_" data-uid="Silverback.Messaging.Broker.BrokerConnectorService.ExecuteAsync(CancellationToken)">ExecuteAsync(CancellationToken)</h4>
+  <h4 id="Silverback_Messaging_Broker_BrokerConnectorService_ExecuteAsync_System_Threading_CancellationToken_" data-uid="Silverback.Messaging.Broker.BrokerConnectorService.ExecuteAsync(System.Threading.CancellationToken)">ExecuteAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -183,7 +232,7 @@ application is being stopped.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">CancellationToken</span></td>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">stoppingToken</span></td>
         <td></td>
       </tr>
@@ -199,11 +248,20 @@ application is being stopped.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">Microsoft.Extensions.Hosting.BackgroundService.ExecuteAsync(System.Threading.CancellationToken)</span></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">Microsoft.Extensions.Hosting.IHostedService</span>
+  </div>
+  <div>
+      <span class="xref">System.IDisposable</span>
+  </div>
 </article>
           </div>
           
@@ -211,6 +269,12 @@ application is being stopped.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerConnectorService.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerConnectorService%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Broker/BrokerConnectorService.cs/#L20" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

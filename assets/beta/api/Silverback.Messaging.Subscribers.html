@@ -102,12 +102,17 @@ in the same process.</p>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.MessageFilterAttribute.html">MessageFilterAttribute</a></h4>
       <section><p>Can be placed on a subscribed method to filter the messages to be processed.</p>
 </section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.MqttClientIdFilterAttribute.html">MqttClientIdFilterAttribute</a></h4>
+      <section><p>Can be placed on a subscribed method to filter the messages to be processed according to the client
+id that consumed them. This is used when having multiple clients for the same topic running
+in the same process.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a></h4>
       <section><p>Used to identify the methods that have to be subscribed to the messages stream. The first parameter
 of the subscriber method always correspond to the message and must be declared with a type
 compatible with the message to be received (the message type, a base type or an implemented
 interface) or a collection of items of that type. The methods can be either synchronous or
-asynchronous (returning a <see cref="!:Task"></see>) and don't need to be publicly visible.</p>
+asynchronous (returning a <span class="xref">System.Threading.Tasks.Task</span>) and don't need to be publicly visible.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.SubscribedMethod.html">SubscribedMethod</a></h4>
       <section><p>A subscribed method that can process certain messages.</p>
@@ -123,6 +128,9 @@ because no value can be resolved for one or more arguments.</p>
   </h3>
       <h4><a class="xref" href="Silverback.Messaging.Subscribers.IMessageFilter.html">IMessageFilter</a></h4>
       <section><p>Filters the messages to be processed.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Subscribers.ISubscribedMethodsCache.html">ISubscribedMethodsCache</a></h4>
+      <section><p>Stores the map of the subscribed methods for each message type.</p>
 </section>
 </article>
           </div>

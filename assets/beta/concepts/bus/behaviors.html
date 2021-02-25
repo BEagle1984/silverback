@@ -112,13 +112,13 @@
         _tracer = tracer;
     }
 
-    public async Task&lt;IReadOnlyCollection&lt;object&gt;&gt; HandleAsync(
-        IReadOnlyCollection&lt;object&gt; messages, 
-        MessagesHandler next)
+    public async Task&lt;IReadOnlyCollection&lt;object?&gt;&gt; HandleAsync(
+        object message, 
+        MessageHandler next)
     {
-        tracer.TraceProcessing(messages);
-        var result = await next(messages);
-        tracer.TraceProcessed(messages);
+        tracer.TraceProcessing(message);
+        var result = await next(message);
+        tracer.TraceProcessed(message);
 
         return result;
     }
@@ -142,10 +142,6 @@
 
 <div class="NOTE">
 <h5>Note</h5>
-<p>The <a class="xref" href="../../api/Silverback.Messaging.Publishing.IBehavior.html#Silverback_Messaging_Publishing_IBehavior_HandleAsync_IReadOnlyCollection_System_Object__Silverback_Messaging_Publishing_MessagesHandler_">HandleAsync</a> method receives a collection of <code>object</code> because a bunch of messages can be published at once via <a class="xref" href="../../api/Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> or the consumer can be configured to process the messages in batch.</p>
-</div>
-<div class="NOTE">
-<h5>Note</h5>
 <p><a class="xref" href="../../api/Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a> and <a class="xref" href="../../api/Silverback.Messaging.Messages.IOutboundEnvelope.html">IOutboundEnvelope</a> are internally used by Silverback to wrap the messages being sent to or received from the message broker and will be received by the <a class="xref" href="../../api/Silverback.Messaging.Broker.IBroker.html">IBroker</a>. Those interfaces contains the message plus the additional data like endpoint, headers, offset, etc.</p>
 </div>
 <h3 id="sorting">Sorting</h3>
@@ -154,13 +150,13 @@
 {
     public int SortIndex =&gt; 120;
 
-    public Task&lt;IReadOnlyCollection&lt;object&gt;&gt; HandleAsync(
-        IReadOnlyCollection&lt;object&gt; messages, 
-        MessagesHandler next)
+    public Task&lt;IReadOnlyCollection&lt;object?&gt;&gt; HandleAsync(
+        object message, 
+        MessageHandler next)
     {
         // ...your logic...
 
-        return next(messages);
+        return next(message);
     }
 }
 </code></pre>

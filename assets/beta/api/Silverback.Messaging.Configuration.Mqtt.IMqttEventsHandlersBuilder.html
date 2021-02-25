@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Interface IEnumerableMessageArgumentResolver
+    <title>Interface IMqttEventsHandlersBuilder
    | Silverback </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Interface IEnumerableMessageArgumentResolver
+    <meta name="title" content="Interface IMqttEventsHandlersBuilder
    | Silverback ">
     <meta name="generator" content="docfx 2.56.6.0">
     
@@ -85,42 +85,33 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.IEnumerableMessageArgumentResolver">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEventsHandlersBuilder">
   
   
-  <h1 id="Silverback_Messaging_Subscribers_ArgumentResolvers_IEnumerableMessageArgumentResolver" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.IEnumerableMessageArgumentResolver" class="text-break">Interface IEnumerableMessageArgumentResolver
+  <h1 id="Silverback_Messaging_Configuration_Mqtt_IMqttEventsHandlersBuilder" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEventsHandlersBuilder" class="text-break">Interface IMqttEventsHandlersBuilder
   </h1>
-  <div class="markdown level0 summary"><p>These resolvers are used to handle the messages collection parameter (<see cref="!:IEnumerable&lt;T>"></see>,
-<span class="xref">System.IObservable&lt;T&gt;</span>, etc.).</p>
+  <div class="markdown level0 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttEventsHandlers.html">MqttEventsHandlers</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IMessageArgumentResolver.html#Silverback_Messaging_Subscribers_ArgumentResolvers_IMessageArgumentResolver_GetMessageType_System_Type_">IMessageArgumentResolver.GetMessageType(Type)</a>
-    </div>
-    <div>
-      <a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.IArgumentResolver.html#Silverback_Messaging_Subscribers_ArgumentResolvers_IArgumentResolver_CanResolve_System_Type_">IArgumentResolver.CanResolve(Type)</a>
-    </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Subscribers.ArgumentResolvers.html">Silverback.Messaging.Subscribers.ArgumentResolvers</a></h6>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.html">Silverback.Messaging.Configuration.Mqtt</a></h6>
   <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
-  <h5 id="Silverback_Messaging_Subscribers_ArgumentResolvers_IEnumerableMessageArgumentResolver_syntax">Syntax</h5>
+  <h5 id="Silverback_Messaging_Configuration_Mqtt_IMqttEventsHandlersBuilder_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IEnumerableMessageArgumentResolver : IMessageArgumentResolver, IArgumentResolver</code></pre>
+    <pre><code class="lang-csharp hljs">public interface IMqttEventsHandlersBuilder</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
   
   
-  <a id="Silverback_Messaging_Subscribers_ArgumentResolvers_IEnumerableMessageArgumentResolver_GetValue_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.IEnumerableMessageArgumentResolver.GetValue*"></a>
-  <h4 id="Silverback_Messaging_Subscribers_ArgumentResolvers_IEnumerableMessageArgumentResolver_GetValue_IReadOnlyCollection_System_Object__System_Type_" data-uid="Silverback.Messaging.Subscribers.ArgumentResolvers.IEnumerableMessageArgumentResolver.GetValue(IReadOnlyCollection{System.Object},System.Type)">GetValue(IReadOnlyCollection&lt;Object&gt;, Type)</h4>
-  <div class="markdown level1 summary"><p>Returns the messages collection in a shape that is compatible with the subscribed method.</p>
+  <a id="Silverback_Messaging_Configuration_Mqtt_IMqttEventsHandlersBuilder_OnConnected_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEventsHandlersBuilder.OnConnected*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEventsHandlersBuilder_OnConnected_System_Func_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_Task__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEventsHandlersBuilder.OnConnected(System.Func{Silverback.Messaging.Configuration.Mqtt.MqttClientConfig,Task})">OnConnected(Func&lt;MqttClientConfig, Task&gt;)</h4>
+  <div class="markdown level1 summary"><p>Registers an event handler that is called when the underlying <see cref="!:IMqttClient"></see>
+connected to the broker.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">object GetValue(IReadOnlyCollection&lt;object&gt; messages, Type targetMessageType)</code></pre>
+    <pre><code class="lang-csharp hljs">IMqttEventsHandlersBuilder OnConnected(Func&lt;MqttClientConfig, Task&gt; connectedHandler)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -133,16 +124,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">System.Object</span>&gt;</td>
-        <td><span class="parametername">messages</span></td>
-        <td><p>The messages being published.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Type</span></td>
-        <td><span class="parametername">targetMessageType</span></td>
-        <td><p>The actual message type being declared by the subscribed method (e.g. <code>TMessage</code> for an
-<code>IEnumerable&lt;TMessage&gt;</code>).</p>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html">MqttClientConfig</a>, <span class="xref">Task</span>&gt;</td>
+        <td><span class="parametername">connectedHandler</span></td>
+        <td><p>The event handler.</p>
 </td>
       </tr>
     </tbody>
@@ -157,8 +141,54 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Object</span></td>
-        <td><p>The actual value to be forwarded to the subscribed method.</p>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttEventsHandlersBuilder.html">IMqttEventsHandlersBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttEventsHandlersBuilder.html">IMqttEventsHandlersBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Silverback_Messaging_Configuration_Mqtt_IMqttEventsHandlersBuilder_OnDisconnecting_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEventsHandlersBuilder.OnDisconnecting*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMqttEventsHandlersBuilder_OnDisconnecting_System_Func_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_Task__" data-uid="Silverback.Messaging.Configuration.Mqtt.IMqttEventsHandlersBuilder.OnDisconnecting(System.Func{Silverback.Messaging.Configuration.Mqtt.MqttClientConfig,Task})">OnDisconnecting(Func&lt;MqttClientConfig, Task&gt;)</h4>
+  <div class="markdown level1 summary"><p>Registers an event handler that is called before the underlying <see cref="!:IMqttClient"></see>
+disconnects from the broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IMqttEventsHandlersBuilder OnDisconnecting(Func&lt;MqttClientConfig, Task&gt; disconnectingHandler)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html">MqttClientConfig</a>, <span class="xref">Task</span>&gt;</td>
+        <td><span class="parametername">disconnectingHandler</span></td>
+        <td><p>The event handler.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttEventsHandlersBuilder.html">IMqttEventsHandlersBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttEventsHandlersBuilder.html">IMqttEventsHandlersBuilder</a> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>

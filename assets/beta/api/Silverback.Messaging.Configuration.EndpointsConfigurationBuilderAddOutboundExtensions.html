@@ -101,16 +101,10 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -121,145 +115,28 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.html">Silverback.Messaging.Configuration</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static class EndpointsConfigurationBuilderAddOutboundExtensions</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  
-  
-  <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_IEnumerable_Silverback_Messaging_IProducerEndpoint__System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,System.Type,IEnumerable{Silverback.Messaging.IProducerEndpoint},System.Boolean)">AddOutbound(IEndpointsConfigurationBuilder, Type, IEnumerable&lt;IProducerEndpoint&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IEndpointsConfigurationBuilder AddOutbound(this IEndpointsConfigurationBuilder endpointsConfigurationBuilder, Type messageType, IEnumerable&lt;IProducerEndpoint&gt; endpoints, bool preloadProducers = true)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
-        <td><span class="parametername">endpointsConfigurationBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a>.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Type</span></td>
-        <td><span class="parametername">messageType</span></td>
-        <td><p>The type of the messages to be published to this endpoint.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
-        <td><span class="parametername">endpoints</span></td>
-        <td><p>The collection of <a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> representing the destination topics or queues.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">preloadProducers</span></td>
-        <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_IOutboundRouter_System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,System.Type,IOutboundRouter,System.Boolean)">AddOutbound(IEndpointsConfigurationBuilder, Type, IOutboundRouter, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IEndpointsConfigurationBuilder AddOutbound(this IEndpointsConfigurationBuilder endpointsConfigurationBuilder, Type messageType, IOutboundRouter router, bool preloadProducers = true)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
-        <td><span class="parametername">endpointsConfigurationBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a>.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Type</span></td>
-        <td><span class="parametername">messageType</span></td>
-        <td><p>The type of the messages to be published to this endpoint.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">IOutboundRouter</span></td>
-        <td><span class="parametername">router</span></td>
-        <td><p>The <see cref="!:IOutboundRouter&lt;TMessage>"></see> to be used to determine the destination endpoint.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">preloadProducers</span></td>
-        <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_Silverback_Messaging_IProducerEndpoint_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder%2CSystem.Type%2CSilverback.Messaging.IProducerEndpoint%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/EndpointsConfigurationBuilderAddOutboundExtensions.cs/#L127">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
   <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_Silverback_Messaging_IProducerEndpoint_System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,System.Type,Silverback.Messaging.IProducerEndpoint,System.Boolean)">AddOutbound(IEndpointsConfigurationBuilder, Type, IProducerEndpoint, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
@@ -301,7 +178,7 @@
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">preloadProducers</span></td>
         <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -322,8 +199,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_Silverback_Messaging_IProducerEndpoint___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder%2CSystem.Type%2CSilverback.Messaging.IProducerEndpoint%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/EndpointsConfigurationBuilderAddOutboundExtensions.cs/#L158">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
   <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_Silverback_Messaging_IProducerEndpoint___" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,System.Type,Silverback.Messaging.IProducerEndpoint[])">AddOutbound(IEndpointsConfigurationBuilder, Type, IProducerEndpoint[])</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
@@ -379,8 +261,151 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_Silverback_Messaging_Outbound_Routing_IOutboundRouter_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder%2CSystem.Type%2CSilverback.Messaging.Outbound.Routing.IOutboundRouter%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/EndpointsConfigurationBuilderAddOutboundExtensions.cs/#L347">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
+  <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_Silverback_Messaging_Outbound_Routing_IOutboundRouter_System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,System.Type,Silverback.Messaging.Outbound.Routing.IOutboundRouter,System.Boolean)">AddOutbound(IEndpointsConfigurationBuilder, Type, IOutboundRouter, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IEndpointsConfigurationBuilder AddOutbound(this IEndpointsConfigurationBuilder endpointsConfigurationBuilder, Type messageType, IOutboundRouter router, bool preloadProducers = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
+        <td><span class="parametername">endpointsConfigurationBuilder</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">messageType</span></td>
+        <td><p>The type of the messages to be published to this endpoint.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Outbound.Routing.IOutboundRouter.html">IOutboundRouter</a></td>
+        <td><span class="parametername">router</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Outbound.Routing.IOutboundRouter-1.html">IOutboundRouter&lt;TMessage&gt;</a> to be used to determine the destination endpoint.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">preloadProducers</span></td>
+        <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_System_Collections_Generic_IEnumerable_Silverback_Messaging_IProducerEndpoint__System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder%2CSystem.Type%2CSystem.Collections.Generic.IEnumerable%7BSilverback.Messaging.IProducerEndpoint%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/EndpointsConfigurationBuilderAddOutboundExtensions.cs/#L191">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
+  <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_System_Collections_Generic_IEnumerable_Silverback_Messaging_IProducerEndpoint__System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,System.Type,System.Collections.Generic.IEnumerable{Silverback.Messaging.IProducerEndpoint},System.Boolean)">AddOutbound(IEndpointsConfigurationBuilder, Type, IEnumerable&lt;IProducerEndpoint&gt;, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IEndpointsConfigurationBuilder AddOutbound(this IEndpointsConfigurationBuilder endpointsConfigurationBuilder, Type messageType, IEnumerable&lt;IProducerEndpoint&gt; endpoints, bool preloadProducers = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
+        <td><span class="parametername">endpointsConfigurationBuilder</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">messageType</span></td>
+        <td><p>The type of the messages to be published to this endpoint.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
+        <td><span class="parametername">endpoints</span></td>
+        <td><p>The collection of <a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> representing the destination topics or queues.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">preloadProducers</span></td>
+        <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_System_Type_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder%2CSystem.Type%2CSystem.Type%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/EndpointsConfigurationBuilderAddOutboundExtensions.cs/#L303">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
   <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Type_System_Type_System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,System.Type,System.Type,System.Boolean)">AddOutbound(IEndpointsConfigurationBuilder, Type, Type, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
@@ -415,7 +440,7 @@
       <tr>
         <td><span class="xref">System.Type</span></td>
         <td><span class="parametername">routerType</span></td>
-        <td><p>The type of the <see cref="!:IOutboundRouter&lt;TMessage>"></see> to be used to determine the destination
+        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.IOutboundRouter-1.html">IOutboundRouter&lt;TMessage&gt;</a> to be used to determine the destination
 endpoint.</p>
 </td>
       </tr>
@@ -423,7 +448,7 @@ endpoint.</p>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">preloadProducers</span></td>
         <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -444,156 +469,13 @@ endpoint.</p>
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__1_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_IEnumerable_Silverback_Messaging_IProducerEndpoint__System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound``1(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,IEnumerable{Silverback.Messaging.IProducerEndpoint},System.Boolean)">AddOutbound&lt;TMessage&gt;(IEndpointsConfigurationBuilder, IEnumerable&lt;IProducerEndpoint&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IEndpointsConfigurationBuilder AddOutbound&lt;TMessage&gt;(this IEndpointsConfigurationBuilder endpointsConfigurationBuilder, IEnumerable&lt;IProducerEndpoint&gt; endpoints, bool preloadProducers = true)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
-        <td><span class="parametername">endpointsConfigurationBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a>.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
-        <td><span class="parametername">endpoints</span></td>
-        <td><p>The collection of <a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> representing the destination topics or queues.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">preloadProducers</span></td>
-        <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TMessage</span></td>
-        <td><p>The type of the messages to be published to this endpoint.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
-  <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__1_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_IOutboundRouter___0__System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound``1(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,IOutboundRouter{``0},System.Boolean)">AddOutbound&lt;TMessage&gt;(IEndpointsConfigurationBuilder, IOutboundRouter&lt;TMessage&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static IEndpointsConfigurationBuilder AddOutbound&lt;TMessage&gt;(this IEndpointsConfigurationBuilder endpointsConfigurationBuilder, IOutboundRouter&lt;TMessage&gt; router, bool preloadProducers = true)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
-        <td><span class="parametername">endpointsConfigurationBuilder</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a>.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">IOutboundRouter</span>&lt;TMessage&gt;</td>
-        <td><span class="parametername">router</span></td>
-        <td><p>The <see cref="!:IOutboundRouter&lt;TMessage>"></see> to be used to determine the destination endpoint.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">preloadProducers</span></td>
-        <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="parametername">TMessage</span></td>
-        <td><p>The type of the messages to be published to this endpoint.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__1_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_Silverback_Messaging_IProducerEndpoint_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound%60%601(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder%2CSilverback.Messaging.IProducerEndpoint%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/EndpointsConfigurationBuilderAddOutboundExtensions.cs/#L64">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
   <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__1_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_Silverback_Messaging_IProducerEndpoint_System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound``1(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,Silverback.Messaging.IProducerEndpoint,System.Boolean)">AddOutbound&lt;TMessage&gt;(IEndpointsConfigurationBuilder, IProducerEndpoint, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
@@ -629,7 +511,7 @@ endpoint.</p>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">preloadProducers</span></td>
         <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -666,8 +548,13 @@ endpoint.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__1_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_Silverback_Messaging_IProducerEndpoint___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound%60%601(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder%2CSilverback.Messaging.IProducerEndpoint%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/EndpointsConfigurationBuilderAddOutboundExtensions.cs/#L35">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
   <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__1_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_Silverback_Messaging_IProducerEndpoint___" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound``1(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,Silverback.Messaging.IProducerEndpoint[])">AddOutbound&lt;TMessage&gt;(IEndpointsConfigurationBuilder, IProducerEndpoint[])</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
@@ -733,8 +620,171 @@ endpoint.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__1_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_Silverback_Messaging_Outbound_Routing_IOutboundRouter___0__System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound%60%601(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder%2CSilverback.Messaging.Outbound.Routing.IOutboundRouter%7B%60%600%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/EndpointsConfigurationBuilderAddOutboundExtensions.cs/#L272">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
+  <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__1_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_Silverback_Messaging_Outbound_Routing_IOutboundRouter___0__System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound``1(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,Silverback.Messaging.Outbound.Routing.IOutboundRouter{``0},System.Boolean)">AddOutbound&lt;TMessage&gt;(IEndpointsConfigurationBuilder, IOutboundRouter&lt;TMessage&gt;, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IEndpointsConfigurationBuilder AddOutbound&lt;TMessage&gt;(this IEndpointsConfigurationBuilder endpointsConfigurationBuilder, IOutboundRouter&lt;TMessage&gt; router, bool preloadProducers = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
+        <td><span class="parametername">endpointsConfigurationBuilder</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Outbound.Routing.IOutboundRouter-1.html">IOutboundRouter</a>&lt;TMessage&gt;</td>
+        <td><span class="parametername">router</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Outbound.Routing.IOutboundRouter-1.html">IOutboundRouter&lt;TMessage&gt;</a> to be used to determine the destination endpoint.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">preloadProducers</span></td>
+        <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be published to this endpoint.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__1_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Collections_Generic_IEnumerable_Silverback_Messaging_IProducerEndpoint__System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound%60%601(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder%2CSystem.Collections.Generic.IEnumerable%7BSilverback.Messaging.IProducerEndpoint%7D%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/EndpointsConfigurationBuilderAddOutboundExtensions.cs/#L97">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
+  <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__1_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Collections_Generic_IEnumerable_Silverback_Messaging_IProducerEndpoint__System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound``1(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,System.Collections.Generic.IEnumerable{Silverback.Messaging.IProducerEndpoint},System.Boolean)">AddOutbound&lt;TMessage&gt;(IEndpointsConfigurationBuilder, IEnumerable&lt;IProducerEndpoint&gt;, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IEndpointsConfigurationBuilder AddOutbound&lt;TMessage&gt;(this IEndpointsConfigurationBuilder endpointsConfigurationBuilder, IEnumerable&lt;IProducerEndpoint&gt; endpoints, bool preloadProducers = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
+        <td><span class="parametername">endpointsConfigurationBuilder</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>&gt;</td>
+        <td><span class="parametername">endpoints</span></td>
+        <td><p>The collection of <a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a> representing the destination topics or queues.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">preloadProducers</span></td>
+        <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be published to this endpoint.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__2_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound%60%602(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/EndpointsConfigurationBuilderAddOutboundExtensions.cs/#L240">View source</a>
+  </span>
   <a id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound*"></a>
   <h4 id="Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions_AddOutbound__2_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_System_Boolean_" data-uid="Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions.AddOutbound``2(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder,System.Boolean)">AddOutbound&lt;TMessage, TRouter&gt;(IEndpointsConfigurationBuilder, Boolean)</h4>
   <div class="markdown level1 summary"><p>Adds an outbound endpoint for the specified message type.</p>
@@ -765,7 +815,7 @@ endpoint.</p>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">preloadProducers</span></td>
         <td><p>Specifies whether the producers must be immediately instantiated and connected. When <code>false</code> the
-<see cref="!:IProducer"></see> will be created only when the first message is about to be produced.</p>
+<a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> will be created only when the first message is about to be produced.</p>
 </td>
       </tr>
     </tbody>
@@ -802,7 +852,7 @@ endpoint.</p>
       </tr>
       <tr>
         <td><span class="parametername">TRouter</span></td>
-        <td><p>The type of the <see cref="!:IOutboundRouter&lt;TMessage>"></see> to be used to determine the destination
+        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.IOutboundRouter-1.html">IOutboundRouter&lt;TMessage&gt;</a> to be used to determine the destination
 endpoint.</p>
 </td>
       </tr>
@@ -815,6 +865,12 @@ endpoint.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_EndpointsConfigurationBuilderAddOutboundExtensions.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.EndpointsConfigurationBuilderAddOutboundExtensions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/EndpointsConfigurationBuilderAddOutboundExtensions.cs/#L18" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

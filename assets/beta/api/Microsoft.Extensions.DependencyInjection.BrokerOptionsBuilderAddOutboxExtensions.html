@@ -101,16 +101,10 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -121,24 +115,35 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Microsoft.Extensions.DependencyInjection.html">Microsoft.Extensions.DependencyInjection</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOutboxExtensions_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static class BrokerOptionsBuilderAddOutboxExtensions</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOutboxExtensions_AddOutbox__1_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxExtensions.AddOutbox%60%601(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/BrokerOptionsBuilderAddOutboxExtensions.cs/#L77">View source</a>
+  </span>
   <a id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOutboxExtensions_AddOutbox_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxExtensions.AddOutbox*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOutboxExtensions_AddOutbox__1_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxExtensions.AddOutbox``1(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)">AddOutbox&lt;TOutbox&gt;(IBrokerOptionsBuilder)</h4>
   <div class="markdown level1 summary"><p>
-    Adds the necessary services to enable the <see cref="!:OutboxProduceStrategy"></see>.
+    Adds the necessary services to enable the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a>.
 </p>
 <p>
-    The <see cref="!:OutboxProduceStrategy"></see> stores the outbound messages into an intermediate outbox,
+    The <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a> stores the outbound messages into an intermediate outbox,
     participating in the database transaction. The outbound messages become therefore transactional
     with the side effects on the local database.
 </p>
@@ -162,7 +167,7 @@
       <tr>
         <td><a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a></td>
         <td><span class="parametername">brokerOptionsBuilder</span></td>
-        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <see cref="!:IServiceCollection"></see> to
+        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span> to
 add the services to.</p>
 </td>
       </tr>
@@ -195,21 +200,26 @@ add the services to.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TOutbox</span></td>
-        <td><p>The type implementing both the <see cref="!:IOutboxWriter"></see> and the <see cref="!:IOutboxReader"></see>
+        <td><p>The type implementing both the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter.html">IOutboxWriter</a> and the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.html">IOutboxReader</a>
 interfaces.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOutboxExtensions_AddOutbox__2_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxExtensions.AddOutbox%60%602(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/BrokerOptionsBuilderAddOutboxExtensions.cs/#L39">View source</a>
+  </span>
   <a id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOutboxExtensions_AddOutbox_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxExtensions.AddOutbox*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOutboxExtensions_AddOutbox__2_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxExtensions.AddOutbox``2(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)">AddOutbox&lt;TOutboxWriter, TOutboxReader&gt;(IBrokerOptionsBuilder)</h4>
   <div class="markdown level1 summary"><p>
-    Adds the necessary services to enable the <see cref="!:OutboxProduceStrategy"></see>.
+    Adds the necessary services to enable the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a>.
 </p>
 <p>
-    The <see cref="!:OutboxProduceStrategy"></see> stores the outbound messages into an intermediate outbox,
+    The <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a> stores the outbound messages into an intermediate outbox,
     participating in the database transaction. The outbound messages become therefore transactional
     with the side effects on the local database.
 </p>
@@ -233,7 +243,7 @@ interfaces.</p>
       <tr>
         <td><a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a></td>
         <td><span class="parametername">brokerOptionsBuilder</span></td>
-        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <see cref="!:IServiceCollection"></see> to
+        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span> to
 add the services to.</p>
 </td>
       </tr>
@@ -266,26 +276,31 @@ add the services to.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TOutboxWriter</span></td>
-        <td><p>The type of the <see cref="!:IOutboxWriter"></see> to be used.</p>
+        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter.html">IOutboxWriter</a> to be used.</p>
 </td>
       </tr>
       <tr>
         <td><span class="parametername">TOutboxReader</span></td>
-        <td><p>The type of the <see cref="!:IOutboxReader"></see> to be used.</p>
+        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader.html">IOutboxReader</a> to be used.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOutboxExtensions_AddOutboxDatabaseTable_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxExtensions.AddOutboxDatabaseTable(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/BrokerOptionsBuilderAddOutboxExtensions.cs/#L103">View source</a>
+  </span>
   <a id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOutboxExtensions_AddOutboxDatabaseTable_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxExtensions.AddOutboxDatabaseTable*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOutboxExtensions_AddOutboxDatabaseTable_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_" data-uid="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxExtensions.AddOutboxDatabaseTable(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)">AddOutboxDatabaseTable(IBrokerOptionsBuilder)</h4>
   <div class="markdown level1 summary"><p>
-    Adds the necessary services to enable the <see cref="!:OutboxProduceStrategy"></see> using a database
+    Adds the necessary services to enable the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a> using a database
     table as outbox.
 </p>
 <p>
-    The <see cref="!:OutboxProduceStrategy"></see> stores the outbound messages into an intermediate outbox,
+    The <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a> stores the outbound messages into an intermediate outbox,
     participating in the database transaction. The outbound messages become therefore transactional
     with the side effects on the local database.
 </p>
@@ -308,7 +323,7 @@ add the services to.</p>
       <tr>
         <td><a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a></td>
         <td><span class="parametername">brokerOptionsBuilder</span></td>
-        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <see cref="!:IServiceCollection"></see> to
+        <td><p>The <a class="xref" href="Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html">IBrokerOptionsBuilder</a> that references the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span> to
 add the services to.</p>
 </td>
       </tr>
@@ -337,6 +352,12 @@ add the services to.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddOutboxExtensions.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddOutboxExtensions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Configuration/BrokerOptionsBuilderAddOutboxExtensions.cs/#L14" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

@@ -102,16 +102,10 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -122,25 +116,36 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.html">Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class OutboxStoredMessage</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage__ctor_System_Type_System_Byte___System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_MessageHeader__System_String_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.%23ctor(System.Type%2CSystem.Byte%5B%5D%2CSystem.Collections.Generic.IEnumerable%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/Model/OutboxStoredMessage.cs/#L35">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage__ctor_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage__ctor_System_Type_System_Byte___System_Nullable_IEnumerable_MessageHeader___System_String_System_String_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.#ctor(System.Type,System.Byte[],System.Nullable{IEnumerable{MessageHeader}},System.String,System.String)">OutboxStoredMessage(Type, Byte[], Nullable&lt;IEnumerable&lt;MessageHeader&gt;&gt;, String, String)</h4>
+  <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage__ctor_System_Type_System_Byte___System_Collections_Generic_IEnumerable_Silverback_Messaging_Messages_MessageHeader__System_String_System_String_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.#ctor(System.Type,System.Byte[],System.Collections.Generic.IEnumerable{Silverback.Messaging.Messages.MessageHeader},System.String,System.String)">OutboxStoredMessage(Type, Byte[], IEnumerable&lt;MessageHeader&gt;, String, String)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.html">OutboxStoredMessage</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public OutboxStoredMessage(Type messageType, byte[] content, IEnumerable&lt;MessageHeader&gt;? headers, string endpointName, string actualEndpointName)</code></pre>
+    <pre><code class="lang-csharp hljs">public OutboxStoredMessage(Type messageType, byte[] content, IEnumerable&lt;MessageHeader&gt; headers, string endpointName, string actualEndpointName)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -165,7 +170,7 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IEnumerable</span>&lt;<span class="xref">MessageHeader</span>&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
         <td><span class="parametername">headers</span></td>
         <td><p>The message headers.</p>
 </td>
@@ -186,8 +191,13 @@
   </table>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_ActualEndpointName.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.ActualEndpointName%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/Model/OutboxStoredMessage.cs/#L68">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_ActualEndpointName_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.ActualEndpointName*"></a>
   <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_ActualEndpointName" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.ActualEndpointName">ActualEndpointName</h4>
   <div class="markdown level1 summary"><p>Gets the name of the actual target endpoint that was resolved for the message.</p>
@@ -212,8 +222,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_Content.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.Content%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/Model/OutboxStoredMessage.cs/#L52">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_Content_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.Content*"></a>
   <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_Content" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.Content">Content</h4>
   <div class="markdown level1 summary"><p>Gets the message raw binary content (body).</p>
@@ -238,8 +253,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_EndpointName.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.EndpointName%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/Model/OutboxStoredMessage.cs/#L63">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_EndpointName_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.EndpointName*"></a>
   <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_EndpointName" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.EndpointName">EndpointName</h4>
   <div class="markdown level1 summary"><p>Gets the name of the producer endpoint.</p>
@@ -264,8 +284,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_Headers.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.Headers%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/Model/OutboxStoredMessage.cs/#L58">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_Headers_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.Headers*"></a>
   <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_Headers" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.Headers">Headers</h4>
   <div class="markdown level1 summary"><p>Gets the message headers.</p>
@@ -273,7 +298,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;MessageHeader&gt;? Headers { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;MessageHeader&gt; Headers { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -285,13 +310,18 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">MessageHeader</span>&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_MessageType.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.MessageType%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/Model/OutboxStoredMessage.cs/#L73">View source</a>
+  </span>
   <a id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_MessageType_" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.MessageType*"></a>
   <h4 id="Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage_MessageType" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage.MessageType">MessageType</h4>
   <div class="markdown level1 summary"><p>Gets the type of the message.</p>
@@ -323,6 +353,12 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Outbound_TransactionalOutbox_Repositories_Model_OutboxStoredMessage.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model.OutboxStoredMessage%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Outbound/TransactionalOutbox/Repositories/Model/OutboxStoredMessage.cs/#L15" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

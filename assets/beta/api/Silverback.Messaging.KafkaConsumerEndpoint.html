@@ -139,13 +139,7 @@
       <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_BaseEquals_Silverback_Messaging_Endpoint_">Endpoint.BaseEquals(Endpoint)</a>
     </div>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetType()</span>
@@ -153,25 +147,36 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.html">Silverback.Messaging</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
   <h5 id="Silverback_Messaging_KafkaConsumerEndpoint_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public sealed class KafkaConsumerEndpoint : ConsumerEndpoint, IConsumerEndpoint, IEndpoint, IEquatable&lt;KafkaConsumerEndpoint&gt;</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint__ctor_Confluent_Kafka_TopicPartition___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.%23ctor(Confluent.Kafka.TopicPartition%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L71">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_IEnumerable_TopicPartition__System_Nullable_KafkaClientConfig__" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(IEnumerable{TopicPartition},System.Nullable{KafkaClientConfig})">KafkaConsumerEndpoint(IEnumerable&lt;TopicPartition&gt;, Nullable&lt;KafkaClientConfig&gt;)</h4>
+  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_Confluent_Kafka_TopicPartition___" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(Confluent.Kafka.TopicPartition[])">KafkaConsumerEndpoint(TopicPartition[])</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(IEnumerable&lt;TopicPartition&gt; topicPartitions, KafkaClientConfig? clientConfig = default(KafkaClientConfig? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(params TopicPartition[] topicPartitions)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -184,30 +189,103 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">TopicPartition</span>&gt;</td>
+        <td><span class="xref">Confluent.Kafka.TopicPartition</span>[]</td>
+        <td><span class="parametername">topicPartitions</span></td>
+        <td><p>The topics and partitions to be consumed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint__ctor_Confluent_Kafka_TopicPartitionOffset___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.%23ctor(Confluent.Kafka.TopicPartitionOffset%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L102">View source</a>
+  </span>
+  <a id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor*"></a>
+  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_Confluent_Kafka_TopicPartitionOffset___" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(Confluent.Kafka.TopicPartitionOffset[])">KafkaConsumerEndpoint(TopicPartitionOffset[])</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(params TopicPartitionOffset[] topicPartitions)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Confluent.Kafka.TopicPartitionOffset</span>[]</td>
+        <td><span class="parametername">topicPartitions</span></td>
+        <td><p>The topics and partitions to be consumed and the starting offset.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.%23ctor(System.Collections.Generic.IEnumerable%7BConfluent.Kafka.TopicPartition%7D%2CSilverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L86">View source</a>
+  </span>
+  <a id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor*"></a>
+  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaConsumerEndpoint(IEnumerable&lt;TopicPartition&gt;, KafkaClientConfig)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(IEnumerable&lt;TopicPartition&gt; topicPartitions, KafkaClientConfig clientConfig = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">Confluent.Kafka.TopicPartition</span>&gt;</td>
         <td><span class="parametername">topicPartitions</span></td>
         <td><p>The topics and partitions to be consumed.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">KafkaClientConfig</span>&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a></td>
         <td><span class="parametername">clientConfig</span></td>
-        <td><p>The <see cref="!:KafkaClientConfig"></see> to be used to initialize the
-<see cref="!:KafkaConsumerConfig"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a> to be used to initialize the
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionOffset__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.%23ctor(System.Collections.Generic.IEnumerable%7BConfluent.Kafka.TopicPartitionOffset%7D%2CSilverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L117">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_IEnumerable_TopicPartitionOffset__System_Nullable_KafkaClientConfig__" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(IEnumerable{TopicPartitionOffset},System.Nullable{KafkaClientConfig})">KafkaConsumerEndpoint(IEnumerable&lt;TopicPartitionOffset&gt;, Nullable&lt;KafkaClientConfig&gt;)</h4>
+  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionOffset__Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaConsumerEndpoint(IEnumerable&lt;TopicPartitionOffset&gt;, KafkaClientConfig)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(IEnumerable&lt;TopicPartitionOffset&gt; topicPartitions, KafkaClientConfig? clientConfig = default(KafkaClientConfig? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(IEnumerable&lt;TopicPartitionOffset&gt; topicPartitions, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -220,30 +298,35 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IEnumerable</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">Confluent.Kafka.TopicPartitionOffset</span>&gt;</td>
         <td><span class="parametername">topicPartitions</span></td>
         <td><p>The topics and partitions to be assigned.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">KafkaClientConfig</span>&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a></td>
         <td><span class="parametername">clientConfig</span></td>
-        <td><p>The <see cref="!:KafkaClientConfig"></see> to be used to initialize the
-<see cref="!:KafkaConsumerConfig"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a> to be used to initialize the
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String_Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.%23ctor(System.String%2CSilverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L41">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String_System_Nullable_KafkaClientConfig__" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String,System.Nullable{KafkaClientConfig})">KafkaConsumerEndpoint(String, Nullable&lt;KafkaClientConfig&gt;)</h4>
+  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String_Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String,Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaConsumerEndpoint(String, KafkaClientConfig)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(string topicName, KafkaClientConfig? clientConfig = default(KafkaClientConfig? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(string topicName, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -262,16 +345,21 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">KafkaClientConfig</span>&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a></td>
         <td><span class="parametername">clientConfig</span></td>
-        <td><p>The <see cref="!:KafkaClientConfig"></see> to be used to initialize the
-<see cref="!:KafkaConsumerConfig"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a> to be used to initialize the
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.%23ctor(System.String%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L26">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String___" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String[])">KafkaConsumerEndpoint(String[])</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> class.</p>
@@ -299,16 +387,21 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String___Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.%23ctor(System.String%5B%5D%2CSilverback.Messaging.Configuration.Kafka.KafkaClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L56">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String___System_Nullable_KafkaClientConfig__" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String[],System.Nullable{KafkaClientConfig})">KafkaConsumerEndpoint(String[], Nullable&lt;KafkaClientConfig&gt;)</h4>
+  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String___Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String[],Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)">KafkaConsumerEndpoint(String[], KafkaClientConfig)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(string[] topicNames, KafkaClientConfig? clientConfig = default(KafkaClientConfig? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(string[] topicNames, KafkaClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -327,76 +420,23 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">KafkaClientConfig</span>&gt;</td>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a></td>
         <td><span class="parametername">clientConfig</span></td>
-        <td><p>The <see cref="!:KafkaClientConfig"></see> to be used to initialize the
-<see cref="!:KafkaConsumerConfig"></see>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_TopicPartition___" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(TopicPartition[])">KafkaConsumerEndpoint(TopicPartition[])</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> class.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(params TopicPartition[] topicPartitions)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">TopicPartition</span>[]</td>
-        <td><span class="parametername">topicPartitions</span></td>
-        <td><p>The topics and partitions to be consumed.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor*"></a>
-  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint__ctor_TopicPartitionOffset___" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.#ctor(TopicPartitionOffset[])">KafkaConsumerEndpoint(TopicPartitionOffset[])</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> class.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaConsumerEndpoint(params TopicPartitionOffset[] topicPartitions)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">TopicPartitionOffset</span>[]</td>
-        <td><span class="parametername">topicPartitions</span></td>
-        <td><p>The topics and partitions to be consumed and the starting offset.</p>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaClientConfig.html">KafkaClientConfig</a> to be used to initialize the
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a>.</p>
 </td>
       </tr>
     </tbody>
   </table>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint_BackpressureLimit.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.BackpressureLimit%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L178">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint_BackpressureLimit_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.BackpressureLimit*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_BackpressureLimit" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.BackpressureLimit">BackpressureLimit</h4>
   <div class="markdown level1 summary"><p>Gets or sets the maximum number of messages to be consumed and enqueued waiting to be processed.
@@ -424,8 +464,13 @@ The default is 1.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint_Configuration.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.Configuration%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L155">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint_Configuration_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Configuration*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_Configuration" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Configuration">Configuration</h4>
   <div class="markdown level1 summary"><p>Gets or sets the Kafka client configuration. This is actually an extension of the configuration
@@ -446,40 +491,18 @@ dictionary provided by the Confluent.Kafka library.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">KafkaConsumerConfig</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="Silverback_Messaging_KafkaConsumerEndpoint_Events_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Events*"></a>
-  <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_Events" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Events">Events</h4>
-  <div class="markdown level1 summary"><p>Gets the event handlers configuration. Can be used to bind some handlers to the Kafka events
-such as partitions revoked/assigned, error, statistics and offsets committed.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaConsumerEventsHandlers Events { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">KafkaConsumerEventsHandlers</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint_MaxDegreeOfParallelism.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.MaxDegreeOfParallelism%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L170">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint_MaxDegreeOfParallelism_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.MaxDegreeOfParallelism*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_MaxDegreeOfParallelism" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.MaxDegreeOfParallelism">MaxDegreeOfParallelism</h4>
   <div class="markdown level1 summary"><p>Gets or sets the maximum number of incoming message that can be processed concurrently. Up to a
@@ -506,8 +529,13 @@ The default is 10.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint_Names.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.Names%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L149">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint_Names_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Names*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_Names" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Names">Names</h4>
   <div class="markdown level1 summary"><p>Gets the name of the topics.</p>
@@ -527,18 +555,23 @@ The default is 10.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint_ProcessPartitionsIndependently.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.ProcessPartitionsIndependently%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L163">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint_ProcessPartitionsIndependently_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.ProcessPartitionsIndependently*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_ProcessPartitionsIndependently" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.ProcessPartitionsIndependently">ProcessPartitionsIndependently</h4>
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the partitions must be processed independently.
 When <code>true</code> a stream will published per each partition and the sequences
-(<see cref="!:ChunkSequence"></see>, <see cref="!:BatchSequence"></see>, ...) cannot span across the partitions.
+(<a class="xref" href="Silverback.Messaging.Sequences.Chunking.ChunkSequence.html">ChunkSequence</a>, <a class="xref" href="Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>, ...) cannot span across the partitions.
 The default is <code>true</code>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -561,8 +594,13 @@ The default is <code>true</code>.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint_TopicPartitions.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.TopicPartitions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L144">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint_TopicPartitions_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.TopicPartitions*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_TopicPartitions" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.TopicPartitions">TopicPartitions</h4>
   <div class="markdown level1 summary"><p>Gets the topic and partitions to be consumed. If the collection is <code>null</code> the topics from the
@@ -572,7 +610,7 @@ broker. If the collection is empty no partition will be consumed.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;TopicPartitionOffset&gt;? TopicPartitions { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;TopicPartitionOffset&gt; TopicPartitions { get; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -584,15 +622,20 @@ broker. If the collection is empty no partition will be consumed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IReadOnlyCollection</span>&lt;<span class="xref">TopicPartitionOffset</span>&gt;&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<span class="xref">Confluent.Kafka.TopicPartitionOffset</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint_Equals_Silverback_Messaging_KafkaConsumerEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.Equals(Silverback.Messaging.KafkaConsumerEndpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L207">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint_Equals_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Equals*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_Equals_Silverback_Messaging_KafkaConsumerEndpoint_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Equals(Silverback.Messaging.KafkaConsumerEndpoint)">Equals(KafkaConsumerEndpoint)</h4>
   <div class="markdown level1 summary"></div>
@@ -633,8 +676,13 @@ broker. If the collection is empty no partition will be consumed.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L219">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint_Equals_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Equals*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_Equals_System_Object_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Equals(System.Object)">Equals(Object)</h4>
   <div class="markdown level1 summary"></div>
@@ -677,8 +725,13 @@ broker. If the collection is empty no partition will be consumed.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.Object.Equals(System.Object)</span></div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L234">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint_GetHashCode_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.GetHashCode*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_GetHashCode" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.GetHashCode">GetHashCode()</h4>
   <div class="markdown level1 summary"></div>
@@ -704,8 +757,13 @@ broker. If the collection is empty no partition will be consumed.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.Object.GetHashCode()</span></div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint_GetUniqueConsumerGroupName.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.GetUniqueConsumerGroupName%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L201">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint_GetUniqueConsumerGroupName_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.GetUniqueConsumerGroupName*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_GetUniqueConsumerGroupName" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.GetUniqueConsumerGroupName">GetUniqueConsumerGroupName()</h4>
   <div class="markdown level1 summary"><p>Gets a unique name for the consumer group (e.g. Kafka's consumer group id). This value (joint with
@@ -739,8 +797,13 @@ the endpoint name) will be used for example to ensure the exactly-once delivery.
 consumer groups within the same process and/or using the same database to store the information
 needed to ensure the exactly-once delivery.</p>
 </div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L181">View source</a>
+  </span>
   <a id="Silverback_Messaging_KafkaConsumerEndpoint_Validate_" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Validate*"></a>
   <h4 id="Silverback_Messaging_KafkaConsumerEndpoint_Validate" data-uid="Silverback.Messaging.KafkaConsumerEndpoint.Validate">Validate()</h4>
   <div class="markdown level1 summary"><p>Validates the endpoint configuration and throws an <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> if
@@ -770,6 +833,12 @@ not valid.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_KafkaConsumerEndpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.KafkaConsumerEndpoint%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/KafkaConsumerEndpoint.cs/#L18" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

@@ -131,7 +131,7 @@ application is being stopped.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.MqttMessageIdentifier.html">MqttMessageIdentifier</a></h4>
       <section><p>The MQTT broker doesn't provide any message identifier, so the identifier is either the
-<see cref="!:DefaultMessageHeaders.MessageId"></see> header value or a client-side generated
+<a class="xref" href="Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_MessageId">MessageId</a> header value or a client-side generated
 <span class="xref">System.Guid</span>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.MqttProducer.html">MqttProducer</a></h4>
@@ -177,7 +177,7 @@ resolve the right instance according to the <a class="xref" href="Silverback.Mes
 </p>
 <p>
     The <a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageOffset.html">IBrokerMessageOffset</a> interface should be implemented whenever possible
-    to allow the exactly-one delivery using the <see cref="!:OffsetStoreExactlyOnceStrategy"></see>.
+    to allow the exactly-one delivery using the <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.OffsetStoreExactlyOnceStrategy.html">OffsetStoreExactlyOnceStrategy</a>.
 </p>
 <p>
     If the message broker doesn&apos;t provide any message identifier, a local one can be created (e.g.
@@ -195,7 +195,7 @@ resolve the right instance according to the <a class="xref" href="Silverback.Mes
 </p>
 <p>
     Being able to compare the identifiers (offsets) allows the exactly-one delivery using the
-<see cref="!:OffsetStoreExactlyOnceStrategy"></see> and for it to work properly the offsets have to be
+<a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.OffsetStoreExactlyOnceStrategy.html">OffsetStoreExactlyOnceStrategy</a> and for it to work properly the offsets have to be
 universally comparable (across restarts and across multiple instances, for a given Key).
 </p>
 </section>

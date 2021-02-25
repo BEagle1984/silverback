@@ -90,7 +90,7 @@
   
   <h1 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddMqttEndpointsExtensions" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddMqttEndpointsExtensions" class="text-break">Class SilverbackBuilderAddMqttEndpointsExtensions
   </h1>
-  <div class="markdown level0 summary"><p>Adds the <code>AddMqttEndpoints</code> method to the <see cref="!:ISilverbackBuilder"></see>.</p>
+  <div class="markdown level0 summary"><p>Adds the <code>AddMqttEndpoints</code> method to the <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -101,16 +101,10 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetHashCode()</span>
@@ -121,20 +115,31 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Microsoft.Extensions.DependencyInjection.html">Microsoft.Extensions.DependencyInjection</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.dll</h6>
   <h5 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddMqttEndpointsExtensions_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static class SilverbackBuilderAddMqttEndpointsExtensions</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddMqttEndpointsExtensions_AddMqttEndpoints_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder__.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddMqttEndpointsExtensions.AddMqttEndpoints(Silverback.Messaging.Configuration.ISilverbackBuilder%2CSystem.Action%7BSilverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/SilverbackBuilderAddMqttEndpointsExtensions.cs/#L31">View source</a>
+  </span>
   <a id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddMqttEndpointsExtensions_AddMqttEndpoints_" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddMqttEndpointsExtensions.AddMqttEndpoints*"></a>
-  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddMqttEndpointsExtensions_AddMqttEndpoints_ISilverbackBuilder_System_Action_IMqttEndpointsConfigurationBuilder__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddMqttEndpointsExtensions.AddMqttEndpoints(ISilverbackBuilder,System.Action{IMqttEndpointsConfigurationBuilder})">AddMqttEndpoints(ISilverbackBuilder, Action&lt;IMqttEndpointsConfigurationBuilder&gt;)</h4>
-  <div class="markdown level1 summary"><p>Adds an <see cref="!:IEndpointsConfigurator"></see> to be used to setup the broker endpoints.</p>
+  <h4 id="Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddMqttEndpointsExtensions_AddMqttEndpoints_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder__" data-uid="Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddMqttEndpointsExtensions.AddMqttEndpoints(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder})">AddMqttEndpoints(ISilverbackBuilder, Action&lt;IMqttEndpointsConfigurationBuilder&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds an <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurator.html">IEndpointsConfigurator</a> to be used to setup the broker endpoints.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -152,16 +157,16 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
         <td><span class="parametername">silverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> that references the <see cref="!:IServiceCollection"></see> to add
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> that references the <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceCollection</span> to add
 the services to.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">IMqttEndpointsConfigurationBuilder</span>&gt;</td>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.html">IMqttEndpointsConfigurationBuilder</a>&gt;</td>
         <td><span class="parametername">configureAction</span></td>
-        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <see cref="!:IMqttEndpointsConfigurationBuilder"></see> and adds
+        <td><p>An <span class="xref">System.Action&lt;T&gt;</span> that takes the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.html">IMqttEndpointsConfigurationBuilder</a> and adds
 the outbound and inbound endpoints.</p>
 </td>
       </tr>
@@ -177,8 +182,8 @@ the outbound and inbound endpoints.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">ISilverbackBuilder</span></td>
-        <td><p>The <see cref="!:ISilverbackBuilder"></see> so that additional calls can be chained.</p>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.ISilverbackBuilder.html">ISilverbackBuilder</a> so that additional calls can be chained.</p>
 </td>
       </tr>
     </tbody>
@@ -190,6 +195,12 @@ the outbound and inbound endpoints.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_SilverbackBuilderAddMqttEndpointsExtensions.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddMqttEndpointsExtensions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.MQTT/Messaging/Configuration/SilverbackBuilderAddMqttEndpointsExtensions.cs/#L15" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

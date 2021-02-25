@@ -91,7 +91,7 @@
   <h1 id="Silverback_Messaging_BinaryFiles_BinaryFileHandlerProducerBehavior" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior" class="text-break">Class BinaryFileHandlerProducerBehavior
   </h1>
   <div class="markdown level0 summary"><p>Switches to the <a class="xref" href="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer.html">BinaryFileMessageSerializer</a> if the message being produced implements
-the <see cref="!:IBinaryFileMessage"></see> interface.</p>
+the <a class="xref" href="Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a> interface.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -99,16 +99,51 @@ the <see cref="!:IBinaryFileMessage"></see> interface.</p>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">BinaryFileHandlerProducerBehavior</span></div>
   </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a></div>
+    <div><a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehavior.html">IBrokerBehavior</a></div>
+    <div><a class="xref" href="Silverback.ISorted.html">ISorted</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.BinaryFiles.html">Silverback.Messaging.BinaryFiles</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_BinaryFiles_BinaryFileHandlerProducerBehavior_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class BinaryFileHandlerProducerBehavior : IProducerBehavior</code></pre>
+    <pre><code class="lang-csharp hljs">public class BinaryFileHandlerProducerBehavior : IProducerBehavior, IBrokerBehavior, ISorted</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryFiles_BinaryFileHandlerProducerBehavior_SortIndex.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior.SortIndex%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/BinaryFiles/BinaryFileHandlerProducerBehavior.cs/#L21">View source</a>
+  </span>
   <a id="Silverback_Messaging_BinaryFiles_BinaryFileHandlerProducerBehavior_SortIndex_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior.SortIndex*"></a>
   <h4 id="Silverback_Messaging_BinaryFiles_BinaryFileHandlerProducerBehavior_SortIndex" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior.SortIndex">SortIndex</h4>
   <div class="markdown level1 summary"><p>Gets the sort index.</p>
@@ -135,11 +170,17 @@ the <see cref="!:IBinaryFileMessage"></see> interface.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryFiles_BinaryFileHandlerProducerBehavior_HandleAsync_Silverback_Messaging_Broker_Behaviors_ProducerPipelineContext_Silverback_Messaging_Broker_Behaviors_ProducerBehaviorHandler_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior.HandleAsync(Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext%2CSilverback.Messaging.Broker.Behaviors.ProducerBehaviorHandler)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/BinaryFiles/BinaryFileHandlerProducerBehavior.cs/#L24">View source</a>
+  </span>
   <a id="Silverback_Messaging_BinaryFiles_BinaryFileHandlerProducerBehavior_HandleAsync_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior.HandleAsync*"></a>
-  <h4 id="Silverback_Messaging_BinaryFiles_BinaryFileHandlerProducerBehavior_HandleAsync_ProducerPipelineContext_ProducerBehaviorHandler_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior.HandleAsync(ProducerPipelineContext,ProducerBehaviorHandler)">HandleAsync(ProducerPipelineContext, ProducerBehaviorHandler)</h4>
-  <div class="markdown level1 summary"></div>
+  <h4 id="Silverback_Messaging_BinaryFiles_BinaryFileHandlerProducerBehavior_HandleAsync_Silverback_Messaging_Broker_Behaviors_ProducerPipelineContext_Silverback_Messaging_Broker_Behaviors_ProducerBehaviorHandler_" data-uid="Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior.HandleAsync(Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext,Silverback.Messaging.Broker.Behaviors.ProducerBehaviorHandler)">HandleAsync(ProducerPipelineContext, ProducerBehaviorHandler)</h4>
+  <div class="markdown level1 summary"><p>Process, handles or transforms the message being produced.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -156,14 +197,16 @@ the <see cref="!:IBinaryFileMessage"></see> interface.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">ProducerPipelineContext</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext.html">ProducerPipelineContext</a></td>
         <td><span class="parametername">context</span></td>
-        <td></td>
+        <td><p>The context that is passed along the behaviors pipeline.</p>
+</td>
       </tr>
       <tr>
-        <td><span class="xref">ProducerBehaviorHandler</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.ProducerBehaviorHandler.html">ProducerBehaviorHandler</a></td>
         <td><span class="parametername">next</span></td>
-        <td></td>
+        <td><p>The next behavior in the pipeline.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -177,11 +220,22 @@ the <see cref="!:IBinaryFileMessage"></see> interface.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span></td>
-        <td></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
       </tr>
     </tbody>
   </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a>
+  </div>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehavior.html">IBrokerBehavior</a>
+  </div>
+  <div>
+      <a class="xref" href="Silverback.ISorted.html">ISorted</a>
+  </div>
 </article>
           </div>
           
@@ -189,6 +243,12 @@ the <see cref="!:IBinaryFileMessage"></see> interface.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_BinaryFiles_BinaryFileHandlerProducerBehavior.md&amp;value=---%0Auid%3A%20Silverback.Messaging.BinaryFiles.BinaryFileHandlerProducerBehavior%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/BinaryFiles/BinaryFileHandlerProducerBehavior.cs/#L16" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

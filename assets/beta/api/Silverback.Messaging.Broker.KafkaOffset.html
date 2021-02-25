@@ -108,13 +108,7 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
       <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
     </div>
     <div>
       <span class="xref">System.Object.GetType()</span>
@@ -122,17 +116,62 @@
     <div>
       <span class="xref">System.Object.MemberwiseClone()</span>
     </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.html">Silverback.Messaging.Broker</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
   <h5 id="Silverback_Messaging_Broker_KafkaOffset_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public sealed class KafkaOffset : IBrokerMessageOffset, IBrokerMessageIdentifier, IEquatable&lt;IBrokerMessageIdentifier&gt;, IComparable&lt;IBrokerMessageOffset&gt;</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset__ctor_Confluent_Kafka_TopicPartitionOffset_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.%23ctor(Confluent.Kafka.TopicPartitionOffset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L75">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_KafkaOffset__ctor_" data-uid="Silverback.Messaging.Broker.KafkaOffset.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Broker_KafkaOffset__ctor_Confluent_Kafka_TopicPartitionOffset_" data-uid="Silverback.Messaging.Broker.KafkaOffset.#ctor(Confluent.Kafka.TopicPartitionOffset)">KafkaOffset(TopicPartitionOffset)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KafkaOffset(TopicPartitionOffset topicPartitionOffset)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Confluent.Kafka.TopicPartitionOffset</span></td>
+        <td><span class="parametername">topicPartitionOffset</span></td>
+        <td><p>The <span class="xref">Confluent.Kafka.TopicPartitionOffset</span>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset__ctor_System_String_System_Int32_System_Int64_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.%23ctor(System.String%2CSystem.Int32%2CSystem.Int64)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L57">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset__ctor_" data-uid="Silverback.Messaging.Broker.KafkaOffset.#ctor*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset__ctor_System_String_System_Int32_System_Int64_" data-uid="Silverback.Messaging.Broker.KafkaOffset.#ctor(System.String,System.Int32,System.Int64)">KafkaOffset(String, Int32, Int64)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a> class.</p>
@@ -172,8 +211,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset__ctor_System_String_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.%23ctor(System.String%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L27">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset__ctor_" data-uid="Silverback.Messaging.Broker.KafkaOffset.#ctor*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset__ctor_System_String_System_String_" data-uid="Silverback.Messaging.Broker.KafkaOffset.#ctor(System.String,System.String)">KafkaOffset(String, String)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a> class.</p>
@@ -207,39 +251,15 @@
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="Silverback_Messaging_Broker_KafkaOffset__ctor_" data-uid="Silverback.Messaging.Broker.KafkaOffset.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Broker_KafkaOffset__ctor_TopicPartitionOffset_" data-uid="Silverback.Messaging.Broker.KafkaOffset.#ctor(TopicPartitionOffset)">KafkaOffset(TopicPartitionOffset)</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a> class.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public KafkaOffset(TopicPartitionOffset topicPartitionOffset)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">TopicPartitionOffset</span></td>
-        <td><span class="parametername">topicPartitionOffset</span></td>
-        <td><p>The <see cref="!:Confluent.Kafka.TopicPartitionOffset"></see>.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   <h3 id="properties">Properties
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_Key.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.Key%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L99">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_Key_" data-uid="Silverback.Messaging.Broker.KafkaOffset.Key*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_Key" data-uid="Silverback.Messaging.Broker.KafkaOffset.Key">Key</h4>
   <div class="markdown level1 summary"><p>Gets the unique key of the queue, topic or partition the message was produced to or consumed from.</p>
@@ -264,8 +284,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_Offset.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.Offset%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L96">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_Offset_" data-uid="Silverback.Messaging.Broker.KafkaOffset.Offset*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_Offset" data-uid="Silverback.Messaging.Broker.KafkaOffset.Offset">Offset</h4>
   <div class="markdown level1 summary"><p>Gets the offset in the partition.</p>
@@ -290,8 +315,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_Partition.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.Partition%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L91">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_Partition_" data-uid="Silverback.Messaging.Broker.KafkaOffset.Partition*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_Partition" data-uid="Silverback.Messaging.Broker.KafkaOffset.Partition">Partition</h4>
   <div class="markdown level1 summary"><p>Gets the partition number.</p>
@@ -316,8 +346,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_Topic.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.Topic%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L86">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_Topic_" data-uid="Silverback.Messaging.Broker.KafkaOffset.Topic*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_Topic" data-uid="Silverback.Messaging.Broker.KafkaOffset.Topic">Topic</h4>
   <div class="markdown level1 summary"><p>Gets the name of the topic.</p>
@@ -342,8 +377,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_Value.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.Value%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L102">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_Value_" data-uid="Silverback.Messaging.Broker.KafkaOffset.Value*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_Value" data-uid="Silverback.Messaging.Broker.KafkaOffset.Value">Value</h4>
   <div class="markdown level1 summary"><p>Gets the identifier value.</p>
@@ -370,8 +410,13 @@
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_CompareTo_Silverback_Messaging_Broker_IBrokerMessageOffset_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.CompareTo(Silverback.Messaging.Broker.IBrokerMessageOffset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L210">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_CompareTo_" data-uid="Silverback.Messaging.Broker.KafkaOffset.CompareTo*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_CompareTo_Silverback_Messaging_Broker_IBrokerMessageOffset_" data-uid="Silverback.Messaging.Broker.KafkaOffset.CompareTo(Silverback.Messaging.Broker.IBrokerMessageOffset)">CompareTo(IBrokerMessageOffset)</h4>
   <div class="markdown level1 summary"></div>
@@ -412,8 +457,13 @@
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_CompareTo_Silverback_Messaging_Broker_KafkaOffset_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.CompareTo(Silverback.Messaging.Broker.KafkaOffset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L198">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_CompareTo_" data-uid="Silverback.Messaging.Broker.KafkaOffset.CompareTo*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_CompareTo_Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Broker.KafkaOffset.CompareTo(Silverback.Messaging.Broker.KafkaOffset)">CompareTo(KafkaOffset)</h4>
   <div class="markdown level1 summary"><p>Compares the current instance with another object of the same type and returns an integer that
@@ -460,8 +510,13 @@ greater than zero if this is greater than object.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_Equals_Silverback_Messaging_Broker_IBrokerMessageIdentifier_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.Equals(Silverback.Messaging.Broker.IBrokerMessageIdentifier)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L224">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_Equals_" data-uid="Silverback.Messaging.Broker.KafkaOffset.Equals*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_Equals_Silverback_Messaging_Broker_IBrokerMessageIdentifier_" data-uid="Silverback.Messaging.Broker.KafkaOffset.Equals(Silverback.Messaging.Broker.IBrokerMessageIdentifier)">Equals(IBrokerMessageIdentifier)</h4>
   <div class="markdown level1 summary"></div>
@@ -502,8 +557,13 @@ greater than zero if this is greater than object.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L241">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_Equals_" data-uid="Silverback.Messaging.Broker.KafkaOffset.Equals*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_Equals_System_Object_" data-uid="Silverback.Messaging.Broker.KafkaOffset.Equals(System.Object)">Equals(Object)</h4>
   <div class="markdown level1 summary"></div>
@@ -546,8 +606,13 @@ greater than zero if this is greater than object.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.Object.Equals(System.Object)</span></div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L255">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_GetHashCode_" data-uid="Silverback.Messaging.Broker.KafkaOffset.GetHashCode*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_GetHashCode" data-uid="Silverback.Messaging.Broker.KafkaOffset.GetHashCode">GetHashCode()</h4>
   <div class="markdown level1 summary"></div>
@@ -573,8 +638,13 @@ greater than zero if this is greater than object.</p>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">System.Object.GetHashCode()</span></div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_ToLogString.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.ToLogString%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L181">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_ToLogString_" data-uid="Silverback.Messaging.Broker.KafkaOffset.ToLogString*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_ToLogString" data-uid="Silverback.Messaging.Broker.KafkaOffset.ToLogString">ToLogString()</h4>
   <div class="markdown level1 summary"><p>Gets a string that can be used to log the offset value.</p>
@@ -603,8 +673,13 @@ greater than zero if this is greater than object.</p>
   <h5 id="Silverback_Messaging_Broker_KafkaOffset_ToLogString_remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This string should contain all identifiers except the endpoint name.</p>
 </div>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_ToVerboseLogString.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.ToVerboseLogString%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L184">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_ToVerboseLogString_" data-uid="Silverback.Messaging.Broker.KafkaOffset.ToVerboseLogString*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_ToVerboseLogString" data-uid="Silverback.Messaging.Broker.KafkaOffset.ToVerboseLogString">ToVerboseLogString()</h4>
   <div class="markdown level1 summary"><p>Gets a string that can be used to log the offset value.</p>
@@ -636,8 +711,13 @@ different endpoints.</p>
 </div>
   <h3 id="operators">Operators
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_op_Equality_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.op_Equality(Silverback.Messaging.Broker.KafkaOffset%2CSilverback.Messaging.Broker.KafkaOffset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L161">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_op_Equality_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_Equality*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_op_Equality_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_Equality(Silverback.Messaging.Broker.KafkaOffset,Silverback.Messaging.Broker.KafkaOffset)">Equality(KafkaOffset, KafkaOffset)</h4>
   <div class="markdown level1 summary"><p>Equality operator.</p>
@@ -686,8 +766,13 @@ different endpoints.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_op_GreaterThan_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.op_GreaterThan(Silverback.Messaging.Broker.KafkaOffset%2CSilverback.Messaging.Broker.KafkaOffset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L125">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_op_GreaterThan_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_GreaterThan*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_op_GreaterThan_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_GreaterThan(Silverback.Messaging.Broker.KafkaOffset,Silverback.Messaging.Broker.KafkaOffset)">GreaterThan(KafkaOffset, KafkaOffset)</h4>
   <div class="markdown level1 summary"><p>Greater than operator.</p>
@@ -736,8 +821,13 @@ different endpoints.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_op_GreaterThanOrEqual_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.op_GreaterThanOrEqual(Silverback.Messaging.Broker.KafkaOffset%2CSilverback.Messaging.Broker.KafkaOffset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L149">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_op_GreaterThanOrEqual_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_GreaterThanOrEqual*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_op_GreaterThanOrEqual_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_GreaterThanOrEqual(Silverback.Messaging.Broker.KafkaOffset,Silverback.Messaging.Broker.KafkaOffset)">GreaterThanOrEqual(KafkaOffset, KafkaOffset)</h4>
   <div class="markdown level1 summary"><p>Greater than or equal operator.</p>
@@ -786,8 +876,13 @@ different endpoints.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_op_Inequality_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.op_Inequality(Silverback.Messaging.Broker.KafkaOffset%2CSilverback.Messaging.Broker.KafkaOffset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L178">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_op_Inequality_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_Inequality*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_op_Inequality_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_Inequality(Silverback.Messaging.Broker.KafkaOffset,Silverback.Messaging.Broker.KafkaOffset)">Inequality(KafkaOffset, KafkaOffset)</h4>
   <div class="markdown level1 summary"><p>Inequality operator.</p>
@@ -836,8 +931,13 @@ different endpoints.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_op_LessThan_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.op_LessThan(Silverback.Messaging.Broker.KafkaOffset%2CSilverback.Messaging.Broker.KafkaOffset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L113">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_op_LessThan_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_LessThan*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_op_LessThan_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_LessThan(Silverback.Messaging.Broker.KafkaOffset,Silverback.Messaging.Broker.KafkaOffset)">LessThan(KafkaOffset, KafkaOffset)</h4>
   <div class="markdown level1 summary"><p>Less than operator.</p>
@@ -886,8 +986,13 @@ different endpoints.</p>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset_op_LessThanOrEqual_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset.op_LessThanOrEqual(Silverback.Messaging.Broker.KafkaOffset%2CSilverback.Messaging.Broker.KafkaOffset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L137">View source</a>
+  </span>
   <a id="Silverback_Messaging_Broker_KafkaOffset_op_LessThanOrEqual_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_LessThanOrEqual*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaOffset_op_LessThanOrEqual_Silverback_Messaging_Broker_KafkaOffset_Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Broker.KafkaOffset.op_LessThanOrEqual(Silverback.Messaging.Broker.KafkaOffset,Silverback.Messaging.Broker.KafkaOffset)">LessThanOrEqual(KafkaOffset, KafkaOffset)</h4>
   <div class="markdown level1 summary"><p>Less than or equal operator.</p>
@@ -956,6 +1061,12 @@ different endpoints.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaOffset.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaOffset%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaOffset.cs/#L16" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

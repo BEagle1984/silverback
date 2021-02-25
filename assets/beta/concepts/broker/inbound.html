@@ -379,7 +379,7 @@ Some message broker implementations might transparently cope with the missing me
     <figcaption>The messages are processed in batches.</figcaption>
 </figure>
 <p>Refer to the <a class="xref" href="../../api/Silverback.Messaging.Sequences.Batch.BatchSettings.html">BatchSettings</a> documentation for details about the configuration.</p>
-<p>The batch must be subscribed as <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a>, see also <a class="xref" href="streaming.html">Streaming</a> for details.</p>
+<p>The batch can be subscribed either as <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a>, <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> or <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a>. See also <a class="xref" href="streaming.html">Streaming</a> for details.</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
 <ul role="tablist">
 <li role="presentation">
@@ -447,7 +447,7 @@ Some message broker implementations might transparently cope with the missing me
         _db = db;
     }
 
-    public async Task OnUpdateBatchReceived(IMessageStreamEnumerable&lt;InventoryUpdateEvent&gt; events)
+    public async Task OnUpdateBatchReceived(IAsyncEnumerable&lt;InventoryUpdateEvent&gt; events)
     {
         async foreach (var event in events)
         {

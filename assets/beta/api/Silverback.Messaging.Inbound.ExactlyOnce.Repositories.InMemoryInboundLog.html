@@ -102,25 +102,76 @@
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">InMemoryInboundLog</span></div>
+    <div class="level1"><a class="xref" href="Silverback.Util.TransactionalList-1.html">TransactionalList</a>&lt;<a class="xref" href="Silverback.Database.Model.InboundLogEntry.html">InboundLogEntry</a>&gt;</div>
+    <div class="level2"><span class="xref">InMemoryInboundLog</span></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
     <div><a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.IInboundLog.html">IInboundLog</a></div>
-    <div><span class="xref">ITransactional</span></div>
+    <div><a class="xref" href="Silverback.Messaging.Inbound.Transaction.ITransactional.html">ITransactional</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Util.TransactionalList-1.html#Silverback_Util_TransactionalList_1_CommittedItemsCount">TransactionalList&lt;InboundLogEntry&gt;.CommittedItemsCount</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Util.TransactionalList-1.html#Silverback_Util_TransactionalList_1_Items">TransactionalList&lt;InboundLogEntry&gt;.Items</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Util.TransactionalList-1.html#Silverback_Util_TransactionalList_1_UncommittedItems">TransactionalList&lt;InboundLogEntry&gt;.UncommittedItems</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Util.TransactionalList-1.html#Silverback_Util_TransactionalList_1_CommitAsync">TransactionalList&lt;InboundLogEntry&gt;.CommitAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Util.TransactionalList-1.html#Silverback_Util_TransactionalList_1_RollbackAsync">TransactionalList&lt;InboundLogEntry&gt;.RollbackAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Util.TransactionalList-1.html#Silverback_Util_TransactionalList_1_AddAsync__0_">TransactionalList&lt;InboundLogEntry&gt;.AddAsync(InboundLogEntry)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Util.TransactionalList-1.html#Silverback_Util_TransactionalList_1_RemoveAsync__0_">TransactionalList&lt;InboundLogEntry&gt;.RemoveAsync(InboundLogEntry)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.html">Silverback.Messaging.Inbound.ExactlyOnce.Repositories</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public class InMemoryInboundLog : TransactionalList&lt;InboundLogEntry&gt;, IInboundLog, ITransactional</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog__ctor_Silverback_Util_TransactionalListSharedItems_Silverback_Database_Model_InboundLogEntry__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.%23ctor(Silverback.Util.TransactionalListSharedItems%7BSilverback.Database.Model.InboundLogEntry%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Inbound/ExactlyOnce/Repositories/InMemoryInboundLog.cs/#L29">View source</a>
+  </span>
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog__ctor_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog__ctor_TransactionalListSharedItems_InboundLogEntry__" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.#ctor(TransactionalListSharedItems{InboundLogEntry})">InMemoryInboundLog(TransactionalListSharedItems&lt;InboundLogEntry&gt;)</h4>
+  <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog__ctor_Silverback_Util_TransactionalListSharedItems_Silverback_Database_Model_InboundLogEntry__" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.#ctor(Silverback.Util.TransactionalListSharedItems{Silverback.Database.Model.InboundLogEntry})">InMemoryInboundLog(TransactionalListSharedItems&lt;InboundLogEntry&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.html">InMemoryInboundLog</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -139,7 +190,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">TransactionalListSharedItems</span>&lt;<span class="xref">InboundLogEntry</span>&gt;</td>
+        <td><a class="xref" href="Silverback.Util.TransactionalListSharedItems-1.html">TransactionalListSharedItems</a>&lt;<a class="xref" href="Silverback.Database.Model.InboundLogEntry.html">InboundLogEntry</a>&gt;</td>
         <td><span class="parametername">sharedItems</span></td>
         <td><p>The log entries shared between the instances of this repository.</p>
 </td>
@@ -148,10 +199,15 @@
   </table>
   <h3 id="methods">Methods
   </h3>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_AddAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.AddAsync(Silverback.Messaging.Messages.IRawInboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Inbound/ExactlyOnce/Repositories/InMemoryInboundLog.cs/#L35">View source</a>
+  </span>
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_AddAsync_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.AddAsync*"></a>
-  <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_AddAsync_IRawInboundEnvelope_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.AddAsync(IRawInboundEnvelope)">AddAsync(IRawInboundEnvelope)</h4>
+  <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_AddAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.AddAsync(Silverback.Messaging.Messages.IRawInboundEnvelope)">AddAsync(IRawInboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Add the message contained in the specified envelope to the log.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -170,7 +226,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
         <td><p>The envelope containing the message to be added.</p>
 </td>
@@ -187,16 +243,21 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span></td>
-        <td><p>A <see cref="!:Task"></see> representing the asynchronous operation.</p>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_ExistsAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.ExistsAsync(Silverback.Messaging.Messages.IRawInboundEnvelope)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Inbound/ExactlyOnce/Repositories/InMemoryInboundLog.cs/#L53">View source</a>
+  </span>
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_ExistsAsync_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.ExistsAsync*"></a>
-  <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_ExistsAsync_IRawInboundEnvelope_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.ExistsAsync(IRawInboundEnvelope)">ExistsAsync(IRawInboundEnvelope)</h4>
+  <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_ExistsAsync_Silverback_Messaging_Messages_IRawInboundEnvelope_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.ExistsAsync(Silverback.Messaging.Messages.IRawInboundEnvelope)">ExistsAsync(IRawInboundEnvelope)</h4>
   <div class="markdown level1 summary"><p>Returns a boolean value indicating whether this very same message has already been logged for the
 same consumer group.</p>
 </div>
@@ -216,7 +277,7 @@ same consumer group.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">IRawInboundEnvelope</span></td>
+        <td><a class="xref" href="Silverback.Messaging.Messages.IRawInboundEnvelope.html">IRawInboundEnvelope</a></td>
         <td><span class="parametername">envelope</span></td>
         <td><p>The envelope containing the message to be checked.</p>
 </td>
@@ -233,15 +294,20 @@ same consumer group.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the asynchronous operation. The task result contains a
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains a
 value indicating whether the message was found in the log.</p>
 </td>
       </tr>
     </tbody>
   </table>
-  
-  
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_GetLengthAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.GetLengthAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Inbound/ExactlyOnce/Repositories/InMemoryInboundLog.cs/#L69">View source</a>
+  </span>
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_GetLengthAsync_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.GetLengthAsync*"></a>
   <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog_GetLengthAsync" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog.GetLengthAsync">GetLengthAsync()</h4>
   <div class="markdown level1 summary"><p>Returns the total number of messages in the log.</p>
@@ -261,8 +327,8 @@ value indicating whether the message was found in the log.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
-        <td><p>A <see cref="!:Task&lt;TResult>"></see> representing the result of the asynchronous operation. The task
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the result of the asynchronous operation. The task
 result contains the log length.</p>
 </td>
       </tr>
@@ -273,7 +339,7 @@ result contains the log length.</p>
       <a class="xref" href="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.IInboundLog.html">IInboundLog</a>
   </div>
   <div>
-      <span class="xref">ITransactional</span>
+      <a class="xref" href="Silverback.Messaging.Inbound.Transaction.ITransactional.html">ITransactional</a>
   </div>
 </article>
           </div>
@@ -282,6 +348,12 @@ result contains the log length.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Inbound_ExactlyOnce_Repositories_InMemoryInboundLog.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Inbound.ExactlyOnce.Repositories.InMemoryInboundLog%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Inbound/ExactlyOnce/Repositories/InMemoryInboundLog.cs/#L21" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

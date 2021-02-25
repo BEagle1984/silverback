@@ -184,90 +184,19 @@ public class OrderCreatedEvent : OrderEvent
 </code></pre>
 <h2 id="supported-methods-and-parameters">Supported methods and parameters</h2>
 <p>The subscribed method can either be synchronous or asynchronous (returning a <code>Task</code>).</p>
-<p>The first parameter must be the message or the collection of messages that are being handled. The parameter type can be the specific message, a base class or an implemented interface.</p>
-<p>The following collection are supported:</p>
-<ul>
-<li><a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a> or <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection<t></t></a>: To be able to handle a batch of messages at once. It will receive also the single messages (in a collection with a single item). (Silverback will in any case always forward a materialized list of messages, but explicitly declaring the parameter as <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection<t></t></a> avoids any false positive <em>&quot;possible multiple enumeration of IEnumerable&quot;</em> issue that may be detected by a static code analysis tool.)</li>
-<li><a href="https://docs.microsoft.com/en-us/dotnet/api/system.iobservable-1">IObservable<t></t></a>: <a href="https://www.nuget.org/packages/Silverback.Core.Rx">Silverback.Core.Rx</a> allows you to handle your messages in a reactive programming fashion.</li>
-<li><a class="xref" href="../../api/Silverback.Messaging.Messages.IMessageStreamEnumerable-1.html">IMessageStreamEnumerable&lt;TMessage&gt;</a>: Used specifically to handle the messages consumed from the message broker in a streaming fashion. See <a class="xref" href="../broker/streaming.html">Streaming</a> for details.</li>
-</ul>
-<p>Using a collection as parameter allows you to handle a batch of messages at once. The methods with a collection as parameter will still be called for single messages and methods with a single message as input parameter will be called for each message in a batch.</p>
+<p>The first parameter must be the message and the parameter type can be the specific message, a base class or an implemented interface.</p>
+<p>Furthermore, when consuming from a message broker, it is possible to subscribe to the message stream and asynchronously enumerate through the messages, as shown in the <a class="xref" href="../broker/streaming.html">Streaming</a> chapter.</p>
+<p>The method can have other parameters that will be resolved using the service provider. Most useful to integrate existing code subscribing via a delegate.</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_methods-subscribingservice1" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_methods-subscribingservice1" data-tab="methods-subscribingservice1" tabindex="0" aria-selected="true">Enumerable</a>
+<a href="#tabpanel_CeZOj-G++Q-1_additional-args-delegate" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_additional-args-delegate" data-tab="additional-args-delegate" tabindex="0" aria-selected="true">Delegate</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_methods-subscribingservice2" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_methods-subscribingservice2" data-tab="methods-subscribingservice2" tabindex="-1">Collection</a>
-</li>
-<li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_methods-subscribingservice3" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_methods-subscribingservice3" data-tab="methods-subscribingservice3" tabindex="-1">Observable</a>
-</li>
-<li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_params-delegate" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_params-delegate" data-tab="params-delegate" tabindex="-1">Delegate subscription</a>
+<a href="#tabpanel_CeZOj-G++Q-1_additional-args-subscriber" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_additional-args-subscriber" data-tab="additional-args-subscriber" tabindex="-1">Subscriber</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-1_methods-subscribingservice1" role="tabpanel" data-tab="methods-subscribingservice1">
-
-<pre><code class="lang-csharp">public class SubscribingService
-{
-    public async Task OnMessageReceived(IEnumerable&lt;SampleMessage&gt; messages)
-    {
-        // TODO: Process messages
-    }
-}
-</code></pre>
-</section>
-<section id="tabpanel_CeZOj-G++Q-1_methods-subscribingservice2" role="tabpanel" data-tab="methods-subscribingservice2" aria-hidden="true" hidden="hidden">
-
-<pre><code class="lang-csharp">public class SubscribingService
-{
-    public async Task OnMessageReceived(IReadOnlyCollection&lt;SampleMessage&gt; messages)
-    {
-        // TODO: Process messages
-    }
-}
-</code></pre>
-</section>
-<section id="tabpanel_CeZOj-G++Q-1_methods-subscribingservice3" role="tabpanel" data-tab="methods-subscribingservice3" aria-hidden="true" hidden="hidden">
-
-<pre><code class="lang-csharp">public class SubscribingService
-{
-    public async Task OnMessageReceived(Observable&lt;SampleMessage&gt; stream) =&gt;
-        stream...Subscribe(...);
-}
-</code></pre>
-</section>
-<section id="tabpanel_CeZOj-G++Q-1_params-delegate" role="tabpanel" data-tab="params-delegate" aria-hidden="true" hidden="hidden">
-
-<pre><code class="lang-csharp">public class Startup
-{
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services
-            .AddSilverback()
-            .AddDelegateSubscriber(
-                (IReadOnlyCollection&lt;SampleMessage&gt; messages) =&gt;
-                {
-                    // TODO: Process messages
-                });
-    }
-}
-</code></pre>
-</section>
-</div>
-
-<p>The method can have other parameters that will be resolved using the service provider. Most useful to integrate existing code subscribing via a delegate.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
-<ul role="tablist">
-<li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-2_additional-args-delegate" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_additional-args-delegate" data-tab="additional-args-delegate" tabindex="0" aria-selected="true">Delegate</a>
-</li>
-<li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-2_additional-args-subscriber" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_additional-args-subscriber" data-tab="additional-args-subscriber" tabindex="-1">Subscriber</a>
-</li>
-</ul>
-<section id="tabpanel_CeZOj-G++Q-2_additional-args-delegate" role="tabpanel" data-tab="additional-args-delegate">
+<section id="tabpanel_CeZOj-G++Q-1_additional-args-delegate" role="tabpanel" data-tab="additional-args-delegate">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -284,7 +213,7 @@ public class OrderCreatedEvent : OrderEvent
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-2_additional-args-subscriber" role="tabpanel" data-tab="additional-args-subscriber" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-1_additional-args-subscriber" role="tabpanel" data-tab="additional-args-subscriber" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class SubscribingService
 {
@@ -310,16 +239,16 @@ public class OrderCreatedEvent : OrderEvent
 </code></pre>
 <h2 id="return-new-messages-republishing">Return new messages (republishing)</h2>
 <p>A subscribed method can also optionally return a message or a collection of messages (either <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a>, <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ireadonlycollection-1">IReadOnlyCollection<t></t></a> or <a href="https://docs.microsoft.com/en-us/dotnet/api/system.iobservable-1">IObservable<t></t></a>, if using <a href="https://www.nuget.org/packages/Silverback.Core.Rx">Silverback.Core.Rx</a>) that will be automatically republished to the internal bus.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-3_republish-subscribingservice1" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_republish-subscribingservice1" data-tab="republish-subscribingservice1" tabindex="0" aria-selected="true">Single</a>
+<a href="#tabpanel_CeZOj-G++Q-2_republish-subscribingservice1" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_republish-subscribingservice1" data-tab="republish-subscribingservice1" tabindex="0" aria-selected="true">Single</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-3_republish-subscribingservice2" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_republish-subscribingservice2" data-tab="republish-subscribingservice2" tabindex="-1">Multiple</a>
+<a href="#tabpanel_CeZOj-G++Q-2_republish-subscribingservice2" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_republish-subscribingservice2" data-tab="republish-subscribingservice2" tabindex="-1">Multiple</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-3_republish-subscribingservice1" role="tabpanel" data-tab="republish-subscribingservice1">
+<section id="tabpanel_CeZOj-G++Q-2_republish-subscribingservice1" role="tabpanel" data-tab="republish-subscribingservice1">
 
 <pre><code class="lang-csharp">public class SubscribingService
 {
@@ -335,7 +264,7 @@ public class OrderCreatedEvent : OrderEvent
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-3_republish-subscribingservice2" role="tabpanel" data-tab="republish-subscribingservice2" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-2_republish-subscribingservice2" role="tabpanel" data-tab="republish-subscribingservice2" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class SubscribingService
 {
@@ -357,19 +286,19 @@ public class OrderCreatedEvent : OrderEvent
 </div>
 
 <p>Silverback recognizes per default only the messages implementing <a class="xref" href="../../api/Silverback.Messaging.Messages.IMessage.html">IMessage</a> but you can register your own types (you can register base types and interfaces as well).</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-4">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-4_republishcustom-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_republishcustom-startup" data-tab="republishcustom-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_CeZOj-G++Q-3_republishcustom-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_republishcustom-startup" data-tab="republishcustom-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-4_republishcustom-subscribingservice" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_republishcustom-subscribingservice" data-tab="republishcustom-subscribingservice" tabindex="-1">Subscriber</a>
+<a href="#tabpanel_CeZOj-G++Q-3_republishcustom-subscribingservice" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_republishcustom-subscribingservice" data-tab="republishcustom-subscribingservice" tabindex="-1">Subscriber</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-4_republishcustom-customsamplemessage" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_republishcustom-customsamplemessage" data-tab="republishcustom-customsamplemessage" tabindex="-1">Message Model</a>
+<a href="#tabpanel_CeZOj-G++Q-3_republishcustom-customsamplemessage" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_republishcustom-customsamplemessage" data-tab="republishcustom-customsamplemessage" tabindex="-1">Message Model</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-4_republishcustom-startup" role="tabpanel" data-tab="republishcustom-startup">
+<section id="tabpanel_CeZOj-G++Q-3_republishcustom-startup" role="tabpanel" data-tab="republishcustom-startup">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -382,7 +311,7 @@ public class OrderCreatedEvent : OrderEvent
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-4_republishcustom-subscribingservice" role="tabpanel" data-tab="republishcustom-subscribingservice" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-3_republishcustom-subscribingservice" role="tabpanel" data-tab="republishcustom-subscribingservice" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class SubscribingService
 {
@@ -398,7 +327,7 @@ public class OrderCreatedEvent : OrderEvent
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-4_republishcustom-customsamplemessage" role="tabpanel" data-tab="republishcustom-customsamplemessage" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-3_republishcustom-customsamplemessage" role="tabpanel" data-tab="republishcustom-customsamplemessage" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class CustomSampleMessage : ICustomMessage
 {
