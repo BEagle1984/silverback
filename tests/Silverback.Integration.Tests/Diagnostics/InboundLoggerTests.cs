@@ -243,7 +243,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                 new TestOffset("a", "42"));
 
             var expectedMessage =
-                "An error occurred while rolling back, the retry error policy cannot be applied. " +
+                "Error occurred while rolling back, the retry error policy cannot be applied. " +
                 "The consumer will be reset. | " +
                 "endpointName: test1, " +
                 "messageType: Message.Type, " +
@@ -271,7 +271,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                 new TestOffset("a", "42"));
 
             var expectedMessage =
-                "An error occurred while rolling back or committing, the skip message error policy " +
+                "Error occurred while rolling back or committing, the skip message error policy " +
                 "cannot be applied. The consumer will be reset. | " +
                 "endpointName: test1, " +
                 "messageType: Message.Type, " +

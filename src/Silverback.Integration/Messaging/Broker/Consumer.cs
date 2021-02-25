@@ -77,11 +77,11 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.StatusInfo" />
         public IConsumerStatusInfo StatusInfo => _statusInfo;
 
-        /// <inheritdoc cref="IConsumer.IsConnected" />
-        public bool IsConnected { get; private set; }
-
         /// <inheritdoc cref="IConsumer.IsConnecting" />
         public bool IsConnecting => _connectTask != null;
+
+        /// <inheritdoc cref="IConsumer.IsConnected" />
+        public bool IsConnected { get; private set; }
 
         /// <inheritdoc cref="IConsumer.IsConsuming" />
         public bool IsConsuming { get; protected set; }
@@ -105,67 +105,83 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.ConnectAsync" />
         public async Task ConnectAsync()
         {
-            if (IsConnected)
-                return;
-
-            if (_connectTask != null)
-            {
-                await _connectTask.ConfigureAwait(false);
-                return;
-            }
-
-            _connectTask = ConnectCoreAsync();
-
             try
             {
-                await _connectTask.ConfigureAwait(false);
+                if (IsConnected)
+                    return;
 
-                IsConnected = true;
+                if (_connectTask != null)
+                {
+                    await _connectTask.ConfigureAwait(false);
+                    return;
+                }
+
+                _connectTask = ConnectCoreAsync();
+
+                try
+                {
+                    await _connectTask.ConfigureAwait(false);
+
+                    IsConnected = true;
+                }
+                finally
+                {
+                    _connectTask = null;
+                }
+
+                _statusInfo.SetConnected();
+                _logger.LogConsumerConnected(this);
+
+                await StartAsync().ConfigureAwait(false);
             }
-            finally
+            catch (Exception ex)
             {
-                _connectTask = null;
+                _logger.LogConsumerConnectError(this, ex);
+                throw;
             }
-
-            _statusInfo.SetConnected();
-            _logger.LogConsumerConnected(this);
-
-            await StartAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IConsumer.DisconnectAsync" />
         public async Task DisconnectAsync()
         {
-            if (!IsConnected)
-                return;
-
-            IsDisconnecting = true;
-
-            // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
-            // but not started)
-            if (IsConsuming)
-                await StopAsync().ConfigureAwait(false);
-            else
-                await StopCoreAsync().ConfigureAwait(false);
-
-            if (SequenceStores.Count > 0)
+            try
             {
-                await SequenceStores
-                    .DisposeAllAsync(SequenceAbortReason.ConsumerAborted)
-                    .ConfigureAwait(false);
+                if (!IsConnected)
+                    return;
+
+                IsDisconnecting = true;
+
+                // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
+                // but not started)
+                if (IsConsuming)
+                    await StopAsync().ConfigureAwait(false);
+                else
+                    await StopCoreAsync().ConfigureAwait(false);
+
+                if (SequenceStores.Count > 0)
+                {
+                    await SequenceStores
+                        .DisposeAllAsync(SequenceAbortReason.ConsumerAborted)
+                        .ConfigureAwait(false);
+                }
+
+                await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
+                await DisconnectCoreAsync().ConfigureAwait(false);
+
+                SequenceStores.ForEach(store => store.Dispose());
+                SequenceStores.Clear();
+
+                IsConnected = false;
+                _statusInfo.SetDisconnected();
+                _logger.LogConsumerDisconnected(this);
+
+                IsDisconnecting = false;
             }
-
-            await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
-            await DisconnectCoreAsync().ConfigureAwait(false);
-
-            SequenceStores.ForEach(store => store.Dispose());
-            SequenceStores.Clear();
-
-            IsConnected = false;
-            _statusInfo.SetDisconnected();
-            _logger.LogConsumerDisconnected(this);
-
-            IsDisconnecting = false;
+            catch (Exception ex)
+            {
+                _logger.LogConsumerDisconnectError(this, ex);
+                throw;
+            }
         }
 
         /// <inheritdoc cref="IConsumer.DisconnectAsync" />
@@ -193,26 +209,42 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.StartAsync" />
         public async Task StartAsync()
         {
-            if (!IsConnected)
-                throw new InvalidOperationException("The consumer is not connected.");
+            try
+            {
+                if (!IsConnected)
+                    throw new InvalidOperationException("The consumer is not connected.");
 
-            if (IsConsuming)
-                return;
+                if (IsConsuming)
+                    return;
 
-            await StartCoreAsync().ConfigureAwait(false);
+                await StartCoreAsync().ConfigureAwait(false);
 
-            IsConsuming = true;
+                IsConsuming = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogConsumerStartError(this, ex);
+                throw;
+            }
         }
 
         /// <inheritdoc cref="IConsumer.StopAsync" />
         public async Task StopAsync()
         {
-            if (!IsConsuming)
-                return;
+            try
+            {
+                if (!IsConsuming)
+                    return;
 
-            await StopCoreAsync().ConfigureAwait(false);
+                await StopCoreAsync().ConfigureAwait(false);
 
-            IsConsuming = false;
+                IsConsuming = false;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogConsumerStopError(this, ex);
+                throw;
+            }
         }
 
         /// <inheritdoc cref="IConsumer.CommitAsync(IBrokerMessageIdentifier)" />

@@ -216,12 +216,12 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown
-        ///     disconnecting the consumer.
+        ///     disconnecting the underlying Confluent.Kafka consumer.
         /// </summary>
-        public static LogEvent ConsumerDisconnectError { get; } = new(
+        public static LogEvent ConfluentConsumerDisconnectError { get; } = new(
             LogLevel.Warning,
-            GetEventId(50, nameof(ConsumerDisconnectError)),
-            "Error disconnecting consumer.");
+            GetEventId(50, nameof(ConfluentConsumerDisconnectError)),
+            "An error occurred while disconnecting the consumer.");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from

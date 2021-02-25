@@ -35,6 +35,8 @@ namespace Silverback.Messaging.Broker.Kafka
 
         private readonly SemaphoreSlim? _messagesLimiterSemaphoreSlim;
 
+        private readonly object _isReadingLock = new();
+
         public ConsumerChannelsManager(
             IReadOnlyList<TopicPartition> partitions,
             KafkaConsumer consumer,
@@ -89,15 +91,25 @@ namespace Silverback.Messaging.Broker.Kafka
         public void StartReading(TopicPartition topicPartition) =>
             StartReading(GetChannelIndex(topicPartition));
 
-        public void StopReading() => _partitions.ForEach(StopReading);
+        public Task StopReadingAsync() => Task.WhenAll(_partitions.Select(StopReadingAsync));
 
-        public void StopReading(TopicPartition topicPartition)
+        public Task StopReadingAsync(TopicPartition topicPartition)
         {
             int channelIndex = GetChannelIndex(topicPartition);
-            _readCancellationTokenSource[channelIndex].Cancel();
+
+            if (!_readCancellationTokenSource[channelIndex].IsCancellationRequested)
+                _readCancellationTokenSource[channelIndex].Cancel();
 
             if (!IsReading[channelIndex])
                 _readTaskCompletionSources[channelIndex].TrySetResult(true);
+
+            return _readTaskCompletionSources[channelIndex].Task;
+        }
+
+        public void Reset(TopicPartition topicPartition)
+        {
+            int channelIndex = GetChannelIndex(topicPartition);
+            _channels[channelIndex] = CreateBoundedChannel();
         }
 
         public ISequenceStore GetSequenceStore(TopicPartition topicPartition) =>
@@ -124,9 +136,10 @@ namespace Silverback.Messaging.Broker.Kafka
                 () => _channels[channelIndex].Writer.WriteAsync(consumeResult, cancellationToken));
         }
 
+        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void Dispose()
         {
-            StopReading();
+            AsyncHelper.RunSynchronously(StopReadingAsync);
             _readCancellationTokenSource.ForEach(
                 cancellationTokenSource => cancellationTokenSource.Dispose());
 
@@ -157,10 +170,13 @@ namespace Silverback.Messaging.Broker.Kafka
                 return;
             }
 
-            if (IsReading[channelIndex])
-                return;
+            lock (_isReadingLock)
+            {
+                if (IsReading[channelIndex])
+                    return;
 
-            IsReading[channelIndex] = true;
+                IsReading[channelIndex] = true;
+            }
 
             if (_readCancellationTokenSource[channelIndex].IsCancellationRequested)
             {
@@ -172,9 +188,6 @@ namespace Silverback.Messaging.Broker.Kafka
                 _readTaskCompletionSources[channelIndex] = new TaskCompletionSource<bool>();
 
             var channelReader = _channels[channelIndex].Reader;
-
-            if (channelReader.Completion.IsCompleted)
-                _channels[channelIndex] = CreateBoundedChannel();
 
             Task.Run(
                 () => ReadChannelAsync(

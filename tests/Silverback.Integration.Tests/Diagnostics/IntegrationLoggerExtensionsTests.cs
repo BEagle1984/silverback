@@ -321,6 +321,66 @@ namespace Silverback.Tests.Integration.Diagnostics
         }
 
         [Fact]
+        public void LogConsumerConnectError_Logged()
+        {
+            var consumer = _serviceProvider.GetRequiredService<TestBroker>()
+                .AddConsumer(TestConsumerEndpoint.GetDefault());
+
+            var expectedMessage =
+                "Error occurred while connecting the consumer. " +
+                $"| consumerId: {consumer.Id}, endpointName: test";
+
+            _silverbackLogger.LogConsumerConnectError(consumer, new InvalidCastException());
+
+            _loggerSubstitute.Received(LogLevel.Error, typeof(InvalidCastException), expectedMessage, 1127);
+        }
+
+        [Fact]
+        public void LogConsumerDisconnectError_Logged()
+        {
+            var consumer = _serviceProvider.GetRequiredService<TestBroker>()
+                .AddConsumer(TestConsumerEndpoint.GetDefault());
+
+            var expectedMessage =
+                "Error occurred while disconnecting the consumer. " +
+                $"| consumerId: {consumer.Id}, endpointName: test";
+
+            _silverbackLogger.LogConsumerDisconnectError(consumer, new InvalidCastException());
+
+            _loggerSubstitute.Received(LogLevel.Error, typeof(InvalidCastException), expectedMessage, 1128);
+        }
+
+        [Fact]
+        public void LogConsumerStartError_Logged()
+        {
+            var consumer = _serviceProvider.GetRequiredService<TestBroker>()
+                .AddConsumer(TestConsumerEndpoint.GetDefault());
+
+            var expectedMessage =
+                "Error occurred while (re)starting the consumer. " +
+                $"| consumerId: {consumer.Id}, endpointName: test";
+
+            _silverbackLogger.LogConsumerStartError(consumer, new InvalidCastException());
+
+            _loggerSubstitute.Received(LogLevel.Error, typeof(InvalidCastException), expectedMessage, 1129);
+        }
+
+        [Fact]
+        public void LogConsumerStopError_Logged()
+        {
+            var consumer = _serviceProvider.GetRequiredService<TestBroker>()
+                .AddConsumer(TestConsumerEndpoint.GetDefault());
+
+            var expectedMessage =
+                "Error occurred while stopping the consumer. " +
+                $"| consumerId: {consumer.Id}, endpointName: test";
+
+            _silverbackLogger.LogConsumerStopError(consumer, new InvalidCastException());
+
+            _loggerSubstitute.Received(LogLevel.Error, typeof(InvalidCastException), expectedMessage, 1130);
+        }
+
+        [Fact]
         public void LogProducerConnected_Logged()
         {
             var producer = _serviceProvider.GetRequiredService<TestBroker>()
@@ -425,6 +485,21 @@ namespace Silverback.Tests.Integration.Diagnostics
                 typeof(EndpointConfigurationException),
                 expectedMessage,
                 1102);
+        }
+
+        [Fact]
+        public void LogCallbackHandlerError_Logged()
+        {
+            var expectedMessage =
+                "Error occurred invoking the callback handler(s).";
+
+            _silverbackLogger.LogCallbackHandlerError(new InvalidCredentialException());
+
+            _loggerSubstitute.Received(
+                LogLevel.Error,
+                typeof(InvalidCredentialException),
+                expectedMessage,
+                1103);
         }
 
         [Fact]

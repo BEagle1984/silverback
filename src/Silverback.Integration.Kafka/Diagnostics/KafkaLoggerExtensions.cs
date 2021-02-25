@@ -132,10 +132,10 @@ namespace Silverback.Diagnostics
                         KafkaLogEvents.ConfluentConsumerError));
 
         private static readonly Action<ILogger, string, string, Exception?>
-            ConsumerDisconnectError =
+            ConfluentConsumerDisconnectError =
                 SilverbackLoggerMessage.Define<string, string>(
                     IntegrationLoggerExtensions.EnrichConsumerLogEvent(
-                        KafkaLogEvents.ConsumerDisconnectError));
+                        KafkaLogEvents.ConfluentConsumerDisconnectError));
 
         private static readonly Action<ILogger, string, string, string, string, Exception?>
             ConfluentProducerLogCritical =
@@ -431,11 +431,11 @@ namespace Silverback.Diagnostics
                 null);
         }
 
-        public static void LogConsumerDisconnectError(
+        public static void LogConfluentConsumerDisconnectError(
             this ISilverbackLogger logger,
             KafkaConsumer consumer,
             Exception exception) =>
-            ConsumerDisconnectError(
+            ConfluentConsumerDisconnectError(
                 logger.InnerLogger,
                 consumer.Id,
                 consumer.Endpoint.Name,

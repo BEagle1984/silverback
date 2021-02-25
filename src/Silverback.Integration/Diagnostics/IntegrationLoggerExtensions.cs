@@ -122,6 +122,26 @@ namespace Silverback.Diagnostics
                     EnrichConsumerLogEvent(IntegrationLogEvents.ConsumerRollbackError, addIdentifiers: true));
 
         private static readonly Action<ILogger, string, string, Exception?>
+            ConsumerConnectError =
+                SilverbackLoggerMessage.Define<string, string>(
+                    EnrichConsumerLogEvent(IntegrationLogEvents.ConsumerConnectError));
+
+        private static readonly Action<ILogger, string, string, Exception?>
+            ConsumerDisconnectError =
+                SilverbackLoggerMessage.Define<string, string>(
+                    EnrichConsumerLogEvent(IntegrationLogEvents.ConsumerDisconnectError));
+
+        private static readonly Action<ILogger, string, string, Exception?>
+            ConsumerStartError =
+                SilverbackLoggerMessage.Define<string, string>(
+                    EnrichConsumerLogEvent(IntegrationLogEvents.ConsumerStartError));
+
+        private static readonly Action<ILogger, string, string, Exception?>
+            ConsumerStopError =
+                SilverbackLoggerMessage.Define<string, string>(
+                    EnrichConsumerLogEvent(IntegrationLogEvents.ConsumerStopError));
+
+        private static readonly Action<ILogger, string, string, Exception?>
             ProducerConnected =
                 SilverbackLoggerMessage.Define<string, string>(
                     EnrichProducerLogEvent(IntegrationLogEvents.ProducerConnected));
@@ -148,6 +168,9 @@ namespace Silverback.Diagnostics
 
         private static readonly Action<ILogger, string, Exception?> EndpointConfiguratorError =
             SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.EndpointConfiguratorError);
+
+        private static readonly Action<ILogger, Exception?> CallbackHandlerError =
+            SilverbackLoggerMessage.Define(IntegrationLogEvents.CallbackHandlerError);
 
         public static void LogMessageAddedToSequence(
             this ISilverbackLogger logger,
@@ -353,6 +376,30 @@ namespace Silverback.Diagnostics
                 exception);
         }
 
+        public static void LogConsumerConnectError(
+            this ISilverbackLogger logger,
+            IConsumer consumer,
+            Exception exception) =>
+            ConsumerConnectError(logger.InnerLogger, consumer.Id, consumer.Endpoint.Name, exception);
+
+        public static void LogConsumerDisconnectError(
+            this ISilverbackLogger logger,
+            IConsumer consumer,
+            Exception exception) =>
+            ConsumerDisconnectError(logger.InnerLogger, consumer.Id, consumer.Endpoint.Name, exception);
+
+        public static void LogConsumerStartError(
+            this ISilverbackLogger logger,
+            IConsumer consumer,
+            Exception exception) =>
+            ConsumerStartError(logger.InnerLogger, consumer.Id, consumer.Endpoint.Name, exception);
+
+        public static void LogConsumerStopError(
+            this ISilverbackLogger logger,
+            IConsumer consumer,
+            Exception exception) =>
+            ConsumerStopError(logger.InnerLogger, consumer.Id, consumer.Endpoint.Name, exception);
+
         public static void LogProducerConnected(
             this ISilverbackLogger logger,
             IProducer producer) =>
@@ -391,6 +438,11 @@ namespace Silverback.Diagnostics
             IEndpointsConfigurator configurator,
             Exception exception) =>
             EndpointConfiguratorError(logger.InnerLogger, configurator.GetType().Name, exception);
+
+        public static void LogCallbackHandlerError(
+            this ISilverbackLogger logger,
+            Exception exception) =>
+            CallbackHandlerError(logger.InnerLogger, exception);
 
         public static void LogLowLevelTrace(
             this ISilverbackLogger logger,

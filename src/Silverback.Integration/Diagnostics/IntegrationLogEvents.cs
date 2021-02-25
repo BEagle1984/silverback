@@ -239,6 +239,42 @@ namespace Silverback.Diagnostics
             "Rollback failed.");
 
         /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown
+        ///     connecting the consumer.
+        /// </summary>
+        public static LogEvent ConsumerConnectError { get; } = new(
+            LogLevel.Error,
+            GetEventId(127, nameof(ConsumerConnectError)),
+            "Error occurred while connecting the consumer.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown
+        ///     disconnecting the consumer.
+        /// </summary>
+        public static LogEvent ConsumerDisconnectError { get; } = new(
+            LogLevel.Error,
+            GetEventId(128, nameof(ConsumerDisconnectError)),
+            "Error occurred while disconnecting the consumer.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown
+        ///     starting the consumer.
+        /// </summary>
+        public static LogEvent ConsumerStartError { get; } = new(
+            LogLevel.Error,
+            GetEventId(129, nameof(ConsumerStartError)),
+            "Error occurred while (re)starting the consumer.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown
+        ///     stopping the consumer.
+        /// </summary>
+        public static LogEvent ConsumerStopError { get; } = new(
+            LogLevel.Error,
+            GetEventId(130, nameof(ConsumerStopError)),
+            "Error occurred while stopping the consumer.");
+
+        /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when the producer is connected to
         ///     the endpoint and ready to produce.
         /// </summary>
@@ -371,7 +407,7 @@ namespace Silverback.Diagnostics
         public static LogEvent RollbackToRetryFailed { get; } = new(
             LogLevel.Warning,
             GetEventId(51, nameof(RollbackToRetryFailed)),
-            "An error occurred while rolling back, the retry error policy cannot be applied. " +
+            "Error occurred while rolling back, the retry error policy cannot be applied. " +
             "The consumer will be reset.");
 
         /// <summary>
@@ -382,7 +418,7 @@ namespace Silverback.Diagnostics
         public static LogEvent RollbackToSkipFailed { get; } = new(
             LogLevel.Warning,
             GetEventId(52, nameof(RollbackToSkipFailed)),
-            "An error occurred while rolling back or committing, the skip message error policy " +
+            "Error occurred while rolling back or committing, the skip message error policy " +
             "cannot be applied. The consumer will be reset.");
 
         /// <summary>
@@ -474,6 +510,15 @@ namespace Silverback.Diagnostics
             LogLevel.Critical,
             GetEventId(102, nameof(EndpointConfiguratorError)),
             "Error occurred configuring the endpoints. | configurator: {endpointsConfiguratorName}");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown
+        ///     by a broker callback handler.
+        /// </summary>
+        public static LogEvent CallbackHandlerError { get; } = new(
+            LogLevel.Error,
+            GetEventId(103, nameof(CallbackHandlerError)),
+            "Error occurred invoking the callback handler(s).");
 
         /// <summary>
         ///     Gets the <see cref="EventId" /> of the low level tracing logs.

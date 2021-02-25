@@ -793,7 +793,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task RetryPolicy_BatchFailingBeforeComplete_RetriedMultipleTimes()
         {
-            var tryCount = 0;
+            var tryMessageCount = 0;
             var completedBatches = 0;
 
             Host.ConfigureServices(
@@ -826,11 +826,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddDelegateSubscriber(
                             async (IAsyncEnumerable<IIntegrationEvent> events) =>
                             {
-                                tryCount++;
                                 await foreach (var dummy in events)
                                 {
-                                    if (tryCount < 3)
-                                        throw new InvalidOperationException("Retry!");
+                                    tryMessageCount++;
+                                    if (tryMessageCount != 2 && tryMessageCount != 4 && tryMessageCount != 5)
+                                        throw new InvalidOperationException($"Retry {tryMessageCount}!");
                                 }
 
                                 completedBatches++;
@@ -844,7 +844,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(2);
-            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(4);
+            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
 
             completedBatches.Should().Be(1);
         }

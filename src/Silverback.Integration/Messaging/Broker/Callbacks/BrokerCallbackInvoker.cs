@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Diagnostics;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Callbacks
@@ -14,10 +15,15 @@ namespace Silverback.Messaging.Broker.Callbacks
     {
         private readonly IServiceProvider _serviceProvider;
 
+        private readonly ISilverbackLogger<BrokerCallbackInvoker> _logger;
+
         private List<Type>? _callbackTypes;
 
-        public BrokerCallbackInvoker(IServiceProvider serviceProvider)
+        public BrokerCallbackInvoker(
+            IServiceProvider serviceProvider,
+            ISilverbackLogger<BrokerCallbackInvoker> logger)
         {
+            _logger = logger;
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
         }
 
@@ -36,6 +42,81 @@ namespace Silverback.Messaging.Broker.Callbacks
         public void Invoke<TCallback>(
             Action<TCallback> action,
             IServiceProvider? scopedServiceProvider = null)
+        {
+            try
+            {
+                InvokeAsyncCore(action, scopedServiceProvider);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCallbackHandlerError(ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Resolves and invokes all callbacks of the specified type.
+        /// </summary>
+        /// <param name="action">
+        ///     The action to be executed for each callback.
+        /// </param>
+        /// <param name="scopedServiceProvider">
+        ///     The scoped <see cref="IServiceProvider" />. If not provided a new scope will be created.
+        /// </param>
+        /// <typeparam name="TCallback">
+        ///     The type of the callback.
+        /// </typeparam>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        public async Task InvokeAsync<TCallback>(
+            Func<TCallback, Task> action,
+            IServiceProvider? scopedServiceProvider = null)
+        {
+            try
+            {
+                await InvokeCoreAsync(action, scopedServiceProvider).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCallbackHandlerError(ex);
+                throw;
+            }
+        }
+
+        private static void TryInvoke<TCallback>(TCallback service, Action<TCallback> action)
+        {
+            try
+            {
+                action.Invoke(service);
+            }
+            catch (Exception ex)
+            {
+                throw new BrokerCallbackInvocationException(
+                    "An exception has been thrown by the broker callback. " +
+                    "See inner exception for details.",
+                    ex);
+            }
+        }
+
+        private static async Task TryInvokeAsync<TCallback>(TCallback service, Func<TCallback, Task> action)
+        {
+            try
+            {
+                await action.Invoke(service).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new BrokerCallbackInvocationException(
+                    "An exception has been thrown by the broker callback. " +
+                    "See inner exception for details.",
+                    ex);
+            }
+        }
+
+        private void InvokeAsyncCore<TCallback>(
+            Action<TCallback> action,
+            IServiceProvider? scopedServiceProvider)
         {
             if (!HasAny<TCallback>())
                 return;
@@ -74,24 +155,9 @@ namespace Silverback.Messaging.Broker.Callbacks
             }
         }
 
-        /// <summary>
-        ///     Resolves and invokes all callbacks of the specified type.
-        /// </summary>
-        /// <param name="action">
-        ///     The action to be executed for each callback.
-        /// </param>
-        /// <param name="scopedServiceProvider">
-        ///     The scoped <see cref="IServiceProvider" />. If not provided a new scope will be created.
-        /// </param>
-        /// <typeparam name="TCallback">
-        ///     The type of the callback.
-        /// </typeparam>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        public async Task InvokeAsync<TCallback>(
+        private async Task InvokeCoreAsync<TCallback>(
             Func<TCallback, Task> action,
-            IServiceProvider? scopedServiceProvider = null)
+            IServiceProvider? scopedServiceProvider)
         {
             if (!HasAny<TCallback>())
                 return;
@@ -127,36 +193,6 @@ namespace Silverback.Messaging.Broker.Callbacks
             finally
             {
                 scope?.Dispose();
-            }
-        }
-
-        private static void TryInvoke<TCallback>(TCallback service, Action<TCallback> action)
-        {
-            try
-            {
-                action.Invoke(service);
-            }
-            catch (Exception ex)
-            {
-                throw new BrokerCallbackInvocationException(
-                    "An exception has been thrown by the broker callback. " +
-                    "See inner exception for details.",
-                    ex);
-            }
-        }
-
-        private static async Task TryInvokeAsync<TCallback>(TCallback service, Func<TCallback, Task> action)
-        {
-            try
-            {
-                await action.Invoke(service).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                throw new BrokerCallbackInvocationException(
-                    "An exception has been thrown by the broker callback. " +
-                    "See inner exception for details.",
-                    ex);
             }
         }
 

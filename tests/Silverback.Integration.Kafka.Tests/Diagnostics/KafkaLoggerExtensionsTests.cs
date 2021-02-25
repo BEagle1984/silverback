@@ -368,6 +368,36 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
         }
 
         [Fact]
+        public void LogConfluentConsumerError_Logged()
+        {
+            var consumer = (KafkaConsumer)_serviceProvider.GetRequiredService<KafkaBroker>()
+                .AddConsumer(_consumerEndpoint);
+
+            var expectedMessage =
+                "Error in Kafka consumer: 'Broker: Specified group generation id is not valid' (22). | " +
+                $"consumerId: {consumer.Id}, endpointName: test";
+
+            _silverbackLogger.LogConfluentConsumerError(new Error(ErrorCode.IllegalGeneration), consumer);
+
+            _loggerSubstitute.Received(LogLevel.Warning, null, expectedMessage, 2042);
+        }
+
+        [Fact]
+        public void LogConfluentConsumerDisconnectError_Logged()
+        {
+            var consumer = (KafkaConsumer)_serviceProvider.GetRequiredService<KafkaBroker>()
+                .AddConsumer(_consumerEndpoint);
+
+            var expectedMessage =
+                "An error occurred while disconnecting the consumer. | " +
+                $"consumerId: {consumer.Id}, endpointName: test";
+
+            _silverbackLogger.LogConfluentConsumerDisconnectError(consumer, new ArithmeticException());
+
+            _loggerSubstitute.Received(LogLevel.Warning, typeof(ArithmeticException), expectedMessage, 2050);
+        }
+
+        [Fact]
         public void LogConfluentProducerLogCritical_Logged()
         {
             var producer = (KafkaProducer)_serviceProvider.GetRequiredService<KafkaBroker>()

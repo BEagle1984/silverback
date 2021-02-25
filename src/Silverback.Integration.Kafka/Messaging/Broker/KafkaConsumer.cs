@@ -309,31 +309,60 @@ namespace Silverback.Messaging.Broker
             if (IsConsuming && _consumeLoopHandler != null)
                 await _consumeLoopHandler.StopAsync().ConfigureAwait(false);
 
-            brokerMessageIdentifiers
-                .GroupBy(offset => offset.Key)
-                .Select(
-                    offsetsGroup => offsetsGroup
-                        .OrderBy(offset => offset.Offset)
-                        .First()
-                        .AsTopicPartitionOffset())
-                .ForEach(Seek);
+            var latestTopicPartitionOffsets =
+                brokerMessageIdentifiers
+                    .GroupBy(offset => offset.Key)
+                    .Select(
+                        offsetsGroup => offsetsGroup
+                            .OrderBy(offset => offset.Offset)
+                            .First()
+                            .AsTopicPartitionOffset())
+                    .ToList();
 
-            if (IsConsuming)
-                _consumeLoopHandler?.Start();
+            var channelsManagerStoppingTasks = new List<Task?>(latestTopicPartitionOffsets.Count);
+
+            foreach (var topicPartitionOffset in latestTopicPartitionOffsets)
+            {
+                channelsManagerStoppingTasks.Add(
+                    _channelsManager?.StopReadingAsync(topicPartitionOffset.TopicPartition));
+                ConfluentConsumer.Seek(topicPartitionOffset);
+            }
+
+            Task.Run(
+                () => RestartConsumeLoopAfterRollbackAsync(
+                    channelsManagerStoppingTasks,
+                    latestTopicPartitionOffsets))
+                .FireAndForget();
         }
 
-        [SuppressMessage(
-            "ReSharper",
-            "InconsistentlySynchronizedField",
-            Justification = "Sync start/stop only")]
-        private void Seek(TopicPartitionOffset topicPartitionOffset)
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+        private async Task RestartConsumeLoopAfterRollbackAsync(
+            IEnumerable<Task?> channelsManagerStoppingTasks,
+            IEnumerable<TopicPartitionOffset> latestTopicPartitionOffsets)
         {
-            _channelsManager?.StopReading(topicPartitionOffset.TopicPartition);
+            try
+            {
+                await Task.WhenAll(channelsManagerStoppingTasks.Where(task => task != null))
+                    .ConfigureAwait(false);
 
-            ConfluentConsumer.Seek(topicPartitionOffset);
+                foreach (var topicPartitionOffset in latestTopicPartitionOffsets)
+                {
+                    _channelsManager?.Reset(topicPartitionOffset.TopicPartition);
 
-            if (IsConsuming)
-                _channelsManager?.StartReading(topicPartitionOffset.TopicPartition);
+                    if (IsConsuming)
+                        _channelsManager?.StartReading(topicPartitionOffset.TopicPartition);
+                }
+
+                if (IsConsuming)
+                    _consumeLoopHandler?.Start();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogConsumerStartError(this, ex);
+
+                // Try to recover from error
+                await TriggerReconnectAsync().ConfigureAwait(false);
+            }
         }
 
         private void InitConfluentConsumer()
@@ -376,9 +405,17 @@ namespace Silverback.Messaging.Broker
 
         private async Task RestartConsumeLoopHandlerAsync()
         {
-            await WaitUntilConsumeLoopHandlerStopsAsync().ConfigureAwait(false);
+            try
+            {
+                await WaitUntilConsumeLoopHandlerStopsAsync().ConfigureAwait(false);
 
-            InitAndStartConsumeLoopHandler();
+                InitAndStartConsumeLoopHandler();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogConsumerStartError(this, ex);
+                throw;
+            }
         }
 
         private void StopConsumeLoopHandlerAndChannelsManager()
@@ -386,7 +423,7 @@ namespace Silverback.Messaging.Broker
             lock (_channelsLock)
             {
                 _consumeLoopHandler?.StopAsync();
-                _channelsManager?.StopReading();
+                _channelsManager?.StopReadingAsync();
             }
         }
 
@@ -461,7 +498,7 @@ namespace Silverback.Messaging.Broker
             }
             catch (Exception ex)
             {
-                _logger.LogConsumerDisconnectError(this, ex);
+                _logger.LogConfluentConsumerDisconnectError(this, ex);
             }
 
             _confluentConsumer = null;
