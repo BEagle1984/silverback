@@ -106,7 +106,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             _silverbackLogger.LogSequenceProcessingError(new FakeSequence(), new InvalidDataException());
 
-            _loggerSubstitute.Received(LogLevel.Debug, typeof(InvalidDataException), expectedMessage, 1007);
+            _loggerSubstitute.Received(LogLevel.Error, typeof(InvalidDataException), expectedMessage, 1007);
         }
 
         [Fact]

@@ -217,7 +217,7 @@ namespace Silverback.Diagnostics
             IRawInboundEnvelope envelope,
             Exception exception)
         {
-            if (!logger.IsEnabled(IntegrationLogEvents.CannotMoveSequences))
+            if (!logger.IsEnabled(IntegrationLogEvents.RollbackToRetryFailed))
                 return;
 
             _rollbackToRetryFailed.Invoke(
@@ -235,7 +235,7 @@ namespace Silverback.Diagnostics
             IRawInboundEnvelope envelope,
             Exception exception)
         {
-            if (!logger.IsEnabled(IntegrationLogEvents.CannotMoveSequences))
+            if (!logger.IsEnabled(IntegrationLogEvents.RollbackToSkipFailed))
                 return;
 
             _rollbackToSkipFailed.Invoke(

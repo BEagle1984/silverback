@@ -90,7 +90,7 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             _inboundLogger.LogProcessingError(envelope, new InvalidDataException());
 
-            _loggerSubstitute.Received(LogLevel.Warning, typeof(InvalidDataException), expectedMessage, 1002);
+            _loggerSubstitute.Received(LogLevel.Error, typeof(InvalidDataException), expectedMessage, 1002);
         }
 
         [Fact]

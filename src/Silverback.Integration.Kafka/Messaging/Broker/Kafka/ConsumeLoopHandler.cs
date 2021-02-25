@@ -147,12 +147,6 @@ namespace Silverback.Messaging.Broker.Kafka
         {
             try
             {
-                if (_consumer.ConfluentConsumer == null)
-                {
-                    _logger.LogConsumerLowLevelTrace(_consumer, "KafkaConsumer.ConfluentConsumer is null.");
-                    return false;
-                }
-
                 var consumeResult = _consumer.ConfluentConsumer.Consume(cancellationToken);
 
                 if (consumeResult == null)

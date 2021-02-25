@@ -36,7 +36,7 @@ namespace Silverback.Diagnostics
         ///     instead.
         /// </remarks>
         public static LogEvent ErrorProcessingInboundMessage { get; } = new(
-            LogLevel.Warning,
+            LogLevel.Error,
             GetEventId(2, nameof(ErrorProcessingInboundMessage)),
             "Error occurred processing the inbound message.");
 
@@ -85,7 +85,7 @@ namespace Silverback.Diagnostics
         ///     processing an inbound sequence.
         /// </summary>
         public static LogEvent ErrorProcessingInboundSequence { get; } = new(
-            LogLevel.Debug,
+            LogLevel.Error,
             GetEventId(7, nameof(ErrorProcessingInboundSequence)),
             "Error occurred processing the {sequenceType} '{sequenceId}'. | " +
             "length: {sequenceLength}");

@@ -63,11 +63,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Retry(10))
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            })))
+                                        .Configure(config => { config.GroupId = "consumer1"; })))
                         .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
@@ -795,6 +791,125 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
+        public async Task RetryPolicy_BatchFailingBeforeComplete_RetriedMultipleTimes()
+        {
+            var tryCount = 0;
+            var completedBatches = 0;
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Retry(10))
+                                        .EnableBatchProcessing(2)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
+                        .AddIntegrationSpy()
+                        .AddDelegateSubscriber(
+                            async (IAsyncEnumerable<IIntegrationEvent> events) =>
+                            {
+                                tryCount++;
+                                await foreach (var dummy in events)
+                                {
+                                    if (tryCount < 3)
+                                        throw new InvalidOperationException("Retry!");
+                                }
+
+                                completedBatches++;
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishAsync(new TestEventOne());
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(4);
+
+            completedBatches.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task RetryPolicy_BatchThrowingAfterEnumerationCompleted_RetriedMultipleTimes()
+        {
+            var tryCount = 0;
+            var completedBatches = 0;
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Retry(10))
+                                        .EnableBatchProcessing(2)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
+                        .AddIntegrationSpy()
+                        .AddDelegateSubscriber(
+                            async (IAsyncEnumerable<IIntegrationEvent> events) =>
+                            {
+                                await foreach (var dummy in events)
+                                {
+                                }
+
+                                tryCount++;
+                                if (tryCount != 3)
+                                    throw new InvalidOperationException("Retry!");
+
+                                completedBatches++;
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new TestEventOne());
+            await publisher.PublishAsync(new TestEventOne());
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(6);
+
+            completedBatches.Should().Be(1);
+        }
+
+        [Fact]
         public async Task MovePolicy_ToOtherTopic_MessageMoved()
         {
             var message = new TestEventOne
@@ -819,11 +934,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .OnError(
                                             policy => policy.MoveToKafkaTopic(
                                                 moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            })))
+                                        .Configure(config => { config.GroupId = "consumer1"; })))
                         .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
@@ -871,11 +982,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             policy => policy.MoveToKafkaTopic(
                                                 moveEndpoint => moveEndpoint.ProduceTo(DefaultTopicName),
                                                 movePolicy => movePolicy.MaxFailedAttempts(10)))
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            })))
+                                        .Configure(config => { config.GroupId = "consumer1"; })))
                         .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
@@ -925,11 +1032,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 .Retry(1)
                                                 .ThenMoveToKafkaTopic(
                                                     moveEndpoint => moveEndpoint.ProduceTo("other-topic")))
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            })))
+                                        .Configure(config => { config.GroupId = "consumer1"; })))
                         .AddIntegrationSpy()
                         .AddDelegateSubscriber(
                             (IIntegrationEvent _) =>
