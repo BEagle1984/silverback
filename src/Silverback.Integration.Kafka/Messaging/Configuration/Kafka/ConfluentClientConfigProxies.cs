@@ -2,7 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 /*******************************************************************************************
-  Note: These proxies are generated using Silverback.Integration.Kafka.ConfigClassGenerator
+  Note: These proxies are generated using Silverback.Tools.KafkaConfigClassGenerator
         located under /tools/
 ********************************************************************************************/
 
@@ -394,9 +394,9 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     If enabled librdkafka will initialize the POSIX PRNG with srand(current_time.milliseconds) on the first
-        ///     invocation of rd_kafka_new(). If disabled the application must call srand() prior to calling
-        ///     rd_kafka_new().
+        ///     If enabled librdkafka will initialize the PRNG with srand(current_time.milliseconds) on the first
+        ///     invocation of rd_kafka_new() (required only if rand_r() is not available on your platform). If disabled
+        ///     the application must call srand() prior to calling rd_kafka_new().
         ///     <br /><br />default: true
         ///     <br />importance: low
         /// </summary>
@@ -593,12 +593,12 @@ namespace Silverback.Messaging.Configuration.Kafka
 
         /// <summary>
         ///     File or directory path to CA certificate(s) for verifying the broker's key. Defaults: On Windows the
-        ///     system's CA certificates are automatically looked up in the Windows Root certificate store. On Mac OSX it
-        ///     is recommended to install openssl using Homebrew, to provide CA certificates. On Linux install the
-        ///     distribution's ca-certificates package. If OpenSSL is statically linked or `ssl.ca.location` is set to
-        ///     `probe` a list of standard paths will be probed and the first one found will be used as the default CA
-        ///     certificate location path. If OpenSSL is dynamically linked the OpenSSL library's default path will be
-        ///     used (see `OPENSSLDIR` in `openssl version -a`).
+        ///     system's CA certificates are automatically looked up in the Windows Root certificate store. On Mac OSX
+        ///     this configuration defaults to `probe`. It is recommended to install openssl using Homebrew, to provide
+        ///     CA certificates. On Linux install the distribution's ca-certificates package. If OpenSSL is statically
+        ///     linked or `ssl.ca.location` is set to `probe` a list of standard paths will be probed and the first one
+        ///     found will be used as the default CA certificate location path. If OpenSSL is dynamically linked the
+        ///     OpenSSL library's default path will be used (see `OPENSSLDIR` in `openssl version -a`).
         ///     <br /><br />default: ''
         ///     <br />importance: low
         /// </summary>
@@ -606,6 +606,20 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             get => ConfluentConfig.SslCaLocation;
             set => ConfluentConfig.SslCaLocation = value;
+        }
+
+        /// <summary>
+        ///     Comma-separated list of Windows Certificate stores to load CA certificates from. Certificates will be
+        ///     loaded in the same order as stores are specified. If no certificates can be loaded from any of the
+        ///     specified stores an error is logged and the OpenSSL library's default CA location is used instead. Store
+        ///     names are typically one or more of: MY, Root, Trust, CA.
+        ///     <br /><br />default: Root
+        ///     <br />importance: low
+        /// </summary>
+        public string SslCaCertificateStores
+        {
+            get => ConfluentConfig.SslCaCertificateStores;
+            set => ConfluentConfig.SslCaCertificateStores = value;
         }
 
         /// <summary>
@@ -869,8 +883,8 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <summary>
         ///     Action to take when there is no initial offset in offset store or the desired offset is out of range:
         ///     'smallest','earliest' - automatically reset the offset to the smallest offset, 'largest','latest' -
-        ///     automatically reset the offset to the largest offset, 'error' - trigger an error which is retrieved by
-        ///     consuming messages and checking 'message-&gt;err'.
+        ///     automatically reset the offset to the largest offset, 'error' - trigger an error (ERR__AUTO_OFFSET_RESET)
+        ///     which is retrieved by consuming messages and checking 'message-&gt;err'.
         ///     <br /><br />default: largest
         ///     <br />importance: high
         /// </summary>
@@ -906,8 +920,11 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Name of partition assignment strategy to use when elected group leader assigns partitions to group
-        ///     members.
+        ///     The name of one or more partition assignment strategies. The elected group leader will use a strategy
+        ///     supported by all members of the group to assign partitions to group members. If there is more than one
+        ///     eligible strategy, preference is determined by the order of this list (strategies earlier in the list
+        ///     have higher priority). Cooperative and non-cooperative (eager) strategies must not be mixed. Available
+        ///     strategies: range, roundrobin, cooperative-sticky.
         ///     <br /><br />default: range,roundrobin
         ///     <br />importance: medium
         /// </summary>
@@ -944,7 +961,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Group protocol type
+        ///     Group protocol type. NOTE: Currently, the only supported group protocol type is `consumer`.
         ///     <br /><br />default: consumer
         ///     <br />importance: low
         /// </summary>
@@ -1243,7 +1260,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <summary>
         ///     The ack timeout of the producer request in milliseconds. This value is only enforced by the broker and
         ///     relies on `request.required.acks` being != 0.
-        ///     <br /><br />default: 5000
+        ///     <br /><br />default: 30000
         ///     <br />importance: medium
         /// </summary>
         public int? RequestTimeoutMs
@@ -1390,7 +1407,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     message batches (MessageSets) to transmit to brokers. A higher value allows larger and more effective
         ///     (less overhead, improved compression) batches of messages to accumulate at the expense of increased
         ///     message delivery latency.
-        ///     <br /><br />default: 0.5
+        ///     <br /><br />default: 5
         ///     <br />importance: high
         /// </summary>
         public double? LingerMs
@@ -1402,7 +1419,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <summary>
         ///     How many times to retry sending a failing Message. **Note:** retrying may cause reordering unless
         ///     `enable.idempotence` is set to true.
-        ///     <br /><br />default: 2
+        ///     <br /><br />default: 2147483647
         ///     <br />importance: high
         /// </summary>
         public int? MessageSendMaxRetries
@@ -1473,6 +1490,21 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             get => ConfluentConfig.BatchSize;
             set => ConfluentConfig.BatchSize = value;
+        }
+
+        /// <summary>
+        ///     Delay in milliseconds to wait to assign new sticky partitions for each topic. By default, set to double
+        ///     the time of linger.ms. To disable sticky behavior, set to 0. This behavior affects messages with the key
+        ///     NULL in all cases, and messages with key lengths of zero when the consistent_random partitioner is in
+        ///     use. These messages would otherwise be assigned randomly. A higher value allows for more effective
+        ///     batching of these messages.
+        ///     <br /><br />default: 10
+        ///     <br />importance: low
+        /// </summary>
+        public int? StickyPartitioningLingerMs
+        {
+            get => ConfluentConfig.StickyPartitioningLingerMs;
+            set => ConfluentConfig.StickyPartitioningLingerMs = value;
         }
 
         /// <summary>

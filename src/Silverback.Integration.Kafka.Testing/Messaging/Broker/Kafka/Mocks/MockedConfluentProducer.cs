@@ -124,15 +124,17 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public void CommitTransaction(TimeSpan timeout) => throw new NotSupportedException();
 
+        public void CommitTransaction() => throw new NotSupportedException();
+
         public void AbortTransaction(TimeSpan timeout) => throw new NotSupportedException();
+
+        public void AbortTransaction() => throw new NotSupportedException();
 
         public void SendOffsetsToTransaction(
             IEnumerable<TopicPartitionOffset> offsets,
             IConsumerGroupMetadata groupMetadata,
-            TimeSpan timeout)
-        {
+            TimeSpan timeout) =>
             throw new NotSupportedException();
-        }
 
         public void Dispose()
         {

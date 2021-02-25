@@ -157,6 +157,15 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public void Assign(IEnumerable<TopicPartition> partitions) => throw new NotSupportedException();
 
+        public void IncrementalAssign(IEnumerable<TopicPartitionOffset> partitions) =>
+            throw new NotSupportedException();
+
+        public void IncrementalAssign(IEnumerable<TopicPartition> partitions) =>
+            throw new NotSupportedException();
+
+        public void IncrementalUnassign(IEnumerable<TopicPartition> partitions) =>
+            throw new NotSupportedException();
+
         public void Unassign() => throw new NotSupportedException();
 
         public void StoreOffset(ConsumeResult<byte[]?, byte[]?> result)
