@@ -2,12 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
+using Silverback.Domain;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.EFCore30.TestTypes;
@@ -52,7 +51,7 @@ namespace Silverback.Tests.Core.EFCore30
 
             _dbContext.SaveChanges();
 
-            _publisher.Received(1).Publish(Arg.Any<IEnumerable<object>>());
+            _publisher.Received(5).Publish(Arg.Any<IDomainEvent>());
         }
 
         [Fact]
@@ -68,7 +67,7 @@ namespace Silverback.Tests.Core.EFCore30
 
             await _dbContext.SaveChangesAsync();
 
-            await _publisher.Received(1).PublishAsync(Arg.Any<IEnumerable<object>>());
+            await _publisher.Received(5).PublishAsync(Arg.Any<IDomainEvent>());
         }
 
         [Fact]
@@ -77,19 +76,14 @@ namespace Silverback.Tests.Core.EFCore30
             var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
             _publisher
-                .When(x => x.Publish(Arg.Any<IEnumerable<object>>()))
-                .Do(
-                    x =>
-                    {
-                        if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
-                            entity.Entity.AddEvent<TestDomainEventTwo>();
-                    });
+                .When(publisher => publisher.Publish(Arg.Any<TestDomainEventOne>()))
+                .Do(_ => entity.Entity.AddEvent<TestDomainEventTwo>());
 
             entity.Entity.AddEvent<TestDomainEventOne>();
 
             _dbContext.SaveChanges();
 
-            _publisher.Received(2).Publish(Arg.Any<IEnumerable<object>>());
+            _publisher.Received(2).Publish(Arg.Any<IDomainEvent>());
         }
 
         [Fact]
@@ -98,19 +92,14 @@ namespace Silverback.Tests.Core.EFCore30
             var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
             _publisher
-                .When(x => x.PublishAsync(Arg.Any<IEnumerable<object>>()))
-                .Do(
-                    x =>
-                    {
-                        if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
-                            entity.Entity.AddEvent<TestDomainEventTwo>();
-                    });
+                .When(publisher => publisher.PublishAsync(Arg.Any<TestDomainEventOne>()))
+                .Do(_ => entity.Entity.AddEvent<TestDomainEventTwo>());
 
             entity.Entity.AddEvent<TestDomainEventOne>();
 
             await _dbContext.SaveChangesAsync();
 
-            await _publisher.Received(2).PublishAsync(Arg.Any<IEnumerable<object>>());
+            await _publisher.Received(2).PublishAsync(Arg.Any<IDomainEvent>());
         }
 
         [Fact]
@@ -132,13 +121,8 @@ namespace Silverback.Tests.Core.EFCore30
             var entity = _dbContext.TestAggregates.Add(new TestAggregateRoot());
 
             _publisher
-                .When(x => x.PublishAsync(Arg.Any<IEnumerable<object>>()))
-                .Do(
-                    x =>
-                    {
-                        if (x.Arg<IEnumerable<object>>().FirstOrDefault() is TestDomainEventOne)
-                            throw new InvalidOperationException();
-                    });
+                .When(publisher => publisher.PublishAsync(Arg.Any<TestDomainEventOne>()))
+                .Do(_ => throw new InvalidOperationException());
 
             entity.Entity.AddEvent<TestDomainEventOne>();
 

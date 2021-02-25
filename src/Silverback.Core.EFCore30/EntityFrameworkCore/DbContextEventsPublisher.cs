@@ -142,9 +142,14 @@ namespace Silverback.EntityFrameworkCore
             while (events.Any())
             {
                 if (executeAsync)
-                    await _publisher.PublishAsync(events).ConfigureAwait(false);
+                {
+                    await events.ForEachAsync(message => _publisher.PublishAsync(message))
+                        .ConfigureAwait(false);
+                }
                 else
-                    _publisher.Publish(events);
+                {
+                    events.ForEach(message => _publisher.Publish(message));
+                }
 
                 events = GetDomainEvents();
             }
