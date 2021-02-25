@@ -46,6 +46,7 @@ namespace Silverback.Tests.Core.Background
         }
 
         [Fact]
+        [Trait("CI", "false")]
         public async Task StartAsync_WithDbLockManager_TaskIsExecuted()
         {
             bool executed = false;
@@ -65,6 +66,7 @@ namespace Silverback.Tests.Core.Background
         }
 
         [Fact]
+        [Trait("CI", "false")]
         public async Task StartAsync_WithNullLockManager_TaskIsExecuted()
         {
             bool executed = false;
