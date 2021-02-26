@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,11 +40,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            })))
+                                        .Configure(config => { config.GroupId = "consumer1"; })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -107,7 +104,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 10;
                                             })))
-                        .AddDelegateSubscriber((TestEventOne _) => receivedMessages++))
+                        .AddDelegateSubscriber(
+                            (TestEventOne _) => Interlocked.Increment(ref receivedMessages)))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -170,14 +168,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
                             }))
                 .Run();
 

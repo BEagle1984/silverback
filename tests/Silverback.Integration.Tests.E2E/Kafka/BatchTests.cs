@@ -60,14 +60,15 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
                             }))
                 .Run();
 
@@ -136,14 +137,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             (IEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
                             }))
                 .Run();
 
@@ -212,14 +213,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
                             }))
                 .Run();
 
@@ -289,11 +290,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             (IObservable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 eventsStream.Subscribe(
                                     message => list.Add(message),
-                                    () => completedBatches++);
+                                    () => Interlocked.Increment(ref completedBatches));
                             }))
                 .Run();
 
@@ -364,14 +365,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
 
                                 // Return a Task, to trick the SubscribedMethodInvoker into thinking that this
                                 // is an asynchronous method, while still enumerating synchronously
@@ -439,7 +440,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.CommitOffsetEach = 1;
                                             })
                                         .EnableBatchProcessing(10)))
-                        .AddDelegateSubscriber((IEnumerable<TestEventOne> _) => { receivedBatches++; }))
+                        .AddDelegateSubscriber(
+                            (IEnumerable<TestEventOne> _) => Interlocked.Increment(ref receivedBatches)))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -489,10 +491,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddDelegateSubscriber(
                             (IEnumerable<TestEventOne> eventsStream) =>
                             {
-                                receivedBatches1++;
+                                Interlocked.Increment(ref receivedBatches1);
                                 var dummy = eventsStream.ToList();
                             })
-                        .AddDelegateSubscriber((IEnumerable<TestEventTwo> _) => receivedBatches2++))
+                        .AddDelegateSubscriber(
+                            (IEnumerable<TestEventTwo> _) => Interlocked.Increment(ref receivedBatches2)))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -538,8 +541,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.CommitOffsetEach = 1;
                                             })
                                         .EnableBatchProcessing(3)))
-                        .AddDelegateSubscriber((IEnumerable<TestEventOne> _) => receivedBatches1++)
-                        .AddDelegateSubscriber((IEnumerable<TestEventTwo> _) => receivedBatches2++))
+                        .AddDelegateSubscriber(
+                            (IEnumerable<TestEventOne> _) => Interlocked.Increment(ref receivedBatches1))
+                        .AddDelegateSubscriber(
+                            (IEnumerable<TestEventTwo> _) => Interlocked.Increment(ref receivedBatches2)))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -594,14 +599,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     areOverlapping = true;
 
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
 
                                 await Task.Delay(500);
 
@@ -658,14 +663,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
                             }))
                 .Run();
 
@@ -734,18 +739,18 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     areOverlapping = true;
 
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
 
                                 await Task.Delay(500);
 
-                                exitedSubscribers++;
+                                Interlocked.Increment(ref exitedSubscribers);
                             }))
                 .Run();
 
@@ -813,7 +818,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 {
                                     await foreach (var message in eventsStream)
                                     {
-                                        receivedMessages.Add(message);
+                                        receivedMessages.ThreadSafeAdd(message);
                                     }
                                 }
                                 catch (OperationCanceledException)
@@ -882,7 +887,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 try
                                 {
                                     var messages = eventsStream.ToList();
-                                    receivedMessages.AddRange(messages);
+                                    messages.ForEach(receivedMessages.ThreadSafeAdd);
                                 }
                                 catch (OperationCanceledException)
                                 {
@@ -950,7 +955,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             {
                                 await foreach (var message in eventsStream)
                                 {
-                                    receivedMessages.Add(message);
+                                    receivedMessages.ThreadSafeAdd(message);
                                 }
 
                                 await Task.Delay(500);
@@ -1012,7 +1017,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             {
                                 await foreach (var message in eventsStream)
                                 {
-                                    receivedMessages.Add(message);
+                                    receivedMessages.ThreadSafeAdd(message);
 
                                     if (receivedMessages.Count == 2)
                                         throw new InvalidOperationException("Test");
@@ -1077,10 +1082,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                lock (receivedBatches)
-                                {
-                                    receivedBatches.Add(list);
-                                }
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {
@@ -1132,11 +1134,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             {
                                 await foreach (var message in eventsStream)
                                 {
-                                    lock (receivedMessages)
-                                    {
-                                        receivedMessages.Add(message);
-                                    }
-
+                                    receivedMessages.ThreadSafeAdd(message);
                                     await taskCompletionSource.Task;
                                 }
                             }))
@@ -1223,14 +1221,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<IInboundEnvelope<TestEventOne>> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var envelope in eventsStream)
                                 {
                                     list.Add(envelope.Message!);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
                             }))
                 .Run();
 
@@ -1302,14 +1300,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<IBinaryFileMessage> eventsStream) =>
                             {
                                 var list = new List<IBinaryFileMessage>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {
                                     list.Add(message!);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
                             }))
                 .Run();
 
@@ -1392,14 +1390,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<IInboundEnvelope<IBinaryFileMessage>> eventsStream) =>
                             {
                                 var list = new List<IBinaryFileMessage>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var envelope in eventsStream)
                                 {
                                     list.Add(envelope.Message!);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
                             }))
                 .Run();
 
@@ -1478,14 +1476,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
 
-                                completedBatches++;
+                                Interlocked.Increment(ref completedBatches);
                             }))
                 .Run();
 
@@ -1537,7 +1535,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {
@@ -1593,7 +1591,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
-                                receivedBatches.Add(list);
+                                receivedBatches.ThreadSafeAdd(list);
 
                                 await foreach (var message in eventsStream)
                                 {

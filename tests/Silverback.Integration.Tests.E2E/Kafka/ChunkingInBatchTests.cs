@@ -61,26 +61,29 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<TestEventOne> streamEnumerable) =>
                             {
                                 var list = new List<TestEventOne>();
-                                batches.Add(list);
+                                batches.ThreadSafeAdd(list);
 
                                 await foreach (var message in streamEnumerable)
                                 {
                                     list.Add(message);
 
-                                    var actualCommittedOffsets = DefaultTopic.GetCommittedOffsetsCount("consumer1");
+                                    var actualCommittedOffsets =
+                                        DefaultTopic.GetCommittedOffsetsCount("consumer1");
                                     var expectedCommittedOffsets = 9 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
                                     {
-                                        failedCommit ??= $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
-                                                         $"({batches.Count}.{list.Count})";
+                                        failedCommit ??=
+                                            $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
+                                            $"({batches.Count}.{list.Count})";
                                     }
                                 }
 
                                 if (list.Count != 3)
                                 {
-                                    enumerationAborted ??= $"Enumeration completed after {list.Count} messages " +
-                                                           $"({batches.Count}.{list.Count})";
+                                    enumerationAborted ??=
+                                        $"Enumeration completed after {list.Count} messages " +
+                                        $"({batches.Count}.{list.Count})";
                                 }
                             }))
                 .Run();
@@ -154,17 +157,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<BinaryFileMessage> streamEnumerable) =>
                             {
                                 var list = new List<string?>();
-                                batches.Add(list);
+                                batches.ThreadSafeAdd(list);
 
                                 await foreach (var message in streamEnumerable)
                                 {
-                                    var actualCommittedOffsets = DefaultTopic.GetCommittedOffsetsCount("consumer1");
+                                    var actualCommittedOffsets =
+                                        DefaultTopic.GetCommittedOffsetsCount("consumer1");
                                     var expectedCommittedOffsets = 10 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
                                     {
-                                        failedCommit ??= $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
-                                                         $"({batches.Count}.{list.Count})";
+                                        failedCommit ??=
+                                            $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
+                                            $"({batches.Count}.{list.Count})";
                                     }
 
                                     var readAll = await message.Content.ReadAllAsync();
@@ -173,8 +178,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
                                 if (list.Count != 5)
                                 {
-                                    enumerationAborted ??= $"Enumeration completed after {list.Count} messages " +
-                                                           $"({batches.Count}.{list.Count})";
+                                    enumerationAborted ??=
+                                        $"Enumeration completed after {list.Count} messages " +
+                                        $"({batches.Count}.{list.Count})";
                                 }
                             }))
                 .Run();
@@ -183,7 +189,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             for (int i = 1; i <= 15; i++)
             {
-                await publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
+                await publisher.PublishAsync(
+                    new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
             }
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -254,26 +261,29 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<TestEventOne> streamEnumerable) =>
                             {
                                 var list = new List<TestEventOne>();
-                                batches.Add(list);
+                                batches.ThreadSafeAdd(list);
 
                                 await foreach (var message in streamEnumerable)
                                 {
                                     list.Add(message);
 
-                                    var actualCommittedOffsets = DefaultTopic.GetCommittedOffsetsCount("consumer1");
+                                    var actualCommittedOffsets =
+                                        DefaultTopic.GetCommittedOffsetsCount("consumer1");
                                     var expectedCommittedOffsets = 3 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
                                     {
-                                        failedCommit ??= $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
-                                                         $"({batches.Count}.{list.Count})";
+                                        failedCommit ??=
+                                            $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
+                                            $"({batches.Count}.{list.Count})";
                                     }
                                 }
 
                                 if (list.Count != 3)
                                 {
-                                    enumerationAborted ??= $"Enumeration completed after {list.Count} messages " +
-                                                           $"({batches.Count}.{list.Count})";
+                                    enumerationAborted ??=
+                                        $"Enumeration completed after {list.Count} messages " +
+                                        $"({batches.Count}.{list.Count})";
                                 }
                             }))
                 .Run();
@@ -347,17 +357,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             async (IAsyncEnumerable<BinaryFileMessage> streamEnumerable) =>
                             {
                                 var list = new List<string?>();
-                                batches.Add(list);
+                                batches.ThreadSafeAdd(list);
 
                                 await foreach (var message in streamEnumerable)
                                 {
-                                    var actualCommittedOffsets = DefaultTopic.GetCommittedOffsetsCount("consumer1");
+                                    var actualCommittedOffsets =
+                                        DefaultTopic.GetCommittedOffsetsCount("consumer1");
                                     var expectedCommittedOffsets = 5 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
                                     {
-                                        failedCommit ??= $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
-                                                         $"({batches.Count}.{list.Count})";
+                                        failedCommit ??=
+                                            $"{actualCommittedOffsets} != {expectedCommittedOffsets} " +
+                                            $"({batches.Count}.{list.Count})";
                                     }
 
                                     var readAll = await message.Content.ReadAllAsync();
@@ -366,8 +378,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
                                 if (list.Count != 5)
                                 {
-                                    enumerationAborted ??= $"Enumeration completed after {list.Count} messages " +
-                                                           $"({batches.Count}.{list.Count})";
+                                    enumerationAborted ??=
+                                        $"Enumeration completed after {list.Count} messages " +
+                                        $"({batches.Count}.{list.Count})";
                                 }
                             }))
                 .Run();
@@ -376,7 +389,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             for (int i = 1; i <= 15; i++)
             {
-                await publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
+                await publisher.PublishAsync(
+                    new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
             }
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
