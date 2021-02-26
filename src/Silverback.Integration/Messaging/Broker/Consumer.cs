@@ -102,6 +102,11 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         protected bool IsDisconnecting { get; private set; }
 
+        /// <summary>
+        ///     Gets a value indicating whether the consumer is being stopped.
+        /// </summary>
+        protected bool IsStopping { get; private set; }
+
         /// <inheritdoc cref="IConsumer.ConnectAsync" />
         public async Task ConnectAsync()
         {
@@ -146,7 +151,7 @@ namespace Silverback.Messaging.Broker
         {
             try
             {
-                if (!IsConnected)
+                if (!IsConnected || IsDisconnecting)
                     return;
 
                 _logger.LogConsumerLowLevelTrace(
@@ -157,7 +162,7 @@ namespace Silverback.Messaging.Broker
 
                 // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
                 // but not started)
-                if (IsConsuming)
+                if (IsConsuming && !IsStopping)
                     await StopAsync().ConfigureAwait(false);
                 else
                     await StopCoreAsync().ConfigureAwait(false);
@@ -178,13 +183,15 @@ namespace Silverback.Messaging.Broker
                 IsConnected = false;
                 _statusInfo.SetDisconnected();
                 _logger.LogConsumerDisconnected(this);
-
-                IsDisconnecting = false;
             }
             catch (Exception ex)
             {
                 _logger.LogConsumerDisconnectError(this, ex);
                 throw;
+            }
+            finally
+            {
+                IsDisconnecting = false;
             }
         }
 
@@ -195,7 +202,7 @@ namespace Silverback.Messaging.Broker
 
             // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
             // but not started)
-            if (IsConsuming)
+            if (IsConsuming && !IsStopping)
                 await StopAsync().ConfigureAwait(false);
             else
                 await StopCoreAsync().ConfigureAwait(false);
@@ -243,8 +250,10 @@ namespace Silverback.Messaging.Broker
         {
             try
             {
-                if (!IsConsuming)
+                if (!IsConsuming || IsStopping)
                     return;
+
+                IsStopping = true;
 
                 await _logger.ExecuteAndTraceConsumerActionAsync(
                         this,
@@ -260,6 +269,10 @@ namespace Silverback.Messaging.Broker
             {
                 _logger.LogConsumerStopError(this, ex);
                 throw;
+            }
+            finally
+            {
+                IsStopping = false;
             }
         }
 

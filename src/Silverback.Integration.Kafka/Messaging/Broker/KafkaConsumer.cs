@@ -389,7 +389,7 @@ namespace Silverback.Messaging.Broker
             if (_channelsManager != null)
                 _consumeLoopHandler.SetChannelsManager(_channelsManager);
 
-            if (IsConsuming)
+            if (IsConsuming && !IsStopping)
                 _consumeLoopHandler.Start();
         }
 
@@ -399,7 +399,7 @@ namespace Silverback.Messaging.Broker
 
             _consumeLoopHandler?.SetChannelsManager(_channelsManager);
 
-            if (IsConsuming)
+            if (IsConsuming && !IsStopping)
                 _channelsManager.StartReading();
         }
 
