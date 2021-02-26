@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -494,6 +495,134 @@ namespace Silverback.Diagnostics
                 IntegrationLogEvents.LowLevelTracing.EventId,
                 message + GetConsumerMessageDataString(),
                 args.ToArray());
+        }
+
+        public static void ExecuteAndTraceConsumerAction(
+            this ISilverbackLogger logger,
+            IConsumer? consumer,
+            Action action,
+            string enterMessage,
+            string exitMessage,
+            Func<object?[]>? argumentsProvider = null) =>
+            ExecuteAndTraceConsumerAction(
+                logger,
+                consumer,
+                action,
+                enterMessage,
+                exitMessage,
+                exitMessage,
+                argumentsProvider);
+
+        public static void ExecuteAndTraceConsumerAction(
+            this ISilverbackLogger logger,
+            IConsumer? consumer,
+            Action action,
+            string enterMessage,
+            string successMessage,
+            string errorMessage,
+            Func<object?[]>? argumentsProvider = null)
+        {
+            if (!logger.IsEnabled(IntegrationLogEvents.LowLevelTracing))
+            {
+                action.Invoke();
+                return;
+            }
+
+            var args = new List<object?>(argumentsProvider?.Invoke() ?? Array.Empty<object>());
+            args.Add(consumer?.Id ?? string.Empty);
+            args.Add(consumer?.Endpoint.Name ?? string.Empty);
+
+            logger.InnerLogger.Log(
+                IntegrationLogEvents.LowLevelTracing.Level,
+                IntegrationLogEvents.LowLevelTracing.EventId,
+                enterMessage + GetConsumerMessageDataString(),
+                args.ToArray());
+
+            try
+            {
+                action.Invoke();
+
+                logger.InnerLogger.Log(
+                    IntegrationLogEvents.LowLevelTracing.Level,
+                    IntegrationLogEvents.LowLevelTracing.EventId,
+                    successMessage + GetConsumerMessageDataString(),
+                    args.ToArray());
+            }
+            catch (Exception ex)
+            {
+                logger.InnerLogger.Log(
+                    IntegrationLogEvents.LowLevelTracing.Level,
+                    IntegrationLogEvents.LowLevelTracing.EventId,
+                    ex,
+                    errorMessage + GetConsumerMessageDataString(),
+                    args.ToArray());
+
+                throw;
+            }
+        }
+
+        public static Task ExecuteAndTraceConsumerActionAsync(
+            this ISilverbackLogger logger,
+            IConsumer? consumer,
+            Func<Task> action,
+            string enterMessage,
+            string exitMessage,
+            Func<object?[]>? argumentsProvider = null) =>
+            ExecuteAndTraceConsumerActionAsync(
+                logger,
+                consumer,
+                action,
+                enterMessage,
+                exitMessage,
+                exitMessage,
+                argumentsProvider);
+
+        public static async Task ExecuteAndTraceConsumerActionAsync(
+            this ISilverbackLogger logger,
+            IConsumer? consumer,
+            Func<Task> action,
+            string enterMessage,
+            string successMessage,
+            string errorMessage,
+            Func<object?[]>? argumentsProvider = null)
+        {
+            if (!logger.IsEnabled(IntegrationLogEvents.LowLevelTracing))
+            {
+                await action.Invoke().ConfigureAwait(false);
+                return;
+            }
+
+            var args = new List<object?>(argumentsProvider?.Invoke() ?? Array.Empty<object>());
+            args.Add(consumer?.Id ?? string.Empty);
+            args.Add(consumer?.Endpoint.Name ?? string.Empty);
+
+            logger.InnerLogger.Log(
+                IntegrationLogEvents.LowLevelTracing.Level,
+                IntegrationLogEvents.LowLevelTracing.EventId,
+                enterMessage + GetConsumerMessageDataString(),
+                args.ToArray());
+
+            try
+            {
+                await action.Invoke().ConfigureAwait(false);
+
+                logger.InnerLogger.Log(
+                    IntegrationLogEvents.LowLevelTracing.Level,
+                    IntegrationLogEvents.LowLevelTracing.EventId,
+                    successMessage + GetConsumerMessageDataString(),
+                    args.ToArray());
+            }
+            catch (Exception ex)
+            {
+                logger.InnerLogger.Log(
+                    IntegrationLogEvents.LowLevelTracing.Level,
+                    IntegrationLogEvents.LowLevelTracing.EventId,
+                    ex,
+                    errorMessage + GetConsumerMessageDataString(),
+                    args.ToArray());
+
+                throw;
+            }
         }
 
         public static LogEvent EnrichConsumerLogEvent(

@@ -42,7 +42,7 @@ namespace Silverback.Tests.Logging
                     ", ",
                     _receivedCalls.Select(
                         call =>
-                            $"{call.LogLevel}, \"{call.Message}\", {call.Exception?.GetType().Name ?? "no exception"}, {call.EventId}"));
+                            $"\r\n* {call.LogLevel}, \"{call.Message}\", {call.Exception?.GetType().Name ?? "no exception"}, {call.EventId}"));
                 throw new InvalidOperationException(
                     $"No matching call received. Received calls: {receivedCallsDump}");
             }

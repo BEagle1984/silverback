@@ -149,6 +149,10 @@ namespace Silverback.Messaging.Broker
                 if (!IsConnected)
                     return;
 
+                _logger.LogConsumerLowLevelTrace(
+                    this,
+                    "Disconnecting consumer...");
+
                 IsDisconnecting = true;
 
                 // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
@@ -217,7 +221,13 @@ namespace Silverback.Messaging.Broker
                 if (IsConsuming)
                     return;
 
-                await StartCoreAsync().ConfigureAwait(false);
+                await _logger.ExecuteAndTraceConsumerActionAsync(
+                    this,
+                    StartCoreAsync,
+                    "Starting consumer...",
+                    "Consumer started.",
+                    "Failed to start consumer.")
+                    .ConfigureAwait(false);
 
                 IsConsuming = true;
             }
@@ -236,7 +246,13 @@ namespace Silverback.Messaging.Broker
                 if (!IsConsuming)
                     return;
 
-                await StopCoreAsync().ConfigureAwait(false);
+                await _logger.ExecuteAndTraceConsumerActionAsync(
+                        this,
+                        StopCoreAsync,
+                        "Stopping consumer...",
+                        "Consumer stopped.",
+                        "Failed to stop consumer.")
+                    .ConfigureAwait(false);
 
                 IsConsuming = false;
             }
@@ -471,16 +487,12 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private async Task WaitUntilConsumingStoppedAsync()
-        {
-            _logger.LogLowLevelTrace(
-                "Waiting until consumer stops... (consumerId: {consumerId})",
-                () => new object[] { Id });
-            await WaitUntilConsumingStoppedCoreAsync().ConfigureAwait(false);
-            _logger.LogLowLevelTrace(
-                "Consumer stopped. (consumerId: {consumerId})",
-                () => new object[] { Id });
-        }
+        private Task WaitUntilConsumingStoppedAsync() =>
+            _logger.ExecuteAndTraceConsumerActionAsync(
+                this,
+                WaitUntilConsumingStoppedCoreAsync,
+                "Waiting until consumer stops...",
+                "Consumer stopped.");
 
         private Task ExecutePipelineAsync(ConsumerPipelineContext context, int stepIndex = 0)
         {

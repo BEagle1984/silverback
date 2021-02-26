@@ -5,6 +5,8 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Authentication;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
@@ -547,6 +549,182 @@ namespace Silverback.Tests.Integration.Diagnostics
                 () => new object[] { "A", 42, true });
 
             _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 1999);
+        }
+
+        [Fact]
+        public void LogConsumerLowLevelTrace_NoArguments_Logged()
+        {
+            var consumer = _serviceProvider.GetRequiredService<TestBroker>()
+                .AddConsumer(TestConsumerEndpoint.GetDefault());
+
+            var expectedMessage = $"Message | consumerId: {consumer.Id}, endpointName: test";
+
+            _silverbackLogger.LogConsumerLowLevelTrace(consumer, "Message");
+
+            _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 1999);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ExecuteAndTraceConsumerAction_EnterAndExitLogged(bool mustFail)
+        {
+            var consumer = _serviceProvider.GetRequiredService<TestBroker>()
+                .AddConsumer(TestConsumerEndpoint.GetDefault());
+
+            var expectedEnterMessage = $"Enter A 42 True | consumerId: {consumer.Id}, endpointName: test";
+            var expectedExitMessage = $"Exit A 42 True | consumerId: {consumer.Id}, endpointName: test";
+            var executed = false;
+
+            Action act = () => _silverbackLogger.ExecuteAndTraceConsumerAction(
+                consumer,
+                () =>
+                {
+                    _loggerSubstitute.Received(LogLevel.Trace, null, expectedEnterMessage, 1999);
+                    executed = true;
+                    if (mustFail)
+                        throw new InvalidCastException();
+                },
+                "Enter {string} {int} {bool}",
+                "Exit {string} {int} {bool}",
+                () => new object[] { "A", 42, true });
+
+            if (mustFail)
+                act.Should().Throw<InvalidCastException>();
+            else
+                act.Should().NotThrow();
+
+            _loggerSubstitute.Received(
+                LogLevel.Trace,
+                mustFail ? typeof(InvalidCastException) : null,
+                expectedExitMessage,
+                1999);
+            executed.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ExecuteAndTraceConsumerAction_EnterAndSuccessOrErrorLogged(bool mustFail)
+        {
+            var consumer = _serviceProvider.GetRequiredService<TestBroker>()
+                .AddConsumer(TestConsumerEndpoint.GetDefault());
+
+            var expectedEnterMessage = $"Enter A 42 True | consumerId: {consumer.Id}, endpointName: test";
+            var expectedSuccessMessage = $"Success A 42 True | consumerId: {consumer.Id}, endpointName: test";
+            var expectedErrorMessage = $"Failure A 42 True | consumerId: {consumer.Id}, endpointName: test";
+            var executed = false;
+
+            Action act = () => _silverbackLogger.ExecuteAndTraceConsumerAction(
+                consumer,
+                () =>
+                {
+                    _loggerSubstitute.Received(LogLevel.Trace, null, expectedEnterMessage, 1999);
+                    executed = true;
+                    if (mustFail)
+                        throw new InvalidCastException();
+                },
+                "Enter {string} {int} {bool}",
+                "Success {string} {int} {bool}",
+                "Failure {string} {int} {bool}",
+                () => new object[] { "A", 42, true });
+
+            if (mustFail)
+                act.Should().Throw<InvalidCastException>();
+            else
+                act.Should().NotThrow();
+
+            _loggerSubstitute.Received(
+                LogLevel.Trace,
+                mustFail ? typeof(InvalidCastException) : null,
+                mustFail ? expectedErrorMessage : expectedSuccessMessage,
+                1999);
+
+            executed.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ExecuteAndTraceConsumerActionAsync_EnterAndExitLogged(bool mustFail)
+        {
+            var consumer = _serviceProvider.GetRequiredService<TestBroker>()
+                .AddConsumer(TestConsumerEndpoint.GetDefault());
+
+            var expectedEnterMessage = $"Enter A 42 True | consumerId: {consumer.Id}, endpointName: test";
+            var expectedExitMessage = $"Exit A 42 True | consumerId: {consumer.Id}, endpointName: test";
+            var executed = false;
+
+            Func<Task> act = () => _silverbackLogger.ExecuteAndTraceConsumerActionAsync(
+                consumer,
+                () =>
+                {
+                    _loggerSubstitute.Received(LogLevel.Trace, null, expectedEnterMessage, 1999);
+                    executed = true;
+                    if (mustFail)
+                        throw new InvalidCastException();
+
+                    return Task.CompletedTask;
+                },
+                "Enter {string} {int} {bool}",
+                "Exit {string} {int} {bool}",
+                () => new object[] { "A", 42, true });
+
+            if (mustFail)
+                act.Should().Throw<InvalidCastException>();
+            else
+                act.Should().NotThrow();
+
+            _loggerSubstitute.Received(
+                LogLevel.Trace,
+                mustFail ? typeof(InvalidCastException) : null,
+                expectedExitMessage,
+                1999);
+
+            executed.Should().BeTrue();
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public void ExecuteAndTraceConsumerActionAsync_EnterAndSuccessOrErrorLogged(bool mustFail)
+        {
+            var consumer = _serviceProvider.GetRequiredService<TestBroker>()
+                .AddConsumer(TestConsumerEndpoint.GetDefault());
+
+            var expectedEnterMessage = $"Enter A 42 True | consumerId: {consumer.Id}, endpointName: test";
+            var expectedSuccessMessage = $"Success A 42 True | consumerId: {consumer.Id}, endpointName: test";
+            var expectedErrorMessage = $"Failure A 42 True | consumerId: {consumer.Id}, endpointName: test";
+            var executed = false;
+
+            Func<Task> act = () => _silverbackLogger.ExecuteAndTraceConsumerActionAsync(
+                consumer,
+                () =>
+                {
+                    _loggerSubstitute.Received(LogLevel.Trace, null, expectedEnterMessage, 1999);
+                    executed = true;
+                    if (mustFail)
+                        throw new InvalidCastException();
+
+                    return Task.CompletedTask;
+                },
+                "Enter {string} {int} {bool}",
+                "Success {string} {int} {bool}",
+                "Failure {string} {int} {bool}",
+                () => new object[] { "A", 42, true });
+
+            if (mustFail)
+                act.Should().Throw<InvalidCastException>();
+            else
+                act.Should().NotThrow();
+
+            _loggerSubstitute.Received(
+                LogLevel.Trace,
+                mustFail ? typeof(InvalidCastException) : null,
+                mustFail ? expectedErrorMessage : expectedSuccessMessage,
+                1999);
+
+            executed.Should().BeTrue();
         }
     }
 }
