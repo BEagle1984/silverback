@@ -3,7 +3,7 @@
     <BaseVersionSuffix>-beta.20</BaseVersionSuffix>
     <BaseVersion>3.0.0$(BaseVersionSuffix)</BaseVersion>
     <DatabasePackagesRevision>1</DatabasePackagesRevision>
-    <DatabasePackagesVersionSuffix>-ignored</DatabasePackagesVersionSuffix>
+    <DatabasePackagesVersionSuffix>$(BaseVersionSuffix)</DatabasePackagesVersionSuffix>
   </PropertyGroup>
 
   <PropertyGroup Label="Build">

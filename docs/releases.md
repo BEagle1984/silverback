@@ -97,6 +97,7 @@ uid: releases
 * <xref:Silverback.Messaging.Sequences.Chunking.ChunkSettings> moved from `Silverback.Messaging.LargeMessages` namespace to `Silverback.Messaging.Sequences.Chunking`
 * Replaced _CoreEventIds_, _IntegrationEventIds_, _KafkaEventIds_ and _RabbitEventIds_ with <xref:Silverback.Diagnostics.CoreLogEvents>, <xref:Silverback.Diagnostics.IntegrationLogEvents>, <xref:Silverback.Diagnostics.KafkaLogEvents> and <xref:Silverback.Diagnostics.RabbitLogEvents> (see also <xref:logging>)
 * Setting the batch size to 1 doesn't disable batching anymore, set the `Batch` to `null` in the <xref:Silverback.Messaging.ConsumerEndpoint> to disable it
+* Deprecated support for Entity Framework 2, only the version 3.0.1 of Silverback.Core.EntityFrameworkCore will work with Silverback 3.0.0
 
 ## [2.2.0](https://github.com/BEagle1984/silverback/releases/tag/v2.2.0)
 
