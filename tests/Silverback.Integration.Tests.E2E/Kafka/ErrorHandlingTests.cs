@@ -660,6 +660,120 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
+        public async Task SkipPolicy_BatchJsonDeserializationError_MessageSkipped()
+        {
+            var message = new TestEventOne { Content = "Hello E2E!" };
+            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
+                                    message,
+                                    new MessageHeaderCollection(),
+                                    MessageSerializationContext.Empty)).ReadAll() ??
+                                throw new InvalidOperationException("Serializer returned null");
+
+            byte[] invalidRawMessage = Encoding.UTF8.GetBytes("<what?!>");
+
+            var receivedBatches = new List<List<TestEventOne>>();
+            var completedBatches = 0;
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .EnableBatchProcessing(5)
+                                        .OnError(policy => policy.Skip())
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
+                        .AddIntegrationSpy()
+                        .AddDelegateSubscriber(
+                            async (IMessageStreamEnumerable<TestEventOne> eventsStream) =>
+                            {
+                                var list = new List<TestEventOne>();
+                                receivedBatches.Add(list);
+
+                                await foreach (var testEvent in eventsStream)
+                                {
+                                    list.Add(testEvent);
+                                }
+
+                                completedBatches++;
+                            }))
+                .Run();
+
+            var producer = Helper.Broker.GetProducer(
+                new KafkaProducerEndpoint(
+                    DefaultTopicName,
+                    new KafkaClientConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://e2e"
+                    }));
+            await producer.RawProduceAsync(
+                invalidRawMessage,
+                new MessageHeaderCollection
+                {
+                    { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
+                });
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            receivedBatches.Should().BeEmpty();
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
+
+            for (int i = 0; i < 6; i++)
+            {
+                await producer.RawProduceAsync(
+                    rawMessage,
+                    new MessageHeaderCollection
+                    {
+                        { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
+                    });
+            }
+
+            await AsyncTestingUtil.WaitAsync(() => receivedBatches.Sum(batch => batch.Count) == 6);
+
+            receivedBatches.Should().HaveCount(2);
+            receivedBatches[0].Should().HaveCount(5);
+            receivedBatches[1].Should().HaveCount(1);
+            completedBatches.Should().Be(1);
+
+            await producer.RawProduceAsync(
+                invalidRawMessage,
+                new MessageHeaderCollection
+                {
+                    { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
+                });
+            for (int i = 0; i < 4; i++)
+            {
+                await producer.RawProduceAsync(
+                    rawMessage,
+                    new MessageHeaderCollection
+                    {
+                        { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
+                    });
+            }
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            receivedBatches.Should().HaveCount(2);
+            receivedBatches[0].Should().HaveCount(5);
+            receivedBatches[1].Should().HaveCount(5);
+            completedBatches.Should().Be(2);
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(12);
+        }
+
+        [Fact]
         public async Task RetryPolicy_EncryptedMessage_RetriedMultipleTimes()
         {
             var message = new TestEventOne
@@ -791,7 +905,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task RetryPolicy_BatchFailingBeforeComplete_RetriedMultipleTimes()
+        public async Task RetryPolicy_BatchThrowingWhileEnumerating_RetriedMultipleTimes()
         {
             var tryMessageCount = 0;
             var completedBatches = 0;
