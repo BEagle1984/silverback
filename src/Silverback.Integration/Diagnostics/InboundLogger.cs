@@ -46,6 +46,9 @@ namespace Silverback.Diagnostics
             _rollbackToSkipFailed;
 
         private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
+            _nullMessageSkipped;
+
+        private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
             _messageAlreadyProcessed;
 
         public InboundLogger(LogAdditionalArguments<IRawInboundEnvelope> additionalArguments)
@@ -87,6 +90,10 @@ namespace Silverback.Diagnostics
             _rollbackToSkipFailed =
                 SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
                     EnrichLogEvent(IntegrationLogEvents.RollbackToSkipFailed));
+
+            _nullMessageSkipped =
+                SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
+                    EnrichLogEvent(IntegrationLogEvents.NullMessageSkipped));
 
             _messageAlreadyProcessed =
                 SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
@@ -246,6 +253,21 @@ namespace Silverback.Diagnostics
                 _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
                 _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
                 exception);
+        }
+
+        public void LogNullMessageSkipped(ISilverbackLogger logger, IRawInboundEnvelope envelope)
+        {
+            if (!logger.IsEnabled(IntegrationLogEvents.NullMessageSkipped))
+                return;
+
+            _nullMessageSkipped.Invoke(
+                logger.InnerLogger,
+                envelope.ActualEndpointName,
+                envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
+                envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
+                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
+                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                null);
         }
 
         public void LogAlreadyProcessed(ISilverbackLogger logger, IRawInboundEnvelope envelope)

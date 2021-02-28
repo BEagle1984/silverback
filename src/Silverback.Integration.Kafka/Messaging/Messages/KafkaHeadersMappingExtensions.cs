@@ -19,10 +19,10 @@ namespace Silverback.Messaging.Messages
         }
 
         public static IReadOnlyCollection<MessageHeader> ToSilverbackHeaders(
-            this Confluent.Kafka.Headers kafkaHeaders)
+            this Confluent.Kafka.Headers? kafkaHeaders)
         {
-            var headers = new List<MessageHeader>(kafkaHeaders.Count);
-            kafkaHeaders.ForEach(
+            var headers = new List<MessageHeader>(kafkaHeaders?.Count ?? 0);
+            kafkaHeaders?.ForEach(
                 kafkaHeader =>
                     headers.Add(
                         new MessageHeader(

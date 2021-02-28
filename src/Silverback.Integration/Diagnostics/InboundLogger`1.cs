@@ -48,6 +48,9 @@ namespace Silverback.Diagnostics
         public void LogRollbackToSkipFailed(IRawInboundEnvelope envelope, Exception exception) =>
             GetLogger(envelope).LogRollbackToSkipFailed(this, envelope, exception);
 
+        public void LogNullMessageSkipped(IRawInboundEnvelope envelope) =>
+            GetLogger(envelope).LogNullMessageSkipped(this, envelope);
+
         public void LogAlreadyProcessed(IRawInboundEnvelope envelope) =>
             GetLogger(envelope).LogAlreadyProcessed(this, envelope);
 

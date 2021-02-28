@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Outbound.Routing
 {
@@ -33,6 +34,13 @@ namespace Silverback.Messaging.Outbound.Routing
             GetRoutesForMessage(message.GetType());
 
         public IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(Type messageType) =>
-            _routes.Where(r => r.MessageType.IsAssignableFrom(messageType)).ToList();
+            _routes.Where(
+                route => route.MessageType.IsAssignableFrom(messageType) ||
+                         IsCompatibleTombstone(route, messageType)).ToList();
+
+        private static bool IsCompatibleTombstone(OutboundRoute route, Type messageType) =>
+            typeof(Tombstone).IsAssignableFrom(messageType) &&
+            messageType.GenericTypeArguments.Length == 1 &&
+            route.MessageType.IsAssignableFrom(messageType.GenericTypeArguments[0]);
     }
 }

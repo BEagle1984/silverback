@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Serialization
@@ -21,12 +22,21 @@ namespace Silverback.Messaging.Serialization
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            context.Envelope.RawMessage ??=
-                await context.Envelope.Endpoint.Serializer.SerializeAsync(
-                        context.Envelope.Message,
-                        context.Envelope.Headers,
-                        new MessageSerializationContext(context.Envelope.Endpoint))
-                    .ConfigureAwait(false);
+            if (context.Envelope.Message is not Tombstone)
+            {
+                context.Envelope.RawMessage ??=
+                    await context.Envelope.Endpoint.Serializer.SerializeAsync(
+                            context.Envelope.Message,
+                            context.Envelope.Headers,
+                            new MessageSerializationContext(context.Envelope.Endpoint))
+                        .ConfigureAwait(false);
+            }
+            else if (context.Envelope.Message.GetType().GenericTypeArguments.Length == 1)
+            {
+                context.Envelope.Headers.AddOrReplace(
+                    DefaultMessageHeaders.MessageType,
+                    context.Envelope.Message.GetType().GenericTypeArguments[0].AssemblyQualifiedName);
+            }
 
             await next(context).ConfigureAwait(false);
         }

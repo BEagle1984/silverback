@@ -37,6 +37,8 @@ namespace Silverback.Messaging.Configuration
 
         private bool? _throwIfUnhandled;
 
+        private NullMessageHandlingStrategy? _nullMessageHandling;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConsumerEndpointBuilder{TEndpoint,TBuilder}" /> class.
         /// </summary>
@@ -131,6 +133,27 @@ namespace Silverback.Messaging.Configuration
             return This;
         }
 
+        /// <inheritdoc cref="IConsumerEndpointBuilder{TBuilder}.HandleTombstoneMessages" />
+        public TBuilder HandleTombstoneMessages()
+        {
+            _nullMessageHandling = NullMessageHandlingStrategy.Tombstone;
+            return This;
+        }
+
+        /// <inheritdoc cref="IConsumerEndpointBuilder{TBuilder}.SkipNullMessages" />
+        public TBuilder SkipNullMessages()
+        {
+            _nullMessageHandling = NullMessageHandlingStrategy.Skip;
+            return This;
+        }
+
+        /// <inheritdoc cref="IConsumerEndpointBuilder{TBuilder}.UseLegacyNullMessageHandling" />
+        public TBuilder UseLegacyNullMessageHandling()
+        {
+            _nullMessageHandling = NullMessageHandlingStrategy.Legacy;
+            return This;
+        }
+
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.Build" />
         public override TEndpoint Build()
         {
@@ -156,6 +179,9 @@ namespace Silverback.Messaging.Configuration
 
             if (_throwIfUnhandled != null)
                 endpoint.ThrowIfUnhandled = _throwIfUnhandled.Value;
+
+            if (_nullMessageHandling != null)
+                endpoint.NullMessageHandlingStrategy = _nullMessageHandling.Value;
 
             return endpoint;
         }

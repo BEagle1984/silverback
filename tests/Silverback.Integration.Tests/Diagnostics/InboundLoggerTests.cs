@@ -285,6 +285,33 @@ namespace Silverback.Tests.Integration.Diagnostics
         }
 
         [Fact]
+        public void LogNullMessageSkipped_Logged()
+        {
+            var envelope = new RawInboundEnvelope(
+                Stream.Null,
+                new MessageHeaderCollection
+                {
+                    { DefaultMessageHeaders.MessageType, "Message.Type" },
+                    { DefaultMessageHeaders.MessageId, "1234" }
+                },
+                new TestConsumerEndpoint("test1, test2"),
+                "test1",
+                new TestOffset("a", "42"));
+
+            var expectedMessage =
+                "The null message will be skipped. | " +
+                "endpointName: test1, " +
+                "messageType: Message.Type, " +
+                "messageId: 1234, " +
+                "unused1: (null), " +
+                "unused2: (null)";
+
+            _inboundLogger.LogNullMessageSkipped(envelope);
+
+            _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1062);
+        }
+
+        [Fact]
         public void LogAlreadyProcessed_Logged()
         {
             var envelope = new RawInboundEnvelope(

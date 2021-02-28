@@ -5,6 +5,7 @@ using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging
 {
@@ -43,6 +44,12 @@ namespace Silverback.Messaging
         ///     to the same message or the messages in a dataset.
         /// </summary>
         public SequenceSettings Sequence { get; set; } = new();
+
+        /// <summary>
+        ///     Gets or sets a value indicating how to handle the null messages. The default value is
+        ///     <see cref="Serialization.NullMessageHandlingStrategy.Tombstone" />.
+        /// </summary>
+        public NullMessageHandlingStrategy NullMessageHandlingStrategy { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether an exception must be thrown if no subscriber is handling the

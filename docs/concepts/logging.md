@@ -60,12 +60,12 @@ Id | Level | Message | Reference
 Id | Level | Message | Reference
 :-- | :-- | :-- | :--
 1001 | Information | Processing inbound message. | [ProcessingInboundMessage](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ProcessingInboundMessage)
-1002 | Warning | Error occurred processing the inbound message. | [ErrorProcessingInboundMessage](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundMessage)
+1002 | Error | Error occurred processing the inbound message. | [ErrorProcessingInboundMessage](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundMessage)
 1003 | Debug | Message '{messageId}' added to {sequenceType} '{sequenceId}'. &#124; length: {sequenceLength} | [MessageAddedToSequence](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageAddedToSequence)
 1004 | Debug | Started new {sequenceType} '{sequenceId}'. | [SequenceStarted](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_SequenceStarted)
 1005 | Debug | {sequenceType} '{sequenceId}' completed. &#124; length: {sequenceLength} | [SequenceCompleted](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_SequenceCompleted)
 1006 | Debug | The {sequenceType} '{sequenceId}' processing has been aborted. &#124; length: {sequenceLength}, reason: {reason} | [SequenceProcessingAborted](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_SequenceProcessingAborted)
-1007 | Debug | Error occurred processing the {sequenceType} '{sequenceId}'. &#124; length: {sequenceLength} | [ErrorProcessingInboundSequence](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundSequence)
+1007 | Error | Error occurred processing the {sequenceType} '{sequenceId}'. &#124; length: {sequenceLength} | [ErrorProcessingInboundSequence](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundSequence)
 1008 | Warning | The incomplete {sequenceType} '{sequenceId}' is aborted. &#124; length: {sequenceLength} | [IncompleteSequenceAborted](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceAborted)
 1009 | Warning | Skipping the incomplete sequence '{sequenceId}'. The first message is missing. | [SkippingIncompleteSequence](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_SkippingIncompleteSequence)
 1110 | Warning | Error occurred aborting the {sequenceType} '{sequenceId}'. | [ErrorAbortingInboundSequence](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorAbortingInboundSequence)
@@ -82,6 +82,10 @@ Id | Level | Message | Reference
 1024 | Warning | Error occurred while disposing the consumer. | [ConsumerDisposingError](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisposingError)
 1025 | Error | Commit failed. | [ConsumerCommitError](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerCommitError)
 1026 | Error | Rollback failed. | [ConsumerRollbackError](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerRollbackError)
+1127 | Error | Error occurred while connecting the consumer. | [ConsumerConnectError](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnectError)
+1128 | Error | Error occurred while disconnecting the consumer. | [ConsumerDisconnectError](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnectError)
+1129 | Error | Error occurred while (re)starting the consumer. | [ConsumerStartError](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerStartError)
+1130 | Error | Error occurred while stopping the consumer. | [ConsumerStopError](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ConsumerStopError)
 1027 | Debug | Connected producer to endpoint. | [ProducerConnected](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ProducerConnected)
 1028 | Debug | Disconnected producer from endpoint. | [ProducerDisconnected](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ProducerDisconnected)
 1031 | Information | Message produced. | [MessageProduced](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageProduced)
@@ -95,9 +99,10 @@ Id | Level | Message | Reference
 1048 | Information | The message will be moved to the endpoint '{targetEndpointName}'. | [MessageMoved](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageMoved)
 1049 | Information | The message(s) will be skipped. | [MessageSkipped](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageSkipped)
 1050 | Warning | The message belongs to a {sequenceType} and cannot be moved. | [CannotMoveSequences](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_CannotMoveSequences)
-1051 | Warning | An error occurred while rolling back, the retry error policy cannot be applied. The consumer will be reset. | [RollbackToRetryFailed](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_RollbackToRetryFailed)
-1052 | Warning | An error occurred while rolling back or committing, the skip message error policy cannot be applied. The consumer will be reset. | [RollbackToSkipFailed](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_RollbackToSkipFailed)
+1051 | Warning | Error occurred while rolling back, the retry error policy cannot be applied. The consumer will be reset. | [RollbackToRetryFailed](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_RollbackToRetryFailed)
+1052 | Warning | Error occurred while rolling back or committing, the skip message error policy cannot be applied. The consumer will be reset. | [RollbackToSkipFailed](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_RollbackToSkipFailed)
 1061 | Warning | Not used anymore. | [ErrorInitializingActivity](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorInitializingActivity)
+1062 | Information | The null message will be skipped. | [NullMessageSkipped](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_NullMessageSkipped)
 1072 | Information | Message is being skipped since it was already processed. | [MessageAlreadyProcessed](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageAlreadyProcessed)
 1073 | Debug | Writing the outbound message to the transactional outbox. | [MessageWrittenToOutbox](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageWrittenToOutbox)
 1074 | Trace | Reading a batch of {readBatchSize} messages from the outbox queue... | [ReadingMessagesFromOutbox](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ReadingMessagesFromOutbox)
@@ -107,6 +112,7 @@ Id | Level | Message | Reference
 1078 | Error | Error occurred processing the outbox. | [ErrorProcessingOutbox](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingOutbox)
 1101 | Critical | Invalid configuration for endpoint '{endpointName}'. | [InvalidEndpointConfiguration](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_InvalidEndpointConfiguration)
 1102 | Critical | Error occurred configuring the endpoints. &#124; configurator: {endpointsConfiguratorName} | [EndpointConfiguratorError](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_EndpointConfiguratorError)
+1103 | Error | Error occurred invoking the callback handler(s). | [CallbackHandlerError](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_CallbackHandlerError)
 1999 | Trace | The actual message will vary. | [LowLevelTracing](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_LowLevelTracing)
 
 ### Kafka
@@ -133,7 +139,7 @@ Id | Level | Message | Reference
 2040 | Error | The received statistics JSON couldn't be deserialized. | [StatisticsDeserializationError](xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_StatisticsDeserializationError)
 2041 | Information | Assigned partition {topic}[{partition}]@{offset}. | [PartitionManuallyAssigned](xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_PartitionManuallyAssigned)
 2042 | Warning | Error in Kafka consumer: '{errorReason}' ({errorCode}). | [ConfluentConsumerError](xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerError)
-2050 | Warning | Error disconnecting consumer. | [ConsumerDisconnectError](xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConsumerDisconnectError)
+2050 | Warning | An error occurred while disconnecting the consumer. | [ConfluentConsumerDisconnectError](xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerDisconnectError)
 2201 | Critical | {sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'. | [ConfluentProducerLogCritical](xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogCritical)
 2202 | Error | {sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'. | [ConfluentProducerLogError](xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogError)
 2203 | Warning | {sysLogLevel} event from Confluent.Kafka producer: '{logMessage}'. | [ConfluentProducerLogWarning](xref:Silverback.Diagnostics.KafkaLogEvents#Silverback_Diagnostics_KafkaLogEvents_ConfluentProducerLogWarning)
@@ -154,4 +160,5 @@ Id | Level | Message | Reference
 4022 | Debug | Error occurred retrying to connect to the MQTT broker. &#124; clientId: {clientId} | [ConnectRetryError](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectRetryError)
 4023 | Warning | Connection with the MQTT broker lost. The client will try to reconnect. &#124; clientId: {clientId} | [ConnectionLost](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectionLost)
 4031 | Debug | Producer queue processing was canceled. | [ProducerQueueProcessingCanceled](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ProducerQueueProcessingCanceled)
+
 

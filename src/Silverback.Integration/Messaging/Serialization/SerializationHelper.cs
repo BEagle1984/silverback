@@ -14,12 +14,7 @@ namespace Silverback.Messaging.Serialization
             var typeName = messageHeaders.GetValue(DefaultMessageHeaders.MessageType);
 
             if (string.IsNullOrEmpty(typeName))
-            {
-                if (throwOnError)
-                    throw new MessageSerializerException("Missing type header.");
-
                 return null;
-            }
 
             return TypesCache.GetType(typeName, throwOnError);
         }

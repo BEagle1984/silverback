@@ -8,6 +8,7 @@ using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.ExactlyOnce;
+using Silverback.Messaging.Serialization;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -147,6 +148,36 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             var endpoint = builder.IgnoreUnhandledMessages().Build();
 
             endpoint.ThrowIfUnhandled.Should().Be(false);
+        }
+
+        [Fact]
+        public void HandleTombstoneMessages_NullMessageHandlingSet()
+        {
+            var builder = new TestConsumerEndpointBuilder();
+
+            var endpoint = builder.HandleTombstoneMessages().Build();
+
+            endpoint.NullMessageHandlingStrategy.Should().Be(NullMessageHandlingStrategy.Tombstone);
+        }
+
+        [Fact]
+        public void SkipNullMessages_NullMessageHandlingSet()
+        {
+            var builder = new TestConsumerEndpointBuilder();
+
+            var endpoint = builder.SkipNullMessages().Build();
+
+            endpoint.NullMessageHandlingStrategy.Should().Be(NullMessageHandlingStrategy.Skip);
+        }
+
+        [Fact]
+        public void UseLegacyNullMessageHandling_NullMessageHandlingSet()
+        {
+            var builder = new TestConsumerEndpointBuilder();
+
+            var endpoint = builder.UseLegacyNullMessageHandling().Build();
+
+            endpoint.NullMessageHandlingStrategy.Should().Be(NullMessageHandlingStrategy.Legacy);
         }
     }
 }

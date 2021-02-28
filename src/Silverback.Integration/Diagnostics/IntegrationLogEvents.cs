@@ -8,6 +8,7 @@ using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Diagnostics
 {
@@ -429,6 +430,15 @@ namespace Silverback.Diagnostics
             LogLevel.Warning,
             GetEventId(61, nameof(ErrorInitializingActivity)),
             "Not used anymore.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a null message is
+        ///     skipped (see <see cref="NullMessageHandlingStrategy.Skip"/>.
+        /// </summary>
+        public static LogEvent NullMessageSkipped { get; } = new(
+            LogLevel.Information,
+            GetEventId(62, nameof(NullMessageSkipped)),
+            "The null message will be skipped.");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when the message is being skipped

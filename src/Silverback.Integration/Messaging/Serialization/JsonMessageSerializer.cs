@@ -60,14 +60,16 @@ namespace Silverback.Messaging.Serialization
         {
             Check.NotNull(messageHeaders, nameof(messageHeaders));
 
-            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders) ??
-                       throw new InvalidOperationException("Message type is null.");
+            var type = SerializationHelper.GetTypeFromHeaders(messageHeaders);
 
             if (messageStream == null)
-                return (null, type);
+                return (null, type ?? typeof(object));
 
             if (messageStream.CanSeek && messageStream.Length == 0)
-                return (null, type);
+                return (null, type ?? typeof(object));
+
+            if (type == null)
+                throw new MessageSerializerException("Missing type header.");
 
             var deserializedObject = await JsonSerializer.DeserializeAsync(messageStream, type, Options)
                                          .ConfigureAwait(false) ??

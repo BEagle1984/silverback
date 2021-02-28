@@ -53,6 +53,10 @@ namespace Silverback.Tests.Integration.TestTypes
         {
         }
 
+        public void LogNullMessageSkipped(IRawInboundEnvelope envelope)
+        {
+        }
+
         public void LogAlreadyProcessed(IRawInboundEnvelope envelope)
         {
         }

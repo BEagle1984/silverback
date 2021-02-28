@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.0.0-beta.20](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.20)
+## [3.0.0-beta.21](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.21)
 
 ### What's new
 
@@ -23,6 +23,7 @@ uid: releases
   * Add setting to produce to a specific partition
   * Add setting to manually assign the consumer partitions
 * Add option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see `throwIfUnhandled` argument in the <xref:Silverback.Messaging.Publishing.IPublisher> methods and [ThrowIfUnhandled](xref:Silverback.Messaging.IConsumerEndpoint#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled) property in the <xref:Silverback.Messaging.IConsumerEndpoint>)
+* Handle null messages as <xref:Silverback.Messaging.Messages.Tombstone>/<xref:Silverback.Messaging.Messages.Tombstone`1> (see <xref:tombstone>) 
 * Replace [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json) with [System.Text.Json](https://www.nuget.org/packages/System.Text.Json) to improve serialization and deserialization performance (the old serializers have been moved into the [Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft) package, see <xref:serialization>)
 * Improve outbound routing customization options with endpoint name resolvers (see <xref:outbound-routing>)
 * Add non-blocking `Produce`/`ProduceAsync`/`RawProduce`/`RawProduceAsync` overloads to <xref:Silverback.Messaging.Broker.IProducer>, suitable for higher throughput (see <xref:producer>)
@@ -69,7 +70,7 @@ uid: releases
 * _IConsumer.Received_ event replaced by a callback delegate
 * _IBroker.GetConsumer_ and _IBrokerCollection.GetConsumer_ methods renamed to [IBroker.AddConsumer](xref:Silverback.Messaging.Broker.IBroker#Silverback_Messaging_Broker_IBroker_AddConsumer_Silverback_Messaging_IConsumerEndpoint_) and [IBrokerCollection.AddConsumer](xref:Silverback.Messaging.Broker.IBrokerCollection#Silverback_Messaging_Broker_IBrokerCollection_AddConsumer_Silverback_Messaging_IConsumerEndpoint_)
 * _IQueueProducer_ and _IQueueConsumer_ renamed to <xref:Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter> and <xref:Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader>
-* Messages with a null or empty body can be subscribed as <xref:Silverback.Messaging.Messages.IOutboundEnvelope`1> as well, as long as the `x-message-type` header is set or a typed serializer such as <xref:Silverback.Messaging.Serialization.JsonMessageSerializer`1> is used
+* The messages with a null body are by default mapped to a <xref:Silverback.Messaging.Messages.Tombstone>/<xref:Silverback.Messaging.Messages.Tombstone`1> (see <xref:tombstone>)
 * Database:
   * Moved all entities (used with Entity Framework Core) to the `Silverback.Database.Model` namespace
   * Replaced _InboundMessage_ entity with <xref:Silverback.Database.Model.InboundLogEntry>

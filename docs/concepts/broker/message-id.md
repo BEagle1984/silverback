@@ -8,7 +8,7 @@ Silverback will ensure that an `x-message-id` header is always set with each mes
 
 The producer will automatically generate a random `Guid` to be used as message identifier. (This value will be used also as Kafka key by default, see <xref:kafka-partitioning>.) 
 
-In the consumer side the message identifier may be used also to rebuild the [chunks sequence](xref:chunking), implement [exactly once processing](xref:inbound#inbound-log), etc.. If the header is not present, the consumer may artificially set if with another identifier such as the Kafka key (see <xref:kafka-partitioning>). 
+In the consumer side the message identifier may be used also to rebuild the [chunks sequence](xref:chunking), implement [exactly once processing](xref:inbound#inbound-log) and similar. If the header is not present, the consumer may artificially set if with another identifier such as the Kafka key (see <xref:kafka-partitioning>). 
 
 ## Custom value
 

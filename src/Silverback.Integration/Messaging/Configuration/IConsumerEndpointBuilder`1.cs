@@ -5,6 +5,7 @@ using System;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.ExactlyOnce;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Serialization;
 
@@ -137,5 +138,33 @@ namespace Silverback.Messaging.Configuration
         ///     The endpoint builder so that additional calls can be chained.
         /// </returns>
         TBuilder IgnoreUnhandledMessages();
+
+        /// <summary>
+        ///     Specifies that the null messages have to be mapped to a <see cref="Tombstone{TMessage}" /> (
+        ///     <see cref="NullMessageHandlingStrategy.Tombstone" />). This is the default behavior, use the
+        ///     <see cref="UseLegacyNullMessageHandling" /> or <see cref="SkipNullMessages" /> methods to change it.
+        /// </summary>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        TBuilder HandleTombstoneMessages();
+
+        /// <summary>
+        ///     Specifies that the null messages have to be silently skipped (
+        ///     <see cref="NullMessageHandlingStrategy.Skip" />).
+        /// </summary>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        TBuilder SkipNullMessages();
+
+        /// <summary>
+        ///     Specifies that the null messages have to be forwarded as <c>null</c> (
+        ///     <see cref="NullMessageHandlingStrategy.Legacy" />).
+        /// </summary>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        TBuilder UseLegacyNullMessageHandling();
     }
 }

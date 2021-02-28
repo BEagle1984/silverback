@@ -1,7 +1,9 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
+using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
@@ -13,6 +15,19 @@ namespace Silverback.Messaging.Serialization
     /// </summary>
     public class DeserializerConsumerBehavior : IConsumerBehavior
     {
+        private readonly IInboundLogger<DeserializerConsumerBehavior> _logger;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="DeserializerConsumerBehavior" /> class.
+        /// </summary>
+        /// <param name="logger">
+        ///     The <see cref="IInboundLogger{TCategoryName}" />.
+        /// </param>
+        public DeserializerConsumerBehavior(IInboundLogger<DeserializerConsumerBehavior> logger)
+        {
+            _logger = Check.NotNull(logger, nameof(logger));
+        }
+
         /// <inheritdoc cref="ISorted.SortIndex" />
         public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Deserializer;
 
@@ -24,12 +39,20 @@ namespace Silverback.Messaging.Serialization
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            context.Envelope = await DeserializeAsync(context).ConfigureAwait(false);
+            var newEnvelope = await DeserializeAsync(context).ConfigureAwait(false);
+
+            if (newEnvelope == null)
+            {
+                _logger.LogNullMessageSkipped(context.Envelope);
+                return;
+            }
+
+            context.Envelope = newEnvelope;
 
             await next(context).ConfigureAwait(false);
         }
 
-        private static async Task<IRawInboundEnvelope> DeserializeAsync(ConsumerPipelineContext context)
+        private static async Task<IRawInboundEnvelope?> DeserializeAsync(ConsumerPipelineContext context)
         {
             var envelope = context.Envelope;
 
@@ -43,10 +66,72 @@ namespace Silverback.Messaging.Serialization
                         new MessageSerializationContext(envelope.Endpoint, envelope.ActualEndpointName))
                     .ConfigureAwait(false);
 
-            envelope.Headers.AddIfNotExists(DefaultMessageHeaders.MessageType, deserializedType.AssemblyQualifiedName);
+            envelope.Headers.AddIfNotExists(
+                DefaultMessageHeaders.MessageType,
+                deserializedType.AssemblyQualifiedName);
 
-            // Create typed message for easier specific subscription
-            return SerializationHelper.CreateTypedInboundEnvelope(envelope, deserializedObject, deserializedType);
+            return deserializedObject == null
+                ? HandleNullMessage(context, envelope, deserializedType)
+                : SerializationHelper.CreateTypedInboundEnvelope(
+                    envelope,
+                    deserializedObject,
+                    deserializedType);
+        }
+
+        private static IRawInboundEnvelope? HandleNullMessage(
+            ConsumerPipelineContext context,
+            IRawInboundEnvelope envelope,
+            Type deserializedType)
+        {
+            switch (context.Consumer.Endpoint.NullMessageHandlingStrategy)
+            {
+                case NullMessageHandlingStrategy.Tombstone:
+                    return CreateTombstoneEnvelope(envelope, deserializedType);
+                case NullMessageHandlingStrategy.Legacy:
+                    return SerializationHelper.CreateTypedInboundEnvelope(
+                        envelope,
+                        null,
+                        deserializedType);
+                case NullMessageHandlingStrategy.Skip:
+                    return null;
+                default:
+                    throw new InvalidOperationException("Unknown NullMessageHandling value.");
+            }
+        }
+
+        private static IRawInboundEnvelope CreateTombstoneEnvelope(
+            IRawInboundEnvelope envelope,
+            Type deserializedType)
+        {
+            var tombstone = CreateTombstone(deserializedType, envelope);
+            return SerializationHelper.CreateTypedInboundEnvelope(
+                envelope,
+                tombstone,
+                tombstone.GetType());
+        }
+
+        private static Tombstone CreateTombstone(Type? deserializedType, IRawInboundEnvelope envelope)
+        {
+            var messageId = envelope.Headers.GetValue(DefaultMessageHeaders.MessageId);
+
+            if (deserializedType == null)
+            {
+                envelope.Headers.AddOrReplace(
+                    DefaultMessageHeaders.MessageType,
+                    typeof(Tombstone).AssemblyQualifiedName);
+
+                return new Tombstone(messageId);
+            }
+
+            var tombstoneType = typeof(Tombstone<>).MakeGenericType(deserializedType);
+
+            envelope.Headers.AddOrReplace(
+                DefaultMessageHeaders.MessageType,
+                tombstoneType.AssemblyQualifiedName);
+
+            return (Tombstone)Activator.CreateInstance(
+                tombstoneType,
+                messageId);
         }
     }
 }

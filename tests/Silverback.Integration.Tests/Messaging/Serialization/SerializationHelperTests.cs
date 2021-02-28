@@ -63,22 +63,6 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         }
 
         [Fact]
-        public void GetTypeFromHeader_NonExistingTypeWithNoThrow_NullReturned()
-        {
-            var headers = new MessageHeaderCollection
-            {
-                {
-                    "x-message-type",
-                    "Baaaad.Event, Silverback.Integration.Tests"
-                }
-            };
-
-            var type = SerializationHelper.GetTypeFromHeaders(headers, false);
-
-            type.Should().BeNull();
-        }
-
-        [Fact]
         public void GetTypeFromHeader_IncompleteTypeName_TypeReturned()
         {
             var headers = new MessageHeaderCollection
@@ -95,17 +79,9 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
         }
 
         [Fact]
-        public void GetTypeFromHeader_NoHeader_ExceptionThrown()
+        public void GetTypeFromHeader_NoHeader_NullReturned()
         {
-            Action act = () => SerializationHelper.GetTypeFromHeaders(new MessageHeaderCollection());
-
-            act.Should().Throw<MessageSerializerException>();
-        }
-
-        [Fact]
-        public void GetTypeFromHeader_NoHeaderWithNoThrow_NullReturned()
-        {
-            var type = SerializationHelper.GetTypeFromHeaders(new MessageHeaderCollection(), false);
+            var type = SerializationHelper.GetTypeFromHeaders(new MessageHeaderCollection());
 
             type.Should().BeNull();
         }

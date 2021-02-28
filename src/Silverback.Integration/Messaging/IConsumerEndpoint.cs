@@ -5,6 +5,7 @@ using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
+using Silverback.Messaging.Serialization;
 
 namespace Silverback.Messaging
 {
@@ -27,8 +28,7 @@ namespace Silverback.Messaging
 
         /// <summary>
         ///     Gets a value indicating whether an exception must be thrown if no subscriber is handling the
-        ///     received message. The default is <c>false</c> and it means that the unhandled messages are silently
-        ///     discarded.
+        ///     received message. The default is <c>true</c>.
         /// </summary>
         bool ThrowIfUnhandled { get; }
 
@@ -42,6 +42,12 @@ namespace Silverback.Messaging
         ///     Gets the strategy to be used to guarantee that each message is consumed only once.
         /// </summary>
         IExactlyOnceStrategy? ExactlyOnceStrategy { get; }
+
+        /// <summary>
+        ///     Gets a value indicating how to handle the null messages. The default value is
+        ///     <see cref="Serialization.NullMessageHandlingStrategy.Tombstone" />.
+        /// </summary>
+        NullMessageHandlingStrategy NullMessageHandlingStrategy { get; }
 
         /// <summary>
         ///     Gets a unique name for the consumer group (e.g. Kafka's consumer group id). This value (joint with

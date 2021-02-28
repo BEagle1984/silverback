@@ -28,6 +28,8 @@
           href: broker/headers.md
         - name: Serialization
           href: broker/serialization.md
+        - name: Tombstone Message
+          href: broker/tombstone.md
         - name: Message Identifier
           href: broker/message-id.md
         - name: IInboundEnvelope
