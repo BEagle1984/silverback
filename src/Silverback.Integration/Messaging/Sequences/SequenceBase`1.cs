@@ -526,7 +526,7 @@ namespace Silverback.Messaging.Sequences
             _timeoutCancellationTokenSource?.Cancel();
 
             await Context.SequenceStore.RemoveAsync(SequenceId).ConfigureAwait(false);
-            if (await HandleExceptionAsync(exception).ConfigureAwait(false))
+            if (await RollbackTransactionAndNotifyProcessingCompletedAsync(exception).ConfigureAwait(false))
                 LogAbort();
 
             _streamProvider.Abort();
@@ -536,7 +536,7 @@ namespace Silverback.Messaging.Sequences
         }
 
         [SuppressMessage("", "CA1031", Justification = "Exception notified")]
-        private async Task<bool> HandleExceptionAsync(Exception? exception)
+        private async Task<bool> RollbackTransactionAndNotifyProcessingCompletedAsync(Exception? exception)
         {
             var done = true;
 

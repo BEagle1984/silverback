@@ -69,7 +69,9 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
             catch (Exception exception)
             {
-                // Sequence errors are handled in AwaitSequenceProcessingAsync, just await the rollback and rethrow
+                // Sequence errors are handled in AwaitSequenceProcessingAsync, just await the rollback and
+                // rethrow (-> if the exception bubbled up till this point, it's because it failed to be
+                // handled and it's safer to stop the consumer)
                 if (context.Sequence != null)
                 {
                     await context.Sequence.AbortAsync(SequenceAbortReason.Error, exception)

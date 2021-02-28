@@ -362,12 +362,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(10)))
                         .AddDelegateSubscriber(
-                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
+                            (IEnumerable<TestEventOne> eventsStream) =>
                             {
                                 var list = new List<TestEventOne>();
                                 receivedBatches.ThreadSafeAdd(list);
 
-                                await foreach (var message in eventsStream)
+                                foreach (var message in eventsStream)
                                 {
                                     list.Add(message);
                                 }
