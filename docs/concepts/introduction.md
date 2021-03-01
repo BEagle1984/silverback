@@ -67,7 +67,7 @@ Includes some utilities to help writing automated tests involving Silverback.Int
 
 #### Silverback.Integration.Kafka
 
-An implementation of [Silverback.Integration](https://www.nuget.org/packages/Silverback.Integration) for the popular Apache Kafka message broker. It internally uses the `Confluent.Kafka` client library.
+An implementation of [Silverback.Integration](https://www.nuget.org/packages/Silverback.Integration) for the popular Apache Kafka message broker.
 
 [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka)
 
@@ -83,9 +83,21 @@ Includes a mock for the Kafka message broker to be used for in-memory testing.
 
 [![NuGet](https://buildstats.info/nuget/Silverback.Integration.Kafka.Testing?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.Kafka.Testing)
 
+#### Silverback.Integration.MQTT
+
+An implementation of [Silverback.Integration](https://www.nuget.org/packages/Silverback.Integration) for MQTT.
+
+[![NuGet](https://buildstats.info/nuget/Silverback.Integration.MQTT?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.MQTT)
+
+#### Silverback.Integration.MQTT.Testing
+
+Includes a mock for the MQTT message broker to be used for in-memory testing.
+
+[![NuGet](https://buildstats.info/nuget/Silverback.Integration.MQTT.Testing?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.MQTT.Testing)
+
 #### Silverback.Integration.RabbitMQ
 
-An implementation of [Silverback.Integration](https://www.nuget.org/packages/Silverback.Integration) for the popular RabbitMQ message broker. It internally uses the `RabbitMQ.Client` library.
+An implementation of [Silverback.Integration](https://www.nuget.org/packages/Silverback.Integration) for the popular RabbitMQ message broker.
 
 [![NuGet](https://buildstats.info/nuget/Silverback.Integration.RabbitMQ?includePreReleases=true)](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ)
 

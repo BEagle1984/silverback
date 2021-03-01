@@ -53,3 +53,10 @@ public class StreamSubscriber
 }
 ```
 ***
+
+# Notes, suggestions and insights
+
+* The stream will be pushed with messages as they are read from the message broker. Since the I/O bound nature of the operation you should obviously prefer to subscribe to an [IAsyncEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1) instead of an [IEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1) and in any case loop asynchronously (`await foreach` or similar approach).
+* If the sequence is interrupted because the application is disconnecting or an error occurred in another subscriber, the [IEnumerator](https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerator) will throw an [OperationCancelledException](https://docs.microsoft.com/en-us/dotnet/api/system.operationcanceledexception). Handle it if you need to gracefully abort or cleanup.
+* Throwing an exception while enumerating a sequence (e.g. a [BatchSequence](xref:Silverback.Messaging.Sequences.Batch.BatchSequence)) will cause it to be aborted and handled according to the defined [error policies](xref:inbound#error-handling). If you just break the iteration and the subscriber return, the operation will be considered successful instead and the sequence will be committed.
+

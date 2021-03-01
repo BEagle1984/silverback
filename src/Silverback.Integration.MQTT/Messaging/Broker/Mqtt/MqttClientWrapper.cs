@@ -10,7 +10,6 @@ using MQTTnet;
 using MQTTnet.Client;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Callbacks;
-using Silverback.Messaging.Broker.Events;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 

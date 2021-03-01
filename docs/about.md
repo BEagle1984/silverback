@@ -19,6 +19,7 @@ Silverback uses the following libraries under the hood:
 * [Rx.Net](https://github.com/dotnet/reactive)
 * [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
 * [Confluent's .NET Client for Apache Kafka](https://github.com/confluentinc/confluent-kafka-dotnet)
+* [MQTTNet](https://github.com/chkr1011/MQTTnet)
 * [RabbitMQ .NET Client](https://github.com/rabbitmq/rabbitmq-dotnet-client)
 
 ## Special Thanks

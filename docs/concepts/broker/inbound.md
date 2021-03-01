@@ -68,6 +68,66 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 > [!Note]
 > For a more in-depth documentation about the Kafka client configuration refer also to the [confluent-kafka-dotnet documentation](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html).
 
+## MQTT
+
+The <xref:Silverback.Messaging.MqttConsumerEndpoint> is defined by
+[Silverback.Integration.MQTT](https://www.nuget.org/packages/Silverback.Integration.MQTT) and is used to declare an inbound endpoint connected to an MQTT broker.
+
+# [Fluent (preferred)](#tab/mqtt-consumer-fluent)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddMqttEndpoints(endpoints => endpoints
+                .Configure(
+                    config => config
+                        .WithClientId("order-service")
+                        .ConnectViaTcp("localhost")
+                        .SendLastWillMessage(
+                            lastWill => lastWill
+                                .Message(new TestamentMessage())
+                                .ProduceTo("testaments")))
+                .AddInbound(endpoint => endpoint
+                    .ConsumeFrom("order-events", "inventory-events")
+                    .WithQualityOfServiceLevel(
+                        MqttQualityOfServiceLevel.AtLeastOnce)
+                    .OnError(policy => policy.Retry(5))));
+}
+```
+# [Legacy](#tab/mqtt-consumer-legacy)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddInbound(
+                new MqttConsumerEndpoint(
+                    "order-events", 
+                    "inventory-events")
+                {
+                    Configuration =
+                    {
+                        ClientId = "order-service",
+                        ChannelOptions = new MqttClientTcpOptions
+                        {
+                            Server = "localhost"
+                        },
+                        WillMessage = new MqttApplicationMessage() { ... }
+                    },
+                    QualityOfServiceLevel = MqttQualityOfServiceLevel.AtLeastOnce
+                    ErrorPolicy = new RetryErrorPolicy().MaxFailedAttempts(5) 
+                });
+}
+```
+***
+
+> [!Note]
+> It doesn't matter how you configure the inbound and outbound endpoints, a single client will be created as long as all endpoints match the exact same configuration. (Using a slightly different configuration for the same client it will cause an exception to be thrown when validating the endpoints configuration.) 
+
+> [!Note]
+> For a more in-depth documentation about the MQTT client configuration refer also to the [MQTTNet documentation](https://github.com/chkr1011/MQTTnet/wiki).
+
 ## RabbitMQ
 
 [Silverback.Integration.RabbitMQ](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ) is a bit more intricate and uses 2 different classes to specify an endpoint that connects to a queue (<xref:Silverback.Messaging.RabbitQueueConsumerEndpoint>) or directly to an exchange (<xref:Silverback.Messaging.RabbitExchangeConsumerEndpoint>).
@@ -193,7 +253,7 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 
 ### Apply rules
 
-Use [ApplyTo](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyTo_Type_) and [Exclude](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Exclude_Type_) methods to decide which exceptions must be handled by the error policy or take advantage of [ApplyWhen](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyWhen_Func_IRawInboundEnvelope_Exception_System_Boolean__) to specify a custom apply rule.
+Use [ApplyTo](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyTo_System_Type_) and [Exclude](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_Exclude_System_Type_) methods to decide which exceptions must be handled by the error policy or take advantage of [ApplyWhen](xref:Silverback.Messaging.Inbound.ErrorHandling.ErrorPolicyBase#Silverback_Messaging_Inbound_ErrorHandling_ErrorPolicyBase_ApplyWhen_System_Func_Silverback_Messaging_Messages_IRawInboundEnvelope_System_Exception_System_Boolean__) to specify a custom apply rule.
 
 ```csharp
 .OnError(policy => policy

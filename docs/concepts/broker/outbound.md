@@ -58,6 +58,61 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 > [!Note]
 > For a more in-depth documentation about the Kafka client configuration refer also to the [confluent-kafka-dotnet documentation](https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html).
 
+## MQTT
+
+The <xref:Silverback.Messaging.MqttProducerEndpoint> is defined by
+[Silverback.Integration.MQTT](https://www.nuget.org/packages/Silverback.Integration.MQTT) and is used to declare an outbound endpoint connected to an MQTT broker.
+
+# [Fluent (preferred)](#tab/mqtt-producer-fluent)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddMqttEndpoints(endpoints => endpoints
+                .Configure(
+                    config => config
+                        .WithClientId("order-service")
+                        .ConnectViaTcp("localhost")
+                        .SendLastWillMessage(
+                            lastWill => lastWill
+                                .Message(new TestamentMessage())
+                                .ProduceTo("testaments")))
+                .AddOutbound<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo("order-events")
+                    .WithQualityOfServiceLevel(
+                        MqttQualityOfServiceLevel.AtLeastOnce)
+                    .Retain()));
+}
+```
+# [Legacy](#tab/mqtt-producer-legacy)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddOutbound<IIntegrationEvent>(
+                new MqttProducerEndpoint("order-events")
+                {
+                    Configuration =
+                    {
+                        ClientId = "order-service",
+                        ChannelOptions = new MqttClientTcpOptions
+                        {
+                            Server = "localhost"
+                        },
+                        WillMessage = new MqttApplicationMessage() { ... }
+                    },
+                    QualityOfServiceLevel = MqttQualityOfServiceLevel.AtLeastOnce,
+                    Retain = true
+                });
+}
+```
+***
+
+> [!Note]
+> For a more in-depth documentation about the MQTT client configuration refer also to the [MQTTNet documentation](https://github.com/chkr1011/MQTTnet/wiki).
+> 
 ## RabbitMQ
 
 [Silverback.Integration.RabbitMQ](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ) is a bit more intricate and uses 2 different classes to specify an endpoint that connects to a queue (<xref:Silverback.Messaging.RabbitQueueProducerEndpoint>) or directly to an exchange (<xref:Silverback.Messaging.RabbitExchangeProducerEndpoint>).

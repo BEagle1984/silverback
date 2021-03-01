@@ -12,7 +12,7 @@ The following example is very basic and there are of course many more configurat
 
 The basic concepts:
 * `WithConnectionToMessageBroker` registers the services necessary to connect to a message broker
-* `AddKafka`, `AddRabbit`, etc. register the message broker implementation(s)
+* `AddKafka`, `AddMqtt`, `AddRabbit`, etc. register the message broker implementation(s)
 * `AddEndpointsConfigurator` is used to outsource the endpoints configuration into a separate class implementing the <xref:Silverback.Messaging.Configuration.IEndpointsConfigurator> interface (of course multiple configurators can be registered)
 * `AddInbound` is used to automatically relay the incoming messages to the internal bus and they can therefore be subscribed as seen in the previous chapters
 * `AddOutbound` works the other way around and subscribes to the internal bus to forward the integration messages to the message broker
@@ -57,7 +57,7 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                         config.GroupId = "order-service";
                     }))
                 .AddInbound(endpoint => endpoint
-                    .ConsumeFrom("basket-events")
+                    .ConsumeFrom("payment-events")
                     .Configure(config =>
                     {
                         confing.GroupId = "order-service"
@@ -67,6 +67,57 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 }
 ```
 ***
+
+#### MQTT
+
+# [Startup](#tab/mqtt-startup)
+```csharp
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options => options
+                .AddMqtt())
+            .AddEndpointsConfigurator<MyEndpointsConfigurator>();
+    }
+}
+```
+# [EndpointsConfigurator](#tab/mqtt-configurator)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddMqttEndpoints(endpoints => endpoints
+                .Configure(
+                    config => config
+                        .WithClientId("order-service")
+                        .ConnectViaTcp("localhost")
+                        .SendLastWillMessage(
+                            lastWill => lastWill
+                                .Message(new TestamentMessage())
+                                .ProduceTo("testaments")))
+                .AddInbound(endpoint => endpoint
+                    .ConsumeFrom("basket-events")
+                    .WithQualityOfServiceLevel(
+                        MqttQualityOfServiceLevel.AtLeastOnce))
+                .AddInbound(endpoint => endpoint
+                    .ConsumeFrom("payment-events")
+                    .WithQualityOfServiceLevel(
+                        MqttQualityOfServiceLevel.AtLeastOnce))
+                .AddOutbound<IIntegrationEvent>(endpoint => endpoint
+                    .ProduceTo("order-events")
+                    .WithQualityOfServiceLevel(
+                        MqttQualityOfServiceLevel.AtLeastOnce)
+                    .Retain()));
+}
+```
+***
+
+> [!Important]
+> Silverback uses by default the v5 of the MQTT protocol, since it supports the user properties (headers). You can of course configure the client to use an older version but some Silverback functionalities (relying on message headers) might not work.
 
 #### RabbitMQ
 
@@ -312,9 +363,9 @@ It is important to properly close the consumers using the `DisconnectAsync` meth
 The [Silverback.Integration.HealthChecks](https://www.nuget.org/packages/Silverback.Integration.HealthChecks) package contains some extensions for [Microsoft.Extensions.Diagnostics.HealthChecks](https://www.nuget.org/packages/Microsoft.Extensions.Diagnostics.HealthChecks) that can be used to monitor the connection to the message broker.
 
 Currently two checks exists:
-* [AddOutboundEndpointsCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___): Adds an health check that sends a ping message to all the outbound endpoints.
-* [AddOutboxCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___): Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.
-* [AddConsumersCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___): Adds an health check that verifies that all consumers are connected.
+* [AddOutboundEndpointsCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__): Adds an health check that sends a ping message to all the outbound endpoints.
+* [AddOutboxCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__): Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.
+* [AddConsumersCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__): Adds an health check that verifies that all consumers are connected.
 
 The usage is very simple, you just need to configure the checks in the Startup.cs, as shown in the following example.
 

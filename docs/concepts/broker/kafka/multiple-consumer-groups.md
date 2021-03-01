@@ -4,7 +4,7 @@ uid: kafka-consumer-groups
 
 # Multiple Consumer Groups (in same process)
 
-In some cases you may want to consume subscribe multiple times the same consumed message, to perform independent tasks. Having multiple subscribers handling the very same message is not a good idea since a failure in one of them will cause the message to be consumed again and thus reprocessed by all subscribers.
+In some cases you may want to subscribe multiple times the same consumed message, to perform independent tasks. Having multiple subscribers handling the very same message is not a good idea since a failure in one of them will cause the message to be consumed again and thus reprocessed by all subscribers.
 
 A much safer approach is to bind multiple consumers to the same topic, using a different consumer group id. This will cause the message to be consumed multiple times (once per consumer group) and being committed independently. The <xref:Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute> can be used to execute a subscribed method according to the group id.
 
@@ -56,7 +56,7 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                         BootstrapServers = "PLAINTEXT://kafka:9092",
                         GroupId = "group2"
                     }
-                });;
+                });
 }
 ```
 # [Subscriber](#tab/groups-subscriber)

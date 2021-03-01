@@ -3,18 +3,17 @@
 
 using System.Threading.Tasks;
 using MQTTnet.Client;
-using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Mqtt;
 
-namespace Silverback.Messaging.Broker.Events
+namespace Silverback.Messaging.Broker.Callbacks
 {
     /// <summary>
-    ///     Declares the <see cref="OnClientDisconnectingAsync" /> event handler.
+    ///     Declares the <see cref="OnClientConnectedAsync" /> event handler.
     /// </summary>
-    public interface IMqttClientDisconnectingCallback : IBrokerCallback
+    public interface IMqttClientConnectedCallback : IBrokerCallback
     {
         /// <summary>
-        ///     Called when the underlying <see cref="IMqttClient" /> is disconnecting from the broker.
+        ///     Called when the underlying <see cref="IMqttClient" /> connects to the broker.
         /// </summary>
         /// <param name="config">
         ///     The client configuration.
@@ -22,6 +21,6 @@ namespace Silverback.Messaging.Broker.Events
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task OnClientDisconnectingAsync(MqttClientConfig config);
+        Task OnClientConnectedAsync(MqttClientConfig config);
     }
 }

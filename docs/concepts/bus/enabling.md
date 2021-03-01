@@ -22,7 +22,7 @@ public class Startup
 
 ## Configuring Silverback
 
-The [AddSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionAddSilverbackExtensions#Microsoft_Extensions_DependencyInjection_ServiceCollectionAddSilverbackExtensions_AddSilverback_IServiceCollection_) method highlighted in the previous chapter returns an <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> that exposes all the methods needed to configure Silverback and wire everything up.
+The [AddSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionAddSilverbackExtensions#Microsoft_Extensions_DependencyInjection_ServiceCollectionAddSilverbackExtensions_AddSilverback_Microsoft_Extensions_DependencyInjection_IServiceCollection_) method highlighted in the previous chapter returns an <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> that exposes all the methods needed to configure Silverback and wire everything up.
 
 The several configuration options will are exhaustively presented in each dedicated section of this documentation but here is a basic sample startup.
 
@@ -43,7 +43,7 @@ public class Startup
 }
 ```
 
-Note that [AddSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionAddSilverbackExtensions#Microsoft_Extensions_DependencyInjection_ServiceCollectionAddSilverbackExtensions_AddSilverback_IServiceCollection_) should be called only once but you can use the [ConfigureSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions#Microsoft_Extensions_DependencyInjection_ServiceCollectionConfigureSilverbackExtensions_ConfigureSilverback_IServiceCollection_) extension method on the [IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection) to retrieve the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> instance once again.
+Note that [AddSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionAddSilverbackExtensions#Microsoft_Extensions_DependencyInjection_ServiceCollectionAddSilverbackExtensions_AddSilverback_Microsoft_Extensions_DependencyInjection_IServiceCollection_) should be called only once but you can use the [ConfigureSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions#Microsoft_Extensions_DependencyInjection_ServiceCollectionConfigureSilverbackExtensions_ConfigureSilverback_Microsoft_Extensions_DependencyInjection_IServiceCollection_) extension method on the [IServiceCollection](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection) to retrieve the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> instance once again.
 
 # [Startup](#tab/configure-startup)
 ```csharp

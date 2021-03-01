@@ -17,6 +17,7 @@ namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
                             config => config
                                 .WithClientId("samples.basic.consumer")
                                 .ConnectViaTcp("localhost")
+                                .UseProtocolVersion(MqttProtocolVersion.V310)
 
                                 // Send last will message if disconnecting
                                 // ungracefully

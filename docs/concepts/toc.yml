@@ -52,6 +52,8 @@
           href: broker/behaviors.md
         - name: Producer
           href: broker/producer.md
+        - name: Callbacks
+          href: broker/callbacks.md
     - name: Kafka Specific
       items:
         - name: Partitioning and Key
@@ -60,6 +62,12 @@
           href: broker/kafka/multiple-consumer-groups.md
         - name: Kafka Events
           href: broker/kafka/kafka-events.md
+    - name: MQTT Specific
+      items:
+          - name: Multiple Clients (in same process)
+            href: broker/mqtt/multiple-clients.md
+          - name: MQTT Events
+            href: broker/mqtt/mqtt-events.md
     - name: RabbitMQ Specific
       items:
         - name: Routing Key

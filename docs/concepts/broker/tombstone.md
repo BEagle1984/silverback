@@ -8,7 +8,7 @@ A tombstone message is a message with a `null` body, used to indicate that the r
 
 ## Consumer
 
-Silverback maps by default the messages with a `null` body to a <xref:Silverback.Messaging.Messages.Tombstone> or <xref:Silverback.Messaging.Messages.Tombstone`1>. This behavior can be changed setting using the [SkipNullMessages](xref:) or [UseLegacyNullMessageHandling](xref:) of the <xref:Silverback.Messaging.Configuration.IConsumerEndpointBuilder`1>, or setting the [NullMessageHandlingStrategy](xref:) property of the <xref:Silverback.Messaging.IConsumerEndpoint>).
+Silverback maps by default the messages with a `null` body to a <xref:Silverback.Messaging.Messages.Tombstone> or <xref:Silverback.Messaging.Messages.Tombstone`1>. This behavior can be changed setting using the [SkipNullMessages](xref:Silverback.Messaging.Configuration.IConsumerEndpointBuilder`1#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_SkipNullMessages) or [UseLegacyNullMessageHandling](xref:Silverback.Messaging.Configuration.IConsumerEndpointBuilder`1#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_UseLegacyNullMessageHandling) of the <xref:Silverback.Messaging.Configuration.IConsumerEndpointBuilder`1>, or setting the [NullMessageHandlingStrategy](xref:Silverback.Messaging.ConsumerEndpoint#Silverback_Messaging_ConsumerEndpoint_NullMessageHandlingStrategy) property of the <xref:Silverback.Messaging.ConsumerEndpoint>).
 
 The <xref:Silverback.Messaging.Messages.Tombstone>/<xref:Silverback.Messaging.Messages.Tombstone`1> message exposes a single property containing the [message identifier](xref:message-id). 
 

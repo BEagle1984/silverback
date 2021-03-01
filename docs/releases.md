@@ -4,10 +4,11 @@ uid: releases
 
 # Releases
 
-## [3.0.0-beta.21](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.21)
+## [3.0.0-beta.22](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0-beta.22)
 
 ### What's new
 
+* Add support for MQTT (see <xref:message-broker>, <xref:inbound>, <xref:outbound>, ...)
 * Simplify configuration and reduce boiler plate (see <xref:subscribe> and <xref:message-broker>)
   * Simplify subscribers registration and get rid of the _ISubscriber_ interface (see <xref:subscribe>)
   * Scan subscribers automatically at startup to reduce cost of first message
@@ -53,7 +54,7 @@ uid: releases
 * Refactored <xref:Silverback.Messaging.Publishing.IPublisher>
   * Removed the overloads to publish a batch of messages (see <xref:publish>)
   * Cannot subscribe to collection of messages anymore (see <xref:subscribe>), unless they are consumed from a message broker (see <xref:streaming>)
-* The chunks belonging to the same message must be contiguous (interleaved messages are at the moment not supported anymore)
+* The chunks belonging to the same message must be contiguous (interleaved messages are at the moment not supported anymore) and in the same partition in case of Kafka
 * Removed _ISubscriber_ interface
 * Removed _BusConfigurator_ (moved all the configuration into the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> extension methods)
   * Replaced _BusConfigurator.Connect_ with [ISilverbackBuilder.AddEndpointsConfigurator](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddEndpointsConfiguratorExtensions) and [ISilverbackBuilder.AddEndpoints](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddEndpointsExtensions) (or [ISilverbackBuilder.AddKafkaEndpoints](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddKafkaEndpointsExtensions) etc.) to configure the endpoints, while the broker is connected automatically at startup (see <xref:message-broker>)
@@ -94,11 +95,13 @@ uid: releases
   * Changed signature of the `HandleAsync` method (see <xref:behaviors> and <xref:broker-behaviors>)
   * Changed some sort indexes and introduced some new broker behaviors, you may need to adjust the sort index of your custom behaviors (see <xref:broker-behaviors> for the updated list of built-in behaviors)
 * Replaced _IBroker.Connect_ and _IBroker.Disconnect_ with [IBroker.ConnectAsync](xref:Silverback.Messaging.Broker.IBroker#Silverback_Messaging_Broker_IBroker_ConnectAsync) and [IBroker.DisconnectAsync](xref:Silverback.Messaging.Broker.IBroker#Silverback_Messaging_Broker_IBroker_DisconnectAsync)
-* Removed all batch events (_BatchStartedEvent_, _BatchCompleteEvent_, _BatchProcessedEvent_, _BatchAbortedEvent_), refer to <xref:streaming> to learn how to leverage the new <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1>
+* Some major changes to batch consuming:
+  * Removed all batch events (_BatchStartedEvent_, _BatchCompleteEvent_, _BatchProcessedEvent_, _BatchAbortedEvent_), refer to <xref:streaming> to learn how to leverage the new <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1>
+  * Setting the batch size to 1 doesn't disable batching anymore, set the `Batch` to `null` in the <xref:Silverback.Messaging.ConsumerEndpoint> to disable it
+  * When batching is enabled the messages can be subscribed only via the <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> (see <xref:streaming>), the subscribers to the single messages will not be invoked
 * <xref:Silverback.Messaging.Sequences.Chunking.ChunkSettings> moved from `Silverback.Messaging.LargeMessages` namespace to `Silverback.Messaging.Sequences.Chunking`
 * Replaced _CoreEventIds_, _IntegrationEventIds_, _KafkaEventIds_ and _RabbitEventIds_ with <xref:Silverback.Diagnostics.CoreLogEvents>, <xref:Silverback.Diagnostics.IntegrationLogEvents>, <xref:Silverback.Diagnostics.KafkaLogEvents> and <xref:Silverback.Diagnostics.RabbitLogEvents> (see also <xref:logging>)
-* Setting the batch size to 1 doesn't disable batching anymore, set the `Batch` to `null` in the <xref:Silverback.Messaging.ConsumerEndpoint> to disable it
-* Deprecated support for Entity Framework 2, only the version 3.0.1 of Silverback.Core.EntityFrameworkCore will work with Silverback 3.0.0
+* Deprecated support for Entity Framework 2, only the version 3.0.1 of [Silverback.Core.EntityFrameworkCore](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore) will work with Silverback 3.0.0
 
 ## [2.2.0](https://github.com/BEagle1984/silverback/releases/tag/v2.2.0)
 

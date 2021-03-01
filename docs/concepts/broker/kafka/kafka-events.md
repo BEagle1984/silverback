@@ -35,17 +35,17 @@ public class Startup
     }
 }
 ```
-# [ResetOffsetPartitionsAssignedCallbackHandler](#tab/offset-reset-legacy)
+# [ResetOffsetPartitionsAssignedCallbackHandler](#tab/offset-reset-handler)
 ```csharp
-  public class ResetOffsetPartitionsAssignedCallbackHandler
+public class ResetOffsetPartitionsAssignedCallbackHandler
     : IKafkaPartitionsAssignedCallback
-  {
-      public IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
-          IReadOnlyCollection<TopicPartition> topicPartitions,
-          KafkaConsumer consumer) =>
-          topicPartitions.Select(
-              topicPartition => new TopicPartitionOffset(topicPartition, Offset.Beginning));
-  }
+{
+    public IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
+        IReadOnlyCollection<TopicPartition> topicPartitions,
+        KafkaConsumer consumer) =>
+        topicPartitions.Select(
+            topicPartition => new TopicPartitionOffset(topicPartition, Offset.Beginning));
+}
 ```
 ***
 
@@ -53,3 +53,7 @@ public class Startup
 
 These callbacks are available:
 * <xref:Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback>
+
+## See also
+
+<xref:broker-callbacks>
