@@ -1,4 +1,5 @@
-﻿using MQTTnet.Protocol;
+﻿using MQTTnet.Formatter;
+using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration;
 using Silverback.Samples.Mqtt.Basic.Common;
 
