@@ -2,8 +2,10 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,33 +71,59 @@ namespace Silverback.Messaging.Broker
             DisposeConfluentProducer();
         }
 
-        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
-        protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
-            AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
+        /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string)" />
+        protected override IBrokerMessageIdentifier? ProduceCore(
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName) =>
+            AsyncHelper.RunSynchronously(
+                () => ProduceCoreAsync(message, messageStream, headers, actualEndpointName));
 
-        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action,Action{Exception})" />
-        [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
+        /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string)" />
+        protected override IBrokerMessageIdentifier? ProduceCore(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName) =>
+            AsyncHelper.RunSynchronously(
+                () => ProduceCoreAsync(message, messageBytes, headers, actualEndpointName));
+
+        /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
         protected override void ProduceCore(
-            IOutboundEnvelope envelope,
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
+            Action onSuccess,
+            Action<Exception> onError) =>
+            ProduceCore(message, messageStream.ReadAll(), headers, actualEndpointName, onSuccess, onError);
+
+        /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        [SuppressMessage("", "CA1031", Justification = "Exception forwarded")]
+        protected override void ProduceCore(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
             Action onSuccess,
             Action<Exception> onError)
         {
-            Check.NotNull(envelope, nameof(envelope));
             Check.NotNull(onSuccess, nameof(onSuccess));
             Check.NotNull(onError, nameof(onError));
 
             var kafkaMessage = new Message<byte[]?, byte[]?>
             {
-                Key = GetKafkaKeyAndRemoveHeader(envelope.Headers),
-                Value = envelope.RawMessage.ReadAll()
+                Key = GetKafkaKey(headers),
+                Value = messageBytes
             };
 
-            if (envelope.Headers.Count >= 1)
-                kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
+            if (headers != null && headers.Count >= 1)
+                kafkaMessage.Headers = headers.ToConfluentHeaders();
 
             var topicPartition = new TopicPartition(
-                envelope.ActualEndpointName,
-                GetPartitionAndRemoveHeader(envelope.Headers));
+                actualEndpointName,
+                GetPartition(headers));
 
             GetConfluentProducer().Produce(
                 topicPartition,
@@ -126,25 +154,40 @@ namespace Silverback.Messaging.Broker
                 });
         }
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
-        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
-        {
-            Check.NotNull(envelope, nameof(envelope));
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string)" />
+        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName) =>
+            await ProduceCoreAsync(
+                    message,
+                    await messageStream.ReadAllAsync().ConfigureAwait(false),
+                    headers,
+                    actualEndpointName)
+                .ConfigureAwait(false);
 
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string)" />
+        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName)
+        {
             try
             {
                 var kafkaMessage = new Message<byte[]?, byte[]?>
                 {
-                    Key = GetKafkaKeyAndRemoveHeader(envelope.Headers),
-                    Value = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false)
+                    Key = GetKafkaKey(headers),
+                    Value = messageBytes
                 };
 
-                if (envelope.Headers.Count >= 1)
-                    kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
+                if (headers is { Count: >= 1 })
+                    kafkaMessage.Headers = headers.ToConfluentHeaders();
 
                 var topicPartition = new TopicPartition(
-                    envelope.ActualEndpointName,
-                    GetPartitionAndRemoveHeader(envelope.Headers));
+                    actualEndpointName,
+                    GetPartition(headers));
 
                 var deliveryResult = await GetConfluentProducer().ProduceAsync(topicPartition, kafkaMessage)
                     .ConfigureAwait(false);
@@ -166,86 +209,61 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope,Action,Action{Exception})" />
-        [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
         protected override async Task ProduceCoreAsync(
-            IOutboundEnvelope envelope,
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
+            Action onSuccess,
+            Action<Exception> onError) =>
+            await ProduceCoreAsync(
+                    message,
+                    await messageStream.ReadAllAsync().ConfigureAwait(false),
+                    headers,
+                    actualEndpointName,
+                    onSuccess,
+                    onError)
+                .ConfigureAwait(false);
+
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
+        protected override Task ProduceCoreAsync(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
             Action onSuccess,
             Action<Exception> onError)
         {
-            Check.NotNull(envelope, nameof(envelope));
-            Check.NotNull(onSuccess, nameof(onSuccess));
-            Check.NotNull(onError, nameof(onError));
-
-            var kafkaMessage = new Message<byte[]?, byte[]?>
-            {
-                Key = GetKafkaKeyAndRemoveHeader(envelope.Headers),
-                Value = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false)
-            };
-
-            if (envelope.Headers.Count >= 1)
-                kafkaMessage.Headers = envelope.Headers.ToConfluentHeaders();
-
-            var topicPartition = new TopicPartition(
-                envelope.ActualEndpointName,
-                GetPartitionAndRemoveHeader(envelope.Headers));
-
-            GetConfluentProducer().Produce(
-                topicPartition,
-                kafkaMessage,
-                deliveryReport =>
-                {
-                    try
-                    {
-                        if (deliveryReport.Error != null && deliveryReport.Error.IsError)
-                        {
-                            // Disposing and re-creating the producer will maybe fix the issue
-                            if (Endpoint.Configuration.DisposeOnException)
-                                DisposeConfluentProducer();
-
-                            throw new ProduceException(
-                                $"Error occurred producing the message. (error code {deliveryReport.Error.Code})");
-                        }
-
-                        if (Endpoint.Configuration.ArePersistenceStatusReportsEnabled)
-                            CheckPersistenceStatus(deliveryReport);
-
-                        onSuccess.Invoke();
-                    }
-                    catch (Exception ex)
-                    {
-                        onError.Invoke(ex);
-                    }
-                });
+            ProduceCore(message, messageBytes, headers, actualEndpointName, onSuccess, onError);
+            return Task.CompletedTask;
         }
 
-        private static Partition GetPartitionAndRemoveHeader(MessageHeaderCollection headers)
+        private static Partition GetPartition(IReadOnlyCollection<MessageHeader>? headers)
         {
+            if (headers == null)
+                return Partition.Any;
+
             var partitionHeader =
                 headers.FirstOrDefault(header => header.Name == KafkaMessageHeaders.KafkaPartitionIndex);
 
-            if (partitionHeader == null)
-                return Partition.Any;
-
-            headers.Remove(partitionHeader);
-
-            if (partitionHeader.Value == null)
+            if (partitionHeader?.Value == null)
                 return Partition.Any;
 
             return int.Parse(partitionHeader.Value, CultureInfo.InvariantCulture);
         }
 
-        private byte[]? GetKafkaKeyAndRemoveHeader(MessageHeaderCollection headers)
+        private byte[]? GetKafkaKey(IReadOnlyCollection<MessageHeader>? headers)
         {
-            var kafkaKeyHeader =
-                headers.FirstOrDefault(header => header.Name == KafkaMessageHeaders.KafkaMessageKey);
-
-            if (kafkaKeyHeader == null)
+            if (headers == null)
                 return null;
 
-            headers.Remove(kafkaKeyHeader);
+            var kafkaKeyHeader =
+                headers.FirstOrDefault(header => header.Name == KafkaMessageHeaders.KafkaMessageKey) ??
+                headers.FirstOrDefault(header => header.Name == DefaultMessageHeaders.MessageId);
 
-            if (kafkaKeyHeader.Value == null)
+            if (kafkaKeyHeader?.Value == null)
                 return null;
 
             return Endpoint.Serializer is IKafkaMessageSerializer kafkaSerializer

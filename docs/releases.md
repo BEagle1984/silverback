@@ -27,7 +27,7 @@ uid: releases
 * Handle null messages as <xref:Silverback.Messaging.Messages.Tombstone>/<xref:Silverback.Messaging.Messages.Tombstone`1> (see <xref:tombstone>) 
 * Replace [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json) with [System.Text.Json](https://www.nuget.org/packages/System.Text.Json) to improve serialization and deserialization performance (the old serializers have been moved into the [Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft) package, see <xref:serialization>)
 * Improve outbound routing customization options with endpoint name resolvers (see <xref:outbound-routing>)
-* Add non-blocking `Produce`/`ProduceAsync`/`RawProduce`/`RawProduceAsync` overloads to <xref:Silverback.Messaging.Broker.IProducer>, suitable for higher throughput (see <xref:producer>)
+* Add non-blocking `Produce`/`ProduceAsync`/`RawProduce`/`RawProduceAsync` overloads to <xref:Silverback.Messaging.Broker.IProducer>, better suitable for higher throughput scenarios (see <xref:producer>)
 * Refactor broker event handlers (see <xref:broker-callbacks>)
 * Add log levels configuration (see <xref:logging>)
 * Allow header names customization (see <xref:headers>)

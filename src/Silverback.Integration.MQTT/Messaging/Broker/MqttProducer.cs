@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
@@ -87,20 +89,51 @@ namespace Silverback.Messaging.Broker
         protected override Task DisconnectCoreAsync() =>
             ClientWrapper.DisconnectAsync(this);
 
-        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
-        protected override IBrokerMessageIdentifier? ProduceCore(IOutboundEnvelope envelope) =>
-            AsyncHelper.RunSynchronously(() => ProduceCoreAsync(envelope));
+        /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string)" />
+        protected override IBrokerMessageIdentifier? ProduceCore(
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName) =>
+            AsyncHelper.RunSynchronously(
+                () => ProduceCoreAsync(message, messageStream, headers, actualEndpointName));
 
-        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action,Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string)" />
+        protected override IBrokerMessageIdentifier? ProduceCore(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName) =>
+            AsyncHelper.RunSynchronously(
+                () => ProduceCoreAsync(message, messageBytes, headers, actualEndpointName));
+
+        /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        protected override void ProduceCore(
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
+            Action onSuccess,
+            Action<Exception> onError) =>
+            ProduceCore(
+                message,
+                messageStream.ReadAll(),
+                headers,
+                actualEndpointName,
+                onSuccess,
+                onError);
+
+        /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
         [SuppressMessage("", "VSTHRD110", Justification = "Result observed via ContinueWith")]
         protected override void ProduceCore(
-            IOutboundEnvelope envelope,
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
             Action onSuccess,
             Action<Exception> onError)
         {
-            Check.NotNull(envelope, nameof(envelope));
-
-            var queuedMessage = new QueuedMessage(envelope);
+            var queuedMessage = new QueuedMessage(messageBytes, headers, actualEndpointName);
 
             AsyncHelper.RunValueTaskSynchronously(() => _queueChannel.Writer.WriteAsync(queuedMessage));
 
@@ -115,12 +148,27 @@ namespace Silverback.Messaging.Broker
                 TaskScheduler.Default);
         }
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
-        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
-        {
-            Check.NotNull(envelope, nameof(envelope));
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string)" />
+        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName) =>
+            await ProduceCoreAsync(
+                    message,
+                    await messageStream.ReadAllAsync().ConfigureAwait(false),
+                    headers,
+                    actualEndpointName)
+                .ConfigureAwait(false);
 
-            var queuedMessage = new QueuedMessage(envelope);
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string)" />
+        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName)
+        {
+            var queuedMessage = new QueuedMessage(messageBytes, headers, actualEndpointName);
 
             await _queueChannel.Writer.WriteAsync(queuedMessage).ConfigureAwait(false);
             await queuedMessage.TaskCompletionSource.Task.ConfigureAwait(false);
@@ -128,15 +176,33 @@ namespace Silverback.Messaging.Broker
             return null;
         }
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope,Action,Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
         protected override async Task ProduceCoreAsync(
-            IOutboundEnvelope envelope,
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
+            Action onSuccess,
+            Action<Exception> onError) =>
+            await ProduceCoreAsync(
+                    message,
+                    await messageStream.ReadAllAsync().ConfigureAwait(false),
+                    headers,
+                    actualEndpointName,
+                    onSuccess,
+                    onError)
+                .ConfigureAwait(false);
+
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        protected override async Task ProduceCoreAsync(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
             Action onSuccess,
             Action<Exception> onError)
         {
-            Check.NotNull(envelope, nameof(envelope));
-
-            var queuedMessage = new QueuedMessage(envelope);
+            var queuedMessage = new QueuedMessage(messageBytes, headers, actualEndpointName);
 
             await _queueChannel.Writer.WriteAsync(queuedMessage).ConfigureAwait(false);
 
@@ -164,7 +230,7 @@ namespace Silverback.Messaging.Broker
 
                     try
                     {
-                        await PublishToTopicAsync(queuedMessage.Envelope).ConfigureAwait(false);
+                        await PublishToTopicAsync(queuedMessage).ConfigureAwait(false);
 
                         queuedMessage.TaskCompletionSource.SetResult(null);
                     }
@@ -183,22 +249,22 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private async Task PublishToTopicAsync(IRawOutboundEnvelope envelope)
+        private async Task PublishToTopicAsync(QueuedMessage queuedMessage)
         {
             if (!ClientWrapper.MqttClient.IsConnected)
                 throw new InvalidOperationException("The client is not connected.");
 
             var mqttApplicationMessage = new MqttApplicationMessage
             {
-                Topic = envelope.ActualEndpointName,
-                Payload = await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false),
+                Topic = queuedMessage.ActualEndpointName,
+                Payload = queuedMessage.MessageBytes,
                 QualityOfServiceLevel = Endpoint.QualityOfServiceLevel,
                 Retain = Endpoint.Retain,
                 MessageExpiryInterval = Endpoint.MessageExpiryInterval
             };
 
-            if (Endpoint.Configuration.AreHeadersSupported)
-                mqttApplicationMessage.UserProperties = envelope.Headers.ToUserProperties();
+            if (queuedMessage.Headers != null && Endpoint.Configuration.AreHeadersSupported)
+                mqttApplicationMessage.UserProperties = queuedMessage.Headers.ToUserProperties();
 
             var result = await ClientWrapper.MqttClient.PublishAsync(
                 mqttApplicationMessage,
@@ -223,13 +289,22 @@ namespace Silverback.Messaging.Broker
 
         private class QueuedMessage
         {
-            public QueuedMessage(IRawOutboundEnvelope envelope)
+            public QueuedMessage(
+                byte[]? messageBytes,
+                IReadOnlyCollection<MessageHeader>? headers,
+                string actualEndpointName)
             {
-                Envelope = envelope;
+                MessageBytes = messageBytes;
+                Headers = headers;
+                ActualEndpointName = actualEndpointName;
                 TaskCompletionSource = new TaskCompletionSource<IBrokerMessageIdentifier?>();
             }
 
-            public IRawOutboundEnvelope Envelope { get; }
+            public byte[]? MessageBytes { get; }
+
+            public IReadOnlyCollection<MessageHeader>? Headers { get; }
+
+            public string ActualEndpointName { get; }
 
             public TaskCompletionSource<IBrokerMessageIdentifier?> TaskCompletionSource { get; }
         }

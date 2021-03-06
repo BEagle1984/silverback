@@ -42,5 +42,4 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Silverback.Tests.Common")]
 [assembly: InternalsVisibleTo("Silverback.Tests.Common.Integration")]
-[assembly: InternalsVisibleTo("Silverback.Tests.Benchmarks")]
 [assembly: InternalsVisibleTo("Silverback.Tests.Performance")]

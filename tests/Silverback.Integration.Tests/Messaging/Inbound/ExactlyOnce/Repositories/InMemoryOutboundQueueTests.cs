@@ -33,7 +33,13 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         {
             await Task.WhenAll(
                 Enumerable.Range(0, 3)
-                    .Select(_ => _queue.WriteAsync(_sampleOutboundEnvelope)));
+                    .Select(
+                        _ => _queue.WriteAsync(
+                            _sampleOutboundEnvelope.Message,
+                            _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                            _sampleOutboundEnvelope.Headers,
+                            _sampleOutboundEnvelope.Endpoint.Name,
+                            _sampleOutboundEnvelope.ActualEndpointName)));
 
             (await _queue.GetLengthAsync()).Should().Be(0);
         }
@@ -43,7 +49,13 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         {
             await Task.WhenAll(
                 Enumerable.Range(0, 3)
-                    .Select(_ => _queue.WriteAsync(_sampleOutboundEnvelope)));
+                    .Select(
+                        _ => _queue.WriteAsync(
+                            _sampleOutboundEnvelope.Message,
+                            _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                            _sampleOutboundEnvelope.Headers,
+                            _sampleOutboundEnvelope.Endpoint.Name,
+                            _sampleOutboundEnvelope.ActualEndpointName)));
 
             await _queue.CommitAsync();
 
@@ -55,7 +67,13 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         {
             await Task.WhenAll(
                 Enumerable.Range(0, 3)
-                    .Select(_ => _queue.WriteAsync(_sampleOutboundEnvelope)));
+                    .Select(
+                        _ => _queue.WriteAsync(
+                            _sampleOutboundEnvelope.Message,
+                            _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                            _sampleOutboundEnvelope.Headers,
+                            _sampleOutboundEnvelope.Endpoint.Name,
+                            _sampleOutboundEnvelope.ActualEndpointName)));
 
             await _queue.RollbackAsync();
 
@@ -65,11 +83,26 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task Enqueue_SomeEnvelopes_OnlyCommittedEnvelopesAreEnqueued()
         {
-            await _queue.WriteAsync(_sampleOutboundEnvelope);
+            await _queue.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
             await _queue.CommitAsync();
-            await _queue.WriteAsync(_sampleOutboundEnvelope);
+            await _queue.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
             await _queue.RollbackAsync();
-            await _queue.WriteAsync(_sampleOutboundEnvelope);
+            await _queue.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
             await _queue.CommitAsync();
 
             (await _queue.GetLengthAsync()).Should().Be(2);
@@ -85,7 +118,12 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         {
             for (var i = 0; i < 5; i++)
             {
-                await _queue.WriteAsync(_sampleOutboundEnvelope);
+                await _queue.WriteAsync(
+                    _sampleOutboundEnvelope.Message,
+                    _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                    _sampleOutboundEnvelope.Headers,
+                    _sampleOutboundEnvelope.Endpoint.Name,
+                    _sampleOutboundEnvelope.ActualEndpointName);
             }
 
             await _queue.CommitAsync();
@@ -100,7 +138,12 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         {
             for (var i = 0; i < 5; i++)
             {
-                await _queue.WriteAsync(_sampleOutboundEnvelope);
+                await _queue.WriteAsync(
+                    _sampleOutboundEnvelope.Message,
+                    _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                    _sampleOutboundEnvelope.Headers,
+                    _sampleOutboundEnvelope.Endpoint.Name,
+                    _sampleOutboundEnvelope.ActualEndpointName);
             }
 
             await _queue.CommitAsync();

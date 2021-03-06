@@ -30,19 +30,18 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
         }
 
         /// <inheritdoc cref="IOutboxWriter.WriteAsync" />
-        public async Task WriteAsync(IOutboundEnvelope envelope)
-        {
-            Check.NotNull(envelope, nameof(envelope));
-
-            var item = new OutboxStoredMessage(
-                envelope.Message?.GetType(),
-                await envelope.RawMessage.ReadAllAsync().ConfigureAwait(false),
-                envelope.Headers,
-                envelope.Endpoint.Name,
-                envelope.ActualEndpointName);
-
-            await AddAsync(item).ConfigureAwait(false);
-        }
+        public Task WriteAsync(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string endpointName,
+            string actualEndpointName) =>
+            AddAsync(new OutboxStoredMessage(
+                message?.GetType(),
+                messageBytes,
+                headers,
+                endpointName,
+                actualEndpointName));
 
         /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
         public Task<int> GetLengthAsync() => Task.FromResult(CommittedItemsCount);

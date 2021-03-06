@@ -9,8 +9,6 @@ using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Infrastructure;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Serialization;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
 {
@@ -31,21 +29,25 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
         }
 
         /// <inheritdoc cref="IOutboxWriter.WriteAsync" />
-        public async Task WriteAsync(IOutboundEnvelope envelope)
+        public Task WriteAsync(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string endpointName,
+            string actualEndpointName)
         {
-            Check.NotNull(envelope, nameof(envelope));
-
             DbSet.Add(
                 new OutboxMessage
                 {
-                    MessageType = envelope.Message?.GetType().AssemblyQualifiedName,
-                    Content = await GetContentAsync(envelope).ConfigureAwait(false),
-                    SerializedHeaders =
-                        JsonSerializer.SerializeToUtf8Bytes((IEnumerable<MessageHeader>)envelope.Headers),
-                    EndpointName = envelope.Endpoint.Name,
-                    ActualEndpointName = envelope.ActualEndpointName,
+                    MessageType = message?.GetType().AssemblyQualifiedName,
+                    Content = messageBytes,
+                    SerializedHeaders = SerializeHeaders(headers),
+                    EndpointName = endpointName,
+                    ActualEndpointName = actualEndpointName,
                     Created = DateTime.UtcNow
                 });
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="IOutboxWriter.CommitAsync" />
@@ -62,17 +64,12 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
             return Task.CompletedTask;
         }
 
-        private static async ValueTask<byte[]?> GetContentAsync(IOutboundEnvelope envelope)
+        private static byte[]? SerializeHeaders(IReadOnlyCollection<MessageHeader>? headers)
         {
-            var stream =
-                envelope.RawMessage ??
-                await envelope.Endpoint.Serializer.SerializeAsync(
-                        envelope.Message,
-                        envelope.Headers,
-                        new MessageSerializationContext(envelope.Endpoint))
-                    .ConfigureAwait(false);
+            if (headers == null)
+                return null;
 
-            return await stream.ReadAllAsync().ConfigureAwait(false);
+            return JsonSerializer.SerializeToUtf8Bytes(headers);
         }
     }
 }

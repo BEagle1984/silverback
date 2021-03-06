@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -15,16 +16,20 @@ using Silverback.Tests.Integration.TestTypes.Database;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Repositories
 {
     public sealed class DbOutboxWriterTests : IDisposable
     {
-        private static readonly IOutboundEnvelope SampleOutboundEnvelope = new OutboundEnvelope(
+        private readonly IOutboundEnvelope _sampleOutboundEnvelope = new OutboundEnvelope(
             new TestEventOne { Content = "Test" },
             new[] { new MessageHeader("one", "1"), new MessageHeader("two", "2") },
-            TestProducerEndpoint.GetDefault());
+            TestProducerEndpoint.GetDefault())
+        {
+            RawMessage = new MemoryStream(new byte[] { 0x01, 0x02, 0x03 })
+        };
 
         private readonly SqliteConnection _connection;
 
@@ -66,9 +71,24 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
         [Fact]
         public async Task WriteAsync_SomeMessages_TableStillEmpty()
         {
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
 
             _dbContext.Outbox.Should().HaveCount(0);
         }
@@ -76,9 +96,24 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
         [Fact]
         public async Task WriteAsyncAndSaveChanges_SomeMessages_MessagesAddedToQueue()
         {
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
             await _queueWriter.CommitAsync();
             await _dbContext.SaveChangesAsync();
 
@@ -88,9 +123,24 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
         [Fact]
         public async Task WriteAsyncAndRollbackAsync_SomeMessages_TableStillEmpty()
         {
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
             await _queueWriter.RollbackAsync();
 
             _dbContext.Outbox.Should().HaveCount(0);
@@ -99,9 +149,24 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox.Re
         [Fact]
         public async Task WriteAsyncCommitAndSaveChanges_Message_MessageCorrectlyAddedToQueue()
         {
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
-            await _queueWriter.WriteAsync(SampleOutboundEnvelope);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
+            await _queueWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
             await _queueWriter.CommitAsync();
             await _dbContext.SaveChangesAsync();
 

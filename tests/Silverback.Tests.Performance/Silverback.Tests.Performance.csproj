@@ -4,7 +4,7 @@
     <RootNamespace>Silverback.Tests.Performance</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <OutputType>exe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Silverback.Core\Silverback.Core.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Kafka.Testing\Silverback.Integration.Kafka.Testing.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Kafka\Silverback.Integration.Kafka.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration\Silverback.Integration.csproj" />

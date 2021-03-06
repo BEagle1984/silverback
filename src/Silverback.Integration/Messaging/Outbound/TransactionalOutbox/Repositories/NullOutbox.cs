@@ -28,7 +28,13 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
         public Task RetryAsync(IEnumerable<OutboxStoredMessage> outboxMessages) =>
             throw new NotImplementedException();
 
-        public Task WriteAsync(IOutboundEnvelope envelope) => throw new NotSupportedException();
+        public Task WriteAsync(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string endpointName,
+            string actualEndpointName) =>
+            throw new NotSupportedException();
 
         public Task CommitAsync() => Task.CompletedTask;
 

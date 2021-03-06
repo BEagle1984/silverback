@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Confluent.SchemaRegistry;
@@ -43,13 +44,13 @@ namespace Silverback.Messaging.Serialization
         /// <inheritdoc cref="IKafkaMessageSerializer.SerializeKey" />
         public abstract byte[] SerializeKey(
             string key,
-            MessageHeaderCollection messageHeaders,
+            IReadOnlyCollection<MessageHeader> messageHeaders,
             MessageSerializationContext context);
 
         /// <inheritdoc cref="IKafkaMessageSerializer.DeserializeKey" />
         public abstract string DeserializeKey(
             byte[] key,
-            MessageHeaderCollection messageHeaders,
+            IReadOnlyCollection<MessageHeader> messageHeaders,
             MessageSerializationContext context);
     }
 }

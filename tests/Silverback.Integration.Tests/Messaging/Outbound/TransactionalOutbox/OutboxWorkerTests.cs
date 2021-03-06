@@ -69,15 +69,17 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
         public async Task ProcessQueue_SomeMessages_Produced()
         {
             await _outboxWriter.WriteAsync(
-                new OutboundEnvelope<TestEventOne>(
-                    new TestEventOne { Content = "Test" },
-                    null,
-                    new TestProducerEndpoint("topic1")));
+                new TestEventOne { Content = "Test" },
+                null,
+                null,
+                "topic1",
+                "topic1");
             await _outboxWriter.WriteAsync(
-                new OutboundEnvelope<TestEventTwo>(
-                    new TestEventTwo { Content = "Test" },
-                    null,
-                    new TestProducerEndpoint("topic2")));
+                new TestEventTwo { Content = "Test" },
+                null,
+                null,
+                "topic2",
+                "topic2");
             await _outboxWriter.CommitAsync();
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
@@ -91,15 +93,17 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
         public async Task ProcessQueue_SomeMessagesWithMultipleEndpoints_CorrectlyProduced()
         {
             await _outboxWriter.WriteAsync(
-                new OutboundEnvelope<TestEventThree>(
-                    new TestEventThree { Content = "Test" },
-                    null,
-                    new TestProducerEndpoint("topic3a")));
+                new TestEventThree { Content = "Test" },
+                null,
+                null,
+                "topic3a",
+                "topic3a");
             await _outboxWriter.WriteAsync(
-                new OutboundEnvelope<TestEventThree>(
-                    new TestEventThree { Content = "Test" },
-                    null,
-                    new TestProducerEndpoint("topic3b")));
+                new TestEventThree { Content = "Test" },
+                null,
+                null,
+                "topic3b",
+                "topic3b");
             await _outboxWriter.CommitAsync();
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
@@ -112,8 +116,18 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
         [Fact]
         public async Task ProcessQueue_RunTwice_ProducedOnce()
         {
-            await _outboxWriter.WriteAsync(_sampleOutboundEnvelope);
-            await _outboxWriter.WriteAsync(_sampleOutboundEnvelope);
+            await _outboxWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
+            await _outboxWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
             await _outboxWriter.CommitAsync();
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
@@ -125,13 +139,28 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
         [Fact]
         public async Task ProcessQueue_RunTwice_ProducedNewMessages()
         {
-            await _outboxWriter.WriteAsync(_sampleOutboundEnvelope);
-            await _outboxWriter.WriteAsync(_sampleOutboundEnvelope);
+            await _outboxWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
+            await _outboxWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
             await _outboxWriter.CommitAsync();
 
             await _worker.ProcessQueueAsync(CancellationToken.None);
 
-            await _outboxWriter.WriteAsync(_sampleOutboundEnvelope);
+            await _outboxWriter.WriteAsync(
+                _sampleOutboundEnvelope.Message,
+                _sampleOutboundEnvelope.RawMessage.ReadAll(),
+                _sampleOutboundEnvelope.Headers,
+                _sampleOutboundEnvelope.Endpoint.Name,
+                _sampleOutboundEnvelope.ActualEndpointName);
             await _outboxWriter.CommitAsync();
 
             await _worker.ProcessQueueAsync(CancellationToken.None);

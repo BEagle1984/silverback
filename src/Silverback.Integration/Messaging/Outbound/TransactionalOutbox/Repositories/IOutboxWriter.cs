@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
 
@@ -14,13 +15,30 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
         /// <summary>
         ///     Adds the message contained in the specified envelope to the outbox.
         /// </summary>
-        /// <param name="envelope">
-        ///     The envelope containing the message to be stored.
+        /// <param name="message">
+        ///     The message to be delivered.
+        /// </param>
+        /// <param name="messageBytes">
+        ///     The actual serialized message to be delivered.
+        /// </param>
+        /// <param name="headers">
+        ///     The message headers.
+        /// </param>
+        /// <param name="endpointName">
+        ///     The name of the configured endpoint to produce to.
+        /// </param>
+        /// <param name="actualEndpointName">
+        ///     The actual endpoint to produce to.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task WriteAsync(IOutboundEnvelope envelope);
+        Task WriteAsync(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string endpointName,
+            string actualEndpointName);
 
         /// <summary>
         ///     Called to commit the transaction, storing the pending messages to the outbox.

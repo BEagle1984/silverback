@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Serialization
@@ -27,7 +28,7 @@ namespace Silverback.Messaging.Serialization
         /// </returns>
         byte[] SerializeKey(
             string key,
-            MessageHeaderCollection messageHeaders,
+            IReadOnlyCollection<MessageHeader> messageHeaders,
             MessageSerializationContext context);
 
         /// <summary>
@@ -47,7 +48,7 @@ namespace Silverback.Messaging.Serialization
         /// </returns>
         string DeserializeKey(
             byte[] key,
-            MessageHeaderCollection messageHeaders,
+            IReadOnlyCollection<MessageHeader> messageHeaders,
             MessageSerializationContext context);
     }
 }

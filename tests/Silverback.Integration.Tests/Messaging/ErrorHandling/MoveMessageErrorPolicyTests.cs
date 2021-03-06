@@ -164,7 +164,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var producedMessage = producer.ProducedMessages.Last();
             var (deserializedMessage, _) =
                 await producedMessage.Endpoint.Serializer.DeserializeAsync(
-                    producedMessage.Message,
+                    new MemoryStream(producedMessage.Message!),
                     producedMessage.Headers,
                     MessageSerializationContext.Empty);
             deserializedMessage.Should().BeEquivalentTo(envelope.Message);
@@ -244,7 +244,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var producer = (TestProducer)_broker.GetProducer(TestProducerEndpoint.GetDefault());
             var (producedMessage, _) = await producer.Endpoint.Serializer.DeserializeAsync(
-                producer.ProducedMessages[0].Message,
+                new MemoryStream(producer.ProducedMessages[0].Message!),
                 producer.ProducedMessages[0].Headers,
                 MessageSerializationContext.Empty);
             producedMessage.Should().BeOfType<TestEventTwo>();

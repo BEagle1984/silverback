@@ -44,7 +44,7 @@ namespace Silverback.Tests.Performance.Broker
     // Produced per second: 26357.639856799997
     public static class ProduceStrategiesComparisonRunner
     {
-        public static async Task Run(
+        public static async Task RunAsync(
             int iterations,
             int? startStrategyIndex = null,
             int? endStrategyIndex = null)

@@ -13,7 +13,7 @@ A pre-serialized message can be produced via the normal `Produce`/`ProduceAsync`
 ## Non-blocking overloads
 
 These are especially important for Kafka, since the underlying library is able to batch the outgoing messages for efficiency and that improves the throughput a lot.
-They will complete as soon as the message has been enqueued and invoke a callback when it is successfully produced (or when it fails / times out). These overloads exist for `Produce`, `ProduceAsync`, `RawProduce` and `RawProduceAsync`.
+They will complete as soon as the message has been enqueued and invoke a callback when it is successfully produced (or when it fails / times out). These overloads exist for `Produce`, `ProduceAsync`, `RawProduce` and `RawProduceAsync`. (Note that )
 
 ```csharp
 public class ProducerService
@@ -29,20 +29,20 @@ public class ProducerService
         _logger = logger;
     }
     
-    public async Task Produce()
+    public async Task Produce(byte[] rawMessage)
     {
         for (int i = 0; i < 100_000: i++)
         {
-            await _producer.ProducerAsync(
-              new MyMessage(i),
-              null,
-              () => _logger.LogInformation($"Produced {i}"),
-              ex => _logger.LogError(ex, $"Failed to produce {i}");
+            _producer.RawProduce(
+                rawMessage,
+                null,
+                () => _logger.LogInformation($"Produced {i}"),
+                ex => _logger.LogError(ex, $"Failed to produce {i}");
         }
     }
 }
 ```
 
 > [!Note]
-> This is different than calling `ProduceAsync` in a loop without awaiting, because that wouldn't ensure exact message ordering under all circumstances.
+> The non-async overload with callback functions is generally the fastest option with Kafka.
 

@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
@@ -51,32 +53,109 @@ namespace Silverback.Messaging.Outbound.Routing
             _queueWriter = queueWriter;
         }
 
-        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope)" />
-        protected override IBrokerMessageIdentifier ProduceCore(IOutboundEnvelope envelope) =>
+        /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string)" />
+        protected override IBrokerMessageIdentifier ProduceCore(
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName) =>
             throw new InvalidOperationException("Only asynchronous operations are supported.");
 
-        /// <inheritdoc cref="Producer.ProduceCore(IOutboundEnvelope,Action,Action{Exception})" />
-        protected override void ProduceCore(IOutboundEnvelope envelope, Action onSuccess, Action<Exception> onError) =>
+        /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string)" />
+        protected override IBrokerMessageIdentifier ProduceCore(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName) =>
             throw new InvalidOperationException("Only asynchronous operations are supported.");
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope)" />
-        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(IOutboundEnvelope envelope)
+        /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        protected override void ProduceCore(
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
+            Action onSuccess,
+            Action<Exception> onError) =>
+            throw new InvalidOperationException("Only asynchronous operations are supported.");
+
+        /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        protected override void ProduceCore(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
+            Action onSuccess,
+            Action<Exception> onError) =>
+            throw new InvalidOperationException("Only asynchronous operations are supported.");
+
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string)" />
+        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName) =>
+            await ProduceCoreAsync(
+                    message,
+                    await messageStream.ReadAllAsync().ConfigureAwait(false),
+                    headers,
+                    actualEndpointName)
+                .ConfigureAwait(false);
+
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string)" />
+        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName)
         {
-            Check.NotNull(envelope, nameof(envelope));
-
-            await _queueWriter.WriteAsync(envelope).ConfigureAwait(false);
+            await _queueWriter.WriteAsync(
+                    message,
+                    messageBytes,
+                    headers,
+                    Endpoint.Name,
+                    actualEndpointName)
+                .ConfigureAwait(false);
 
             return null;
         }
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(IOutboundEnvelope,Action,Action{Exception})" />
-        protected override async Task ProduceCoreAsync(IOutboundEnvelope envelope, Action onSuccess, Action<Exception> onError)
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        protected override async Task ProduceCoreAsync(
+            object? message,
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
+            Action onSuccess,
+            Action<Exception> onError) =>
+            await ProduceCoreAsync(
+                    message,
+                    await messageStream.ReadAllAsync().ConfigureAwait(false),
+                    headers,
+                    actualEndpointName,
+                    onSuccess,
+                    onError)
+                .ConfigureAwait(false);
+
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        protected override async Task ProduceCoreAsync(
+            object? message,
+            byte[]? messageBytes,
+            IReadOnlyCollection<MessageHeader>? headers,
+            string actualEndpointName,
+            Action onSuccess,
+            Action<Exception> onError)
         {
-            Check.NotNull(envelope, nameof(envelope));
             Check.NotNull(onSuccess, nameof(onSuccess));
             Check.NotNull(onError, nameof(onError));
 
-            await _queueWriter.WriteAsync(envelope).ConfigureAwait(false);
+            await _queueWriter.WriteAsync(
+                    message,
+                    messageBytes,
+                    headers,
+                    Endpoint.Name,
+                    actualEndpointName)
+                .ConfigureAwait(false);
 
             onSuccess.Invoke();
         }

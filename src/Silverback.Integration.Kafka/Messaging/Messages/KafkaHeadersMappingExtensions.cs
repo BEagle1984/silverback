@@ -14,7 +14,14 @@ namespace Silverback.Messaging.Messages
         public static Confluent.Kafka.Headers ToConfluentHeaders(this IEnumerable<MessageHeader> headers)
         {
             var kafkaHeaders = new Confluent.Kafka.Headers();
-            headers.ForEach(header => kafkaHeaders.Add(header.Name, Encode(header.Value)));
+            headers.ForEach(header =>
+            {
+                if (header.Name == KafkaMessageHeaders.KafkaMessageKey ||
+                    header.Name == KafkaMessageHeaders.KafkaPartitionIndex)
+                    return;
+
+                kafkaHeaders.Add(header.Name, Encode(header.Value));
+            });
             return kafkaHeaders;
         }
 
@@ -23,11 +30,11 @@ namespace Silverback.Messaging.Messages
         {
             var headers = new List<MessageHeader>(kafkaHeaders?.Count ?? 0);
             kafkaHeaders?.ForEach(
-                kafkaHeader =>
-                    headers.Add(
-                        new MessageHeader(
-                            kafkaHeader.Key,
-                            Decode(kafkaHeader.GetValueBytes()))));
+                kafkaHeader => headers.Add(
+                    new MessageHeader(
+                        kafkaHeader.Key,
+                        Decode(kafkaHeader.GetValueBytes()))));
+
             return headers;
         }
 

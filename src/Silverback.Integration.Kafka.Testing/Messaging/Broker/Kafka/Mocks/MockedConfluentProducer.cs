@@ -14,6 +14,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
     internal sealed class MockedConfluentProducer : IMockedConfluentProducer
     {
+        private static readonly Random RandomInstance = new();
+
         private readonly IInMemoryTopicCollection _topics;
 
         public MockedConfluentProducer(ProducerConfig config, IInMemoryTopicCollection topics)
@@ -144,7 +146,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         private static int GetPartitionIndex(IInMemoryTopic topic, byte[]? messageKey)
         {
             if (messageKey == null)
-                return 0;
+                return RandomInstance.Next(0, topic.Partitions.Count);
 
             return messageKey.Last() % topic.Partitions.Count;
         }
