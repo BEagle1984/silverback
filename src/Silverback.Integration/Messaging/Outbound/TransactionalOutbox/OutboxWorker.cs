@@ -119,7 +119,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             _brokerCollection.GetProducer(endpoint).RawProduceAsync(
                 actualEndpointName,
@@ -198,7 +198,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                         message.Headers,
                         endpoint,
                         message.ActualEndpointName ?? endpoint.Name,
-                        () => { Interlocked.Decrement(ref _pendingProduceOperations); },
+                        _ => { Interlocked.Decrement(ref _pendingProduceOperations); },
                         exception =>
                         {
                             failedMessages.Add(message);

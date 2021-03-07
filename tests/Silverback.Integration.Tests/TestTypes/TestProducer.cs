@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.TestTypes
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError)
         {
             ProduceCore(
@@ -77,11 +77,11 @@ namespace Silverback.Tests.Integration.TestTypes
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError)
         {
             ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
-            onSuccess.Invoke();
+            onSuccess.Invoke(null);
         }
 
         protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
@@ -110,7 +110,7 @@ namespace Silverback.Tests.Integration.TestTypes
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             await ProduceCoreAsync(
                 message,
@@ -125,11 +125,11 @@ namespace Silverback.Tests.Integration.TestTypes
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError)
         {
             ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
-            onSuccess.Invoke();
+            onSuccess.Invoke(null);
             return Task.CompletedTask;
         }
     }

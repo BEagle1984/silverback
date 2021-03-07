@@ -69,23 +69,23 @@ namespace Silverback.Messaging.Outbound.Routing
             string actualEndpointName) =>
             throw new InvalidOperationException("Only asynchronous operations are supported.");
 
-        /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
         protected override void ProduceCore(
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             throw new InvalidOperationException("Only asynchronous operations are supported.");
 
-        /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
         protected override void ProduceCore(
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             throw new InvalidOperationException("Only asynchronous operations are supported.");
 
@@ -120,13 +120,13 @@ namespace Silverback.Messaging.Outbound.Routing
             return null;
         }
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
         protected override async Task ProduceCoreAsync(
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             await ProduceCoreAsync(
                     message,
@@ -137,13 +137,13 @@ namespace Silverback.Messaging.Outbound.Routing
                     onError)
                 .ConfigureAwait(false);
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
         protected override async Task ProduceCoreAsync(
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError)
         {
             Check.NotNull(onSuccess, nameof(onSuccess));
@@ -157,7 +157,7 @@ namespace Silverback.Messaging.Outbound.Routing
                     actualEndpointName)
                 .ConfigureAwait(false);
 
-            onSuccess.Invoke();
+            onSuccess.Invoke(null);
         }
     }
 }

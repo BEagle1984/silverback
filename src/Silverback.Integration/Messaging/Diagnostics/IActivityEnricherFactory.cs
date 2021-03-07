@@ -1,24 +1,22 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-
 namespace Silverback.Messaging.Diagnostics
 {
     /// <summary>
-    ///     Creates a <see cref="IBrokerActivityEnricher" /> for a given endpoint.
+    ///     Provides the <see cref="IBrokerActivityEnricher" /> according to the specified endpoint.
     /// </summary>
     public interface IActivityEnricherFactory
     {
         /// <summary>
-        ///     Returns a <see cref="IBrokerActivityEnricher" /> for the given endpoint type.
+        ///     Returns the <see cref="IBrokerActivityEnricher" /> for the specified endpoint.
         /// </summary>
-        /// <param name="endpointType">
-        ///     The endpoint type.
+        /// <param name="endpoint">
+        ///     The endpoint.
         /// </param>
         /// <returns>
         ///     The <see cref="IBrokerActivityEnricher" /> that matches the specified endpoint type.
         /// </returns>
-        IBrokerActivityEnricher GetActivityEnricher(Type endpointType);
+        IBrokerActivityEnricher GetActivityEnricher(IEndpoint endpoint);
     }
 }

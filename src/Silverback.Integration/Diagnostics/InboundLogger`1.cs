@@ -13,46 +13,59 @@ namespace Silverback.Diagnostics
     internal class InboundLogger<TCategoryName>
         : SilverbackLogger<TCategoryName>, IInboundLogger<TCategoryName>
     {
-        private readonly LoggerCollection _loggers;
+        private readonly InboundLoggerFactory _loggerFactory;
 
-        public InboundLogger(IMappedLevelsLogger<TCategoryName> mappedLevelsLogger, LoggerCollection loggers)
+        public InboundLogger(
+            IMappedLevelsLogger<TCategoryName> mappedLevelsLogger,
+            InboundLoggerFactory loggerFactory)
             : base(mappedLevelsLogger)
         {
-            _loggers = Check.NotNull(loggers, nameof(loggers));
+            _loggerFactory = Check.NotNull(loggerFactory, nameof(loggerFactory));
         }
 
         public void LogProcessing(IRawInboundEnvelope envelope) =>
-            GetLogger(envelope).LogProcessing(this, envelope);
+            _loggerFactory.GetInboundLogger(envelope.Endpoint)
+                .LogProcessing(this, envelope);
 
         public void LogProcessingError(IRawInboundEnvelope envelope, Exception exception) =>
-            GetLogger(envelope).LogProcessingError(this, envelope, exception);
+            _loggerFactory.GetInboundLogger(envelope.Endpoint)
+                .LogProcessingError(this, envelope, exception);
 
         public void LogProcessingFatalError(IRawInboundEnvelope envelope, Exception exception) =>
-            GetLogger(envelope).LogProcessingFatalError(this, envelope, exception);
+            _loggerFactory.GetInboundLogger(envelope.Endpoint)
+                .LogProcessingFatalError(this, envelope, exception);
 
         public void LogRetryProcessing(IRawInboundEnvelope envelope) =>
-            GetLogger(envelope).LogRetryProcessing(this, envelope);
+            _loggerFactory.GetInboundLogger(envelope.Endpoint)
+                .LogRetryProcessing(this, envelope);
 
         public void LogMoved(IRawInboundEnvelope envelope, IProducerEndpoint targetEndpoint) =>
-            GetLogger(envelope).LogMoved(this, envelope, targetEndpoint);
+            _loggerFactory.GetInboundLogger(envelope.Endpoint)
+                .LogMoved(this, envelope, targetEndpoint);
 
         public void LogSkipped(IRawInboundEnvelope envelope) =>
-            GetLogger(envelope).LogSkipped(this, envelope);
+            _loggerFactory.GetInboundLogger(envelope.Endpoint)
+                .LogSkipped(this, envelope);
 
         public void LogCannotMoveSequences(IRawInboundEnvelope envelope, ISequence sequence) =>
-            GetLogger(envelope).LogCannotMoveSequences(this, envelope, sequence);
+            _loggerFactory.GetInboundLogger(envelope.Endpoint)
+                .LogCannotMoveSequences(this, envelope, sequence);
 
         public void LogRollbackToRetryFailed(IRawInboundEnvelope envelope, Exception exception) =>
-            GetLogger(envelope).LogRollbackToRetryFailed(this, envelope, exception);
+            _loggerFactory.GetInboundLogger(envelope.Endpoint)
+                .LogRollbackToRetryFailed(this, envelope, exception);
 
         public void LogRollbackToSkipFailed(IRawInboundEnvelope envelope, Exception exception) =>
-            GetLogger(envelope).LogRollbackToSkipFailed(this, envelope, exception);
+            _loggerFactory.GetInboundLogger(envelope.Endpoint)
+                .LogRollbackToSkipFailed(this, envelope, exception);
 
         public void LogNullMessageSkipped(IRawInboundEnvelope envelope) =>
-            GetLogger(envelope).LogNullMessageSkipped(this, envelope);
+            _loggerFactory.GetInboundLogger(envelope.Endpoint)
+                .LogNullMessageSkipped(this, envelope);
 
         public void LogAlreadyProcessed(IRawInboundEnvelope envelope) =>
-            GetLogger(envelope).LogAlreadyProcessed(this, envelope);
+            _loggerFactory.GetInboundLogger(envelope.Endpoint)
+                .LogAlreadyProcessed(this, envelope);
 
         public void LogInboundTrace(
             LogEvent logEvent,
@@ -69,7 +82,7 @@ namespace Silverback.Diagnostics
             if (logEvent.Level > LogLevel.Trace)
                 throw new InvalidOperationException("This method is intended for tracing only.");
 
-            GetLogger(envelope).LogInboundTrace(
+            _loggerFactory.GetInboundLogger(envelope.Endpoint).LogInboundTrace(
                 this,
                 logEvent.Level,
                 logEvent.EventId,
@@ -90,7 +103,7 @@ namespace Silverback.Diagnostics
             IRawInboundEnvelope envelope,
             Exception? exception,
             Func<object?[]>? argumentsProvider = null) =>
-            GetLogger(envelope).LogInboundTrace(
+            _loggerFactory.GetInboundLogger(envelope.Endpoint).LogInboundTrace(
                 this,
                 IntegrationLogEvents.LowLevelTracing.Level,
                 IntegrationLogEvents.LowLevelTracing.EventId,
@@ -98,8 +111,5 @@ namespace Silverback.Diagnostics
                 envelope,
                 exception,
                 argumentsProvider);
-
-        private InboundLogger GetLogger(IRawInboundEnvelope envelope) =>
-            _loggers.GetInboundLogger(envelope.Endpoint.GetType());
     }
 }

@@ -226,7 +226,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             producer.Produce(
                 message,
@@ -234,7 +234,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             producer.Produce(
                 message,
@@ -242,7 +242,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
 
             produced.Should().BeLessThan(3);
@@ -301,7 +301,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         { "one", "1" }, { "two", "2" }
                     },
                     producer.Endpoint),
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             producer.Produce(
                 EnvelopeFactory.Create(
@@ -311,7 +311,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         { "one", "1" }, { "two", "2" }
                     },
                     producer.Endpoint),
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             producer.Produce(
                 EnvelopeFactory.Create(
@@ -321,7 +321,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         { "one", "1" }, { "two", "2" }
                     },
                     producer.Endpoint),
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
 
             produced.Should().BeLessThan(3);
@@ -501,7 +501,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             producer.RawProduce(
                 producer.Endpoint.Name,
@@ -510,7 +510,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             producer.RawProduce(
                 rawMessage,
@@ -518,7 +518,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
 
             produced.Should().BeLessThan(3);
@@ -583,7 +583,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             producer.RawProduce(
                 producer.Endpoint.Name,
@@ -592,7 +592,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             producer.RawProduce(
                 new MemoryStream(rawMessage),
@@ -600,7 +600,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
 
             produced.Should().BeLessThan(3);
@@ -824,7 +824,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             await producer.ProduceAsync(
                 message,
@@ -832,7 +832,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             await producer.ProduceAsync(
                 message,
@@ -840,7 +840,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
 
             produced.Should().BeLessThan(3);
@@ -899,7 +899,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         { "one", "1" }, { "two", "2" }
                     },
                     producer.Endpoint),
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             await producer.ProduceAsync(
                 EnvelopeFactory.Create(
@@ -909,7 +909,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         { "one", "1" }, { "two", "2" }
                     },
                     producer.Endpoint),
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             await producer.ProduceAsync(
                 EnvelopeFactory.Create(
@@ -919,7 +919,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         { "one", "1" }, { "two", "2" }
                     },
                     producer.Endpoint),
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
 
             produced.Should().BeLessThan(3);
@@ -1099,7 +1099,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             await producer.RawProduceAsync(
                 producer.Endpoint.Name,
@@ -1108,7 +1108,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             await producer.RawProduceAsync(
                 rawMessage,
@@ -1116,7 +1116,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
 
             produced.Should().BeLessThan(3);
@@ -1176,7 +1176,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             await producer.RawProduceAsync(
                 producer.Endpoint.Name,
@@ -1185,7 +1185,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
             await producer.RawProduceAsync(
                 new MemoryStream(rawMessage),
@@ -1193,7 +1193,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 {
                     { "one", "1" }, { "two", "2" }
                 },
-                () => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
 
             produced.Should().BeLessThan(3);
@@ -1259,7 +1259,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await producer.RawProduceAsync(
                     rawMessage,
                     headers,
-                    () => Interlocked.Increment(ref produced),
+                    _ => Interlocked.Increment(ref produced),
                     _ => Interlocked.Increment(ref errors));
             }
 
@@ -1327,7 +1327,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 await producer.RawProduceAsync(
                     rawMessage,
                     headers,
-                    () => Interlocked.Increment(ref produced),
+                    _ => Interlocked.Increment(ref produced),
                     _ => Interlocked.Increment(ref errors));
             }
 

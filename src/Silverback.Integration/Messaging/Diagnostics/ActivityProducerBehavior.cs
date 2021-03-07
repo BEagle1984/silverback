@@ -37,7 +37,7 @@ namespace Silverback.Messaging.Diagnostics
 
             using (var activity = ActivitySources.StartProduceActivity(context.Envelope))
             {
-                _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint.GetType())
+                _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint)
                     .EnrichOutboundActivity(activity, context);
                 await next(context).ConfigureAwait(false);
             }

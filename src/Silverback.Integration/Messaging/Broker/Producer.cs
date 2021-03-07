@@ -114,91 +114,161 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?)" />
-        public void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
+        public IBrokerMessageIdentifier? Produce(
+            object? message,
+            IReadOnlyCollection<MessageHeader>? headers = null) =>
             Produce(new OutboundEnvelope(message, headers, Endpoint));
 
         /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
         [SuppressMessage("", "VSTHRD103", Justification = "Method executes synchronously")]
-        public void Produce(IOutboundEnvelope envelope) =>
-            AsyncHelper.RunSynchronously(
-                async () =>
-                    await ExecutePipelineAsync(
-                        new ProducerPipelineContext(envelope, this, _serviceProvider),
-                        finalContext =>
-                        {
-                            ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
-                                ProduceCore(
+        public IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope)
+        {
+            try
+            {
+                IBrokerMessageIdentifier? brokerMessageIdentifier = null;
+
+                AsyncHelper.RunSynchronously(
+                    async () =>
+                        await ExecutePipelineAsync(
+                            new ProducerPipelineContext(envelope, this, _serviceProvider),
+                            finalContext =>
+                            {
+                                brokerMessageIdentifier = ProduceCore(
                                     finalContext.Envelope.Message,
                                     finalContext.Envelope.RawMessage,
                                     finalContext.Envelope.Headers,
                                     finalContext.Envelope.ActualEndpointName);
 
-                            return Task.CompletedTask;
-                        }).ConfigureAwait(false));
+                                ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                                    brokerMessageIdentifier;
 
-        /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?,Action,Action{Exception})" />
+                                _logger.LogProduced(envelope);
+
+                                return Task.CompletedTask;
+                            }).ConfigureAwait(false));
+
+                return brokerMessageIdentifier;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogProduceError(envelope, ex);
+                throw;
+            }
+        }
+
+        /// <inheritdoc cref="IProducer.Produce(object?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
         public void Produce(
             object? message,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             Produce(new OutboundEnvelope(message, headers, Endpoint), onSuccess, onError);
 
-        /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope,Action,Action{Exception})" />
+        /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
         [SuppressMessage("", "VSTHRD103", Justification = "OK to call sync ProduceCore")]
-        public void Produce(IOutboundEnvelope envelope, Action onSuccess, Action<Exception> onError)
+        public void Produce(
+            IOutboundEnvelope envelope,
+            Action<IBrokerMessageIdentifier?> onSuccess,
+            Action<Exception> onError)
         {
-            AsyncHelper.RunSynchronously(
-                async () =>
-                {
-                    await ExecutePipelineAsync(
-                        new ProducerPipelineContext(envelope, this, _serviceProvider),
-                        finalContext =>
-                        {
-                            ProduceCore(
-                                finalContext.Envelope.Message,
-                                finalContext.Envelope.RawMessage,
-                                finalContext.Envelope.Headers,
-                                finalContext.Envelope.ActualEndpointName,
-                                onSuccess,
-                                onError);
+            try
+            {
+                AsyncHelper.RunSynchronously(
+                    async () =>
+                    {
+                        await ExecutePipelineAsync(
+                            new ProducerPipelineContext(envelope, this, _serviceProvider),
+                            finalContext =>
+                            {
+                                ProduceCore(
+                                    finalContext.Envelope.Message,
+                                    finalContext.Envelope.RawMessage,
+                                    finalContext.Envelope.Headers,
+                                    finalContext.Envelope.ActualEndpointName,
+                                    identifier =>
+                                    {
+                                        ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                                            identifier;
+                                        _logger.LogProduced(envelope);
+                                        onSuccess.Invoke(identifier);
+                                    },
+                                    exception =>
+                                    {
+                                        _logger.LogProduceError(envelope, exception);
+                                        onError.Invoke(exception);
+                                    });
+                                _logger.LogProduced(envelope);
 
-                            return Task.CompletedTask;
-                        }).ConfigureAwait(false);
-                });
+                                return Task.CompletedTask;
+                            }).ConfigureAwait(false);
+                    });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogProduceError(envelope, ex);
+                throw;
+            }
         }
 
         /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?)" />
-        public void RawProduce(
+        public IBrokerMessageIdentifier? RawProduce(
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers = null) =>
             RawProduce(Endpoint.Name, messageContent, headers);
 
         /// <inheritdoc cref="IProducer.RawProduce(Stream?,IReadOnlyCollection{MessageHeader}?)" />
-        public void RawProduce(
+        public IBrokerMessageIdentifier? RawProduce(
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers = null) =>
             RawProduce(Endpoint.Name, messageStream, headers);
 
         /// <inheritdoc cref="IProducer.RawProduce(string, byte[],IReadOnlyCollection{MessageHeader}?)" />
-        public void RawProduce(
+        public IBrokerMessageIdentifier? RawProduce(
             string actualEndpointName,
             byte[]? messageContent,
-            IReadOnlyCollection<MessageHeader>? headers = null) =>
-            ProduceCore(null, messageContent, headers, actualEndpointName);
+            IReadOnlyCollection<MessageHeader>? headers = null)
+        {
+            try
+            {
+                var brokerMessageIdentifier = ProduceCore(null, messageContent, headers, actualEndpointName);
+
+                _logger.LogProduced(Endpoint, actualEndpointName, headers, brokerMessageIdentifier);
+
+                return brokerMessageIdentifier;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogProduceError(Endpoint, actualEndpointName, headers, ex);
+                throw;
+            }
+        }
 
         /// <inheritdoc cref="IProducer.RawProduce(string, Stream?,IReadOnlyCollection{MessageHeader}?)" />
-        public void RawProduce(
+        public IBrokerMessageIdentifier? RawProduce(
             string actualEndpointName,
             Stream? messageStream,
-            IReadOnlyCollection<MessageHeader>? headers = null) =>
-            ProduceCore(null, messageStream, headers, actualEndpointName);
+            IReadOnlyCollection<MessageHeader>? headers = null)
+        {
+            try
+            {
+                var brokerMessageIdentifier = ProduceCore(null, messageStream, headers, actualEndpointName);
 
-        /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?,Action,Action{Exception})" />
+                _logger.LogProduced(Endpoint, actualEndpointName, headers, brokerMessageIdentifier);
+
+                return brokerMessageIdentifier;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogProduceError(Endpoint, actualEndpointName, headers, ex);
+                throw;
+            }
+        }
+
+        /// <inheritdoc cref="IProducer.RawProduce(byte[],IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
         public void RawProduce(
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             RawProduce(
                 Endpoint.Name,
@@ -207,11 +277,11 @@ namespace Silverback.Messaging.Broker
                 onSuccess,
                 onError);
 
-        /// <inheritdoc cref="IProducer.RawProduce(Stream?,IReadOnlyCollection{MessageHeader}?,Action,Action{Exception})" />
+        /// <inheritdoc cref="IProducer.RawProduce(Stream?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
         public void RawProduce(
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             RawProduce(
                 Endpoint.Name,
@@ -220,108 +290,192 @@ namespace Silverback.Messaging.Broker
                 onSuccess,
                 onError);
 
-        /// <inheritdoc cref="IProducer.RawProduce(string,byte[],IReadOnlyCollection{MessageHeader}?,Action,Action{Exception})" />
+        /// <inheritdoc cref="IProducer.RawProduce(string,byte[],IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
         public void RawProduce(
             string actualEndpointName,
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
-            ProduceCore(null, messageContent, headers, actualEndpointName, onSuccess, onError);
+            ProduceCore(
+                null,
+                messageContent,
+                headers,
+                actualEndpointName,
+                identifier =>
+                {
+                    _logger.LogProduced(Endpoint, actualEndpointName, headers, identifier);
+                    onSuccess.Invoke(identifier);
+                },
+                exception =>
+                {
+                    _logger.LogProduceError(Endpoint, actualEndpointName, headers, exception);
+                    onError.Invoke(exception);
+                });
 
-        /// <inheritdoc cref="IProducer.RawProduce(string,Stream,IReadOnlyCollection{MessageHeader}?,Action,Action{Exception})" />
+        /// <inheritdoc cref="IProducer.RawProduce(string,Stream,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
         public void RawProduce(
             string actualEndpointName,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             ProduceCore(
                 null,
                 messageStream,
                 headers,
                 actualEndpointName,
-                onSuccess,
-                onError);
+                identifier =>
+                {
+                    _logger.LogProduced(Endpoint, actualEndpointName, headers, identifier);
+                    onSuccess.Invoke(identifier);
+                },
+                exception =>
+                {
+                    _logger.LogProduceError(Endpoint, actualEndpointName, headers, exception);
+                    onError.Invoke(exception);
+                });
 
         /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?)" />
-        public Task ProduceAsync(object? message, IReadOnlyCollection<MessageHeader>? headers = null) =>
+        public Task<IBrokerMessageIdentifier?> ProduceAsync(
+            object? message,
+            IReadOnlyCollection<MessageHeader>? headers = null) =>
             ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
 
         /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
-        public async Task ProduceAsync(IOutboundEnvelope envelope) =>
-            await ExecutePipelineAsync(
-                new ProducerPipelineContext(envelope, this, _serviceProvider),
-                async finalContext =>
-                {
-                    ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
-                        await ProduceCoreAsync(
+        public async Task<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope)
+        {
+            try
+            {
+                IBrokerMessageIdentifier? brokerMessageIdentifier = null;
+
+                await ExecutePipelineAsync(
+                    new ProducerPipelineContext(envelope, this, _serviceProvider),
+                    async finalContext =>
+                    {
+                        brokerMessageIdentifier = await ProduceCoreAsync(
                                 finalContext.Envelope.Message,
                                 finalContext.Envelope.RawMessage,
                                 finalContext.Envelope.Headers,
                                 finalContext.Envelope.ActualEndpointName)
                             .ConfigureAwait(false);
-                }).ConfigureAwait(false);
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,Action,Action{Exception})" />
+                        ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier =
+                            brokerMessageIdentifier;
+
+                        _logger.LogProduced(envelope);
+                    }).ConfigureAwait(false);
+
+                return brokerMessageIdentifier;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogProduceError(envelope, ex);
+                throw;
+            }
+        }
+
+        /// <inheritdoc cref="IProducer.ProduceAsync(object?,IReadOnlyCollection{MessageHeader}?,Action{IBrokerMessageIdentifier},Action{Exception})" />
         public Task ProduceAsync(
             object? message,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             ProduceAsync(new OutboundEnvelope(message, headers, Endpoint), onSuccess, onError);
 
-        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,Action,Action{Exception})" />
+        /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
         public async Task ProduceAsync(
             IOutboundEnvelope envelope,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             await ExecutePipelineAsync(
-                    new ProducerPipelineContext(envelope, this, _serviceProvider),
-                    finalContext => ProduceCoreAsync(
-                        finalContext.Envelope.Message,
-                        finalContext.Envelope.RawMessage,
-                        finalContext.Envelope.Headers,
-                        finalContext.Envelope.ActualEndpointName,
-                        onSuccess,
-                        onError))
-                .ConfigureAwait(false);
+                new ProducerPipelineContext(envelope, this, _serviceProvider),
+                finalContext => ProduceCoreAsync(
+                    finalContext.Envelope.Message,
+                    finalContext.Envelope.RawMessage,
+                    finalContext.Envelope.Headers,
+                    finalContext.Envelope.ActualEndpointName,
+                    identifier =>
+                    {
+                        ((RawOutboundEnvelope)finalContext.Envelope).BrokerMessageIdentifier = identifier;
+                        _logger.LogProduced(envelope);
+                        onSuccess.Invoke(identifier);
+                    },
+                    exception =>
+                    {
+                        _logger.LogProduceError(envelope, exception);
+                        onError.Invoke(exception);
+                    })).ConfigureAwait(false);
 
         /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
-        public Task RawProduceAsync(
+        public Task<IBrokerMessageIdentifier?> RawProduceAsync(
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers = null) =>
             RawProduceAsync(Endpoint.Name, messageContent, headers);
 
         /// <inheritdoc cref="IProducer.RawProduceAsync(Stream?,IReadOnlyCollection{MessageHeader}?)" />
-        public Task RawProduceAsync(
+        public Task<IBrokerMessageIdentifier?> RawProduceAsync(
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers = null) =>
             RawProduceAsync(Endpoint.Name, messageStream, headers);
 
         /// <inheritdoc cref="IProducer.RawProduceAsync(string, byte[],IReadOnlyCollection{MessageHeader}?)" />
-        public Task RawProduceAsync(
+        public async Task<IBrokerMessageIdentifier?> RawProduceAsync(
             string actualEndpointName,
             byte[]? messageContent,
-            IReadOnlyCollection<MessageHeader>? headers = null) =>
-            ProduceCoreAsync(null, messageContent, headers, actualEndpointName);
+            IReadOnlyCollection<MessageHeader>? headers = null)
+        {
+            try
+            {
+                var brokerMessageIdentifier = await ProduceCoreAsync(
+                        null,
+                        messageContent,
+                        headers,
+                        actualEndpointName)
+                    .ConfigureAwait(false);
+
+                _logger.LogProduced(Endpoint, actualEndpointName, headers, brokerMessageIdentifier);
+
+                return brokerMessageIdentifier;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogProduceError(Endpoint, actualEndpointName, headers, ex);
+                throw;
+            }
+        }
 
         /// <inheritdoc cref="IProducer.RawProduceAsync(string, Stream?,IReadOnlyCollection{MessageHeader}?)" />
-        public Task RawProduceAsync(
+        public async Task<IBrokerMessageIdentifier?> RawProduceAsync(
             string actualEndpointName,
             Stream? messageStream,
-            IReadOnlyCollection<MessageHeader>? headers = null) =>
-            ProduceCoreAsync(
-                null,
-                messageStream,
-                headers,
-                actualEndpointName);
+            IReadOnlyCollection<MessageHeader>? headers = null)
+        {
+            try
+            {
+                var brokerMessageIdentifier = await ProduceCoreAsync(
+                        null,
+                        messageStream,
+                        headers,
+                        actualEndpointName)
+                    .ConfigureAwait(false);
+
+                _logger.LogProduced(Endpoint, actualEndpointName, headers, brokerMessageIdentifier);
+
+                return brokerMessageIdentifier;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogProduceError(Endpoint, actualEndpointName, headers, ex);
+                throw;
+            }
+        }
 
         /// <inheritdoc cref="IProducer.RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader}?)" />
         public Task RawProduceAsync(
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             RawProduceAsync(
                 Endpoint.Name,
@@ -334,7 +488,7 @@ namespace Silverback.Messaging.Broker
         public Task RawProduceAsync(
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             RawProduceAsync(
                 Endpoint.Name,
@@ -348,24 +502,46 @@ namespace Silverback.Messaging.Broker
             string actualEndpointName,
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
-            ProduceCoreAsync(null, messageContent, headers, actualEndpointName, onSuccess, onError);
+            ProduceCoreAsync(
+                null,
+                messageContent,
+                headers,
+                actualEndpointName,
+                identifier =>
+                {
+                    _logger.LogProduced(Endpoint, actualEndpointName, headers, identifier);
+                    onSuccess.Invoke(identifier);
+                },
+                exception =>
+                {
+                    _logger.LogProduceError(Endpoint, actualEndpointName, headers, exception);
+                    onError.Invoke(exception);
+                });
 
         /// <inheritdoc cref="IProducer.RawProduceAsync(string,Stream?,IReadOnlyCollection{MessageHeader}?)" />
         public Task RawProduceAsync(
             string actualEndpointName,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             ProduceCoreAsync(
                 null,
                 messageStream,
                 headers,
                 actualEndpointName,
-                onSuccess,
-                onError);
+                identifier =>
+                {
+                    _logger.LogProduced(Endpoint, actualEndpointName, headers, identifier);
+                    onSuccess.Invoke(identifier);
+                },
+                exception =>
+                {
+                    _logger.LogProduceError(Endpoint, actualEndpointName, headers, exception);
+                    onError.Invoke(exception);
+                });
 
         /// <summary>
         ///     Connects to the message broker.
@@ -388,10 +564,10 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="message">
         ///     The message to be delivered before serialization. This might be null if
-        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})"/> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})"/> have been used to
+        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageStream">
@@ -417,10 +593,10 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="message">
         ///     The message to be delivered before serialization. This might be null if
-        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})"/> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})"/> have been used to
+        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageBytes">
@@ -450,10 +626,10 @@ namespace Silverback.Messaging.Broker
         /// </remarks>
         /// <param name="message">
         ///     The message to be delivered before serialization. This might be null if
-        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})"/> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})"/> have been used to
+        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageStream">
@@ -476,7 +652,7 @@ namespace Silverback.Messaging.Broker
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -488,10 +664,10 @@ namespace Silverback.Messaging.Broker
         /// </remarks>
         /// <param name="message">
         ///     The message to be delivered before serialization. This might be null if
-        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})"/> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})"/> have been used to
+        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageBytes">
@@ -514,7 +690,7 @@ namespace Silverback.Messaging.Broker
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -522,10 +698,10 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="message">
         ///     The message to be delivered before serialization. This might be null if
-        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})"/> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})"/> have been used to
+        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageStream">
@@ -552,10 +728,10 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         /// <param name="message">
         ///     The message to be delivered before serialization. This might be null if
-        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})"/> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})"/> have been used to
+        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageBytes">
@@ -586,10 +762,10 @@ namespace Silverback.Messaging.Broker
         /// </remarks>
         /// <param name="message">
         ///     The message to be delivered before serialization. This might be null if
-        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})"/> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})"/> have been used to
+        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageStream">
@@ -616,7 +792,7 @@ namespace Silverback.Messaging.Broker
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -628,10 +804,10 @@ namespace Silverback.Messaging.Broker
         /// </remarks>
         /// <param name="message">
         ///     The message to be delivered before serialization. This might be null if
-        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})"/>,
-        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})"/> or
-        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})"/> have been used to
+        ///     <see cref="RawProduce(byte[],IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduce(Stream,IReadOnlyCollection{MessageHeader})" />,
+        ///     <see cref="RawProduceAsync(byte[],IReadOnlyCollection{MessageHeader})" /> or
+        ///     <see cref="RawProduceAsync(Stream,IReadOnlyCollection{MessageHeader})" /> have been used to
         ///     produce.
         /// </param>
         /// <param name="messageBytes">
@@ -658,29 +834,20 @@ namespace Silverback.Messaging.Broker
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
-        private async Task ExecutePipelineAsync(
-            ProducerPipelineContext context,
-            ProducerBehaviorHandler finalAction)
-        {
-            await ExecutePipelineCoreAsync(context, finalAction, 0).ConfigureAwait(false);
-
-            _logger.LogProduced(context.Envelope);
-        }
-
-        private Task ExecutePipelineCoreAsync(
+        private Task ExecutePipelineAsync(
             ProducerPipelineContext context,
             ProducerBehaviorHandler finalAction,
-            int stepIndex)
+            int stepIndex = 0)
         {
             if (_behaviors.Count <= 0 || stepIndex >= _behaviors.Count)
                 return finalAction(context);
 
             return _behaviors[stepIndex].HandleAsync(
                 context,
-                nextContext => ExecutePipelineCoreAsync(nextContext, finalAction, stepIndex + 1));
+                nextContext => ExecutePipelineAsync(nextContext, finalAction, stepIndex + 1));
         }
     }
 }

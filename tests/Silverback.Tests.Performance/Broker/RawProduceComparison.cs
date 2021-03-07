@@ -344,7 +344,7 @@ namespace Silverback.Tests.Performance.Broker
                 await producer.ProduceAsync(
                     message.Value,
                     null,
-                    () =>
+                    _ =>
                     {
                         Interlocked.Increment(ref produced);
                         NotifyProduced(produced);
@@ -418,7 +418,7 @@ namespace Silverback.Tests.Performance.Broker
                 producer.Produce(
                     message.Value,
                     null,
-                    () =>
+                    _ =>
                     {
                         Interlocked.Increment(ref produced);
                         NotifyProduced(produced);
@@ -492,7 +492,7 @@ namespace Silverback.Tests.Performance.Broker
                 await producer.RawProduceAsync(
                     messageStream,
                     null,
-                    () =>
+                    _ =>
                     {
                         Interlocked.Increment(ref produced);
                         NotifyProduced(produced);
@@ -566,7 +566,7 @@ namespace Silverback.Tests.Performance.Broker
                 producer.RawProduce(
                     messageStream,
                     null,
-                    () =>
+                    _ =>
                     {
                         Interlocked.Increment(ref produced);
                         NotifyProduced(produced);

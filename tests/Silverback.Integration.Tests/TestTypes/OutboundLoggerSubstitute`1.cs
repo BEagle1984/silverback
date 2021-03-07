@@ -2,9 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Silverback.Diagnostics;
+using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Integration.TestTypes
@@ -16,6 +19,26 @@ namespace Silverback.Tests.Integration.TestTypes
         public bool IsEnabled(LogEvent logEvent) => true;
 
         public void LogProduced(IOutboundEnvelope envelope)
+        {
+        }
+
+        public void LogProduced(
+            IProducerEndpoint endpoint,
+            string actualEndpointName,
+            IReadOnlyCollection<MessageHeader>? headers,
+            IBrokerMessageIdentifier? brokerMessageIdentifier)
+        {
+        }
+
+        public void LogProduceError(IOutboundEnvelope envelope, Exception exception)
+        {
+        }
+
+        public void LogProduceError(
+            IProducerEndpoint endpoint,
+            string actualEndpointName,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Exception exception)
         {
         }
 

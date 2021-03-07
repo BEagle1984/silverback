@@ -302,6 +302,14 @@ namespace Silverback.Diagnostics
             "Message produced.");
 
         /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs producing a message.
+        /// </summary>
+        public static LogEvent ErrorProducingMessage { get; } = new(
+            LogLevel.Warning,
+            GetEventId(32, nameof(ErrorProducingMessage)),
+            "Error occurred producing the message.");
+
+        /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written during the evaluation of an error
         ///     policy, when the maximum configured failed attempts for the policies are exceeded and the policy isn't
         ///     applied anymore.

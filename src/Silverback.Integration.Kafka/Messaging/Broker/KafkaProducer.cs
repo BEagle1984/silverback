@@ -89,24 +89,24 @@ namespace Silverback.Messaging.Broker
             AsyncHelper.RunSynchronously(
                 () => ProduceCoreAsync(message, messageBytes, headers, actualEndpointName));
 
-        /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
         protected override void ProduceCore(
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             ProduceCore(message, messageStream.ReadAll(), headers, actualEndpointName, onSuccess, onError);
 
-        /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
         [SuppressMessage("", "CA1031", Justification = "Exception forwarded")]
         protected override void ProduceCore(
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError)
         {
             Check.NotNull(onSuccess, nameof(onSuccess));
@@ -145,7 +145,8 @@ namespace Silverback.Messaging.Broker
                         if (Endpoint.Configuration.ArePersistenceStatusReportsEnabled)
                             CheckPersistenceStatus(deliveryReport);
 
-                        onSuccess.Invoke();
+                        onSuccess.Invoke(
+                            new KafkaOffset(deliveryReport.TopicPartitionOffsetError.TopicPartitionOffset));
                     }
                     catch (Exception ex)
                     {
@@ -209,13 +210,13 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
         protected override async Task ProduceCoreAsync(
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             await ProduceCoreAsync(
                     message,
@@ -226,14 +227,14 @@ namespace Silverback.Messaging.Broker
                     onError)
                 .ConfigureAwait(false);
 
-        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,Action,Action{Exception})" />
+        /// <inheritdoc cref="Producer.ProduceCoreAsync(object,byte[],IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
         [SuppressMessage("", "CA1031", Justification = "Exception logged/forwarded")]
         protected override Task ProduceCoreAsync(
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError)
         {
             ProduceCore(message, messageBytes, headers, actualEndpointName, onSuccess, onError);

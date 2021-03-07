@@ -89,6 +89,7 @@ Id | Level | Message | Reference
 1027 | Debug | Connected producer to endpoint. | [ProducerConnected](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ProducerConnected)
 1028 | Debug | Disconnected producer from endpoint. | [ProducerDisconnected](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ProducerDisconnected)
 1031 | Information | Message produced. | [MessageProduced](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_MessageProduced)
+1032 | Warning | Error occurred producing the message. | [ErrorProducingMessage](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingMessage)
 1041 | Trace | The {policyType} will be skipped because the current failed attempts ({failedAttempts}) exceeds the configured maximum attempts ({maxFailedAttempts}). | [PolicyMaxFailedAttemptsExceeded](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_PolicyMaxFailedAttemptsExceeded)
 1042 | Trace | The {policyType} will be skipped because the {exceptionType} is not in the list of handled exceptions. | [PolicyExceptionNotIncluded](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionNotIncluded)
 1043 | Trace | The {policyType} will be skipped because the {exceptionType} is in the list of excluded exceptions. | [PolicyExceptionExcluded](xref:Silverback.Diagnostics.IntegrationLogEvents#Silverback_Diagnostics_IntegrationLogEvents_PolicyExceptionExcluded)
@@ -160,5 +161,3 @@ Id | Level | Message | Reference
 4022 | Debug | Error occurred retrying to connect to the MQTT broker. &#124; clientId: {clientId} | [ConnectRetryError](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectRetryError)
 4023 | Warning | Connection with the MQTT broker lost. The client will try to reconnect. &#124; clientId: {clientId} | [ConnectionLost](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectionLost)
 4031 | Debug | Producer queue processing was canceled. | [ProducerQueueProcessingCanceled](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ProducerQueueProcessingCanceled)
-
-

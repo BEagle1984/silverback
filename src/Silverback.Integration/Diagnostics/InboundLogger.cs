@@ -13,10 +13,7 @@ namespace Silverback.Diagnostics
 {
     internal class InboundLogger
     {
-        private const string EventsDataString =
-            " | endpointName: {endpointName}, messageType: {messageType}, messageId: {messageId}";
-
-        private readonly LogAdditionalArguments<IRawInboundEnvelope> _additionalArguments;
+        private readonly IBrokerLogEnricher _logEnricher;
 
         private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
             _processingInboundMessage;
@@ -51,9 +48,9 @@ namespace Silverback.Diagnostics
         private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
             _messageAlreadyProcessed;
 
-        public InboundLogger(LogAdditionalArguments<IRawInboundEnvelope> additionalArguments)
+        public InboundLogger(IBrokerLogEnricher logEnricher)
         {
-            _additionalArguments = Check.NotNull(additionalArguments, nameof(additionalArguments));
+            _logEnricher = Check.NotNull(logEnricher, nameof(logEnricher));
 
             _processingInboundMessage =
                 SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
@@ -105,13 +102,18 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.ProcessingInboundMessage))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             _processingInboundMessage.Invoke(
                 logger.InnerLogger,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                value1,
+                value2,
                 null);
         }
 
@@ -123,13 +125,18 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.ErrorProcessingInboundMessage))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             _errorProcessingInboundMessage.Invoke(
                 logger.InnerLogger,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                value1,
+                value2,
                 exception);
         }
 
@@ -141,13 +148,18 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.ConsumerFatalError))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             _consumerFatalError.Invoke(
                 logger.InnerLogger,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                value1,
+                value2,
                 exception);
         }
 
@@ -156,13 +168,18 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.RetryMessageProcessing))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             _retryMessageProcessing.Invoke(
                 logger.InnerLogger,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                value1,
+                value2,
                 null);
         }
 
@@ -174,14 +191,19 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.MessageMoved))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             _messageMoved.Invoke(
                 logger.InnerLogger,
                 targetEndpoint.Name,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                value1,
+                value2,
                 null);
         }
 
@@ -190,13 +212,18 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.MessageSkipped))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             _messageSkipped.Invoke(
                 logger.InnerLogger,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                value1,
+                value2,
                 null);
         }
 
@@ -208,14 +235,19 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.CannotMoveSequences))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             _cannotMoveSequences.Invoke(
                 logger.InnerLogger,
                 sequence.GetType().Name,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                value1,
+                value2,
                 null);
         }
 
@@ -227,13 +259,18 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.RollbackToRetryFailed))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             _rollbackToRetryFailed.Invoke(
                 logger.InnerLogger,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                value1,
+                value2,
                 exception);
         }
 
@@ -245,13 +282,18 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.RollbackToSkipFailed))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             _rollbackToSkipFailed.Invoke(
                 logger.InnerLogger,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                value1,
+                value2,
                 exception);
         }
 
@@ -260,13 +302,18 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.NullMessageSkipped))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             _nullMessageSkipped.Invoke(
                 logger.InnerLogger,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                value1,
+                value2,
                 null);
         }
 
@@ -275,13 +322,18 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.MessageAlreadyProcessed))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             _messageAlreadyProcessed.Invoke(
                 logger.InnerLogger,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                _additionalArguments.Argument1.ValueProvider.Invoke(envelope),
-                _additionalArguments.Argument2.ValueProvider.Invoke(envelope),
+                value1,
+                value2,
                 null);
         }
 
@@ -297,12 +349,17 @@ namespace Silverback.Diagnostics
             if (!logger.IsEnabled(IntegrationLogEvents.LowLevelTracing))
                 return;
 
+            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+                envelope.Endpoint,
+                envelope.Headers,
+                envelope.BrokerMessageIdentifier);
+
             var args = new List<object?>(argumentsProvider?.Invoke() ?? Array.Empty<object?>());
             args.Add(envelope.ActualEndpointName);
             args.Add(envelope.Headers.GetValue(DefaultMessageHeaders.MessageType));
             args.Add(envelope.Headers.GetValue(DefaultMessageHeaders.MessageId));
-            args.Add(_additionalArguments.Argument1.ValueProvider.Invoke(envelope));
-            args.Add(_additionalArguments.Argument2.ValueProvider.Invoke(envelope));
+            args.Add(value1);
+            args.Add(value2);
 
             logger.InnerLogger.Log(
                 logLevel,
@@ -323,6 +380,11 @@ namespace Silverback.Diagnostics
         }
 
         private string EnrichMessage(string message) =>
-            _additionalArguments.EnrichMessage(message + EventsDataString);
+            $"{message} | " +
+            "endpointName: {endpointName}, " +
+            "messageType: {messageType}, " +
+            "messageId: {messageId}, " +
+            $"{_logEnricher.AdditionalPropertyName1}: {{{_logEnricher.AdditionalPropertyName1}}}, " +
+            $"{_logEnricher.AdditionalPropertyName2}: {{{_logEnricher.AdditionalPropertyName2}}}";
     }
 }

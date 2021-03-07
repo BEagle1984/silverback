@@ -6,7 +6,6 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka;
 using Silverback.Messaging.Diagnostics;
-using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
@@ -30,27 +29,9 @@ namespace Silverback.Messaging.Configuration
                 .Services
                 .AddTransient<IConfluentProducerBuilder, ConfluentProducerBuilder>()
                 .AddTransient<IConfluentConsumerBuilder, ConfluentConsumerBuilder>()
-                .AddSingleton<IConfluentProducersCache, ConfluentProducersCache>();
-
-            brokerOptionsBuilder.GetLoggerCollection().AddInbound<KafkaConsumerEndpoint>(
-                "offset",
-                envelope =>
-                    envelope.BrokerMessageIdentifier is KafkaOffset offset
-                        ? $"{offset.Partition}@{offset.Offset}"
-                        : null,
-                "kafkaKey",
-                envelope => envelope.Headers.GetValue(KafkaMessageHeaders.KafkaMessageKey));
-
-            brokerOptionsBuilder.GetLoggerCollection().AddOutbound<KafkaProducerEndpoint>(
-                "offset",
-                envelope =>
-                    envelope.BrokerMessageIdentifier is KafkaOffset offset
-                        ? $"{offset.Partition}@{offset.Offset}"
-                        : null,
-                "kafkaKey",
-                envelope => envelope.Headers.GetValue(KafkaMessageHeaders.KafkaMessageKey));
-
-            brokerOptionsBuilder.SilverbackBuilder.Services
+                .AddSingleton<IConfluentProducersCache, ConfluentProducersCache>()
+                .AddSingleton<IBrokerLogEnricher<KafkaProducerEndpoint>, KafkaLogEnricher>()
+                .AddSingleton<IBrokerLogEnricher<KafkaConsumerEndpoint>, KafkaLogEnricher>()
                 .AddSingleton<IBrokerActivityEnricher<KafkaProducerEndpoint>, KafkaActivityEnricher>()
                 .AddSingleton<IBrokerActivityEnricher<KafkaConsumerEndpoint>, KafkaActivityEnricher>();
         }

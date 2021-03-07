@@ -58,7 +58,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogProcessing(envelope);
@@ -86,7 +86,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogProcessingError(envelope, new InvalidDataException());
@@ -114,7 +114,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogProcessingFatalError(envelope, new ArithmeticException());
@@ -142,7 +142,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogRetryProcessing(envelope);
@@ -170,7 +170,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogMoved(envelope, new TestProducerEndpoint("target1"));
@@ -198,7 +198,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogSkipped(envelope);
@@ -226,7 +226,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogCannotMoveSequences(envelope, new FakeSequence());
@@ -254,7 +254,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogAlreadyProcessed(envelope);
@@ -283,7 +283,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogInboundTrace(
@@ -315,7 +315,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogInboundTrace(
@@ -351,7 +351,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogInboundLowLevelTrace(
@@ -386,7 +386,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "endpointName: topic2, " +
                 "messageType: Message.Type, " +
                 "messageId: 1234, " +
-                "offset: 2@42, " +
+                "offset: [2]@42, " +
                 "kafkaKey: key1234";
 
             _inboundLogger.LogInboundLowLevelTrace(

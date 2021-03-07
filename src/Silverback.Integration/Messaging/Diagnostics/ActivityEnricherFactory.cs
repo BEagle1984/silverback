@@ -21,14 +21,14 @@ namespace Silverback.Messaging.Diagnostics
             _serviceProvider = serviceProvider;
         }
 
-        public IBrokerActivityEnricher GetActivityEnricher(Type endpointType)
+        public IBrokerActivityEnricher GetActivityEnricher(IEndpoint endpoint)
         {
-            Type closedEnricherType = _enricherTypeCache.GetOrAdd(
-                endpointType,
-                t => typeof(IBrokerActivityEnricher<>).MakeGenericType(t));
+            var enricherType = _enricherTypeCache.GetOrAdd(
+                endpoint.GetType(),
+                type => typeof(IBrokerActivityEnricher<>)
+                    .MakeGenericType(type));
 
-            IBrokerActivityEnricher? activityEnricher =
-                (IBrokerActivityEnricher?)_serviceProvider.GetService(closedEnricherType);
+            var activityEnricher = (IBrokerActivityEnricher?)_serviceProvider.GetService(enricherType);
 
             return activityEnricher ?? NullEnricherInstance;
         }

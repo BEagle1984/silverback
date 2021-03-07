@@ -141,12 +141,10 @@ namespace Silverback.Tests.Performance.Broker
             int number = 0;
             var stats = new Stats("Publisher.PublishAsync no await");
             stats.StartProducing();
-            int pendingTasks = 0;
+            int pendingTasks = iterations;
 
             while (number < iterations)
             {
-                Interlocked.Increment(ref pendingTasks);
-
                 publisher.PublishAsync(
                         new SampleMessage3
                         {
@@ -184,12 +182,10 @@ namespace Silverback.Tests.Performance.Broker
             int number = 0;
             var stats = new Stats("Producer.ProduceAsync no await");
             stats.StartProducing();
-            int pendingTasks = 0;
+            int pendingTasks = iterations;
 
             while (number < iterations)
             {
-                Interlocked.Increment(ref pendingTasks);
-
                 producer.ProduceAsync(
                         new SampleMessage4
                         {
@@ -227,18 +223,17 @@ namespace Silverback.Tests.Performance.Broker
             int number = 0;
             var stats = new Stats("Producer.Produce with callbacks");
             stats.StartProducing();
-            int pendingTasks = 0;
+            int pendingTasks = iterations;
 
             while (number < iterations)
             {
-                Interlocked.Increment(ref pendingTasks);
                 producer.Produce(
                     new SampleMessage5
                     {
                         Number = ++number
                     },
                     null,
-                    () =>
+                    _ =>
                     {
                         stats.IncrementProducedMessages();
                         Interlocked.Decrement(ref pendingTasks);
@@ -268,12 +263,10 @@ namespace Silverback.Tests.Performance.Broker
             int number = 0;
             var stats = new Stats("Producer.Produce with callbacks, wrapped in Task.Run");
             stats.StartProducing();
-            int pendingTasks = 0;
+            int pendingTasks = iterations;
 
             while (number < iterations)
             {
-                Interlocked.Increment(ref pendingTasks);
-
                 var nextNumber = ++number;
                 Task.Run(
                         () =>
@@ -284,7 +277,7 @@ namespace Silverback.Tests.Performance.Broker
                                     Number = nextNumber
                                 },
                                 null,
-                                () =>
+                                _ =>
                                 {
                                     stats.IncrementProducedMessages();
                                     Interlocked.Decrement(ref pendingTasks);

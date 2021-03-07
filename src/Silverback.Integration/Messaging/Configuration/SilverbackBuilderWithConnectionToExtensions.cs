@@ -52,7 +52,9 @@ namespace Microsoft.Extensions.DependencyInjection
             silverbackBuilder.Services
                 .AddSingleton(typeof(IInboundLogger<>), typeof(InboundLogger<>))
                 .AddSingleton(typeof(IOutboundLogger<>), typeof(OutboundLogger<>))
-                .AddSingleton(new LoggerCollection());
+                .AddSingleton<InboundLoggerFactory>()
+                .AddSingleton<OutboundLoggerFactory>()
+                .AddSingleton<BrokerLogEnricherFactory>();
 
             // Activities
             silverbackBuilder.Services.AddSingleton<IActivityEnricherFactory, ActivityEnricherFactory>();

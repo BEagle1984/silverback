@@ -65,7 +65,12 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
-        void Produce(object? message, IReadOnlyCollection<MessageHeader>? headers = null);
+        /// <returns>
+        ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
+        /// </returns>
+        IBrokerMessageIdentifier? Produce(
+            object? message,
+            IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -73,7 +78,10 @@ namespace Silverback.Messaging.Broker
         /// <param name="envelope">
         ///     The envelope containing the message to be delivered.
         /// </param>
-        void Produce(IOutboundEnvelope envelope);
+        /// <returns>
+        ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
+        /// </returns>
+        IBrokerMessageIdentifier? Produce(IOutboundEnvelope envelope);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -97,7 +105,7 @@ namespace Silverback.Messaging.Broker
         void Produce(
             object? message,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -116,7 +124,10 @@ namespace Silverback.Messaging.Broker
         /// <param name="onError">
         ///     The callback to be invoked when the produce fails.
         /// </param>
-        void Produce(IOutboundEnvelope envelope, Action onSuccess, Action<Exception> onError);
+        void Produce(
+            IOutboundEnvelope envelope,
+            Action<IBrokerMessageIdentifier?> onSuccess,
+            Action<Exception> onError);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -127,7 +138,12 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
-        void RawProduce(byte[]? messageContent, IReadOnlyCollection<MessageHeader>? headers = null);
+        /// <returns>
+        ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
+        /// </returns>
+        IBrokerMessageIdentifier? RawProduce(
+            byte[]? messageContent,
+            IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -138,7 +154,12 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
-        void RawProduce(Stream? messageStream, IReadOnlyCollection<MessageHeader>? headers = null);
+        /// <returns>
+        ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
+        /// </returns>
+        IBrokerMessageIdentifier? RawProduce(
+            Stream? messageStream,
+            IReadOnlyCollection<MessageHeader>? headers = null);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -152,7 +173,10 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
-        void RawProduce(
+        /// <returns>
+        ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
+        /// </returns>
+        IBrokerMessageIdentifier? RawProduce(
             string actualEndpointName,
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers = null);
@@ -169,7 +193,10 @@ namespace Silverback.Messaging.Broker
         /// <param name="headers">
         ///     The optional message headers.
         /// </param>
-        void RawProduce(
+        /// <returns>
+        ///     The <see cref="IBrokerMessageIdentifier" /> of the produced record.
+        /// </returns>
+        IBrokerMessageIdentifier? RawProduce(
             string actualEndpointName,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers = null);
@@ -196,7 +223,7 @@ namespace Silverback.Messaging.Broker
         void RawProduce(
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -221,7 +248,7 @@ namespace Silverback.Messaging.Broker
         void RawProduce(
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -250,7 +277,7 @@ namespace Silverback.Messaging.Broker
             string actualEndpointName,
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -279,7 +306,7 @@ namespace Silverback.Messaging.Broker
             string actualEndpointName,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -292,9 +319,10 @@ namespace Silverback.Messaging.Broker
         ///     The optional message headers.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
         /// </returns>
-        Task ProduceAsync(
+        Task<IBrokerMessageIdentifier?> ProduceAsync(
             object? message,
             IReadOnlyCollection<MessageHeader>? headers = null);
 
@@ -305,9 +333,10 @@ namespace Silverback.Messaging.Broker
         ///     The envelope containing the message to be delivered.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
         /// </returns>
-        Task ProduceAsync(IOutboundEnvelope envelope);
+        Task<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope);
 
         /// <summary>
         ///     Publishes the specified message.
@@ -335,7 +364,7 @@ namespace Silverback.Messaging.Broker
         Task ProduceAsync(
             object? message,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -358,7 +387,10 @@ namespace Silverback.Messaging.Broker
         ///     A <see cref="Task" /> representing the asynchronous operation. The <see cref="Task" /> will complete as
         ///     soon as the message is enqueued.
         /// </returns>
-        Task ProduceAsync(IOutboundEnvelope envelope, Action onSuccess, Action<Exception> onError);
+        Task ProduceAsync(
+            IOutboundEnvelope envelope,
+            Action<IBrokerMessageIdentifier?> onSuccess,
+            Action<Exception> onError);
 
         /// <summary>
         ///     Publishes the specified message as-is, without sending it through the behaviors pipeline.
@@ -370,9 +402,10 @@ namespace Silverback.Messaging.Broker
         ///     The optional message headers.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
         /// </returns>
-        Task RawProduceAsync(
+        Task<IBrokerMessageIdentifier?> RawProduceAsync(
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers = null);
 
@@ -386,9 +419,10 @@ namespace Silverback.Messaging.Broker
         ///     The optional message headers.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
         /// </returns>
-        Task RawProduceAsync(
+        Task<IBrokerMessageIdentifier?> RawProduceAsync(
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers = null);
 
@@ -405,9 +439,10 @@ namespace Silverback.Messaging.Broker
         ///     The optional message headers.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
         /// </returns>
-        Task RawProduceAsync(
+        Task<IBrokerMessageIdentifier?> RawProduceAsync(
             string actualEndpointName,
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers = null);
@@ -425,9 +460,10 @@ namespace Silverback.Messaging.Broker
         ///     The optional message headers.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
+        ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
+        ///     <see cref="IBrokerMessageIdentifier" /> of the produced record.
         /// </returns>
-        Task RawProduceAsync(
+        Task<IBrokerMessageIdentifier?> RawProduceAsync(
             string actualEndpointName,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers = null);
@@ -458,7 +494,7 @@ namespace Silverback.Messaging.Broker
         Task RawProduceAsync(
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -487,7 +523,7 @@ namespace Silverback.Messaging.Broker
         Task RawProduceAsync(
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -520,7 +556,7 @@ namespace Silverback.Messaging.Broker
             string actualEndpointName,
             byte[]? messageContent,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
 
         /// <summary>
@@ -553,7 +589,7 @@ namespace Silverback.Messaging.Broker
             string actualEndpointName,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            Action onSuccess,
+            Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError);
     }
 }

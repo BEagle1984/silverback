@@ -2,6 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using Silverback.Messaging;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
 namespace Silverback.Diagnostics
@@ -22,6 +25,59 @@ namespace Silverback.Diagnostics
         ///     The <see cref="IOutboundEnvelope" />.
         /// </param>
         void LogProduced(IOutboundEnvelope envelope);
+
+        /// <summary>
+        ///     Logs the <see cref="IntegrationLogEvents.MessageProduced" /> event.
+        /// </summary>
+        /// <param name="endpoint">
+        ///     The <see cref="IProducerEndpoint" />.
+        /// </param>
+        /// <param name="actualEndpointName">
+        ///     The name of the actual target endpoint.
+        /// </param>
+        /// <param name="headers">
+        ///     The message headers.
+        /// </param>
+        /// <param name="brokerMessageIdentifier">
+        ///     The <see cref="IBrokerMessageIdentifier" />.
+        /// </param>
+        void LogProduced(
+            IProducerEndpoint endpoint,
+            string actualEndpointName,
+            IReadOnlyCollection<MessageHeader>? headers,
+            IBrokerMessageIdentifier? brokerMessageIdentifier);
+
+        /// <summary>
+        ///     Logs the <see cref="IntegrationLogEvents.ErrorProducingMessage" /> event.
+        /// </summary>
+        /// <param name="envelope">
+        ///     The <see cref="IOutboundEnvelope" />.
+        /// </param>
+        /// <param name="exception">
+        ///     The <see cref="Exception" />.
+        /// </param>
+        void LogProduceError(IOutboundEnvelope envelope, Exception exception);
+
+        /// <summary>
+        ///     Logs the <see cref="IntegrationLogEvents.ErrorProducingMessage" /> event.
+        /// </summary>
+        /// <param name="endpoint">
+        ///     The <see cref="IProducerEndpoint" />.
+        /// </param>
+        /// <param name="actualEndpointName">
+        ///     The name of the actual target endpoint.
+        /// </param>
+        /// <param name="headers">
+        ///     The message headers.
+        /// </param>
+        /// <param name="exception">
+        ///     The <see cref="Exception" />.
+        /// </param>
+        void LogProduceError(
+            IProducerEndpoint endpoint,
+            string actualEndpointName,
+            IReadOnlyCollection<MessageHeader>? headers,
+            Exception exception);
 
         /// <summary>
         ///     Logs the <see cref="IntegrationLogEvents.MessageWrittenToOutbox" /> event.
