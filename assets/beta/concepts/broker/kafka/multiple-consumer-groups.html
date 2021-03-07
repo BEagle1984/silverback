@@ -86,7 +86,7 @@
             <article class="content wrap" id="_content" data-uid="kafka-consumer-groups">
 <h1 id="multiple-consumer-groups-in-same-process">Multiple Consumer Groups (in same process)</h1>
 
-<p>In some cases you may want to consume subscribe multiple times the same consumed message, to perform independent tasks. Having multiple subscribers handling the very same message is not a good idea since a failure in one of them will cause the message to be consumed again and thus reprocessed by all subscribers.</p>
+<p>In some cases you may want to subscribe multiple times the same consumed message, to perform independent tasks. Having multiple subscribers handling the very same message is not a good idea since a failure in one of them will cause the message to be consumed again and thus reprocessed by all subscribers.</p>
 <p>A much safer approach is to bind multiple consumers to the same topic, using a different consumer group id. This will cause the message to be consumed multiple times (once per consumer group) and being committed independently. The <a class="xref" href="../../../api/Silverback.Messaging.Subscribers.KafkaGroupIdFilterAttribute.html">KafkaGroupIdFilterAttribute</a> can be used to execute a subscribed method according to the group id.</p>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q">
 <ul role="tablist">
@@ -149,7 +149,7 @@
                         BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;,
                         GroupId = &quot;group2&quot;
                     }
-                });;
+                });
 }
 </code></pre>
 </section>
@@ -158,10 +158,10 @@
 <pre><code class="lang-csharp">public class MySubscriber
 {
     [KafkaGroupIdFilter(&quot;group1&quot;)]
-    private void PerformTask1(MyEvent @event) =&gt; ...
+    public void PerformTask1(MyEvent @event) =&gt; ...
 
     [KafkaGroupIdFilter(&quot;group2&quot;)]
-    private void PerformTask2(MyEvent @event) =&gt; ...
+    public void PerformTask2(MyEvent @event) =&gt; ...
 }
 </code></pre>
 </section>

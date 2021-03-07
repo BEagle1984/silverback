@@ -1,0 +1,420 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>MQTT - Basic (v3) | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="MQTT - Basic (v3) | Silverback ">
+    <meta name="generator" content="docfx 2.56.6.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="sample-mqtt-basic-v3">
+<h1 id="mqtt---basic-v3">MQTT - Basic (v3)</h1>
+
+<p>This sample implements the simple possible producer and consumer, but using MQTT protocol version 3.</p>
+<p>See also: <a class="xref" href="../../concepts/broker/connecting.html">Connecting to a Message Broker</a></p>
+<h2 id="common">Common</h2>
+<p>The message being exchanged is defined in a common project.</p>
+<pre><code class="lang-csharp" name="Common.Message">namespace Silverback.Samples.Mqtt.Basic.Common
+{
+    public class SampleMessage
+    {
+        public int Number { get; set; }
+    }
+}
+</code></pre>
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/Basic.Common">https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/Basic.Common</a></em></p>
+<h2 id="producer">Producer</h2>
+<p>The producer uses an hosted service to publish some messages in the background.</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_producer-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producer-startup" data-tab="producer-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_producer-endpoints" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producer-endpoints" data-tab="producer-endpoints" tabindex="-1">EndpointsConfigurator</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_producer-background-service" role="tab" aria-controls="tabpanel_CeZOj-G++Q_producer-background-service" data-tab="producer-background-service" tabindex="-1">Background Service</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_producer-startup" role="tabpanel" data-tab="producer-startup">
+<pre><code class="lang-csharp" name="Producer.Startup">using Microsoft.Extensions.DependencyInjection;
+
+namespace Silverback.Samples.Mqtt.Basic.ProducerV3
+{
+    public class Startup
+    {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            // Enable Silverback
+            services
+                .AddSilverback()
+
+                // Use Apache Mqtt as message broker
+                .WithConnectionToMessageBroker(
+                    options =&gt; options
+                        .AddMqtt())
+
+                // Delegate the inbound/outbound endpoints configuration to a separate
+                // class.
+                .AddEndpointsConfigurator&lt;EndpointsConfigurator&gt;();
+
+            // Add the hosted service that produces the random sample messages
+            services.AddHostedService&lt;ProducerBackgroundService&gt;();
+        }
+
+        public void Configure()
+        {
+        }
+    }
+}
+</code></pre></section>
+<section id="tabpanel_CeZOj-G++Q_producer-endpoints" role="tabpanel" data-tab="producer-endpoints" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Producer.EndpointsConfigurator">using MQTTnet.Formatter;
+using MQTTnet.Protocol;
+using Silverback.Messaging.Configuration;
+using Silverback.Samples.Mqtt.Basic.Common;
+
+namespace Silverback.Samples.Mqtt.Basic.ProducerV3
+{
+    public class EndpointsConfigurator : IEndpointsConfigurator
+    {
+        public void Configure(IEndpointsConfigurationBuilder builder)
+        {
+            builder
+                .AddMqttEndpoints(
+                    endpoints =&gt; endpoints
+
+                        // Configure the client options
+                        .Configure(
+                            config =&gt; config
+                                .WithClientId(&quot;samples.basic.producer&quot;)
+                                .ConnectViaTcp(&quot;localhost&quot;)
+                                .UseProtocolVersion(MqttProtocolVersion.V310))
+
+                        // Produce the SampleMessage to the samples-basic topic
+                        .AddOutbound&lt;SampleMessage&gt;(
+                            endpoint =&gt; endpoint
+                                .ProduceTo(&quot;samples/basic&quot;)
+                                .WithQualityOfServiceLevel(
+                                    MqttQualityOfServiceLevel.AtLeastOnce)
+                                .Retain()));
+        }
+    }
+}
+</code></pre></section>
+<section id="tabpanel_CeZOj-G++Q_producer-background-service" role="tabpanel" data-tab="producer-background-service" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Producer.BackgroundService">using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Publishing;
+using Silverback.Samples.Mqtt.Basic.Common;
+
+namespace Silverback.Samples.Mqtt.Basic.ProducerV3
+{
+    public class ProducerBackgroundService : BackgroundService
+    {
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+
+        private readonly ILogger&lt;ProducerBackgroundService&gt; _logger;
+
+        public ProducerBackgroundService(
+            IServiceScopeFactory serviceScopeFactory,
+            ILogger&lt;ProducerBackgroundService&gt; logger)
+        {
+            _serviceScopeFactory = serviceScopeFactory;
+            _logger = logger;
+        }
+
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            // Create a service scope and resolve the IPublisher
+            // (the IPublisher cannot be resolved from the root scope and cannot
+            // therefore be directly injected into the BackgroundService)
+            using var scope = _serviceScopeFactory.CreateScope();
+            var publisher = scope.ServiceProvider.GetRequiredService&lt;IPublisher&gt;();
+            var broker = scope.ServiceProvider.GetRequiredService&lt;IBroker&gt;();
+
+            int number = 0;
+
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                // Check whether the connection has been established, since the
+                // BackgroundService will start immediately, before the application
+                // is completely bootstrapped
+                if (!broker.IsConnected)
+                {
+                    await Task.Delay(100, stoppingToken);
+                    continue;
+                }
+
+                await ProduceMessageAsync(publisher, ++number);
+
+                await Task.Delay(100, stoppingToken);
+            }
+        }
+
+        private async Task ProduceMessageAsync(IPublisher publisher, int number)
+        {
+            try
+            {
+                await publisher.PublishAsync(
+                    new SampleMessage
+                    {
+                        Number = number
+                    });
+
+                _logger.LogInformation($&quot;Produced {number}&quot;);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $&quot;Failed to produce {number}&quot;);
+            }
+        }
+    }
+}
+</code></pre></section>
+</div>
+
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/Basic.ProducerV3">https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/Basic.ProducerV3</a></em></p>
+<h2 id="consumer">Consumer</h2>
+<p>The consumer simply streams the file to a temporary folder in the local file system.</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_consumer-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_consumer-startup" data-tab="consumer-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_consumer-endpoints" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_consumer-endpoints" data-tab="consumer-endpoints" tabindex="-1">EndpointsConfigurator</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_consumer-subscriber" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_consumer-subscriber" data-tab="consumer-subscriber" tabindex="-1">Subscriber</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_consumer-startup" role="tabpanel" data-tab="consumer-startup">
+<pre><code class="lang-csharp" name="Consumer.Startup">using Microsoft.Extensions.DependencyInjection;
+
+namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
+{
+    public class Startup
+    {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            // Enable Silverback
+            services
+                .AddSilverback()
+
+                // Use Apache Mqtt as message broker
+                .WithConnectionToMessageBroker(
+                    options =&gt; options
+                        .AddMqtt())
+
+                // Delegate the inbound/outbound endpoints configuration to a separate
+                // class.
+                .AddEndpointsConfigurator&lt;EndpointsConfigurator&gt;()
+
+                // Register the subscribers
+                .AddSingletonSubscriber&lt;SampleMessageSubscriber&gt;();
+        }
+
+        public void Configure()
+        {
+        }
+    }
+}
+</code></pre></section>
+<section id="tabpanel_CeZOj-G++Q-1_consumer-endpoints" role="tabpanel" data-tab="consumer-endpoints" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Consumer.EndpointsConfigurator">using MQTTnet.Formatter;
+using MQTTnet.Protocol;
+using Silverback.Messaging.Configuration;
+using Silverback.Samples.Mqtt.Basic.Common;
+
+namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
+{
+    public class EndpointsConfigurator : IEndpointsConfigurator
+    {
+        public void Configure(IEndpointsConfigurationBuilder builder)
+        {
+            builder
+                .AddMqttEndpoints(
+                    endpoints =&gt; endpoints
+
+                        // Configure the client options
+                        .Configure(
+                            config =&gt; config
+                                .WithClientId(&quot;samples.basic.consumer&quot;)
+                                .ConnectViaTcp(&quot;localhost&quot;)
+                                .UseProtocolVersion(MqttProtocolVersion.V310)
+
+                                // Send last will message if disconnecting
+                                // ungracefully
+                                .SendLastWillMessage(
+                                    lastWill =&gt; lastWill
+                                        .Message(new TestamentMessage())
+                                        .ProduceTo(&quot;samples/testaments&quot;)))
+
+                        // Consume the samples/basic topic
+                        .AddInbound(
+                            endpoint =&gt; endpoint
+                                .ConsumeFrom(&quot;samples/basic&quot;)
+                                .WithQualityOfServiceLevel(
+                                    MqttQualityOfServiceLevel.AtLeastOnce)
+
+                                // It is mandatory to specify the message type, since
+                                // MQTT 3 doesn't support message headers (aka user
+                                // properties)
+                                .DeserializeJson(
+                                    serializer =&gt; serializer
+                                        .UseFixedType&lt;SampleMessage&gt;())
+
+                                // Silently skip the messages in case of exception
+                                .OnError(policy =&gt; policy.Skip())));
+        }
+    }
+}
+</code></pre></section>
+<section id="tabpanel_CeZOj-G++Q-1_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
+<pre><code class="lang-csharp" name="Consumer.Subscriber">using Microsoft.Extensions.Logging;
+using Silverback.Samples.Mqtt.Basic.Common;
+
+namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
+{
+    public class SampleMessageSubscriber
+    {
+        private readonly ILogger&lt;SampleMessageSubscriber&gt; _logger;
+
+        public SampleMessageSubscriber(ILogger&lt;SampleMessageSubscriber&gt; logger)
+        {
+            _logger = logger;
+        }
+
+        public void OnMessageReceived(SampleMessage message) =&gt;
+            _logger.LogInformation($&quot;Received {message.Number}&quot;);
+    }
+}
+</code></pre></section>
+</div>
+
+<p><em>Full source code: <a href="https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/Basic.ConsumerV3">https://github.com/BEagle1984/silverback/tree/master/samples/Mqtt/Basic.ConsumerV3</a></em></p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/samples/mqtt/basic-v3.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

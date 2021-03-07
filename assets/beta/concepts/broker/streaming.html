@@ -137,6 +137,12 @@
 </code></pre>
 </section>
 </div>
+<h1 id="notes-suggestions-and-insights">Notes, suggestions and insights</h1>
+<ul>
+<li>The stream will be pushed with messages as they are read from the message broker. Since the I/O bound nature of the operation you should obviously prefer to subscribe to an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1">IAsyncEnumerable<t></t></a> instead of an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable<t></t></a> and in any case loop asynchronously (<code>await foreach</code> or similar approach).</li>
+<li>If the sequence is interrupted because the application is disconnecting or an error occurred in another subscriber, the <a href="https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerator">IEnumerator</a> will throw an <a href="https://docs.microsoft.com/en-us/dotnet/api/system.operationcanceledexception">OperationCancelledException</a>. Handle it if you need to gracefully abort or cleanup.</li>
+<li>Throwing an exception while enumerating a sequence (e.g. a <a class="xref" href="../../api/Silverback.Messaging.Sequences.Batch.BatchSequence.html">BatchSequence</a>) will cause it to be aborted and handled according to the defined <a class="xref" href="inbound.html#error-handling">error policies</a>. If you just break the iteration and the subscriber return, the operation will be considered successful instead and the sequence will be committed.</li>
+</ul>
 </article>
           </div>
           

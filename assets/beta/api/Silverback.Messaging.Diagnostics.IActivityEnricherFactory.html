@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_Diagnostics_IActivityEnricherFactory" data-uid="Silverback.Messaging.Diagnostics.IActivityEnricherFactory" class="text-break">Interface IActivityEnricherFactory
   </h1>
-  <div class="markdown level0 summary"><p>Creates a <a class="xref" href="Silverback.Messaging.Diagnostics.IBrokerActivityEnricher.html">IBrokerActivityEnricher</a> for a given endpoint.</p>
+  <div class="markdown level0 summary"><p>Provides the <a class="xref" href="Silverback.Messaging.Diagnostics.IBrokerActivityEnricher.html">IBrokerActivityEnricher</a> according to the specified endpoint.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Diagnostics.html">Silverback.Messaging.Diagnostics</a></h6>
@@ -103,19 +103,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Diagnostics_IActivityEnricherFactory_GetActivityEnricher_System_Type_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Diagnostics.IActivityEnricherFactory.GetActivityEnricher(System.Type)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Diagnostics_IActivityEnricherFactory_GetActivityEnricher_Silverback_Messaging_IEndpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Diagnostics.IActivityEnricherFactory.GetActivityEnricher(Silverback.Messaging.IEndpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Diagnostics/IActivityEnricherFactory.cs/#L22">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/features/performance/src/Silverback.Integration/Messaging/Diagnostics/IActivityEnricherFactory.cs/#L20">View source</a>
   </span>
   <a id="Silverback_Messaging_Diagnostics_IActivityEnricherFactory_GetActivityEnricher_" data-uid="Silverback.Messaging.Diagnostics.IActivityEnricherFactory.GetActivityEnricher*"></a>
-  <h4 id="Silverback_Messaging_Diagnostics_IActivityEnricherFactory_GetActivityEnricher_System_Type_" data-uid="Silverback.Messaging.Diagnostics.IActivityEnricherFactory.GetActivityEnricher(System.Type)">GetActivityEnricher(Type)</h4>
-  <div class="markdown level1 summary"><p>Returns a <a class="xref" href="Silverback.Messaging.Diagnostics.IBrokerActivityEnricher.html">IBrokerActivityEnricher</a> for the given endpoint type.</p>
+  <h4 id="Silverback_Messaging_Diagnostics_IActivityEnricherFactory_GetActivityEnricher_Silverback_Messaging_IEndpoint_" data-uid="Silverback.Messaging.Diagnostics.IActivityEnricherFactory.GetActivityEnricher(Silverback.Messaging.IEndpoint)">GetActivityEnricher(IEndpoint)</h4>
+  <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Diagnostics.IBrokerActivityEnricher.html">IBrokerActivityEnricher</a> for the specified endpoint.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IBrokerActivityEnricher GetActivityEnricher(Type endpointType)</code></pre>
+    <pre><code class="lang-csharp hljs">IBrokerActivityEnricher GetActivityEnricher(IEndpoint endpoint)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -128,9 +128,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Type</span></td>
-        <td><span class="parametername">endpointType</span></td>
-        <td><p>The endpoint type.</p>
+        <td><a class="xref" href="Silverback.Messaging.IEndpoint.html">IEndpoint</a></td>
+        <td><span class="parametername">endpoint</span></td>
+        <td><p>The endpoint.</p>
 </td>
       </tr>
     </tbody>
@@ -162,7 +162,7 @@
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Diagnostics_IActivityEnricherFactory.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Diagnostics.IActivityEnricherFactory%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration/Messaging/Diagnostics/IActivityEnricherFactory.cs/#L11" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/features/performance/src/Silverback.Integration/Messaging/Diagnostics/IActivityEnricherFactory.cs/#L9" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

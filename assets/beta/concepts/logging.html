@@ -227,7 +227,7 @@
 </tr>
 <tr>
 <td style="text-align: left;">1002</td>
-<td style="text-align: left;">Warning</td>
+<td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred processing the inbound message.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundMessage">ErrorProcessingInboundMessage</a></td>
 </tr>
@@ -257,7 +257,7 @@
 </tr>
 <tr>
 <td style="text-align: left;">1007</td>
-<td style="text-align: left;">Debug</td>
+<td style="text-align: left;">Error</td>
 <td style="text-align: left;">Error occurred processing the {sequenceType} '{sequenceId}'. | length: {sequenceLength}</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProcessingInboundSequence">ErrorProcessingInboundSequence</a></td>
 </tr>
@@ -358,6 +358,30 @@
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerRollbackError">ConsumerRollbackError</a></td>
 </tr>
 <tr>
+<td style="text-align: left;">1127</td>
+<td style="text-align: left;">Error</td>
+<td style="text-align: left;">Error occurred while connecting the consumer.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerConnectError">ConsumerConnectError</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">1128</td>
+<td style="text-align: left;">Error</td>
+<td style="text-align: left;">Error occurred while disconnecting the consumer.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerDisconnectError">ConsumerDisconnectError</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">1129</td>
+<td style="text-align: left;">Error</td>
+<td style="text-align: left;">Error occurred while (re)starting the consumer.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerStartError">ConsumerStartError</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">1130</td>
+<td style="text-align: left;">Error</td>
+<td style="text-align: left;">Error occurred while stopping the consumer.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ConsumerStopError">ConsumerStopError</a></td>
+</tr>
+<tr>
 <td style="text-align: left;">1027</td>
 <td style="text-align: left;">Debug</td>
 <td style="text-align: left;">Connected producer to endpoint.</td>
@@ -374,6 +398,12 @@
 <td style="text-align: left;">Information</td>
 <td style="text-align: left;">Message produced.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_MessageProduced">MessageProduced</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">1032</td>
+<td style="text-align: left;">Warning</td>
+<td style="text-align: left;">Error occurred producing the message.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorProducingMessage">ErrorProducingMessage</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1041</td>
@@ -438,13 +468,13 @@
 <tr>
 <td style="text-align: left;">1051</td>
 <td style="text-align: left;">Warning</td>
-<td style="text-align: left;">An error occurred while rolling back, the retry error policy cannot be applied. The consumer will be reset.</td>
+<td style="text-align: left;">Error occurred while rolling back, the retry error policy cannot be applied. The consumer will be reset.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_RollbackToRetryFailed">RollbackToRetryFailed</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1052</td>
 <td style="text-align: left;">Warning</td>
-<td style="text-align: left;">An error occurred while rolling back or committing, the skip message error policy cannot be applied. The consumer will be reset.</td>
+<td style="text-align: left;">Error occurred while rolling back or committing, the skip message error policy cannot be applied. The consumer will be reset.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_RollbackToSkipFailed">RollbackToSkipFailed</a></td>
 </tr>
 <tr>
@@ -452,6 +482,12 @@
 <td style="text-align: left;">Warning</td>
 <td style="text-align: left;">Not used anymore.</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorInitializingActivity">ErrorInitializingActivity</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">1062</td>
+<td style="text-align: left;">Information</td>
+<td style="text-align: left;">The null message will be skipped.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_NullMessageSkipped">NullMessageSkipped</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1072</td>
@@ -506,6 +542,12 @@
 <td style="text-align: left;">Critical</td>
 <td style="text-align: left;">Error occurred configuring the endpoints. | configurator: {endpointsConfiguratorName}</td>
 <td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_EndpointConfiguratorError">EndpointConfiguratorError</a></td>
+</tr>
+<tr>
+<td style="text-align: left;">1103</td>
+<td style="text-align: left;">Error</td>
+<td style="text-align: left;">Error occurred invoking the callback handler(s).</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_CallbackHandlerError">CallbackHandlerError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">1999</td>
@@ -649,8 +691,8 @@
 <tr>
 <td style="text-align: left;">2050</td>
 <td style="text-align: left;">Warning</td>
-<td style="text-align: left;">Error disconnecting consumer.</td>
-<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConsumerDisconnectError">ConsumerDisconnectError</a></td>
+<td style="text-align: left;">An error occurred while disconnecting the consumer.</td>
+<td style="text-align: left;"><a class="xref" href="../api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ConfluentConsumerDisconnectError">ConfluentConsumerDisconnectError</a></td>
 </tr>
 <tr>
 <td style="text-align: left;">2201</td>

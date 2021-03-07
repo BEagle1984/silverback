@@ -91,7 +91,7 @@
 <p>A pre-serialized message can be produced via the normal <code>Produce</code>/<code>ProduceAsync</code> or the <code>RawProduce</code>/<code>RawProduceAsync</code> methods. The difference is that the latter skip the entire Silverback behaviors pipeline (note that it means that no <a class="xref" href="chunking.html">chunking</a> or other features will kick in).</p>
 <h2 id="non-blocking-overloads">Non-blocking overloads</h2>
 <p>These are especially important for Kafka, since the underlying library is able to batch the outgoing messages for efficiency and that improves the throughput a lot.
-They will complete as soon as the message has been enqueued and invoke a callback when it is successfully produced (or when it fails / times out). These overloads exist for <code>Produce</code>, <code>ProduceAsync</code>, <code>RawProduce</code> and <code>RawProduceAsync</code>.</p>
+They will complete as soon as the message has been enqueued and invoke a callback when it is successfully produced (or when it fails / times out). These overloads exist for <code>Produce</code>, <code>ProduceAsync</code>, <code>RawProduce</code> and <code>RawProduceAsync</code>. (Note that )</p>
 <pre><code class="lang-csharp">public class ProducerService
 {
     private readonly IProducer _producer;
@@ -105,22 +105,22 @@ They will complete as soon as the message has been enqueued and invoke a callbac
         _logger = logger;
     }
     
-    public async Task Produce()
+    public async Task Produce(byte[] rawMessage)
     {
         for (int i = 0; i &lt; 100_000: i++)
         {
-            await _producer.ProducerAsync(
-              new MyMessage(i),
-              null,
-              () =&gt; _logger.LogInformation($&quot;Produced {i}&quot;),
-              ex =&gt; _logger.LogError(ex, $&quot;Failed to produce {i}&quot;);
+            _producer.RawProduce(
+                rawMessage,
+                null,
+                () =&gt; _logger.LogInformation($&quot;Produced {i}&quot;),
+                ex =&gt; _logger.LogError(ex, $&quot;Failed to produce {i}&quot;);
         }
     }
 }
 </code></pre>
 <div class="NOTE">
 <h5>Note</h5>
-<p>This is different than calling <code>ProduceAsync</code> in a loop without awaiting, because that wouldn't ensure exact message ordering under all circumstances.</p>
+<p>The non-async overload with callback functions is generally the fastest option with Kafka.</p>
 </div>
 </article>
           </div>

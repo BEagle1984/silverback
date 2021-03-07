@@ -115,19 +115,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_IKafkaMessageSerializer_DeserializeKey_System_Byte___Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.IKafkaMessageSerializer.DeserializeKey(System.Byte%5B%5D%2CSilverback.Messaging.Messages.MessageHeaderCollection%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_IKafkaMessageSerializer_DeserializeKey_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.IKafkaMessageSerializer.DeserializeKey(System.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Serialization/IKafkaMessageSerializer.cs/#L48">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/features/performance/src/Silverback.Integration.Kafka/Messaging/Serialization/IKafkaMessageSerializer.cs/#L49">View source</a>
   </span>
   <a id="Silverback_Messaging_Serialization_IKafkaMessageSerializer_DeserializeKey_" data-uid="Silverback.Messaging.Serialization.IKafkaMessageSerializer.DeserializeKey*"></a>
-  <h4 id="Silverback_Messaging_Serialization_IKafkaMessageSerializer_DeserializeKey_System_Byte___Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.IKafkaMessageSerializer.DeserializeKey(System.Byte[],Silverback.Messaging.Messages.MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">DeserializeKey(Byte[], MessageHeaderCollection, MessageSerializationContext)</h4>
+  <h4 id="Silverback_Messaging_Serialization_IKafkaMessageSerializer_DeserializeKey_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.IKafkaMessageSerializer.DeserializeKey(System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},Silverback.Messaging.Serialization.MessageSerializationContext)">DeserializeKey(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, MessageSerializationContext)</h4>
   <div class="markdown level1 summary"><p>Deserializes the byte array back into a key string.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">string DeserializeKey(byte[] key, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">string DeserializeKey(byte[] key, IReadOnlyCollection&lt;MessageHeader&gt; messageHeaders, MessageSerializationContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -146,7 +146,7 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.MessageHeaderCollection.html">MessageHeaderCollection</a></td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
         <td><span class="parametername">messageHeaders</span></td>
         <td><p>The message headers collection.</p>
 </td>
@@ -177,19 +177,19 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_IKafkaMessageSerializer_SerializeKey_System_String_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.IKafkaMessageSerializer.SerializeKey(System.String%2CSilverback.Messaging.Messages.MessageHeaderCollection%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_IKafkaMessageSerializer_SerializeKey_System_String_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__Silverback_Messaging_Serialization_MessageSerializationContext_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.IKafkaMessageSerializer.SerializeKey(System.String%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSilverback.Messaging.Serialization.MessageSerializationContext)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Serialization/IKafkaMessageSerializer.cs/#L28">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/features/performance/src/Silverback.Integration.Kafka/Messaging/Serialization/IKafkaMessageSerializer.cs/#L29">View source</a>
   </span>
   <a id="Silverback_Messaging_Serialization_IKafkaMessageSerializer_SerializeKey_" data-uid="Silverback.Messaging.Serialization.IKafkaMessageSerializer.SerializeKey*"></a>
-  <h4 id="Silverback_Messaging_Serialization_IKafkaMessageSerializer_SerializeKey_System_String_Silverback_Messaging_Messages_MessageHeaderCollection_Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.IKafkaMessageSerializer.SerializeKey(System.String,Silverback.Messaging.Messages.MessageHeaderCollection,Silverback.Messaging.Serialization.MessageSerializationContext)">SerializeKey(String, MessageHeaderCollection, MessageSerializationContext)</h4>
+  <h4 id="Silverback_Messaging_Serialization_IKafkaMessageSerializer_SerializeKey_System_String_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__Silverback_Messaging_Serialization_MessageSerializationContext_" data-uid="Silverback.Messaging.Serialization.IKafkaMessageSerializer.SerializeKey(System.String,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},Silverback.Messaging.Serialization.MessageSerializationContext)">SerializeKey(String, IReadOnlyCollection&lt;MessageHeader&gt;, MessageSerializationContext)</h4>
   <div class="markdown level1 summary"><p>Serializes the specified key string into a byte array.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">byte[] SerializeKey(string key, MessageHeaderCollection messageHeaders, MessageSerializationContext context)</code></pre>
+    <pre><code class="lang-csharp hljs">byte[] SerializeKey(string key, IReadOnlyCollection&lt;MessageHeader&gt; messageHeaders, MessageSerializationContext context)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -208,7 +208,7 @@
 </td>
       </tr>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Messages.MessageHeaderCollection.html">MessageHeaderCollection</a></td>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
         <td><span class="parametername">messageHeaders</span></td>
         <td><p>The message headers collection.</p>
 </td>
@@ -248,7 +248,7 @@
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Serialization_IKafkaMessageSerializer.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Serialization.IKafkaMessageSerializer%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/feature/fix-nullrefs/src/Silverback.Integration.Kafka/Messaging/Serialization/IKafkaMessageSerializer.cs/#L11" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/features/performance/src/Silverback.Integration.Kafka/Messaging/Serialization/IKafkaMessageSerializer.cs/#L12" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

@@ -92,7 +92,7 @@
 <p>The basic concepts:</p>
 <ul>
 <li><code>WithConnectionToMessageBroker</code> registers the services necessary to connect to a message broker</li>
-<li><code>AddKafka</code>, <code>AddRabbit</code>, etc. register the message broker implementation(s)</li>
+<li><code>AddKafka</code>, <code>AddMqtt</code>, <code>AddRabbit</code>, etc. register the message broker implementation(s)</li>
 <li><code>AddEndpointsConfigurator</code> is used to outsource the endpoints configuration into a separate class implementing the <a class="xref" href="../../api/Silverback.Messaging.Configuration.IEndpointsConfigurator.html">IEndpointsConfigurator</a> interface (of course multiple configurators can be registered)</li>
 <li><code>AddInbound</code> is used to automatically relay the incoming messages to the internal bus and they can therefore be subscribed as seen in the previous chapters</li>
 <li><code>AddOutbound</code> works the other way around and subscribes to the internal bus to forward the integration messages to the message broker</li>
@@ -143,7 +143,7 @@
                         config.GroupId = &quot;order-service&quot;;
                     }))
                 .AddInbound(endpoint =&gt; endpoint
-                    .ConsumeFrom(&quot;basket-events&quot;)
+                    .ConsumeFrom(&quot;payment-events&quot;)
                     .Configure(config =&gt;
                     {
                         confing.GroupId = &quot;order-service&quot;
@@ -154,17 +154,79 @@
 </code></pre>
 </section>
 </div>
-<h4 id="rabbitmq">RabbitMQ</h4>
+<h4 id="mqtt">MQTT</h4>
 <div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_rabbit-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_rabbit-startup" data-tab="rabbit-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_CeZOj-G++Q-1_mqtt-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_mqtt-startup" data-tab="mqtt-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-1_rabbit-configurator" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_rabbit-configurator" data-tab="rabbit-configurator" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_CeZOj-G++Q-1_mqtt-configurator" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_mqtt-configurator" data-tab="mqtt-configurator" tabindex="-1">EndpointsConfigurator</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-1_rabbit-startup" role="tabpanel" data-tab="rabbit-startup">
+<section id="tabpanel_CeZOj-G++Q-1_mqtt-startup" role="tabpanel" data-tab="mqtt-startup">
+
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddMqtt())
+            .AddEndpointsConfigurator&lt;MyEndpointsConfigurator&gt;();
+    }
+}
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_mqtt-configurator" role="tabpanel" data-tab="mqtt-configurator" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddMqttEndpoints(endpoints =&gt; endpoints
+                .Configure(
+                    config =&gt; config
+                        .WithClientId(&quot;order-service&quot;)
+                        .ConnectViaTcp(&quot;localhost&quot;)
+                        .SendLastWillMessage(
+                            lastWill =&gt; lastWill
+                                .Message(new TestamentMessage())
+                                .ProduceTo(&quot;testaments&quot;)))
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;basket-events&quot;)
+                    .WithQualityOfServiceLevel(
+                        MqttQualityOfServiceLevel.AtLeastOnce))
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;payment-events&quot;)
+                    .WithQualityOfServiceLevel(
+                        MqttQualityOfServiceLevel.AtLeastOnce))
+                .AddOutbound&lt;IIntegrationEvent&gt;(endpoint =&gt; endpoint
+                    .ProduceTo(&quot;order-events&quot;)
+                    .WithQualityOfServiceLevel(
+                        MqttQualityOfServiceLevel.AtLeastOnce)
+                    .Retain()));
+}
+</code></pre>
+</section>
+</div>
+
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>Silverback uses by default the v5 of the MQTT protocol, since it supports the user properties (headers). You can of course configure the client to use an older version but some Silverback functionalities (relying on message headers) might not work.</p>
+</div>
+<h4 id="rabbitmq">RabbitMQ</h4>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_rabbit-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_rabbit-startup" data-tab="rabbit-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_rabbit-configurator" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_rabbit-configurator" data-tab="rabbit-configurator" tabindex="-1">EndpointsConfigurator</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-2_rabbit-startup" role="tabpanel" data-tab="rabbit-startup">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -179,7 +241,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-1_rabbit-configurator" role="tabpanel" data-tab="rabbit-configurator" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-2_rabbit-configurator" role="tabpanel" data-tab="rabbit-configurator" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -284,16 +346,16 @@
 </code></pre>
 <h3 id="multiple-brokers">Multiple brokers</h3>
 <p>It is possible to use multiple message broker implementation together in the same application. The following sample demonstrates how to consume from both Apache Kafka and RabbitMQ.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-2_multiple-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_multiple-startup" data-tab="multiple-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_CeZOj-G++Q-3_multiple-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_multiple-startup" data-tab="multiple-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-2_multiple-kafka-configurator" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_multiple-kafka-configurator" data-tab="multiple-kafka-configurator" tabindex="-1">EndpointsConfigurator</a>
+<a href="#tabpanel_CeZOj-G++Q-3_multiple-kafka-configurator" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_multiple-kafka-configurator" data-tab="multiple-kafka-configurator" tabindex="-1">EndpointsConfigurator</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-2_multiple-startup" role="tabpanel" data-tab="multiple-startup">
+<section id="tabpanel_CeZOj-G++Q-3_multiple-startup" role="tabpanel" data-tab="multiple-startup">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -309,7 +371,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-2_multiple-kafka-configurator" role="tabpanel" data-tab="multiple-kafka-configurator" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-3_multiple-kafka-configurator" role="tabpanel" data-tab="multiple-kafka-configurator" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -354,16 +416,16 @@
 }
 </code></pre>
 <p>But it's also possible to completely disable the automatic connection and manually perform it.</p>
-<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-4">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-3_noautoconnect-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_noautoconnect-startup" data-tab="noautoconnect-startup" tabindex="0" aria-selected="true">Startup</a>
+<a href="#tabpanel_CeZOj-G++Q-4_noautoconnect-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_noautoconnect-startup" data-tab="noautoconnect-startup" tabindex="0" aria-selected="true">Startup</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_CeZOj-G++Q-3_noautoconnect-service" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_noautoconnect-service" data-tab="noautoconnect-service" tabindex="-1">Service</a>
+<a href="#tabpanel_CeZOj-G++Q-4_noautoconnect-service" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_noautoconnect-service" data-tab="noautoconnect-service" tabindex="-1">Service</a>
 </li>
 </ul>
-<section id="tabpanel_CeZOj-G++Q-3_noautoconnect-startup" role="tabpanel" data-tab="noautoconnect-startup">
+<section id="tabpanel_CeZOj-G++Q-4_noautoconnect-startup" role="tabpanel" data-tab="noautoconnect-startup">
 
 <pre><code class="lang-csharp">public class Startup
 {
@@ -382,7 +444,7 @@
 }
 </code></pre>
 </section>
-<section id="tabpanel_CeZOj-G++Q-3_noautoconnect-service" role="tabpanel" data-tab="noautoconnect-service" aria-hidden="true" hidden="hidden">
+<section id="tabpanel_CeZOj-G++Q-4_noautoconnect-service" role="tabpanel" data-tab="noautoconnect-service" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class BrokerConnectionService
 {
@@ -420,9 +482,9 @@
 <p>The <a href="https://www.nuget.org/packages/Silverback.Integration.HealthChecks">Silverback.Integration.HealthChecks</a> package contains some extensions for <a href="https://www.nuget.org/packages/Microsoft.Extensions.Diagnostics.HealthChecks">Microsoft.Extensions.Diagnostics.HealthChecks</a> that can be used to monitor the connection to the message broker.</p>
 <p>Currently two checks exists:</p>
 <ul>
-<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___">AddOutboundEndpointsCheck</a>: Adds an health check that sends a ping message to all the outbound endpoints.</li>
-<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___">AddOutboxCheck</a>: Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.</li>
-<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_IHealthChecksBuilder_System_String_System_Nullable_HealthStatus__System_Nullable_IEnumerable_System_String___">AddConsumersCheck</a>: Adds an health check that verifies that all consumers are connected.</li>
+<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddOutboundEndpointsCheck</a>: Adds an health check that sends a ping message to all the outbound endpoints.</li>
+<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddOutboxCheck</a>: Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.</li>
+<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddConsumersCheck</a>: Adds an health check that verifies that all consumers are connected.</li>
 </ul>
 <p>The usage is very simple, you just need to configure the checks in the Startup.cs, as shown in the following example.</p>
 <pre><code class="lang-csharp">public class Startup
