@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 
@@ -15,6 +16,11 @@ namespace Silverback.Testing
         /// <summary>
         ///     Returns the <see cref="IInMemoryTopic" /> with the specified name.
         /// </summary>
+        /// <remarks>
+        ///     This method works with the mocked MQTT broker only. See
+        ///     <see cref="SilverbackBuilderUseMockedKafkaExtensions.UseMockedKafka" /> or
+        ///     <see cref="BrokerOptionsBuilderAddMockedKafkaExtensions.AddMockedKafka" />.
+        /// </remarks>
         /// <param name="name">
         ///     The name of the topic.
         /// </param>
@@ -27,6 +33,11 @@ namespace Silverback.Testing
         ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
         ///     processed and committed.
         /// </summary>
+        /// <remarks>
+        ///     This method works with the mocked MQTT broker only. See
+        ///     <see cref="SilverbackBuilderUseMockedKafkaExtensions.UseMockedKafka" /> or
+        ///     <see cref="BrokerOptionsBuilderAddMockedKafkaExtensions.AddMockedKafka" />.
+        /// </remarks>
         /// <param name="topicNames">
         ///     The name of the topics to be monitored.
         /// </param>

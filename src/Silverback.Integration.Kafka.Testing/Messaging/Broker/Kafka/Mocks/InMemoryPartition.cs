@@ -3,14 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Confluent.Kafka;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
     internal class InMemoryPartition : IInMemoryPartition
     {
-        private const int MaxRetainedMessages = 100;
-
         private readonly List<Message<byte[]?, byte[]?>> _messages = new();
 
         public InMemoryPartition(in int index, InMemoryTopic topic)
@@ -27,6 +26,9 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public Offset LastOffset { get; private set; } = Offset.Unset;
 
+        [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
+        public IReadOnlyCollection<Message<byte[]?, byte[]?>> Messages => _messages;
+
         public int TotalMessagesCount { get; private set; }
 
         public Offset Add(Message<byte[]?, byte[]?> message)
@@ -39,12 +41,6 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                     LastOffset++;
 
                 _messages.Add(message);
-
-                if (_messages.Count > MaxRetainedMessages)
-                {
-                    _messages.RemoveAt(0);
-                    FirstOffset++;
-                }
 
                 TotalMessagesCount++;
 

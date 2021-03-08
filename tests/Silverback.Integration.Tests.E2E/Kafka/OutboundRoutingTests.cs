@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne { Content = "5" });
 
             DefaultTopic.Partitions
-                .Where(partition => partition.TotalMessagesCount > 0)
+                .Where(partition => partition.Messages.Count > 0)
                 .Should().HaveCountGreaterThan(1);
         }
 
@@ -88,11 +88,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne { Content = "4" });
             await publisher.PublishAsync(new TestEventOne { Content = "5" });
 
-            DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(0);
-            DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(0);
-            DefaultTopic.Partitions[2].TotalMessagesCount.Should().Be(0);
-            DefaultTopic.Partitions[3].TotalMessagesCount.Should().Be(5);
-            DefaultTopic.Partitions[4].TotalMessagesCount.Should().Be(0);
+            DefaultTopic.Partitions[0].Messages.Count.Should().Be(0);
+            DefaultTopic.Partitions[1].Messages.Count.Should().Be(0);
+            DefaultTopic.Partitions[2].Messages.Count.Should().Be(0);
+            DefaultTopic.Partitions[3].Messages.Count.Should().Be(5);
+            DefaultTopic.Partitions[4].Messages.Count.Should().Be(0);
         }
 
         [Fact]
@@ -121,11 +121,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "4" });
             await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = "5" });
 
-            DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(2);
-            DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(1);
-            DefaultTopic.Partitions[2].TotalMessagesCount.Should().Be(0);
-            DefaultTopic.Partitions[3].TotalMessagesCount.Should().Be(0);
-            DefaultTopic.Partitions[4].TotalMessagesCount.Should().Be(2);
+            DefaultTopic.Partitions[0].Messages.Count.Should().Be(2);
+            DefaultTopic.Partitions[1].Messages.Count.Should().Be(1);
+            DefaultTopic.Partitions[2].Messages.Count.Should().Be(0);
+            DefaultTopic.Partitions[3].Messages.Count.Should().Be(0);
+            DefaultTopic.Partitions[4].Messages.Count.Should().Be(2);
         }
 
         [Fact]
@@ -155,11 +155,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 2, Content = "4" });
             await publisher.PublishAsync(new TestEventWithKafkaKey { KafkaKey = 3, Content = "5" });
 
-            DefaultTopic.Partitions[0].TotalMessagesCount.Should().Be(0);
-            DefaultTopic.Partitions[1].TotalMessagesCount.Should().Be(0);
-            DefaultTopic.Partitions[2].TotalMessagesCount.Should().Be(0);
-            DefaultTopic.Partitions[3].TotalMessagesCount.Should().Be(5);
-            DefaultTopic.Partitions[4].TotalMessagesCount.Should().Be(0);
+            DefaultTopic.Partitions[0].Messages.Count.Should().Be(0);
+            DefaultTopic.Partitions[1].Messages.Count.Should().Be(0);
+            DefaultTopic.Partitions[2].Messages.Count.Should().Be(0);
+            DefaultTopic.Partitions[3].Messages.Count.Should().Be(5);
+            DefaultTopic.Partitions[4].Messages.Count.Should().Be(0);
         }
 
         [Fact]
@@ -202,16 +202,16 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne { Content = "2" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            topic1.TotalMessagesCount.Should().Be(1);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(1);
+            topic1.MessagesCount.Should().Be(1);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(1);
 
             await publisher.PublishAsync(new TestEventOne { Content = "1" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            topic1.TotalMessagesCount.Should().Be(2);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(2);
+            topic1.MessagesCount.Should().Be(2);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(2);
         }
 
         [Fact]
@@ -269,20 +269,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne { Content = "2" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            topic1.TotalMessagesCount.Should().Be(1);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(1);
-            partition1.TotalMessagesCount.Should().Be(1);
-            partition2.TotalMessagesCount.Should().Be(1);
+            topic1.MessagesCount.Should().Be(1);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(1);
+            partition1.Messages.Count.Should().Be(1);
+            partition2.Messages.Count.Should().Be(1);
 
             await publisher.PublishAsync(new TestEventOne { Content = "1" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            topic1.TotalMessagesCount.Should().Be(2);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(2);
-            partition1.TotalMessagesCount.Should().Be(2);
-            partition2.TotalMessagesCount.Should().Be(1);
+            topic1.MessagesCount.Should().Be(2);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(2);
+            partition1.Messages.Count.Should().Be(2);
+            partition2.Messages.Count.Should().Be(1);
         }
 
         [Fact]
@@ -326,16 +326,16 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne { Content = "2" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            topic1.TotalMessagesCount.Should().Be(1);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(1);
+            topic1.MessagesCount.Should().Be(1);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(1);
 
             await publisher.PublishAsync(new TestEventOne { Content = "1" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            topic1.TotalMessagesCount.Should().Be(2);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(2);
+            topic1.MessagesCount.Should().Be(2);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(2);
         }
 
         [Fact]
@@ -368,20 +368,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne { Content = "2" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            topic1.TotalMessagesCount.Should().Be(1);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(1);
-            partition1.TotalMessagesCount.Should().Be(1);
-            partition2.TotalMessagesCount.Should().Be(1);
+            topic1.MessagesCount.Should().Be(1);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(1);
+            partition1.Messages.Count.Should().Be(1);
+            partition2.Messages.Count.Should().Be(1);
 
             await publisher.PublishAsync(new TestEventOne { Content = "1" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            topic1.TotalMessagesCount.Should().Be(2);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(2);
-            partition1.TotalMessagesCount.Should().Be(2);
-            partition2.TotalMessagesCount.Should().Be(1);
+            topic1.MessagesCount.Should().Be(2);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(2);
+            partition1.Messages.Count.Should().Be(2);
+            partition2.Messages.Count.Should().Be(1);
         }
 
         [Fact]
@@ -408,16 +408,16 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne { Content = "2" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            topic1.TotalMessagesCount.Should().Be(1);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(1);
+            topic1.MessagesCount.Should().Be(1);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(1);
 
             await publisher.PublishAsync(new TestEventOne { Content = "1,2,3" });
             await publisher.PublishAsync(new TestEventOne { Content = "2,1" });
 
-            topic1.TotalMessagesCount.Should().Be(3);
-            topic2.TotalMessagesCount.Should().Be(3);
-            topic3.TotalMessagesCount.Should().Be(2);
+            topic1.MessagesCount.Should().Be(3);
+            topic2.MessagesCount.Should().Be(3);
+            topic3.MessagesCount.Should().Be(2);
         }
 
         [Fact]
@@ -473,22 +473,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne { Content = "one" });
             await publisher.PublishAsync(new TestEventOne { Content = "two" });
 
-            topic1.TotalMessagesCount.Should().Be(1);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(0);
-            topicA.TotalMessagesCount.Should().Be(0);
-            topicB.TotalMessagesCount.Should().Be(0);
-            topicC.TotalMessagesCount.Should().Be(0);
+            topic1.MessagesCount.Should().Be(1);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(0);
+            topicA.MessagesCount.Should().Be(0);
+            topicB.MessagesCount.Should().Be(0);
+            topicC.MessagesCount.Should().Be(0);
 
             await publisher.PublishAsync(new TestEventTwo { Content = "one" });
             await publisher.PublishAsync(new TestEventTwo { Content = "two" });
 
-            topic1.TotalMessagesCount.Should().Be(1);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(0);
-            topicA.TotalMessagesCount.Should().Be(1);
-            topicB.TotalMessagesCount.Should().Be(1);
-            topicC.TotalMessagesCount.Should().Be(0);
+            topic1.MessagesCount.Should().Be(1);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(0);
+            topicA.MessagesCount.Should().Be(1);
+            topicB.MessagesCount.Should().Be(1);
+            topicC.MessagesCount.Should().Be(0);
         }
 
         [Fact]
@@ -541,43 +541,43 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await publisher.PublishAsync(new TestEventOne { Content = "one" });
 
-            topic1.Partitions[0].TotalMessagesCount.Should().Be(0);
-            topic1.Partitions[1].TotalMessagesCount.Should().Be(1);
-            topic1.Partitions[2].TotalMessagesCount.Should().Be(0);
-            topic1.Partitions[3].TotalMessagesCount.Should().Be(0);
-            topic1.Partitions[4].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[0].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[1].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[2].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[3].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[4].TotalMessagesCount.Should().Be(0);
+            topic1.Partitions[0].Messages.Count.Should().Be(0);
+            topic1.Partitions[1].Messages.Count.Should().Be(1);
+            topic1.Partitions[2].Messages.Count.Should().Be(0);
+            topic1.Partitions[3].Messages.Count.Should().Be(0);
+            topic1.Partitions[4].Messages.Count.Should().Be(0);
+            topicA.Partitions[0].Messages.Count.Should().Be(0);
+            topicA.Partitions[1].Messages.Count.Should().Be(0);
+            topicA.Partitions[2].Messages.Count.Should().Be(0);
+            topicA.Partitions[3].Messages.Count.Should().Be(0);
+            topicA.Partitions[4].Messages.Count.Should().Be(0);
 
             await publisher.PublishAsync(new TestEventOne { Content = "two" });
 
-            topic1.Partitions[0].TotalMessagesCount.Should().Be(0);
-            topic1.Partitions[1].TotalMessagesCount.Should().Be(1);
-            topic1.Partitions[2].TotalMessagesCount.Should().Be(1);
-            topic1.Partitions[3].TotalMessagesCount.Should().Be(0);
-            topic1.Partitions[4].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[0].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[1].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[2].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[3].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[4].TotalMessagesCount.Should().Be(0);
+            topic1.Partitions[0].Messages.Count.Should().Be(0);
+            topic1.Partitions[1].Messages.Count.Should().Be(1);
+            topic1.Partitions[2].Messages.Count.Should().Be(1);
+            topic1.Partitions[3].Messages.Count.Should().Be(0);
+            topic1.Partitions[4].Messages.Count.Should().Be(0);
+            topicA.Partitions[0].Messages.Count.Should().Be(0);
+            topicA.Partitions[1].Messages.Count.Should().Be(0);
+            topicA.Partitions[2].Messages.Count.Should().Be(0);
+            topicA.Partitions[3].Messages.Count.Should().Be(0);
+            topicA.Partitions[4].Messages.Count.Should().Be(0);
 
             await publisher.PublishAsync(new TestEventTwo { Content = "one" });
             await publisher.PublishAsync(new TestEventTwo { Content = "two" });
 
-            topic1.Partitions[0].TotalMessagesCount.Should().Be(0);
-            topic1.Partitions[1].TotalMessagesCount.Should().Be(1);
-            topic1.Partitions[2].TotalMessagesCount.Should().Be(1);
-            topic1.Partitions[3].TotalMessagesCount.Should().Be(0);
-            topic1.Partitions[4].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[0].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[1].TotalMessagesCount.Should().Be(1);
-            topicA.Partitions[2].TotalMessagesCount.Should().Be(1);
-            topicA.Partitions[3].TotalMessagesCount.Should().Be(0);
-            topicA.Partitions[4].TotalMessagesCount.Should().Be(0);
+            topic1.Partitions[0].Messages.Count.Should().Be(0);
+            topic1.Partitions[1].Messages.Count.Should().Be(1);
+            topic1.Partitions[2].Messages.Count.Should().Be(1);
+            topic1.Partitions[3].Messages.Count.Should().Be(0);
+            topic1.Partitions[4].Messages.Count.Should().Be(0);
+            topicA.Partitions[0].Messages.Count.Should().Be(0);
+            topicA.Partitions[1].Messages.Count.Should().Be(1);
+            topicA.Partitions[2].Messages.Count.Should().Be(1);
+            topicA.Partitions[3].Messages.Count.Should().Be(0);
+            topicA.Partitions[4].Messages.Count.Should().Be(0);
         }
 
         [Fact]
@@ -633,22 +633,22 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne { Content = "one" });
             await publisher.PublishAsync(new TestEventOne { Content = "two-three" });
 
-            topic1.TotalMessagesCount.Should().Be(1);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(1);
-            topicA.TotalMessagesCount.Should().Be(0);
-            topicB.TotalMessagesCount.Should().Be(0);
-            topicC.TotalMessagesCount.Should().Be(0);
+            topic1.MessagesCount.Should().Be(1);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(1);
+            topicA.MessagesCount.Should().Be(0);
+            topicB.MessagesCount.Should().Be(0);
+            topicC.MessagesCount.Should().Be(0);
 
             await publisher.PublishAsync(new TestEventTwo { Content = "one" });
             await publisher.PublishAsync(new TestEventTwo { Content = "two-three" });
 
-            topic1.TotalMessagesCount.Should().Be(1);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(1);
-            topicA.TotalMessagesCount.Should().Be(1);
-            topicB.TotalMessagesCount.Should().Be(1);
-            topicC.TotalMessagesCount.Should().Be(1);
+            topic1.MessagesCount.Should().Be(1);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(1);
+            topicA.MessagesCount.Should().Be(1);
+            topicB.MessagesCount.Should().Be(1);
+            topicC.MessagesCount.Should().Be(1);
         }
 
         [Fact]

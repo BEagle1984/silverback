@@ -29,15 +29,15 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         IClientSession GetClientSession(string clientId);
 
         /// <summary>
-        ///     Gets the total number of messages that were published to the specified topic.
+        ///     Gets the messages that have been published to the specified topic.
         /// </summary>
         /// <param name="topic">
         ///     The name of the topic.
         /// </param>
         /// <returns>
-        ///     The number of messages published to the topic.
+        ///     The messages published to the topic.
         /// </returns>
-        int GetMessagesCount(string topic);
+        IReadOnlyList<MqttApplicationMessage> GetMessages(string topic);
 
         /// <summary>
         ///     Connects the specified client.

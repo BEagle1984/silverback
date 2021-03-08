@@ -54,7 +54,11 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public IReadOnlyList<IInMemoryPartition> Partitions => _partitions;
 
-        public int TotalMessagesCount => _partitions.Sum(partition => partition.TotalMessagesCount);
+        public int MessagesCount =>
+            _partitions.Sum(partition => partition.Messages.Count);
+
+        public IReadOnlyList<Message<byte[]?, byte[]?>> GetAllMessages() =>
+            _partitions.SelectMany(partition => partition.Messages).ToList();
 
         public Offset Push(int partition, Message<byte[]?, byte[]?> message) =>
             _partitions[partition].Add(message);

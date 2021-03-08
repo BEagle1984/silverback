@@ -21,14 +21,22 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         string Name { get; }
 
         /// <summary>
-        ///     Gets the partitions in this topic.
+        ///     Gets the partitions in the topic.
         /// </summary>
         IReadOnlyList<IInMemoryPartition> Partitions { get; }
 
         /// <summary>
-        ///     Gets the number of messages written into this topic.
+        ///     Gets the total number of messages written into all the partitions of the topic.
         /// </summary>
-        int TotalMessagesCount { get; }
+        int MessagesCount { get; }
+
+        /// <summary>
+        ///     Gets all messages written into all the partitions of the topic.
+        /// </summary>
+        /// <returns>
+        ///     The messages written into the topic.
+        /// </returns>
+        IReadOnlyList<Message<byte[]?, byte[]?>> GetAllMessages();
 
         /// <summary>
         ///     Writes a message to the topic.

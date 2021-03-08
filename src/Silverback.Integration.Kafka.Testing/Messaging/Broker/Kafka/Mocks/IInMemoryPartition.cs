@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using Confluent.Kafka;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
@@ -26,8 +27,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         Offset LastOffset { get; }
 
         /// <summary>
-        ///     Gets the total number of messages written to the partition.
+        ///     Gets the messages written to the partition.
         /// </summary>
-        int TotalMessagesCount { get; }
+        IReadOnlyCollection<Message<byte[]?, byte[]?>> Messages { get; }
     }
 }

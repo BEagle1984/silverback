@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
     {
         private readonly Dictionary<string, ClientSession> _sessions = new();
 
-        private readonly Dictionary<string, int> _messagesCountByTopic = new();
+        private readonly Dictionary<string, List<MqttApplicationMessage>> _messagesByTopic = new();
 
         [SuppressMessage(
             "ReSharper",
@@ -28,8 +28,10 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         public IClientSession GetClientSession(string clientId) => _sessions[clientId];
 
         [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Lock writes only")]
-        public int GetMessagesCount(string topic) =>
-            _messagesCountByTopic.ContainsKey(topic) ? _messagesCountByTopic[topic] : 0;
+        public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic) =>
+            _messagesByTopic.ContainsKey(topic)
+                ? _messagesByTopic[topic]
+                : Array.Empty<MqttApplicationMessage>();
 
         public void Connect(IMqttClientOptions clientOptions, IMqttApplicationMessageReceivedHandler handler)
         {
@@ -93,7 +95,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             if (!_sessions.TryGetValue(clientId, out var publisherSession) || !publisherSession.IsConnected)
                 throw new InvalidOperationException("The client is not connected.");
 
-            IncrementMessagesCount(message);
+            StoreMessage(message);
 
             return _sessions.Values.ForEachAsync(session => session.PushAsync(message).AsTask());
         }
@@ -121,14 +123,14 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             _sessions.Values.ForEach(session => session.Dispose());
         }
 
-        private void IncrementMessagesCount(MqttApplicationMessage message)
+        private void StoreMessage(MqttApplicationMessage message)
         {
-            lock (_messagesCountByTopic)
+            lock (_messagesByTopic)
             {
-                if (_messagesCountByTopic.ContainsKey(message.Topic))
-                    _messagesCountByTopic[message.Topic] = _messagesCountByTopic[message.Topic] + 1;
-                else
-                    _messagesCountByTopic[message.Topic] = 1;
+                if (!_messagesByTopic.ContainsKey(message.Topic))
+                    _messagesByTopic[message.Topic] = new List<MqttApplicationMessage>();
+
+                _messagesByTopic[message.Topic].Add(message);
             }
         }
     }

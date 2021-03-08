@@ -127,7 +127,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().BeEmpty();
 
             dbContext.Outbox.Should().BeEmpty();
-            DefaultTopic.TotalMessagesCount.Should().Be(0);
+            DefaultTopic.MessagesCount.Should().Be(0);
         }
 
         [Fact]
@@ -181,24 +181,24 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new TestEventOne { Content = "2" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            topic1.TotalMessagesCount.Should().Be(0);
-            topic2.TotalMessagesCount.Should().Be(0);
-            topic3.TotalMessagesCount.Should().Be(0);
+            topic1.MessagesCount.Should().Be(0);
+            topic2.MessagesCount.Should().Be(0);
+            topic3.MessagesCount.Should().Be(0);
 
             await dbContext.SaveChangesAsync();
 
             await AsyncTestingUtil.WaitAsync(
                 () =>
-                    topic1.TotalMessagesCount >= 1 &&
-                    topic2.TotalMessagesCount >= 1 &&
-                    topic3.TotalMessagesCount >= 1);
+                    topic1.MessagesCount >= 1 &&
+                    topic2.MessagesCount >= 1 &&
+                    topic3.MessagesCount >= 1);
 
             dbContext.Outbox.ForEach(
                 outboxMessage => outboxMessage.ActualEndpointName.Should().NotBeNullOrEmpty());
 
-            topic1.TotalMessagesCount.Should().Be(1);
-            topic2.TotalMessagesCount.Should().Be(1);
-            topic3.TotalMessagesCount.Should().Be(1);
+            topic1.MessagesCount.Should().Be(1);
+            topic2.MessagesCount.Should().Be(1);
+            topic3.MessagesCount.Should().Be(1);
         }
     }
 }

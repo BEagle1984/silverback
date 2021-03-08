@@ -34,6 +34,9 @@ namespace Silverback.Testing
         /// <summary>
         ///     Returns a <see cref="Task" /> that completes when all consumers have connected.
         /// </summary>
+        /// <remarks>
+        ///     This method works with the mocked brokers only.
+        /// </remarks>
         /// <param name="timeout">
         ///     The time to wait for the consumers to connect. The default is 30 seconds.
         /// </param>
@@ -46,6 +49,9 @@ namespace Silverback.Testing
         ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
         ///     processed and committed.
         /// </summary>
+        /// <remarks>
+        ///     This method works with the mocked brokers only.
+        /// </remarks>
         /// <param name="timeout">
         ///     The time to wait for the messages to be consumed and processed. The default is 30 seconds.
         /// </param>

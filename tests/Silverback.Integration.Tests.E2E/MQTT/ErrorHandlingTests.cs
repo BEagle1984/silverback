@@ -483,7 +483,10 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                 .BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
             Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("e2e/other");
 
-            Helper.GetMessagesCount("e2e/other").Should().Be(1);
+            var otherTopicMessages = Helper.GetMessages("e2e/other");
+            otherTopicMessages.Count.Should().Be(1);
+            otherTopicMessages[0].Payload.Should()
+                .BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
         }
 
         [Fact]
@@ -591,7 +594,10 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                 .BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
             Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("e2e/other");
 
-            Helper.GetMessagesCount("e2e/other").Should().Be(1);
+            var otherTopicMessages = Helper.GetMessages("e2e/other");
+            otherTopicMessages.Count.Should().Be(1);
+            otherTopicMessages[0].Payload.Should()
+                .BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
         }
     }
 }

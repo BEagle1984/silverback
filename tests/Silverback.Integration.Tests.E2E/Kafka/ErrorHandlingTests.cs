@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker.Kafka.Mocks;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Messages;
@@ -29,8 +30,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         private static readonly byte[] AesEncryptionKey =
         {
             0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c,
-            0x1d, 0x1e,
-            0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c
+            0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c
         };
 
         public ErrorHandlingTests(ITestOutputHelper testOutputHelper)
@@ -1066,7 +1066,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
             Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("other-topic");
 
-            Helper.GetTopic("other-topic").TotalMessagesCount.Should().Be(1);
+            var otherTopic = Helper.GetTopic("other-topic");
+            otherTopic.MessagesCount.Should().Be(1);
+            otherTopic.GetAllMessages()[0].Value.Should()
+                .BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
         }
 
         [Fact]
@@ -1170,7 +1173,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .BeEquivalentTo(Helper.Spy.OutboundEnvelopes[0].Message);
             Helper.Spy.OutboundEnvelopes[1].Endpoint.Name.Should().Be("other-topic");
 
-            Helper.GetTopic("other-topic").TotalMessagesCount.Should().Be(1);
+            var otherTopic = Helper.GetTopic("other-topic");
+            otherTopic.MessagesCount.Should().Be(1);
+            otherTopic.GetAllMessages()[0].Value.Should()
+                .BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
         }
     }
 }

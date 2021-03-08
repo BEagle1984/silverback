@@ -80,16 +80,16 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var topic1 = Helper.GetTopic("topic1");
             var topic2 = Helper.GetTopic("topic2");
 
-            topic1.Partitions[0].TotalMessagesCount.Should().Be(0);
-            topic1.Partitions[1].TotalMessagesCount.Should().Be(1);
-            topic1.Partitions[2].TotalMessagesCount.Should().Be(1);
-            topic1.Partitions[3].TotalMessagesCount.Should().Be(0);
-            topic1.Partitions[4].TotalMessagesCount.Should().Be(0);
-            topic2.Partitions[0].TotalMessagesCount.Should().Be(0);
-            topic2.Partitions[1].TotalMessagesCount.Should().Be(1);
-            topic2.Partitions[2].TotalMessagesCount.Should().Be(1);
-            topic2.Partitions[3].TotalMessagesCount.Should().Be(0);
-            topic2.Partitions[4].TotalMessagesCount.Should().Be(0);
+            topic1.Partitions[0].Messages.Count.Should().Be(0);
+            topic1.Partitions[1].Messages.Count.Should().Be(1);
+            topic1.Partitions[2].Messages.Count.Should().Be(1);
+            topic1.Partitions[3].Messages.Count.Should().Be(0);
+            topic1.Partitions[4].Messages.Count.Should().Be(0);
+            topic2.Partitions[0].Messages.Count.Should().Be(0);
+            topic2.Partitions[1].Messages.Count.Should().Be(1);
+            topic2.Partitions[2].Messages.Count.Should().Be(1);
+            topic2.Partitions[3].Messages.Count.Should().Be(0);
+            topic2.Partitions[4].Messages.Count.Should().Be(0);
         }
     }
 }

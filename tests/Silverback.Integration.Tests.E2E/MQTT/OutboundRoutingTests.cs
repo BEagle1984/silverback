@@ -63,16 +63,16 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
             await publisher.PublishAsync(new TestEventOne { Content = "2" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            Helper.GetMessagesCount("topic1").Should().Be(1);
-            Helper.GetMessagesCount("topic2").Should().Be(1);
-            Helper.GetMessagesCount("topic3").Should().Be(1);
+            Helper.GetMessages("topic1").Should().HaveCount(1);
+            Helper.GetMessages("topic2").Should().HaveCount(1);
+            Helper.GetMessages("topic3").Should().HaveCount(1);
 
             await publisher.PublishAsync(new TestEventOne { Content = "1" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            Helper.GetMessagesCount("topic1").Should().Be(2);
-            Helper.GetMessagesCount("topic2").Should().Be(1);
-            Helper.GetMessagesCount("topic3").Should().Be(2);
+            Helper.GetMessages("topic1").Should().HaveCount(2);
+            Helper.GetMessages("topic2").Should().HaveCount(1);
+            Helper.GetMessages("topic3").Should().HaveCount(2);
         }
 
         [Fact]
@@ -116,16 +116,16 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
             await publisher.PublishAsync(new TestEventOne { Content = "2" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            Helper.GetMessagesCount("topic1").Should().Be(1);
-            Helper.GetMessagesCount("topic2").Should().Be(1);
-            Helper.GetMessagesCount("topic3").Should().Be(1);
+            Helper.GetMessages("topic1").Should().HaveCount(1);
+            Helper.GetMessages("topic2").Should().HaveCount(1);
+            Helper.GetMessages("topic3").Should().HaveCount(1);
 
             await publisher.PublishAsync(new TestEventOne { Content = "1" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            Helper.GetMessagesCount("topic1").Should().Be(2);
-            Helper.GetMessagesCount("topic2").Should().Be(1);
-            Helper.GetMessagesCount("topic3").Should().Be(2);
+            Helper.GetMessages("topic1").Should().HaveCount(2);
+            Helper.GetMessages("topic2").Should().HaveCount(1);
+            Helper.GetMessages("topic3").Should().HaveCount(2);
         }
 
         [Fact]
@@ -155,16 +155,16 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
             await publisher.PublishAsync(new TestEventOne { Content = "2" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            Helper.GetMessagesCount("topic1").Should().Be(1);
-            Helper.GetMessagesCount("topic2").Should().Be(1);
-            Helper.GetMessagesCount("topic3").Should().Be(1);
+            Helper.GetMessages("topic1").Should().HaveCount(1);
+            Helper.GetMessages("topic2").Should().HaveCount(1);
+            Helper.GetMessages("topic3").Should().HaveCount(1);
 
             await publisher.PublishAsync(new TestEventOne { Content = "1" });
             await publisher.PublishAsync(new TestEventOne { Content = "3" });
 
-            Helper.GetMessagesCount("topic1").Should().Be(2);
-            Helper.GetMessagesCount("topic2").Should().Be(1);
-            Helper.GetMessagesCount("topic3").Should().Be(2);
+            Helper.GetMessages("topic1").Should().HaveCount(2);
+            Helper.GetMessages("topic2").Should().HaveCount(1);
+            Helper.GetMessages("topic3").Should().HaveCount(2);
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]

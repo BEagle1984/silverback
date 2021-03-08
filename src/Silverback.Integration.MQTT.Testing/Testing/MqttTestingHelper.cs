@@ -2,10 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MQTTnet;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Mqtt.Mocks;
@@ -75,13 +77,13 @@ namespace Silverback.Testing
             return _inMemoryMqttBroker.GetClientSession(clientId);
         }
 
-        /// <inheritdoc cref="IMqttTestingHelper.GetMessagesCount" />
-        public int GetMessagesCount(string topic)
+        /// <inheritdoc cref="IMqttTestingHelper.GetMessages" />
+        public IReadOnlyList<MqttApplicationMessage> GetMessages(string topic)
         {
             if (_inMemoryMqttBroker == null)
                 throw new InvalidOperationException("The IInMemoryMqttBroker is not initialized.");
 
-            return _inMemoryMqttBroker.GetMessagesCount(topic);
+            return _inMemoryMqttBroker.GetMessages(topic);
         }
     }
 }

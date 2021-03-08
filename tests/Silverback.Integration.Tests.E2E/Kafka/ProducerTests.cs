@@ -47,7 +47,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(config => { config.GroupId = "consumer1"; })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -57,9 +62,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             producer.Produce(message);
             producer.Produce(message);
 
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            foreach (var envelope in Helper.Spy.OutboundEnvelopes)
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+            foreach (var envelope in Helper.Spy.InboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
             }
@@ -87,7 +94,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(config => { config.GroupId = "consumer1"; })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -112,9 +124,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { "one", "1" }, { "two", "2" }
                 });
 
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            foreach (var envelope in Helper.Spy.OutboundEnvelopes)
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+            foreach (var envelope in Helper.Spy.InboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
                 envelope.Headers.Should()
@@ -146,7 +160,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(config => { config.GroupId = "consumer1"; })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -177,9 +196,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     },
                     producer.Endpoint));
 
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            foreach (var envelope in Helper.Spy.OutboundEnvelopes)
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+            foreach (var envelope in Helper.Spy.InboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
                 envelope.Headers.Should()
@@ -214,7 +235,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(config => { config.GroupId = "consumer1"; })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -247,12 +273,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             produced.Should().BeLessThan(3);
 
-            await AsyncTestingUtil.WaitAsync(() => errors + produced >= 3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             produced.Should().Be(3);
             errors.Should().Be(0);
 
-            foreach (var envelope in Helper.Spy.OutboundEnvelopes)
+            foreach (var envelope in Helper.Spy.InboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
                 envelope.Headers.Should()
@@ -287,7 +313,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(config => { config.GroupId = "consumer1"; })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -326,12 +357,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             produced.Should().BeLessThan(3);
 
-            await AsyncTestingUtil.WaitAsync(() => errors + produced >= 3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             produced.Should().Be(3);
             errors.Should().Be(0);
 
-            foreach (var envelope in Helper.Spy.OutboundEnvelopes)
+            foreach (var envelope in Helper.Spy.InboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
                 envelope.Headers.Should()
@@ -388,6 +419,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 });
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
             Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
 
             foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
@@ -447,6 +479,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 });
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
             Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
 
             foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
@@ -523,12 +556,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             produced.Should().BeLessThan(3);
 
-            await AsyncTestingUtil.WaitAsync(() => errors + produced >= 3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             produced.Should().Be(3);
             errors.Should().Be(0);
 
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
             Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
 
             foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
@@ -605,12 +637,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             produced.Should().BeLessThan(3);
 
-            await AsyncTestingUtil.WaitAsync(() => errors + produced >= 3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             produced.Should().Be(3);
             errors.Should().Be(0);
 
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
             Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
 
             foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
@@ -645,7 +676,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(config => { config.GroupId = "consumer1"; })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -655,16 +691,18 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await producer.ProduceAsync(message);
             await producer.ProduceAsync(message);
 
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            foreach (var envelope in Helper.Spy.OutboundEnvelopes)
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+            foreach (var envelope in Helper.Spy.InboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
             }
         }
 
         [Fact]
-        public async Task ProduceAsync_MessageWithHeaders_Produced()
+        public async Task ProduceAsync_MessageWithHeaders_ProducedAndConsumed()
         {
             var message = new TestEventOne
             {
@@ -685,7 +723,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(config => { config.GroupId = "consumer1"; })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -710,9 +753,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { "one", "1" }, { "two", "2" }
                 });
 
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            foreach (var envelope in Helper.Spy.OutboundEnvelopes)
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+            foreach (var envelope in Helper.Spy.InboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
                 envelope.Headers.Should()
@@ -723,7 +768,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task ProduceAsync_Envelope_Produced()
+        public async Task ProduceAsync_Envelope_ProducedAndConsumed()
         {
             var message = new TestEventOne
             {
@@ -744,7 +789,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(config => { config.GroupId = "consumer1"; })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -775,9 +825,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     },
                     producer.Endpoint));
 
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            foreach (var envelope in Helper.Spy.OutboundEnvelopes)
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+            foreach (var envelope in Helper.Spy.InboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
                 envelope.Headers.Should()
@@ -788,7 +840,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task ProduceAsync_MessageUsingCallbacks_Produced()
+        public async Task ProduceAsync_MessageUsingCallbacks_ProducedAndConsumed()
         {
             int produced = 0;
             int errors = 0;
@@ -812,7 +864,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(config => { config.GroupId = "consumer1"; })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -845,12 +902,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             produced.Should().BeLessThan(3);
 
-            await AsyncTestingUtil.WaitAsync(() => errors + produced >= 3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             produced.Should().Be(3);
             errors.Should().Be(0);
 
-            foreach (var envelope in Helper.Spy.OutboundEnvelopes)
+            foreach (var envelope in Helper.Spy.InboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
                 envelope.Headers.Should()
@@ -861,7 +918,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task ProduceAsync_EnvelopeUsingCallbacks_Produced()
+        public async Task ProduceAsync_EnvelopeUsingCallbacks_ProducedAndConsumed()
         {
             int produced = 0;
             int errors = 0;
@@ -885,7 +942,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(config => { config.GroupId = "consumer1"; })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -924,12 +986,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             produced.Should().BeLessThan(3);
 
-            await AsyncTestingUtil.WaitAsync(() => errors + produced >= 3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             produced.Should().Be(3);
             errors.Should().Be(0);
 
-            foreach (var envelope in Helper.Spy.OutboundEnvelopes)
+            foreach (var envelope in Helper.Spy.InboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
                 envelope.Headers.Should()
@@ -940,7 +1002,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task RawProduceAsync_ByteArray_Produced()
+        public async Task RawProduceAsync_ByteArray_ProducedAndConsumed()
         {
             var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
 
@@ -986,6 +1048,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 });
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
             Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
 
             foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
@@ -999,7 +1062,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task RawProduceAsync_Stream_Produced()
+        public async Task RawProduceAsync_Stream_ProducedAndConsumed()
         {
             var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
 
@@ -1045,6 +1108,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 });
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
             Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
 
             foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
@@ -1058,7 +1122,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task RawProduceAsync_ByteArrayUsingCallbacks_Produced()
+        public async Task RawProduceAsync_ByteArrayUsingCallbacks_ProducedAndConsumed()
         {
             int produced = 0;
             int errors = 0;
@@ -1121,12 +1185,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             produced.Should().BeLessThan(3);
 
-            await AsyncTestingUtil.WaitAsync(() => errors + produced >= 3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             produced.Should().Be(3);
             errors.Should().Be(0);
 
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
             Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
 
             foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
@@ -1140,7 +1203,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task RawProduceAsync_StreamUsingCallbacks_Produced()
+        public async Task RawProduceAsync_StreamUsingCallbacks_ProducedAndConsumed()
         {
             int produced = 0;
             int errors = 0;
@@ -1164,7 +1227,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName)))
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .Configure(config => { config.GroupId = "consumer1"; })
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Skip())))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -1198,12 +1266,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             produced.Should().BeLessThan(3);
 
-            await AsyncTestingUtil.WaitAsync(() => errors + produced >= 3);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             produced.Should().Be(3);
             errors.Should().Be(0);
 
-            foreach (var envelope in Helper.Spy.OutboundEnvelopes)
+            foreach (var envelope in Helper.Spy.InboundEnvelopes)
             {
                 envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
                 envelope.Headers.Should()
@@ -1265,12 +1333,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             produced.Should().BeLessThan(3);
 
-            await AsyncTestingUtil.WaitAsync(() => errors + produced >= 5);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             produced.Should().Be(5);
             errors.Should().Be(0);
 
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
             Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
 
             foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
@@ -1333,12 +1400,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             produced.Should().BeLessThan(3);
 
-            await AsyncTestingUtil.WaitAsync(() => errors + produced >= 5);
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             produced.Should().Be(5);
             errors.Should().Be(0);
 
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
             Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
 
             foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
