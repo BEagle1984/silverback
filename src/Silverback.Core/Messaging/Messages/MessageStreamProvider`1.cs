@@ -3,11 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
@@ -31,9 +33,6 @@ namespace Silverback.Messaging.Messages
 
         /// <inheritdoc cref="IMessageStreamProvider.StreamsCount" />
         public int StreamsCount => _lazyStreams.Count;
-
-        /// <inheritdoc cref="IMessageStreamProvider.AllowSubscribeAsEnumerable" />
-        public bool AllowSubscribeAsEnumerable { get; set; } = true;
 
         /// <summary>
         ///     Adds the specified message to the stream. The returned <see cref="Task" /> will complete only when the
@@ -72,6 +71,10 @@ namespace Silverback.Messaging.Messages
         ///     when the message has actually been pulled and processed and its result contains the number of
         ///     <see cref="IMessageStreamEnumerable{TMessage}" /> that have been pushed.
         /// </returns>
+        [SuppressMessage(
+            "ReSharper",
+            "ParameterOnlyUsedForPreconditionCheck.Global",
+            Justification = "False positive")]
         public virtual async Task<int> PushAsync(
             TMessage message,
             bool throwIfUnhandled,
@@ -126,38 +129,44 @@ namespace Silverback.Messaging.Messages
                 });
 
         /// <inheritdoc cref="IMessageStreamProvider.CreateStream" />
-        public IMessageStreamEnumerable<object> CreateStream(Type messageType)
+        public IMessageStreamEnumerable<object> CreateStream(
+            Type messageType,
+            IReadOnlyCollection<IMessageFilter>? filters = null)
         {
-            var lazyStream = (ILazyMessageStreamEnumerable)CreateLazyStream(messageType);
+            var lazyStream = (ILazyMessageStreamEnumerable)CreateLazyStream(messageType, filters);
             return (IMessageStreamEnumerable<object>)lazyStream.GetOrCreateStream();
         }
 
         /// <inheritdoc cref="IMessageStreamProvider.CreateStream{TMessage}" />
-        public IMessageStreamEnumerable<TMessageLinked> CreateStream<TMessageLinked>()
+        public IMessageStreamEnumerable<TMessageLinked> CreateStream<TMessageLinked>(
+            IReadOnlyCollection<IMessageFilter>? filters = null)
         {
-            var lazyStream = (ILazyMessageStreamEnumerable)CreateLazyStream<TMessageLinked>();
+            var lazyStream = (ILazyMessageStreamEnumerable)CreateLazyStream<TMessageLinked>(filters);
             return (IMessageStreamEnumerable<TMessageLinked>)lazyStream.GetOrCreateStream();
         }
 
         /// <inheritdoc cref="IMessageStreamProvider.CreateLazyStream" />
-        public ILazyMessageStreamEnumerable<object> CreateLazyStream(Type messageType)
+        public ILazyMessageStreamEnumerable<object> CreateLazyStream(
+            Type messageType,
+            IReadOnlyCollection<IMessageFilter>? filters = null)
         {
             _genericCreateStreamMethodInfo ??= GetType().GetMethod(
-                "CreateLazyStream",
+                nameof(CreateLazyStream),
                 1,
-                Array.Empty<Type>());
+                new[] { typeof(IReadOnlyCollection<IMessageFilter>) });
 
             object lazyStream = _genericCreateStreamMethodInfo
                 .MakeGenericMethod(messageType)
-                .Invoke(this, Array.Empty<object>());
+                .Invoke(this, new object?[] { filters });
 
             return (ILazyMessageStreamEnumerable<object>)lazyStream;
         }
 
         /// <inheritdoc cref="IMessageStreamProvider.CreateLazyStream{TMessage}" />
-        public ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStream<TMessageLinked>()
+        public ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStream<TMessageLinked>(
+            IReadOnlyCollection<IMessageFilter>? filters = null)
         {
-            var stream = CreateLazyStreamCore<TMessageLinked>();
+            var stream = CreateLazyStreamCore<TMessageLinked>(filters);
 
             lock (_lazyStreams)
             {
@@ -188,8 +197,9 @@ namespace Silverback.Messaging.Messages
                 AsyncHelper.RunSynchronously(() => CompleteAsync());
         }
 
-        private static ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStreamCore<TMessageLinked>() =>
-            new LazyMessageStreamEnumerable<TMessageLinked>();
+        private static ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStreamCore<TMessageLinked>(
+            IReadOnlyCollection<IMessageFilter>? filters = null) =>
+            new LazyMessageStreamEnumerable<TMessageLinked>(filters);
 
         private static bool PushIfCompatibleType(
             ILazyMessageStreamEnumerable lazyStream,
@@ -198,7 +208,7 @@ namespace Silverback.Messaging.Messages
             CancellationToken cancellationToken,
             out Task messageProcessingTask)
         {
-            if (message == null)
+            if (message == null || IsFiltered(lazyStream.Filters, message))
             {
                 messageProcessingTask = Task.CompletedTask;
                 return false;
@@ -207,7 +217,8 @@ namespace Silverback.Messaging.Messages
             if (lazyStream.MessageType.IsInstanceOfType(message))
             {
                 var pushedMessage = new PushedMessage(messageId, message, message);
-                messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(pushedMessage, cancellationToken);
+                messageProcessingTask =
+                    lazyStream.GetOrCreateStream().PushAsync(pushedMessage, cancellationToken);
                 return true;
             }
 
@@ -216,13 +227,17 @@ namespace Silverback.Messaging.Messages
                 lazyStream.MessageType.IsInstanceOfType(envelope.Message))
             {
                 var pushedMessage = new PushedMessage(messageId, envelope.Message, message);
-                messageProcessingTask = lazyStream.GetOrCreateStream().PushAsync(pushedMessage, cancellationToken);
+                messageProcessingTask =
+                    lazyStream.GetOrCreateStream().PushAsync(pushedMessage, cancellationToken);
                 return true;
             }
 
             messageProcessingTask = Task.CompletedTask;
             return false;
         }
+
+        private static bool IsFiltered(IReadOnlyCollection<IMessageFilter>? filters, object message) =>
+            filters != null && filters.Count != 0 && !filters.All(filter => filter.MustProcess(message));
 
         private IEnumerable<Task> PushToCompatibleStreams(
             int messageId,
@@ -231,8 +246,15 @@ namespace Silverback.Messaging.Messages
         {
             foreach (var lazyStream in _lazyStreams)
             {
-                if (PushIfCompatibleType(lazyStream, messageId, message, cancellationToken, out var processingTask))
+                if (PushIfCompatibleType(
+                    lazyStream,
+                    messageId,
+                    message,
+                    cancellationToken,
+                    out var processingTask))
+                {
                     yield return processingTask;
+                }
             }
         }
     }

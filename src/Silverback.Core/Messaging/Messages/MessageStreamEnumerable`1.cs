@@ -40,7 +40,9 @@ namespace Silverback.Messaging.Messages
             "ReSharper",
             "InconsistentlySynchronizedField",
             Justification = "The lock is important to avoid multiple complete/abort, here is not important")]
-        public async Task PushAsync(PushedMessage pushedMessage, CancellationToken cancellationToken = default)
+        public async Task PushAsync(
+            PushedMessage pushedMessage,
+            CancellationToken cancellationToken = default)
         {
             Check.NotNull(pushedMessage, nameof(pushedMessage));
 
@@ -55,6 +57,7 @@ namespace Silverback.Messaging.Messages
             SafelyRelease(_readSemaphore);
 
             await _processedSemaphore.WaitAsync(linkedTokenSource.Token).ConfigureAwait(false);
+            _current = null;
             _writeSemaphore.Release();
         }
 
@@ -94,12 +97,12 @@ namespace Silverback.Messaging.Messages
         public IEnumerator<TMessage> GetEnumerator() =>
             GetEnumerable().GetEnumerator();
 
-        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
         /// <inheritdoc cref="IAsyncEnumerable{T}.GetAsyncEnumerator" />
         public IAsyncEnumerator<TMessage> GetAsyncEnumerator(CancellationToken cancellationToken = default) =>
             GetAsyncEnumerable(cancellationToken).GetAsyncEnumerator(cancellationToken);
+
+        /// <inheritdoc cref="IEnumerable.GetEnumerator" />
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
@@ -181,7 +184,8 @@ namespace Silverback.Messaging.Messages
             return _current != null;
         }
 
-        private CancellationTokenSource LinkWithAbortCancellationTokenSource(CancellationToken cancellationToken) =>
+        private CancellationTokenSource LinkWithAbortCancellationTokenSource(
+            CancellationToken cancellationToken) =>
             CancellationTokenSource.CreateLinkedTokenSource(
                 cancellationToken,
                 _abortCancellationTokenSource.Token);

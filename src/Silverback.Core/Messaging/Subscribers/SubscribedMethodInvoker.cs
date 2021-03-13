@@ -115,7 +115,8 @@ namespace Silverback.Messaging.Subscribers
 
             var lazyStream = streamEnumerableResolver.GetValue(
                 messageStreamProvider,
-                subscribedMethod.MessageType);
+                subscribedMethod.MessageType,
+                subscribedMethod.Filters);
 
             return Task.Run(
                 async () =>

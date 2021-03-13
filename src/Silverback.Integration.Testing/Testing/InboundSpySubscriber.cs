@@ -31,7 +31,7 @@ namespace Silverback.Testing
         }
 
         [Subscribe]
-        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Called by Silverback")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         private void OnInbound(IInboundEnvelope envelope) => _integrationSpy.AddInboundEnvelope(envelope);
     }
 }

@@ -9,6 +9,7 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Sequences
 {
@@ -113,10 +114,14 @@ namespace Silverback.Messaging.Sequences
         /// <typeparam name="TMessage">
         ///     The type of the messages to be streamed.
         /// </typeparam>
+        /// <param name="filters">
+        ///     The filters to be applied.
+        /// </param>
         /// <returns>
         ///     The <see cref="IMessageStreamEnumerable{TMessage}" />.
         /// </returns>
-        IMessageStreamEnumerable<TMessage> CreateStream<TMessage>();
+        IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(
+            IReadOnlyCollection<IMessageFilter>? filters = null);
 
         /// <summary>
         ///     Adds the message to the sequence.

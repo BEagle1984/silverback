@@ -38,11 +38,14 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         }
 
         /// <inheritdoc cref="IStreamEnumerableMessageArgumentResolver.GetValue" />
-        public ILazyArgumentValue GetValue(IMessageStreamProvider streamProvider, Type targetMessageType)
+        public ILazyArgumentValue GetValue(
+            IMessageStreamProvider streamProvider,
+            Type targetMessageType,
+            IReadOnlyCollection<IMessageFilter>? filters = null)
         {
             Check.NotNull(streamProvider, nameof(streamProvider));
 
-            return (ILazyArgumentValue)streamProvider.CreateLazyStream(targetMessageType);
+            return (ILazyArgumentValue)streamProvider.CreateLazyStream(targetMessageType, filters);
         }
     }
 }

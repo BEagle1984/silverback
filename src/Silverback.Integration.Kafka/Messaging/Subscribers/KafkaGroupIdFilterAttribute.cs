@@ -31,8 +31,10 @@ namespace Silverback.Messaging.Subscribers
 
         /// <inheritdoc cref="MessageFilterAttribute.MustProcess" />
         public override bool MustProcess(object message) =>
-            message is IInboundEnvelope inboundEnvelope &&
-            inboundEnvelope.Endpoint is KafkaConsumerEndpoint endpoint &&
-            GroupId.Any(groupId => groupId == endpoint.Configuration.GroupId);
+            MessageIsFromAllowedGroups(message) || message is IMessageStreamProvider;
+
+        private bool MessageIsFromAllowedGroups(object message) =>
+            message is IInboundEnvelope { Endpoint: KafkaConsumerEndpoint endpoint }
+            && GroupId.Any(groupId => groupId == endpoint.Configuration.GroupId);
     }
 }

@@ -127,7 +127,6 @@ namespace Silverback.Tests.Integration.Diagnostics
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
                 { DefaultMessageHeaders.MessageId, "1234" }
             };
-            var brokerMessageIdentifier = new TestOffset("a", "42");
 
             var expectedMessage =
                 "Error occurred producing the message. | " +

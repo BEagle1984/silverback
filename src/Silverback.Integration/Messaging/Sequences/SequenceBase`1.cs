@@ -14,6 +14,7 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Subscribers;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
@@ -120,11 +121,11 @@ namespace Silverback.Messaging.Sequences
         /// <inheritdoc cref="ISequenceImplementation.ShouldCreateNewActivity" />
         public bool ShouldCreateNewActivity => true;
 
-        /// <inheritdoc cref="ISequenceImplementation.Activity" />
-        public Activity? Activity { get; private set; }
-
         /// <inheritdoc cref="ISequence.StreamProvider" />
         public IMessageStreamProvider StreamProvider => _streamProvider;
+
+        /// <inheritdoc cref="ISequenceImplementation.Activity" />
+        public Activity? Activity { get; private set; }
 
         /// <inheritdoc cref="ISequence.ParentSequence" />
         public ISequence? ParentSequence { get; private set; }
@@ -187,8 +188,9 @@ namespace Silverback.Messaging.Sequences
         }
 
         /// <inheritdoc cref="ISequence.CreateStream{TMessage}" />
-        public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>() =>
-            StreamProvider.CreateStream<TMessage>();
+        public IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(
+            IReadOnlyCollection<IMessageFilter>? filters = null) =>
+            StreamProvider.CreateStream<TMessage>(filters);
 
         /// <inheritdoc cref="ISequence.AddAsync" />
         public Task<int> AddAsync(

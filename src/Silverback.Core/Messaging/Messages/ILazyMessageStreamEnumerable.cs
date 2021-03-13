@@ -2,7 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Messages
 {
@@ -21,6 +23,11 @@ namespace Silverback.Messaging.Messages
         ///     Gets the <see cref="IMessageStreamEnumerable{TMessage}" />, as soon as it is created.
         /// </summary>
         IMessageStreamEnumerable? Stream { get; }
+
+        /// <summary>
+        ///     Gets the filters to be applied.
+        /// </summary>
+        IReadOnlyCollection<IMessageFilter>? Filters { get; }
 
         /// <summary>
         ///     Gets an awaitable <see cref="Task" /> that completes when the first message is pushed and the

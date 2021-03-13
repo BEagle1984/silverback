@@ -3,7 +3,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Sequences.Unbounded
 {
@@ -15,14 +14,7 @@ namespace Silverback.Messaging.Sequences.Unbounded
     {
         [SuppressMessage("", "CA2000", Justification = "Stream disposed in base class")]
         public UnboundedSequence(string sequenceId, ConsumerPipelineContext context)
-            : base(
-                sequenceId,
-                context,
-                false,
-                streamProvider: new MessageStreamProvider<IInboundEnvelope>
-                {
-                    AllowSubscribeAsEnumerable = false
-                })
+            : base(sequenceId, context, false)
         {
         }
     }

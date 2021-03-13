@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Messages
 {
@@ -17,12 +18,6 @@ namespace Silverback.Messaging.Messages
         Type MessageType { get; }
 
         /// <summary>
-        ///     Gets a value indicating whether the stream can be forwarded to the subscribers declare a parameter of
-        ///     type <see cref="IEnumerable{T}" />.
-        /// </summary>
-        bool AllowSubscribeAsEnumerable { get; }
-
-        /// <summary>
         ///     Gets the number of <see cref="IMessageStreamEnumerable{TMessage}" /> that have been created via
         ///     <see cref="CreateStream" /> or <see cref="CreateStream{TMessage}" />.
         /// </summary>
@@ -35,10 +30,15 @@ namespace Silverback.Messaging.Messages
         /// <param name="messageType">
         ///     The type of the messages to be streamed to the linked stream.
         /// </param>
+        /// <param name="filters">
+        ///     The filters to be applied.
+        /// </param>
         /// <returns>
         ///     The linked <see cref="IMessageStreamEnumerable{TMessage}" />.
         /// </returns>
-        IMessageStreamEnumerable<object> CreateStream(Type messageType);
+        IMessageStreamEnumerable<object> CreateStream(
+            Type messageType,
+            IReadOnlyCollection<IMessageFilter>? filters = null);
 
         /// <summary>
         ///     Creates a new <see cref="IMessageStreamEnumerable{TMessage}" /> that will be linked with this
@@ -47,10 +47,14 @@ namespace Silverback.Messaging.Messages
         /// <typeparam name="TMessage">
         ///     The type of the messages to be streamed to the linked stream.
         /// </typeparam>
+        /// <param name="filters">
+        ///     The filters to be applied.
+        /// </param>
         /// <returns>
         ///     The linked <see cref="IMessageStreamEnumerable{TMessage}" />.
         /// </returns>
-        IMessageStreamEnumerable<TMessage> CreateStream<TMessage>();
+        IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(
+            IReadOnlyCollection<IMessageFilter>? filters = null);
 
         /// <summary>
         ///     Creates a new <see cref="ILazyMessageStreamEnumerable{TMessage}" /> that will be linked with this
@@ -60,10 +64,15 @@ namespace Silverback.Messaging.Messages
         /// <param name="messageType">
         ///     The type of the messages to be streamed to the linked stream.
         /// </param>
+        /// <param name="filters">
+        ///     The filters to be applied.
+        /// </param>
         /// <returns>
         ///     The linked <see cref="ILazyMessageStreamEnumerable{TMessage}" />.
         /// </returns>
-        ILazyMessageStreamEnumerable<object> CreateLazyStream(Type messageType);
+        ILazyMessageStreamEnumerable<object> CreateLazyStream(
+            Type messageType,
+            IReadOnlyCollection<IMessageFilter>? filters = null);
 
         /// <summary>
         ///     Creates a new <see cref="ILazyMessageStreamEnumerable{TMessage}" /> that will be linked with this
@@ -73,9 +82,13 @@ namespace Silverback.Messaging.Messages
         /// <typeparam name="TMessage">
         ///     The type of the messages to be streamed to the linked stream.
         /// </typeparam>
+        /// <param name="filters">
+        ///     The filters to be applied.
+        /// </param>
         /// <returns>
         ///     The linked <see cref="ILazyMessageStreamEnumerable{TMessage}" />.
         /// </returns>
-        ILazyMessageStreamEnumerable<TMessage> CreateLazyStream<TMessage>();
+        ILazyMessageStreamEnumerable<TMessage> CreateLazyStream<TMessage>(
+            IReadOnlyCollection<IMessageFilter>? filters = null);
     }
 }

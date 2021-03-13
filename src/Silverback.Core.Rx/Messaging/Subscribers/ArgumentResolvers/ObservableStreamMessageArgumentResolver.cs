@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Silverback.Messaging.Messages;
@@ -40,7 +41,10 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
         }
 
         /// <inheritdoc cref="IStreamEnumerableMessageArgumentResolver.GetValue" />
-        public ILazyArgumentValue GetValue(IMessageStreamProvider streamProvider, Type targetMessageType)
+        public ILazyArgumentValue GetValue(
+            IMessageStreamProvider streamProvider,
+            Type targetMessageType,
+            IReadOnlyCollection<IMessageFilter>? filters = null)
         {
             Check.NotNull(streamProvider, nameof(streamProvider));
 
@@ -50,7 +54,7 @@ namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 
             return (ILazyArgumentValue)_createObservableMethodInfo!
                 .MakeGenericMethod(targetMessageType)
-                .Invoke(this, new object[] { streamProvider.CreateLazyStream(targetMessageType) });
+                .Invoke(this, new object[] { streamProvider.CreateLazyStream(targetMessageType, filters) });
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Invoked via Reflection")]
