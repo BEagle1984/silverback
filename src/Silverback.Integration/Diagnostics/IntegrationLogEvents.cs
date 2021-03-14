@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Configuration;
@@ -434,6 +435,7 @@ namespace Silverback.Diagnostics
         ///     Reserved, not used anymore.
         /// </summary>
         [SuppressMessage("", "SA1623", Justification = "Reserved id")]
+        [Obsolete("Not used anymore.", true)]
         public static LogEvent ErrorInitializingActivity { get; } = new(
             LogLevel.Warning,
             GetEventId(61, nameof(ErrorInitializingActivity)),
