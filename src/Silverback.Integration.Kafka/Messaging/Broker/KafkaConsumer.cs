@@ -329,9 +329,9 @@ namespace Silverback.Messaging.Broker
             }
 
             Task.Run(
-                () => RestartConsumeLoopAfterRollbackAsync(
-                    channelsManagerStoppingTasks,
-                    latestTopicPartitionOffsets))
+                    () => RestartConsumeLoopAfterRollbackAsync(
+                        channelsManagerStoppingTasks,
+                        latestTopicPartitionOffsets))
                 .FireAndForget();
         }
 
@@ -390,7 +390,18 @@ namespace Silverback.Messaging.Broker
                 _consumeLoopHandler.SetChannelsManager(_channelsManager);
 
             if (IsConsuming && !IsStopping)
+            {
                 _consumeLoopHandler.Start();
+
+                _logger.LogConsumerLowLevelTrace(
+                    this,
+                    "ConsumeLoopHandler started. | instanceId: {instanceId}, taskId: {taskId}",
+                    () => new object[]
+                    {
+                        _consumeLoopHandler.Id,
+                        _consumeLoopHandler.Stopping.Id
+                    });
+            }
         }
 
         private void InitAndStartChannelsManager(IReadOnlyList<TopicPartition> partitions)

@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Broker.Kafka
 
         private CancellationTokenSource _cancellationTokenSource = new();
 
-        private TaskCompletionSource<bool> _consumeTaskCompletionSource = new();
+        private TaskCompletionSource<bool>? _consumeTaskCompletionSource;
 
         public ConsumeLoopHandler(
             KafkaConsumer consumer,
@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker.Kafka
 
         public InstanceIdentifier Id { get; } = new();
 
-        public Task Stopping => IsConsuming ? _consumeTaskCompletionSource.Task : Task.CompletedTask;
+        public Task Stopping => _consumeTaskCompletionSource?.Task ?? Task.CompletedTask;
 
         public bool IsConsuming { get; private set; }
 
@@ -54,7 +54,7 @@ namespace Silverback.Messaging.Broker.Kafka
                 _cancellationTokenSource = new CancellationTokenSource();
             }
 
-            if (_consumeTaskCompletionSource.Task.IsCompleted)
+            if (_consumeTaskCompletionSource == null || _consumeTaskCompletionSource.Task.IsCompleted)
                 _consumeTaskCompletionSource = new TaskCompletionSource<bool>();
 
             var taskCompletionSource = _consumeTaskCompletionSource;
@@ -69,15 +69,15 @@ namespace Silverback.Messaging.Broker.Kafka
 
         public Task StopAsync()
         {
+            if (!IsConsuming)
+                return Stopping;
+
             _logger.LogConsumerLowLevelTrace(
                 _consumer,
                 "Stopping ConsumeLoopHandler... | instanceId: {instanceId}",
                 () => new object[] { Id });
 
             _cancellationTokenSource.Cancel();
-
-            if (!IsConsuming)
-                _consumeTaskCompletionSource.TrySetResult(true);
 
             IsConsuming = false;
 
