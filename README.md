@@ -2,12 +2,12 @@
 
 A simple but feature-rich framework to build reactive/event-driven applications or microservices.
 
-It includes an in-memory message bus that can be easily connected to a message broker to integrate with other applications or microservices. At the moment only [Apache Kafka](https://kafka.apache.org/) and [RabbitMQ](https://www.rabbitmq.com/) are supported but other message brokers could be added without much effort.
+It includes an in-memory message bus that can be easily connected to a message broker to integrate with other applications or microservices. At the moment only [Apache Kafka](https://kafka.apache.org/), MQTT and [RabbitMQ](https://www.rabbitmq.com/) are supported but other message brokers could be added without much effort.
 
 Its main features are:
 * Simple yet powerful message bus
 * Abstracted integration with a message broker
-* Apache Kafka and RabbitMQ integration
+* Apache Kafka, MQTT and RabbitMQ integration
 * DDD, domain events and transactional messaging
 * Built-in error handling policies for consumers
 

@@ -21,7 +21,7 @@ More complex and complete samples can be found in the <xref:samples> section.
 
 ### Basic configuration
 
-The following sample demonstrates how to setup some inbound and outbound endpoints against the built-in message brokers (Apache Kafka or RabbitMQ).
+The following sample demonstrates how to setup some inbound and outbound endpoints against the built-in message brokers (Apache Kafka, MQTT or RabbitMQ).
 
 #### Apache Kafka
 
