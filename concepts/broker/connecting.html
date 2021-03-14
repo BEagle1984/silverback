@@ -1,0 +1,595 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Connecting to a Message Broker | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Connecting to a Message Broker | Silverback ">
+    <meta name="generator" content="docfx 2.56.6.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="message-broker">
+<h1 id="connecting-to-a-message-broker">Connecting to a Message Broker</h1>
+
+<p>To connect Silverback to a message broker we need a reference to <a href="https://www.nuget.org/packages/Silverback.Integration">Silverback.Integration</a>, plus the concrete implementation (<a href="https://www.nuget.org/packages/Silverback.Integration.Kafka">Silverback.Integration.Kafka</a>, <a href="https://www.nuget.org/packages/Silverback.Integration.MQTT">Silverback.Integration.MQTT</a>, <a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ">Silverback.Integration.RabbitMQ</a>, etc.). We can then add the broker to the DI and configure the connected endpoints.</p>
+<h2 id="sample-configuration">Sample configuration</h2>
+<p>The following example is very basic and there are of course many more configurations and possibilities. Some more details are given in the dedicated <a class="xref" href="outbound.html">Outbound Endpoint</a> and <a class="xref" href="inbound.html">Inbound Endpoint</a> sections.</p>
+<p>The basic concepts:</p>
+<ul>
+<li><code>WithConnectionToMessageBroker</code> registers the services necessary to connect to a message broker</li>
+<li><code>AddKafka</code>, <code>AddMqtt</code>, <code>AddRabbit</code>, etc. register the message broker implementation(s)</li>
+<li><code>AddEndpointsConfigurator</code> is used to outsource the endpoints configuration into a separate class implementing the <a class="xref" href="../../api/Silverback.Messaging.Configuration.IEndpointsConfigurator.html">IEndpointsConfigurator</a> interface (of course multiple configurators can be registered)</li>
+<li><code>AddInbound</code> is used to automatically relay the incoming messages to the internal bus and they can therefore be subscribed as seen in the previous chapters</li>
+<li><code>AddOutbound</code> works the other way around and subscribes to the internal bus to forward the integration messages to the message broker</li>
+</ul>
+<p>More complex and complete samples can be found in the <a class="xref" href="../../samples/samples.html">Samples</a> section.</p>
+<h3 id="basic-configuration">Basic configuration</h3>
+<p>The following sample demonstrates how to setup some inbound and outbound endpoints against the built-in message brokers (Apache Kafka, MQTT or RabbitMQ).</p>
+<h4 id="apache-kafka">Apache Kafka</h4>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_kafka-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q_kafka-startup" data-tab="kafka-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q_kafka-configurator" role="tab" aria-controls="tabpanel_CeZOj-G++Q_kafka-configurator" data-tab="kafka-configurator" tabindex="-1">EndpointsConfigurator</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q_kafka-startup" role="tabpanel" data-tab="kafka-startup">
+
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka())
+            .AddEndpointsConfigurator&lt;MyEndpointsConfigurator&gt;();
+    }
+}
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q_kafka-configurator" role="tabpanel" data-tab="kafka-configurator" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;basket-events&quot;)
+                    .Configure(config =&gt;
+                    {
+                        config.GroupId = &quot;order-service&quot;;
+                    }))
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;payment-events&quot;)
+                    .Configure(config =&gt;
+                    {
+                        confing.GroupId = &quot;order-service&quot;
+                    }))
+                .AddOutbound&lt;IIntegrationEvent&gt;(endpoint =&gt; endpoint
+                    .ProduceTo(&quot;order-events&quot;)));
+}
+</code></pre>
+</section>
+</div>
+<h4 id="mqtt">MQTT</h4>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_mqtt-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_mqtt-startup" data-tab="mqtt-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-1_mqtt-configurator" role="tab" aria-controls="tabpanel_CeZOj-G++Q-1_mqtt-configurator" data-tab="mqtt-configurator" tabindex="-1">EndpointsConfigurator</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-1_mqtt-startup" role="tabpanel" data-tab="mqtt-startup">
+
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddMqtt())
+            .AddEndpointsConfigurator&lt;MyEndpointsConfigurator&gt;();
+    }
+}
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-1_mqtt-configurator" role="tabpanel" data-tab="mqtt-configurator" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddMqttEndpoints(endpoints =&gt; endpoints
+                .Configure(
+                    config =&gt; config
+                        .WithClientId(&quot;order-service&quot;)
+                        .ConnectViaTcp(&quot;localhost&quot;)
+                        .SendLastWillMessage(
+                            lastWill =&gt; lastWill
+                                .Message(new TestamentMessage())
+                                .ProduceTo(&quot;testaments&quot;)))
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;basket-events&quot;)
+                    .WithQualityOfServiceLevel(
+                        MqttQualityOfServiceLevel.AtLeastOnce))
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;payment-events&quot;)
+                    .WithQualityOfServiceLevel(
+                        MqttQualityOfServiceLevel.AtLeastOnce))
+                .AddOutbound&lt;IIntegrationEvent&gt;(endpoint =&gt; endpoint
+                    .ProduceTo(&quot;order-events&quot;)
+                    .WithQualityOfServiceLevel(
+                        MqttQualityOfServiceLevel.AtLeastOnce)
+                    .Retain()));
+}
+</code></pre>
+</section>
+</div>
+
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>Silverback uses by default the v5 of the MQTT protocol, since it supports the user properties (headers). You can of course configure the client to use an older version but some Silverback functionalities (relying on message headers) might not work.</p>
+</div>
+<h4 id="rabbitmq">RabbitMQ</h4>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-2">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_rabbit-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_rabbit-startup" data-tab="rabbit-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-2_rabbit-configurator" role="tab" aria-controls="tabpanel_CeZOj-G++Q-2_rabbit-configurator" data-tab="rabbit-configurator" tabindex="-1">EndpointsConfigurator</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-2_rabbit-startup" role="tabpanel" data-tab="rabbit-startup">
+
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddRabbit())
+            .AddEndpointsConfigurator&lt;MyEndpointsConfigurator&gt;();
+    }
+}
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-2_rabbit-configurator" role="tabpanel" data-tab="rabbit-configurator" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder)
+    {
+        builder
+            .AddInbound(
+                new RabbitExchangeConsumerEndpoint(&quot;basket-events&quot;)
+                {
+                    Connection = new RabbitConnectionConfig
+                    {
+                        HostName = &quot;localhost&quot;,
+                        UserName = &quot;guest&quot;,
+                        Password = &quot;guest&quot;,
+                    },
+                    Exchange = new RabbitExchangeConfig
+                    {
+                        IsDurable = true,
+                        IsAutoDeleteEnabled = false,
+                        ExchangeType = ExchangeType.Fanout
+                    },
+                    QueueName = &quot;basket-events-order-service-queue&quot;,
+                    Queue = new RabbitQueueConfig
+                    {
+                        IsDurable = true,
+                        IsExclusive = true,
+                        IsAutoDeleteEnabled = false
+                    }
+                })
+            .AddInbound(
+                new RabbitExchangeConsumerEndpoint(&quot;payment-events&quot;)
+                {
+                    Connection = new RabbitConnectionConfig
+                    {
+                        HostName = &quot;localhost&quot;,
+                        UserName = &quot;guest&quot;,
+                        Password = &quot;guest&quot;,
+                    },
+                    Exchange = new RabbitExchangeConfig
+                    {
+                        IsDurable = true,
+                        IsAutoDeleteEnabled = false,
+                        ExchangeType = ExchangeType.Fanout
+                    },
+                    QueueName = &quot;payment-events-order-service-queue&quot;,
+                    Queue = new RabbitQueueConfig
+                    {
+                        IsDurable = true,
+                        IsExclusive = true,
+                        IsAutoDeleteEnabled = false
+                    }
+                })
+            .AddOutbound&lt;IIntegrationEvent&gt;(
+                new RabbitExchangeProducerEndpoint(&quot;order-events&quot;)
+                {
+                    Connection = new RabbitConnectionConfig
+                    {
+                        HostName = &quot;localhost&quot;,
+                        UserName = &quot;guest&quot;,
+                        Password = &quot;guest&quot;
+                    },
+                    Exchange = new RabbitExchangeConfig
+                    {
+                        IsDurable = true,
+                        IsAutoDeleteEnabled = false,
+                        ExchangeType = ExchangeType.Fanout
+                    }
+                });
+    }
+}
+</code></pre>
+</section>
+</div>
+
+<div class="TIP">
+<h5>Tip</h5>
+<p>All <a class="xref" href="../../api/Silverback.Messaging.Configuration.IEndpointsConfigurator.html">IEndpointsConfigurator</a> implementations are registered as scoped services. Multiple implementations can be registered to split the configuration and of course dependencies (such as <code>IOption</code> or a <code>DbContext</code>) can be injected to load the configuration variables.</p>
+</div>
+<div class="IMPORTANT">
+<h5>Important</h5>
+<p>Starting from version 3.0.0 the broker(s) will be connected and all consumers started automatically at startup, unless explicitly disabled (see the <a href="#connection-modes">Connection modes</a> chapter for details).</p>
+</div>
+<h3 id="inline-endpoints-configuration">Inline endpoints configuration</h3>
+<p>The preferred and suggested way to configure the message broker endpoints is using the <a class="xref" href="../../api/Silverback.Messaging.Configuration.IEndpointsConfigurator.html">IEndpointsConfigurator</a> but you can use <code>AddEndpoints</code> (or <code>AddKafkaEndpoints</code> etc.) directly and configure everything inline.</p>
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka())
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddInbound(...)
+                .AddOutbound&lt;IIntegrationEvent&gt;(...));
+    }
+}
+</code></pre>
+<h3 id="multiple-brokers">Multiple brokers</h3>
+<p>It is possible to use multiple message broker implementation together in the same application. The following sample demonstrates how to consume from both Apache Kafka and RabbitMQ.</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-3">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_multiple-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_multiple-startup" data-tab="multiple-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-3_multiple-kafka-configurator" role="tab" aria-controls="tabpanel_CeZOj-G++Q-3_multiple-kafka-configurator" data-tab="multiple-kafka-configurator" tabindex="-1">EndpointsConfigurator</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-3_multiple-startup" role="tabpanel" data-tab="multiple-startup">
+
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka()
+                .AddRabbit())
+            .AddEndpointsConfigurator&lt;MyEndpointsConfigurator&gt;();
+    }
+}
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-3_multiple-kafka-configurator" role="tabpanel" data-tab="multiple-kafka-configurator" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder)
+    {
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddInbound(...)
+                .AddOutbound&lt;IIntegrationEvent&gt;(...))
+            .AddInbound(
+                new RabbitExchangeConsumerEndpoint(&quot;rabbit-events&quot;)
+                {
+                    ...
+                });
+    }
+}
+</code></pre>
+</section>
+</div>
+<h2 id="connection-modes">Connection modes</h2>
+<p>You may not want to connect your broker immediately. In the following example is shown how to postpone the automatic connection after the application startup.</p>
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka()
+                .WithConnectionOptions(new BrokerConnectionOptions
+                {
+                    Mode = BrokerConnectionMode.AfterStartup,
+                    RetryInterval = TimeSpan.FromMinutes(5)
+
+                }))
+            .AddEndpointsConfigurator&lt;MyEndpointsConfigurator&gt;();
+    }
+}
+</code></pre>
+<p>But it's also possible to completely disable the automatic connection and manually perform it.</p>
+<div class="tabGroup" id="tabgroup_CeZOj-G++Q-4">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_noautoconnect-startup" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_noautoconnect-startup" data-tab="noautoconnect-startup" tabindex="0" aria-selected="true">Startup</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_CeZOj-G++Q-4_noautoconnect-service" role="tab" aria-controls="tabpanel_CeZOj-G++Q-4_noautoconnect-service" data-tab="noautoconnect-service" tabindex="-1">Service</a>
+</li>
+</ul>
+<section id="tabpanel_CeZOj-G++Q-4_noautoconnect-startup" role="tabpanel" data-tab="noautoconnect-startup">
+
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddSilverback()
+            .WithConnectionToMessageBroker(options =&gt; options
+                .AddKafka()
+                .WithConnectionOptions(new BrokerConnectionOptions
+                {
+                    Mode = BrokerConnectionMode.Manual
+                }))
+            .AddEndpointsConfigurator&lt;MyEndpointsConfigurator&gt;();
+    }
+}
+</code></pre>
+</section>
+<section id="tabpanel_CeZOj-G++Q-4_noautoconnect-service" role="tabpanel" data-tab="noautoconnect-service" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class BrokerConnectionService
+{
+    private readonly IBroker _broker;
+
+    public BrokerConnectionService(IBroker broker)
+    {
+        _broker = broker;
+    }
+
+    public async ConnectAsync()
+    {
+        broker.ConnectAsync();
+    }
+}
+</code></pre>
+</section>
+</div>
+
+<div class="TIP">
+<h5>Tip</h5>
+<p>See the <a class="xref" href="../../api/Silverback.Messaging.Configuration.BrokerConnectionOptions.html">BrokerConnectionOptions</a> documentation for details about the different options.</p>
+</div>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Use <a class="xref" href="../../api/Silverback.Messaging.Broker.IBrokerCollection.html">IBrokerCollection</a> instead of <a class="xref" href="../../api/Silverback.Messaging.Broker.IBroker.html">IBroker</a> when multiple broker implementations are used.</p>
+</div>
+<div class="IMPORTANT">
+<h5>Important</h5>
+</div>
+<p>If your application is not running using an <code>IHost</code> (<code>GenericHost</code> or <code>WebHost</code>, like in a normal ASP.NET Core application) you always need to manually connect it as shown in the second example above.</p>
+<h2 id="graceful-shutdown">Graceful shutdown</h2>
+<p>It is important to properly close the consumers using the <code>DisconnectAsync</code> method before exiting. The offsets have to be committed and the broker has to be notified (it will then proceed to reassign the partitions as needed). Starting from version 3.0.0 this is done automatically (if your application is running using an <code>IHost</code> (<code>GenericHost</code> or <code>WebHost</code>, like in a normal ASP.NET Core application).</p>
+<h2 id="health-monitoring">Health Monitoring</h2>
+<p>The <a href="https://www.nuget.org/packages/Silverback.Integration.HealthChecks">Silverback.Integration.HealthChecks</a> package contains some extensions for <a href="https://www.nuget.org/packages/Microsoft.Extensions.Diagnostics.HealthChecks">Microsoft.Extensions.Diagnostics.HealthChecks</a> that can be used to monitor the connection to the message broker.</p>
+<p>Currently two checks exists:</p>
+<ul>
+<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddOutboundEndpointsCheck</a>: Adds an health check that sends a ping message to all the outbound endpoints.</li>
+<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddOutboxCheck</a>: Adds an health check that monitors the outbound queue (outbox table), verifying that the messages are being processed.</li>
+<li><a class="xref" href="../../api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddConsumersCheck</a>: Adds an health check that verifies that all consumers are connected.</li>
+</ul>
+<p>The usage is very simple, you just need to configure the checks in the Startup.cs, as shown in the following example.</p>
+<pre><code class="lang-csharp">public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services
+            .AddHealthChecks()
+            .AddOutboundEndpointsCheck()
+            .AddOutboundQueueCheck()
+            .AddConsumersCheck();
+    }
+
+    public void Configure(IApplicationBuilder app)
+    {
+        app.UseHealthChecks(&quot;/health&quot;);
+    }
+}
+</code></pre>
+<h2 id="consumer-management-api">Consumer management API</h2>
+<p>The consumer exposes some information and statistics that can be used to programmatically check the consumer status (see <a class="xref" href="../../api/Silverback.Messaging.Broker.IConsumer.html#Silverback_Messaging_Broker_IConsumer_StatusInfo">IConsumer</a>). A consumer can also be connected, started, stopped and disconnected at will.</p>
+<p>The following example shows a sample service that is used to monitor the total number of consumed message and restart the faulted consumers (the consumers get disconnected when an unhandled exception is thrown while processing the consumed message).</p>
+<pre><code class="lang-csharp">public class ConsumerManagementService
+{
+    private readonly IBrokerCollection _brokers;
+
+    public ConsumerManagementService(IBrokerCollection brokers)
+    {
+        _brokers = brokers;
+    }
+
+    public int GetTotalConsumedMessages()
+    {
+        int totalCount = 0;
+
+        foreach (var broker in _brokers)
+        {
+            foreach (var consumer in broker.Consumers)
+            {
+                totalCount += consumer.StatusInfo.ConsumedMessagesCount;
+            }
+        }
+    }
+
+    public void RestartDisconnectedConsumers()
+    {
+        foreach (var broker in _brokers)
+        {
+            if (!broker.IsConnected)
+                continue;
+
+            foreach (var consumer in broker.Consumers)
+            {
+                if (consumer.StatusInfo.Status == ConsumerStatus.Disconnected)
+                {
+                    consumer.Connect();
+                }
+            }
+        }
+    }
+}
+</code></pre>
+<h2 id="samples">Samples</h2>
+<ul>
+<li><a class="xref" href="../../samples/samples.html">All</a></li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/blob/master/docs/concepts/broker/connecting.md/#L1" class="contribution-link">Improve this doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

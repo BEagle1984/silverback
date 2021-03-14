@@ -1,0 +1,692 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ErrorPolicyBuilder
+   | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ErrorPolicyBuilder
+   | Silverback ">
+    <meta name="generator" content="docfx 2.56.6.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder">
+  
+  
+  <h1 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder" class="text-break">Class ErrorPolicyBuilder
+  </h1>
+  <div class="markdown level0 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a>.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">ErrorPolicyBuilder</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.html">Silverback.Messaging.Configuration</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
+  <h5 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ErrorPolicyBuilder : IErrorPolicyBuilder</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ErrorPolicyBuilder__ctor_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ErrorPolicyBuilder.%23ctor(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ErrorPolicyBuilder.cs/#L24">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_ErrorPolicyBuilder__ctor_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder__ctor_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.#ctor(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)">ErrorPolicyBuilder(IEndpointsConfigurationBuilder)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Configuration.ErrorPolicyBuilder.html">ErrorPolicyBuilder</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ErrorPolicyBuilder(IEndpointsConfigurationBuilder endpointsConfigurationBuilder = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
+        <td><span class="parametername">endpointsConfigurationBuilder</span></td>
+        <td><p>The optional reference to the <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a> that instantiated the
+builder.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ErrorPolicyBuilder_EndpointsConfigurationBuilder.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ErrorPolicyBuilder.EndpointsConfigurationBuilder%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ErrorPolicyBuilder.cs/#L33">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_EndpointsConfigurationBuilder_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.EndpointsConfigurationBuilder*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_EndpointsConfigurationBuilder" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.EndpointsConfigurationBuilder">EndpointsConfigurationBuilder</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a> that instantiated the builder.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEndpointsConfigurationBuilder EndpointsConfigurationBuilder { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder.html">IEndpointsConfigurationBuilder</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ErrorPolicyBuilder_Build.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ErrorPolicyBuilder.Build%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ErrorPolicyBuilder.cs/#L80">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Build_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Build*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Build" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Build">Build()</h4>
+  <div class="markdown level1 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a> instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IErrorPolicy Build()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy.html">IErrorPolicy</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ErrorPolicyBuilder_Move_Silverback_Messaging_IProducerEndpoint_System_Action_Silverback_Messaging_Inbound_ErrorHandling_MoveMessageErrorPolicy__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ErrorPolicyBuilder.Move(Silverback.Messaging.IProducerEndpoint%2CSystem.Action%7BSilverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ErrorPolicyBuilder.cs/#L69">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Move_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Move*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Move_Silverback_Messaging_IProducerEndpoint_System_Action_Silverback_Messaging_Inbound_ErrorHandling_MoveMessageErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Move(Silverback.Messaging.IProducerEndpoint,System.Action{Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy})">Move(IProducerEndpoint, Action&lt;MoveMessageErrorPolicy&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a> that moves the messages that fail to be processed to the
+configured endpoint.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder Move(IProducerEndpoint endpoint, Action&lt;MoveMessageErrorPolicy&gt; policyConfigurationAction = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a></td>
+        <td><span class="parametername">endpoint</span></td>
+        <td><p>The endpoint to move the message to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a>&gt;</td>
+        <td><span class="parametername">policyConfigurationAction</span></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry(System.Action%7BSilverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ErrorPolicyBuilder.cs/#L44">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry(System.Action{Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy})">Retry(Action&lt;RetryErrorPolicy&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> that retries to process the messages that previously failed to
+be to processed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder Retry(Action&lt;RetryErrorPolicy&gt; policyConfigurationAction)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>&gt;</td>
+        <td><span class="parametername">policyConfigurationAction</span></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_System_Int32_System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry(System.Int32%2CSystem.Action%7BSilverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ErrorPolicyBuilder.cs/#L48">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_System_Int32_System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry(System.Int32,System.Action{Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy})">Retry(Int32, Action&lt;RetryErrorPolicy&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> that retries to process the messages that previously failed to
+be to processed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder Retry(int retriesCount, Action&lt;RetryErrorPolicy&gt; policyConfigurationAction)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">retriesCount</span></td>
+        <td><p>The maximum number of retries to be performed.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>&gt;</td>
+        <td><span class="parametername">policyConfigurationAction</span></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_System_Int32_System_TimeSpan_System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry(System.Int32%2CSystem.TimeSpan%2CSystem.Action%7BSilverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ErrorPolicyBuilder.cs/#L54">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_System_Int32_System_TimeSpan_System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry(System.Int32,System.TimeSpan,System.Action{Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy})">Retry(Int32, TimeSpan, Action&lt;RetryErrorPolicy&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> that retries to process the messages that previously failed to
+be to processed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder Retry(int retriesCount, TimeSpan initialDelay, Action&lt;RetryErrorPolicy&gt; policyConfigurationAction)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">retriesCount</span></td>
+        <td><p>The maximum number of retries to be performed.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">initialDelay</span></td>
+        <td><p>The optional delay to be applied to the first retry.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>&gt;</td>
+        <td><span class="parametername">policyConfigurationAction</span></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_System_Nullable_System_Int32__System_Nullable_System_TimeSpan__System_Nullable_System_TimeSpan__System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry(System.Nullable%7BSystem.Int32%7D%2CSystem.Nullable%7BSystem.TimeSpan%7D%2CSystem.Nullable%7BSystem.TimeSpan%7D%2CSystem.Action%7BSilverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ErrorPolicyBuilder.cs/#L61">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Retry_System_Nullable_System_Int32__System_Nullable_System_TimeSpan__System_Nullable_System_TimeSpan__System_Action_Silverback_Messaging_Inbound_ErrorHandling_RetryErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Retry(System.Nullable{System.Int32},System.Nullable{System.TimeSpan},System.Nullable{System.TimeSpan},System.Action{Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy})">Retry(Nullable&lt;Int32&gt;, Nullable&lt;TimeSpan&gt;, Nullable&lt;TimeSpan&gt;, Action&lt;RetryErrorPolicy&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a> that retries to process the messages that previously failed to
+be to processed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder Retry(int? retriesCount = default(int? ), TimeSpan? initialDelay = default(TimeSpan? ), TimeSpan? delayIncrement = default(TimeSpan? ), Action&lt;RetryErrorPolicy&gt; policyConfigurationAction = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><span class="parametername">retriesCount</span></td>
+        <td><p>The maximum number of retries to be performed.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">initialDelay</span></td>
+        <td><p>The optional delay to be applied to the first retry.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">delayIncrement</span></td>
+        <td><p>The optional increment to the delay to be applied at each retry.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.RetryErrorPolicy.html">RetryErrorPolicy</a>&gt;</td>
+        <td><span class="parametername">policyConfigurationAction</span></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ErrorPolicyBuilder_Skip_System_Action_Silverback_Messaging_Inbound_ErrorHandling_SkipMessageErrorPolicy__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ErrorPolicyBuilder.Skip(System.Action%7BSilverback.Messaging.Inbound.ErrorHandling.SkipMessageErrorPolicy%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ErrorPolicyBuilder.cs/#L40">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Skip_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Skip*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Skip_System_Action_Silverback_Messaging_Inbound_ErrorHandling_SkipMessageErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Skip(System.Action{Silverback.Messaging.Inbound.ErrorHandling.SkipMessageErrorPolicy})">Skip(Action&lt;SkipMessageErrorPolicy&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a> that skips the messages that fail to be processed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder Skip(Action&lt;SkipMessageErrorPolicy&gt; policyConfigurationAction = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.SkipMessageErrorPolicy.html">SkipMessageErrorPolicy</a>&gt;</td>
+        <td><span class="parametername">policyConfigurationAction</span></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ErrorPolicyBuilder_Stop_System_Action_Silverback_Messaging_Inbound_ErrorHandling_StopConsumerErrorPolicy__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ErrorPolicyBuilder.Stop(System.Action%7BSilverback.Messaging.Inbound.ErrorHandling.StopConsumerErrorPolicy%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ErrorPolicyBuilder.cs/#L36">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Stop_" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Stop*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ErrorPolicyBuilder_Stop_System_Action_Silverback_Messaging_Inbound_ErrorHandling_StopConsumerErrorPolicy__" data-uid="Silverback.Messaging.Configuration.ErrorPolicyBuilder.Stop(System.Action{Silverback.Messaging.Inbound.ErrorHandling.StopConsumerErrorPolicy})">Stop(Action&lt;StopConsumerErrorPolicy&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a <a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.StopConsumerErrorPolicy.html">StopConsumerErrorPolicy</a> that stops the consumer when an exception is thrown
+during the message processing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IErrorPolicyChainBuilder Stop(Action&lt;StopConsumerErrorPolicy&gt; policyConfigurationAction = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Inbound.ErrorHandling.StopConsumerErrorPolicy.html">StopConsumerErrorPolicy</a>&gt;</td>
+        <td><span class="parametername">policyConfigurationAction</span></td>
+        <td><p>The (optional) additional configuration.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyChainBuilder.html">IErrorPolicyChainBuilder</a> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.IErrorPolicyBuilder.html">IErrorPolicyBuilder</a>
+  </div>
+  <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ErrorPolicyBuilderMoveToMqttTopicExtensions.html#Silverback_Messaging_Configuration_ErrorPolicyBuilderMoveToMqttTopicExtensions_MoveToMqttTopic_Silverback_Messaging_Configuration_IErrorPolicyBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder__System_Action_Silverback_Messaging_Inbound_ErrorHandling_MoveMessageErrorPolicy__">ErrorPolicyBuilderMoveToMqttTopicExtensions.MoveToMqttTopic(IErrorPolicyBuilder, Action&lt;IMqttProducerEndpointBuilder&gt;, Action&lt;MoveMessageErrorPolicy&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ErrorPolicyBuilderMoveToKafkaTopicExtensions.html#Silverback_Messaging_Configuration_ErrorPolicyBuilderMoveToKafkaTopicExtensions_MoveToKafkaTopic_Silverback_Messaging_Configuration_IErrorPolicyBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder__System_Action_Silverback_Messaging_Inbound_ErrorHandling_MoveMessageErrorPolicy__">ErrorPolicyBuilderMoveToKafkaTopicExtensions.MoveToKafkaTopic(IErrorPolicyBuilder, Action&lt;IKafkaProducerEndpointBuilder&gt;, Action&lt;MoveMessageErrorPolicy&gt;)</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ErrorPolicyBuilder.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ErrorPolicyBuilder%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ErrorPolicyBuilder.cs/#L13" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

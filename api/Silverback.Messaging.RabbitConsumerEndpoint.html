@@ -1,0 +1,492 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class RabbitConsumerEndpoint
+   | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class RabbitConsumerEndpoint
+   | Silverback ">
+    <meta name="generator" content="docfx 2.56.6.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.RabbitConsumerEndpoint">
+  
+  
+  <h1 id="Silverback_Messaging_RabbitConsumerEndpoint" data-uid="Silverback.Messaging.RabbitConsumerEndpoint" class="text-break">Class RabbitConsumerEndpoint
+  </h1>
+  <div class="markdown level0 summary"><p>Represents a queue or exchange to consume from.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Endpoint.html">Endpoint</a></div>
+    <div class="level2"><a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html">ConsumerEndpoint</a></div>
+    <div class="level3"><span class="xref">RabbitConsumerEndpoint</span></div>
+      <div class="level4"><a class="xref" href="Silverback.Messaging.RabbitExchangeConsumerEndpoint.html">RabbitExchangeConsumerEndpoint</a></div>
+      <div class="level4"><a class="xref" href="Silverback.Messaging.RabbitQueueConsumerEndpoint.html">RabbitQueueConsumerEndpoint</a></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a></div>
+    <div><a class="xref" href="Silverback.Messaging.IEndpoint.html">IEndpoint</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html#Silverback_Messaging_ConsumerEndpoint_ErrorPolicy">ConsumerEndpoint.ErrorPolicy</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html#Silverback_Messaging_ConsumerEndpoint_ExactlyOnceStrategy">ConsumerEndpoint.ExactlyOnceStrategy</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html#Silverback_Messaging_ConsumerEndpoint_Batch">ConsumerEndpoint.Batch</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html#Silverback_Messaging_ConsumerEndpoint_Sequence">ConsumerEndpoint.Sequence</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html#Silverback_Messaging_ConsumerEndpoint_NullMessageHandlingStrategy">ConsumerEndpoint.NullMessageHandlingStrategy</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html#Silverback_Messaging_ConsumerEndpoint_ThrowIfUnhandled">ConsumerEndpoint.ThrowIfUnhandled</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html#Silverback_Messaging_ConsumerEndpoint_GetUniqueConsumerGroupName">ConsumerEndpoint.GetUniqueConsumerGroupName()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_DefaultSerializer">Endpoint.DefaultSerializer</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Name">Endpoint.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Serializer">Endpoint.Serializer</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_Encryption">Endpoint.Encryption</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.html">Silverback.Messaging</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.RabbitMQ.dll</h6>
+  <h5 id="Silverback_Messaging_RabbitConsumerEndpoint_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class RabbitConsumerEndpoint : ConsumerEndpoint, IConsumerEndpoint, IEndpoint</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitConsumerEndpoint__ctor_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitConsumerEndpoint.%23ctor(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitConsumerEndpoint.cs/#L19">View source</a>
+  </span>
+  <a id="Silverback_Messaging_RabbitConsumerEndpoint__ctor_" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.#ctor*"></a>
+  <h4 id="Silverback_Messaging_RabbitConsumerEndpoint__ctor_System_String_" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.#ctor(System.String)">RabbitConsumerEndpoint(String)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.RabbitConsumerEndpoint.html">RabbitConsumerEndpoint</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected RabbitConsumerEndpoint(string name)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>The name of the queue or exchange.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitConsumerEndpoint_AcknowledgeEach.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitConsumerEndpoint.AcknowledgeEach%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitConsumerEndpoint.cs/#L38">View source</a>
+  </span>
+  <a id="Silverback_Messaging_RabbitConsumerEndpoint_AcknowledgeEach_" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.AcknowledgeEach*"></a>
+  <h4 id="Silverback_Messaging_RabbitConsumerEndpoint_AcknowledgeEach" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.AcknowledgeEach">AcknowledgeEach</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the number of message to be processed before sending the acknowledgment to the server.
+The most reliable level is 1 but it reduces throughput.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int AcknowledgeEach { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitConsumerEndpoint_Connection.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitConsumerEndpoint.Connection%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitConsumerEndpoint.cs/#L27">View source</a>
+  </span>
+  <a id="Silverback_Messaging_RabbitConsumerEndpoint_Connection_" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.Connection*"></a>
+  <h4 id="Silverback_Messaging_RabbitConsumerEndpoint_Connection" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.Connection">Connection</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the RabbitMQ connection settings.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RabbitConnectionConfig Connection { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Rabbit.RabbitConnectionConfig.html">RabbitConnectionConfig</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitConsumerEndpoint_PrefetchCount.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitConsumerEndpoint.PrefetchCount%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitConsumerEndpoint.cs/#L48">View source</a>
+  </span>
+  <a id="Silverback_Messaging_RabbitConsumerEndpoint_PrefetchCount_" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.PrefetchCount*"></a>
+  <h4 id="Silverback_Messaging_RabbitConsumerEndpoint_PrefetchCount" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.PrefetchCount">PrefetchCount</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the QoS prefetch count parameter for the consumer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ushort PrefetchCount { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.UInt16</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitConsumerEndpoint_PrefetchSize.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitConsumerEndpoint.PrefetchSize%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitConsumerEndpoint.cs/#L43">View source</a>
+  </span>
+  <a id="Silverback_Messaging_RabbitConsumerEndpoint_PrefetchSize_" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.PrefetchSize*"></a>
+  <h4 id="Silverback_Messaging_RabbitConsumerEndpoint_PrefetchSize" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.PrefetchSize">PrefetchSize</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the QoS prefetch size parameter for the consumer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint PrefetchSize { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.UInt32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitConsumerEndpoint_Queue.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitConsumerEndpoint.Queue%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitConsumerEndpoint.cs/#L32">View source</a>
+  </span>
+  <a id="Silverback_Messaging_RabbitConsumerEndpoint_Queue_" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.Queue*"></a>
+  <h4 id="Silverback_Messaging_RabbitConsumerEndpoint_Queue" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.Queue">Queue</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the queue configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public RabbitQueueConfig Queue { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Rabbit.RabbitQueueConfig.html">RabbitQueueConfig</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitConsumerEndpoint_BaseEquals_Silverback_Messaging_Endpoint_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitConsumerEndpoint.BaseEquals(Silverback.Messaging.Endpoint)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitConsumerEndpoint.cs/#L70">View source</a>
+  </span>
+  <a id="Silverback_Messaging_RabbitConsumerEndpoint_BaseEquals_" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.BaseEquals*"></a>
+  <h4 id="Silverback_Messaging_RabbitConsumerEndpoint_BaseEquals_Silverback_Messaging_Endpoint_" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.BaseEquals(Silverback.Messaging.Endpoint)">BaseEquals(Endpoint)</h4>
+  <div class="markdown level1 summary"><p>Determines whether the specified <a class="xref" href="Silverback.Messaging.Endpoint.html">Endpoint</a> is equal to the current
+<a class="xref" href="Silverback.Messaging.Endpoint.html">Endpoint</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override bool BaseEquals(Endpoint other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Endpoint.html">Endpoint</a></td>
+        <td><span class="parametername">other</span></td>
+        <td><p>The object to compare with the current object.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>Returns a value indicating whether the other object is equal to the current object.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_BaseEquals_Silverback_Messaging_Endpoint_">Endpoint.BaseEquals(Endpoint)</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitConsumerEndpoint_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitConsumerEndpoint.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitConsumerEndpoint.cs/#L51">View source</a>
+  </span>
+  <a id="Silverback_Messaging_RabbitConsumerEndpoint_Validate_" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.Validate*"></a>
+  <h4 id="Silverback_Messaging_RabbitConsumerEndpoint_Validate" data-uid="Silverback.Messaging.RabbitConsumerEndpoint.Validate">Validate()</h4>
+  <div class="markdown level1 summary"><p>Validates the endpoint configuration and throws an <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> if
+not valid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void Validate()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.ConsumerEndpoint.html#Silverback_Messaging_ConsumerEndpoint_Validate">ConsumerEndpoint.Validate()</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a>
+  </div>
+  <div>
+      <a class="xref" href="Silverback.Messaging.IEndpoint.html">IEndpoint</a>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_RabbitConsumerEndpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.RabbitConsumerEndpoint%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.RabbitMQ/Messaging/RabbitConsumerEndpoint.cs/#L11" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

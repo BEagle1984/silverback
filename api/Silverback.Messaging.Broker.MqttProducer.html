@@ -1,0 +1,1069 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class MqttProducer
+   | Silverback </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class MqttProducer
+   | Silverback ">
+    <meta name="generator" content="docfx 2.56.6.0">
+    
+  
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicon-16x16.png">
+    <link rel="manifest" href="../images/icons/site.webmanifest">
+    <link rel="mask-icon" href="../images/icons/safari-pinned-tab.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+    <script src="https://kit.fontawesome.com/e3306be642.js" crossorigin="anonymous"></script>
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.MqttProducer">
+  
+  
+  <h1 id="Silverback_Messaging_Broker_MqttProducer" data-uid="Silverback.Messaging.Broker.MqttProducer" class="text-break">Class MqttProducer
+  </h1>
+  <div class="markdown level0 summary"><p>Produces to an endpoint.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Silverback.Messaging.Broker.Producer.html">Producer</a></div>
+    <div class="level2"><a class="xref" href="Silverback.Messaging.Broker.Producer-2.html">Producer</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.MqttBroker.html">MqttBroker</a>, <a class="xref" href="Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a>&gt;</div>
+    <div class="level3"><span class="xref">MqttProducer</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a></div>
+    <div><span class="xref">System.IDisposable</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer-2.html#Silverback_Messaging_Broker_Producer_2_Broker">Producer&lt;MqttBroker, MqttProducerEndpoint&gt;.Broker</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer-2.html#Silverback_Messaging_Broker_Producer_2_Endpoint">Producer&lt;MqttBroker, MqttProducerEndpoint&gt;.Endpoint</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_Id">Producer.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_Broker">Producer.Broker</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_Endpoint">Producer.Endpoint</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_IsConnecting">Producer.IsConnecting</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_IsConnected">Producer.IsConnected</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ConnectAsync">Producer.ConnectAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_DisconnectAsync">Producer.DisconnectAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_Produce_System_Object_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">Producer.Produce(Object, IReadOnlyCollection&lt;MessageHeader&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_Produce_Silverback_Messaging_Messages_IOutboundEnvelope_">Producer.Produce(IOutboundEnvelope)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_Produce_System_Object_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.Produce(Object, IReadOnlyCollection&lt;MessageHeader&gt;, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_Produce_Silverback_Messaging_Messages_IOutboundEnvelope_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.Produce(IOutboundEnvelope, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">Producer.RawProduce(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">Producer.RawProduce(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_String_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">Producer.RawProduce(String, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_String_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">Producer.RawProduce(String, Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.RawProduce(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.RawProduce(Stream, IReadOnlyCollection&lt;MessageHeader&gt;, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_String_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.RawProduce(String, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_String_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.RawProduce(String, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceAsync_System_Object_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">Producer.ProduceAsync(Object, IReadOnlyCollection&lt;MessageHeader&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceAsync_Silverback_Messaging_Messages_IOutboundEnvelope_">Producer.ProduceAsync(IOutboundEnvelope)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceAsync_System_Object_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.ProduceAsync(Object, IReadOnlyCollection&lt;MessageHeader&gt;, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceAsync_Silverback_Messaging_Messages_IOutboundEnvelope_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.ProduceAsync(IOutboundEnvelope, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">Producer.RawProduceAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">Producer.RawProduceAsync(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_String_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">Producer.RawProduceAsync(String, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_String_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">Producer.RawProduceAsync(String, Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.RawProduceAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.RawProduceAsync(Stream, IReadOnlyCollection&lt;MessageHeader&gt;, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_String_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.RawProduceAsync(String, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_String_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.RawProduceAsync(String, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.html">Silverback.Messaging.Broker</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.dll</h6>
+  <h5 id="Silverback_Messaging_Broker_MqttProducer_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class MqttProducer : Producer&lt;MqttBroker, MqttProducerEndpoint&gt;, IProducer, IDisposable</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer__ctor_Silverback_Messaging_Broker_MqttBroker_Silverback_Messaging_MqttProducerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IProducerBehavior__System_IServiceProvider_Silverback_Diagnostics_IOutboundLogger_Silverback_Messaging_Broker_MqttProducer__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.%23ctor(Silverback.Messaging.Broker.MqttBroker%2CSilverback.Messaging.MqttProducerEndpoint%2CSilverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider%7BSilverback.Messaging.Broker.Behaviors.IProducerBehavior%7D%2CSystem.IServiceProvider%2CSilverback.Diagnostics.IOutboundLogger%7BSilverback.Messaging.Broker.MqttProducer%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L49">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer__ctor_" data-uid="Silverback.Messaging.Broker.MqttProducer.#ctor*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer__ctor_Silverback_Messaging_Broker_MqttBroker_Silverback_Messaging_MqttProducerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IProducerBehavior__System_IServiceProvider_Silverback_Diagnostics_IOutboundLogger_Silverback_Messaging_Broker_MqttProducer__" data-uid="Silverback.Messaging.Broker.MqttProducer.#ctor(Silverback.Messaging.Broker.MqttBroker,Silverback.Messaging.MqttProducerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IProducerBehavior},System.IServiceProvider,Silverback.Diagnostics.IOutboundLogger{Silverback.Messaging.Broker.MqttProducer})">MqttProducer(MqttBroker, MqttProducerEndpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt;, IServiceProvider, IOutboundLogger&lt;MqttProducer&gt;)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.MqttProducer.html">MqttProducer</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MqttProducer(MqttBroker broker, MqttProducerEndpoint endpoint, IBrokerBehaviorsProvider&lt;IProducerBehavior&gt; behaviorsProvider, IServiceProvider serviceProvider, IOutboundLogger&lt;MqttProducer&gt; logger)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.MqttBroker.html">MqttBroker</a></td>
+        <td><span class="parametername">broker</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> that instantiated this producer.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a></td>
+        <td><span class="parametername">endpoint</span></td>
+        <td><p>The endpoint to produce to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider-1.html">IBrokerBehaviorsProvider</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a>&gt;</td>
+        <td><span class="parametername">behaviorsProvider</span></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider-1.html">IBrokerBehaviorsProvider&lt;TBehavior&gt;</a>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.IServiceProvider</span></td>
+        <td><span class="parametername">serviceProvider</span></td>
+        <td><p>The <span class="xref">System.IServiceProvider</span> to be used to resolve the required services.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Diagnostics.IOutboundLogger-1.html">IOutboundLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Broker.MqttProducer.html">MqttProducer</a>&gt;</td>
+        <td><span class="parametername">logger</span></td>
+        <td><p>The <a class="xref" href="Silverback.Diagnostics.IOutboundLogger-1.html">IOutboundLogger&lt;TCategoryName&gt;</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer_ConnectCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.ConnectCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L85">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer_ConnectCoreAsync_" data-uid="Silverback.Messaging.Broker.MqttProducer.ConnectCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer_ConnectCoreAsync" data-uid="Silverback.Messaging.Broker.MqttProducer.ConnectCoreAsync">ConnectCoreAsync()</h4>
+  <div class="markdown level1 summary"><p>Connects to the message broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task ConnectCoreAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ConnectCoreAsync">Producer.ConnectCoreAsync()</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer_DisconnectCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.DisconnectCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L89">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer_DisconnectCoreAsync_" data-uid="Silverback.Messaging.Broker.MqttProducer.DisconnectCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer_DisconnectCoreAsync" data-uid="Silverback.Messaging.Broker.MqttProducer.DisconnectCoreAsync">DisconnectCoreAsync()</h4>
+  <div class="markdown level1 summary"><p>Disconnects from the message broker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task DisconnectCoreAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_DisconnectCoreAsync">Producer.DisconnectCoreAsync()</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer_Dispose.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.Dispose%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L71">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer_Dispose_" data-uid="Silverback.Messaging.Broker.MqttProducer.Dispose*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer_Dispose" data-uid="Silverback.Messaging.Broker.MqttProducer.Dispose">Dispose()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.ProduceCore(System.Object%2CSystem.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L102">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer_ProduceCore_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCore*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCore(System.Object,System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String)">ProduceCore(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message and returns its identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override IBrokerMessageIdentifier ProduceCore(object message, byte[] messageBytes, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be delivered before serialization. This might be null if
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a> or
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a> have been used to
+produce.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">messageBytes</span></td>
+        <td><p>The actual serialized message to be delivered.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
+        <td><span class="parametername">headers</span></td>
+        <td><p>The message headers.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">actualEndpointName</span></td>
+        <td><p>The actual endpoint to produce to.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a></td>
+        <td><p>The message identifier assigned by the broker (the Kafka offset or similar).</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_">Producer.ProduceCore(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String)</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.ProduceCore(System.Object%2CSystem.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String%2CSystem.Action%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D%2CSystem.Action%7BSystem.Exception%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L127">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer_ProduceCore_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCore*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCore(System.Object,System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String,System.Action{Silverback.Messaging.Broker.IBrokerMessageIdentifier},System.Action{System.Exception})">ProduceCore(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message and returns its identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void ProduceCore(object message, byte[] messageBytes, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be delivered before serialization. This might be null if
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a> or
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a> have been used to
+produce.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">messageBytes</span></td>
+        <td><p>The actual serialized message to be delivered.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
+        <td><span class="parametername">headers</span></td>
+        <td><p>The message headers.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">actualEndpointName</span></td>
+        <td><p>The actual endpoint to produce to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
+        <td><span class="parametername">onSuccess</span></td>
+        <td><p>The callback to be invoked when the message is successfully produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Exception</span>&gt;</td>
+        <td><span class="parametername">onError</span></td>
+        <td><p>The callback to be invoked when the produce fails.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.ProduceCore(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a></div>
+  <h5 id="Silverback_Messaging_Broker_MqttProducer_ProduceCore_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+are called when the message is actually produced (or the produce failed).</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer_ProduceCore_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.ProduceCore(System.Object%2CSystem.IO.Stream%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L93">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer_ProduceCore_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCore*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer_ProduceCore_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCore(System.Object,System.IO.Stream,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String)">ProduceCore(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message and returns its identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override IBrokerMessageIdentifier ProduceCore(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be delivered before serialization. This might be null if
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a> or
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a> have been used to
+produce.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.IO.Stream</span></td>
+        <td><span class="parametername">messageStream</span></td>
+        <td><p>The actual serialized message to be delivered.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
+        <td><span class="parametername">headers</span></td>
+        <td><p>The message headers.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">actualEndpointName</span></td>
+        <td><p>The actual endpoint to produce to.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a></td>
+        <td><p>The message identifier assigned by the broker (the Kafka offset or similar).</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceCore_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_">Producer.ProduceCore(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String)</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer_ProduceCore_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.ProduceCore(System.Object%2CSystem.IO.Stream%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String%2CSystem.Action%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D%2CSystem.Action%7BSystem.Exception%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L111">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer_ProduceCore_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCore*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer_ProduceCore_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCore(System.Object,System.IO.Stream,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String,System.Action{Silverback.Messaging.Broker.IBrokerMessageIdentifier},System.Action{System.Exception})">ProduceCore(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message and returns its identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void ProduceCore(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be delivered before serialization. This might be null if
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a> or
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a> have been used to
+produce.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.IO.Stream</span></td>
+        <td><span class="parametername">messageStream</span></td>
+        <td><p>The message to be delivered.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
+        <td><span class="parametername">headers</span></td>
+        <td><p>The message headers.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">actualEndpointName</span></td>
+        <td><p>The actual endpoint to produce to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
+        <td><span class="parametername">onSuccess</span></td>
+        <td><p>The callback to be invoked when the message is successfully produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Exception</span>&gt;</td>
+        <td><span class="parametername">onError</span></td>
+        <td><p>The callback to be invoked when the produce fails.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceCore_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.ProduceCore(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a></div>
+  <h5 id="Silverback_Messaging_Broker_MqttProducer_ProduceCore_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>In this implementation the message is synchronously enqueued but produced asynchronously. The callbacks
+are called when the message is actually produced (or the produce failed).</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync(System.Object%2CSystem.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L165">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync(System.Object,System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String)">ProduceCoreAsync(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message and returns its identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task&lt;IBrokerMessageIdentifier&gt; ProduceCoreAsync(object message, byte[] messageBytes, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be delivered before serialization. This might be null if
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a> or
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a> have been used to
+produce.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">messageBytes</span></td>
+        <td><p>The actual serialized message to be delivered.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
+        <td><span class="parametername">headers</span></td>
+        <td><p>The message headers.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">actualEndpointName</span></td>
+        <td><p>The actual endpoint to produce to.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+message identifier assigned by the broker (the Kafka offset or similar).</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceCoreAsync_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_">Producer.ProduceCoreAsync(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String)</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync(System.Object%2CSystem.Byte%5B%5D%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String%2CSystem.Action%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D%2CSystem.Action%7BSystem.Exception%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L197">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync(System.Object,System.Byte[],System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String,System.Action{Silverback.Messaging.Broker.IBrokerMessageIdentifier},System.Action{System.Exception})">ProduceCoreAsync(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message and returns its identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task ProduceCoreAsync(object message, byte[] messageBytes, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be delivered before serialization. This might be null if
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a> or
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a> have been used to
+produce.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">messageBytes</span></td>
+        <td><p>The actual serialized message to be delivered.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
+        <td><span class="parametername">headers</span></td>
+        <td><p>The message headers.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">actualEndpointName</span></td>
+        <td><p>The actual endpoint to produce to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
+        <td><span class="parametername">onSuccess</span></td>
+        <td><p>The callback to be invoked when the message is successfully produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Exception</span>&gt;</td>
+        <td><span class="parametername">onError</span></td>
+        <td><p>The callback to be invoked when the produce fails.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation. The <span class="xref">System.Threading.Tasks.Task</span> will complete as
+soon as the message is enqueued.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceCoreAsync_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.ProduceCoreAsync(Object, Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a></div>
+  <h5 id="Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_System_Object_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The returned <span class="xref">System.Threading.Tasks.Task</span> completes when the message is enqueued while the callbacks
+are called when the message is actually produced (or the produce failed).</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync(System.Object%2CSystem.IO.Stream%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L152">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync(System.Object,System.IO.Stream,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String)">ProduceCoreAsync(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message and returns its identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task&lt;IBrokerMessageIdentifier&gt; ProduceCoreAsync(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be delivered before serialization. This might be null if
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a> or
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a> have been used to
+produce.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.IO.Stream</span></td>
+        <td><span class="parametername">messageStream</span></td>
+        <td><p>The message to be delivered.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
+        <td><span class="parametername">headers</span></td>
+        <td><p>The message headers.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">actualEndpointName</span></td>
+        <td><p>The actual endpoint to produce to.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+message identifier assigned by the broker (the Kafka offset or similar).</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceCoreAsync_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_">Producer.ProduceCoreAsync(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String)</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync(System.Object%2CSystem.IO.Stream%2CSystem.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Messages.MessageHeader%7D%2CSystem.String%2CSystem.Action%7BSilverback.Messaging.Broker.IBrokerMessageIdentifier%7D%2CSystem.Action%7BSystem.Exception%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L180">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync*"></a>
+  <h4 id="Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__" data-uid="Silverback.Messaging.Broker.MqttProducer.ProduceCoreAsync(System.Object,System.IO.Stream,System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Messages.MessageHeader},System.String,System.Action{Silverback.Messaging.Broker.IBrokerMessageIdentifier},System.Action{System.Exception})">ProduceCoreAsync(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</h4>
+  <div class="markdown level1 summary"><p>Publishes the specified message and returns its identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task ProduceCoreAsync(object message, Stream messageStream, IReadOnlyCollection&lt;MessageHeader&gt; headers, string actualEndpointName, Action&lt;IBrokerMessageIdentifier&gt; onSuccess, Action&lt;Exception&gt; onError)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be delivered before serialization. This might be null if
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduce_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduce(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a>,
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;)</a> or
+<a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_RawProduceAsync_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__">RawProduceAsync(Stream, IReadOnlyCollection&lt;MessageHeader&gt;)</a> have been used to
+produce.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.IO.Stream</span></td>
+        <td><span class="parametername">messageStream</span></td>
+        <td><p>The message to be delivered.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.MessageHeader.html">MessageHeader</a>&gt;</td>
+        <td><span class="parametername">headers</span></td>
+        <td><p>The message headers.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">actualEndpointName</span></td>
+        <td><p>The actual endpoint to produce to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageIdentifier.html">IBrokerMessageIdentifier</a>&gt;</td>
+        <td><span class="parametername">onSuccess</span></td>
+        <td><p>The callback to be invoked when the message is successfully produced.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Exception</span>&gt;</td>
+        <td><span class="parametername">onError</span></td>
+        <td><p>The callback to be invoked when the produce fails.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation. The <span class="xref">System.Threading.Tasks.Task</span> will complete as
+soon as the message is enqueued.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Silverback.Messaging.Broker.Producer.html#Silverback_Messaging_Broker_Producer_ProduceCoreAsync_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception__">Producer.ProduceCoreAsync(Object, Stream, IReadOnlyCollection&lt;MessageHeader&gt;, String, Action&lt;IBrokerMessageIdentifier&gt;, Action&lt;Exception&gt;)</a></div>
+  <h5 id="Silverback_Messaging_Broker_MqttProducer_ProduceCoreAsync_System_Object_System_IO_Stream_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_System_Action_Silverback_Messaging_Broker_IBrokerMessageIdentifier__System_Action_System_Exception___remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The returned <span class="xref">System.Threading.Tasks.Task</span> completes when the message is enqueued while the callbacks
+are called when the message is actually produced (or the produce failed).</p>
+</div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a>
+  </div>
+  <div>
+      <span class="xref">System.IDisposable</span>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_MqttProducer.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.MqttProducer%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Broker/MqttProducer.cs/#L23" class="contribution-link">View source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="footer">
+          <div class="container contacts">
+            <a href="https://github.com/BEagle1984" rel="nofollow noopener noreferrer"><i class='fab fa-github'></i> GitHub</a>
+            <a href="mailto:silverback-project@outlook.com" rel="nofollow noopener noreferrer"><i class='fas fa-envelope'></i> E-Mail</a>
+          </div>
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">&uarr; Back to top</a>
+            </span>
+            © 2020 Sergio Aquilini
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
