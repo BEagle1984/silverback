@@ -41,7 +41,7 @@ title: "Home"
                     The bus can be connected with a message broker to integrate different services or application. The integration happens configuratively at startup and it is then completely abstracted.
                 </p>
                 <p>
-                    Silverback corrently provides a package to connect with the very popular <a href="https://kafka.apache.org/">Apache Kafka</a> message broker, <a href="https://www.rabbitmq.com/">RabbitMQ</a> or any <a href="https://mqtt.org/">MQTT</a>a> broker.
+                    Silverback corrently provides a package to connect with the very popular <a href="https://kafka.apache.org/">Apache Kafka</a> message broker, <a href="https://www.rabbitmq.com/">RabbitMQ</a> or any <a href="https://mqtt.org/">MQTT</a> broker.
                 </p>
                 <p>
                     Integrating other message brokers wouldn't be a big deal and some will be added in the future...or feel free to create your own <code>IBroker</code> implementation.

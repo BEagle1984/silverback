@@ -4,7 +4,7 @@ uid: message-broker
 
 # Connecting to a Message Broker
 
-To connect Silverback to a message broker we need a reference to [Silverback.Integration](https://www.nuget.org/packages/Silverback.Integration), plus the concrete implementation ([Silverback.Integration.Kafka](https://www.nuget.org/packages/Silverback.Integration.Kafka), [Silverback.Integration.RabbitMQ](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ), etc.). We can then add the broker to the DI and configure the connected endpoints. 
+To connect Silverback to a message broker we need a reference to [Silverback.Integration](https://www.nuget.org/packages/Silverback.Integration), plus the concrete implementation ([Silverback.Integration.Kafka](https://www.nuget.org/packages/Silverback.Integration.Kafka), [Silverback.Integration.MQTT](https://www.nuget.org/packages/Silverback.Integration.MQTT), [Silverback.Integration.RabbitMQ](https://www.nuget.org/packages/Silverback.Integration.RabbitMQ), etc.). We can then add the broker to the DI and configure the connected endpoints. 
 
 ## Sample configuration
 
