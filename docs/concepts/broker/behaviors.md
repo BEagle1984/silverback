@@ -73,7 +73,7 @@ public class CustomHeadersProducerBehavior : IProducerBehavior
         ProducerPipelineContext context, 
         ProducerBehaviorHandler next)
     {
-        context.Envelope.Message.Headers.Add("generated-by", "silverback");
+        context.Envelope.Headers.Add("generated-by", "silverback");
 
         await next(context);
     }
@@ -116,15 +116,12 @@ public class LogHeadersConsumerBehavior : IConsumerBehavior
         ConsumerPipelineContext context, 
         ConsumerBehaviorHandler next)
     {
-        foreach (var envelope in context.Envelopes)
+        foreach (var header in context.Envelope.Headers)
         {
-            foreach (var header in envelope.Headers)
-            {
-                _logger.LogTrace(
-                    "{key}={value}",
-                    header.Key,
-                    header.Value);
-            }
+            _logger.LogTrace(
+                "{Name}={Value}",
+                header.Name,
+                header.Value);
         }
 
         await next(context);
