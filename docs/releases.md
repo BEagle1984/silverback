@@ -29,7 +29,9 @@ uid: releases
 * Improve outbound routing customization options with endpoint name resolvers (see <xref:outbound-routing>)
 * Add non-blocking `Produce`/`ProduceAsync`/`RawProduce`/`RawProduceAsync` overloads to <xref:Silverback.Messaging.Broker.IProducer>, better suitable for higher throughput scenarios (see <xref:producer>)
 * Refactor broker event handlers (see <xref:broker-callbacks>)
+* Expose [IConsumer.StopAsync](xref:Silverback.Messaging.Broker.IConsumer#Silverback_Messaging_Broker_IConsumer_StopAsync) and [IConsumer.StartAsync](xref:Silverback.Messaging.Broker.IConsumer#Silverback_Messaging_Broker_IConsumer_StartAsync) methods to pause and resume consumers
 * Add log levels configuration (see <xref:logging>)
+* Improve (distributed) tracing (see <xref:logging>)
 * Allow header names customization (see <xref:headers>)
 * Add consumer status information and statistics (see <xref:message-broker#consumer-management-api>)
 * Add basic consumers health check (see <xref:message-broker#health-monitoring>)
@@ -102,6 +104,7 @@ uid: releases
 * <xref:Silverback.Messaging.Sequences.Chunking.ChunkSettings> moved from `Silverback.Messaging.LargeMessages` namespace to `Silverback.Messaging.Sequences.Chunking`
 * Replaced _CoreEventIds_, _IntegrationEventIds_, _KafkaEventIds_ and _RabbitEventIds_ with <xref:Silverback.Diagnostics.CoreLogEvents>, <xref:Silverback.Diagnostics.IntegrationLogEvents>, <xref:Silverback.Diagnostics.KafkaLogEvents> and <xref:Silverback.Diagnostics.RabbitLogEvents> (see also <xref:logging>)
 * Deprecated support for Entity Framework 2, only the version 3.0.1 of [Silverback.Core.EntityFrameworkCore](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore) will work with Silverback 3.0.0
+* Modified message encryption for chunked messages and it will not be compatible with previous versions of Silverback (affects chunking+encryption only) 
 
 ## [2.2.0](https://github.com/BEagle1984/silverback/releases/tag/v2.2.0)
 

@@ -35,12 +35,11 @@ namespace Silverback.Messaging.Diagnostics
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            using (var activity = ActivitySources.StartProduceActivity(context.Envelope))
-            {
-                _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint)
-                    .EnrichOutboundActivity(activity, context);
-                await next(context).ConfigureAwait(false);
-            }
+            using var activity = ActivitySources.StartProduceActivity(context.Envelope);
+            _activityEnricherFactory
+                .GetActivityEnricher(context.Envelope.Endpoint)
+                .EnrichOutboundActivity(activity, context);
+            await next(context).ConfigureAwait(false);
         }
     }
 }

@@ -14,6 +14,10 @@ The full source code is available on [GitHub](https://github.com/BEagle1984/silv
 
 The [Directory.Build.props](https://github.com/BEagle1984/silverback/blob/master/Directory.Build.props) file in the root of the repository contains the current version of the NuGet packages being built and referenced. The `<BaseVersion>` and `<VersionSuffix>` tags can be used to increment the current version.
 
+### Commits
+
+Please try to follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for the commit messages. 
+
 ### Building (NuGet packages)
 
 The nuget packages can be built locally using the powershell script under `/nuget/Update.ps1`. Add the `-l` switch to clear the local nuget cache as well (especially useful when building the same version over and over).

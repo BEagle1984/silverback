@@ -161,3 +161,22 @@ Id | Level | Message | Reference
 4022 | Debug | Error occurred retrying to connect to the MQTT broker. &#124; clientId: {clientId} | [ConnectRetryError](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectRetryError)
 4023 | Warning | Connection with the MQTT broker lost. The client will try to reconnect. &#124; clientId: {clientId} | [ConnectionLost](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ConnectionLost)
 4031 | Debug | Producer queue processing was canceled. | [ProducerQueueProcessingCanceled](xref:Silverback.Diagnostics.MqttLogEvents#Silverback_Diagnostics_MqttLogEvents_ProducerQueueProcessingCanceled)
+
+## Tracing
+
+An [Activity](https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity) is created:
+* in the Consumer when a message is received (initialized with the `traceparent` header, if submitted)
+* in the Producer when a message is being sent (submitting the `Activity.Id` in the `traceparent` header )
+* when a sequence (e.g. a [BatchSequence](xref:Silverback.Messaging.Sequences.Batch.BatchSequence)) is being consumed
+* when a subscriber is being invoked (either internally or from a consumer)
+
+This allows to trace the methods execution and follow a message across different services (distributed tracing).
+
+The following table summarizes the activities and the information being tracked.
+
+Id | Description / Tags
+:-- | :--
+`Silverback.Integration.Produce` | A message is being produced to a message broker.<br/><br/>Tags:<ul><li>`messaging.message_id`</li><li>`messaging.destination`</li><li>[`messaging.kafka.message_key`]</li><li>[`messaging.kafka.partition`]</li></ul>
+`Silverback.Integration.Consume` | A consumed message is being processed.<br/><br/>Tags: <ul><li>`messaging.message_id`</li><li>`messaging.destination`</li><li>[`messaging.sequence.activity`]</li><li>[`messaging.kafka.message_key`]</li><li>[`messaging.kafka.partition`]</li></ul>
+`Silverback.Integration.Sequence` | A sequence of messages is being processed.<br/><br/>Tags: _none_
+`Silverback.Core.Subscribers.InvokeSubscriber` | A subscriber is being invoked to process a message.<br/><br/>Tags:<ul><li>`SubscriberType`</li><li>`SubscriberMethod`</li></ul>

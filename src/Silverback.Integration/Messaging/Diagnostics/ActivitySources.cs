@@ -55,7 +55,7 @@ namespace Silverback.Messaging.Diagnostics
         public static Activity? StartSequenceActivity()
         {
             Activity? messageActivity = Activity.Current;
-            Activity? sequenceAcivity = ConsumeActivitySource.StartActivity(
+            Activity? sequenceActivity = ConsumeActivitySource.StartActivity(
                 SequenceActivityName,
                 ActivityKind.Internal,
                 new ActivityContext(
@@ -63,12 +63,12 @@ namespace Silverback.Messaging.Diagnostics
                     ActivitySpanId.CreateRandom(),
                     ActivityTraceFlags.None));
 
-            if (messageActivity != null && sequenceAcivity?.Id != null)
+            if (messageActivity != null && sequenceActivity?.Id != null)
             {
-                messageActivity.SetTag(ActivityTagNames.SequenceActivity, sequenceAcivity.Id);
+                messageActivity.SetTag(ActivityTagNames.SequenceActivity, sequenceActivity.Id);
             }
 
-            return sequenceAcivity;
+            return sequenceActivity;
         }
 
         private static Activity ForceStartActivity(
