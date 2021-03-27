@@ -2,11 +2,13 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
+using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Util;
@@ -74,7 +76,8 @@ namespace Silverback.Messaging
         ///     Initializes a new instance of the <see cref="ProducerEndpoint" /> class.
         /// </summary>
         /// <param name="nameResolverType">
-        ///     The type of the <see cref="IProducerEndpointNameResolver"/> to be used to resolve the actual endpoint name.
+        ///     The type of the <see cref="IProducerEndpointNameResolver" /> to be used to resolve the actual endpoint
+        ///     name.
         /// </param>
         protected ProducerEndpoint(Type nameResolverType)
             : base($"[dynamic | {nameResolverType}]")
@@ -92,16 +95,28 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
+        ///     Gets or sets the message chunking settings. This option can be used to split large messages into
+        ///     smaller chunks.
+        /// </summary>
+        public ChunkSettings? Chunk { get; set; }
+
+        /// <summary>
         ///     Gets or sets the strategy to be used to produce the messages. If no strategy is specified, the
         ///     messages will be sent to the message broker directly.
         /// </summary>
         public IProduceStrategy Strategy { get; set; } = new DefaultProduceStrategy();
 
         /// <summary>
-        ///     Gets or sets the message chunking settings. This option can be used to split large messages into
-        ///     smaller chunks.
+        ///     Gets or sets the collection of <see cref="IOutboundMessageEnricher" /> to be used to enrich the outbound
+        ///     message.
         /// </summary>
-        public ChunkSettings? Chunk { get; set; }
+        [SuppressMessage("", "CA2227", Justification = "Easier initialization")]
+        public ICollection<IOutboundMessageEnricher> MessageEnrichers { get; set; } =
+            new List<IOutboundMessageEnricher>();
+
+        /// <inheritdoc cref="IProducerEndpoint.MessageEnrichers" />
+        IReadOnlyCollection<IOutboundMessageEnricher> IProducerEndpoint.MessageEnrichers =>
+            MessageEnrichers.AsReadOnlyCollection();
 
         /// <inheritdoc cref="IProducerEndpoint.GetActualName" />
         public string GetActualName(IOutboundEnvelope envelope, IServiceProvider serviceProvider) =>

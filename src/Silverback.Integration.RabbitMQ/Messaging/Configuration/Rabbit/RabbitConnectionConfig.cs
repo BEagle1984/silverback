@@ -83,7 +83,7 @@ namespace Silverback.Messaging.Configuration.Rabbit
         /// <summary>
         ///     Gets or sets the dictionary of client properties to be sent to the server.
         /// </summary>
-        [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
+        [SuppressMessage("", "CA2227", Justification = "DTO")]
         public IDictionary<string, object> ClientProperties { get; set; } = new Dictionary<string, object>();
 
         /// <summary>

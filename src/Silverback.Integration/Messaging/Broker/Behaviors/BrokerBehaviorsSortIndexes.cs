@@ -9,6 +9,7 @@ using Silverback.Messaging.Headers;
 using Silverback.Messaging.Inbound;
 using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Inbound.Transaction;
+using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
@@ -36,6 +37,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             ///     The <see cref="HeadersWriterProducerBehavior" /> sort index.
             /// </summary>
             public const int HeadersWriter = 200;
+
+            /// <summary>
+            ///     The <see cref="MessageEnricherProducerBehavior" /> sort index.
+            /// </summary>
+            public const int MessageEnricher = 250;
 
             /// <summary>
             ///     The <see cref="MessageIdInitializerProducerBehavior" /> sort index.

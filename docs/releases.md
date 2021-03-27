@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [3.1.0](https://github.com/BEagle1984/silverback/releases/tag/v3.1.0)
+
+### What's new
+
+* Add new ways to configure headers and kafka key (see <xref:headers> and <xref:kafka-partitioning>)
+
 ## [3.0.1](https://github.com/BEagle1984/silverback/releases/tag/v3.0.1)
 
 ### Fixes

@@ -172,6 +172,21 @@ namespace Silverback.Messaging.Configuration.Kafka
             where TResolver : IKafkaProducerEndpointNameResolver;
 
         /// <summary>
+        ///    Uses the specified value provider function to set the kafka key for each produced message.
+        /// </summary>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be enriched.
+        /// </typeparam>
+        /// <param name="valueProvider">
+        ///     The value provider function.
+        /// </param>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        IKafkaProducerEndpointBuilder WithKafkaKey<TMessage>(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
+            where TMessage : class;
+
+        /// <summary>
         ///     Configures the Kafka client properties.
         /// </summary>
         /// <param name="configAction">

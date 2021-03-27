@@ -2,8 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Silverback.Messaging.Encryption;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
+using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
@@ -25,6 +28,8 @@ namespace Silverback.Messaging.Configuration
         where TEndpoint : ProducerEndpoint
         where TBuilder : IProducerEndpointBuilder<TBuilder>
     {
+        private readonly List<IOutboundMessageEnricher> _messageEnrichers = new();
+
         private IProduceStrategy? _strategy;
 
         private int? _chunkSize;
@@ -87,6 +92,37 @@ namespace Silverback.Messaging.Configuration
             return This;
         }
 
+        /// <inheritdoc cref="IProducerEndpointBuilder{TBuilder}.AddHeader(string,object)" />
+        public TBuilder AddHeader(string name, object? value)
+        {
+            _messageEnrichers.Add(new GenericOutboundHeadersEnricher(name, value));
+            return This;
+        }
+
+        /// <inheritdoc cref="IProducerEndpointBuilder{TBuilder}.AddHeader{TMessage}(string,object)" />
+        public TBuilder AddHeader<TMessage>(string name, object? value)
+            where TMessage : class
+        {
+            _messageEnrichers.Add(new GenericOutboundHeadersEnricher<TMessage>(name, value));
+            return This;
+        }
+
+        /// <inheritdoc cref="IProducerEndpointBuilder{TBuilder}.AddHeader{TMessage}(string,Func{IOutboundEnvelope{TMessage},object})" />
+        public TBuilder AddHeader<TMessage>(string name, Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
+            where TMessage : class
+        {
+            _messageEnrichers.Add(new GenericOutboundHeadersEnricher<TMessage>(name, valueProvider));
+            return This;
+        }
+
+        /// <inheritdoc cref="IProducerEndpointBuilder{TBuilder}.WithMessageId{TMessage}(Func{IOutboundEnvelope{TMessage},object})" />
+        public TBuilder WithMessageId<TMessage>(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
+            where TMessage : class
+        {
+            _messageEnrichers.Add(new OutboundMessageIdHeadersEnricher<TMessage>(valueProvider));
+            return This;
+        }
+
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.Build" />
         public override TEndpoint Build()
         {
@@ -103,6 +139,8 @@ namespace Silverback.Messaging.Configuration
                     AlwaysAddHeaders = _alwaysAddChunkHeaders ?? false
                 };
             }
+
+            _messageEnrichers.ForEach(endpoint.MessageEnrichers.Add);
 
             return endpoint;
         }

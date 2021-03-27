@@ -25,7 +25,7 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics
         public WindowStatistics BatchCnt { get; set; } = new();
 
         [JsonPropertyName("partitions")]
-        [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
+        [SuppressMessage("", "CA2227", Justification = "DTO")]
         public Dictionary<string, PartitionStatistics> Partitions { get; set; } =
             new();
     }

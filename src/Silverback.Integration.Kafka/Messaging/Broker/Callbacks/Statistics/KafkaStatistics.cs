@@ -54,11 +54,11 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics
         public long MetadataCacheCnt { get; set; }
 
         [JsonPropertyName("brokers")]
-        [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
+        [SuppressMessage("", "CA2227", Justification = "DTO")]
         public Dictionary<string, BrokerStatistics> Brokers { get; set; } = new();
 
         [JsonPropertyName("topics")]
-        [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
+        [SuppressMessage("", "CA2227", Justification = "DTO")]
         public Dictionary<string, TopicStatistics> Topics { get; set; } = new();
 
         [JsonPropertyName("cgrp")]

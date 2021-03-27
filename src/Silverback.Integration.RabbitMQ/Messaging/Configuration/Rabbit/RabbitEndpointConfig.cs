@@ -30,7 +30,7 @@ namespace Silverback.Messaging.Configuration.Rabbit
         ///     Gets or sets the optional arguments dictionary. The arguments are used by plugins and
         ///     broker-specific features to configure values such as message TTL, queue length limit, etc.
         /// </summary>
-        [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
+        [SuppressMessage("", "CA2227", Justification = "Easier initialization")]
         public Dictionary<string, object>? Arguments { get; set; }
 
         /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />

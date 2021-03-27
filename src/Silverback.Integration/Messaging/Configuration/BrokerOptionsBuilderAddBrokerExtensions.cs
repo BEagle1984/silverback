@@ -14,6 +14,7 @@ using Silverback.Messaging.Headers;
 using Silverback.Messaging.Inbound;
 using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Inbound.Transaction;
+using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
@@ -103,6 +104,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
                 // Pipeline - Producer basic logic
                 brokerOptionsBuilder.SilverbackBuilder
+                    .AddSingletonBrokerBehavior<MessageEnricherProducerBehavior>()
                     .AddSingletonBrokerBehavior<MessageIdInitializerProducerBehavior>()
                     .AddSingletonBrokerBehavior<EndpointNameResolverProducerBehavior>();
 

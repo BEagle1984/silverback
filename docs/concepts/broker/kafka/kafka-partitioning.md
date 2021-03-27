@@ -12,7 +12,7 @@ If the destination topic contains multiple partitions, the destination partition
 
 You can override this default behavior explicitly setting the target partition in the endpoint. The endpoint can be statically defined like in the following snippet or resolved via [dynamic routing](xref:outbound-routing).
 
-# [Fluent (preferred)](#tab/destination-partition-fluent)
+# [Fluent](#tab/destination-partition-fluent)
 ```csharp
 public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -59,8 +59,51 @@ Apache Kafka require a message key for different purposes, such as:
     <figcaption>The messages with the same key are guaranteed to be written to the same partition.</figcaption>
 </figure>
 
-Silverback will always generate a message key (same value as the `x-message-id` [header](xref:headers)) but it also offers a convenient way to specify a custom key. It is enough to decorate the properties that must be part of the key with <xref:Silverback.Messaging.Messages.KafkaKeyMemberAttribute>.
+Silverback will always generate a message key (same value as the `x-message-id` [header](xref:headers)) but you can also generate your own key, either adding an enricher to the <xref:Silverback.Messaging.IProducerEndpoint> or decorating the properties that must be part of the key with <xref:Silverback.Messaging.Messages.KafkaKeyMemberAttribute>.
 
+#### Using enricher
+
+# [Fluent](#tab/enricher-fluent)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddKafkaEndpoints(endpoints => endpoints
+                .Configure(config => 
+                    {
+                        config.BootstrapServers = "PLAINTEXT://kafka:9092"; 
+                    })
+                .AddOutbound<InventoryEvent>(endpoint => endpoint
+                    .ProduceTo("inventory-events")
+                    .WithKafkaKey<InventoryEvent>(
+                        envelope => envelope.Message?.ProductId)));
+}
+```
+# [Legacy](#tab/enricher-legacy)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddOutbound<InventoryEvent>(
+                new KafkaProducerEndpoint("inventory-events")
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://kafka:9092"
+                    },
+                    MessageEnrichers = new List<IOutboundMessageEnricher>
+                    {
+                        new OutboundMessageKafkaKeyEnricher<InventoryEvent>(
+                            envelope => envelope.Message?.ProductId)
+                    }
+                });
+}
+```
+***
+
+#### Using KafkaKeyMemberAttribute
 ```csharp
 public class MultipleKeyMembersMessage : IIntegrationMessage
 {

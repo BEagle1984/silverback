@@ -8,8 +8,13 @@ namespace Silverback.Util
 {
     internal static class EnumerableAsCollectionExtensions
     {
-        public static IReadOnlyCollection<T> AsReadOnlyCollection<T>(this IEnumerable<T> enumerable) =>
-            enumerable.AsReadOnlyList();
+        public static IReadOnlyCollection<T> AsReadOnlyCollection<T>(this IEnumerable<T> enumerable)
+        {
+            if (enumerable is IReadOnlyCollection<T> collection)
+                return collection;
+
+            return enumerable.ToList();
+        }
 
         public static IReadOnlyList<T> AsReadOnlyList<T>(this IEnumerable<T> enumerable)
         {

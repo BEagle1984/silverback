@@ -3,6 +3,7 @@
 
 using System;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
@@ -16,6 +17,8 @@ namespace Silverback.Messaging.Configuration.Kafka
         private readonly KafkaClientConfig? _clientConfig;
 
         private Func<KafkaProducerEndpoint>? _endpointFactory;
+
+        private IOutboundMessageEnricher? _kafkaKeyEnricher;
 
         private Action<KafkaProducerConfig>? _configAction;
 
@@ -162,7 +165,7 @@ namespace Silverback.Messaging.Configuration.Kafka
 
             if (partitionFunction != null)
             {
-                wrappedPartitionFunction = (envelope) =>
+                wrappedPartitionFunction = envelope =>
                     partitionFunction.Invoke((IOutboundEnvelope<TMessage>)envelope);
             }
 
@@ -180,6 +183,16 @@ namespace Silverback.Messaging.Configuration.Kafka
             where TResolver : IKafkaProducerEndpointNameResolver
         {
             _endpointFactory = () => new KafkaProducerEndpoint(typeof(TResolver), _clientConfig);
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IKafkaProducerEndpointBuilder.WithKafkaKey{TMessage}" />
+        public IKafkaProducerEndpointBuilder WithKafkaKey<TMessage>(
+            Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
+            where TMessage : class
+        {
+            _kafkaKeyEnricher = new OutboundMessageKafkaKeyEnricher<TMessage>(valueProvider);
 
             return this;
         }
@@ -206,6 +219,9 @@ namespace Silverback.Messaging.Configuration.Kafka
             var endpoint = _endpointFactory.Invoke();
 
             _configAction?.Invoke(endpoint.Configuration);
+
+            if (_kafkaKeyEnricher != null)
+                endpoint.MessageEnrichers.Add(_kafkaKeyEnricher);
 
             return endpoint;
         }

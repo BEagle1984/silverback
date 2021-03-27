@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Messaging.Encryption;
+using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Serialization;
@@ -85,5 +87,70 @@ namespace Silverback.Messaging.Configuration
         ///     The endpoint builder so that additional calls can be chained.
         /// </returns>
         TBuilder EnableChunking(int chunkSize, bool alwaysAddHeaders = true);
+
+        /// <summary>
+        ///     Adds the specified header to all produced messages.
+        /// </summary>
+        /// <param name="name">
+        ///     The header name.
+        /// </param>
+        /// <param name="value">
+        ///     The header value.
+        /// </param>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        TBuilder AddHeader(string name, object? value);
+
+        /// <summary>
+        ///     Adds the specified header to all produced messages of the specified type.
+        /// </summary>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be enriched with this header.
+        /// </typeparam>
+        /// <param name="name">
+        ///     The header name.
+        /// </param>
+        /// <param name="value">
+        ///     The header value.
+        /// </param>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        TBuilder AddHeader<TMessage>(string name, object? value)
+            where TMessage : class;
+
+        /// <summary>
+        ///     Adds the specified header to all produced messages of the specified type, using a value provider function to determine the header value for each message.
+        /// </summary>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be enriched with this header.
+        /// </typeparam>
+        /// <param name="name">
+        ///     The header name.
+        /// </param>
+        /// <param name="valueProvider">
+        ///     The value provider function.
+        /// </param>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        TBuilder AddHeader<TMessage>(string name, Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
+            where TMessage : class;
+
+        /// <summary>
+        ///    Uses the specified value provider function to set the message id header for each produced message.
+        /// </summary>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages to be enriched with this header.
+        /// </typeparam>
+        /// <param name="valueProvider">
+        ///     The value provider function.
+        /// </param>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        TBuilder WithMessageId<TMessage>(Func<IOutboundEnvelope<TMessage>, object?> valueProvider)
+            where TMessage : class;
     }
 }

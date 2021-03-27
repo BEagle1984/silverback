@@ -6,12 +6,63 @@ uid: headers
 
 ## Custom headers
 
-There are basically two ways to add custom headers to an outbound message:
-* The easiest and usually preferred approach is to annotate some properties with the <xref:Silverback.Messaging.Messages.HeaderAttribute>, as shown in the next chapter.
-* Otherwise a custom <xref:Silverback.Messaging.Publishing.IBehavior> or <xref:Silverback.Messaging.Broker.Behaviors.IProducerBehavior> can be implemented, as shown in the <xref:behaviors> and <xref:broker-behaviors> sections.
+There are multiple ways to add custom headers to an outbound message:
+* adding an enricher to the <xref:Silverback.Messaging.IProducerEndpoint>
+* annotating some properties with the <xref:Silverback.Messaging.Messages.HeaderAttribute>, as shown in the next chapter.
+* using a custom <xref:Silverback.Messaging.Publishing.IBehavior> or <xref:Silverback.Messaging.Broker.Behaviors.IProducerBehavior> can be implemented, as shown in the <xref:behaviors> and <xref:broker-behaviors> sections.
 
 > [!Warning]
 > Some message broker implementations might not support headers and Silverback doesn't currently provide any workaround, thus the headers will simply be ignored.
+
+### Using enrichers
+
+# [Fluent](#tab/enrichers-fluent)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddKafkaEndpoints(endpoints => endpoints
+                .Configure(config => 
+                    {
+                        config.BootstrapServers = "PLAINTEXT://kafka:9092"; 
+                    })
+                .AddOutbound<InventoryEvent>(endpoint => endpoint
+                    .ProduceTo("inventory-events")
+                    .AddHeader(
+                        "x-my-header",
+                        "static value")
+                    .AddHeader<InventoryEvent>(
+                        "x-product-id", 
+                        envelope => envelope.Message?.ProductId)));
+}
+```
+# [Legacy](#tab/enrichers-legacy)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddOutbound<InventoryEvent>(
+                new KafkaProducerEndpoint("inventory-events")
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://kafka:9092"
+                    },
+                    MessageEnrichers = new List<IOutboundMessageEnricher>
+                    {
+                        new GenericOutboundHeadersEnricher(
+                            "x-my-header",
+                            "static value"),
+                        new GenericOutboundHeadersEnricher<InventoryEvent>(
+                            "x-product-id", 
+                            envelope => envelope.Message?.ProductId)
+                    }
+                });
+}
+```
+***
 
 ### Using HeaderAttribute
 

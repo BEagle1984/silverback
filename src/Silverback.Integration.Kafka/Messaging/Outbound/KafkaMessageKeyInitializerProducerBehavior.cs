@@ -25,19 +25,17 @@ namespace Silverback.Messaging.Outbound
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            string key = GetKafkaKey(context);
-
-            context.Envelope.Headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, key);
+            if (!context.Envelope.Headers.Contains(KafkaMessageHeaders.KafkaMessageKey))
+            {
+                string key = GetKafkaKey(context);
+                context.Envelope.Headers.Add(KafkaMessageHeaders.KafkaMessageKey, key);
+            }
 
             await next(context).ConfigureAwait(false);
         }
 
         private static string GetKafkaKey(ProducerPipelineContext context)
         {
-            string? kafkaKeyHeaderValue = context.Envelope.Headers.GetValue(KafkaMessageHeaders.KafkaMessageKey);
-            if (kafkaKeyHeaderValue != null)
-                return kafkaKeyHeaderValue;
-
             string? keyFromMessage = KafkaKeyHelper.GetMessageKey(context.Envelope.Message);
             if (keyFromMessage != null)
                 return keyFromMessage;

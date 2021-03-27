@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
@@ -24,6 +25,21 @@ namespace Silverback.Messaging.Messages
         /// <param name="value">
         ///     The header value.
         /// </param>
+        public MessageHeader(string name, object? value)
+            : this(name, value?.ToString())
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="MessageHeader" /> class.
+        /// </summary>
+        /// <param name="name">
+        ///     The header name.
+        /// </param>
+        /// <param name="value">
+        ///     The header value.
+        /// </param>
+        [JsonConstructor]
         public MessageHeader(string name, string? value)
         {
             _name = Check.NotNull(name, nameof(name));

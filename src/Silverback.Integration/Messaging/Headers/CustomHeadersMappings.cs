@@ -28,12 +28,12 @@ namespace Silverback.Messaging.Headers
         }
 
         public void Apply(IEnumerable<MessageHeader> headers) =>
-            headers?.ForEach(
+            headers.ForEach(
                 header =>
                     header.Name = GetMappedHeaderName(header.Name, _mappings));
 
         public void Revert(IEnumerable<MessageHeader> headers) =>
-            headers?.ForEach(
+            headers.ForEach(
                 header =>
                     header.Name = GetMappedHeaderName(header.Name, _inverseMappings));
 

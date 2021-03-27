@@ -100,11 +100,11 @@ namespace Silverback.Messaging.Broker.Callbacks.Statistics
         public WindowStatistics Throttle { get; set; } = new();
 
         [JsonPropertyName("req")]
-        [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
+        [SuppressMessage("", "CA2227", Justification = "DTO")]
         public Dictionary<string, long> Requests { get; set; } = new();
 
         [JsonPropertyName("toppars")]
-        [SuppressMessage("ReSharper", "CA2227", Justification = "DTO")]
+        [SuppressMessage("", "CA2227", Justification = "DTO")]
         public Dictionary<string, TopicPartitions> TopicPartitions { get; set; } = new();
     }
 }
