@@ -7733,7 +7733,7 @@
       "output": {
         ".html": {
           "relative_path": "releases.html",
-          "hash": "qIrs/H6hOZjyQaKepYKIbA=="
+          "hash": "NLX2ENIqk1I4XlMIbE6Mng=="
         }
       },
       "is_incremental": false,
@@ -7839,25 +7839,23 @@
   "incremental_info": [
     {
       "status": {
-        "can_incremental": false,
-        "details": "Disable incremental build by force rebuild option.",
+        "can_incremental": true,
         "incrementalPhase": "build",
         "total_file_count": 0,
-        "skipped_file_count": 0,
-        "full_build_reason_code": "ForceRebuild"
+        "skipped_file_count": 0
       },
       "processors": {
         "ConceptualDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 45,
-          "skipped_file_count": 0
+          "skipped_file_count": 44
         },
         "ManagedReferenceDocumentProcessor": {
-          "can_incremental": false,
+          "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 572,
-          "skipped_file_count": 0
+          "skipped_file_count": 572
         },
         "ResourceDocumentProcessor": {
           "can_incremental": false,
