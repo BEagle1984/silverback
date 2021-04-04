@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
@@ -17,6 +18,8 @@ namespace Silverback.Messaging.Outbound.Routing
     public class ProduceBehavior : IBehavior, ISorted
     {
         private readonly IServiceProvider _serviceProvider;
+
+        private IProduceStrategyImplementation? _produceStrategyImplementation;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProduceBehavior" /> class.
@@ -40,8 +43,8 @@ namespace Silverback.Messaging.Outbound.Routing
 
             if (message is IOutboundEnvelope envelope)
             {
-                await envelope.Endpoint.Strategy.Build(_serviceProvider).ProduceAsync(envelope)
-                    .ConfigureAwait(false);
+                _produceStrategyImplementation ??= envelope.Endpoint.Strategy.Build(_serviceProvider);
+                await _produceStrategyImplementation.ProduceAsync(envelope).ConfigureAwait(false);
             }
 
             return await next(message).ConfigureAwait(false);

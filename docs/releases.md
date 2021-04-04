@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [3.0.1](https://github.com/BEagle1984/silverback/releases/tag/v3.0.1)
+
+### Fixes
+
+* Fix <xref:Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter> lifecycle [[#128](https://github.com/BEagle1984/silverback/issues/128)]
+
 ## [3.0.0](https://github.com/BEagle1984/silverback/releases/tag/v3.0.0)
 
 ### What's new

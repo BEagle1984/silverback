@@ -42,7 +42,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddOutboxWorker(TimeSpan.FromMilliseconds(100)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
@@ -58,15 +62,19 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-            var dbContext = Host.ScopedServiceProvider.GetRequiredService<TestDbContext>();
-
-            for (int i = 1; i <= 15; i++)
+            for (int i = 0; i < 3; i++)
             {
-                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
-            }
+                using var scope = Host.ServiceProvider.CreateScope();
+                var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
 
-            await dbContext.SaveChangesAsync();
+                for (int j = (i * 5) + 1; j <= (i + 1) * 5; j++)
+                {
+                    await publisher.PublishAsync(new TestEventOne { Content = $"{j}" });
+                }
+
+                await dbContext.SaveChangesAsync();
+            }
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
@@ -96,7 +104,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddOutboxWorker(TimeSpan.FromMilliseconds(100)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
@@ -148,7 +160,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddOutboxWorker(TimeSpan.FromMilliseconds(100)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(

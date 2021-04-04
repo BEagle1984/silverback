@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
@@ -17,11 +18,9 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
     /// </summary>
     public class OutboxProduceStrategy : IProduceStrategy
     {
-        private OutboxProduceStrategyImplementation? _implementation;
-
         /// <inheritdoc cref="IProduceStrategy.Build" />
         public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>
-            _implementation ??= new OutboxProduceStrategyImplementation(
+            new OutboxProduceStrategyImplementation(
                 serviceProvider.GetRequiredService<TransactionalOutboxBroker>(),
                 serviceProvider.GetRequiredService<IOutboundLogger<OutboxProduceStrategy>>());
 
@@ -30,6 +29,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             private readonly TransactionalOutboxBroker _outboundQueueBroker;
 
             private readonly IOutboundLogger<OutboxProduceStrategy> _logger;
+
+            private IProducer? _producer;
 
             public OutboxProduceStrategyImplementation(
                 TransactionalOutboxBroker outboundQueueBroker,
@@ -45,7 +46,9 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
 
                 _logger.LogWrittenToOutbox(envelope);
 
-                return _outboundQueueBroker.GetProducer(envelope.Endpoint).ProduceAsync(envelope);
+                _producer ??= _outboundQueueBroker.GetProducer(envelope.Endpoint);
+
+                return _producer.ProduceAsync(envelope);
             }
         }
     }
