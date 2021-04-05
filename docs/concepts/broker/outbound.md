@@ -235,6 +235,24 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                 });
 }
 ```
+# [Publisher](#tab/publisher)
+```csharp
+private readonly IPublisher _publisher;
+private readonly SampleDbContext _dbContext;
+
+public async Task CancelOrder(int orderId)
+{
+    // You can change database here
+    
+    await _publisher.PublishAsync(new OrderCancelledEvent
+    {
+        OrderId = orderId
+    });
+
+	// No messages will be published unless you call SaveChangesAsync!
+    await _dbContext.SaveChangesAsync();
+}
+```
 ***
 
 ### Custom outbox
