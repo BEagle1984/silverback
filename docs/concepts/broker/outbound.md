@@ -242,7 +242,7 @@ private readonly SampleDbContext _dbContext;
 
 public async Task CancelOrder(int orderId)
 {
-    // You can change database here
+    // You can use _dbContext to update/insert entities here
     
     await _publisher.PublishAsync(new OrderCancelledEvent
     {
