@@ -9,8 +9,8 @@ uid: introduction
 Silverback is essentially a bus that can be either used internally to an application or connected to a message broker to integrate different applications or microservices.
 
 <figure>
-	<a href="~/images/diagrams/overview.png"><img src="~/images/diagrams/overview.png"></a>
-    <figcaption>Silverback is used to produce the messages 1 and 3 to the message broker, while the messages 2 and 3 are also consumed locally, within the same application.</figcaption>
+	<a href="~/images/diagrams/overview-complete.png"><img src="~/images/diagrams/overview-complete.png"></a>
+    <figcaption>Silverback is used to exchange message inside an application and/or connect to a message broker to integrate with other applications or microservices.</figcaption>
 </figure>
 
 ## Samples and examples
@@ -18,8 +18,8 @@ Silverback is essentially a bus that can be either used internally to an applica
 This documentation is filled with examples and code snippets, plus an entire section is dedicated to fully functional ready-to-run code [samples](xref:samples). The plan is to improve the samples section over time, adding real-world scenarios that demonstrates how to take advantage of the various Silverback features in your projects.
 
 A few notes about the code:
-* Even though it will compile and work just fine (most of the time), it is intended for demonstrational purpose only and don't automatically imply the best practices are being in place nor it is by any mean production ready. Sometimes some shortcuts may have been taken to keep the code compact, readable and focused on the aspect that is being highlighted.
-* Not all examples are ported to each message broker implementation but most of them can be adapted to work with either Kafka, MQTT or Rabbit with minimal effort (unless some broker-specific features are being used, of course).
+* Even though it will compile and work just fine (most of the time), it is intended for demo purpose only and don't automatically imply the best practices are being in place nor it is by any mean production ready. Sometimes some shortcuts may have been taken to keep the code compact, readable and focused on the aspect that is being highlighted.
+* Not all examples are ported to each message broker implementation, but most of them can be adapted to work with either Kafka, MQTT or Rabbit with minimal effort (unless some broker-specific features are being used, of course).
 
 ## Packages
 

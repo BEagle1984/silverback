@@ -396,9 +396,9 @@ public class InventoryService
         _db = db;
     }
 
-    public async Task OnUpdateBatchReceived(IAsyncEnumerable<InventoryUpdateEvent> events)
+    public async Task OnBatchReceived(IAsyncEnumerable<InventoryUpdateEvent> messages)
     {
-        async foreach (var event in events)
+        async foreach (var message in messages)
         {
             // Process each message
         }

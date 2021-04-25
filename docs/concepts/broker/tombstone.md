@@ -37,12 +37,10 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 ```csharp
 public class MySubscriber
 {
-    public async Task OnProductDeleted(
-      Tombstone<Product> tombstone)
+    public async Task OnProductDeleted(Tombstone<Product> tombstone)
     {
-        // TODO: use tombstone.MessageId 
-        // to remove the product from the
-        // local database
+        // TODO: use tombstone.MessageId to remove the product 
+        // from the local database
     }
 }
 ```
@@ -85,8 +83,9 @@ public class MyService
     {
         ...
         
-        await _publisher.PublishAsync(new Tombstone<Product>(productId);
+        await _publisher.PublishAsync(new Tombstone<Product>(productId));
     }
+}
 ```
 ***
 

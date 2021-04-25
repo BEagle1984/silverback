@@ -182,9 +182,6 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
         {
             builder.ConfigureTestServices(services =>
             {
-                // Replace the usual broker (KafkaBroker)
-                // with the mocked version and add the
-                // IIntegrationSpy
                 services
                     .ConfigureSilverback()
                     .UseMockedKafka()
@@ -206,6 +203,8 @@ public class IntegrationTests : IClassFixture<WebApplicationFactory<Startup>>
         // Act
         await producer.ProduceAsync(new TestMessage { Content = "abc" });
 
+        // Wait until all messages have been consumed and 
+        // committed before asserting
         await testingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
         // Assert
