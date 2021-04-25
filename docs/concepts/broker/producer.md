@@ -31,7 +31,7 @@ public class ProducerService
     
     public async Task Produce(byte[] rawMessage)
     {
-        for (int i = 0; i < 100_000: i++)
+        for (int i = 0; i < 100000; i++)
         {
             _producer.RawProduce(
                 rawMessage,
