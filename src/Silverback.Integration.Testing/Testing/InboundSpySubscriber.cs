@@ -32,6 +32,7 @@ namespace Silverback.Testing
 
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private void OnInbound(IInboundEnvelope envelope) => _integrationSpy.AddInboundEnvelope(envelope);
     }
 }

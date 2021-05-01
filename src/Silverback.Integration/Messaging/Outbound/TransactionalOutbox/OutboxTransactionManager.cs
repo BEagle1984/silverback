@@ -36,6 +36,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private async Task OnTransactionCompletedAsync(TransactionCompletedEvent message) =>
             await _queueWriter.CommitAsync().ConfigureAwait(false);
 
@@ -43,6 +44,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private async Task OnTransactionAbortedAsync(TransactionAbortedEvent message) =>
             await _queueWriter.RollbackAsync().ConfigureAwait(false);
     }

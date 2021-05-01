@@ -59,6 +59,7 @@ namespace Silverback.Tests.EventSourcing.TestTypes
             events.Select(AddAndApplyEvent).ToList();
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private void Apply(NameChangedEvent @event, bool isReplaying)
         {
             // Skip if a newer event exists (just to show how it can be done)
@@ -69,9 +70,11 @@ namespace Silverback.Tests.EventSourcing.TestTypes
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private void Apply(AgeChangedEvent @event) => Age = @event.NewAge;
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private void Apply(PhoneNumberChangedEvent @event, bool isReplaying)
         {
             PhoneNumber = @event.NewPhoneNumber;

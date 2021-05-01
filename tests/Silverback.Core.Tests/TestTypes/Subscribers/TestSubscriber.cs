@@ -45,6 +45,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private async Task OnTestMessageReceived2(ITestMessage message)
         {
             await Task.Delay(1);
@@ -54,6 +55,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private async Task OnTestMessageReceived4(ITestMessage message)
         {
             await Task.Delay(1);

@@ -14,6 +14,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private void OnMessageReceived(IInboundEnvelope<IMessage> envelope) => ReceivedEnvelopes.Add(envelope);
     }
 }

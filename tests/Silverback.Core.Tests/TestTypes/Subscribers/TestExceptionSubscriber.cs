@@ -16,6 +16,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private void OnMessageReceived(TestEventOne message) => throw new InvalidOperationException("Test");
 
         [Subscribe]
@@ -23,6 +24,7 @@ namespace Silverback.Tests.Core.TestTypes.Subscribers
         [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
         [SuppressMessage("", "CA1822", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private Task OnMessageReceivedAsync(TestEventTwo message) => throw new InvalidOperationException("Test");
     }
 }

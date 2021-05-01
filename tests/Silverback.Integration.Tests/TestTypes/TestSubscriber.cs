@@ -24,6 +24,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         [Subscribe]
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private async Task OnMessageReceived(IMessage message)
         {
             if (Delay > TimeSpan.Zero)

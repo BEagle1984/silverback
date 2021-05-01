@@ -20,7 +20,8 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        [SuppressMessage("ReSharper", "CA2012", Justification = "Test method")]
+        [SuppressMessage("", "CA2012", Justification = "Test method")]
+        [SuppressMessage("", "VSTHRD104", Justification = "Test method")]
         public void FromResult_IntResult_SuccessfulTaskCreated()
         {
             var result = ValueTaskFactory.FromResult(42);

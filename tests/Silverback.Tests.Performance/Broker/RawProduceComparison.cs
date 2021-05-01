@@ -90,6 +90,7 @@ namespace Silverback.Tests.Performance.Broker
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private static async Task<Stats> RunConfluent(
             int count,
             Message<byte[], byte[]> message,
@@ -175,6 +176,7 @@ namespace Silverback.Tests.Performance.Broker
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private static async Task<Stats> RunConfluentWithoutAwait(
             int count,
             Message<byte[], byte[]> message,
@@ -226,6 +228,7 @@ namespace Silverback.Tests.Performance.Broker
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private static async Task<Stats> RunSilverbackProduceAsync(
             int count,
             Message<byte[], byte[]> message,
@@ -367,6 +370,7 @@ namespace Silverback.Tests.Performance.Broker
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "For future use")]
+        [SuppressMessage("", "IDE0051", Justification = Justifications.CalledBySilverback)]
         private static async Task<Stats> RunSilverbackProduceWithCallbacks(
             int count,
             Message<byte[], byte[]> message,
