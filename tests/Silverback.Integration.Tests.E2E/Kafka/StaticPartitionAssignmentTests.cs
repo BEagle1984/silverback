@@ -50,12 +50,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     endpoint => endpoint
                                         .ConsumeFrom(
                                             new TopicPartition("topic1", 2),
-                                            new TopicPartition("topic2", 2))
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            })))
+                                            new TopicPartition("topic2", 2))))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 

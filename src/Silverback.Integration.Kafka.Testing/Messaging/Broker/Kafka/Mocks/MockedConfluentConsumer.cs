@@ -39,12 +39,6 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             Check.NotNull(config, nameof(config));
             _topics = Check.NotNull(topics, nameof(topics));
 
-            if (string.IsNullOrEmpty(config.GroupId))
-            {
-                throw new ArgumentException(
-                    "'group.id' configuration parameter is required and was not specified.");
-            }
-
             Name = $"{config.ClientId ?? "mocked"}.{Guid.NewGuid():N}";
             GroupId = config.GroupId;
             MemberId = Guid.NewGuid().ToString("N");
@@ -63,7 +57,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public string Name { get; }
 
-        public string GroupId { get; }
+        public string GroupId { get; private set; }
 
         public string MemberId { get; }
 
@@ -110,6 +104,12 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public void Subscribe(IEnumerable<string> topics)
         {
+            if (string.IsNullOrEmpty(GroupId))
+            {
+                throw new ArgumentException(
+                    "'group.id' configuration parameter is required and was not specified.");
+            }
+
             var topicsList = Check.NotNull(topics, nameof(topics)).AsReadOnlyList();
             Check.NotEmpty(topicsList, nameof(topics));
             Check.HasNoEmpties(topicsList, nameof(topics));
@@ -143,6 +143,9 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public void Assign(IEnumerable<TopicPartitionOffset> partitions)
         {
+            if (string.IsNullOrEmpty(GroupId))
+                GroupId = Guid.NewGuid().ToString();
+
             Assignment.Clear();
 
             foreach (var topicPartitionOffset in partitions)
