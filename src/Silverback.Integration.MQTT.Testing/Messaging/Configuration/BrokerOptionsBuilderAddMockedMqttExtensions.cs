@@ -1,6 +1,8 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
@@ -19,15 +21,20 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="IBrokerOptionsBuilder" /> that references the <see cref="IServiceCollection" /> to
         ///     add the services to.
         /// </param>
+        /// <param name="optionsAction">
+        ///     Configures the mock options.
+        /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static IBrokerOptionsBuilder AddMockedMqtt(this IBrokerOptionsBuilder brokerOptionsBuilder)
+        public static IBrokerOptionsBuilder AddMockedMqtt(
+            this IBrokerOptionsBuilder brokerOptionsBuilder,
+            Action<IMockedMqttOptionsBuilder>? optionsAction = null)
         {
             Check.NotNull(brokerOptionsBuilder, nameof(brokerOptionsBuilder));
 
             brokerOptionsBuilder.AddMqtt();
-            brokerOptionsBuilder.SilverbackBuilder.UseMockedMqtt();
+            brokerOptionsBuilder.SilverbackBuilder.UseMockedMqtt(optionsAction);
 
             return brokerOptionsBuilder;
         }

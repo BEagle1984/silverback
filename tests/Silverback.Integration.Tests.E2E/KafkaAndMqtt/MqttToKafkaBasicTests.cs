@@ -12,7 +12,7 @@ using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Silverback.Tests.Integration.E2E.KafkaAndMQTT
+namespace Silverback.Tests.Integration.E2E.KafkaAndMqtt
 {
     public class MqttToKafkaBasicTests : KafkaTestFixture
     {

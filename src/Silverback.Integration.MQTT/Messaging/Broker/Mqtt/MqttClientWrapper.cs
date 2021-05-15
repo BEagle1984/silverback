@@ -37,8 +37,6 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         private MqttConsumer? _consumer;
 
-        private MqttTopicFilter[]? _subscriptionTopicFilters;
-
         public MqttClientWrapper(
             IMqttClient mqttClient,
             MqttClientConfig clientConfig,
@@ -82,14 +80,11 @@ namespace Silverback.Messaging.Broker.Mqtt
                 ConnectAndMonitorConnection();
             }
 
-            return _connectingTaskCompletionSource.Task;
+            return Task.CompletedTask;
         }
 
-        public Task SubscribeAsync(params MqttTopicFilter[] topicFilters)
-        {
-            _subscriptionTopicFilters = topicFilters;
-            return MqttClient.SubscribeAsync(topicFilters);
-        }
+        public Task SubscribeAsync(params MqttTopicFilter[] topicFilters) =>
+            MqttClient.SubscribeAsync(topicFilters);
 
         public async Task DisconnectAsync(object sender)
         {
@@ -108,7 +103,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             }
 
             await _brokerCallbacksInvoker.InvokeAsync<IMqttClientDisconnectingCallback>(
-                handler => handler.OnClientDisconnectingAsync(ClientConfig))
+                    handler => handler.OnClientDisconnectingAsync(ClientConfig))
                 .ConfigureAwait(false);
 
             await MqttClient.DisconnectAsync().ConfigureAwait(false);
@@ -150,32 +145,33 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         private async Task<bool> TryConnectAsync(bool isFirstTry, CancellationToken cancellationToken)
         {
+            bool connectionLost = false;
+
             lock (_connectionLock)
             {
                 if (_connectingTaskCompletionSource.Task.IsCompleted)
                 {
                     _connectingTaskCompletionSource = new TaskCompletionSource<bool>();
 
+                    connectionLost = true;
+
                     _logger.LogConnectionLost(this);
                 }
             }
 
-            if (Consumer != null)
-                await Consumer.StopAsync().ConfigureAwait(false);
+            if (connectionLost && Consumer != null)
+                await Consumer.OnConnectionLostAsync().ConfigureAwait(false);
 
             if (!await TryConnectClientAsync(isFirstTry, cancellationToken).ConfigureAwait(false))
                 return false;
 
-            if (Consumer != null && _subscriptionTopicFilters != null)
-            {
-                await SubscribeAsync(_subscriptionTopicFilters).ConfigureAwait(false);
-                await Consumer.StartAsync().ConfigureAwait(false);
-            }
-
             _connectingTaskCompletionSource.SetResult(true);
 
+            if (Consumer != null)
+                await Consumer.OnConnectionEstablishedAsync().ConfigureAwait(false);
+
             await _brokerCallbacksInvoker.InvokeAsync<IMqttClientConnectedCallback>(
-                handler => handler.OnClientConnectedAsync(ClientConfig))
+                    handler => handler.OnClientConnectedAsync(ClientConfig))
                 .ConfigureAwait(false);
 
             return true;

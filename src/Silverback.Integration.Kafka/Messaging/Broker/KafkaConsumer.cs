@@ -116,12 +116,16 @@ namespace Silverback.Messaging.Broker
                 IsConsuming = true;
 
                 InitAndStartChannelsManager(partitions);
+
+                SetReadyStatus();
             }
         }
 
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         internal void OnPartitionsRevoked()
         {
+            RevertReadyStatus();
+
             StopConsumeLoopHandlerAndChannelsManager();
 
             AsyncHelper.RunSynchronously(WaitUntilChannelsManagerStopsAsync);
@@ -379,6 +383,8 @@ namespace Silverback.Messaging.Broker
 
                 Endpoint.TopicPartitions.ForEach(
                     topicPartitionOffset => _logger.LogPartitionManuallyAssigned(topicPartitionOffset, this));
+
+                SetReadyStatus();
             }
         }
 

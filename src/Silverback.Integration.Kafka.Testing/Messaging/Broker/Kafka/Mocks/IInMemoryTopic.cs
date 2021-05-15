@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -79,10 +80,16 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         /// <param name="consumer">
         ///     The consumer.
         /// </param>
+        /// <param name="assignmentDelay">
+        ///     The delay to be applied before assigning the partitions.
+        /// </param>
         /// <param name="cancellationToken">
         ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
         /// </param>
-        void EnsurePartitionsAssigned(IMockedConfluentConsumer consumer, CancellationToken cancellationToken);
+        void EnsurePartitionsAssigned(
+            IMockedConfluentConsumer consumer,
+            TimeSpan assignmentDelay,
+            CancellationToken cancellationToken);
 
         /// <summary>
         ///     Subscribes the consumer to the topic.

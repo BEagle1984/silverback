@@ -78,12 +78,10 @@ namespace Silverback.Messaging.Broker
                 .ConfigureAwait(false);
         }
 
-        /// <inheritdoc cref="Consumer.ConnectCoreAsync" />
-        protected override async Task ConnectCoreAsync()
+        internal async Task OnConnectionEstablishedAsync()
         {
-            _clientWrapper = _clientFactory.GetClient(this);
-
-            await _clientWrapper.ConnectAsync(this).ConfigureAwait(false);
+            if (_clientWrapper == null)
+                return;
 
             await _clientWrapper.SubscribeAsync(
                     Endpoint.Topics.Select(
@@ -94,6 +92,27 @@ namespace Silverback.Messaging.Broker
                                     .Build())
                         .ToArray())
                 .ConfigureAwait(false);
+
+            await StartAsync().ConfigureAwait(false);
+
+            SetReadyStatus();
+        }
+
+        internal async Task OnConnectionLostAsync()
+        {
+            await StopAsync().ConfigureAwait(false);
+
+            RevertReadyStatus();
+        }
+
+        /// <inheritdoc cref="Consumer.ConnectCoreAsync" />
+        protected override Task ConnectCoreAsync()
+        {
+            _clientWrapper = _clientFactory.GetClient(this);
+
+            _clientWrapper.ConnectAsync(this).FireAndForget();
+
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="Consumer.DisconnectCoreAsync" />
@@ -114,6 +133,7 @@ namespace Silverback.Messaging.Broker
 
             _channelManager = new ConsumerChannelManager(_clientWrapper, _logger);
             _channelManager.StartReading();
+
             return Task.CompletedTask;
         }
 

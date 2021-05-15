@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Testing;
 
 namespace Silverback.Messaging.Configuration.Kafka
@@ -38,5 +39,16 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IMockedKafkaOptionsBuilder" /> so that additional calls can be chained.
         /// </returns>
         IMockedKafkaOptionsBuilder OverrideAutoCommitIntervalMs(int? intervalMs);
+
+        /// <summary>
+        ///     Specifies the delay to be applied before assigning the partitions.
+        /// </summary>
+        /// <param name="delay">
+        ///     The delay to be applied before assigning the partitions.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMockedKafkaOptionsBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IMockedKafkaOptionsBuilder DelayPartitionsAssignment(TimeSpan delay);
     }
 }

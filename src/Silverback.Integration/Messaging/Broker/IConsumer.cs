@@ -29,18 +29,23 @@ namespace Silverback.Messaging.Broker
         IConsumerEndpoint Endpoint { get; }
 
         /// <summary>
-        ///     Gets a value indicating whether this consumer is connected to the message broker and ready to consume
-        ///     messages.
+        ///     Gets a value indicating whether this consumer has successfully initialized the connection to the message
+        ///     broker.
         /// </summary>
+        /// <remarks>
+        ///     This doesn't necessary mean that it is connected and ready to consume. The underlying library might
+        ///     handle the connection process asynchronously in the background or the protocol might require extra steps
+        ///     (e.g. Kafka might require the partitions to be assigned).
+        /// </remarks>
         bool IsConnected { get; }
 
         /// <summary>
-        ///     Gets a value indicating whether this consumer is trying to connect to the message broker.
+        ///     Gets a value indicating whether this consumer is initializing the connection to the message broker.
         /// </summary>
         bool IsConnecting { get; }
 
         /// <summary>
-        ///     Gets a value indicating whether this consumer is connected and consuming.
+        ///     Gets a value indicating whether this consumer is connected and consuming (started).
         /// </summary>
         bool IsConsuming { get; }
 

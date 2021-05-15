@@ -62,7 +62,8 @@ namespace Silverback.Testing
 
             try
             {
-                while (!_broker.IsConnected || _broker.Consumers.Any(consumer => consumer.IsConnecting))
+                while (!_broker.IsConnected || _broker.Consumers.Any(
+                    consumer => consumer.StatusInfo.Status < ConsumerStatus.Ready))
                 {
                     cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
@@ -72,7 +73,7 @@ namespace Silverback.Testing
             catch (OperationCanceledException)
             {
                 _logger.LogWarning(
-                    "The timeout elapsed before all messages could be consumed and processed.");
+                    "The timeout elapsed before the consumers successfully established a connection.");
             }
         }
 

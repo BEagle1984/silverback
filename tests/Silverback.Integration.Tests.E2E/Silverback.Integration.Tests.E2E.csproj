@@ -38,6 +38,7 @@
     <ProjectReference Include="..\..\src\Silverback.Integration.MQTT\Silverback.Integration.MQTT.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.MQTT.Testing\Silverback.Integration.MQTT.Testing.csproj" />
     <ProjectReference Include="..\..\src\Silverback.Integration.Newtonsoft\Silverback.Integration.Newtonsoft.csproj" />
+    <ProjectReference Include="..\..\src\Silverback.Integration.HealthChecks\Silverback.Integration.HealthChecks.csproj" />
   </ItemGroup>
 
   <ItemGroup>

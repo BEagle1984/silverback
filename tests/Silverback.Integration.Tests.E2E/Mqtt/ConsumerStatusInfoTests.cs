@@ -14,9 +14,9 @@ using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Silverback.Tests.Integration.E2E.Kafka
+namespace Silverback.Tests.Integration.E2E.Mqtt
 {
-    public class ConsumerStatusInfoTests : KafkaTestFixture
+    public class ConsumerStatusInfoTests : MqttTestFixture
     {
         public ConsumerStatusInfoTests(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task StatusInfo_ConsumingAndRebalanceAndDisconnecting_StatusIsCorrectlySet()
+        public async Task StatusInfo_ConsumingAndDisconnecting_StatusIsCorrectlySet()
         {
             Host.ConfigureServices(
                     services => services
@@ -32,42 +32,26 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(
-                            options => options.AddMockedKafka(
+                            options => options.AddMockedMqtt(
                                 mockedKafkaOptions =>
-                                    mockedKafkaOptions.DelayPartitionsAssignment(
-                                        TimeSpan.FromMilliseconds(100))))
-                        .AddKafkaEndpoints(
+                                    mockedKafkaOptions.DelayConnection(TimeSpan.FromMilliseconds(200))))
+                        .AddMqttEndpoints(
                             endpoints => endpoints
                                 .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://e2e";
-                                    })
+                                    config => config
+                                        .WithClientId("e2e-test")
+                                        .ConnectViaTcp("e2e-mqtt-broker"))
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                                config.EnableAutoCommit = false;
-                                                config.CommitOffsetEach = 1;
-                                            })))
+                                        .ConsumeFrom(DefaultTopicName)))
                         .AddIntegrationSpyAndSubscriber())
                 .Run(waitUntilBrokerConnected: false);
 
             var consumer = Helper.Broker.Consumers[0];
 
             consumer.IsConnected.Should().BeTrue();
-            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
-
-            await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Ready);
-            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Ready);
-
-            DefaultTopic.Rebalance();
-
             consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
 
             await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Ready);
@@ -95,29 +79,20 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(
-                            options => options.AddMockedKafka(
+                            options => options.AddMockedMqtt(
                                 mockedKafkaOptions =>
-                                    mockedKafkaOptions.DelayPartitionsAssignment(
-                                        TimeSpan.FromMilliseconds(100))))
-                        .AddKafkaEndpoints(
+                                    mockedKafkaOptions.DelayConnection(TimeSpan.FromMilliseconds(200))))
+                        .AddMqttEndpoints(
                             endpoints => endpoints
                                 .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://e2e";
-                                    })
+                                    config => config
+                                        .WithClientId("e2e-test")
+                                        .ConnectViaTcp("e2e-mqtt-broker"))
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                                config.EnableAutoCommit = false;
-                                                config.CommitOffsetEach = 1;
-                                            })))
+                                        .ConsumeFrom(DefaultTopicName)))
                         .AddIntegrationSpyAndSubscriber())
                 .Run(waitUntilBrokerConnected: false);
 
@@ -158,39 +133,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(
-                            options => options.AddMockedKafka(
-                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
-                        .AddKafkaEndpoints(
+                            options => options.AddMockedMqtt(
+                                mockedKafkaOptions =>
+                                    mockedKafkaOptions.DelayConnection(TimeSpan.FromMilliseconds(100))))
+                        .AddMqttEndpoints(
                             endpoints => endpoints
                                 .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://e2e";
-                                    })
+                                    config => config
+                                        .WithClientId("e2e-test")
+                                        .ConnectViaTcp("e2e-mqtt-broker"))
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                                config.EnableAutoCommit = false;
-                                                config.CommitOffsetEach = 1;
-                                            })))
+                                        .ConsumeFrom(DefaultTopicName)))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
+
+            await Helper.WaitUntilConnectedAsync();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventOne());
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Helper.Broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.Should()
-                .BeOfType<KafkaOffset>();
-            Helper.Broker.Consumers[0].StatusInfo.LatestConsumedMessageIdentifier.As<KafkaOffset>().Offset
-                .Should().Be(1);
             Helper.Broker.Consumers[0].StatusInfo.LatestConsumedMessageTimestamp.Should().NotBeNull();
         }
     }

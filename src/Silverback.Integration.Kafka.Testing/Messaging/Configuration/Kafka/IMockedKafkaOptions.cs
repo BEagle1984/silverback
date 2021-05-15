@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+
 namespace Silverback.Messaging.Configuration.Kafka
 {
     /// <summary>
@@ -19,5 +21,10 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     <c>null</c> to disable the feature. The default is 10 milliseconds.
         /// </summary>
         public int? OverriddenAutoCommitIntervalMs { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the delay to be applied before and assigning the partitions.
+        /// </summary>
+        public TimeSpan PartitionsAssignmentDelay { get; set; }
     }
 }

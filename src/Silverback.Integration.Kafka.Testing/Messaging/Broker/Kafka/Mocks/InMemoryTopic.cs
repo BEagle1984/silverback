@@ -95,6 +95,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Sync writes only")]
         public void EnsurePartitionsAssigned(
             IMockedConfluentConsumer consumer,
+            TimeSpan assignmentDelay,
             CancellationToken cancellationToken)
         {
             if (consumer.PartitionsAssigned)
@@ -105,6 +106,11 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             {
                 Task.Delay(10, cancellationToken).Wait(cancellationToken);
             }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (assignmentDelay > TimeSpan.Zero)
+                Task.Delay(assignmentDelay, cancellationToken).Wait(cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
 

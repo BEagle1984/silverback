@@ -16,19 +16,26 @@ namespace Silverback.Messaging.Configuration.Kafka
 
         public IServiceCollection Services { get; }
 
-        public IMockedKafkaOptions BusOptions =>
+        public IMockedKafkaOptions MockedKafkaOptions =>
             Services.GetSingletonServiceInstance<IMockedKafkaOptions>() ??
-            throw new InvalidOperationException("IMockedKafkaOptions not found, AddMockedKafka has not been called.");
+            throw new InvalidOperationException(
+                "IMockedKafkaOptions not found, AddMockedKafka has not been called.");
 
         public IMockedKafkaOptionsBuilder WithDefaultPartitionsCount(int partitionsCount)
         {
-            BusOptions.DefaultPartitionsCount = partitionsCount;
+            MockedKafkaOptions.DefaultPartitionsCount = partitionsCount;
             return this;
         }
 
         public IMockedKafkaOptionsBuilder OverrideAutoCommitIntervalMs(int? intervalMs)
         {
-            BusOptions.OverriddenAutoCommitIntervalMs = intervalMs;
+            MockedKafkaOptions.OverriddenAutoCommitIntervalMs = intervalMs;
+            return this;
+        }
+
+        public IMockedKafkaOptionsBuilder DelayPartitionsAssignment(TimeSpan delay)
+        {
+            MockedKafkaOptions.PartitionsAssignmentDelay = delay;
             return this;
         }
     }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -30,7 +31,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         private SqliteConnection? _sqliteConnection;
 
-        private WebApplicationFactory<BlankStartup>? _applicationFactory;
+        private WebApplicationFactory<Startup>? _applicationFactory;
 
         private ITestOutputHelper? _testOutputHelper;
 
@@ -38,11 +39,15 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         private IServiceProvider? _scopedServiceProvider;
 
+        private HttpClient? _httpClient;
+
         public IServiceProvider ServiceProvider =>
             _applicationFactory?.Services ?? throw new InvalidOperationException();
 
         public IServiceProvider ScopedServiceProvider =>
             _scopedServiceProvider ??= ServiceProvider.CreateScope().ServiceProvider;
+
+        public HttpClient HttpClient => _httpClient ?? throw new InvalidOperationException();
 
         public TestApplicationHost<THelper> ConfigureServices(Action<IServiceCollection> configurationAction)
         {
@@ -68,14 +73,14 @@ namespace Silverback.Tests.Integration.E2E.TestHost
             return this;
         }
 
-        public void Run([CallerMemberName] string? testMethodName = null)
+        public void Run([CallerMemberName] string? testMethodName = null, bool waitUntilBrokerConnected = true)
         {
             if (_applicationFactory != null)
                 throw new InvalidOperationException("Run can only be called once.");
 
             _testMethodName = testMethodName;
 
-            var appRoot = Path.Combine("tests", GetType().Assembly.GetName().Name!);
+            string appRoot = Path.Combine("tests", GetType().Assembly.GetName().Name!);
 
             _applicationFactory = new TestApplicationFactory()
                 .WithWebHostBuilder(
@@ -106,14 +111,15 @@ namespace Silverback.Tests.Integration.E2E.TestHost
                             })
                         .UseSolutionRelativeContentRoot(appRoot));
 
-            _applicationFactory.CreateClient();
+            _httpClient = _applicationFactory.CreateClient();
 
             if (_addDbContext)
                 InitDatabase();
 
             _configurationActions.Clear();
 
-            WaitUntilBrokerIsConnected();
+            if (waitUntilBrokerConnected)
+                WaitUntilBrokerIsConnected();
 
             ScopedServiceProvider.GetService<ILogger<TestApplicationHost<THelper>>>()
                 ?.LogInformation($"Starting end-to-end test {_testMethodName}.");
@@ -130,6 +136,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
             _sqliteConnection?.SafeClose();
             _sqliteConnection?.Dispose();
+            _httpClient?.Dispose();
             _applicationFactory?.Dispose();
 
             logger?.LogInformation($"Test host disposed ({_testMethodName}).");
@@ -148,10 +155,8 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         private void InitDatabase()
         {
-            using (var scope = ServiceProvider.CreateScope())
-            {
-                scope.ServiceProvider.GetService<TestDbContext>()?.Database.EnsureCreated();
-            }
+            using IServiceScope scope = ServiceProvider.CreateScope();
+            scope.ServiceProvider.GetService<TestDbContext>()?.Database.EnsureCreated();
         }
     }
 }

@@ -10,13 +10,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
-using Silverback.Util;
+using AsyncHelper = Silverback.Util.AsyncHelper;
+using Check = Silverback.Util.Check;
+using EnumerableAsCollectionExtensions = Silverback.Util.EnumerableAsCollectionExtensions;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
     internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
         private readonly IInMemoryTopicCollection _topics;
+
+        private readonly IMockedKafkaOptions _options;
 
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _currentOffsets
             = new();
@@ -38,6 +42,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         {
             Check.NotNull(config, nameof(config));
             _topics = Check.NotNull(topics, nameof(topics));
+            _options = Check.NotNull(options, nameof(options));
 
             Name = $"{config.ClientId ?? "mocked"}.{Guid.NewGuid():N}";
             GroupId = config.GroupId;
@@ -57,8 +62,6 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public string Name { get; }
 
-        public string GroupId { get; private set; }
-
         public string MemberId { get; }
 
         public List<TopicPartition> Assignment { get; } = new();
@@ -66,6 +69,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public List<string> Subscription { get; } = new();
 
         public IConsumerGroupMetadata ConsumerGroupMetadata => throw new NotSupportedException();
+
+        public string GroupId { get; private set; }
 
         public bool PartitionsAssigned { get; private set; }
 
@@ -110,7 +115,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                     "'group.id' configuration parameter is required and was not specified.");
             }
 
-            var topicsList = Check.NotNull(topics, nameof(topics)).AsReadOnlyList();
+            var topicsList =
+                EnumerableAsCollectionExtensions.AsReadOnlyList(Check.NotNull(topics, nameof(topics)));
             Check.NotEmpty(topicsList, nameof(topics));
             Check.HasNoEmpties(topicsList, nameof(topics));
 
@@ -118,7 +124,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             {
                 Subscription.Clear();
                 Subscription.AddRange(topicsList);
-                Subscription.ForEach(topic => _topics[topic].Subscribe(this));
+                Subscription.ForEach(
+                    topic => _topics[topic].Subscribe(this));
             }
         }
 
@@ -200,7 +207,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                         partitionPair.Key,
                         partitionPair.Value))).ToList();
 
-            var topicPartitionOffsetsByTopic = topicPartitionOffsets.GroupBy(tpo => tpo.Topic);
+            var topicPartitionOffsetsByTopic =
+                topicPartitionOffsets.GroupBy(topicPartitionOffset => topicPartitionOffset.Topic);
 
             var actualCommittedOffsets = new List<TopicPartitionOffset>();
             foreach (var group in topicPartitionOffsetsByTopic)
@@ -347,7 +355,11 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             CancellationToken cancellationToken,
             out ConsumeResult<byte[]?, byte[]?>? result)
         {
-            Subscription.ForEach(topic => _topics[topic].EnsurePartitionsAssigned(this, cancellationToken));
+            Subscription.ForEach(
+                topic => _topics[topic].EnsurePartitionsAssigned(
+                    this,
+                    _options.PartitionsAssignmentDelay,
+                    cancellationToken));
 
             // Process the topics starting from the one that consumed less messages
             var topicPairs = _currentOffsets

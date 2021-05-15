@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.HealthChecks;
 using Silverback.Util;
 
@@ -43,7 +44,8 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             Check.NotNull(builder, nameof(builder));
 
-            builder.Services.AddScoped<IOutboundEndpointsHealthCheckService, OutboundEndpointsHealthCheckService>();
+            builder.Services
+                .AddScoped<IOutboundEndpointsHealthCheckService, OutboundEndpointsHealthCheckService>();
 
             static IHealthCheck ServiceFactory(IServiceProvider serviceProvider) =>
                 new OutboundEndpointsHealthCheck(
@@ -87,7 +89,8 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services.AddScoped<IOutboundQueueHealthCheckService, OutboundQueueHealthCheckService>();
 
             static IHealthCheck ServiceFactory(IServiceProvider serviceProvider) =>
-                new OutboxQueueHealthCheck(serviceProvider.GetRequiredService<IOutboundQueueHealthCheckService>());
+                new OutboxQueueHealthCheck(
+                    serviceProvider.GetRequiredService<IOutboundQueueHealthCheckService>());
 
             return builder.Add(
                 new HealthCheckRegistration(
@@ -119,22 +122,54 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IHealthChecksBuilder AddConsumersCheck(
             this IHealthChecksBuilder builder,
             string name = "Consumers",
-            HealthStatus? failureStatus = default,
-            IEnumerable<string>? tags = default)
+            HealthStatus? failureStatus = null,
+            IEnumerable<string>? tags = null) =>
+            AddConsumersCheck(builder, ConsumerStatus.Ready, name, failureStatus, tags);
+
+        /// <summary>
+        ///     Adds an health check that verifies that all consumers are connected.
+        /// </summary>
+        /// <param name="builder">
+        ///     The <see cref="IHealthChecksBuilder" />.
+        /// </param>
+        /// <param name="minStatus">
+        ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered fully connected.
+        /// </param>
+        /// <param name="name">
+        ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
+        /// </param>
+        /// <param name="failureStatus">
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check fails. Optional. If
+        ///     <c>null</c> then the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
+        /// </param>
+        /// <param name="tags">
+        ///     A list of tags that can be used to filter sets of health checks. Optional.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static IHealthChecksBuilder AddConsumersCheck(
+            this IHealthChecksBuilder builder,
+            ConsumerStatus minStatus,
+            string name = "Consumers",
+            HealthStatus? failureStatus = null,
+            IEnumerable<string>? tags = null)
         {
             Check.NotNull(builder, nameof(builder));
 
             builder.Services.AddSingleton<IConsumersHealthCheckService, ConsumersHealthCheckService>();
 
-            static IHealthCheck ServiceFactory(IServiceProvider serviceProvider) =>
-                new ConsumersHealthCheck(serviceProvider.GetRequiredService<IConsumersHealthCheckService>());
-
             return builder.Add(
                 new HealthCheckRegistration(
                     name,
-                    ServiceFactory,
+                    CreateService,
                     failureStatus,
                     tags));
+
+            IHealthCheck CreateService(IServiceProvider serviceProvider)
+                => new ConsumersHealthCheck(
+                    serviceProvider.GetRequiredService<IConsumersHealthCheckService>(),
+                    minStatus);
         }
     }
 }

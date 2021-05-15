@@ -16,6 +16,7 @@ using MQTTnet.Client.Receiving;
 using MQTTnet.Client.Subscribing;
 using MQTTnet.Client.Unsubscribing;
 using MQTTnet.Protocol;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks
@@ -28,6 +29,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
     {
         private readonly IInMemoryMqttBroker _broker;
 
+        private readonly IMockedMqttOptions _mockOptions;
+
         private bool _connecting;
 
         /// <summary>
@@ -36,9 +39,13 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         /// <param name="broker">
         ///     The <see cref="IInMemoryMqttBroker" />.
         /// </param>
-        public MockedMqttClient(IInMemoryMqttBroker broker)
+        /// <param name="mockOptions">
+        ///     The <see cref="IMockedMqttOptions"/>.
+        /// </param>
+        public MockedMqttClient(IInMemoryMqttBroker broker, IMockedMqttOptions mockOptions)
         {
             _broker = Check.NotNull(broker, nameof(broker));
+            _mockOptions = Check.NotNull(mockOptions, nameof(mockOptions));
         }
 
         /// <inheritdoc cref="IMqttClient.IsConnected" />
@@ -77,7 +84,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
             _broker.Connect(options, this);
 
-            await Task.Delay(10, cancellationToken).ConfigureAwait(false);
+            await Task.Delay(_mockOptions.ConnectionDelay, cancellationToken).ConfigureAwait(false);
 
             IsConnected = true;
             _connecting = false;

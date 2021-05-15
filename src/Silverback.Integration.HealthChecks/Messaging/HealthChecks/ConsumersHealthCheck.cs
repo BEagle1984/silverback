@@ -1,9 +1,13 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Silverback.Messaging.Broker;
 using Silverback.Util;
 
 namespace Silverback.Messaging.HealthChecks
@@ -15,15 +19,23 @@ namespace Silverback.Messaging.HealthChecks
     {
         private readonly IConsumersHealthCheckService _service;
 
+        private readonly ConsumerStatus _minStatus;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConsumersHealthCheck" /> class.
         /// </summary>
         /// <param name="service">
         ///     The <see cref="IConsumersHealthCheckService" /> implementation to be used to check the consumers.
         /// </param>
-        public ConsumersHealthCheck(IConsumersHealthCheckService service)
+        /// <param name="minStatus">
+        ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered fully connected.
+        /// </param>
+        public ConsumersHealthCheck(
+            IConsumersHealthCheckService service,
+            ConsumerStatus minStatus)
         {
             _service = service;
+            _minStatus = minStatus;
         }
 
         /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
@@ -33,10 +45,19 @@ namespace Silverback.Messaging.HealthChecks
         {
             Check.NotNull(context, nameof(context));
 
-            if (await _service.CheckConsumersConnectedAsync().ConfigureAwait(false))
+            IReadOnlyCollection<IConsumer> disconnectedConsumers =
+                await _service.GetDisconnectedConsumersAsync(_minStatus).ConfigureAwait(false);
+
+            if (disconnectedConsumers.Count == 0)
                 return new HealthCheckResult(HealthStatus.Healthy);
 
-            string errorMessage = "One or more consumers are not connected.";
+            string errorMessage = disconnectedConsumers.Aggregate(
+                "One or more consumers are not connected:",
+                (current, consumer) =>
+                    $"{current}{Environment.NewLine}- " +
+                    $"[{consumer.Id}] " +
+                    $"{consumer.Endpoint.Name} " +
+                    $"({consumer.Endpoint.GetUniqueConsumerGroupName()})");
 
             return new HealthCheckResult(context.Registration.FailureStatus, errorMessage);
         }

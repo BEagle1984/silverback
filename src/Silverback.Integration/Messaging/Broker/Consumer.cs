@@ -229,11 +229,11 @@ namespace Silverback.Messaging.Broker
                     return;
 
                 await _logger.ExecuteAndTraceConsumerActionAsync(
-                    this,
-                    StartCoreAsync,
-                    "Starting consumer...",
-                    "Consumer started.",
-                    "Failed to start consumer.")
+                        this,
+                        StartCoreAsync,
+                        "Starting consumer...",
+                        "Consumer started.",
+                        "Failed to start consumer.")
                     .ConfigureAwait(false);
 
                 IsConsuming = true;
@@ -474,6 +474,24 @@ namespace Silverback.Messaging.Broker
                 ServiceProvider);
 
             await ExecutePipelineAsync(consumerPipelineContext).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        ///     Called when fully connected to transitions the consumer to <see cref="ConsumerStatus.Ready" />.
+        /// </summary>
+        protected void SetReadyStatus()
+        {
+            _statusInfo.SetReady();
+        }
+
+        /// <summary>
+        ///     Called when the connection is lost to transitions the consumer back to
+        ///     <see cref="ConsumerStatus.Connected" />.
+        /// </summary>
+        protected void RevertReadyStatus()
+        {
+            if (_statusInfo.Status > ConsumerStatus.Connected)
+                _statusInfo.SetConnected();
         }
 
         /// <summary>

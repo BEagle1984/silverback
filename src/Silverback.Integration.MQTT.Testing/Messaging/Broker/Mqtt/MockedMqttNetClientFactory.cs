@@ -3,6 +3,7 @@
 
 using MQTTnet.Client;
 using Silverback.Messaging.Broker.Mqtt.Mocks;
+using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt
@@ -12,6 +13,8 @@ namespace Silverback.Messaging.Broker.Mqtt
     /// </summary>
     public class MockedMqttNetClientFactory : IMqttNetClientFactory
     {
+        private readonly IMockedMqttOptions _options;
+
         private readonly IInMemoryMqttBroker _broker;
 
         /// <summary>
@@ -20,12 +23,16 @@ namespace Silverback.Messaging.Broker.Mqtt
         /// <param name="broker">
         ///     The <see cref="IInMemoryMqttBroker" />.
         /// </param>
-        public MockedMqttNetClientFactory(IInMemoryMqttBroker broker)
+        /// <param name="options">
+        ///     The <see cref="IMockedMqttOptions"/>.
+        /// </param>
+        public MockedMqttNetClientFactory(IInMemoryMqttBroker broker, IMockedMqttOptions options)
         {
             _broker = Check.NotNull(broker, nameof(broker));
+            _options = Check.NotNull(options, nameof(options));
         }
 
         /// <inheritdoc cref="IMqttNetClientFactory.CreateClient" />
-        public IMqttClient CreateClient() => new MockedMqttClient(_broker);
+        public IMqttClient CreateClient() => new MockedMqttClient(_broker, _options);
     }
 }

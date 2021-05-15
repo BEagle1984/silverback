@@ -26,7 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="ISilverbackBuilder" />.
         /// </param>
         /// <param name="optionsAction">
-        ///     Additional options (such as topics and partitions settings).
+        ///     Configures the mock options.
         /// </param>
         /// <returns>
         ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.

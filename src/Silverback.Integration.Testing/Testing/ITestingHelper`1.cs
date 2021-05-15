@@ -32,16 +32,13 @@ namespace Silverback.Testing
         IIntegrationSpy Spy { get; }
 
         /// <summary>
-        ///     Returns a <see cref="Task" /> that completes when all consumers have connected.
+        ///     Returns a <see cref="Task" /> that completes when all consumers are connected and ready.
         /// </summary>
-        /// <remarks>
-        ///     This method works with the mocked brokers only.
-        /// </remarks>
         /// <param name="timeout">
         ///     The time to wait for the consumers to connect. The default is 30 seconds.
         /// </param>
         /// <returns>
-        ///     A <see cref="Task" /> that completes when all messages have been processed.
+        ///     A <see cref="Task" /> that completes when all consumers are successfully connected and ready.
         /// </returns>
         Task WaitUntilConnectedAsync(TimeSpan? timeout = null);
 

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
 {
-    public class TestApplicationFactory : WebApplicationFactory<BlankStartup>
+    public class TestApplicationFactory : WebApplicationFactory<Startup>
     {
         protected override IHostBuilder? CreateHostBuilder() =>
             null;
@@ -22,6 +22,6 @@ namespace Silverback.Tests.Integration.E2E.TestHost
                         options.ValidateScopes = true;
                         options.ValidateOnBuild = true;
                     })
-                .UseStartup<BlankStartup>();
+                .UseStartup<Startup>();
     }
 }

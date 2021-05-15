@@ -20,13 +20,15 @@ namespace Silverback.Messaging.Broker
 
         public IBrokerMessageIdentifier? LatestConsumedMessageIdentifier { get; private set; }
 
+        public void SetDisconnected() => ChangeStatus(ConsumerStatus.Disconnected);
+
         public void SetConnected() => ChangeStatus(ConsumerStatus.Connected);
 
-        public void SetDisconnected() => ChangeStatus(ConsumerStatus.Disconnected);
+        public void SetReady() => ChangeStatus(ConsumerStatus.Ready);
 
         public void RecordConsumedMessage(IBrokerMessageIdentifier? brokerMessageIdentifier)
         {
-            if (Status == ConsumerStatus.Connected)
+            if (Status is ConsumerStatus.Connected or ConsumerStatus.Ready)
                 ChangeStatus(ConsumerStatus.Consuming);
 
             ConsumedMessagesCount++;

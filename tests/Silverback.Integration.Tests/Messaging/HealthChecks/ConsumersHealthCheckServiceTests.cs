@@ -1,9 +1,11 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Hosting;
 using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.HealthChecks;
@@ -15,19 +17,47 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
 {
     public class ConsumersHealthCheckServiceTests
     {
-        [Fact]
-        public async Task CheckConsumersConnected_AllConnected_TrueReturned()
-        {
-            var connectedConsumer = Substitute.For<IConsumer>();
-            connectedConsumer.IsConnected.Returns(true);
+        private readonly IConsumer _disconnectedConsumer;
 
+        private readonly IConsumer _connectedConsumer;
+
+        private readonly IConsumer _readyConsumer;
+
+        private readonly IConsumer _consumingConsumer;
+
+        public ConsumersHealthCheckServiceTests()
+        {
+            var disconnectedStatusInfo = Substitute.For<IConsumerStatusInfo>();
+            disconnectedStatusInfo.Status.Returns(ConsumerStatus.Disconnected);
+            _disconnectedConsumer = Substitute.For<IConsumer>();
+            _disconnectedConsumer.StatusInfo.Returns(disconnectedStatusInfo);
+
+            var connectedStatusInfo = Substitute.For<IConsumerStatusInfo>();
+            connectedStatusInfo.Status.Returns(ConsumerStatus.Connected);
+            _connectedConsumer = Substitute.For<IConsumer>();
+            _connectedConsumer.StatusInfo.Returns(connectedStatusInfo);
+
+            var readyStatusInfo = Substitute.For<IConsumerStatusInfo>();
+            readyStatusInfo.Status.Returns(ConsumerStatus.Ready);
+            _readyConsumer = Substitute.For<IConsumer>();
+            _readyConsumer.StatusInfo.Returns(readyStatusInfo);
+
+            var consumingStatusInfo = Substitute.For<IConsumerStatusInfo>();
+            consumingStatusInfo.Status.Returns(ConsumerStatus.Consuming);
+            _consumingConsumer = Substitute.For<IConsumer>();
+            _consumingConsumer.StatusInfo.Returns(consumingStatusInfo);
+        }
+
+        [Fact]
+        public async Task GetDisconnectedConsumersAsync_AllConsumersConnected_EmptyCollectionReturned()
+        {
             var broker1 = Substitute.For<IBroker>();
             broker1.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
             broker1.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
             broker1.Consumers.Returns(
                 new[]
                 {
-                    connectedConsumer, connectedConsumer, connectedConsumer
+                    _connectedConsumer, _consumingConsumer, _readyConsumer
                 });
             var broker2 = Substitute.For<IBroker>();
             broker2.ProducerEndpointType.Returns(typeof(TestOtherProducerEndpoint));
@@ -35,31 +65,29 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             broker2.Consumers.Returns(
                 new[]
                 {
-                    connectedConsumer, connectedConsumer, connectedConsumer
+                    _readyConsumer, _readyConsumer
                 });
 
             var brokerCollection = new BrokerCollection(new[] { broker1, broker2 });
+            var hostApplicationLifetime = Substitute.For<IHostApplicationLifetime>();
+            var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
 
-            var result = await new ConsumersHealthCheckService(brokerCollection).CheckConsumersConnectedAsync();
+            IReadOnlyCollection<IConsumer> result =
+                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Connected);
 
-            result.Should().BeTrue();
+            result.Should().BeEmpty();
         }
 
         [Fact]
-        public async Task CheckConsumersConnected_OneIsNotConnected_FalseReturned()
+        public async Task GetDisconnectedConsumersAsync_SomeConsumersNotFullyConnected_ConsumersListReturned()
         {
-            var connectedConsumer = Substitute.For<IConsumer>();
-            connectedConsumer.IsConnected.Returns(true);
-            var disconnectedConsumer = Substitute.For<IConsumer>();
-            connectedConsumer.IsConnected.Returns(false);
-
             var broker1 = Substitute.For<IBroker>();
             broker1.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
             broker1.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
             broker1.Consumers.Returns(
                 new[]
                 {
-                    connectedConsumer, connectedConsumer, connectedConsumer
+                    _readyConsumer, _consumingConsumer, _connectedConsumer
                 });
             var broker2 = Substitute.For<IBroker>();
             broker2.ProducerEndpointType.Returns(typeof(TestOtherProducerEndpoint));
@@ -67,29 +95,52 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             broker2.Consumers.Returns(
                 new[]
                 {
-                    connectedConsumer, disconnectedConsumer, connectedConsumer
+                    _readyConsumer, _disconnectedConsumer
                 });
 
             var brokerCollection = new BrokerCollection(new[] { broker1, broker2 });
+            var hostApplicationLifetime = Substitute.For<IHostApplicationLifetime>();
+            var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
 
-            var result = await new ConsumersHealthCheckService(brokerCollection).CheckConsumersConnectedAsync();
+            IReadOnlyCollection<IConsumer> result =
+                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready);
 
-            result.Should().BeFalse();
+            result.Should().HaveCount(2);
+            result.Should().BeEquivalentTo(_connectedConsumer, _disconnectedConsumer);
         }
 
         [Fact]
-        public async Task CheckConsumersConnected_NoConsumers_TrueReturned()
+        public async Task GetDisconnectedConsumersAsync_ShuttingDown_EmptyCollectionReturned()
         {
             var broker1 = Substitute.For<IBroker>();
             broker1.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
             broker1.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
-            broker1.Consumers.Returns(Array.Empty<IConsumer>());
+            broker1.Consumers.Returns(
+                new[]
+                {
+                    _readyConsumer, _consumingConsumer, _connectedConsumer
+                });
+            var broker2 = Substitute.For<IBroker>();
+            broker2.ProducerEndpointType.Returns(typeof(TestOtherProducerEndpoint));
+            broker2.ConsumerEndpointType.Returns(typeof(TestOtherConsumerEndpoint));
+            broker2.Consumers.Returns(
+                new[]
+                {
+                    _readyConsumer, _disconnectedConsumer
+                });
 
-            var brokerCollection = new BrokerCollection(new[] { broker1 });
+            var brokerCollection = new BrokerCollection(new[] { broker1, broker2 });
+            var hostApplicationLifetime = Substitute.For<IHostApplicationLifetime>();
+            var applicationStoppingTokenSource = new CancellationTokenSource();
+            hostApplicationLifetime.ApplicationStopping.Returns(applicationStoppingTokenSource.Token);
+            var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
 
-            var result = await new ConsumersHealthCheckService(brokerCollection).CheckConsumersConnectedAsync();
+            applicationStoppingTokenSource.Cancel();
 
-            result.Should().BeTrue();
+            IReadOnlyCollection<IConsumer> result =
+                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready);
+
+            result.Should().BeEmpty();
         }
     }
 }

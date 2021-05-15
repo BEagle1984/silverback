@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     add the services to.
         /// </param>
         /// <param name="optionsAction">
-        ///     Additional options (such as topics and partitions settings).
+        ///     Configures the mock options.
         /// </param>
         /// <returns>
         ///     The <see cref="IBrokerOptionsBuilder" /> so that additional calls can be chained.

@@ -7,18 +7,24 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
 {
-    public class BlankStartup
+    public class Startup
     {
         [SuppressMessage("", "CA1822", Justification = "Called by IHost")]
         [SuppressMessage("", "CA1801", Justification = "Called by IHost")]
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHealthChecks();
         }
 
         [SuppressMessage("", "CA1822", Justification = "Called by IHost")]
         [SuppressMessage("", "CA1801", Justification = "Called by IHost")]
         public void Configure(IApplicationBuilder app)
         {
+            app.UseRouting().UseEndpoints(
+                endpoints =>
+                {
+                    endpoints.MapHealthChecks("/health");
+                });
         }
     }
 }

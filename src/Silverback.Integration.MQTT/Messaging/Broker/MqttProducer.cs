@@ -230,7 +230,7 @@ namespace Silverback.Messaging.Broker
 
                     try
                     {
-                        await PublishToTopicAsync(queuedMessage).ConfigureAwait(false);
+                        await PublishToTopicAsync(queuedMessage, cancellationToken).ConfigureAwait(false);
 
                         queuedMessage.TaskCompletionSource.SetResult(null);
                     }
@@ -249,11 +249,10 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private async Task PublishToTopicAsync(QueuedMessage queuedMessage)
+        private async Task PublishToTopicAsync(
+            QueuedMessage queuedMessage,
+            CancellationToken cancellationToken)
         {
-            if (!ClientWrapper.MqttClient.IsConnected)
-                throw new InvalidOperationException("The client is not connected.");
-
             var mqttApplicationMessage = new MqttApplicationMessage
             {
                 Topic = queuedMessage.ActualEndpointName,
@@ -266,9 +265,15 @@ namespace Silverback.Messaging.Broker
             if (queuedMessage.Headers != null && Endpoint.Configuration.AreHeadersSupported)
                 mqttApplicationMessage.UserProperties = queuedMessage.Headers.ToUserProperties();
 
+            while (!ClientWrapper.MqttClient.IsConnected)
+            {
+                await Task.Delay(1, cancellationToken).ConfigureAwait(false);
+            }
+
             var result = await ClientWrapper.MqttClient.PublishAsync(
-                mqttApplicationMessage,
-                CancellationToken.None).ConfigureAwait(false);
+                    mqttApplicationMessage,
+                    cancellationToken)
+                .ConfigureAwait(false);
 
             if (result.ReasonCode != MqttClientPublishReasonCode.Success)
             {
