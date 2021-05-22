@@ -109,6 +109,7 @@ namespace Silverback.Messaging.Broker.Kafka
         public void Reset(TopicPartition topicPartition)
         {
             int channelIndex = GetChannelIndex(topicPartition);
+            _channels[channelIndex].Writer.Complete();
             _channels[channelIndex] = CreateBoundedChannel();
         }
 

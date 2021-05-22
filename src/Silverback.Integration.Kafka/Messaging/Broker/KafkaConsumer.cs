@@ -307,12 +307,8 @@ namespace Silverback.Messaging.Broker
             "ReSharper",
             "InconsistentlySynchronizedField",
             Justification = "Sync start/stop only")]
-        protected override async Task RollbackCoreAsync(
-            IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
+        protected override Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
-            if (IsConsuming && _consumeLoopHandler != null)
-                await _consumeLoopHandler.StopAsync().ConfigureAwait(false);
-
             var latestTopicPartitionOffsets =
                 brokerMessageIdentifiers
                     .GroupBy(offset => offset.Key)
@@ -323,6 +319,13 @@ namespace Silverback.Messaging.Broker
                             .AsTopicPartitionOffset())
                     .ToList();
 
+            if (IsConsuming)
+            {
+                _confluentConsumer?.Pause(
+                    latestTopicPartitionOffsets.Select(
+                        topicPartitionOffset => topicPartitionOffset.TopicPartition));
+            }
+
             var channelsManagerStoppingTasks = new List<Task?>(latestTopicPartitionOffsets.Count);
 
             foreach (var topicPartitionOffset in latestTopicPartitionOffsets)
@@ -330,6 +333,7 @@ namespace Silverback.Messaging.Broker
                 channelsManagerStoppingTasks.Add(
                     _channelsManager?.StopReadingAsync(topicPartitionOffset.TopicPartition));
                 ConfluentConsumer.Seek(topicPartitionOffset);
+                _logger.LogPartitionOffsetReset(topicPartitionOffset, this);
             }
 
             Task.Run(
@@ -337,12 +341,14 @@ namespace Silverback.Messaging.Broker
                         channelsManagerStoppingTasks,
                         latestTopicPartitionOffsets))
                 .FireAndForget();
+
+            return Task.CompletedTask;
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private async Task RestartConsumeLoopAfterRollbackAsync(
             IEnumerable<Task?> channelsManagerStoppingTasks,
-            IEnumerable<TopicPartitionOffset> latestTopicPartitionOffsets)
+            IReadOnlyCollection<TopicPartitionOffset> latestTopicPartitionOffsets)
         {
             try
             {
@@ -354,7 +360,10 @@ namespace Silverback.Messaging.Broker
                     _channelsManager?.Reset(topicPartitionOffset.TopicPartition);
 
                     if (IsConsuming)
+                    {
                         _channelsManager?.StartReading(topicPartitionOffset.TopicPartition);
+                        _confluentConsumer?.Resume(new[] { topicPartitionOffset.TopicPartition });
+                    }
                 }
 
                 if (IsConsuming)

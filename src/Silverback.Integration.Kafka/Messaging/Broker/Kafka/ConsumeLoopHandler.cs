@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Util;
@@ -176,7 +177,12 @@ namespace Silverback.Messaging.Broker.Kafka
                 if (cancellationToken.IsCancellationRequested)
                     _logger.LogConsumingCanceled(_consumer);
             }
-            catch (Exception ex)
+            catch (ChannelClosedException)
+            {
+                // Ignore the ChannelClosedException as it might be thrown in case of retry
+                // (see ConsumerChannelsManager.Reset method)
+            }
+            catch (Exception ex) when (ex is not ChannelClosedException)
             {
                 if (!_consumer.AutoRecoveryIfEnabled(ex, cancellationToken))
                     return false;

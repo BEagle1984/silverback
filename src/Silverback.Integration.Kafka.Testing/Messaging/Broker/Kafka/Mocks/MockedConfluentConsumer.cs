@@ -10,9 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
-using AsyncHelper = Silverback.Util.AsyncHelper;
-using Check = Silverback.Util.Check;
-using EnumerableAsCollectionExtensions = Silverback.Util.EnumerableAsCollectionExtensions;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
@@ -33,6 +31,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         private readonly List<string> _topicAssignments = new();
 
         private readonly int _autoCommitIntervalMs;
+
+        private readonly List<TopicPartition> _pausedPartitions = new();
 
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public MockedConfluentConsumer(
@@ -124,8 +124,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             {
                 Subscription.Clear();
                 Subscription.AddRange(topicsList);
-                Subscription.ForEach(
-                    topic => _topics[topic].Subscribe(this));
+                Subscription.ForEach(topic => _topics[topic].Subscribe(this));
             }
         }
 
@@ -245,9 +244,29 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             _currentOffsets[tpo.Topic][tpo.Partition] = tpo.Offset;
         }
 
-        public void Pause(IEnumerable<TopicPartition> partitions) => throw new NotSupportedException();
+        public void Pause(IEnumerable<TopicPartition> partitions)
+        {
+            lock (_pausedPartitions)
+            {
+                foreach (var partition in partitions)
+                {
+                    if (!_pausedPartitions.Contains(partition))
+                        _pausedPartitions.Add(partition);
+                }
+            }
+        }
 
-        public void Resume(IEnumerable<TopicPartition> partitions) => throw new NotSupportedException();
+        public void Resume(IEnumerable<TopicPartition> partitions)
+        {
+            lock (_pausedPartitions)
+            {
+                foreach (var partition in partitions)
+                {
+                    if (_pausedPartitions.Contains(partition))
+                        _pausedPartitions.Remove(partition);
+                }
+            }
+        }
 
         public List<TopicPartitionOffset> Committed(TimeSpan timeout) => throw new NotSupportedException();
 
@@ -321,13 +340,11 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         }
 
         private List<TopicPartitionOffset>? InvokePartitionsAssignedHandler(
-            IEnumerable<TopicPartitionOffset> partitionOffsets)
-        {
-            return PartitionsAssignedHandler?.Invoke(
+            IEnumerable<TopicPartitionOffset> partitionOffsets) =>
+            PartitionsAssignedHandler?.Invoke(
                     this,
                     partitionOffsets.Select(partitionOffset => partitionOffset.TopicPartition).ToList())
                 ?.ToList();
-        }
 
         private void InvokePartitionsRevokedHandler(string topicName)
         {
@@ -371,7 +388,9 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             {
                 bool pulled = _topics[topicPair.Key].TryPull(
                     this,
-                    topicPair.Value.Select(
+                    topicPair.Value
+                        .Where(partitionPair => !IsPaused(topicPair.Key, partitionPair.Key))
+                        .Select(
                             partitionPair => new TopicPartitionOffset(
                                 topicPair.Key,
                                 partitionPair.Key,
@@ -391,6 +410,14 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
             result = null;
             return false;
+        }
+
+        private bool IsPaused(string topic, Partition partition)
+        {
+            lock (_pausedPartitions)
+            {
+                return _pausedPartitions.Contains(new TopicPartition(topic, partition));
+            }
         }
 
         private TopicPartitionOffset GetStartingOffset(TopicPartitionOffset topicPartitionOffset)
