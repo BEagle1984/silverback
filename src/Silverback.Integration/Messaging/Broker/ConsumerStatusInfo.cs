@@ -22,7 +22,11 @@ namespace Silverback.Messaging.Broker
 
         public void SetDisconnected() => ChangeStatus(ConsumerStatus.Disconnected);
 
-        public void SetConnected() => ChangeStatus(ConsumerStatus.Connected);
+        public void SetConnected(bool allowStepBack = false)
+        {
+            if (allowStepBack || Status < ConsumerStatus.Connected)
+                ChangeStatus(ConsumerStatus.Connected);
+        }
 
         public void SetReady() => ChangeStatus(ConsumerStatus.Ready);
 

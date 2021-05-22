@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
@@ -71,6 +72,60 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
 
             await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Ready);
+            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Ready);
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new TestEventOne());
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            consumer.IsConnected.Should().BeTrue();
+            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Consuming);
+
+            await Helper.Broker.DisconnectAsync();
+
+            consumer.IsConnected.Should().BeFalse();
+            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Disconnected);
+        }
+
+        [Fact]
+        public async Task StatusInfo_StaticPartitionsAssignment_StatusIsCorrectlySet()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(
+                                            new TopicPartition(DefaultTopicName, 0),
+                                            new TopicPartition(DefaultTopicName, 1),
+                                            new TopicPartition(DefaultTopicName, 2),
+                                            new TopicPartition(DefaultTopicName, 3),
+                                            new TopicPartition(DefaultTopicName, 4))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                                config.EnableAutoCommit = false;
+                                                config.CommitOffsetEach = 1;
+                                            })))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run(waitUntilBrokerConnected: false);
+
+            var consumer = Helper.Broker.Consumers[0];
+
+            consumer.IsConnected.Should().BeTrue();
             consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Ready);
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();

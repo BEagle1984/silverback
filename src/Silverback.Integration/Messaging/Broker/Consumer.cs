@@ -491,7 +491,7 @@ namespace Silverback.Messaging.Broker
         protected void RevertReadyStatus()
         {
             if (_statusInfo.Status > ConsumerStatus.Connected)
-                _statusInfo.SetConnected();
+                _statusInfo.SetConnected(true);
         }
 
         /// <summary>
