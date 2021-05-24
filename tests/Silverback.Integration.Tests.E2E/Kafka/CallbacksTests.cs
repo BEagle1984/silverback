@@ -46,19 +46,28 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://tests";
+                                    })
                                 .AddOutbound<TestEventTwo>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(config => { config.GroupId = "consumer1"; }))))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            }))))
                 .Run();
 
             var kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
             await kafkaTestingHelper.WaitUntilConnectedAsync();
 
-            var callbackHandler =
-                (SimpleCallbackHandler)Host.ServiceProvider.GetRequiredService<IBrokerCallback>();
+            var callbackHandler = (SimpleCallbackHandler)Host.ServiceProvider
+                .GetServices<IBrokerCallback>()
+                .Single(service => service is SimpleCallbackHandler);
             callbackHandler.CallCount.Should().Be(1);
         }
 
@@ -77,21 +86,31 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://tests";
+                                    })
                                 .AddOutbound<TestEventTwo>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(config => { config.GroupId = "consumer1"; }))))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            }))))
                 .Run();
 
             var kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
             await kafkaTestingHelper.WaitUntilConnectedAsync();
 
-            var callbackHandlers = Host.ServiceProvider.GetServices<IBrokerCallback>().ToList();
+            var callbackHandlers = Host.ServiceProvider
+                .GetServices<IBrokerCallback>()
+                .Where(service => service is SimpleCallbackHandler)
+                .ToList();
             callbackHandlers.Should().HaveCount(2);
-            callbackHandlers.Should().AllBeAssignableTo<SimpleCallbackHandler>();
-            callbackHandlers.Cast<SimpleCallbackHandler>().Should().OnlyContain(b => b.CallCount == 1);
+            callbackHandlers.Cast<SimpleCallbackHandler>().Should().OnlyContain(handler => handler.CallCount == 1);
         }
 
         [Fact]
@@ -108,13 +127,21 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://tests";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(config => { config.GroupId = "consumer1"; })))
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 

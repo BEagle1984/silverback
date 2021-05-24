@@ -97,10 +97,22 @@ namespace Silverback.Diagnostics
                         KafkaLogEvents.ConfluentConsumerFatalError));
 
         private static readonly Action<ILogger, string, string, Exception?>
-            KafkaErrorHandlerError =
+            KafkaConsumerErrorHandlerError =
                 SilverbackLoggerMessage.Define<string, string>(
                     IntegrationLoggerExtensions.EnrichConsumerLogEvent(
                         KafkaLogEvents.KafkaErrorHandlerError));
+
+        private static readonly Action<ILogger, string, string, Exception?>
+            KafkaConsumerLogHandlerError =
+                SilverbackLoggerMessage.Define<string, string>(
+                    IntegrationLoggerExtensions.EnrichConsumerLogEvent(
+                        KafkaLogEvents.KafkaLogHandlerError));
+
+        private static readonly Action<ILogger, string, string, Exception?>
+            KafkaProducerLogHandlerError =
+                SilverbackLoggerMessage.Define<string, string>(
+                    IntegrationLoggerExtensions.EnrichProducerLogEvent(
+                        KafkaLogEvents.KafkaLogHandlerError));
 
         private static readonly Action<ILogger, string, string, string, Exception?>
             ConsumerStatisticsReceived =
@@ -369,10 +381,30 @@ namespace Silverback.Diagnostics
             this ISilverbackLogger logger,
             KafkaConsumer consumer,
             Exception exception) =>
-            KafkaErrorHandlerError(
+            KafkaConsumerErrorHandlerError(
                 logger.InnerLogger,
                 consumer.Id,
                 consumer.Endpoint.Name,
+                exception);
+
+        public static void LogKafkaLogHandlerError(
+            this ISilverbackLogger logger,
+            KafkaConsumer consumer,
+            Exception exception) =>
+            KafkaConsumerLogHandlerError(
+                logger.InnerLogger,
+                consumer.Id,
+                consumer.Endpoint.Name,
+                exception);
+
+        public static void LogKafkaLogHandlerError(
+            this ISilverbackLogger logger,
+            KafkaProducer producer,
+            Exception exception) =>
+            KafkaProducerLogHandlerError(
+                logger.InnerLogger,
+                producer.Id,
+                producer.Endpoint.Name,
                 exception);
 
         public static void LogConsumerStatisticsReceived(

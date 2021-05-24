@@ -161,7 +161,7 @@ namespace Silverback.Diagnostics
         public static LogEvent KafkaErrorHandlerError { get; } = new(
             LogLevel.Error,
             GetEventId(37, nameof(KafkaErrorHandlerError)),
-            "Error in Kafka consumer error handler.");
+            "Error in Kafka error handler.");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when the consumer statistics are
@@ -213,6 +213,15 @@ namespace Silverback.Diagnostics
             LogLevel.Warning,
             GetEventId(42, nameof(ConfluentConsumerError)),
             "Error in Kafka consumer: '{errorReason}' ({errorCode}).");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when the custom log handler
+        ///     throws an unhandled exception.
+        /// </summary>
+        public static LogEvent KafkaLogHandlerError { get; } = new(
+            LogLevel.Error,
+            GetEventId(43, nameof(KafkaLogHandlerError)),
+            "Error in Kafka log handler.");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown

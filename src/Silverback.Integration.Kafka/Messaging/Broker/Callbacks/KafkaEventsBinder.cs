@@ -22,7 +22,7 @@ namespace Silverback.Messaging.Broker.Callbacks
             producerBuilder
                 .SetStatisticsHandler(
                     (_, statistics) => OnStatistics(statistics, producer, callbacksInvoker, logger))
-                .SetLogHandler((_, logMessage) => OnLog(logMessage, producer, logger));
+                .SetLogHandler((_, logMessage) => OnLog(logMessage, producer, callbacksInvoker, logger));
 
         public static void SetEventsHandlers(
             this IConfluentConsumerBuilder consumerBuilder,
@@ -47,7 +47,7 @@ namespace Silverback.Messaging.Broker.Callbacks
                 .SetOffsetsCommittedHandler(
                     (_, offsets) => OnOffsetsCommitted(offsets, consumer, callbacksInvoker, logger))
                 .SetErrorHandler((_, error) => OnError(error, consumer, callbacksInvoker, logger))
-                .SetLogHandler((_, logMessage) => OnLog(logMessage, consumer, logger));
+                .SetLogHandler((_, logMessage) => OnLog(logMessage, consumer, callbacksInvoker, logger));
 
         private static void OnStatistics(
             string statistics,
@@ -181,7 +181,10 @@ namespace Silverback.Messaging.Broker.Callbacks
                 bool handled = false;
 
                 callbacksInvoker.Invoke<IKafkaConsumerErrorCallback>(
-                    handler => { handled &= handler.OnConsumerError(error, consumer); });
+                    handler =>
+                    {
+                        handled &= handler.OnConsumerError(error, consumer);
+                    });
 
                 if (handled)
                     return;
@@ -200,8 +203,27 @@ namespace Silverback.Messaging.Broker.Callbacks
         private static void OnLog(
             LogMessage logMessage,
             KafkaProducer producer,
+            IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger logger)
         {
+            try
+            {
+                bool handled = false;
+
+                callbacksInvoker.Invoke<IKafkaProducerLogCallback>(
+                    handler =>
+                    {
+                        handled &= handler.OnProducerLog(logMessage, producer);
+                    });
+
+                if (handled)
+                    return;
+            }
+            catch (Exception ex)
+            {
+                logger.LogKafkaLogHandlerError(producer, ex);
+            }
+
             switch (logMessage.Level)
             {
                 case SyslogLevel.Emergency:
@@ -228,8 +250,27 @@ namespace Silverback.Messaging.Broker.Callbacks
         private static void OnLog(
             LogMessage logMessage,
             KafkaConsumer consumer,
+            IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger logger)
         {
+            try
+            {
+                bool handled = false;
+
+                callbacksInvoker.Invoke<IKafkaConsumerLogCallback>(
+                    handler =>
+                    {
+                        handled &= handler.OnConsumerLog(logMessage, consumer);
+                    });
+
+                if (handled)
+                    return;
+            }
+            catch (Exception ex)
+            {
+                logger.LogKafkaLogHandlerError(consumer, ex);
+            }
+
             switch (logMessage.Level)
             {
                 case SyslogLevel.Emergency:

@@ -294,13 +294,13 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
         }
 
         [Fact]
-        public void LogKafkaErrorHandlerError_Logged()
+        public void LogKafkaErrorHandlerError_Consumer_Logged()
         {
             var consumer = (KafkaConsumer)_serviceProvider.GetRequiredService<KafkaBroker>()
                 .AddConsumer(_consumerEndpoint);
 
             var expectedMessage =
-                "Error in Kafka consumer error handler. | " +
+                "Error in Kafka error handler. | " +
                 $"consumerId: {consumer.Id}, endpointName: test";
 
             _silverbackLogger.LogKafkaErrorHandlerError(consumer, new InvalidProgramException());
@@ -310,6 +310,44 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 typeof(InvalidProgramException),
                 expectedMessage,
                 2037);
+        }
+
+        [Fact]
+        public void LogKafkaLogHandlerError_Consumer_Logged()
+        {
+            var consumer = (KafkaConsumer)_serviceProvider.GetRequiredService<KafkaBroker>()
+                .AddConsumer(_consumerEndpoint);
+
+            var expectedMessage =
+                "Error in Kafka log handler. | " +
+                $"consumerId: {consumer.Id}, endpointName: test";
+
+            _silverbackLogger.LogKafkaLogHandlerError(consumer, new InvalidProgramException());
+
+            _loggerSubstitute.Received(
+                LogLevel.Error,
+                typeof(InvalidProgramException),
+                expectedMessage,
+                2043);
+        }
+
+        [Fact]
+        public void LogKafkaLogHandlerError_Producer_Logged()
+        {
+            var producer = (KafkaProducer)_serviceProvider.GetRequiredService<KafkaBroker>()
+                .GetProducer(_producerEndpoint);
+
+            var expectedMessage =
+                "Error in Kafka log handler. | " +
+                $"producerId: {producer.Id}, endpointName: test";
+
+            _silverbackLogger.LogKafkaLogHandlerError(producer, new InvalidProgramException());
+
+            _loggerSubstitute.Received(
+                LogLevel.Error,
+                typeof(InvalidProgramException),
+                expectedMessage,
+                2043);
         }
 
         [Fact]
