@@ -200,6 +200,7 @@ namespace Silverback.Messaging.Broker.Callbacks
                 logger.LogConfluentConsumerError(error, consumer);
         }
 
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private static void OnLog(
             LogMessage logMessage,
             KafkaProducer producer,
@@ -247,6 +248,7 @@ namespace Silverback.Messaging.Broker.Callbacks
             }
         }
 
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         private static void OnLog(
             LogMessage logMessage,
             KafkaConsumer consumer,

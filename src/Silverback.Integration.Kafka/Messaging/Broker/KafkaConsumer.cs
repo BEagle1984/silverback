@@ -146,6 +146,8 @@ namespace Silverback.Messaging.Broker
             Task.Run(RestartConsumeLoopHandlerAsync);
         }
 
+        internal void OnPollTimeout() => RevertReadyStatus();
+
         internal async Task HandleMessageAsync(
             Message<byte[]?, byte[]?> message,
             TopicPartitionOffset topicPartitionOffset)

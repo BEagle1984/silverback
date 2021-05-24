@@ -8,6 +8,7 @@ using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -139,6 +140,56 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             consumer.IsConnected.Should().BeFalse();
             consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Disconnected);
+        }
+
+        [Fact]
+        public async Task StatusInfo_PollTimeout_StatusReverted()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            })))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run(waitUntilBrokerConnected: false);
+
+            var consumer = (KafkaConsumer)Helper.Broker.Consumers[0];
+
+            await AsyncTestingUtil.WaitAsync(() => consumer.StatusInfo.Status == ConsumerStatus.Ready);
+            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Ready);
+
+            // Simulate a local poll timeout
+            var timeoutMonitor = (KafkaConsumerLocalTimeoutMonitor)Host.ServiceProvider
+                .GetServices<IBrokerCallback>()
+                .Single(service => service is KafkaConsumerLocalTimeoutMonitor);
+            timeoutMonitor.OnConsumerLog(
+                new LogMessage(
+                    "rdkafka#consumer-1",
+                    SyslogLevel.Warning,
+                    "MAXPOLL",
+                    "[thrd:main]: Application maximum poll interval (10000ms) exceeded by 89ms (adjust max.poll.interval.ms for long-running message processing): leaving group"),
+                consumer);
+
+            consumer.IsConnected.Should().BeTrue();
+            consumer.StatusInfo.Status.Should().Be(ConsumerStatus.Connected);
         }
 
         [Fact]
