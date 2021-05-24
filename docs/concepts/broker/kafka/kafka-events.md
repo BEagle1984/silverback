@@ -16,6 +16,7 @@ These callbacks are available:
 * <xref:Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback>
 * <xref:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback>
 * <xref:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerStatisticsCallback>
+* <xref:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback>
 
 ### Offset reset example
 
@@ -53,6 +54,7 @@ public class ResetOffsetPartitionsAssignedCallbackHandler
 
 These callbacks are available:
 * <xref:Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback>
+* <xref:Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback>
 
 ## See also
 

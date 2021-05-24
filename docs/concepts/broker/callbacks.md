@@ -8,7 +8,7 @@ The callbacks are used to notify some events happening during the lifecycle of a
 
 An interface has to be implemented by the callback handler that is then registered via the `Add*BrokerCallbacksHandler` methods.
 
-The only generic callback, invoked for any of the actual broke implementation is:
+The only generic callback, invoked for any of the actual broker implementation is:
 * <xref:Silverback.Messaging.Broker.Callbacks.IEndpointsConfiguredCallback>
 
 Some broker specific callbacks may be added by the specific broker implementation (see <xref:kafka-events> and <xref:mqtt-events>).

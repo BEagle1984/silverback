@@ -9,6 +9,16 @@ uid: releases
 ### What's new
 
 * Add new ways to configure headers and kafka key (see <xref:headers> and <xref:kafka-partitioning>)
+* New callbacks for Kafka log events (see <xref:kafka-events>)
+* Improve consumer status tracking introducing [ConsumerStatus.Ready](xref:Silverback.Messaging.Broker.ConsumerStatus)
+  * Revert the Kafka consumer status from `Ready` to `Connected` whenever:
+    * partitions are revoked
+    * a poll timeout occurs
+  * Adapt consumer health check to monitor the new status and report unhealthy if not `Ready` (see [Health Monitoring](xref:message-broker#health-monitoring))
+
+### Fixes
+
+* Prevent possible race condition causing messages to be skipped when a `RetryPolicy` kicks in for messages from multiple Kafka partitions simultaneously 
 
 ## [3.0.1](https://github.com/BEagle1984/silverback/releases/tag/v3.0.1)
 
@@ -46,7 +56,7 @@ uid: releases
 * Improve (distributed) tracing (see <xref:logging>)
 * Allow header names customization (see <xref:headers>)
 * Add consumer status information and statistics (see <xref:message-broker#consumer-management-api>)
-* Add basic consumers health check (see <xref:message-broker#health-monitoring>)
+* Add basic consumer health check (see [Health Monitoring](xref:message-broker#health-monitoring))
 * Allow broker behaviors to be registered as transient, meaning that an instance will be created per each producer or consumer (see <xref:broker-behaviors>)
 * Improve code quality
   * Enhance CI pipeline to use Roslyn analyzers
