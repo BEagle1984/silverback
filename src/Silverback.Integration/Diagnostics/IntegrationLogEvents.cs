@@ -277,6 +277,15 @@ namespace Silverback.Diagnostics
             "Error occurred while stopping the consumer.");
 
         /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown
+        ///     reconnecting the consumer (auto recovery from errors).
+        /// </summary>
+        public static LogEvent ErrorReconnectingConsumer { get; } = new(
+            LogLevel.Warning,
+            GetEventId(131, nameof(ErrorReconnectingConsumer)),
+            "Failed to reconnect the consumer. Will retry in {retryDelay} milliseconds.");
+
+        /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when the producer is connected to
         ///     the endpoint and ready to produce.
         /// </summary>
@@ -418,7 +427,7 @@ namespace Silverback.Diagnostics
             LogLevel.Warning,
             GetEventId(51, nameof(RollbackToRetryFailed)),
             "Error occurred while rolling back, the retry error policy cannot be applied. " +
-            "The consumer will be reset.");
+            "The consumer will be reconnected.");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when a the rollback initiated by
@@ -429,7 +438,7 @@ namespace Silverback.Diagnostics
             LogLevel.Warning,
             GetEventId(52, nameof(RollbackToSkipFailed)),
             "Error occurred while rolling back or committing, the skip message error policy " +
-            "cannot be applied. The consumer will be reset.");
+            "cannot be applied. The consumer will be reconnected.");
 
         /// <summary>
         ///     Reserved, not used anymore.

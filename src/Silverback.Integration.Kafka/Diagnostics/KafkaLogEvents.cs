@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Diagnostics.CodeAnalysis;
+using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Silverback.Messaging.Broker;
 
@@ -34,7 +36,7 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when a
-        ///     <see cref="KafkaExceptionAutoRecovery" /> is thrown inside the <c>Consume</c> method. The consumer
+        ///     <see cref="KafkaException" /> is thrown inside the <c>Consume</c> method. The consumer
         ///     will automatically recover from these exceptions (<c>EnableAutoRecovery</c> is <c>true</c>).
         /// </summary>
         public static LogEvent KafkaExceptionAutoRecovery { get; } = new(
@@ -44,24 +46,26 @@ namespace Silverback.Diagnostics
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when a
-        ///     <see cref="KafkaExceptionAutoRecovery" /> is thrown inside the <c>Consume</c> method. The consumer
+        ///     <see cref="KafkaException" /> is thrown inside the <c>Consume</c> method. The consumer
         ///     will be stopped (<c>EnableAutoRecovery</c> is <c>false</c>).
         /// </summary>
         public static LogEvent KafkaExceptionNoAutoRecovery { get; } = new(
             LogLevel.Error,
             GetEventId(14, nameof(KafkaExceptionNoAutoRecovery)),
             "An error occurred while trying to pull the next message. The consumer will be stopped. " +
-            "Enable auto recovery to allow Silverback to automatically try to reconnect " +
+            "Enable auto recovery to allow Silverback to automatically try to recover " +
             "(EnableAutoRecovery=true in the consumer configuration).");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when the
         ///     <see cref="KafkaConsumer" /> is unable to recover from the <see cref="KafkaExceptionAutoRecovery" />.
         /// </summary>
+        [SuppressMessage("", "SA1623", Justification = "Reserved id")]
+        [Obsolete("Not used anymore.", true)]
         public static LogEvent ErrorRecoveringFromKafkaException { get; } = new(
             LogLevel.Warning,
             GetEventId(15, nameof(ErrorRecoveringFromKafkaException)),
-            "Failed to recover from consumer exception. Will retry in {retryDelay} milliseconds.");
+            "Not used anymore.");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when the <c>Consume</c> is aborted
@@ -231,6 +235,26 @@ namespace Silverback.Diagnostics
             LogLevel.Warning,
             GetEventId(50, nameof(ConfluentConsumerDisconnectError)),
             "An error occurred while disconnecting the consumer.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a poll timeout is notified.
+        ///     The consumer will automatically recover from these situation (<c>EnableAutoRecovery</c> is <c>true</c>).
+        /// </summary>
+        public static LogEvent PollTimeoutAutoRecovery { get; } = new(
+            LogLevel.Warning,
+            GetEventId(60, nameof(PollTimeoutAutoRecovery)),
+            "{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. -> The consumer will try to recover.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when a poll timeout is notified.
+        ///     The consumer will be stopped (<c>EnableAutoRecovery</c> is <c>false</c>).
+        /// </summary>
+        public static LogEvent PollTimeoutNoAutoRecovery { get; } = new(
+            LogLevel.Error,
+            GetEventId(61, nameof(PollTimeoutNoAutoRecovery)),
+            "{sysLogLevel} event from Confluent.Kafka consumer: '{logMessage}'. -> Enable auto recovery to " +
+            "allow Silverback to automatically try to recover (EnableAutoRecovery=true in the consumer " +
+            "configuration).");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when a log event is received from

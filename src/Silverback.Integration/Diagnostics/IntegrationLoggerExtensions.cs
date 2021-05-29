@@ -142,6 +142,11 @@ namespace Silverback.Diagnostics
                 SilverbackLoggerMessage.Define<string, string>(
                     EnrichConsumerLogEvent(IntegrationLogEvents.ConsumerStopError));
 
+        private static readonly Action<ILogger, double, string, string, Exception?>
+            ErrorReconnectingConsumer =
+                SilverbackLoggerMessage.Define<double, string, string>(
+                    EnrichConsumerLogEvent(IntegrationLogEvents.ErrorReconnectingConsumer));
+
         private static readonly Action<ILogger, string, string, Exception?>
             ProducerConnected =
                 SilverbackLoggerMessage.Define<string, string>(
@@ -400,6 +405,18 @@ namespace Silverback.Diagnostics
             IConsumer consumer,
             Exception exception) =>
             ConsumerStopError(logger.InnerLogger, consumer.Id, consumer.Endpoint.Name, exception);
+
+        public static void LogErrorReconnectingConsumer(
+            this ISilverbackLogger logger,
+            TimeSpan retryDelay,
+            IConsumer consumer,
+            Exception exception) =>
+            ErrorReconnectingConsumer(
+                logger.InnerLogger,
+                retryDelay.TotalMilliseconds,
+                consumer.Id,
+                consumer.Endpoint.Name,
+                exception);
 
         public static void LogProducerConnected(
             this ISilverbackLogger logger,

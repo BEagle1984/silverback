@@ -16,8 +16,11 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IKafkaConsumerLogCallback.OnConsumerLog" />
         public bool OnConsumerLog(LogMessage logMessage, KafkaConsumer consumer)
         {
-            if (logMessage?.Facility == "MAXPOLL")
-                consumer?.OnPollTimeout();
+            if (consumer == null || logMessage == null)
+                return false;
+
+            if (logMessage.Facility == "MAXPOLL")
+                return consumer.OnPollTimeout(logMessage);
 
             return false;
         }

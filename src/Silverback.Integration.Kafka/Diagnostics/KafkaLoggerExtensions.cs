@@ -32,12 +32,6 @@ namespace Silverback.Diagnostics
                     IntegrationLoggerExtensions.EnrichConsumerLogEvent(
                         KafkaLogEvents.KafkaExceptionNoAutoRecovery));
 
-        private static readonly Action<ILogger, double, string, string, Exception?>
-            ErrorRecoveringFromKafkaException =
-                SilverbackLoggerMessage.Define<double, string, string>(
-                    IntegrationLoggerExtensions.EnrichConsumerLogEvent(
-                        KafkaLogEvents.ErrorRecoveringFromKafkaException));
-
         private static readonly Action<ILogger, string, string, Exception?>
             ConsumingCanceled =
                 SilverbackLoggerMessage.Define<string, string>(
@@ -105,14 +99,12 @@ namespace Silverback.Diagnostics
         private static readonly Action<ILogger, string, string, Exception?>
             KafkaConsumerLogHandlerError =
                 SilverbackLoggerMessage.Define<string, string>(
-                    IntegrationLoggerExtensions.EnrichConsumerLogEvent(
-                        KafkaLogEvents.KafkaLogHandlerError));
+                    IntegrationLoggerExtensions.EnrichConsumerLogEvent(KafkaLogEvents.KafkaLogHandlerError));
 
         private static readonly Action<ILogger, string, string, Exception?>
             KafkaProducerLogHandlerError =
                 SilverbackLoggerMessage.Define<string, string>(
-                    IntegrationLoggerExtensions.EnrichProducerLogEvent(
-                        KafkaLogEvents.KafkaLogHandlerError));
+                    IntegrationLoggerExtensions.EnrichProducerLogEvent(KafkaLogEvents.KafkaLogHandlerError));
 
         private static readonly Action<ILogger, string, string, string, Exception?>
             ConsumerStatisticsReceived =
@@ -148,6 +140,18 @@ namespace Silverback.Diagnostics
                 SilverbackLoggerMessage.Define<string, string>(
                     IntegrationLoggerExtensions.EnrichConsumerLogEvent(
                         KafkaLogEvents.ConfluentConsumerDisconnectError));
+
+        private static readonly Action<ILogger, string, string, string, string, Exception?>
+            PollTimeoutAutoRecovery =
+                SilverbackLoggerMessage.Define<string, string, string, string>(
+                    IntegrationLoggerExtensions.EnrichConsumerLogEvent(
+                        KafkaLogEvents.PollTimeoutAutoRecovery));
+
+        private static readonly Action<ILogger, string, string, string, string, Exception?>
+            PollTimeoutNoAutoRecovery =
+                SilverbackLoggerMessage.Define<string, string, string, string>(
+                    IntegrationLoggerExtensions.EnrichConsumerLogEvent(
+                        KafkaLogEvents.PollTimeoutNoAutoRecovery));
 
         private static readonly Action<ILogger, string, string, string, string, Exception?>
             ConfluentProducerLogCritical =
@@ -251,18 +255,6 @@ namespace Silverback.Diagnostics
             Exception exception) =>
             KafkaExceptionNoAutoRecovery(
                 logger.InnerLogger,
-                consumer.Id,
-                consumer.Endpoint.Name,
-                exception);
-
-        public static void LogErrorRecoveringFromKafkaException(
-            this ISilverbackLogger logger,
-            TimeSpan retryDelay,
-            KafkaConsumer consumer,
-            Exception exception) =>
-            ErrorRecoveringFromKafkaException(
-                logger.InnerLogger,
-                retryDelay.TotalMilliseconds,
                 consumer.Id,
                 consumer.Endpoint.Name,
                 exception);
@@ -472,6 +464,30 @@ namespace Silverback.Diagnostics
                 consumer.Id,
                 consumer.Endpoint.Name,
                 exception);
+
+        public static void LogPollTimeoutAutoRecovery(
+            this ISilverbackLogger logger,
+            LogMessage logMessage,
+            KafkaConsumer consumer) =>
+            PollTimeoutAutoRecovery(
+                logger.InnerLogger,
+                logMessage.Level.ToString(),
+                logMessage.Message,
+                consumer.Id,
+                consumer.Endpoint.Name,
+                null);
+
+        public static void LogPollTimeoutNoAutoRecovery(
+            this ISilverbackLogger logger,
+            LogMessage logMessage,
+            KafkaConsumer consumer) =>
+            PollTimeoutNoAutoRecovery(
+                logger.InnerLogger,
+                logMessage.Level.ToString(),
+                logMessage.Message,
+                consumer.Id,
+                consumer.Endpoint.Name,
+                null);
 
         public static void LogConfluentProducerLogCritical(
             this ISilverbackLogger logger,

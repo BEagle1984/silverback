@@ -40,8 +40,9 @@ namespace Silverback.Messaging.Configuration.Kafka
         public int CommitOffsetEach { get; set; } = -1;
 
         /// <summary>
-        ///     Specifies whether the consumer has to be automatically restarted if a <see cref="KafkaException" />
-        ///     is thrown while polling/consuming. The default is <c>true</c>.
+        ///     Specifies whether the consumer has to be automatically recycled when a <see cref="KafkaException" />
+        ///     is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported). The default
+        ///     is <c>true</c>.
         /// </summary>
         public bool EnableAutoRecovery { get; set; } = true;
 

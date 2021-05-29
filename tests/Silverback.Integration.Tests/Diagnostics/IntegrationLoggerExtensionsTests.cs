@@ -383,6 +383,24 @@ namespace Silverback.Tests.Integration.Diagnostics
         }
 
         [Fact]
+        public void LogErrorReconnectingConsumer_Logged()
+        {
+            var consumer = _serviceProvider.GetRequiredService<TestBroker>()
+                .AddConsumer(TestConsumerEndpoint.GetDefault());
+
+            var expectedMessage =
+                "Failed to reconnect the consumer. Will retry in 42000 milliseconds. | " +
+                $"consumerId: {consumer.Id}, endpointName: test";
+
+            _silverbackLogger.LogErrorReconnectingConsumer(
+                TimeSpan.FromSeconds(42),
+                consumer,
+                new InvalidProgramException());
+
+            _loggerSubstitute.Received(LogLevel.Warning, typeof(InvalidProgramException), expectedMessage, 1131);
+        }
+
+        [Fact]
         public void LogProducerConnected_Logged()
         {
             var producer = _serviceProvider.GetRequiredService<TestBroker>()

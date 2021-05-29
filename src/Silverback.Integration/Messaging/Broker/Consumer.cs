@@ -19,6 +19,8 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="IConsumer" />
     public abstract class Consumer : IConsumer, IDisposable
     {
+        private static readonly TimeSpan ReconnectRetryDelay = TimeSpan.FromSeconds(5);
+
         private readonly IReadOnlyList<IConsumerBehavior> _behaviors;
 
         private readonly ISilverbackLogger<Consumer> _logger;
@@ -28,7 +30,13 @@ namespace Silverback.Messaging.Broker
         private readonly ConcurrentDictionary<IBrokerMessageIdentifier, int>
             _failedAttemptsDictionary = new();
 
+        private readonly object _reconnectLock = new();
+
         private Task? _connectTask;
+
+        private bool _isReconnecting;
+
+        private bool _disposed;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
@@ -181,6 +189,7 @@ namespace Silverback.Messaging.Broker
                 SequenceStores.Clear();
 
                 IsConnected = false;
+
                 _statusInfo.SetDisconnected();
                 _logger.LogConsumerDisconnected(this);
             }
@@ -196,9 +205,18 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IConsumer.DisconnectAsync" />
+        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         public async Task TriggerReconnectAsync()
         {
-            IsDisconnecting = true;
+            lock (_reconnectLock)
+            {
+                if (_isReconnecting || _disposed)
+                    return;
+
+                _isReconnecting = true;
+            }
+
+            _logger.LogConsumerLowLevelTrace(this, "Triggering reconnect.");
 
             // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
             // but not started)
@@ -210,9 +228,23 @@ namespace Silverback.Messaging.Broker
             Task.Run(
                     async () =>
                     {
-                        await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
-                        await DisconnectAsync().ConfigureAwait(false);
-                        await ConnectAsync().ConfigureAwait(false);
+                        try
+                        {
+                            await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
+                            await DisconnectAsync().ConfigureAwait(false);
+                            await ConnectAsync().ConfigureAwait(false);
+
+                            _isReconnecting = false;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogErrorReconnectingConsumer(ReconnectRetryDelay, this, ex);
+
+                            await Task.Delay(ReconnectRetryDelay).ConfigureAwait(false);
+
+                            _isReconnecting = false;
+                            await TriggerReconnectAsync().ConfigureAwait(false);
+                        }
                     })
                 .FireAndForget();
         }
@@ -507,6 +539,8 @@ namespace Silverback.Messaging.Broker
         {
             if (!disposing)
                 return;
+
+            _disposed = true;
 
             try
             {

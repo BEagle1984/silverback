@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,8 +22,6 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
     public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint, KafkaOffset>
     {
-        private static readonly TimeSpan RecoveryDelay = TimeSpan.FromSeconds(5);
-
         private readonly IConfluentConsumerBuilder _confluentConsumerBuilder;
 
         private readonly IBrokerCallbacksInvoker _callbacksInvoker;
@@ -146,7 +143,21 @@ namespace Silverback.Messaging.Broker
             Task.Run(RestartConsumeLoopHandlerAsync);
         }
 
-        internal void OnPollTimeout() => RevertReadyStatus();
+        internal bool OnPollTimeout(LogMessage logMessage)
+        {
+            if (Endpoint.Configuration.EnableAutoRecovery)
+            {
+                _logger.LogPollTimeoutAutoRecovery(logMessage, this);
+                TriggerReconnectAsync().FireAndForget();
+            }
+            else
+            {
+                _logger.LogPollTimeoutNoAutoRecovery(logMessage, this);
+                RevertReadyStatus();
+            }
+
+            return true;
+        }
 
         internal async Task HandleMessageAsync(
             Message<byte[]?, byte[]?> message,
@@ -175,31 +186,6 @@ namespace Silverback.Messaging.Broker
                     topicPartitionOffset.Topic,
                     new KafkaOffset(topicPartitionOffset))
                 .ConfigureAwait(false);
-        }
-
-        internal bool AutoRecoveryIfEnabled(Exception ex, CancellationToken cancellationToken)
-        {
-            if (!Endpoint.Configuration.EnableAutoRecovery)
-            {
-                _logger.LogKafkaExceptionNoAutoRecovery(this, ex);
-                return false;
-            }
-
-            try
-            {
-                if (cancellationToken.IsCancellationRequested)
-                    return false;
-
-                _logger.LogKafkaExceptionAutoRecovery(this, ex);
-
-                ResetConfluentConsumer(cancellationToken);
-
-                return true;
-            }
-            catch (OperationCanceledException)
-            {
-                return false;
-            }
         }
 
         internal void CreateSequenceStores(int count)
@@ -530,27 +516,6 @@ namespace Silverback.Messaging.Broker
             }
 
             _confluentConsumer = null;
-        }
-
-        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private void ResetConfluentConsumer(CancellationToken cancellationToken)
-        {
-            while (true)
-            {
-                try
-                {
-                    DisposeConfluentConsumer();
-                    InitConfluentConsumer();
-
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogErrorRecoveringFromKafkaException(RecoveryDelay, this, ex);
-
-                    Task.Delay(RecoveryDelay, cancellationToken).Wait(cancellationToken);
-                }
-            }
         }
 
         private void StoreOffset(IEnumerable<TopicPartitionOffset> offsets)

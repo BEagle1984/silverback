@@ -125,7 +125,7 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
 
             var expectedMessage =
                 "An error occurred while trying to pull the next message. The consumer will be stopped. " +
-                "Enable auto recovery to allow Silverback to automatically try to reconnect " +
+                "Enable auto recovery to allow Silverback to automatically try to recover " +
                 "(EnableAutoRecovery=true in the consumer configuration). | " +
                 $"consumerId: {consumer.Id}, endpointName: test";
 
@@ -134,24 +134,6 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 new KafkaException(ErrorCode.Local_Fail));
 
             _loggerSubstitute.Received(LogLevel.Error, typeof(KafkaException), expectedMessage, 2014);
-        }
-
-        [Fact]
-        public void LogErrorRecoveringFromKafkaException_Logged()
-        {
-            var consumer = (KafkaConsumer)_serviceProvider.GetRequiredService<KafkaBroker>()
-                .AddConsumer(_consumerEndpoint);
-
-            var expectedMessage =
-                "Failed to recover from consumer exception. Will retry in 42000 milliseconds. | " +
-                $"consumerId: {consumer.Id}, endpointName: test";
-
-            _silverbackLogger.LogErrorRecoveringFromKafkaException(
-                TimeSpan.FromSeconds(42),
-                consumer,
-                new KafkaException(ErrorCode.Local_Fail));
-
-            _loggerSubstitute.Received(LogLevel.Warning, typeof(KafkaException), expectedMessage, 2015);
         }
 
         [Fact]
@@ -433,6 +415,43 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
             _silverbackLogger.LogConfluentConsumerDisconnectError(consumer, new ArithmeticException());
 
             _loggerSubstitute.Received(LogLevel.Warning, typeof(ArithmeticException), expectedMessage, 2050);
+        }
+
+        [Fact]
+        public void LogPollTimeoutAutoRecovery_Logged()
+        {
+            var consumer = (KafkaConsumer)_serviceProvider.GetRequiredService<KafkaBroker>()
+                .AddConsumer(_consumerEndpoint);
+
+            var expectedMessage =
+                "Warning event from Confluent.Kafka consumer: 'Poll timeout'. " +
+                "-> The consumer will try to recover. | " +
+                $"consumerId: {consumer.Id}, endpointName: test";
+
+            _silverbackLogger.LogPollTimeoutAutoRecovery(
+                new LogMessage("-", SyslogLevel.Warning, "-", "Poll timeout"),
+                consumer);
+
+            _loggerSubstitute.Received(LogLevel.Warning, null, expectedMessage, 2060);
+        }
+
+        [Fact]
+        public void LogPollTimeoutNoAutoRecovery_Logged()
+        {
+            var consumer = (KafkaConsumer)_serviceProvider.GetRequiredService<KafkaBroker>()
+                .AddConsumer(_consumerEndpoint);
+
+            var expectedMessage =
+                "Warning event from Confluent.Kafka consumer: 'Poll timeout'. " +
+                "-> Enable auto recovery to allow Silverback to automatically try to recover " +
+                "(EnableAutoRecovery=true in the consumer configuration). | " +
+                $"consumerId: {consumer.Id}, endpointName: test";
+
+            _silverbackLogger.LogPollTimeoutNoAutoRecovery(
+                new LogMessage("-", SyslogLevel.Warning, "-", "Poll timeout"),
+                consumer);
+
+            _loggerSubstitute.Received(LogLevel.Error, null, expectedMessage, 2061);
         }
 
         [Fact]

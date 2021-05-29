@@ -11,14 +11,13 @@ uid: releases
 * Add new ways to configure headers and kafka key (see <xref:headers> and <xref:kafka-partitioning>)
 * New callbacks for Kafka log events (see <xref:kafka-events>)
 * Improve consumer status tracking introducing [ConsumerStatus.Ready](xref:Silverback.Messaging.Broker.ConsumerStatus)
-  * Revert the Kafka consumer status from `Ready` to `Connected` whenever:
-    * partitions are revoked
-    * a poll timeout occurs
-  * Adapt consumer health check to monitor the new status and report unhealthy if not `Ready` (see [Health Monitoring](xref:message-broker#health-monitoring))
+    * Revert the Kafka consumer status from `Ready` to `Connected` whenever partitions are revoked or a poll timeout occurs
+    * Adapt consumer health check to monitor the new status and report unhealthy if not `Ready` (see [Health Monitoring](xref:message-broker#health-monitoring))
+* Try to automatically recover from Kafka maximum poll interval exceed errors
 
 ### Fixes
 
-* Prevent possible race condition causing messages to be skipped when a `RetryPolicy` kicks in for messages from multiple Kafka partitions simultaneously 
+* Prevent possible race condition causing messages to be skipped when a `RetryPolicy` kicks in for messages from multiple Kafka partitions simultaneously
 
 ## [3.0.1](https://github.com/BEagle1984/silverback/releases/tag/v3.0.1)
 
@@ -31,22 +30,22 @@ uid: releases
 ### What's new
 
 * Add support for MQTT (see <xref:message-broker>, <xref:inbound>, <xref:outbound>, ...)
-* Simplify configuration and reduce boiler plate (see <xref:subscribe> and <xref:message-broker>)
-  * Simplify subscribers registration and get rid of the _ISubscriber_ interface (see <xref:subscribe>)
-  * Scan subscribers automatically at startup to reduce cost of first message
-  * Connect brokers and handle graceful shutdown automatically (see <xref:message-broker>)
-  * Improve endpoints configuration API (see <xref:message-broker>)
-  * Add [IServiceCollection.ConfigureSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions) extension method to conveniently split the configuration code (see <xref:enabling-silverback>)
+* Simplify configuration and reduce boilerplate (see <xref:subscribe> and <xref:message-broker>)
+    * Simplify subscribers registration and get rid of the _ISubscriber_ interface (see <xref:subscribe>)
+    * Scan subscribers automatically at startup to reduce cost of first message
+    * Connect brokers and handle graceful shutdown automatically (see <xref:message-broker>)
+    * Improve endpoints configuration API (see <xref:message-broker>)
+    * Add [IServiceCollection.ConfigureSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions) extension method to conveniently split the configuration code (see <xref:enabling-silverback>)
 * Refactor Silverback.Integration to support streaming
-  * Create <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> (see <xref:streaming>)
-  * Improve chunking support in conjunction with streaming, requiring only one chunk at a time to be loaded into memory
-  * Redesign sequences handling to support chunking, batch consuming and future sequences as well
+    * Create <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> (see <xref:streaming>)
+    * Improve chunking support in conjunction with streaming, requiring only one chunk at a time to be loaded into memory
+    * Redesign sequences handling to support chunking, batch consuming and future sequences as well
 * Improve Kafka partitions handling (see <xref:kafka-partitioning>)
-  * Process partitions independently and concurrently
-  * Add setting to produce to a specific partition
-  * Add setting to manually assign the consumer partitions
+    * Process partitions independently and concurrently
+    * Add setting to produce to a specific partition
+    * Add setting to manually assign the consumer partitions
 * Add option to throw an exception if no subscriber is handling a message that was published to the internal bus or was consumed from a message broker (see `throwIfUnhandled` argument in the <xref:Silverback.Messaging.Publishing.IPublisher> methods and [ThrowIfUnhandled](xref:Silverback.Messaging.IConsumerEndpoint#Silverback_Messaging_IConsumerEndpoint_ThrowIfUnhandled) property in the <xref:Silverback.Messaging.IConsumerEndpoint>)
-* Handle null messages as <xref:Silverback.Messaging.Messages.Tombstone>/<xref:Silverback.Messaging.Messages.Tombstone`1> (see <xref:tombstone>) 
+* Handle null messages as <xref:Silverback.Messaging.Messages.Tombstone>/<xref:Silverback.Messaging.Messages.Tombstone`1> (see <xref:tombstone>)
 * Replace [Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json) with [System.Text.Json](https://www.nuget.org/packages/System.Text.Json) to improve serialization and deserialization performance (the old serializers have been moved into the [Silverback.Integration.Newtonsoft](https://www.nuget.org/packages/Silverback.Integration.Newtonsoft) package, see <xref:serialization>)
 * Improve outbound routing customization options with endpoint name resolvers (see <xref:outbound-routing>)
 * Add non-blocking `Produce`/`ProduceAsync`/`RawProduce`/`RawProduceAsync` overloads to <xref:Silverback.Messaging.Broker.IProducer>, better suitable for higher throughput scenarios (see <xref:producer>)
@@ -59,12 +58,12 @@ uid: releases
 * Add basic consumer health check (see [Health Monitoring](xref:message-broker#health-monitoring))
 * Allow broker behaviors to be registered as transient, meaning that an instance will be created per each producer or consumer (see <xref:broker-behaviors>)
 * Improve code quality
-  * Enhance CI pipeline to use Roslyn analyzers
-  * Integrate [SonarCloud](https://sonarcloud.io/dashboard?id=silverback))
-  * Improve integration tests
-  * Increase automated tests coverage
-  * Enable nullable reference types and adjust all API
-  * Document the entire public API (see [API Documentation](~/api/Microsoft.Extensions.DependencyInjection.html))
+    * Enhance CI pipeline to use Roslyn analyzers
+    * Integrate [SonarCloud](https://sonarcloud.io/dashboard?id=silverback))
+    * Improve integration tests
+    * Increase automated tests coverage
+    * Enable nullable reference types and adjust all API
+    * Document the entire public API (see [API Documentation](~/api/Microsoft.Extensions.DependencyInjection.html))
 * Released some utilities to help writing automated tests involving Silverback.Integration (see <xref:testing>)
 * Upgrade to [Confluent.Kafka 1.6.2](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.6.2)
 * Upgrade to [RabbitMQ.Client 6.2.1](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.2.1)
@@ -76,15 +75,15 @@ uid: releases
 ### Breaking Changes
 
 * Refactored <xref:Silverback.Messaging.Publishing.IPublisher>
-  * Removed the overloads to publish a batch of messages (see <xref:publish>)
-  * Cannot subscribe to collection of messages anymore (see <xref:subscribe>), unless they are consumed from a message broker (see <xref:streaming>)
+    * Removed the overloads to publish a batch of messages (see <xref:publish>)
+    * Cannot subscribe to collection of messages anymore (see <xref:subscribe>), unless they are consumed from a message broker (see <xref:streaming>)
 * The chunks belonging to the same message must be contiguous (interleaved messages are at the moment not supported anymore) and in the same partition in case of Kafka
 * Removed _ISubscriber_ interface
 * Removed _BusConfigurator_ (moved all the configuration into the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> extension methods)
-  * Replaced _BusConfigurator.Connect_ with [ISilverbackBuilder.AddEndpointsConfigurator](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddEndpointsConfiguratorExtensions) and [ISilverbackBuilder.AddEndpoints](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddEndpointsExtensions) (or [ISilverbackBuilder.AddKafkaEndpoints](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddKafkaEndpointsExtensions) etc.) to configure the endpoints, while the broker is connected automatically at startup (see <xref:message-broker>)
-  * Replaced _BusConfigurator.Subscribe_ methods with [ISilverbackBuilder.AddDelegateSubscriber](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions) (see <xref:subscribe>)
-  * Replaced _BusConfigurator.HandleMessagesOfType_ methods with [ISilverbackBuilder.HandleMessageOfType](xref:Silverback.Messaging.Configuration.SilverbackBuilderHandleMessageOfTypeExtensions) (see <xref:subscribe>)
-  * _BusConfigurator.ScanSubscribers_ is not needed anymore since it gets called automatically at startup (from an [IHostedService](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.ihostedservice))
+    * Replaced _BusConfigurator.Connect_ with [ISilverbackBuilder.AddEndpointsConfigurator](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddEndpointsConfiguratorExtensions) and [ISilverbackBuilder.AddEndpoints](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddEndpointsExtensions) (or [ISilverbackBuilder.AddKafkaEndpoints](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddKafkaEndpointsExtensions) etc.) to configure the endpoints, while the broker is connected automatically at startup (see <xref:message-broker>)
+    * Replaced _BusConfigurator.Subscribe_ methods with [ISilverbackBuilder.AddDelegateSubscriber](xref:Microsoft.Extensions.DependencyInjection.SilverbackBuilderAddDelegateSubscriberExtensions) (see <xref:subscribe>)
+    * Replaced _BusConfigurator.HandleMessagesOfType_ methods with [ISilverbackBuilder.HandleMessageOfType](xref:Silverback.Messaging.Configuration.SilverbackBuilderHandleMessageOfTypeExtensions) (see <xref:subscribe>)
+    * _BusConfigurator.ScanSubscribers_ is not needed anymore since it gets called automatically at startup (from an [IHostedService](https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.ihostedservice))
 * Removed _IServiceCollection.Add*Subscriber_, _IServiceCollection.Add*Behavior_, _IServiceCollection.Add*BrokerBehavior_, _IServiceCollection.AddEndpointsConfigurator_, _IServiceCollection.Add*OutboundRouter_ extension methods, use the same methods on the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> (using [IServiceCollection.ConfigureSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions) to get an instance if the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> if necessary, as shown in  <xref:enabling-silverback>)
 * Removed _IBrokerOptionsBuilder.Add*BrokerBehavior_, _IBrokerOptionsBuilder.RegisterConfigurator_, _IBrokerOptionsBuilder.Add*OutboundRouter_ extension methods, use the same methods on the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> (using [IServiceCollection.ConfigureSilverback](xref:Microsoft.Extensions.DependencyInjection.ServiceCollectionConfigureSilverbackExtensions) to get an instance if the <xref:Silverback.Messaging.Configuration.ISilverbackBuilder> if necessary, as shown in  <xref:enabling-silverback>)
 * Reorganized the `Silverback.Messaging.Configuration` namespace moving some broker specific types under `Silverback.Messaging.Configuration.Kafka`, `Silverback.Messaging.Configuration.Rabbit` or `Silverback.Messaging.Configuration.Mqtt`
@@ -97,11 +96,11 @@ uid: releases
 * _IQueueProducer_ and _IQueueConsumer_ renamed to <xref:Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter> and <xref:Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxReader>
 * The messages with a null body are by default mapped to a <xref:Silverback.Messaging.Messages.Tombstone>/<xref:Silverback.Messaging.Messages.Tombstone`1> (see <xref:tombstone>)
 * Database:
-  * Moved all entities (used with Entity Framework Core) to the `Silverback.Database.Model` namespace
-  * Replaced _InboundMessage_ entity with <xref:Silverback.Database.Model.InboundLogEntry>
-  * Replaced _OutboundMessage_ entity with <xref:Silverback.Database.Model.OutboxMessage>
-  * Removed _TemporaryMessageChunk_
-  * Modified schema of <xref:Silverback.Database.Model.StoredOffset> entity
+    * Moved all entities (used with Entity Framework Core) to the `Silverback.Database.Model` namespace
+    * Replaced _InboundMessage_ entity with <xref:Silverback.Database.Model.InboundLogEntry>
+    * Replaced _OutboundMessage_ entity with <xref:Silverback.Database.Model.OutboxMessage>
+    * Removed _TemporaryMessageChunk_
+    * Modified schema of <xref:Silverback.Database.Model.StoredOffset> entity
 * Moved and renamed some internally used types (e.g. _QueuedMessage_, _DbQueuedMessage_, ...)
 * Complete redesign of the error policies
 * Removed _IMessageIdProvider_ and all related logic: the `Id` or `MessageId` property will not be automatically initialized anymore and its value will not be used as identifier for the outbound message anymore (refer to the <xref:message-id> page for further details on how to set a custom message id, if needed)
@@ -115,18 +114,18 @@ uid: releases
 * Removed `Parallel` option from <xref:Silverback.Messaging.Subscribers.SubscribeAttribute>
 * Renamed `Offset` to a more generic `BrokerMessageIdentifier` in the [Silverback.Integration](https://www.nuget.org/packages/Silverback.Integration) abstractions (including the envelopes)
 * Some changes to the behaviors:
-  * Renamed `Handle` to `HandleAsync` in the <xref:Silverback.Messaging.Publishing.IBehavior>, <xref:Silverback.Messaging.Broker.Behaviors.IProducerBehavior> and <xref:Silverback.Messaging.Broker.Behaviors.IConsumerBehavior>
-  * Changed signature of the `HandleAsync` method (see <xref:behaviors> and <xref:broker-behaviors>)
-  * Changed some sort indexes and introduced some new broker behaviors, you may need to adjust the sort index of your custom behaviors (see <xref:broker-behaviors> for the updated list of built-in behaviors)
+    * Renamed `Handle` to `HandleAsync` in the <xref:Silverback.Messaging.Publishing.IBehavior>, <xref:Silverback.Messaging.Broker.Behaviors.IProducerBehavior> and <xref:Silverback.Messaging.Broker.Behaviors.IConsumerBehavior>
+    * Changed signature of the `HandleAsync` method (see <xref:behaviors> and <xref:broker-behaviors>)
+    * Changed some sort indexes and introduced some new broker behaviors, you may need to adjust the sort index of your custom behaviors (see <xref:broker-behaviors> for the updated list of built-in behaviors)
 * Replaced _IBroker.Connect_ and _IBroker.Disconnect_ with [IBroker.ConnectAsync](xref:Silverback.Messaging.Broker.IBroker#Silverback_Messaging_Broker_IBroker_ConnectAsync) and [IBroker.DisconnectAsync](xref:Silverback.Messaging.Broker.IBroker#Silverback_Messaging_Broker_IBroker_DisconnectAsync)
 * Some major changes to batch consuming:
-  * Removed all batch events (_BatchStartedEvent_, _BatchCompleteEvent_, _BatchProcessedEvent_, _BatchAbortedEvent_), refer to <xref:streaming> to learn how to leverage the new <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1>
-  * Setting the batch size to 1 doesn't disable batching anymore, set the `Batch` to `null` in the <xref:Silverback.Messaging.ConsumerEndpoint> to disable it
-  * When batching is enabled the messages can be subscribed only via the <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> (see <xref:streaming>), the subscribers to the single messages will not be invoked
+    * Removed all batch events (_BatchStartedEvent_, _BatchCompleteEvent_, _BatchProcessedEvent_, _BatchAbortedEvent_), refer to <xref:streaming> to learn how to leverage the new <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1>
+    * Setting the batch size to 1 doesn't disable batching anymore, set the `Batch` to `null` in the <xref:Silverback.Messaging.ConsumerEndpoint> to disable it
+    * When batching is enabled the messages can be subscribed only via the <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> (see <xref:streaming>), the subscribers to the single messages will not be invoked
 * <xref:Silverback.Messaging.Sequences.Chunking.ChunkSettings> moved from `Silverback.Messaging.LargeMessages` namespace to `Silverback.Messaging.Sequences.Chunking`
 * Replaced _CoreEventIds_, _IntegrationEventIds_, _KafkaEventIds_ and _RabbitEventIds_ with <xref:Silverback.Diagnostics.CoreLogEvents>, <xref:Silverback.Diagnostics.IntegrationLogEvents>, <xref:Silverback.Diagnostics.KafkaLogEvents> and <xref:Silverback.Diagnostics.RabbitLogEvents> (see also <xref:logging>)
 * Deprecated support for Entity Framework 2, only the version 3.0.1 of [Silverback.Core.EntityFrameworkCore](https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore) will work with Silverback 3.0.0
-* Modified message encryption for chunked messages and it will not be compatible with previous versions of Silverback (affects chunking+encryption only) 
+* Modified message encryption for chunked messages and it will not be compatible with previous versions of Silverback (affects chunking+encryption only)
 
 ## [2.2.0](https://github.com/BEagle1984/silverback/releases/tag/v2.2.0)
 
@@ -229,8 +228,8 @@ These aren't real breaking changes but some methods have been marked as deprecat
 ### Fixes
 
 * Fix mortal loop issue: it is finally safe to consume and produce the same type of messages from within the same process (in a natural way, without any extra configuration)
-  * Since version [1.0.0](#100) the messages routed to an endpoint aren't forwarded to any subscriber directly
-  * Now the inbound connector has been fixed as well, preventing the inbound messages to be immediately routed once again to the outbound endpoint and eliminating all possible causes of mortal loops
+    * Since version [1.0.0](#100) the messages routed to an endpoint aren't forwarded to any subscriber directly
+    * Now the inbound connector has been fixed as well, preventing the inbound messages to be immediately routed once again to the outbound endpoint and eliminating all possible causes of mortal loops
 
 ## [1.0.3](https://github.com/BEagle1984/silverback/releases/tag/v1.0.3)
 

@@ -184,11 +184,27 @@ namespace Silverback.Messaging.Broker.Kafka
             }
             catch (Exception ex) when (ex is not ChannelClosedException)
             {
-                if (!_consumer.AutoRecoveryIfEnabled(ex, cancellationToken))
-                    return false;
+                AutoRecoveryIfEnabled(ex, cancellationToken);
+                return false;
             }
 
             return true;
+        }
+
+        private void AutoRecoveryIfEnabled(Exception ex, CancellationToken cancellationToken)
+        {
+            if (!_consumer.Endpoint.Configuration.EnableAutoRecovery)
+            {
+                _logger.LogKafkaExceptionNoAutoRecovery(_consumer, ex);
+                return;
+            }
+
+            if (cancellationToken.IsCancellationRequested)
+                return;
+
+            _logger.LogKafkaExceptionAutoRecovery(_consumer, ex);
+
+            _consumer.TriggerReconnectAsync().FireAndForget();
         }
     }
 }
