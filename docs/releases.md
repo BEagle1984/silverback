@@ -15,6 +15,7 @@ uid: releases
     * Adapt consumer health check to monitor the new status and report unhealthy if not `Ready` (see [Health Monitoring](xref:message-broker#health-monitoring))
 * Try to automatically recover from Kafka maximum poll interval exceed errors
 * Upgrade to [Confluent.Kafka 1.7.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.7.0)
+* Upgrade to [MQTTnet 3.0.15](https://github.com/chkr1011/MQTTnet/releases/tag/v3.0.15)
 
 ### Fixes
 
