@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging.Subscribers;
 
 namespace Silverback.Messaging.Messages
@@ -36,6 +37,7 @@ namespace Silverback.Messaging.Messages
         /// <returns>
         ///     The linked <see cref="IMessageStreamEnumerable{TMessage}" />.
         /// </returns>
+        [SuppressMessage("", "VSTHRD200", Justification = "IMessageStreamEnumerable is both sync and async")]
         IMessageStreamEnumerable<object> CreateStream(
             Type messageType,
             IReadOnlyCollection<IMessageFilter>? filters = null);
@@ -53,6 +55,7 @@ namespace Silverback.Messaging.Messages
         /// <returns>
         ///     The linked <see cref="IMessageStreamEnumerable{TMessage}" />.
         /// </returns>
+        [SuppressMessage("", "VSTHRD200", Justification = "IMessageStreamEnumerable is both sync and async")]
         IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(
             IReadOnlyCollection<IMessageFilter>? filters = null);
 

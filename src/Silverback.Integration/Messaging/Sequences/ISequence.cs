@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -120,6 +121,7 @@ namespace Silverback.Messaging.Sequences
         /// <returns>
         ///     The <see cref="IMessageStreamEnumerable{TMessage}" />.
         /// </returns>
+        [SuppressMessage("", "VSTHRD200", Justification = "IMessageStreamEnumerable is both sync and async")]
         IMessageStreamEnumerable<TMessage> CreateStream<TMessage>(
             IReadOnlyCollection<IMessageFilter>? filters = null);
 
