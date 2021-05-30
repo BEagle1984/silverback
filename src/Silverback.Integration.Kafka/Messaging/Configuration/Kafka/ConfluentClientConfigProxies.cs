@@ -138,17 +138,6 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
-        ///     Non-topic request timeout in milliseconds. This is for metadata requests, etc.
-        ///     <br /><br />default: 60000
-        ///     <br />importance: low
-        /// </summary>
-        public int? MetadataRequestTimeoutMs
-        {
-            get => ConfluentConfig.MetadataRequestTimeoutMs;
-            set => ConfluentConfig.MetadataRequestTimeoutMs = value;
-        }
-
-        /// <summary>
         ///     Period of time in milliseconds at which topic and broker metadata is refreshed in order to proactively
         ///     discover any new brokers, topics, partitions or partition leader changes. Use -1 to disable the
         ///     intervalled refresh (not recommended). If there are no locally referenced topics (no topic objects
@@ -331,6 +320,19 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             get => ConfluentConfig.BrokerAddressFamily;
             set => ConfluentConfig.BrokerAddressFamily = value;
+        }
+
+        /// <summary>
+        ///     Close broker connections after the specified time of inactivity. Disable with 0. If this property is left
+        ///     at its default value some heuristics are performed to determine a suitable default value, this is
+        ///     currently limited to identifying brokers on Azure (see librdkafka issue #3109 for more info).
+        ///     <br /><br />default: 0
+        ///     <br />importance: medium
+        /// </summary>
+        public int? ConnectionsMaxIdleMs
+        {
+            get => ConfluentConfig.ConnectionsMaxIdleMs;
+            set => ConfluentConfig.ConnectionsMaxIdleMs = value;
         }
 
         /// <summary>
@@ -656,6 +658,28 @@ namespace Silverback.Messaging.Configuration.Kafka
         }
 
         /// <summary>
+        ///     Path to OpenSSL engine library. OpenSSL &gt;= 1.1.0 required.
+        ///     <br /><br />default: ''
+        ///     <br />importance: low
+        /// </summary>
+        public string SslEngineLocation
+        {
+            get => ConfluentConfig.SslEngineLocation;
+            set => ConfluentConfig.SslEngineLocation = value;
+        }
+
+        /// <summary>
+        ///     OpenSSL engine id is the name used for loading engine.
+        ///     <br /><br />default: dynamic
+        ///     <br />importance: low
+        /// </summary>
+        public string SslEngineId
+        {
+            get => ConfluentConfig.SslEngineId;
+            set => ConfluentConfig.SslEngineId = value;
+        }
+
+        /// <summary>
         ///     Enable OpenSSL's builtin broker (server) certificate verification. This verification can be extended by
         ///     the application by implementing a certificate_verify_cb.
         ///     <br /><br />default: true
@@ -940,7 +964,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     for a group member within the session timeout, the broker will remove the consumer from the group and
         ///     trigger a rebalance. The allowed range is configured with the **broker** configuration properties
         ///     `group.min.session.timeout.ms` and `group.max.session.timeout.ms`. Also see `max.poll.interval.ms`.
-        ///     <br /><br />default: 10000
+        ///     <br /><br />default: 45000
         ///     <br />importance: high
         /// </summary>
         public int? SessionTimeoutMs
@@ -1239,7 +1263,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     A comma separated list of fields that may be optionally set in delivery
         ///     reports. Disabling delivery report fields that you do not require will
         ///     improve maximum throughput and reduce memory usage. Allowed values:
-        ///     key, value, timestamp, headers, all, none.
+        ///     key, value, timestamp, headers, status, all, none.
         ///     <br /><br />default: all
         ///     <br />importance: low
         /// </summary>

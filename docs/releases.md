@@ -14,6 +14,7 @@ uid: releases
     * Revert the Kafka consumer status from `Ready` to `Connected` whenever partitions are revoked or a poll timeout occurs
     * Adapt consumer health check to monitor the new status and report unhealthy if not `Ready` (see [Health Monitoring](xref:message-broker#health-monitoring))
 * Try to automatically recover from Kafka maximum poll interval exceed errors
+* Upgrade to [Confluent.Kafka 1.7.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.7.0)
 
 ### Fixes
 
