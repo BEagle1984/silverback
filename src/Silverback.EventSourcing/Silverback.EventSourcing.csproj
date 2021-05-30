@@ -31,7 +31,7 @@ This package contains an implementation of an event store that perfectly integra
   </PropertyGroup>
 
   <ItemGroup>
-      <PackageReference Include="System.Text.Json" Version="5.0.1" />
+      <PackageReference Include="System.Text.Json" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
