@@ -19,7 +19,7 @@ namespace Silverback.Messaging.HealthChecks
     {
         private readonly IConsumersHealthCheckService _service;
 
-        private readonly ConsumerStatus _minStatus;
+        private readonly ConsumerStatus _minHealthyStatus;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConsumersHealthCheck" /> class.
@@ -27,15 +27,15 @@ namespace Silverback.Messaging.HealthChecks
         /// <param name="service">
         ///     The <see cref="IConsumersHealthCheckService" /> implementation to be used to check the consumers.
         /// </param>
-        /// <param name="minStatus">
-        ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered fully connected.
+        /// <param name="minHealthyStatus">
+        ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered healthy.
         /// </param>
         public ConsumersHealthCheck(
             IConsumersHealthCheckService service,
-            ConsumerStatus minStatus)
+            ConsumerStatus minHealthyStatus)
         {
             _service = service;
-            _minStatus = minStatus;
+            _minHealthyStatus = minHealthyStatus;
         }
 
         /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
@@ -46,7 +46,7 @@ namespace Silverback.Messaging.HealthChecks
             Check.NotNull(context, nameof(context));
 
             IReadOnlyCollection<IConsumer> disconnectedConsumers =
-                await _service.GetDisconnectedConsumersAsync(_minStatus).ConfigureAwait(false);
+                await _service.GetDisconnectedConsumersAsync(_minHealthyStatus).ConfigureAwait(false);
 
             if (disconnectedConsumers.Count == 0)
                 return new HealthCheckResult(HealthStatus.Healthy);

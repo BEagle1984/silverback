@@ -18,7 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class HealthCheckBuilderExtensions
     {
         /// <summary>
-        ///     Adds an health check that sends a ping message to all the outbound endpoints.
+        ///     Adds a health check that sends a ping message to all the outbound endpoints.
         /// </summary>
         /// <param name="builder">
         ///     The <see cref="IHealthChecksBuilder" />.
@@ -27,11 +27,11 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The health check name. If <c>null</c> the name 'OutboundEndpoints' will be used for the name.
         /// </param>
         /// <param name="failureStatus">
-        ///     The <see cref="HealthStatus" /> that should be reported when the health check fails. Optional. If
-        ///     <c>null</c> then the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
+        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
         /// </param>
         /// <param name="tags">
-        ///     A list of tags that can be used to filter sets of health checks. Optional.
+        ///     An optional list of tags that can be used for filtering health checks.
         /// </param>
         /// <returns>
         ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
@@ -60,7 +60,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds an health check that monitors the outbox, verifying that the messages are being processed.
+        ///     Adds a health check that monitors the outbox, verifying that the messages are being processed.
         /// </summary>
         /// <param name="builder">
         ///     The <see cref="IHealthChecksBuilder" />.
@@ -69,11 +69,11 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
         /// </param>
         /// <param name="failureStatus">
-        ///     The <see cref="HealthStatus" /> that should be reported when the health check fails. Optional. If
-        ///     <c>null</c> then the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
+        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
         /// </param>
         /// <param name="tags">
-        ///     A list of tags that can be used to filter sets of health checks. Optional.
+        ///     An optional list of tags that can be used for filtering health checks.
         /// </param>
         /// <returns>
         ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
@@ -101,7 +101,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds an health check that verifies that all consumers are connected.
+        ///     Adds a health check that verifies that all consumers are connected.
         /// </summary>
         /// <param name="builder">
         ///     The <see cref="IHealthChecksBuilder" />.
@@ -110,11 +110,11 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
         /// </param>
         /// <param name="failureStatus">
-        ///     The <see cref="HealthStatus" /> that should be reported when the health check fails. Optional. If
-        ///     <c>null</c> then the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
+        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
         /// </param>
         /// <param name="tags">
-        ///     A list of tags that can be used to filter sets of health checks. Optional.
+        ///     An optional list of tags that can be used for filtering health checks.
         /// </param>
         /// <returns>
         ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
@@ -127,30 +127,30 @@ namespace Microsoft.Extensions.DependencyInjection
             AddConsumersCheck(builder, ConsumerStatus.Ready, name, failureStatus, tags);
 
         /// <summary>
-        ///     Adds an health check that verifies that all consumers are connected.
+        ///     Adds a health check that verifies that all consumers are connected.
         /// </summary>
         /// <param name="builder">
         ///     The <see cref="IHealthChecksBuilder" />.
         /// </param>
-        /// <param name="minStatus">
-        ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered fully connected.
+        /// <param name="minHealthyStatus">
+        ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered healthy.
         /// </param>
         /// <param name="name">
         ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
         /// </param>
         /// <param name="failureStatus">
-        ///     The <see cref="HealthStatus" /> that should be reported when the health check fails. Optional. If
-        ///     <c>null</c> then the default status of <see cref="HealthStatus.Unhealthy" /> will be reported.
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
+        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
         /// </param>
         /// <param name="tags">
-        ///     A list of tags that can be used to filter sets of health checks. Optional.
+        ///     An optional list of tags that can be used for filtering health checks.
         /// </param>
         /// <returns>
         ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
         /// </returns>
         public static IHealthChecksBuilder AddConsumersCheck(
             this IHealthChecksBuilder builder,
-            ConsumerStatus minStatus,
+            ConsumerStatus minHealthyStatus,
             string name = "Consumers",
             HealthStatus? failureStatus = null,
             IEnumerable<string>? tags = null)
@@ -169,7 +169,7 @@ namespace Microsoft.Extensions.DependencyInjection
             IHealthCheck CreateService(IServiceProvider serviceProvider)
                 => new ConsumersHealthCheck(
                     serviceProvider.GetRequiredService<IConsumersHealthCheckService>(),
-                    minStatus);
+                    minHealthyStatus);
         }
     }
 }
