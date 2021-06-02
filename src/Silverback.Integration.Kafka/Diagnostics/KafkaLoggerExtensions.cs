@@ -261,12 +261,13 @@ namespace Silverback.Diagnostics
 
         public static void LogConsumingCanceled(
             this ISilverbackLogger logger,
-            KafkaConsumer consumer) =>
+            KafkaConsumer consumer,
+            Exception exception) =>
             ConsumingCanceled(
                 logger.InnerLogger,
                 consumer.Id,
                 consumer.Endpoint.Name,
-                null);
+                exception);
 
         public static void LogCreatingConfluentProducer(
             this ISilverbackLogger logger,

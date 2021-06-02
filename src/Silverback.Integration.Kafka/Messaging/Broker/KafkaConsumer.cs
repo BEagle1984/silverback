@@ -224,10 +224,6 @@ namespace Silverback.Messaging.Broker
                 // Set IsConsuming before calling the init methods, otherwise they don't start for real
                 IsConsuming = true;
 
-                // The consume loop must start immediately because the partitions assignment is received
-                // only after Consume is called
-                InitAndStartConsumeLoopHandler();
-
                 // Start reading from the channels right away in case of static partitions assignment or if
                 // the consumer is restarting and the partition assignment is set already
                 if (Endpoint.TopicPartitions != null ||
@@ -235,6 +231,10 @@ namespace Silverback.Messaging.Broker
                 {
                     InitAndStartChannelsManager(ConfluentConsumer.Assignment);
                 }
+
+                // The consume loop must start immediately because the partitions assignment is received
+                // only after Consume is called once
+                InitAndStartConsumeLoopHandler();
             }
 
             return Task.CompletedTask;

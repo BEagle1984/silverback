@@ -146,9 +146,9 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
                 "Consuming canceled. | " +
                 $"consumerId: {consumer.Id}, endpointName: test";
 
-            _silverbackLogger.LogConsumingCanceled(consumer);
+            _silverbackLogger.LogConsumingCanceled(consumer, new TimeoutException());
 
-            _loggerSubstitute.Received(LogLevel.Trace, null, expectedMessage, 2016);
+            _loggerSubstitute.Received(LogLevel.Trace, typeof(TimeoutException), expectedMessage, 2016);
         }
 
         [Fact]

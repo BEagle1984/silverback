@@ -110,9 +110,7 @@ namespace Silverback.Messaging.Broker
         {
             _clientWrapper = _clientFactory.GetClient(this);
 
-            _clientWrapper.ConnectAsync(this).FireAndForget();
-
-            return Task.CompletedTask;
+            return _clientWrapper.ConnectAsync(this);
         }
 
         /// <inheritdoc cref="Consumer.DisconnectCoreAsync" />

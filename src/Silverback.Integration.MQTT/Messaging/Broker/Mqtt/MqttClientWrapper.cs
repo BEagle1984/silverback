@@ -31,11 +31,11 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         private readonly List<object> _connectedObjects = new();
 
-        private TaskCompletionSource<bool> _connectingTaskCompletionSource = new();
-
         private CancellationTokenSource? _connectCancellationTokenSource;
 
         private MqttConsumer? _consumer;
+
+        private bool _isConnected;
 
         public MqttClientWrapper(
             IMqttClient mqttClient,
@@ -75,7 +75,7 @@ namespace Silverback.Messaging.Broker.Mqtt
                     _connectedObjects.Add(sender);
 
                 if (_connectedObjects.Count > 1 || MqttClient.IsConnected)
-                    return _connectingTaskCompletionSource.Task;
+                    return Task.CompletedTask;
 
                 ConnectAndMonitorConnection();
             }
@@ -147,16 +147,12 @@ namespace Silverback.Messaging.Broker.Mqtt
         {
             bool connectionLost = false;
 
-            lock (_connectionLock)
+            if (_isConnected)
             {
-                if (_connectingTaskCompletionSource.Task.IsCompleted)
-                {
-                    _connectingTaskCompletionSource = new TaskCompletionSource<bool>();
+                connectionLost = true;
+                _isConnected = false;
 
-                    connectionLost = true;
-
-                    _logger.LogConnectionLost(this);
-                }
+                _logger.LogConnectionLost(this);
             }
 
             if (connectionLost && Consumer != null)
@@ -165,7 +161,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             if (!await TryConnectClientAsync(isFirstTry, cancellationToken).ConfigureAwait(false))
                 return false;
 
-            _connectingTaskCompletionSource.SetResult(true);
+            _isConnected = true;
 
             if (Consumer != null)
                 await Consumer.OnConnectionEstablishedAsync().ConfigureAwait(false);

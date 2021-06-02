@@ -156,33 +156,21 @@ namespace Silverback.Messaging.Broker.Kafka
                 _logger.LogConsuming(consumeResult, _consumer);
 
                 if (_channelsManager == null)
-                {
-                    _logger.LogConsumerLowLevelTrace(
-                        _consumer,
-                        "Waiting for channels manager to be initialized...");
-
-                    // Wait until the ChannelsManager is set (after the partitions have been assigned)
-                    while (_channelsManager == null)
-                    {
-                        Task.Delay(50, cancellationToken).Wait(cancellationToken);
-
-                        cancellationToken.ThrowIfCancellationRequested();
-                    }
-                }
+                    throw new InvalidOperationException("The ChannelsManager is not initialized.");
 
                 _channelsManager.Write(consumeResult, cancellationToken);
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException ex)
             {
-                if (cancellationToken.IsCancellationRequested)
-                    _logger.LogConsumingCanceled(_consumer);
+                _logger.LogConsumingCanceled(_consumer, ex);
             }
-            catch (ChannelClosedException)
+            catch (ChannelClosedException ex)
             {
                 // Ignore the ChannelClosedException as it might be thrown in case of retry
                 // (see ConsumerChannelsManager.Reset method)
+                _logger.LogConsumingCanceled(_consumer, ex);
             }
-            catch (Exception ex) when (ex is not ChannelClosedException)
+            catch (Exception ex)
             {
                 AutoRecoveryIfEnabled(ex, cancellationToken);
                 return false;

@@ -144,14 +144,14 @@ namespace Silverback.Messaging.Broker
 
                 _statusInfo.SetConnected();
                 _logger.LogConsumerConnected(this);
-
-                await StartAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 _logger.LogConsumerConnectError(this, ex);
                 throw;
             }
+
+            await StartAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IConsumer.DisconnectAsync" />
@@ -511,10 +511,7 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Called when fully connected to transitions the consumer to <see cref="ConsumerStatus.Ready" />.
         /// </summary>
-        protected void SetReadyStatus()
-        {
-            _statusInfo.SetReady();
-        }
+        protected void SetReadyStatus() => _statusInfo.SetReady();
 
         /// <summary>
         ///     Called when the connection is lost to transitions the consumer back to
