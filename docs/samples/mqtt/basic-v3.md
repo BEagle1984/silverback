@@ -19,7 +19,7 @@ _Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/
 
 ## Producer
 
-The producer uses an hosted service to publish some messages in the background.
+The producer uses a hosted service to publish some messages in the background.
 
 # [Startup](#tab/producer-startup)
 [!code-csharp[Producer.Startup](../../../samples/Mqtt/Basic.ProducerV3/Startup.cs)]
@@ -33,7 +33,7 @@ _Full source code: https://github.com/BEagle1984/silverback/tree/master/samples/
 
 ## Consumer
 
-The consumer simply streams the file to a temporary folder in the local file system.
+The consumer processes the messages and outputs their value to the standard output.
 
 # [Startup](#tab/consumer-startup)
 [!code-csharp[Consumer.Startup](../../../samples/Mqtt/Basic.ConsumerV3/Startup.cs)]

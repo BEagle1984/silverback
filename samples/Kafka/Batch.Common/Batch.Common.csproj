@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
-    <RootNamespace>Silverback.Samples.Mqtt.Basic.Common</RootNamespace>
+    <RootNamespace>Silverback.Samples.Kafka.Batch.Common</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>

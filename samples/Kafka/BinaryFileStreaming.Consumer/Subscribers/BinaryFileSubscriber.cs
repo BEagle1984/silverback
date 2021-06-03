@@ -10,13 +10,10 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Subscribers
     {
         private const string OutputPath = "../../temp";
 
-        private readonly Random _random;
-
         private readonly ILogger<BinaryFileSubscriber> _logger;
 
         public BinaryFileSubscriber(ILogger<BinaryFileSubscriber> logger)
         {
-            _random = new Random((int)DateTime.Now.Ticks);
             _logger = logger;
         }
 
@@ -39,10 +36,6 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer.Subscribers
                 // never loaded into memory.
                 await binaryFileMessage.Content.CopyToAsync(fileStream);
             }
-
-            // Randomly simulate a processing exception
-            if (_random.Next(2) == 1)
-                throw new InvalidOperationException("You must fail!");
 
             _logger.LogInformation(
                 $"Written {fileStream.Length} bytes into {filename}.");

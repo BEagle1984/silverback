@@ -22,6 +22,15 @@ Produce and consume basic messages.
     1. `dotnet run -p ./samples/Kafka/Basic.Consumer/.`
 1. Observe the console output while the messages are produced and consumed
 
+### Batch Processing
+
+Process consumed messages in batch.
+
+1. Run the two applications
+    1. `dotnet run -p ./samples/Kafka/Batch.Producer/.`
+    1. `dotnet run -p ./samples/Kafka/Batch.Consumer/.`
+1. Observe the console output while the messages are produced and consumed
+
 ### Binary Files Streaming
 
 Binary file streaming through Kafka.

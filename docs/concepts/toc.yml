@@ -2,16 +2,16 @@
   href: introduction.md
 - name: Bus
   items:
-  - name: Enabling the Bus
-    href: bus/enabling.md
-  - name: Creating the Message model
-    href: bus/model.md
-  - name: Publish
-    href: bus/publish.md
-  - name: Subscribe
-    href: bus/subscribe.md
-  - name: Behaviors
-    href: bus/behaviors.md
+    - name: Enabling the Bus
+      href: bus/enabling.md
+    - name: Creating the Message model
+      href: bus/model.md
+    - name: Publish
+      href: bus/publish.md
+    - name: Subscribe
+      href: bus/subscribe.md
+    - name: Behaviors
+      href: bus/behaviors.md
 - name: Message Broker
   items:
     - name: Basics

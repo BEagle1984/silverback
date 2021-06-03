@@ -1,7 +1,8 @@
-﻿using Confluent.Kafka;
+﻿using System;
+using Confluent.Kafka;
 using Silverback.Messaging.Configuration;
 
-namespace Silverback.Samples.Kafka.Basic.Consumer
+namespace Silverback.Samples.Kafka.Batch.Consumer
 {
     public class EndpointsConfigurator : IEndpointsConfigurator
     {
@@ -20,10 +21,10 @@ namespace Silverback.Samples.Kafka.Basic.Consumer
                                     "PLAINTEXT://localhost:9092";
                             })
 
-                        // Consume the samples-basic topic
+                        // Consume the samples-batch topic
                         .AddInbound(
                             endpoint => endpoint
-                                .ConsumeFrom("samples-basic")
+                                .ConsumeFrom("samples-batch")
                                 .Configure(
                                     config =>
                                     {
@@ -38,7 +39,11 @@ namespace Silverback.Samples.Kafka.Basic.Consumer
                                         // stored for this consumer group
                                         config.AutoOffsetReset =
                                             AutoOffsetReset.Earliest;
-                                    })));
+                                    })
+
+                                // Configure processing in batches of 100 messages,
+                                // with a max wait time of 5 seconds
+                                .EnableBatchProcessing(100, TimeSpan.FromSeconds(5))));
         }
     }
 }

@@ -2,15 +2,17 @@
   href: samples.md
 - name: Kafka
   items:
-  - name: Basic
-    href: kafka/basic.md
-  - name: Files Streaming
-    href: kafka/binaryfile-streaming.md
+    - name: Basic
+      href: kafka/basic.md
+    - name: Batch Processing
+      href: kafka/batch.md
+    - name: Files Streaming
+      href: kafka/binaryfile-streaming.md
 - name: MQTT
   items:
-      - name: Basic
-        href: mqtt/basic.md
-      - name: Basic (protocol v3)
-        href: mqtt/basic-v3.md
-      - name: Files Streaming
-        href: mqtt/binaryfile-streaming.md
+    - name: Basic
+      href: mqtt/basic.md
+    - name: Basic (protocol v3)
+      href: mqtt/basic-v3.md
+    - name: Files Streaming
+      href: mqtt/binaryfile-streaming.md

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
-    <RootNamespace>Silverback.Samples.Kafka.Basic.Consumer</RootNamespace>
+    <RootNamespace>Silverback.Samples.Kafka.Batch.Producer</RootNamespace>
     <LangVersion>$(LangVersion)</LangVersion>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Basic.Common\Basic.Common.csproj"/>
+    <ProjectReference Include="..\Batch.Common\Batch.Common.csproj"/>
   </ItemGroup>
 
 </Project>
