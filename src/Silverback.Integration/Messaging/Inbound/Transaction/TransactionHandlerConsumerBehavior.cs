@@ -52,6 +52,8 @@ namespace Silverback.Messaging.Inbound.Transaction
                     context.ServiceProvider
                         .GetRequiredService<IInboundLogger<ConsumerTransactionManager>>());
 
+                _logger.LogProcessing(context.Envelope);
+
                 await next(context).ConfigureAwait(false);
 
                 if (context.Sequence == null)
