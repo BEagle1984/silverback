@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
@@ -37,6 +38,8 @@ namespace Silverback.Messaging.Broker
         private bool _isReconnecting;
 
         private bool _disposed;
+
+        private CancellationTokenSource _disconnectCancellationTokenSource = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Consumer" /> class.
@@ -118,90 +121,14 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IConsumer.ConnectAsync" />
         public async Task ConnectAsync()
         {
-            try
-            {
-                if (IsConnected)
-                    return;
-
-                if (_connectTask != null)
-                {
-                    await _connectTask.ConfigureAwait(false);
-                    return;
-                }
-
-                _connectTask = ConnectCoreAsync();
-
-                try
-                {
-                    await _connectTask.ConfigureAwait(false);
-
-                    IsConnected = true;
-                }
-                finally
-                {
-                    _connectTask = null;
-                }
-
-                _statusInfo.SetConnected();
-                _logger.LogConsumerConnected(this);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogConsumerConnectError(this, ex);
-                throw;
-            }
-
-            await StartAsync().ConfigureAwait(false);
+            await ConnectAndStartAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IConsumer.DisconnectAsync" />
         public async Task DisconnectAsync()
         {
-            try
-            {
-                if (!IsConnected || IsDisconnecting)
-                    return;
-
-                _logger.LogConsumerLowLevelTrace(
-                    this,
-                    "Disconnecting consumer...");
-
-                IsDisconnecting = true;
-
-                // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
-                // but not started)
-                if (IsConsuming && !IsStopping)
-                    await StopAsync().ConfigureAwait(false);
-                else
-                    await StopCoreAsync().ConfigureAwait(false);
-
-                if (SequenceStores.Count > 0)
-                {
-                    await SequenceStores
-                        .DisposeAllAsync(SequenceAbortReason.ConsumerAborted)
-                        .ConfigureAwait(false);
-                }
-
-                await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
-                await DisconnectCoreAsync().ConfigureAwait(false);
-
-                SequenceStores.ForEach(store => store.Dispose());
-                SequenceStores.Clear();
-
-                IsConnected = false;
-
-                _statusInfo.SetDisconnected();
-                _logger.LogConsumerDisconnected(this);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogConsumerDisconnectError(this, ex);
-                throw;
-            }
-            finally
-            {
-                IsDisconnecting = false;
-            }
+            _disconnectCancellationTokenSource.Cancel();
+            await StopAndDisconnectAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="IConsumer.DisconnectAsync" />
@@ -218,32 +145,38 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogConsumerLowLevelTrace(this, "Triggering reconnect.");
 
-            // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
-            // but not started)
-            if (IsConsuming && !IsStopping)
-                await StopAsync().ConfigureAwait(false);
-            else
-                await StopCoreAsync().ConfigureAwait(false);
+            // Await stopping but disconnect/reconnect in a separate thread to avoid deadlocks
+            await StopAsync().ConfigureAwait(false);
 
             Task.Run(
                     async () =>
                     {
                         try
                         {
-                            await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
-                            await DisconnectAsync().ConfigureAwait(false);
-                            await ConnectAsync().ConfigureAwait(false);
+                            await StopAndDisconnectAsync().ConfigureAwait(false);
 
-                            _isReconnecting = false;
+                            _disconnectCancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                            await ConnectAndStartAsync().ConfigureAwait(false);
                         }
                         catch (Exception ex)
                         {
                             _logger.LogErrorReconnectingConsumer(ReconnectRetryDelay, this, ex);
 
-                            await Task.Delay(ReconnectRetryDelay).ConfigureAwait(false);
+                            await Task.Delay(
+                                    ReconnectRetryDelay,
+                                    _disconnectCancellationTokenSource.Token)
+                                .ConfigureAwait(false);
+
+                            if (_disconnectCancellationTokenSource.Token.IsCancellationRequested)
+                                return;
 
                             _isReconnecting = false;
-                            await TriggerReconnectAsync().ConfigureAwait(false);
+                            TriggerReconnectAsync().FireAndForget();
+                        }
+                        finally
+                        {
+                            _isReconnecting = false;
                         }
                     })
                 .FireAndForget();
@@ -542,10 +475,105 @@ namespace Silverback.Messaging.Broker
             try
             {
                 AsyncHelper.RunSynchronously(DisconnectAsync);
+
+                _disconnectCancellationTokenSource.Dispose();
             }
             catch (Exception ex)
             {
                 _logger.LogConsumerDisposingError(this, ex);
+            }
+        }
+
+        private async Task ConnectAndStartAsync()
+        {
+            try
+            {
+                if (IsConnected)
+                    return;
+
+                if (_disconnectCancellationTokenSource.IsCancellationRequested)
+                {
+                    _disconnectCancellationTokenSource.Dispose();
+                    _disconnectCancellationTokenSource = new CancellationTokenSource();
+                }
+
+                if (_connectTask != null)
+                {
+                    await _connectTask.ConfigureAwait(false);
+                    return;
+                }
+
+                _connectTask = ConnectCoreAsync();
+
+                try
+                {
+                    await _connectTask.ConfigureAwait(false);
+
+                    IsConnected = true;
+                }
+                finally
+                {
+                    _connectTask = null;
+                }
+
+                _statusInfo.SetConnected();
+                _logger.LogConsumerConnected(this);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogConsumerConnectError(this, ex);
+                throw;
+            }
+
+            await StartAsync().ConfigureAwait(false);
+        }
+
+        private async Task StopAndDisconnectAsync()
+        {
+            try
+            {
+                if (!IsConnected || IsDisconnecting)
+                    return;
+
+                _logger.LogConsumerLowLevelTrace(
+                    this,
+                    "Disconnecting consumer...");
+
+                IsDisconnecting = true;
+
+                // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
+                // but not started)
+                if (IsConsuming && !IsStopping)
+                    await StopAsync().ConfigureAwait(false);
+                else
+                    await StopCoreAsync().ConfigureAwait(false);
+
+                if (SequenceStores.Count > 0)
+                {
+                    await SequenceStores
+                        .DisposeAllAsync(SequenceAbortReason.ConsumerAborted)
+                        .ConfigureAwait(false);
+                }
+
+                await WaitUntilConsumingStoppedAsync().ConfigureAwait(false);
+                await DisconnectCoreAsync().ConfigureAwait(false);
+
+                SequenceStores.ForEach(store => store.Dispose());
+                SequenceStores.Clear();
+
+                IsConnected = false;
+
+                _statusInfo.SetDisconnected();
+                _logger.LogConsumerDisconnected(this);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogConsumerDisconnectError(this, ex);
+                throw;
+            }
+            finally
+            {
+                IsDisconnecting = false;
             }
         }
 

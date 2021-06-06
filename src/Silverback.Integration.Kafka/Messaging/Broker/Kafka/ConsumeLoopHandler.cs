@@ -172,23 +172,20 @@ namespace Silverback.Messaging.Broker.Kafka
             }
             catch (Exception ex)
             {
-                AutoRecoveryIfEnabled(ex, cancellationToken);
+                AutoRecoveryIfEnabled(ex);
                 return false;
             }
 
             return true;
         }
 
-        private void AutoRecoveryIfEnabled(Exception ex, CancellationToken cancellationToken)
+        private void AutoRecoveryIfEnabled(Exception ex)
         {
             if (!_consumer.Endpoint.Configuration.EnableAutoRecovery)
             {
                 _logger.LogKafkaExceptionNoAutoRecovery(_consumer, ex);
                 return;
             }
-
-            if (cancellationToken.IsCancellationRequested)
-                return;
 
             _logger.LogKafkaExceptionAutoRecovery(_consumer, ex);
 
