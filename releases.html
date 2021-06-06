@@ -8,7 +8,7 @@
     <title>Releases | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Releases | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="images/icons/apple-touch-icon.png">
@@ -79,16 +79,35 @@
             <article class="content wrap" id="_content" data-uid="releases">
 <h1 id="releases">Releases</h1>
 
-<h2 id="301"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.1">3.0.1</a></h2>
+<h2 id="310-beta1"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.1.0-beta.1">3.1.0-beta.1</a></h2>
+<h3 id="whats-new">What's new</h3>
+<ul>
+<li>Add new ways to configure headers and kafka key (see <a class="xref" href="concepts/broker/headers.html">Message Headers</a> and <a class="xref" href="concepts/broker/kafka/kafka-partitioning.html">Kafka Partitioning and Message Key</a>)</li>
+<li>New callbacks for Kafka log events (see <a class="xref" href="concepts/broker/kafka/kafka-events.html">Kafka Events</a>)</li>
+<li>Improve consumer status tracking introducing <a class="xref" href="api/Silverback.Messaging.Broker.ConsumerStatus.html">ConsumerStatus.Ready</a>
+<ul>
+<li>Revert the Kafka consumer status from <code>Ready</code> to <code>Connected</code> whenever partitions are revoked or a poll timeout occurs</li>
+<li>Adapt consumer health check to monitor the new status and report unhealthy if not <code>Ready</code> (see <a class="xref" href="concepts/broker/connecting.html#health-monitoring">Health Monitoring</a>)</li>
+</ul>
+</li>
+<li>Try to automatically recover from Kafka maximum poll interval exceed errors</li>
+<li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.7.0">Confluent.Kafka 1.7.0</a></li>
+<li>Upgrade to <a href="https://github.com/chkr1011/MQTTnet/releases/tag/v3.0.15">MQTTnet 3.0.15</a></li>
+</ul>
 <h3 id="fixes">Fixes</h3>
+<ul>
+<li>Prevent possible race condition causing messages to be skipped when a <code>RetryPolicy</code> kicks in for messages from multiple Kafka partitions simultaneously</li>
+</ul>
+<h2 id="301"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.1">3.0.1</a></h2>
+<h3 id="fixes-1">Fixes</h3>
 <ul>
 <li>Fix <a class="xref" href="api/Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.IOutboxWriter.html">IOutboxWriter</a> lifecycle [<a href="https://github.com/BEagle1984/silverback/issues/128">#128</a>]</li>
 </ul>
 <h2 id="300"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.0">3.0.0</a></h2>
-<h3 id="whats-new">What's new</h3>
+<h3 id="whats-new-1">What's new</h3>
 <ul>
 <li>Add support for MQTT (see <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>, <a class="xref" href="concepts/broker/inbound.html">Inbound Endpoint</a>, <a class="xref" href="concepts/broker/outbound.html">Outbound Endpoint</a>, ...)</li>
-<li>Simplify configuration and reduce boiler plate (see <a class="xref" href="concepts/bus/subscribe.html">Subscribing</a> and <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)
+<li>Simplify configuration and reduce boilerplate (see <a class="xref" href="concepts/bus/subscribe.html">Subscribing</a> and <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)
 <ul>
 <li>Simplify subscribers registration and get rid of the <em>ISubscriber</em> interface (see <a class="xref" href="concepts/bus/subscribe.html">Subscribing</a>)</li>
 <li>Scan subscribers automatically at startup to reduce cost of first message</li>
@@ -122,7 +141,7 @@
 <li>Improve (distributed) tracing (see <a class="xref" href="concepts/logging.html">Logging</a>)</li>
 <li>Allow header names customization (see <a class="xref" href="concepts/broker/headers.html">Message Headers</a>)</li>
 <li>Add consumer status information and statistics (see <a class="xref" href="concepts/broker/connecting.html#consumer-management-api">Connecting to a Message Broker</a>)</li>
-<li>Add basic consumers health check (see <a class="xref" href="concepts/broker/connecting.html#health-monitoring">Connecting to a Message Broker</a>)</li>
+<li>Add basic consumer health check (see <a class="xref" href="concepts/broker/connecting.html#health-monitoring">Health Monitoring</a>)</li>
 <li>Allow broker behaviors to be registered as transient, meaning that an instance will be created per each producer or consumer (see <a class="xref" href="concepts/broker/behaviors.html">Broker behaviors pipeline</a>)</li>
 <li>Improve code quality
 <ul>
@@ -138,7 +157,7 @@
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.6.2">Confluent.Kafka 1.6.2</a></li>
 <li>Upgrade to <a href="https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.2.1">RabbitMQ.Client 6.2.1</a></li>
 </ul>
-<h3 id="fixes-1">Fixes</h3>
+<h3 id="fixes-2">Fixes</h3>
 <ul>
 <li>Fix <a class="xref" href="api/Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a> not publishing custom headers [<a href="https://github.com/BEagle1984/silverback/issues/102">#102</a>]</li>
 </ul>
@@ -213,17 +232,17 @@
 <li>Modified message encryption for chunked messages and it will not be compatible with previous versions of Silverback (affects chunking+encryption only)</li>
 </ul>
 <h2 id="220"><a href="https://github.com/BEagle1984/silverback/releases/tag/v2.2.0">2.2.0</a></h2>
-<h3 id="whats-new-1">What's new</h3>
+<h3 id="whats-new-2">What's new</h3>
 <ul>
 <li>Allow custom outbound routers to be registered as scoped or transient (instead of singleton only)</li>
 </ul>
 <h2 id="212"><a href="https://github.com/BEagle1984/silverback/releases/tag/v2.1.2">2.1.2</a></h2>
-<h3 id="fixes-2">Fixes</h3>
+<h3 id="fixes-3">Fixes</h3>
 <ul>
 <li>Fix delay in Retry policy [<a href="https://github.com/BEagle1984/silverback/issues/97">#97</a>]</li>
 </ul>
 <h2 id="211"><a href="https://github.com/BEagle1984/silverback/releases/tag/v2.1.1">2.1.1</a></h2>
-<h3 id="whats-new-2">What's new</h3>
+<h3 id="whats-new-3">What's new</h3>
 <ul>
 <li>Add support for multiple message brokers (Kafka and RabbitMQ) in the same application (see <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)</li>
 <li>Add end-to-end message encryption (see <a class="xref" href="concepts/broker/encryption.html">Encryption</a>)</li>
@@ -255,7 +274,7 @@
 <li><code>WithConnectionTo&lt;&gt;</code>, <code>WithConnectionToKafka</code> and <code>WithConnectionToRabbitMQ</code> are deprecated (they will still be supported in this version), please use the new <code>WithConnectionToMessageBroker</code> and <code>AddKafka</code>/<code>AddRabbit</code> methods (see <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)</li>
 </ul>
 <h2 id="200"><a href="https://github.com/BEagle1984/silverback/releases/tag/v2.0.0">2.0.0</a></h2>
-<h3 id="whats-new-3">What's new</h3>
+<h3 id="whats-new-4">What's new</h3>
 <ul>
 <li>Create <a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ">Silverback.Integration.RabbitMQ</a> package to connect Silverback with RabbitMQ (see <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)</li>
 <li>Enable subscription of messages with an empty body (you must subscribe to the <a class="xref" href="api/Silverback.Messaging.Messages.IInboundEnvelope.html">IInboundEnvelope</a>) [<a href="https://github.com/BEagle1984/silverback/issues/61">#61</a>]</li>
@@ -273,12 +292,12 @@
 <li>The <code>MustUnwrap</code> option has been removed from the inbound connector configuration (messages are unwrapped by default)</li>
 </ul>
 <h2 id="120"><a href="https://github.com/BEagle1984/silverback/releases/tag/v1.2.0">1.2.0</a></h2>
-<h3 id="whats-new-4">What's new</h3>
+<h3 id="whats-new-5">What's new</h3>
 <ul>
 <li>Publish events to the internal bus as a consequence to the Kafka events such as partitions assigned or revoked (see <a class="xref" href="concepts/broker/kafka/kafka-events.html">Kafka Events</a>) [<a href="https://github.com/BEagle1984/silverback/issues/34">#34</a>]</li>
 </ul>
 <h2 id="110"><a href="https://github.com/BEagle1984/silverback/releases/tag/v1.1.0">1.1.0</a></h2>
-<h3 id="whats-new-5">What's new</h3>
+<h3 id="whats-new-6">What's new</h3>
 <ul>
 <li>Add <a class="xref" href="api/Silverback.Messaging.Configuration.IEndpointsConfigurator.html">IEndpointsConfigurator</a> interface to allow splitting the endpoints configuration across multiple types (see <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)</li>
 <li>Add support for distributed tracing (based on <a href="https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=netcore-3.1">System.Diagnostics</a>)</li>
@@ -289,18 +308,18 @@
 <li>Replaced <em>ISortedBehavior</em> with a generic <a class="xref" href="api/Silverback.ISorted.html">ISorted</a> interface</li>
 </ul>
 <h2 id="105"><a href="https://github.com/BEagle1984/silverback/releases/tag/v1.0.5">1.0.5</a></h2>
-<h3 id="whats-new-6">What's new</h3>
+<h3 id="whats-new-7">What's new</h3>
 <ul>
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.3.0">Confluent.Kafka 1.3.0</a></li>
 </ul>
-<h3 id="fixes-3">Fixes</h3>
+<h3 id="fixes-4">Fixes</h3>
 <ul>
 <li>Fix <code>OutboundQueueHealthCheck</code> [<a href="https://github.com/BEagle1984/silverback/issues/43">#43</a>]</li>
 <li>Remove automatic disposal of the <a class="xref" href="api/Silverback.Messaging.Broker.KafkaProducer.html">KafkaProducer</a> when a <a href="https://docs.confluent.io/platform/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.KafkaException.html">KafkaException</a> is thrown (creating too many instances of the producer over a short time span could lead to too many active TCP connections)</li>
 <li>Fix the bug preventing a <a class="xref" href="api/Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> pointing to multiple topics to be successfully subscribed</li>
 </ul>
 <h2 id="104"><a href="https://github.com/BEagle1984/silverback/releases/tag/v1.0.4">1.0.4</a></h2>
-<h3 id="fixes-4">Fixes</h3>
+<h3 id="fixes-5">Fixes</h3>
 <ul>
 <li>Fix mortal loop issue: it is finally safe to consume and produce the same type of messages from within the same process (in a natural way, without any extra configuration)
 <ul>
@@ -310,22 +329,22 @@
 </li>
 </ul>
 <h2 id="103"><a href="https://github.com/BEagle1984/silverback/releases/tag/v1.0.3">1.0.3</a></h2>
-<h3 id="whats-new-7">What's new</h3>
+<h3 id="whats-new-8">What's new</h3>
 <ul>
 <li>Deprecate <em>PartitioningKeyMemberAttribute</em> in favor of <a class="xref" href="api/Silverback.Messaging.Messages.KafkaKeyMemberAttribute.html">KafkaKeyMemberAttribute</a>, since the message key isn't used just for partitioning (see <a class="xref" href="concepts/broker/kafka/kafka-partitioning.html">Kafka Partitioning and Message Key</a>)</li>
 </ul>
-<h3 id="fixes-5">Fixes</h3>
+<h3 id="fixes-6">Fixes</h3>
 <ul>
 <li>Forward Kafka message key as-is (not hashed anymore) to avoid possible collisions and simplify debugging</li>
 </ul>
 <h2 id="102"><a href="https://github.com/BEagle1984/silverback/releases/tag/v1.0.2">1.0.2</a></h2>
-<h3 id="fixes-6">Fixes</h3>
+<h3 id="fixes-7">Fixes</h3>
 <ul>
 <li>Reintroduce <code>Add*Subscriber</code> and <code>Add*Behavior</code> as <a href="https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicecollection">IServiceCollection</a> extension methods (for backward compatibility and greater flexibility) [<a href="https://github.com/BEagle1984/silverback/issues/41">#41</a>]</li>
 <li>Add <code>WithInMemoryBroker</code> and <code>OverrideWithInMemoryBroker</code> extension methods (see <a class="xref" href="concepts/broker/testing.html">Testing</a>)</li>
 </ul>
 <h2 id="100"><a href="https://github.com/BEagle1984/silverback/releases/tag/v1.0.0">1.0.0</a></h2>
-<h3 id="whats-new-8">What's new</h3>
+<h3 id="whats-new-9">What's new</h3>
 <ul>
 <li>Optimize message size (no wrappers anymore)</li>
 <li>Improve headers usage: identifiers, types, chunks information, etc. are now all sent in the headers</li>
@@ -340,7 +359,7 @@
 <li>Improve and optimize performance (including <a href="https://github.com/BEagle1984/silverback/issues/37">#37</a>)</li>
 <li>Improve database locks mechanism (used also to run the <em>OutboundQueueWorker</em>)</li>
 </ul>
-<h3 id="fixes-7">Fixes</h3>
+<h3 id="fixes-8">Fixes</h3>
 <ul>
 <li>Fix issue requiring types not implementing <a class="xref" href="api/Silverback.Messaging.Messages.IMessage.html">IMessage</a> to be registered with <code>HandleMessagesOfType&lt;T&gt;</code> to consume them [<a href="https://github.com/BEagle1984/silverback/issues/33">#33</a>]</li>
 <li>Mitigate issue causing the <a class="xref" href="api/Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a> to sometime fail to acquire the database lock [<a href="https://github.com/BEagle1984/silverback/issues/39">#39</a>]</li>
@@ -363,25 +382,25 @@
 <li><em>KeyMemberAttribute</em> has been renamed to <em>PartitioningKeyMemberAttribute</em> (see <a class="xref" href="concepts/broker/connecting.html">Connecting to a Message Broker</a>)</li>
 </ul>
 <h2 id="0100"><a href="https://github.com/BEagle1984/silverback/releases/tag/v0.10.0">0.10.0</a></h2>
-<h3 id="whats-new-9">What's new</h3>
+<h3 id="whats-new-10">What's new</h3>
 <ul>
 <li>Improve error handling: now all exceptions, including the ones thrown by the message serialzer can be handled through the error policies</li>
 <li>Improve logs: promoted some important logs to Information level, writing all processing errors as (at least) Warning and improved logged information quality (logged attributes)</li>
 <li>Add ability to modify messages and headers when moving them via <a class="xref" href="api/Silverback.Messaging.Inbound.ErrorHandling.MoveMessageErrorPolicy.html">MoveMessageErrorPolicy</a></li>
 <li>Refactor message processing to a cleaner, more extensible and predictable API and behavior</li>
 </ul>
-<h3 id="fixes-8">Fixes</h3>
+<h3 id="fixes-9">Fixes</h3>
 <ul>
 <li>Fixed several small (and not so small) issues and bugs</li>
 </ul>
 <h2 id="080---090">0.8.0 - 0.9.0</h2>
 <p>Released two versions mostly to fix bugs, do some small adjustments according to some user feedbacks and update the external dependencies (e.g. Confluent.Kafka 1.0.1).</p>
-<h3 id="fixes-9">Fixes</h3>
+<h3 id="fixes-10">Fixes</h3>
 <ul>
 <li>Fix exception loading error policies from JSON in Silverback.Integration.Configuration [<a href="https://github.com/BEagle1984/silverback/issues/24">#24</a>]</li>
 </ul>
 <h2 id="070">0.7.0</h2>
-<h3 id="whats-new-10">What's new</h3>
+<h3 id="whats-new-11">What's new</h3>
 <ul>
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.0.0">Confluent.Kafka 1.0.0</a></li>
 <li>Create a simple event store that perfectly integrates with the rest of the Silverback framework (see <a class="xref" href="concepts/event-sourcing.html">Event Sourcing</a>)</li>
@@ -389,7 +408,7 @@
 <li>Several small optimizations and improvements</li>
 </ul>
 <h2 id="060">0.6.0</h2>
-<h3 id="whats-new-11">What's new</h3>
+<h3 id="whats-new-12">What's new</h3>
 <ul>
 <li>Add support for message headers</li>
 <li>Simplify message subscription even further: now all public methods of the types implementing the marker interface <em>ISubscriber</em> are automatically subscribed by default without having to annotate them with the <a class="xref" href="api/Silverback.Messaging.Subscribers.SubscribeAttribute.html">SubscribeAttribute</a> (this behavior is customizable)</li>
@@ -397,7 +416,7 @@
 </ul>
 <h2 id="03x---05x">0.3.x - 0.5.x</h2>
 <p>Some releases where done adding quite a few features.</p>
-<h3 id="whats-new-12">What's new</h3>
+<h3 id="whats-new-13">What's new</h3>
 <ul>
 <li>Add Silverback.Integration.Configuration package to load the inbound/outbound configuration from the app.settings json</li>
 <li>Add batch processing</li>
@@ -410,7 +429,7 @@
 <li>Add message chunking to automatically split the larger messages and rebuild them on the other end (see <a class="xref" href="concepts/broker/chunking.html">Chunking</a>)</li>
 <li>...much more...and a huge amount of refactorings</li>
 </ul>
-<h3 id="fixes-10">Fixes</h3>
+<h3 id="fixes-11">Fixes</h3>
 <ul>
 <li>Several fixes and optimizations</li>
 </ul>

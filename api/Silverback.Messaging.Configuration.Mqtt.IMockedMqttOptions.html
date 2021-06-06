@@ -5,12 +5,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Namespace Silverback.Messaging.Broker.Events
+    <title>Interface IMockedMqttOptions
    | Silverback </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Namespace Silverback.Messaging.Broker.Events
+    <meta name="title" content="Interface IMockedMqttOptions
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -85,21 +85,53 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.Events">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions">
   
-  <h1 id="Silverback_Messaging_Broker_Events" data-uid="Silverback.Messaging.Broker.Events" class="text-break">Namespace Silverback.Messaging.Broker.Events
+  
+  <h1 id="Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions" data-uid="Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions" class="text-break">Interface IMockedMqttOptions
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Stores the mocked MQTT configuration.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
-  <div class="markdown level0 remarks"></div>
-    <h3 id="interfaces">Interfaces
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.html">Silverback.Messaging.Configuration.Mqtt</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.MQTT.Testing.dll</h6>
+  <h5 id="Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IMockedMqttOptions</code></pre>
+  </div>
+  <h3 id="properties">Properties
   </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Events.IMqttClientConnectedCallback.html">IMqttClientConnectedCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Events.IMqttClientConnectedCallback.html#Silverback_Messaging_Broker_Events_IMqttClientConnectedCallback_OnClientConnectedAsync_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_">OnClientConnectedAsync(MqttClientConfig)</a> event handler.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Events.IMqttClientDisconnectingCallback.html">IMqttClientDisconnectingCallback</a></h4>
-      <section><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Events.IMqttClientDisconnectingCallback.html#Silverback_Messaging_Broker_Events_IMqttClientDisconnectingCallback_OnClientDisconnectingAsync_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_">OnClientDisconnectingAsync(MqttClientConfig)</a> event handler.</p>
-</section>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions_ConnectionDelay.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.ConnectionDelay%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Configuration/Mqtt/IMockedMqttOptions.cs/#L16">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions_ConnectionDelay_" data-uid="Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.ConnectionDelay*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions_ConnectionDelay" data-uid="Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.ConnectionDelay">ConnectionDelay</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the delay to be applied before establishing a connection.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">TimeSpan ConnectionDelay { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
           
@@ -107,6 +139,12 @@
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT.Testing/Messaging/Configuration/Mqtt/IMockedMqttOptions.cs/#L11" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

@@ -5,12 +5,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class KafkaProducerEventsHandlers
+    <title>Namespace Silverback.Messaging.Outbound.Enrichers
    | Silverback </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class KafkaProducerEventsHandlers
+    <meta name="title" content="Namespace Silverback.Messaging.Outbound.Enrichers
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -85,84 +85,40 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.KafkaEvents.KafkaProducerEventsHandlers">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Outbound.Enrichers">
   
-  
-  <h1 id="Silverback_Messaging_KafkaEvents_KafkaProducerEventsHandlers" data-uid="Silverback.Messaging.KafkaEvents.KafkaProducerEventsHandlers" class="text-break">Class KafkaProducerEventsHandlers
+  <h1 id="Silverback_Messaging_Outbound_Enrichers" data-uid="Silverback.Messaging.Outbound.Enrichers" class="text-break">Namespace Silverback.Messaging.Outbound.Enrichers
   </h1>
-  <div class="markdown level0 summary"><p>Defines the handlers for the Kafka events such as partitions revoked/assigned, error, statistics and
-offsets committed.</p>
-</div>
+  <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
-  <div class="inheritance">
-    <h5>Inheritance</h5>
-    <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">KafkaProducerEventsHandlers</span></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-  </div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.KafkaEvents.html">Silverback.Messaging.KafkaEvents</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
-  <h5 id="Silverback_Messaging_KafkaEvents_KafkaProducerEventsHandlers_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class KafkaProducerEventsHandlers</code></pre>
-  </div>
-  <h3 id="properties">Properties
+  <div class="markdown level0 remarks"></div>
+    <h3 id="classes">Classes
   </h3>
-  
-  
-  <a id="Silverback_Messaging_KafkaEvents_KafkaProducerEventsHandlers_StatisticsHandler_" data-uid="Silverback.Messaging.KafkaEvents.KafkaProducerEventsHandlers.StatisticsHandler*"></a>
-  <h4 id="Silverback_Messaging_KafkaEvents_KafkaProducerEventsHandlers_StatisticsHandler" data-uid="Silverback.Messaging.KafkaEvents.KafkaProducerEventsHandlers.StatisticsHandler">StatisticsHandler</h4>
-  <div class="markdown level1 summary"><p>
-    Gets or sets the handler to call on statistics events.
-</p>
-<p>
-    You can enable statistics and set the statistics interval using the <code>StatisticsIntervalMs</code>
-    configuration property (disabled by default).
-</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Action&lt;KafkaStatistics, string, KafkaProducer&gt; StatisticsHandler { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">KafkaStatistics</span>, <span class="xref">System.String</span>, <span class="xref">KafkaProducer</span>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
+      <h4><a class="xref" href="Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.html">GenericOutboundHeadersEnricher</a></h4>
+      <section><p>A generic enricher that adds a message header according to a static name/value pair or a provider
+function.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher-1.html">GenericOutboundHeadersEnricher&lt;TMessage&gt;</a></h4>
+      <section><p>A generic enricher that adds a message header according to a static name/value pair or a provider
+function.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.html">MessageEnricherProducerBehavior</a></h4>
+      <section><p>Invokes all the <a class="xref" href="Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.html">IOutboundMessageEnricher</a> configured for to the endpoint.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher-1.html">OutboundMessageIdHeadersEnricher&lt;TMessage&gt;</a></h4>
+      <section><p>A generic enricher that sets the message id header according to a value provider function.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher-1.html">OutboundMessageKafkaKeyEnricher&lt;TMessage&gt;</a></h4>
+      <section><p>A generic enricher that sets the kafka key according to a value provider function.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher-1.html">OutboundMessageRabbitRoutingKeyEnricher&lt;TMessage&gt;</a></h4>
+      <section><p>A generic enricher that sets the routing key according to a value provider function.</p>
+</section>
+    <h3 id="interfaces">Interfaces
+  </h3>
+      <h4><a class="xref" href="Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.html">IOutboundMessageEnricher</a></h4>
+      <section><p>Enriches the outbound message (e.g. adding custom headers).</p>
+</section>
 </article>
           </div>
           

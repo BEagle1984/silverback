@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IConsumersHealthCheckService
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -103,21 +103,39 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_CheckConsumersConnectedAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.CheckConsumersConnectedAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/HealthChecks/IConsumersHealthCheckService.cs/#L21">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/HealthChecks/IConsumersHealthCheckService.cs/#L26">View source</a>
   </span>
-  <a id="Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_CheckConsumersConnectedAsync_" data-uid="Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.CheckConsumersConnectedAsync*"></a>
-  <h4 id="Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_CheckConsumersConnectedAsync" data-uid="Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.CheckConsumersConnectedAsync">CheckConsumersConnectedAsync()</h4>
-  <div class="markdown level1 summary"><p>Checks the status of all the consumers and reports as unhealthy if a consumer is in disconnected
-status.</p>
+  <a id="Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_" data-uid="Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync*"></a>
+  <h4 id="Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_" data-uid="Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus)">GetDisconnectedConsumersAsync(ConsumerStatus)</h4>
+  <div class="markdown level1 summary"><p>Checks the status of all the consumers and returns a collection containing the consumer instances that
+don't appear to be fully connected (Status &gt;= <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Ready">Ready</a>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;bool&gt; CheckConsumersConnectedAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;IReadOnlyCollection&lt;IConsumer&gt;&gt; GetDisconnectedConsumersAsync(ConsumerStatus minStatus)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html">ConsumerStatus</a></td>
+        <td><span class="parametername">minStatus</span></td>
+        <td><p>The minimum <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html">ConsumerStatus</a> a consumer must have to be considered fully connected.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -128,9 +146,9 @@ status.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains a
-boolean value indicating whether the check is successful.</p>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a>&gt;&gt;</td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+consumers that aren't fully connected.</p>
 </td>
       </tr>
     </tbody>
@@ -146,7 +164,7 @@ boolean value indicating whether the check is successful.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_HealthChecks_IConsumersHealthCheckService.md&amp;value=---%0Auid%3A%20Silverback.Messaging.HealthChecks.IConsumersHealthCheckService%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/HealthChecks/IConsumersHealthCheckService.cs/#L11" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/HealthChecks/IConsumersHealthCheckService.cs/#L13" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

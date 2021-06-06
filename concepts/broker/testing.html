@@ -8,7 +8,7 @@
     <title>Testing | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Testing | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -248,9 +248,6 @@
         {
             builder.ConfigureTestServices(services =&gt;
             {
-                // Replace the usual broker (KafkaBroker)
-                // with the mocked version and add the
-                // IIntegrationSpy
                 services
                     .ConfigureSilverback()
                     .UseMockedKafka()
@@ -272,6 +269,8 @@
         // Act
         await producer.ProduceAsync(new TestMessage { Content = &quot;abc&quot; });
 
+        // Wait until all messages have been consumed and 
+        // committed before asserting
         await testingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
         // Assert

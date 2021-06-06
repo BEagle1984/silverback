@@ -5,12 +5,12 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Interface IBrokerEventsHandler
+    <title>Interface IKafkaProducerLogCallback
    | Silverback </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Interface IBrokerEventsHandler
+    <meta name="title" content="Interface IKafkaProducerLogCallback
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -85,34 +85,62 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.IBrokerEventsHandler">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback">
   
   
-  <h1 id="Silverback_Messaging_Configuration_IBrokerEventsHandler" data-uid="Silverback.Messaging.Configuration.IBrokerEventsHandler" class="text-break">Interface IBrokerEventsHandler
+  <h1 id="Silverback_Messaging_Broker_Callbacks_IKafkaProducerLogCallback" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback" class="text-break">Interface IKafkaProducerLogCallback
   </h1>
-  <div class="markdown level0 summary"><p>Exposes some event hooks that are being called during configuration and initialization
-of brokers.</p>
+  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaProducerLogCallback_OnProducerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_KafkaProducer_">OnProducerLog(LogMessage, KafkaProducer)</a> event handler.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.html">Silverback.Messaging.Configuration</a></h6>
-  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
-  <h5 id="Silverback_Messaging_Configuration_IBrokerEventsHandler_syntax">Syntax</h5>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Callbacks.html">Silverback.Messaging.Broker.Callbacks</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
+  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaProducerLogCallback_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IBrokerEventsHandler</code></pre>
+    <pre><code class="lang-csharp hljs">public interface IKafkaProducerLogCallback : IBrokerCallback</code></pre>
   </div>
   <h3 id="methods">Methods
   </h3>
-  
-  
-  <a id="Silverback_Messaging_Configuration_IBrokerEventsHandler_OnEndpointsConfiguredAsync_" data-uid="Silverback.Messaging.Configuration.IBrokerEventsHandler.OnEndpointsConfiguredAsync*"></a>
-  <h4 id="Silverback_Messaging_Configuration_IBrokerEventsHandler_OnEndpointsConfiguredAsync" data-uid="Silverback.Messaging.Configuration.IBrokerEventsHandler.OnEndpointsConfiguredAsync">OnEndpointsConfiguredAsync()</h4>
-  <div class="markdown level1 summary"><p>Is triggered when all endpoints were configured.</p>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaProducerLogCallback_OnProducerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_KafkaProducer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.OnProducerLog(Confluent.Kafka.LogMessage%2CSilverback.Messaging.Broker.KafkaProducer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaProducerLogCallback.cs/#L26">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Callbacks_IKafkaProducerLogCallback_OnProducerLog_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.OnProducerLog*"></a>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_IKafkaProducerLogCallback_OnProducerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_KafkaProducer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.OnProducerLog(Confluent.Kafka.LogMessage,Silverback.Messaging.Broker.KafkaProducer)">OnProducerLog(LogMessage, KafkaProducer)</h4>
+  <div class="markdown level1 summary"><p>Called when a log message is being reported by the underlying producer.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task OnEndpointsConfiguredAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">bool OnProducerLog(LogMessage logMessage, KafkaProducer producer)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Confluent.Kafka.LogMessage</span></td>
+        <td><span class="parametername">logMessage</span></td>
+        <td><p>The <span class="xref">Confluent.Kafka.LogMessage</span>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.KafkaProducer.html">KafkaProducer</a></td>
+        <td><span class="parametername">producer</span></td>
+        <td><p>The related producer instance.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -123,8 +151,9 @@ of brokers.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Task</span></td>
-        <td><p>A <see cref="!:Task"></see> representing the asynchronous operation.</p>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>A value whether the log message was handled/written. When <code>true</code> the message will not be logged nor
+handled in any other way by Silverback.</p>
 </td>
       </tr>
     </tbody>
@@ -136,6 +165,12 @@ of brokers.</p>
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaProducerLogCallback.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaProducerLogCallback.cs/#L11" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

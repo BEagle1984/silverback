@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class KafkaConsumer
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -213,6 +213,12 @@
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_HandleMessageAsync_System_Byte___System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Messages_MessageHeader__System_String_Silverback_Messaging_Broker_IBrokerMessageIdentifier_">Consumer.HandleMessageAsync(Byte[], IReadOnlyCollection&lt;MessageHeader&gt;, String, IBrokerMessageIdentifier)</a>
     </div>
     <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_SetReadyStatus">Consumer.SetReadyStatus()</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RevertReadyStatus">Consumer.RevertReadyStatus()</a>
+    </div>
+    <div>
       <a class="xref" href="Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_Dispose_System_Boolean_">Consumer.Dispose(Boolean)</a>
     </div>
     <div>
@@ -250,7 +256,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer__ctor_Silverback_Messaging_Broker_KafkaBroker_Silverback_Messaging_KafkaConsumerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_System_IServiceProvider_Silverback_Diagnostics_IInboundLogger_Silverback_Messaging_Broker_KafkaConsumer__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.%23ctor(Silverback.Messaging.Broker.KafkaBroker%2CSilverback.Messaging.KafkaConsumerEndpoint%2CSilverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider%7BSilverback.Messaging.Broker.Behaviors.IConsumerBehavior%7D%2CSilverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder%2CSilverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker%2CSystem.IServiceProvider%2CSilverback.Diagnostics.IInboundLogger%7BSilverback.Messaging.Broker.KafkaConsumer%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L72">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L69">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaConsumer__ctor_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.#ctor*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaConsumer__ctor_Silverback_Messaging_Broker_KafkaBroker_Silverback_Messaging_KafkaConsumerEndpoint_Silverback_Messaging_Broker_Behaviors_IBrokerBehaviorsProvider_Silverback_Messaging_Broker_Behaviors_IConsumerBehavior__Silverback_Messaging_Broker_Kafka_IConfluentConsumerBuilder_Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_System_IServiceProvider_Silverback_Diagnostics_IInboundLogger_Silverback_Messaging_Broker_KafkaConsumer__" data-uid="Silverback.Messaging.Broker.KafkaConsumer.#ctor(Silverback.Messaging.Broker.KafkaBroker,Silverback.Messaging.KafkaConsumerEndpoint,Silverback.Messaging.Broker.Behaviors.IBrokerBehaviorsProvider{Silverback.Messaging.Broker.Behaviors.IConsumerBehavior},Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder,Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker,System.IServiceProvider,Silverback.Diagnostics.IInboundLogger{Silverback.Messaging.Broker.KafkaConsumer})">KafkaConsumer(KafkaBroker, KafkaConsumerEndpoint, IBrokerBehaviorsProvider&lt;IConsumerBehavior&gt;, IConfluentConsumerBuilder, IBrokerCallbacksInvoker, IServiceProvider, IInboundLogger&lt;KafkaConsumer&gt;)</h4>
@@ -322,7 +328,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_MemberId.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.MemberId%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L101">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L98">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaConsumer_MemberId_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.MemberId*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaConsumer_MemberId" data-uid="Silverback.Messaging.Broker.KafkaConsumer.MemberId">MemberId</h4>
@@ -355,7 +361,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_KafkaOffset__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.KafkaOffset%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L278">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L270">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaConsumer_CommitCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.CommitCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaConsumer_CommitCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_KafkaOffset__" data-uid="Silverback.Messaging.Broker.KafkaConsumer.CommitCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.KafkaOffset})">CommitCoreAsync(IReadOnlyCollection&lt;KafkaOffset&gt;)</h4>
@@ -406,7 +412,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_ConnectCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.ConnectCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L209">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L201">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaConsumer_ConnectCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.ConnectCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaConsumer_ConnectCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.ConnectCoreAsync">ConnectCoreAsync()</h4>
@@ -440,7 +446,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_DisconnectCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.DisconnectCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L217">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L209">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaConsumer_DisconnectCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.DisconnectCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaConsumer_DisconnectCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.DisconnectCoreAsync">DisconnectCoreAsync()</h4>
@@ -474,7 +480,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_GetSequenceStore_Silverback_Messaging_Broker_KafkaOffset_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.GetSequenceStore(Silverback.Messaging.Broker.KafkaOffset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L260">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L252">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaConsumer_GetSequenceStore_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.GetSequenceStore*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaConsumer_GetSequenceStore_Silverback_Messaging_Broker_KafkaOffset_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.GetSequenceStore(Silverback.Messaging.Broker.KafkaOffset)">GetSequenceStore(KafkaOffset)</h4>
@@ -525,7 +531,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_KafkaOffset__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection%7BSilverback.Messaging.Broker.KafkaOffset%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L302">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L294">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaConsumer_RollbackCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.RollbackCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaConsumer_RollbackCoreAsync_System_Collections_Generic_IReadOnlyCollection_Silverback_Messaging_Broker_KafkaOffset__" data-uid="Silverback.Messaging.Broker.KafkaConsumer.RollbackCoreAsync(System.Collections.Generic.IReadOnlyCollection{Silverback.Messaging.Broker.KafkaOffset})">RollbackCoreAsync(IReadOnlyCollection&lt;KafkaOffset&gt;)</h4>
@@ -577,7 +583,7 @@ successfully, to ensure that they will be consumed again.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_StartCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.StartCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L228">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L220">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaConsumer_StartCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.StartCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaConsumer_StartCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.StartCoreAsync">StartCoreAsync()</h4>
@@ -611,7 +617,7 @@ successfully, to ensure that they will be consumed again.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_StopCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.StopCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L252">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L244">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaConsumer_StopCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.StopCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaConsumer_StopCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.StopCoreAsync">StopCoreAsync()</h4>
@@ -645,7 +651,7 @@ successfully, to ensure that they will be consumed again.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer_WaitUntilConsumingStoppedCoreAsync.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer.WaitUntilConsumingStoppedCoreAsync%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L272">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L264">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_KafkaConsumer_WaitUntilConsumingStoppedCoreAsync_" data-uid="Silverback.Messaging.Broker.KafkaConsumer.WaitUntilConsumingStoppedCoreAsync*"></a>
   <h4 id="Silverback_Messaging_Broker_KafkaConsumer_WaitUntilConsumingStoppedCoreAsync" data-uid="Silverback.Messaging.Broker.KafkaConsumer.WaitUntilConsumingStoppedCoreAsync">WaitUntilConsumingStoppedCoreAsync()</h4>
@@ -692,7 +698,7 @@ successfully, to ensure that they will be consumed again.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_KafkaConsumer.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.KafkaConsumer%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L24" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/KafkaConsumer.cs/#L23" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

@@ -8,7 +8,7 @@
     <title>Message Headers | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Message Headers | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../../images/icons/apple-touch-icon.png">
@@ -87,14 +87,74 @@
 <h1 id="message-headers">Message Headers</h1>
 
 <h2 id="custom-headers">Custom headers</h2>
-<p>There are basically two ways to add custom headers to an outbound message:</p>
+<p>There are multiple ways to add custom headers to an outbound message:</p>
 <ul>
-<li>The easiest and usually preferred approach is to annotate some properties with the <a class="xref" href="../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a>, as shown in the next chapter.</li>
-<li>Otherwise a custom <a class="xref" href="../../api/Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a> or <a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a> can be implemented, as shown in the <a class="xref" href="../bus/behaviors.html">Behaviors</a> and <a class="xref" href="behaviors.html">Broker behaviors pipeline</a> sections.</li>
+<li>adding an enricher to the <a class="xref" href="../../api/Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a></li>
+<li>annotating some properties with the <a class="xref" href="../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a>, as shown in the next chapter.</li>
+<li>using a custom <a class="xref" href="../../api/Silverback.Messaging.Publishing.IBehavior.html">IBehavior</a> or <a class="xref" href="../../api/Silverback.Messaging.Broker.Behaviors.IProducerBehavior.html">IProducerBehavior</a> can be implemented, as shown in the <a class="xref" href="../bus/behaviors.html">Behaviors</a> and <a class="xref" href="behaviors.html">Broker behaviors pipeline</a> sections.</li>
 </ul>
 <div class="WARNING">
 <h5>Warning</h5>
 <p>Some message broker implementations might not support headers and Silverback doesn't currently provide any workaround, thus the headers will simply be ignored.</p>
+</div>
+<h3 id="using-enrichers">Using enrichers</h3>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S_enrichers-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S_enrichers-fluent" data-tab="enrichers-fluent" tabindex="0" aria-selected="true">Fluent</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S_enrichers-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S_enrichers-legacy" data-tab="enrichers-legacy" tabindex="-1">Legacy</a>
+</li>
+</ul>
+<section id="tabpanel_bHGHmlrG6S_enrichers-fluent" role="tabpanel" data-tab="enrichers-fluent">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddOutbound&lt;InventoryEvent&gt;(endpoint =&gt; endpoint
+                    .ProduceTo(&quot;inventory-events&quot;)
+                    .AddHeader(
+                        &quot;x-my-header&quot;,
+                        &quot;static value&quot;)
+                    .AddHeader&lt;InventoryEvent&gt;(
+                        &quot;x-product-id&quot;, 
+                        envelope =&gt; envelope.Message?.ProductId)));
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S_enrichers-legacy" role="tabpanel" data-tab="enrichers-legacy" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddOutbound&lt;InventoryEvent&gt;(
+                new KafkaProducerEndpoint(&quot;inventory-events&quot;)
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    },
+                    MessageEnrichers = new List&lt;IOutboundMessageEnricher&gt;
+                    {
+                        new GenericOutboundHeadersEnricher(
+                            &quot;x-my-header&quot;,
+                            &quot;static value&quot;),
+                        new GenericOutboundHeadersEnricher&lt;InventoryEvent&gt;(
+                            &quot;x-product-id&quot;, 
+                            envelope =&gt; envelope.Message?.ProductId)
+                    }
+                });
+}
+</code></pre>
+</section>
 </div>
 <h3 id="using-headerattribute">Using HeaderAttribute</h3>
 <p>The <a class="xref" href="../../api/Silverback.Messaging.Messages.HeaderAttribute.html">HeaderAttribute</a> usage is very simple: you just have to decorate the properties you want to publish as headers and specify a name for the header.</p>

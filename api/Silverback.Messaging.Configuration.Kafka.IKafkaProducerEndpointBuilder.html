@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IKafkaProducerEndpointBuilder
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -114,6 +114,18 @@
       <a class="xref" href="Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_EnableChunking_System_Int32_System_Boolean_">IProducerEndpointBuilder&lt;IKafkaProducerEndpointBuilder&gt;.EnableChunking(Int32, Boolean)</a>
     </div>
     <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_AddHeader_System_String_System_Object_">IProducerEndpointBuilder&lt;IKafkaProducerEndpointBuilder&gt;.AddHeader(String, Object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_AddHeader__1_System_String_System_Object_">IProducerEndpointBuilder&lt;IKafkaProducerEndpointBuilder&gt;.AddHeader&lt;TMessage&gt;(String, Object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_AddHeader__1_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__">IProducerEndpointBuilder&lt;IKafkaProducerEndpointBuilder&gt;.AddHeader&lt;TMessage&gt;(String, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, Object&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_WithMessageId__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__">IProducerEndpointBuilder&lt;IKafkaProducerEndpointBuilder&gt;.WithMessageId&lt;TMessage&gt;(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, Object&gt;)</a>
+    </div>
+    <div>
       <a class="xref" href="Silverback.Messaging.Configuration.IEndpointBuilder-1.html#Silverback_Messaging_Configuration_IEndpointBuilder_1_UseSerializer_Silverback_Messaging_Serialization_IMessageSerializer_">IEndpointBuilder&lt;IKafkaProducerEndpointBuilder&gt;.UseSerializer(IMessageSerializer)</a>
     </div>
     <div>
@@ -133,7 +145,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.Configure(System.Action%7BSilverback.Messaging.Configuration.Kafka.KafkaProducerConfig%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/IKafkaProducerEndpointBuilder.cs/#L183">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/IKafkaProducerEndpointBuilder.cs/#L198">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder_Configure_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.Configure*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig__" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.Configure(System.Action{Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig})">Configure(Action&lt;KafkaProducerConfig&gt;)</h4>
@@ -695,6 +707,73 @@ actual endpoint name and partition.</p>
       <tr>
         <td><span class="parametername">TResolver</span></td>
         <td><p>The type of the <a class="xref" href="Silverback.Messaging.Outbound.Routing.IKafkaProducerEndpointNameResolver.html">IKafkaProducerEndpointNameResolver</a> to be used.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder_WithKafkaKey__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.WithKafkaKey%60%601(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%2CSystem.Object%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/IKafkaProducerEndpointBuilder.cs/#L186">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder_WithKafkaKey_" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.WithKafkaKey*"></a>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder_WithKafkaKey__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__" data-uid="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.WithKafkaKey``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})">WithKafkaKey&lt;TMessage&gt;(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, Object&gt;)</h4>
+  <div class="markdown level1 summary"><p>Uses the specified value provider function to set the kafka key for each produced message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IKafkaProducerEndpointBuilder WithKafkaKey&lt;TMessage&gt;(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, object&gt; valueProvider)
+    where TMessage : class</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="parametername">valueProvider</span></td>
+        <td><p>The value provider function.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html">IKafkaProducerEndpointBuilder</a></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TMessage</span></td>
+        <td><p>The type of the messages to be enriched.</p>
 </td>
       </tr>
     </tbody>

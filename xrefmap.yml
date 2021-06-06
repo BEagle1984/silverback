@@ -184,12 +184,15 @@ references:
   commentId: T:Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions
   fullName: Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions
   nameWithType: BrokerOptionsBuilderAddMockedMqttExtensions
-- uid: Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)
-  name: AddMockedMqtt(IBrokerOptionsBuilder)
-  href: api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedMqttExtensions_AddMockedMqtt_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_
-  commentId: M:Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)
-  fullName: Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder)
-  nameWithType: BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt(IBrokerOptionsBuilder)
+- uid: Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder,System.Action{Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder})
+  name: AddMockedMqtt(IBrokerOptionsBuilder, Action<IMockedMqttOptionsBuilder>)
+  href: api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedMqttExtensions_AddMockedMqtt_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptionsBuilder__
+  commentId: M:Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder,System.Action{Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder})
+  name.vb: AddMockedMqtt(IBrokerOptionsBuilder, Action(Of IMockedMqttOptionsBuilder))
+  fullName: Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder, System.Action<Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder>)
+  fullName.vb: Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt(Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder, System.Action(Of Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder))
+  nameWithType: BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt(IBrokerOptionsBuilder, Action<IMockedMqttOptionsBuilder>)
+  nameWithType.vb: BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt(IBrokerOptionsBuilder, Action(Of IMockedMqttOptionsBuilder))
 - uid: Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.AddMockedMqtt*
   name: AddMockedMqtt
   href: api/Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedMqttExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedMqttExtensions_AddMockedMqtt_
@@ -393,6 +396,15 @@ references:
   commentId: T:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions
   fullName: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions
   nameWithType: HealthCheckBuilderExtensions
+- uid: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,Silverback.Messaging.Broker.ConsumerStatus,System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String})
+  name: AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, String, Nullable<HealthStatus>, IEnumerable<String>)
+  href: api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__
+  commentId: M:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,Silverback.Messaging.Broker.ConsumerStatus,System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String})
+  name.vb: AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, String, Nullable(Of HealthStatus), IEnumerable(Of String))
+  fullName: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder, Silverback.Messaging.Broker.ConsumerStatus, System.String, System.Nullable<Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus>, System.Collections.Generic.IEnumerable<System.String>)
+  fullName.vb: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder, Silverback.Messaging.Broker.ConsumerStatus, System.String, System.Nullable(Of Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus), System.Collections.Generic.IEnumerable(Of System.String))
+  nameWithType: HealthCheckBuilderExtensions.AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, String, Nullable<HealthStatus>, IEnumerable<String>)
+  nameWithType.vb: HealthCheckBuilderExtensions.AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, String, Nullable(Of HealthStatus), IEnumerable(Of String))
 - uid: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String})
   name: AddConsumersCheck(IHealthChecksBuilder, String, Nullable<HealthStatus>, IEnumerable<String>)
   href: api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__
@@ -1618,12 +1630,15 @@ references:
   commentId: T:Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions
   fullName: Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions
   nameWithType: SilverbackBuilderUseMockedMqttExtensions
-- uid: Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt(Silverback.Messaging.Configuration.ISilverbackBuilder)
-  name: UseMockedMqtt(ISilverbackBuilder)
-  href: api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedMqttExtensions_UseMockedMqtt_Silverback_Messaging_Configuration_ISilverbackBuilder_
-  commentId: M:Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt(Silverback.Messaging.Configuration.ISilverbackBuilder)
-  fullName: Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt(Silverback.Messaging.Configuration.ISilverbackBuilder)
-  nameWithType: SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt(ISilverbackBuilder)
+- uid: Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Action{Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder})
+  name: UseMockedMqtt(ISilverbackBuilder, Action<IMockedMqttOptionsBuilder>)
+  href: api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedMqttExtensions_UseMockedMqtt_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptionsBuilder__
+  commentId: M:Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt(Silverback.Messaging.Configuration.ISilverbackBuilder,System.Action{Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder})
+  name.vb: UseMockedMqtt(ISilverbackBuilder, Action(Of IMockedMqttOptionsBuilder))
+  fullName: Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt(Silverback.Messaging.Configuration.ISilverbackBuilder, System.Action<Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder>)
+  fullName.vb: Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt(Silverback.Messaging.Configuration.ISilverbackBuilder, System.Action(Of Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder))
+  nameWithType: SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt(ISilverbackBuilder, Action<IMockedMqttOptionsBuilder>)
+  nameWithType.vb: SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt(ISilverbackBuilder, Action(Of IMockedMqttOptionsBuilder))
 - uid: Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.UseMockedMqtt*
   name: UseMockedMqtt
   href: api/Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedMqttExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedMqttExtensions_UseMockedMqtt_
@@ -1721,6 +1736,9 @@ references:
 - uid: sample-kafka-basic
   name: Kafka - Basic
   href: samples/kafka/basic.html
+- uid: sample-kafka-batch
+  name: Kafka - Batch Processing
+  href: samples/kafka/batch.html
 - uid: sample-kafka-binaryfile
   name: Kafka - Files Streaming
   href: samples/kafka/binaryfile-streaming.html
@@ -3937,6 +3955,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Diagnostics.IntegrationLogEvents.ErrorProducingOutboxStoredMessage
   nameWithType: IntegrationLogEvents.ErrorProducingOutboxStoredMessage
+- uid: Silverback.Diagnostics.IntegrationLogEvents.ErrorReconnectingConsumer
+  name: ErrorReconnectingConsumer
+  href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorReconnectingConsumer
+  commentId: P:Silverback.Diagnostics.IntegrationLogEvents.ErrorReconnectingConsumer
+  fullName: Silverback.Diagnostics.IntegrationLogEvents.ErrorReconnectingConsumer
+  nameWithType: IntegrationLogEvents.ErrorReconnectingConsumer
+- uid: Silverback.Diagnostics.IntegrationLogEvents.ErrorReconnectingConsumer*
+  name: ErrorReconnectingConsumer
+  href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_ErrorReconnectingConsumer_
+  commentId: Overload:Silverback.Diagnostics.IntegrationLogEvents.ErrorReconnectingConsumer
+  isSpec: "True"
+  fullName: Silverback.Diagnostics.IntegrationLogEvents.ErrorReconnectingConsumer
+  nameWithType: IntegrationLogEvents.ErrorReconnectingConsumer
 - uid: Silverback.Diagnostics.IntegrationLogEvents.IncompleteSequenceAborted
   name: IncompleteSequenceAborted
   href: api/Silverback.Diagnostics.IntegrationLogEvents.html#Silverback_Diagnostics_IntegrationLogEvents_IncompleteSequenceAborted
@@ -4774,6 +4805,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Diagnostics.KafkaLogEvents.KafkaExceptionNoAutoRecovery
   nameWithType: KafkaLogEvents.KafkaExceptionNoAutoRecovery
+- uid: Silverback.Diagnostics.KafkaLogEvents.KafkaLogHandlerError
+  name: KafkaLogHandlerError
+  href: api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_KafkaLogHandlerError
+  commentId: P:Silverback.Diagnostics.KafkaLogEvents.KafkaLogHandlerError
+  fullName: Silverback.Diagnostics.KafkaLogEvents.KafkaLogHandlerError
+  nameWithType: KafkaLogEvents.KafkaLogHandlerError
+- uid: Silverback.Diagnostics.KafkaLogEvents.KafkaLogHandlerError*
+  name: KafkaLogHandlerError
+  href: api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_KafkaLogHandlerError_
+  commentId: Overload:Silverback.Diagnostics.KafkaLogEvents.KafkaLogHandlerError
+  isSpec: "True"
+  fullName: Silverback.Diagnostics.KafkaLogEvents.KafkaLogHandlerError
+  nameWithType: KafkaLogEvents.KafkaLogHandlerError
 - uid: Silverback.Diagnostics.KafkaLogEvents.OffsetCommitError
   name: OffsetCommitError
   href: api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_OffsetCommitError
@@ -4852,6 +4896,32 @@ references:
   isSpec: "True"
   fullName: Silverback.Diagnostics.KafkaLogEvents.PartitionRevoked
   nameWithType: KafkaLogEvents.PartitionRevoked
+- uid: Silverback.Diagnostics.KafkaLogEvents.PollTimeoutAutoRecovery
+  name: PollTimeoutAutoRecovery
+  href: api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PollTimeoutAutoRecovery
+  commentId: P:Silverback.Diagnostics.KafkaLogEvents.PollTimeoutAutoRecovery
+  fullName: Silverback.Diagnostics.KafkaLogEvents.PollTimeoutAutoRecovery
+  nameWithType: KafkaLogEvents.PollTimeoutAutoRecovery
+- uid: Silverback.Diagnostics.KafkaLogEvents.PollTimeoutAutoRecovery*
+  name: PollTimeoutAutoRecovery
+  href: api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PollTimeoutAutoRecovery_
+  commentId: Overload:Silverback.Diagnostics.KafkaLogEvents.PollTimeoutAutoRecovery
+  isSpec: "True"
+  fullName: Silverback.Diagnostics.KafkaLogEvents.PollTimeoutAutoRecovery
+  nameWithType: KafkaLogEvents.PollTimeoutAutoRecovery
+- uid: Silverback.Diagnostics.KafkaLogEvents.PollTimeoutNoAutoRecovery
+  name: PollTimeoutNoAutoRecovery
+  href: api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PollTimeoutNoAutoRecovery
+  commentId: P:Silverback.Diagnostics.KafkaLogEvents.PollTimeoutNoAutoRecovery
+  fullName: Silverback.Diagnostics.KafkaLogEvents.PollTimeoutNoAutoRecovery
+  nameWithType: KafkaLogEvents.PollTimeoutNoAutoRecovery
+- uid: Silverback.Diagnostics.KafkaLogEvents.PollTimeoutNoAutoRecovery*
+  name: PollTimeoutNoAutoRecovery
+  href: api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_PollTimeoutNoAutoRecovery_
+  commentId: Overload:Silverback.Diagnostics.KafkaLogEvents.PollTimeoutNoAutoRecovery
+  isSpec: "True"
+  fullName: Silverback.Diagnostics.KafkaLogEvents.PollTimeoutNoAutoRecovery
+  nameWithType: KafkaLogEvents.PollTimeoutNoAutoRecovery
 - uid: Silverback.Diagnostics.KafkaLogEvents.ProduceNotAcknowledged
   name: ProduceNotAcknowledged
   href: api/Silverback.Diagnostics.KafkaLogEvents.html#Silverback_Diagnostics_KafkaLogEvents_ProduceNotAcknowledged
@@ -6932,6 +7002,12 @@ references:
   commentId: F:Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsSortIndexes.Producer.HeadersWriter
   fullName: Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsSortIndexes.Producer.HeadersWriter
   nameWithType: BrokerBehaviorsSortIndexes.Producer.HeadersWriter
+- uid: Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsSortIndexes.Producer.MessageEnricher
+  name: MessageEnricher
+  href: api/Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsSortIndexes.Producer.html#Silverback_Messaging_Broker_Behaviors_BrokerBehaviorsSortIndexes_Producer_MessageEnricher
+  commentId: F:Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsSortIndexes.Producer.MessageEnricher
+  fullName: Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsSortIndexes.Producer.MessageEnricher
+  nameWithType: BrokerBehaviorsSortIndexes.Producer.MessageEnricher
 - uid: Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsSortIndexes.Producer.MessageIdInitializer
   name: MessageIdInitializer
   href: api/Silverback.Messaging.Broker.Behaviors.BrokerBehaviorsSortIndexes.Producer.html#Silverback_Messaging_Broker_Behaviors_BrokerBehaviorsSortIndexes_Producer_MessageIdInitializer
@@ -7885,6 +7961,25 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.OnConsumerError
   nameWithType: IKafkaConsumerErrorCallback.OnConsumerError
+- uid: Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback
+  name: IKafkaConsumerLogCallback
+  href: api/Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.html
+  commentId: T:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback
+  fullName: Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback
+  nameWithType: IKafkaConsumerLogCallback
+- uid: Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.OnConsumerLog(Confluent.Kafka.LogMessage,Silverback.Messaging.Broker.KafkaConsumer)
+  name: OnConsumerLog(LogMessage, KafkaConsumer)
+  href: api/Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaConsumerLogCallback_OnConsumerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_KafkaConsumer_
+  commentId: M:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.OnConsumerLog(Confluent.Kafka.LogMessage,Silverback.Messaging.Broker.KafkaConsumer)
+  fullName: Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.OnConsumerLog(Confluent.Kafka.LogMessage, Silverback.Messaging.Broker.KafkaConsumer)
+  nameWithType: IKafkaConsumerLogCallback.OnConsumerLog(LogMessage, KafkaConsumer)
+- uid: Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.OnConsumerLog*
+  name: OnConsumerLog
+  href: api/Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaConsumerLogCallback_OnConsumerLog_
+  commentId: Overload:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.OnConsumerLog
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback.OnConsumerLog
+  nameWithType: IKafkaConsumerLogCallback.OnConsumerLog
 - uid: Silverback.Messaging.Broker.Callbacks.IKafkaConsumerStatisticsCallback
   name: IKafkaConsumerStatisticsCallback
   href: api/Silverback.Messaging.Broker.Callbacks.IKafkaConsumerStatisticsCallback.html
@@ -7967,6 +8062,25 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsRevokedCallback.OnPartitionsRevoked
   nameWithType: IKafkaPartitionsRevokedCallback.OnPartitionsRevoked
+- uid: Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback
+  name: IKafkaProducerLogCallback
+  href: api/Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.html
+  commentId: T:Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback
+  fullName: Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback
+  nameWithType: IKafkaProducerLogCallback
+- uid: Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.OnProducerLog(Confluent.Kafka.LogMessage,Silverback.Messaging.Broker.KafkaProducer)
+  name: OnProducerLog(LogMessage, KafkaProducer)
+  href: api/Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaProducerLogCallback_OnProducerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_KafkaProducer_
+  commentId: M:Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.OnProducerLog(Confluent.Kafka.LogMessage,Silverback.Messaging.Broker.KafkaProducer)
+  fullName: Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.OnProducerLog(Confluent.Kafka.LogMessage, Silverback.Messaging.Broker.KafkaProducer)
+  nameWithType: IKafkaProducerLogCallback.OnProducerLog(LogMessage, KafkaProducer)
+- uid: Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.OnProducerLog*
+  name: OnProducerLog
+  href: api/Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaProducerLogCallback_OnProducerLog_
+  commentId: Overload:Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.OnProducerLog
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Callbacks.IKafkaProducerLogCallback.OnProducerLog
+  nameWithType: IKafkaProducerLogCallback.OnProducerLog
 - uid: Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback
   name: IKafkaProducerStatisticsCallback
   href: api/Silverback.Messaging.Broker.Callbacks.IKafkaProducerStatisticsCallback.html
@@ -9980,6 +10094,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Consumer.IsStopping
   nameWithType: Consumer.IsStopping
+- uid: Silverback.Messaging.Broker.Consumer.RevertReadyStatus
+  name: RevertReadyStatus()
+  href: api/Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RevertReadyStatus
+  commentId: M:Silverback.Messaging.Broker.Consumer.RevertReadyStatus
+  fullName: Silverback.Messaging.Broker.Consumer.RevertReadyStatus()
+  nameWithType: Consumer.RevertReadyStatus()
+- uid: Silverback.Messaging.Broker.Consumer.RevertReadyStatus*
+  name: RevertReadyStatus
+  href: api/Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RevertReadyStatus_
+  commentId: Overload:Silverback.Messaging.Broker.Consumer.RevertReadyStatus
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Consumer.RevertReadyStatus
+  nameWithType: Consumer.RevertReadyStatus
 - uid: Silverback.Messaging.Broker.Consumer.RollbackAsync(Silverback.Messaging.Broker.IBrokerMessageIdentifier)
   name: RollbackAsync(IBrokerMessageIdentifier)
   href: api/Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_RollbackAsync_Silverback_Messaging_Broker_IBrokerMessageIdentifier_
@@ -10044,6 +10171,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Consumer.ServiceProvider
   nameWithType: Consumer.ServiceProvider
+- uid: Silverback.Messaging.Broker.Consumer.SetReadyStatus
+  name: SetReadyStatus()
+  href: api/Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_SetReadyStatus
+  commentId: M:Silverback.Messaging.Broker.Consumer.SetReadyStatus
+  fullName: Silverback.Messaging.Broker.Consumer.SetReadyStatus()
+  nameWithType: Consumer.SetReadyStatus()
+- uid: Silverback.Messaging.Broker.Consumer.SetReadyStatus*
+  name: SetReadyStatus
+  href: api/Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_SetReadyStatus_
+  commentId: Overload:Silverback.Messaging.Broker.Consumer.SetReadyStatus
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Consumer.SetReadyStatus
+  nameWithType: Consumer.SetReadyStatus
 - uid: Silverback.Messaging.Broker.Consumer.StartAsync
   name: StartAsync()
   href: api/Silverback.Messaging.Broker.Consumer.html#Silverback_Messaging_Broker_Consumer_StartAsync
@@ -10299,6 +10439,12 @@ references:
   commentId: F:Silverback.Messaging.Broker.ConsumerStatus.Disconnected
   fullName: Silverback.Messaging.Broker.ConsumerStatus.Disconnected
   nameWithType: ConsumerStatus.Disconnected
+- uid: Silverback.Messaging.Broker.ConsumerStatus.Ready
+  name: Ready
+  href: api/Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Ready
+  commentId: F:Silverback.Messaging.Broker.ConsumerStatus.Ready
+  fullName: Silverback.Messaging.Broker.ConsumerStatus.Ready
+  nameWithType: ConsumerStatus.Ready
 - uid: Silverback.Messaging.Broker.IBroker
   name: IBroker
   href: api/Silverback.Messaging.Broker.IBroker.html
@@ -12013,12 +12159,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.Commit
   nameWithType: IInMemoryTopic.Commit
-- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.EnsurePartitionsAssigned(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,System.Threading.CancellationToken)
-  name: EnsurePartitionsAssigned(IMockedConfluentConsumer, CancellationToken)
-  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_EnsurePartitionsAssigned_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_System_Threading_CancellationToken_
-  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.EnsurePartitionsAssigned(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,System.Threading.CancellationToken)
-  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.EnsurePartitionsAssigned(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer, System.Threading.CancellationToken)
-  nameWithType: IInMemoryTopic.EnsurePartitionsAssigned(IMockedConfluentConsumer, CancellationToken)
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.EnsurePartitionsAssigned(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,System.TimeSpan,System.Threading.CancellationToken)
+  name: EnsurePartitionsAssigned(IMockedConfluentConsumer, TimeSpan, CancellationToken)
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_EnsurePartitionsAssigned_Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_System_TimeSpan_System_Threading_CancellationToken_
+  commentId: M:Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.EnsurePartitionsAssigned(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer,System.TimeSpan,System.Threading.CancellationToken)
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.EnsurePartitionsAssigned(Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer, System.TimeSpan, System.Threading.CancellationToken)
+  nameWithType: IInMemoryTopic.EnsurePartitionsAssigned(IMockedConfluentConsumer, TimeSpan, CancellationToken)
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.EnsurePartitionsAssigned*
   name: EnsurePartitionsAssigned
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html#Silverback_Messaging_Broker_Kafka_Mocks_IInMemoryTopic_EnsurePartitionsAssigned_
@@ -12490,6 +12636,25 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.KafkaConsumer.WaitUntilConsumingStoppedCoreAsync
   nameWithType: KafkaConsumer.WaitUntilConsumingStoppedCoreAsync
+- uid: Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor
+  name: KafkaConsumerLocalTimeoutMonitor
+  href: api/Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.html
+  commentId: T:Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor
+  fullName: Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor
+  nameWithType: KafkaConsumerLocalTimeoutMonitor
+- uid: Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.OnConsumerLog(Confluent.Kafka.LogMessage,Silverback.Messaging.Broker.KafkaConsumer)
+  name: OnConsumerLog(LogMessage, KafkaConsumer)
+  href: api/Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.html#Silverback_Messaging_Broker_KafkaConsumerLocalTimeoutMonitor_OnConsumerLog_Confluent_Kafka_LogMessage_Silverback_Messaging_Broker_KafkaConsumer_
+  commentId: M:Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.OnConsumerLog(Confluent.Kafka.LogMessage,Silverback.Messaging.Broker.KafkaConsumer)
+  fullName: Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.OnConsumerLog(Confluent.Kafka.LogMessage, Silverback.Messaging.Broker.KafkaConsumer)
+  nameWithType: KafkaConsumerLocalTimeoutMonitor.OnConsumerLog(LogMessage, KafkaConsumer)
+- uid: Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.OnConsumerLog*
+  name: OnConsumerLog
+  href: api/Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.html#Silverback_Messaging_Broker_KafkaConsumerLocalTimeoutMonitor_OnConsumerLog_
+  commentId: Overload:Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.OnConsumerLog
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.OnConsumerLog
+  nameWithType: KafkaConsumerLocalTimeoutMonitor.OnConsumerLog
 - uid: Silverback.Messaging.Broker.KafkaOffset
   name: KafkaOffset
   href: api/Silverback.Messaging.Broker.KafkaOffset.html
@@ -12893,12 +13058,12 @@ references:
   commentId: T:Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory
   fullName: Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory
   nameWithType: MockedMqttNetClientFactory
-- uid: Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory.#ctor(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker)
-  name: MockedMqttNetClientFactory(IInMemoryMqttBroker)
-  href: api/Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory.html#Silverback_Messaging_Broker_Mqtt_MockedMqttNetClientFactory__ctor_Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_
-  commentId: M:Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory.#ctor(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker)
-  fullName: Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory.MockedMqttNetClientFactory(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker)
-  nameWithType: MockedMqttNetClientFactory.MockedMqttNetClientFactory(IInMemoryMqttBroker)
+- uid: Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory.#ctor(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker,Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions)
+  name: MockedMqttNetClientFactory(IInMemoryMqttBroker, IMockedMqttOptions)
+  href: api/Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory.html#Silverback_Messaging_Broker_Mqtt_MockedMqttNetClientFactory__ctor_Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory.#ctor(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker,Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions)
+  fullName: Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory.MockedMqttNetClientFactory(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker, Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions)
+  nameWithType: MockedMqttNetClientFactory.MockedMqttNetClientFactory(IInMemoryMqttBroker, IMockedMqttOptions)
 - uid: Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory.#ctor*
   name: MockedMqttNetClientFactory
   href: api/Silverback.Messaging.Broker.Mqtt.MockedMqttNetClientFactory.html#Silverback_Messaging_Broker_Mqtt_MockedMqttNetClientFactory__ctor_
@@ -13066,12 +13231,12 @@ references:
   commentId: T:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient
   fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient
   nameWithType: MockedMqttClient
-- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.#ctor(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker)
-  name: MockedMqttClient(IInMemoryMqttBroker)
-  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient__ctor_Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_
-  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.#ctor(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker)
-  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.MockedMqttClient(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker)
-  nameWithType: MockedMqttClient.MockedMqttClient(IInMemoryMqttBroker)
+- uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.#ctor(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker,Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions)
+  name: MockedMqttClient(IInMemoryMqttBroker, IMockedMqttOptions)
+  href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient__ctor_Silverback_Messaging_Broker_Mqtt_Mocks_IInMemoryMqttBroker_Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions_
+  commentId: M:Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.#ctor(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker,Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions)
+  fullName: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.MockedMqttClient(Silverback.Messaging.Broker.Mqtt.Mocks.IInMemoryMqttBroker, Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions)
+  nameWithType: MockedMqttClient.MockedMqttClient(IInMemoryMqttBroker, IMockedMqttOptions)
 - uid: Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.#ctor*
   name: MockedMqttClient
   href: api/Silverback.Messaging.Broker.Mqtt.Mocks.MockedMqttClient.html#Silverback_Messaging_Broker_Mqtt_Mocks_MockedMqttClient__ctor_
@@ -16827,6 +16992,41 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.IProducerEndpointBuilder(Of TBuilder)
   nameWithType: IProducerEndpointBuilder<TBuilder>
   nameWithType.vb: IProducerEndpointBuilder(Of TBuilder)
+- uid: Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.AddHeader(System.String,System.Object)
+  name: AddHeader(String, Object)
+  href: api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_AddHeader_System_String_System_Object_
+  commentId: M:Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.AddHeader(System.String,System.Object)
+  fullName: Silverback.Messaging.Configuration.IProducerEndpointBuilder<TBuilder>.AddHeader(System.String, System.Object)
+  fullName.vb: Silverback.Messaging.Configuration.IProducerEndpointBuilder(Of TBuilder).AddHeader(System.String, System.Object)
+  nameWithType: IProducerEndpointBuilder<TBuilder>.AddHeader(String, Object)
+  nameWithType.vb: IProducerEndpointBuilder(Of TBuilder).AddHeader(String, Object)
+- uid: Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.AddHeader*
+  name: AddHeader
+  href: api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_AddHeader_
+  commentId: Overload:Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.AddHeader
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.IProducerEndpointBuilder<TBuilder>.AddHeader
+  fullName.vb: Silverback.Messaging.Configuration.IProducerEndpointBuilder(Of TBuilder).AddHeader
+  nameWithType: IProducerEndpointBuilder<TBuilder>.AddHeader
+  nameWithType.vb: IProducerEndpointBuilder(Of TBuilder).AddHeader
+- uid: Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.AddHeader``1(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name: AddHeader<TMessage>(String, Func<IOutboundEnvelope<TMessage>, Object>)
+  href: api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_AddHeader__1_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__
+  commentId: M:Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.AddHeader``1(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name.vb: AddHeader(Of TMessage)(String, Func(Of IOutboundEnvelope(Of TMessage), Object))
+  fullName: Silverback.Messaging.Configuration.IProducerEndpointBuilder<TBuilder>.AddHeader<TMessage>(System.String, System.Func<Silverback.Messaging.Messages.IOutboundEnvelope<TMessage>, System.Object>)
+  fullName.vb: Silverback.Messaging.Configuration.IProducerEndpointBuilder(Of TBuilder).AddHeader(Of TMessage)(System.String, System.Func(Of Silverback.Messaging.Messages.IOutboundEnvelope(Of TMessage), System.Object))
+  nameWithType: IProducerEndpointBuilder<TBuilder>.AddHeader<TMessage>(String, Func<IOutboundEnvelope<TMessage>, Object>)
+  nameWithType.vb: IProducerEndpointBuilder(Of TBuilder).AddHeader(Of TMessage)(String, Func(Of IOutboundEnvelope(Of TMessage), Object))
+- uid: Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.AddHeader``1(System.String,System.Object)
+  name: AddHeader<TMessage>(String, Object)
+  href: api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_AddHeader__1_System_String_System_Object_
+  commentId: M:Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.AddHeader``1(System.String,System.Object)
+  name.vb: AddHeader(Of TMessage)(String, Object)
+  fullName: Silverback.Messaging.Configuration.IProducerEndpointBuilder<TBuilder>.AddHeader<TMessage>(System.String, System.Object)
+  fullName.vb: Silverback.Messaging.Configuration.IProducerEndpointBuilder(Of TBuilder).AddHeader(Of TMessage)(System.String, System.Object)
+  nameWithType: IProducerEndpointBuilder<TBuilder>.AddHeader<TMessage>(String, Object)
+  nameWithType.vb: IProducerEndpointBuilder(Of TBuilder).AddHeader(Of TMessage)(String, Object)
 - uid: Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.EnableChunking(System.Int32,System.Boolean)
   name: EnableChunking(Int32, Boolean)
   href: api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_EnableChunking_System_Int32_System_Boolean_
@@ -16929,6 +17129,24 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.IProducerEndpointBuilder(Of TBuilder).UseStrategy
   nameWithType: IProducerEndpointBuilder<TBuilder>.UseStrategy
   nameWithType.vb: IProducerEndpointBuilder(Of TBuilder).UseStrategy
+- uid: Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.WithMessageId*
+  name: WithMessageId
+  href: api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_WithMessageId_
+  commentId: Overload:Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.WithMessageId
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.IProducerEndpointBuilder<TBuilder>.WithMessageId
+  fullName.vb: Silverback.Messaging.Configuration.IProducerEndpointBuilder(Of TBuilder).WithMessageId
+  nameWithType: IProducerEndpointBuilder<TBuilder>.WithMessageId
+  nameWithType.vb: IProducerEndpointBuilder(Of TBuilder).WithMessageId
+- uid: Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.WithMessageId``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name: WithMessageId<TMessage>(Func<IOutboundEnvelope<TMessage>, Object>)
+  href: api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IProducerEndpointBuilder_1_WithMessageId__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__
+  commentId: M:Silverback.Messaging.Configuration.IProducerEndpointBuilder`1.WithMessageId``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name.vb: WithMessageId(Of TMessage)(Func(Of IOutboundEnvelope(Of TMessage), Object))
+  fullName: Silverback.Messaging.Configuration.IProducerEndpointBuilder<TBuilder>.WithMessageId<TMessage>(System.Func<Silverback.Messaging.Messages.IOutboundEnvelope<TMessage>, System.Object>)
+  fullName.vb: Silverback.Messaging.Configuration.IProducerEndpointBuilder(Of TBuilder).WithMessageId(Of TMessage)(System.Func(Of Silverback.Messaging.Messages.IOutboundEnvelope(Of TMessage), System.Object))
+  nameWithType: IProducerEndpointBuilder<TBuilder>.WithMessageId<TMessage>(Func<IOutboundEnvelope<TMessage>, Object>)
+  nameWithType.vb: IProducerEndpointBuilder(Of TBuilder).WithMessageId(Of TMessage)(Func(Of IOutboundEnvelope(Of TMessage), Object))
 - uid: Silverback.Messaging.Configuration.ISilverbackBuilder
   name: ISilverbackBuilder
   href: api/Silverback.Messaging.Configuration.ISilverbackBuilder.html
@@ -17209,6 +17427,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.ConfluentConfig
   nameWithType: ConfluentClientConfigProxy.ConfluentConfig
+- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.ConnectionsMaxIdleMs
+  name: ConnectionsMaxIdleMs
+  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_ConnectionsMaxIdleMs
+  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.ConnectionsMaxIdleMs
+  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.ConnectionsMaxIdleMs
+  nameWithType: ConfluentClientConfigProxy.ConnectionsMaxIdleMs
+- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.ConnectionsMaxIdleMs*
+  name: ConnectionsMaxIdleMs
+  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_ConnectionsMaxIdleMs_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.ConnectionsMaxIdleMs
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.ConnectionsMaxIdleMs
+  nameWithType: ConfluentClientConfigProxy.ConnectionsMaxIdleMs
 - uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.Debug
   name: Debug
   href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_Debug
@@ -17365,19 +17596,6 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.MetadataMaxAgeMs
   nameWithType: ConfluentClientConfigProxy.MetadataMaxAgeMs
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.MetadataRequestTimeoutMs
-  name: MetadataRequestTimeoutMs
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_MetadataRequestTimeoutMs
-  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.MetadataRequestTimeoutMs
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.MetadataRequestTimeoutMs
-  nameWithType: ConfluentClientConfigProxy.MetadataRequestTimeoutMs
-- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.MetadataRequestTimeoutMs*
-  name: MetadataRequestTimeoutMs
-  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_MetadataRequestTimeoutMs_
-  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.MetadataRequestTimeoutMs
-  isSpec: "True"
-  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.MetadataRequestTimeoutMs
-  nameWithType: ConfluentClientConfigProxy.MetadataRequestTimeoutMs
 - uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.PluginLibraryPaths
   name: PluginLibraryPaths
   href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_PluginLibraryPaths
@@ -17742,6 +17960,32 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEndpointIdentificationAlgorithm
   nameWithType: ConfluentClientConfigProxy.SslEndpointIdentificationAlgorithm
+- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineId
+  name: SslEngineId
+  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslEngineId
+  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineId
+  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineId
+  nameWithType: ConfluentClientConfigProxy.SslEngineId
+- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineId*
+  name: SslEngineId
+  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslEngineId_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineId
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineId
+  nameWithType: ConfluentClientConfigProxy.SslEngineId
+- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineLocation
+  name: SslEngineLocation
+  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslEngineLocation
+  commentId: P:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineLocation
+  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineLocation
+  nameWithType: ConfluentClientConfigProxy.SslEngineLocation
+- uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineLocation*
+  name: SslEngineLocation
+  href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslEngineLocation_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineLocation
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslEngineLocation
+  nameWithType: ConfluentClientConfigProxy.SslEngineLocation
 - uid: Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.SslKeyLocation
   name: SslKeyLocation
   href: api/Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslKeyLocation
@@ -18875,6 +19119,22 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.UseEndpointNameResolver(Of TResolver)()
   nameWithType: IKafkaProducerEndpointBuilder.UseEndpointNameResolver<TResolver>()
   nameWithType.vb: IKafkaProducerEndpointBuilder.UseEndpointNameResolver(Of TResolver)()
+- uid: Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.WithKafkaKey*
+  name: WithKafkaKey
+  href: api/Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder_WithKafkaKey_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.WithKafkaKey
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.WithKafkaKey
+  nameWithType: IKafkaProducerEndpointBuilder.WithKafkaKey
+- uid: Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.WithKafkaKey``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name: WithKafkaKey<TMessage>(Func<IOutboundEnvelope<TMessage>, Object>)
+  href: api/Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder_WithKafkaKey__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__
+  commentId: M:Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.WithKafkaKey``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name.vb: WithKafkaKey(Of TMessage)(Func(Of IOutboundEnvelope(Of TMessage), Object))
+  fullName: Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.WithKafkaKey<TMessage>(System.Func<Silverback.Messaging.Messages.IOutboundEnvelope<TMessage>, System.Object>)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.WithKafkaKey(Of TMessage)(System.Func(Of Silverback.Messaging.Messages.IOutboundEnvelope(Of TMessage), System.Object))
+  nameWithType: IKafkaProducerEndpointBuilder.WithKafkaKey<TMessage>(Func<IOutboundEnvelope<TMessage>, Object>)
+  nameWithType.vb: IKafkaProducerEndpointBuilder.WithKafkaKey(Of TMessage)(Func(Of IOutboundEnvelope(Of TMessage), Object))
 - uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions
   name: IMockedKafkaOptions
   href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.html
@@ -18907,12 +19167,38 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.OverriddenAutoCommitIntervalMs
   nameWithType: IMockedKafkaOptions.OverriddenAutoCommitIntervalMs
+- uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.PartitionsAssignmentDelay
+  name: PartitionsAssignmentDelay
+  href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.html#Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptions_PartitionsAssignmentDelay
+  commentId: P:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.PartitionsAssignmentDelay
+  fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.PartitionsAssignmentDelay
+  nameWithType: IMockedKafkaOptions.PartitionsAssignmentDelay
+- uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.PartitionsAssignmentDelay*
+  name: PartitionsAssignmentDelay
+  href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.html#Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptions_PartitionsAssignmentDelay_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.PartitionsAssignmentDelay
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions.PartitionsAssignmentDelay
+  nameWithType: IMockedKafkaOptions.PartitionsAssignmentDelay
 - uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder
   name: IMockedKafkaOptionsBuilder
   href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.html
   commentId: T:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder
   fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder
   nameWithType: IMockedKafkaOptionsBuilder
+- uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.DelayPartitionsAssignment(System.TimeSpan)
+  name: DelayPartitionsAssignment(TimeSpan)
+  href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.html#Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder_DelayPartitionsAssignment_System_TimeSpan_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.DelayPartitionsAssignment(System.TimeSpan)
+  fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.DelayPartitionsAssignment(System.TimeSpan)
+  nameWithType: IMockedKafkaOptionsBuilder.DelayPartitionsAssignment(TimeSpan)
+- uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.DelayPartitionsAssignment*
+  name: DelayPartitionsAssignment
+  href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.html#Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder_DelayPartitionsAssignment_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.DelayPartitionsAssignment
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.DelayPartitionsAssignment
+  nameWithType: IMockedKafkaOptionsBuilder.DelayPartitionsAssignment
 - uid: Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.OverrideAutoCommitIntervalMs(System.Nullable{System.Int32})
   name: OverrideAutoCommitIntervalMs(Nullable<Int32>)
   href: api/Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptionsBuilder.html#Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder_OverrideAutoCommitIntervalMs_System_Nullable_System_Int32__
@@ -19487,6 +19773,22 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.UseEndpointNameResolver(Of TResolver)()
   nameWithType: KafkaProducerEndpointBuilder.UseEndpointNameResolver<TResolver>()
   nameWithType.vb: KafkaProducerEndpointBuilder.UseEndpointNameResolver(Of TResolver)()
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.WithKafkaKey*
+  name: WithKafkaKey
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointBuilder_WithKafkaKey_
+  commentId: Overload:Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.WithKafkaKey
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.WithKafkaKey
+  nameWithType: KafkaProducerEndpointBuilder.WithKafkaKey
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.WithKafkaKey``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name: WithKafkaKey<TMessage>(Func<IOutboundEnvelope<TMessage>, Object>)
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaProducerEndpointBuilder_WithKafkaKey__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__
+  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.WithKafkaKey``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name.vb: WithKafkaKey(Of TMessage)(Func(Of IOutboundEnvelope(Of TMessage), Object))
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.WithKafkaKey<TMessage>(System.Func<Silverback.Messaging.Messages.IOutboundEnvelope<TMessage>, System.Object>)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.WithKafkaKey(Of TMessage)(System.Func(Of Silverback.Messaging.Messages.IOutboundEnvelope(Of TMessage), System.Object))
+  nameWithType: KafkaProducerEndpointBuilder.WithKafkaKey<TMessage>(Func<IOutboundEnvelope<TMessage>, Object>)
+  nameWithType.vb: KafkaProducerEndpointBuilder.WithKafkaKey(Of TMessage)(Func(Of IOutboundEnvelope(Of TMessage), Object))
 - uid: Silverback.Messaging.Configuration.KafkaBrokerOptionsConfigurator
   name: KafkaBrokerOptionsConfigurator
   href: api/Silverback.Messaging.Configuration.KafkaBrokerOptionsConfigurator.html
@@ -19512,6 +19814,44 @@ references:
   commentId: N:Silverback.Messaging.Configuration.Mqtt
   fullName: Silverback.Messaging.Configuration.Mqtt
   nameWithType: Silverback.Messaging.Configuration.Mqtt
+- uid: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions
+  name: IMockedMqttOptions
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.html
+  commentId: T:Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions
+  nameWithType: IMockedMqttOptions
+- uid: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.ConnectionDelay
+  name: ConnectionDelay
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.html#Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions_ConnectionDelay
+  commentId: P:Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.ConnectionDelay
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.ConnectionDelay
+  nameWithType: IMockedMqttOptions.ConnectionDelay
+- uid: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.ConnectionDelay*
+  name: ConnectionDelay
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.html#Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptions_ConnectionDelay_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.ConnectionDelay
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptions.ConnectionDelay
+  nameWithType: IMockedMqttOptions.ConnectionDelay
+- uid: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder
+  name: IMockedMqttOptionsBuilder
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder.html
+  commentId: T:Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder
+  nameWithType: IMockedMqttOptionsBuilder
+- uid: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder.DelayConnection(System.TimeSpan)
+  name: DelayConnection(TimeSpan)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptionsBuilder_DelayConnection_System_TimeSpan_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder.DelayConnection(System.TimeSpan)
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder.DelayConnection(System.TimeSpan)
+  nameWithType: IMockedMqttOptionsBuilder.DelayConnection(TimeSpan)
+- uid: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder.DelayConnection*
+  name: DelayConnection
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMockedMqttOptionsBuilder_DelayConnection_
+  commentId: Overload:Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder.DelayConnection
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMockedMqttOptionsBuilder.DelayConnection
+  nameWithType: IMockedMqttOptionsBuilder.DelayConnection
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder
   name: IMqttClientConfigBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttClientConfigBuilder.html
@@ -21884,6 +22224,41 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointBuilder(Of TEndpoint, TBuilder).ProducerEndpointBuilder
   nameWithType: ProducerEndpointBuilder<TEndpoint, TBuilder>.ProducerEndpointBuilder
   nameWithType.vb: ProducerEndpointBuilder(Of TEndpoint, TBuilder).ProducerEndpointBuilder
+- uid: Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader(System.String,System.Object)
+  name: AddHeader(String, Object)
+  href: api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader_System_String_System_Object_
+  commentId: M:Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader(System.String,System.Object)
+  fullName: Silverback.Messaging.Configuration.ProducerEndpointBuilder<TEndpoint, TBuilder>.AddHeader(System.String, System.Object)
+  fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointBuilder(Of TEndpoint, TBuilder).AddHeader(System.String, System.Object)
+  nameWithType: ProducerEndpointBuilder<TEndpoint, TBuilder>.AddHeader(String, Object)
+  nameWithType.vb: ProducerEndpointBuilder(Of TEndpoint, TBuilder).AddHeader(String, Object)
+- uid: Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader*
+  name: AddHeader
+  href: api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader_
+  commentId: Overload:Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.ProducerEndpointBuilder<TEndpoint, TBuilder>.AddHeader
+  fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointBuilder(Of TEndpoint, TBuilder).AddHeader
+  nameWithType: ProducerEndpointBuilder<TEndpoint, TBuilder>.AddHeader
+  nameWithType.vb: ProducerEndpointBuilder(Of TEndpoint, TBuilder).AddHeader
+- uid: Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader``1(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name: AddHeader<TMessage>(String, Func<IOutboundEnvelope<TMessage>, Object>)
+  href: api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader__1_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__
+  commentId: M:Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader``1(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name.vb: AddHeader(Of TMessage)(String, Func(Of IOutboundEnvelope(Of TMessage), Object))
+  fullName: Silverback.Messaging.Configuration.ProducerEndpointBuilder<TEndpoint, TBuilder>.AddHeader<TMessage>(System.String, System.Func<Silverback.Messaging.Messages.IOutboundEnvelope<TMessage>, System.Object>)
+  fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointBuilder(Of TEndpoint, TBuilder).AddHeader(Of TMessage)(System.String, System.Func(Of Silverback.Messaging.Messages.IOutboundEnvelope(Of TMessage), System.Object))
+  nameWithType: ProducerEndpointBuilder<TEndpoint, TBuilder>.AddHeader<TMessage>(String, Func<IOutboundEnvelope<TMessage>, Object>)
+  nameWithType.vb: ProducerEndpointBuilder(Of TEndpoint, TBuilder).AddHeader(Of TMessage)(String, Func(Of IOutboundEnvelope(Of TMessage), Object))
+- uid: Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader``1(System.String,System.Object)
+  name: AddHeader<TMessage>(String, Object)
+  href: api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader__1_System_String_System_Object_
+  commentId: M:Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader``1(System.String,System.Object)
+  name.vb: AddHeader(Of TMessage)(String, Object)
+  fullName: Silverback.Messaging.Configuration.ProducerEndpointBuilder<TEndpoint, TBuilder>.AddHeader<TMessage>(System.String, System.Object)
+  fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointBuilder(Of TEndpoint, TBuilder).AddHeader(Of TMessage)(System.String, System.Object)
+  nameWithType: ProducerEndpointBuilder<TEndpoint, TBuilder>.AddHeader<TMessage>(String, Object)
+  nameWithType.vb: ProducerEndpointBuilder(Of TEndpoint, TBuilder).AddHeader(Of TMessage)(String, Object)
 - uid: Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.Build
   name: Build()
   href: api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_Build
@@ -22003,6 +22378,24 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointBuilder(Of TEndpoint, TBuilder).UseStrategy
   nameWithType: ProducerEndpointBuilder<TEndpoint, TBuilder>.UseStrategy
   nameWithType.vb: ProducerEndpointBuilder(Of TEndpoint, TBuilder).UseStrategy
+- uid: Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.WithMessageId*
+  name: WithMessageId
+  href: api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_WithMessageId_
+  commentId: Overload:Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.WithMessageId
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.ProducerEndpointBuilder<TEndpoint, TBuilder>.WithMessageId
+  fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointBuilder(Of TEndpoint, TBuilder).WithMessageId
+  nameWithType: ProducerEndpointBuilder<TEndpoint, TBuilder>.WithMessageId
+  nameWithType.vb: ProducerEndpointBuilder(Of TEndpoint, TBuilder).WithMessageId
+- uid: Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.WithMessageId``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name: WithMessageId<TMessage>(Func<IOutboundEnvelope<TMessage>, Object>)
+  href: api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_WithMessageId__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__
+  commentId: M:Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.WithMessageId``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})
+  name.vb: WithMessageId(Of TMessage)(Func(Of IOutboundEnvelope(Of TMessage), Object))
+  fullName: Silverback.Messaging.Configuration.ProducerEndpointBuilder<TEndpoint, TBuilder>.WithMessageId<TMessage>(System.Func<Silverback.Messaging.Messages.IOutboundEnvelope<TMessage>, System.Object>)
+  fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointBuilder(Of TEndpoint, TBuilder).WithMessageId(Of TMessage)(System.Func(Of Silverback.Messaging.Messages.IOutboundEnvelope(Of TMessage), System.Object))
+  nameWithType: ProducerEndpointBuilder<TEndpoint, TBuilder>.WithMessageId<TMessage>(Func<IOutboundEnvelope<TMessage>, Object>)
+  nameWithType.vb: ProducerEndpointBuilder(Of TEndpoint, TBuilder).WithMessageId(Of TMessage)(Func(Of IOutboundEnvelope(Of TMessage), Object))
 - uid: Silverback.Messaging.Configuration.ProducerEndpointBuilderEncryptUsingExtensions
   name: ProducerEndpointBuilderEncryptUsingExtensions
   href: api/Silverback.Messaging.Configuration.ProducerEndpointBuilderEncryptUsingExtensions.html
@@ -24225,12 +24618,12 @@ references:
   commentId: T:Silverback.Messaging.HealthChecks.ConsumersHealthCheck
   fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheck
   nameWithType: ConsumersHealthCheck
-- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.#ctor(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService)
-  name: ConsumersHealthCheck(IConsumersHealthCheckService)
-  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheck__ctor_Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_
-  commentId: M:Silverback.Messaging.HealthChecks.ConsumersHealthCheck.#ctor(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService)
-  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.ConsumersHealthCheck(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService)
-  nameWithType: ConsumersHealthCheck.ConsumersHealthCheck(IConsumersHealthCheckService)
+- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.#ctor(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService,Silverback.Messaging.Broker.ConsumerStatus)
+  name: ConsumersHealthCheck(IConsumersHealthCheckService, ConsumerStatus)
+  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheck__ctor_Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_Silverback_Messaging_Broker_ConsumerStatus_
+  commentId: M:Silverback.Messaging.HealthChecks.ConsumersHealthCheck.#ctor(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService,Silverback.Messaging.Broker.ConsumerStatus)
+  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.ConsumersHealthCheck(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService, Silverback.Messaging.Broker.ConsumerStatus)
+  nameWithType: ConsumersHealthCheck.ConsumersHealthCheck(IConsumersHealthCheckService, ConsumerStatus)
 - uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.#ctor*
   name: ConsumersHealthCheck
   href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheck__ctor_
@@ -24257,12 +24650,12 @@ references:
   commentId: T:Silverback.Messaging.HealthChecks.ConsumersHealthCheckService
   fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService
   nameWithType: ConsumersHealthCheckService
-- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.#ctor(Silverback.Messaging.Broker.IBrokerCollection)
-  name: ConsumersHealthCheckService(IBrokerCollection)
-  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheckService__ctor_Silverback_Messaging_Broker_IBrokerCollection_
-  commentId: M:Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.#ctor(Silverback.Messaging.Broker.IBrokerCollection)
-  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.ConsumersHealthCheckService(Silverback.Messaging.Broker.IBrokerCollection)
-  nameWithType: ConsumersHealthCheckService.ConsumersHealthCheckService(IBrokerCollection)
+- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.#ctor(Silverback.Messaging.Broker.IBrokerCollection,Microsoft.Extensions.Hosting.IHostApplicationLifetime)
+  name: ConsumersHealthCheckService(IBrokerCollection, IHostApplicationLifetime)
+  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheckService__ctor_Silverback_Messaging_Broker_IBrokerCollection_Microsoft_Extensions_Hosting_IHostApplicationLifetime_
+  commentId: M:Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.#ctor(Silverback.Messaging.Broker.IBrokerCollection,Microsoft.Extensions.Hosting.IHostApplicationLifetime)
+  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.ConsumersHealthCheckService(Silverback.Messaging.Broker.IBrokerCollection, Microsoft.Extensions.Hosting.IHostApplicationLifetime)
+  nameWithType: ConsumersHealthCheckService.ConsumersHealthCheckService(IBrokerCollection, IHostApplicationLifetime)
 - uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.#ctor*
   name: ConsumersHealthCheckService
   href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheckService__ctor_
@@ -24270,19 +24663,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.ConsumersHealthCheckService
   nameWithType: ConsumersHealthCheckService.ConsumersHealthCheckService
-- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.CheckConsumersConnectedAsync
-  name: CheckConsumersConnectedAsync()
-  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheckService_CheckConsumersConnectedAsync
-  commentId: M:Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.CheckConsumersConnectedAsync
-  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.CheckConsumersConnectedAsync()
-  nameWithType: ConsumersHealthCheckService.CheckConsumersConnectedAsync()
-- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.CheckConsumersConnectedAsync*
-  name: CheckConsumersConnectedAsync
-  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheckService_CheckConsumersConnectedAsync_
-  commentId: Overload:Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.CheckConsumersConnectedAsync
+- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus)
+  name: GetDisconnectedConsumersAsync(ConsumerStatus)
+  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_
+  commentId: M:Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus)
+  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus)
+  nameWithType: ConsumersHealthCheckService.GetDisconnectedConsumersAsync(ConsumerStatus)
+- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync*
+  name: GetDisconnectedConsumersAsync
+  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheckService_GetDisconnectedConsumersAsync_
+  commentId: Overload:Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync
   isSpec: "True"
-  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.CheckConsumersConnectedAsync
-  nameWithType: ConsumersHealthCheckService.CheckConsumersConnectedAsync
+  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync
+  nameWithType: ConsumersHealthCheckService.GetDisconnectedConsumersAsync
 - uid: Silverback.Messaging.HealthChecks.EndpointCheckResult
   name: EndpointCheckResult
   href: api/Silverback.Messaging.HealthChecks.EndpointCheckResult.html
@@ -24347,19 +24740,19 @@ references:
   commentId: T:Silverback.Messaging.HealthChecks.IConsumersHealthCheckService
   fullName: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService
   nameWithType: IConsumersHealthCheckService
-- uid: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.CheckConsumersConnectedAsync
-  name: CheckConsumersConnectedAsync()
-  href: api/Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_CheckConsumersConnectedAsync
-  commentId: M:Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.CheckConsumersConnectedAsync
-  fullName: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.CheckConsumersConnectedAsync()
-  nameWithType: IConsumersHealthCheckService.CheckConsumersConnectedAsync()
-- uid: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.CheckConsumersConnectedAsync*
-  name: CheckConsumersConnectedAsync
-  href: api/Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_CheckConsumersConnectedAsync_
-  commentId: Overload:Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.CheckConsumersConnectedAsync
+- uid: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus)
+  name: GetDisconnectedConsumersAsync(ConsumerStatus)
+  href: api/Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_
+  commentId: M:Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus)
+  fullName: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus)
+  nameWithType: IConsumersHealthCheckService.GetDisconnectedConsumersAsync(ConsumerStatus)
+- uid: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync*
+  name: GetDisconnectedConsumersAsync
+  href: api/Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_
+  commentId: Overload:Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync
   isSpec: "True"
-  fullName: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.CheckConsumersConnectedAsync
-  nameWithType: IConsumersHealthCheckService.CheckConsumersConnectedAsync
+  fullName: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync
+  nameWithType: IConsumersHealthCheckService.GetDisconnectedConsumersAsync
 - uid: Silverback.Messaging.HealthChecks.IOutboundEndpointsHealthCheckService
   name: IOutboundEndpointsHealthCheckService
   href: api/Silverback.Messaging.HealthChecks.IOutboundEndpointsHealthCheckService.html
@@ -26004,6 +26397,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.IProducerEndpoint.GetActualName
   nameWithType: IProducerEndpoint.GetActualName
+- uid: Silverback.Messaging.IProducerEndpoint.MessageEnrichers
+  name: MessageEnrichers
+  href: api/Silverback.Messaging.IProducerEndpoint.html#Silverback_Messaging_IProducerEndpoint_MessageEnrichers
+  commentId: P:Silverback.Messaging.IProducerEndpoint.MessageEnrichers
+  fullName: Silverback.Messaging.IProducerEndpoint.MessageEnrichers
+  nameWithType: IProducerEndpoint.MessageEnrichers
+- uid: Silverback.Messaging.IProducerEndpoint.MessageEnrichers*
+  name: MessageEnrichers
+  href: api/Silverback.Messaging.IProducerEndpoint.html#Silverback_Messaging_IProducerEndpoint_MessageEnrichers_
+  commentId: Overload:Silverback.Messaging.IProducerEndpoint.MessageEnrichers
+  isSpec: "True"
+  fullName: Silverback.Messaging.IProducerEndpoint.MessageEnrichers
+  nameWithType: IProducerEndpoint.MessageEnrichers
 - uid: Silverback.Messaging.IProducerEndpoint.Strategy
   name: Strategy
   href: api/Silverback.Messaging.IProducerEndpoint.html#Silverback_Messaging_IProducerEndpoint_Strategy
@@ -27198,6 +27604,12 @@ references:
   commentId: T:Silverback.Messaging.Messages.MessageHeader
   fullName: Silverback.Messaging.Messages.MessageHeader
   nameWithType: MessageHeader
+- uid: Silverback.Messaging.Messages.MessageHeader.#ctor(System.String,System.Object)
+  name: MessageHeader(String, Object)
+  href: api/Silverback.Messaging.Messages.MessageHeader.html#Silverback_Messaging_Messages_MessageHeader__ctor_System_String_System_Object_
+  commentId: M:Silverback.Messaging.Messages.MessageHeader.#ctor(System.String,System.Object)
+  fullName: Silverback.Messaging.Messages.MessageHeader.MessageHeader(System.String, System.Object)
+  nameWithType: MessageHeader.MessageHeader(String, Object)
 - uid: Silverback.Messaging.Messages.MessageHeader.#ctor(System.String,System.String)
   name: MessageHeader(String, String)
   href: api/Silverback.Messaging.Messages.MessageHeader.html#Silverback_Messaging_Messages_MessageHeader__ctor_System_String_System_String_
@@ -28065,6 +28477,224 @@ references:
   commentId: N:Silverback.Messaging.Outbound
   fullName: Silverback.Messaging.Outbound
   nameWithType: Silverback.Messaging.Outbound
+- uid: Silverback.Messaging.Outbound.Enrichers
+  name: Silverback.Messaging.Outbound.Enrichers
+  href: api/Silverback.Messaging.Outbound.Enrichers.html
+  commentId: N:Silverback.Messaging.Outbound.Enrichers
+  fullName: Silverback.Messaging.Outbound.Enrichers
+  nameWithType: Silverback.Messaging.Outbound.Enrichers
+- uid: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher
+  name: GenericOutboundHeadersEnricher
+  href: api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.html
+  commentId: T:Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher
+  fullName: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher
+  nameWithType: GenericOutboundHeadersEnricher
+- uid: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.#ctor(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{System.Object},System.Object})
+  name: GenericOutboundHeadersEnricher(String, Func<IOutboundEnvelope<Object>, Object>)
+  href: api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.html#Silverback_Messaging_Outbound_Enrichers_GenericOutboundHeadersEnricher__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope_System_Object__System_Object__
+  commentId: M:Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.#ctor(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{System.Object},System.Object})
+  name.vb: GenericOutboundHeadersEnricher(String, Func(Of IOutboundEnvelope(Of Object), Object))
+  fullName: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.GenericOutboundHeadersEnricher(System.String, System.Func<Silverback.Messaging.Messages.IOutboundEnvelope<System.Object>, System.Object>)
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.GenericOutboundHeadersEnricher(System.String, System.Func(Of Silverback.Messaging.Messages.IOutboundEnvelope(Of System.Object), System.Object))
+  nameWithType: GenericOutboundHeadersEnricher.GenericOutboundHeadersEnricher(String, Func<IOutboundEnvelope<Object>, Object>)
+  nameWithType.vb: GenericOutboundHeadersEnricher.GenericOutboundHeadersEnricher(String, Func(Of IOutboundEnvelope(Of Object), Object))
+- uid: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.#ctor(System.String,System.Object)
+  name: GenericOutboundHeadersEnricher(String, Object)
+  href: api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.html#Silverback_Messaging_Outbound_Enrichers_GenericOutboundHeadersEnricher__ctor_System_String_System_Object_
+  commentId: M:Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.#ctor(System.String,System.Object)
+  fullName: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.GenericOutboundHeadersEnricher(System.String, System.Object)
+  nameWithType: GenericOutboundHeadersEnricher.GenericOutboundHeadersEnricher(String, Object)
+- uid: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.#ctor*
+  name: GenericOutboundHeadersEnricher
+  href: api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.html#Silverback_Messaging_Outbound_Enrichers_GenericOutboundHeadersEnricher__ctor_
+  commentId: Overload:Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.#ctor
+  isSpec: "True"
+  fullName: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher.GenericOutboundHeadersEnricher
+  nameWithType: GenericOutboundHeadersEnricher.GenericOutboundHeadersEnricher
+- uid: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1
+  name: GenericOutboundHeadersEnricher<TMessage>
+  href: api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher-1.html
+  commentId: T:Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1
+  name.vb: GenericOutboundHeadersEnricher(Of TMessage)
+  fullName: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher<TMessage>
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher(Of TMessage)
+  nameWithType: GenericOutboundHeadersEnricher<TMessage>
+  nameWithType.vb: GenericOutboundHeadersEnricher(Of TMessage)
+- uid: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1.#ctor(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Object})
+  name: GenericOutboundHeadersEnricher(String, Func<IOutboundEnvelope<TMessage>, Object>)
+  href: api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher-1.html#Silverback_Messaging_Outbound_Enrichers_GenericOutboundHeadersEnricher_1__ctor_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Object__
+  commentId: M:Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1.#ctor(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Object})
+  name.vb: GenericOutboundHeadersEnricher(String, Func(Of IOutboundEnvelope(Of TMessage), Object))
+  fullName: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher<TMessage>.GenericOutboundHeadersEnricher(System.String, System.Func<Silverback.Messaging.Messages.IOutboundEnvelope<TMessage>, System.Object>)
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher(Of TMessage).GenericOutboundHeadersEnricher(System.String, System.Func(Of Silverback.Messaging.Messages.IOutboundEnvelope(Of TMessage), System.Object))
+  nameWithType: GenericOutboundHeadersEnricher<TMessage>.GenericOutboundHeadersEnricher(String, Func<IOutboundEnvelope<TMessage>, Object>)
+  nameWithType.vb: GenericOutboundHeadersEnricher(Of TMessage).GenericOutboundHeadersEnricher(String, Func(Of IOutboundEnvelope(Of TMessage), Object))
+- uid: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1.#ctor(System.String,System.Object)
+  name: GenericOutboundHeadersEnricher(String, Object)
+  href: api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher-1.html#Silverback_Messaging_Outbound_Enrichers_GenericOutboundHeadersEnricher_1__ctor_System_String_System_Object_
+  commentId: M:Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1.#ctor(System.String,System.Object)
+  fullName: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher<TMessage>.GenericOutboundHeadersEnricher(System.String, System.Object)
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher(Of TMessage).GenericOutboundHeadersEnricher(System.String, System.Object)
+  nameWithType: GenericOutboundHeadersEnricher<TMessage>.GenericOutboundHeadersEnricher(String, Object)
+  nameWithType.vb: GenericOutboundHeadersEnricher(Of TMessage).GenericOutboundHeadersEnricher(String, Object)
+- uid: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1.#ctor*
+  name: GenericOutboundHeadersEnricher
+  href: api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher-1.html#Silverback_Messaging_Outbound_Enrichers_GenericOutboundHeadersEnricher_1__ctor_
+  commentId: Overload:Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1.#ctor
+  isSpec: "True"
+  fullName: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher<TMessage>.GenericOutboundHeadersEnricher
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher(Of TMessage).GenericOutboundHeadersEnricher
+  nameWithType: GenericOutboundHeadersEnricher<TMessage>.GenericOutboundHeadersEnricher
+  nameWithType.vb: GenericOutboundHeadersEnricher(Of TMessage).GenericOutboundHeadersEnricher
+- uid: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1.Enrich(Silverback.Messaging.Messages.IOutboundEnvelope)
+  name: Enrich(IOutboundEnvelope)
+  href: api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher-1.html#Silverback_Messaging_Outbound_Enrichers_GenericOutboundHeadersEnricher_1_Enrich_Silverback_Messaging_Messages_IOutboundEnvelope_
+  commentId: M:Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1.Enrich(Silverback.Messaging.Messages.IOutboundEnvelope)
+  fullName: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher<TMessage>.Enrich(Silverback.Messaging.Messages.IOutboundEnvelope)
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher(Of TMessage).Enrich(Silverback.Messaging.Messages.IOutboundEnvelope)
+  nameWithType: GenericOutboundHeadersEnricher<TMessage>.Enrich(IOutboundEnvelope)
+  nameWithType.vb: GenericOutboundHeadersEnricher(Of TMessage).Enrich(IOutboundEnvelope)
+- uid: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1.Enrich*
+  name: Enrich
+  href: api/Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher-1.html#Silverback_Messaging_Outbound_Enrichers_GenericOutboundHeadersEnricher_1_Enrich_
+  commentId: Overload:Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher`1.Enrich
+  isSpec: "True"
+  fullName: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher<TMessage>.Enrich
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.GenericOutboundHeadersEnricher(Of TMessage).Enrich
+  nameWithType: GenericOutboundHeadersEnricher<TMessage>.Enrich
+  nameWithType.vb: GenericOutboundHeadersEnricher(Of TMessage).Enrich
+- uid: Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher
+  name: IOutboundMessageEnricher
+  href: api/Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.html
+  commentId: T:Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher
+  fullName: Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher
+  nameWithType: IOutboundMessageEnricher
+- uid: Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.Enrich(Silverback.Messaging.Messages.IOutboundEnvelope)
+  name: Enrich(IOutboundEnvelope)
+  href: api/Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.html#Silverback_Messaging_Outbound_Enrichers_IOutboundMessageEnricher_Enrich_Silverback_Messaging_Messages_IOutboundEnvelope_
+  commentId: M:Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.Enrich(Silverback.Messaging.Messages.IOutboundEnvelope)
+  fullName: Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.Enrich(Silverback.Messaging.Messages.IOutboundEnvelope)
+  nameWithType: IOutboundMessageEnricher.Enrich(IOutboundEnvelope)
+- uid: Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.Enrich*
+  name: Enrich
+  href: api/Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.html#Silverback_Messaging_Outbound_Enrichers_IOutboundMessageEnricher_Enrich_
+  commentId: Overload:Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.Enrich
+  isSpec: "True"
+  fullName: Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.Enrich
+  nameWithType: IOutboundMessageEnricher.Enrich
+- uid: Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior
+  name: MessageEnricherProducerBehavior
+  href: api/Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.html
+  commentId: T:Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior
+  fullName: Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior
+  nameWithType: MessageEnricherProducerBehavior
+- uid: Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.HandleAsync(Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext,Silverback.Messaging.Broker.Behaviors.ProducerBehaviorHandler)
+  name: HandleAsync(ProducerPipelineContext, ProducerBehaviorHandler)
+  href: api/Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.html#Silverback_Messaging_Outbound_Enrichers_MessageEnricherProducerBehavior_HandleAsync_Silverback_Messaging_Broker_Behaviors_ProducerPipelineContext_Silverback_Messaging_Broker_Behaviors_ProducerBehaviorHandler_
+  commentId: M:Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.HandleAsync(Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext,Silverback.Messaging.Broker.Behaviors.ProducerBehaviorHandler)
+  fullName: Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.HandleAsync(Silverback.Messaging.Broker.Behaviors.ProducerPipelineContext, Silverback.Messaging.Broker.Behaviors.ProducerBehaviorHandler)
+  nameWithType: MessageEnricherProducerBehavior.HandleAsync(ProducerPipelineContext, ProducerBehaviorHandler)
+- uid: Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.HandleAsync*
+  name: HandleAsync
+  href: api/Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.html#Silverback_Messaging_Outbound_Enrichers_MessageEnricherProducerBehavior_HandleAsync_
+  commentId: Overload:Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.HandleAsync
+  isSpec: "True"
+  fullName: Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.HandleAsync
+  nameWithType: MessageEnricherProducerBehavior.HandleAsync
+- uid: Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.SortIndex
+  name: SortIndex
+  href: api/Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.html#Silverback_Messaging_Outbound_Enrichers_MessageEnricherProducerBehavior_SortIndex
+  commentId: P:Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.SortIndex
+  fullName: Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.SortIndex
+  nameWithType: MessageEnricherProducerBehavior.SortIndex
+- uid: Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.SortIndex*
+  name: SortIndex
+  href: api/Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.html#Silverback_Messaging_Outbound_Enrichers_MessageEnricherProducerBehavior_SortIndex_
+  commentId: Overload:Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.SortIndex
+  isSpec: "True"
+  fullName: Silverback.Messaging.Outbound.Enrichers.MessageEnricherProducerBehavior.SortIndex
+  nameWithType: MessageEnricherProducerBehavior.SortIndex
+- uid: Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher`1
+  name: OutboundMessageIdHeadersEnricher<TMessage>
+  href: api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher-1.html
+  commentId: T:Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher`1
+  name.vb: OutboundMessageIdHeadersEnricher(Of TMessage)
+  fullName: Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher<TMessage>
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher(Of TMessage)
+  nameWithType: OutboundMessageIdHeadersEnricher<TMessage>
+  nameWithType.vb: OutboundMessageIdHeadersEnricher(Of TMessage)
+- uid: Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher`1.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Object})
+  name: OutboundMessageIdHeadersEnricher(Func<IOutboundEnvelope<TMessage>, Object>)
+  href: api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher-1.html#Silverback_Messaging_Outbound_Enrichers_OutboundMessageIdHeadersEnricher_1__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Object__
+  commentId: M:Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher`1.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Object})
+  name.vb: OutboundMessageIdHeadersEnricher(Func(Of IOutboundEnvelope(Of TMessage), Object))
+  fullName: Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher<TMessage>.OutboundMessageIdHeadersEnricher(System.Func<Silverback.Messaging.Messages.IOutboundEnvelope<TMessage>, System.Object>)
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher(Of TMessage).OutboundMessageIdHeadersEnricher(System.Func(Of Silverback.Messaging.Messages.IOutboundEnvelope(Of TMessage), System.Object))
+  nameWithType: OutboundMessageIdHeadersEnricher<TMessage>.OutboundMessageIdHeadersEnricher(Func<IOutboundEnvelope<TMessage>, Object>)
+  nameWithType.vb: OutboundMessageIdHeadersEnricher(Of TMessage).OutboundMessageIdHeadersEnricher(Func(Of IOutboundEnvelope(Of TMessage), Object))
+- uid: Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher`1.#ctor*
+  name: OutboundMessageIdHeadersEnricher
+  href: api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher-1.html#Silverback_Messaging_Outbound_Enrichers_OutboundMessageIdHeadersEnricher_1__ctor_
+  commentId: Overload:Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher`1.#ctor
+  isSpec: "True"
+  fullName: Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher<TMessage>.OutboundMessageIdHeadersEnricher
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.OutboundMessageIdHeadersEnricher(Of TMessage).OutboundMessageIdHeadersEnricher
+  nameWithType: OutboundMessageIdHeadersEnricher<TMessage>.OutboundMessageIdHeadersEnricher
+  nameWithType.vb: OutboundMessageIdHeadersEnricher(Of TMessage).OutboundMessageIdHeadersEnricher
+- uid: Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher`1
+  name: OutboundMessageKafkaKeyEnricher<TMessage>
+  href: api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher-1.html
+  commentId: T:Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher`1
+  name.vb: OutboundMessageKafkaKeyEnricher(Of TMessage)
+  fullName: Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher<TMessage>
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher(Of TMessage)
+  nameWithType: OutboundMessageKafkaKeyEnricher<TMessage>
+  nameWithType.vb: OutboundMessageKafkaKeyEnricher(Of TMessage)
+- uid: Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher`1.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Object})
+  name: OutboundMessageKafkaKeyEnricher(Func<IOutboundEnvelope<TMessage>, Object>)
+  href: api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher-1.html#Silverback_Messaging_Outbound_Enrichers_OutboundMessageKafkaKeyEnricher_1__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Object__
+  commentId: M:Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher`1.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Object})
+  name.vb: OutboundMessageKafkaKeyEnricher(Func(Of IOutboundEnvelope(Of TMessage), Object))
+  fullName: Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher<TMessage>.OutboundMessageKafkaKeyEnricher(System.Func<Silverback.Messaging.Messages.IOutboundEnvelope<TMessage>, System.Object>)
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher(Of TMessage).OutboundMessageKafkaKeyEnricher(System.Func(Of Silverback.Messaging.Messages.IOutboundEnvelope(Of TMessage), System.Object))
+  nameWithType: OutboundMessageKafkaKeyEnricher<TMessage>.OutboundMessageKafkaKeyEnricher(Func<IOutboundEnvelope<TMessage>, Object>)
+  nameWithType.vb: OutboundMessageKafkaKeyEnricher(Of TMessage).OutboundMessageKafkaKeyEnricher(Func(Of IOutboundEnvelope(Of TMessage), Object))
+- uid: Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher`1.#ctor*
+  name: OutboundMessageKafkaKeyEnricher
+  href: api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher-1.html#Silverback_Messaging_Outbound_Enrichers_OutboundMessageKafkaKeyEnricher_1__ctor_
+  commentId: Overload:Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher`1.#ctor
+  isSpec: "True"
+  fullName: Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher<TMessage>.OutboundMessageKafkaKeyEnricher
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.OutboundMessageKafkaKeyEnricher(Of TMessage).OutboundMessageKafkaKeyEnricher
+  nameWithType: OutboundMessageKafkaKeyEnricher<TMessage>.OutboundMessageKafkaKeyEnricher
+  nameWithType.vb: OutboundMessageKafkaKeyEnricher(Of TMessage).OutboundMessageKafkaKeyEnricher
+- uid: Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher`1
+  name: OutboundMessageRabbitRoutingKeyEnricher<TMessage>
+  href: api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher-1.html
+  commentId: T:Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher`1
+  name.vb: OutboundMessageRabbitRoutingKeyEnricher(Of TMessage)
+  fullName: Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher<TMessage>
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher(Of TMessage)
+  nameWithType: OutboundMessageRabbitRoutingKeyEnricher<TMessage>
+  nameWithType.vb: OutboundMessageRabbitRoutingKeyEnricher(Of TMessage)
+- uid: Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher`1.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Object})
+  name: OutboundMessageRabbitRoutingKeyEnricher(Func<IOutboundEnvelope<TMessage>, Object>)
+  href: api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher-1.html#Silverback_Messaging_Outbound_Enrichers_OutboundMessageRabbitRoutingKeyEnricher_1__ctor_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope__0__System_Object__
+  commentId: M:Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher`1.#ctor(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{`0},System.Object})
+  name.vb: OutboundMessageRabbitRoutingKeyEnricher(Func(Of IOutboundEnvelope(Of TMessage), Object))
+  fullName: Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher<TMessage>.OutboundMessageRabbitRoutingKeyEnricher(System.Func<Silverback.Messaging.Messages.IOutboundEnvelope<TMessage>, System.Object>)
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher(Of TMessage).OutboundMessageRabbitRoutingKeyEnricher(System.Func(Of Silverback.Messaging.Messages.IOutboundEnvelope(Of TMessage), System.Object))
+  nameWithType: OutboundMessageRabbitRoutingKeyEnricher<TMessage>.OutboundMessageRabbitRoutingKeyEnricher(Func<IOutboundEnvelope<TMessage>, Object>)
+  nameWithType.vb: OutboundMessageRabbitRoutingKeyEnricher(Of TMessage).OutboundMessageRabbitRoutingKeyEnricher(Func(Of IOutboundEnvelope(Of TMessage), Object))
+- uid: Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher`1.#ctor*
+  name: OutboundMessageRabbitRoutingKeyEnricher
+  href: api/Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher-1.html#Silverback_Messaging_Outbound_Enrichers_OutboundMessageRabbitRoutingKeyEnricher_1__ctor_
+  commentId: Overload:Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher`1.#ctor
+  isSpec: "True"
+  fullName: Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher<TMessage>.OutboundMessageRabbitRoutingKeyEnricher
+  fullName.vb: Silverback.Messaging.Outbound.Enrichers.OutboundMessageRabbitRoutingKeyEnricher(Of TMessage).OutboundMessageRabbitRoutingKeyEnricher
+  nameWithType: OutboundMessageRabbitRoutingKeyEnricher<TMessage>.OutboundMessageRabbitRoutingKeyEnricher
+  nameWithType.vb: OutboundMessageRabbitRoutingKeyEnricher(Of TMessage).OutboundMessageRabbitRoutingKeyEnricher
 - uid: Silverback.Messaging.Outbound.IntegrationBehaviorsSortIndexes
   name: IntegrationBehaviorsSortIndexes
   href: api/Silverback.Messaging.Outbound.IntegrationBehaviorsSortIndexes.html
@@ -29956,6 +30586,36 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.ProducerEndpoint.GetActualName
   nameWithType: ProducerEndpoint.GetActualName
+- uid: Silverback.Messaging.ProducerEndpoint.MessageEnrichers
+  name: MessageEnrichers
+  href: api/Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint_MessageEnrichers
+  commentId: P:Silverback.Messaging.ProducerEndpoint.MessageEnrichers
+  fullName: Silverback.Messaging.ProducerEndpoint.MessageEnrichers
+  nameWithType: ProducerEndpoint.MessageEnrichers
+- uid: Silverback.Messaging.ProducerEndpoint.MessageEnrichers*
+  name: MessageEnrichers
+  href: api/Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint_MessageEnrichers_
+  commentId: Overload:Silverback.Messaging.ProducerEndpoint.MessageEnrichers
+  isSpec: "True"
+  fullName: Silverback.Messaging.ProducerEndpoint.MessageEnrichers
+  nameWithType: ProducerEndpoint.MessageEnrichers
+- uid: Silverback.Messaging.ProducerEndpoint.Silverback#Messaging#IProducerEndpoint#MessageEnrichers
+  name: IProducerEndpoint.MessageEnrichers
+  href: api/Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint_Silverback_Messaging_IProducerEndpoint_MessageEnrichers
+  commentId: P:Silverback.Messaging.ProducerEndpoint.Silverback#Messaging#IProducerEndpoint#MessageEnrichers
+  name.vb: Silverback.Messaging.IProducerEndpoint.MessageEnrichers
+  fullName: Silverback.Messaging.ProducerEndpoint.Silverback.Messaging.IProducerEndpoint.MessageEnrichers
+  nameWithType: ProducerEndpoint.IProducerEndpoint.MessageEnrichers
+  nameWithType.vb: ProducerEndpoint.Silverback.Messaging.IProducerEndpoint.MessageEnrichers
+- uid: Silverback.Messaging.ProducerEndpoint.Silverback#Messaging#IProducerEndpoint#MessageEnrichers*
+  name: IProducerEndpoint.MessageEnrichers
+  href: api/Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint_Silverback_Messaging_IProducerEndpoint_MessageEnrichers_
+  commentId: Overload:Silverback.Messaging.ProducerEndpoint.Silverback#Messaging#IProducerEndpoint#MessageEnrichers
+  isSpec: "True"
+  name.vb: Silverback.Messaging.IProducerEndpoint.MessageEnrichers
+  fullName: Silverback.Messaging.ProducerEndpoint.Silverback.Messaging.IProducerEndpoint.MessageEnrichers
+  nameWithType: ProducerEndpoint.IProducerEndpoint.MessageEnrichers
+  nameWithType.vb: ProducerEndpoint.Silverback.Messaging.IProducerEndpoint.MessageEnrichers
 - uid: Silverback.Messaging.ProducerEndpoint.Strategy
   name: Strategy
   href: api/Silverback.Messaging.ProducerEndpoint.html#Silverback_Messaging_ProducerEndpoint_Strategy

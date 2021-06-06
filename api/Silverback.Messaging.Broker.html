@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Silverback.Messaging.Broker
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -116,6 +116,11 @@ application is being stopped.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a></h4>
       <section><p>Consumes an endpoint and invokes a callback delegate when a message is received.</p>
+</section>
+      <h4><a class="xref" href="Silverback.Messaging.Broker.KafkaConsumerLocalTimeoutMonitor.html">KafkaConsumerLocalTimeoutMonitor</a></h4>
+      <section><p>Handles the consumer error callback and reverts the consumer <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Ready">Ready</a> status
+to <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Connected">Connected</a> when the local poll timeout is exceeded. The consumer should
+eventually reconnect but this allows to accurately track its status.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.KafkaOffset.html">KafkaOffset</a></h4>
       <section><p>Represents the position of the message in a partition.</p>

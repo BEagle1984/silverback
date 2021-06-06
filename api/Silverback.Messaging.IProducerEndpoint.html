@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IProducerEndpoint
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -122,7 +122,7 @@ exchange).</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_IProducerEndpoint_Chunk.md&amp;value=---%0Auid%3A%20Silverback.Messaging.IProducerEndpoint.Chunk%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L21">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L23">View source</a>
   </span>
   <a id="Silverback_Messaging_IProducerEndpoint_Chunk_" data-uid="Silverback.Messaging.IProducerEndpoint.Chunk*"></a>
   <h4 id="Silverback_Messaging_IProducerEndpoint_Chunk" data-uid="Silverback.Messaging.IProducerEndpoint.Chunk">Chunk</h4>
@@ -151,10 +151,41 @@ chunks.</p>
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_IProducerEndpoint_MessageEnrichers.md&amp;value=---%0Auid%3A%20Silverback.Messaging.IProducerEndpoint.MessageEnrichers%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L34">View source</a>
+  </span>
+  <a id="Silverback_Messaging_IProducerEndpoint_MessageEnrichers_" data-uid="Silverback.Messaging.IProducerEndpoint.MessageEnrichers*"></a>
+  <h4 id="Silverback_Messaging_IProducerEndpoint_MessageEnrichers" data-uid="Silverback.Messaging.IProducerEndpoint.MessageEnrichers">MessageEnrichers</h4>
+  <div class="markdown level1 summary"><p>Gets the collection of <a class="xref" href="Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.html">IOutboundMessageEnricher</a> to be used to enrich the outbound message.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IReadOnlyCollection&lt;IOutboundMessageEnricher&gt; MessageEnrichers { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Outbound.Enrichers.IOutboundMessageEnricher.html">IOutboundMessageEnricher</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_IProducerEndpoint_Strategy.md&amp;value=---%0Auid%3A%20Silverback.Messaging.IProducerEndpoint.Strategy%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L27">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L29">View source</a>
   </span>
   <a id="Silverback_Messaging_IProducerEndpoint_Strategy_" data-uid="Silverback.Messaging.IProducerEndpoint.Strategy*"></a>
   <h4 id="Silverback_Messaging_IProducerEndpoint_Strategy" data-uid="Silverback.Messaging.IProducerEndpoint.Strategy">Strategy</h4>
@@ -188,7 +219,7 @@ messages will be sent to the message broker directly.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_IProducerEndpoint_GetActualName_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.IProducerEndpoint.GetActualName(Silverback.Messaging.Messages.IOutboundEnvelope%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L41">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L48">View source</a>
   </span>
   <a id="Silverback_Messaging_IProducerEndpoint_GetActualName_" data-uid="Silverback.Messaging.IProducerEndpoint.GetActualName*"></a>
   <h4 id="Silverback_Messaging_IProducerEndpoint_GetActualName_Silverback_Messaging_Messages_IOutboundEnvelope_System_IServiceProvider_" data-uid="Silverback.Messaging.IProducerEndpoint.GetActualName(Silverback.Messaging.Messages.IOutboundEnvelope,System.IServiceProvider)">GetActualName(IOutboundEnvelope, IServiceProvider)</h4>
@@ -250,7 +281,7 @@ messages will be sent to the message broker directly.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_IProducerEndpoint.md&amp;value=---%0Auid%3A%20Silverback.Messaging.IProducerEndpoint%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L15" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/IProducerEndpoint.cs/#L17" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

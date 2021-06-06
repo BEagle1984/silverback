@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class HealthCheckBuilderExtensions
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -133,14 +133,89 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder%2CSilverback.Messaging.Broker.ConsumerStatus%2CSystem.String%2CSystem.Nullable%7BMicrosoft.Extensions.Diagnostics.HealthChecks.HealthStatus%7D%2CSystem.Collections.Generic.IEnumerable%7BSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.HealthChecks/Messaging/HealthChecks/HealthCheckBuilderExtensions.cs/#L151">View source</a>
+  </span>
+  <a id="Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_" data-uid="Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck*"></a>
+  <h4 id="Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__" data-uid="Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,Silverback.Messaging.Broker.ConsumerStatus,System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String})">AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, String, Nullable&lt;HealthStatus&gt;, IEnumerable&lt;String&gt;)</h4>
+  <div class="markdown level1 summary"><p>Adds a health check that verifies that all consumers are connected.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static IHealthChecksBuilder AddConsumersCheck(this IHealthChecksBuilder builder, ConsumerStatus minHealthyStatus, string name = &quot;Consumers&quot;, HealthStatus? failureStatus = default(HealthStatus? ), IEnumerable&lt;string&gt; tags = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder</span></td>
+        <td><span class="parametername">builder</span></td>
+        <td><p>The <span class="xref">Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder</span>.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html">ConsumerStatus</a></td>
+        <td><span class="parametername">minHealthyStatus</span></td>
+        <td><p>The minimum <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html">ConsumerStatus</a> a consumer must have to be considered healthy.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>The health check name. If <code>null</code> the name 'OutboundQueue' will be used for the name.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus</span>&gt;</td>
+        <td><span class="parametername">failureStatus</span></td>
+        <td><p>The <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus</span> that should be reported when the health check reports a failure. If the
+provided value is <code>null</code>, then <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy</span> will be reported.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="parametername">tags</span></td>
+        <td><p>An optional list of tags that can be used for filtering health checks.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder</span></td>
+        <td><p>The <span class="xref">Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder</span> so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder%2CSystem.String%2CSystem.Nullable%7BMicrosoft.Extensions.Diagnostics.HealthChecks.HealthStatus%7D%2CSystem.Collections.Generic.IEnumerable%7BSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.HealthChecks/Messaging/HealthChecks/HealthCheckBuilderExtensions.cs/#L119">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.HealthChecks/Messaging/HealthChecks/HealthCheckBuilderExtensions.cs/#L122">View source</a>
   </span>
   <a id="Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_" data-uid="Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__" data-uid="Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String})">AddConsumersCheck(IHealthChecksBuilder, String, Nullable&lt;HealthStatus&gt;, IEnumerable&lt;String&gt;)</h4>
-  <div class="markdown level1 summary"><p>Adds an health check that verifies that all consumers are connected.</p>
+  <div class="markdown level1 summary"><p>Adds a health check that verifies that all consumers are connected.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -172,14 +247,14 @@
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus</span>&gt;</td>
         <td><span class="parametername">failureStatus</span></td>
-        <td><p>The <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus</span> that should be reported when the health check fails. Optional. If
-<code>null</code> then the default status of <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy</span> will be reported.</p>
+        <td><p>The <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus</span> that should be reported when the health check reports a failure. If the
+provided value is <code>null</code>, then <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy</span> will be reported.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">tags</span></td>
-        <td><p>A list of tags that can be used to filter sets of health checks. Optional.</p>
+        <td><p>An optional list of tags that can be used for filtering health checks.</p>
 </td>
       </tr>
     </tbody>
@@ -205,11 +280,11 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddOutboundEndpointsCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder%2CSystem.String%2CSystem.Nullable%7BMicrosoft.Extensions.Diagnostics.HealthChecks.HealthStatus%7D%2CSystem.Collections.Generic.IEnumerable%7BSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.HealthChecks/Messaging/HealthChecks/HealthCheckBuilderExtensions.cs/#L38">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.HealthChecks/Messaging/HealthChecks/HealthCheckBuilderExtensions.cs/#L39">View source</a>
   </span>
   <a id="Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_" data-uid="Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddOutboundEndpointsCheck*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboundEndpointsCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__" data-uid="Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddOutboundEndpointsCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String})">AddOutboundEndpointsCheck(IHealthChecksBuilder, String, Nullable&lt;HealthStatus&gt;, IEnumerable&lt;String&gt;)</h4>
-  <div class="markdown level1 summary"><p>Adds an health check that sends a ping message to all the outbound endpoints.</p>
+  <div class="markdown level1 summary"><p>Adds a health check that sends a ping message to all the outbound endpoints.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -241,14 +316,14 @@
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus</span>&gt;</td>
         <td><span class="parametername">failureStatus</span></td>
-        <td><p>The <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus</span> that should be reported when the health check fails. Optional. If
-<code>null</code> then the default status of <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy</span> will be reported.</p>
+        <td><p>The <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus</span> that should be reported when the health check reports a failure. If the
+provided value is <code>null</code>, then <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy</span> will be reported.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">tags</span></td>
-        <td><p>A list of tags that can be used to filter sets of health checks. Optional.</p>
+        <td><p>An optional list of tags that can be used for filtering health checks.</p>
 </td>
       </tr>
     </tbody>
@@ -274,11 +349,11 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddOutboxCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder%2CSystem.String%2CSystem.Nullable%7BMicrosoft.Extensions.Diagnostics.HealthChecks.HealthStatus%7D%2CSystem.Collections.Generic.IEnumerable%7BSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.HealthChecks/Messaging/HealthChecks/HealthCheckBuilderExtensions.cs/#L79">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.HealthChecks/Messaging/HealthChecks/HealthCheckBuilderExtensions.cs/#L81">View source</a>
   </span>
   <a id="Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_" data-uid="Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddOutboxCheck*"></a>
   <h4 id="Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddOutboxCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__" data-uid="Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddOutboxCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String})">AddOutboxCheck(IHealthChecksBuilder, String, Nullable&lt;HealthStatus&gt;, IEnumerable&lt;String&gt;)</h4>
-  <div class="markdown level1 summary"><p>Adds an health check that monitors the outbox, verifying that the messages are being processed.</p>
+  <div class="markdown level1 summary"><p>Adds a health check that monitors the outbox, verifying that the messages are being processed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -310,14 +385,14 @@
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus</span>&gt;</td>
         <td><span class="parametername">failureStatus</span></td>
-        <td><p>The <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus</span> that should be reported when the health check fails. Optional. If
-<code>null</code> then the default status of <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy</span> will be reported.</p>
+        <td><p>The <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus</span> that should be reported when the health check reports a failure. If the
+provided value is <code>null</code>, then <span class="xref">Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy</span> will be reported.</p>
 </td>
       </tr>
       <tr>
         <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td><span class="parametername">tags</span></td>
-        <td><p>A list of tags that can be used to filter sets of health checks. Optional.</p>
+        <td><p>An optional list of tags that can be used for filtering health checks.</p>
 </td>
       </tr>
     </tbody>
@@ -349,7 +424,7 @@
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions.md&amp;value=---%0Auid%3A%20Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.HealthChecks/Messaging/HealthChecks/HealthCheckBuilderExtensions.cs/#L17" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.HealthChecks/Messaging/HealthChecks/HealthCheckBuilderExtensions.cs/#L18" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

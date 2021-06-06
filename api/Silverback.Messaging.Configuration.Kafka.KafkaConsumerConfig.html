@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class KafkaConsumerConfig
    | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -207,9 +207,6 @@
       <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_MaxInFlight">ConfluentClientConfigProxy.MaxInFlight</a>
     </div>
     <div>
-      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_MetadataRequestTimeoutMs">ConfluentClientConfigProxy.MetadataRequestTimeoutMs</a>
-    </div>
-    <div>
       <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_TopicMetadataRefreshIntervalMs">ConfluentClientConfigProxy.TopicMetadataRefreshIntervalMs</a>
     </div>
     <div>
@@ -253,6 +250,9 @@
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_BrokerAddressFamily">ConfluentClientConfigProxy.BrokerAddressFamily</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_ConnectionsMaxIdleMs">ConfluentClientConfigProxy.ConnectionsMaxIdleMs</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_ReconnectBackoffMs">ConfluentClientConfigProxy.ReconnectBackoffMs</a>
@@ -331,6 +331,12 @@
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslKeystorePassword">ConfluentClientConfigProxy.SslKeystorePassword</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslEngineLocation">ConfluentClientConfigProxy.SslEngineLocation</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_SslEngineId">ConfluentClientConfigProxy.SslEngineId</a>
     </div>
     <div>
       <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentClientConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentClientConfigProxy_EnableSslCertificateVerification">ConfluentClientConfigProxy.EnableSslCertificateVerification</a>
@@ -472,12 +478,13 @@ reliable level is 1 but it reduces throughput.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_EnableAutoRecovery.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.EnableAutoRecovery%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L46">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L47">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_EnableAutoRecovery_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.EnableAutoRecovery*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_EnableAutoRecovery" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.EnableAutoRecovery">EnableAutoRecovery</h4>
-  <div class="markdown level1 summary"><p>Specifies whether the consumer has to be automatically restarted if a <span class="xref">Confluent.Kafka.KafkaException</span>
-is thrown while polling/consuming. The default is <code>true</code>.</p>
+  <div class="markdown level1 summary"><p>Specifies whether the consumer has to be automatically recycled when a <span class="xref">Confluent.Kafka.KafkaException</span>
+is thrown while polling/consuming or an issues is detected (e.g. a poll timeout is reported). The default
+is <code>true</code>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -538,7 +545,7 @@ configuration and Kafka defaults.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals(Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L81">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L82">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals(Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig)">Equals(KafkaConsumerConfig)</h4>
@@ -585,7 +592,7 @@ configuration and Kafka defaults.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L94">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L95">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Equals_System_Object_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Equals(System.Object)">Equals(Object)</h4>
@@ -634,7 +641,7 @@ configuration and Kafka defaults.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_GetHashCode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L109">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L110">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_GetHashCode_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GetHashCode*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_GetHashCode" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.GetHashCode">GetHashCode()</h4>
@@ -666,7 +673,7 @@ configuration and Kafka defaults.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L49">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/KafkaConsumerConfig.cs/#L50">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Validate_" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Validate*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig_Validate" data-uid="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.Validate">Validate()</h4>

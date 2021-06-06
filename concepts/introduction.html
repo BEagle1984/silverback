@@ -8,7 +8,7 @@
     <title>Introduction | Silverback </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Introduction | Silverback ">
-    <meta name="generator" content="docfx 2.56.6.0">
+    <meta name="generator" content="docfx 2.57.2.0">
     
   
     <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/apple-touch-icon.png">
@@ -89,15 +89,15 @@
 <h2 id="whats-silverback">What's Silverback?</h2>
 <p>Silverback is essentially a bus that can be either used internally to an application or connected to a message broker to integrate different applications or microservices.</p>
 <figure>
-	<a href="../images/diagrams/overview.png"><img src="../images/diagrams/overview.png"></a>
-    <figcaption>Silverback is used to produce the messages 1 and 3 to the message broker, while the messages 2 and 3 are also consumed locally, within the same application.</figcaption>
+	<a href="../images/diagrams/overview-complete.png"><img src="../images/diagrams/overview-complete.png"></a>
+    <figcaption>Silverback is used to exchange message inside an application and/or connect to a message broker to integrate with other applications or microservices.</figcaption>
 </figure>
 <h2 id="samples-and-examples">Samples and examples</h2>
 <p>This documentation is filled with examples and code snippets, plus an entire section is dedicated to fully functional ready-to-run code <a class="xref" href="../samples/samples.html">samples</a>. The plan is to improve the samples section over time, adding real-world scenarios that demonstrates how to take advantage of the various Silverback features in your projects.</p>
 <p>A few notes about the code:</p>
 <ul>
-<li>Even though it will compile and work just fine (most of the time), it is intended for demonstrational purpose only and don't automatically imply the best practices are being in place nor it is by any mean production ready. Sometimes some shortcuts may have been taken to keep the code compact, readable and focused on the aspect that is being highlighted.</li>
-<li>Not all examples are ported to each message broker implementation but most of them can be adapted to work with either Kafka, MQTT or Rabbit with minimal effort (unless some broker-specific features are being used, of course).</li>
+<li>Even though it will compile and work just fine (most of the time), it is intended for demo purpose only and don't automatically imply the best practices are being in place nor it is by any mean production ready. Sometimes some shortcuts may have been taken to keep the code compact, readable and focused on the aspect that is being highlighted.</li>
+<li>Not all examples are ported to each message broker implementation, but most of them can be adapted to work with either Kafka, MQTT or Rabbit with minimal effort (unless some broker-specific features are being used, of course).</li>
 </ul>
 <h2 id="packages">Packages</h2>
 <p>Silverback is modular and delivered in multiple packages, available through <a href="https://www.nuget.org/packages?q=Silverback">nuget.org</a>.</p>
