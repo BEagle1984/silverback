@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -151,6 +152,10 @@ namespace Silverback.Messaging.Broker
             Task.Run(
                     async () =>
                     {
+                        // Clear trace context to avoid the consume loop to be tracked under the current
+                        // message traceId
+                        Activity.Current = null;
+
                         try
                         {
                             await StopAndDisconnectAsync().ConfigureAwait(false);

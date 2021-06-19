@@ -22,6 +22,7 @@ uid: releases
 * Prevent possible race condition causing messages to be skipped when a `RetryPolicy` kicks in for messages from multiple Kafka partitions simultaneously
 * Prevent `ObjectDisposedException` to be thrown when Kafka events (e.g. statistics) are fired during the application shutdown
 * Prevent `ObjectDisposedException` to be thrown when `Consumer.Dispose` is called multiple times
+* Properly clear the trace context (`Activity`) when reconnecting the consumer to prevent the newly started consume loop to be tracked under the current message traceId
 
 ## [3.0.1](https://github.com/BEagle1984/silverback/releases/tag/v3.0.1)
 
