@@ -3,6 +3,8 @@
 
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using NSubstitute;
 
 namespace Silverback.Tests
 {
@@ -12,6 +14,7 @@ namespace Silverback.Tests
             Action<IServiceCollection> servicesConfigurationAction)
         {
             var services = new ServiceCollection();
+            services.AddSingleton(Substitute.For<IHostApplicationLifetime>());
 
             servicesConfigurationAction(services);
 

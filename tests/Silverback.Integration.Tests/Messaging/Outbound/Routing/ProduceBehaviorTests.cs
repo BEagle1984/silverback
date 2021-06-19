@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using NSubstitute;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
@@ -38,7 +40,9 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                         .AddBroker<TestBroker>()
                         .AddOutbox<InMemoryOutbox>());
 
-            services.AddLoggerSubstitute();
+            services
+                .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+                .AddLoggerSubstitute();
 
             var serviceProvider = services.BuildServiceProvider();
 

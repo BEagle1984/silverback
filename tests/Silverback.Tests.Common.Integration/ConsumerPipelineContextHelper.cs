@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NSubstitute;
 using Silverback.Messaging;
 using Silverback.Messaging.Broker;
@@ -43,6 +44,7 @@ namespace Silverback.Tests
             ServiceProviderHelper.GetServiceProvider(
                 services =>
                     services
+                        .AddSingleton(Substitute.For<IHostApplicationLifetime>())
                         .AddFakeLogger()
                         .AddSilverback()
                         .WithConnectionToMessageBroker());

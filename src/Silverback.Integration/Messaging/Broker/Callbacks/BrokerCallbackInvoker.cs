@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Silverback.Diagnostics;
 using Silverback.Util;
 
@@ -13,18 +14,23 @@ namespace Silverback.Messaging.Broker.Callbacks
 {
     internal class BrokerCallbackInvoker : IBrokerCallbacksInvoker
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private readonly ISilverbackLogger<BrokerCallbackInvoker> _logger;
 
         private List<Type>? _callbackTypes;
 
+        private bool _appStopping;
+
         public BrokerCallbackInvoker(
-            IServiceProvider serviceProvider,
+            IServiceScopeFactory serviceScopeFactory,
+            IHostApplicationLifetime applicationLifetime,
             ISilverbackLogger<BrokerCallbackInvoker> logger)
         {
             _logger = logger;
-            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+            _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
+
+            applicationLifetime.ApplicationStopping.Register(() => _appStopping = true);
         }
 
         /// <summary>
@@ -45,7 +51,7 @@ namespace Silverback.Messaging.Broker.Callbacks
         {
             try
             {
-                InvokeAsyncCore(action, scopedServiceProvider);
+                InvokeCore(action, scopedServiceProvider);
             }
             catch (Exception ex)
             {
@@ -114,11 +120,11 @@ namespace Silverback.Messaging.Broker.Callbacks
             }
         }
 
-        private void InvokeAsyncCore<TCallback>(
+        private void InvokeCore<TCallback>(
             Action<TCallback> action,
             IServiceProvider? scopedServiceProvider)
         {
-            if (!HasAny<TCallback>())
+            if (_appStopping || !HasAny<TCallback>())
                 return;
 
             IServiceScope? scope = null;
@@ -127,7 +133,7 @@ namespace Silverback.Messaging.Broker.Callbacks
             {
                 if (scopedServiceProvider == null)
                 {
-                    scope = _serviceProvider.CreateScope();
+                    scope = _serviceScopeFactory.CreateScope();
                     scopedServiceProvider = scope.ServiceProvider;
                 }
 
@@ -159,7 +165,7 @@ namespace Silverback.Messaging.Broker.Callbacks
             Func<TCallback, Task> action,
             IServiceProvider? scopedServiceProvider)
         {
-            if (!HasAny<TCallback>())
+            if (_appStopping || !HasAny<TCallback>())
                 return;
 
             IServiceScope? scope = null;
@@ -168,7 +174,7 @@ namespace Silverback.Messaging.Broker.Callbacks
             {
                 if (scopedServiceProvider == null)
                 {
-                    scope = _serviceProvider.CreateScope();
+                    scope = _serviceScopeFactory.CreateScope();
                     scopedServiceProvider = scope.ServiceProvider;
                 }
 

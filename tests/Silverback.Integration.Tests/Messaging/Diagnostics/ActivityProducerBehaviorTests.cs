@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -63,6 +64,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var services = new ServiceCollection();
             services
+                .AddSingleton(Substitute.For<IHostApplicationLifetime>())
                 .AddLoggerSubstitute()
                 .AddSilverback().WithConnectionToMessageBroker(
                     options => options
@@ -88,6 +90,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         {
             var services = new ServiceCollection();
             services
+                .AddSingleton(Substitute.For<IHostApplicationLifetime>())
                 .AddLoggerSubstitute()
                 .AddSilverback().WithConnectionToMessageBroker(
                     options => options
