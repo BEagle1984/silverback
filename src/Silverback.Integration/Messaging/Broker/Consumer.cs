@@ -467,7 +467,7 @@ namespace Silverback.Messaging.Broker
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing)
+            if (!disposing || _disposed)
                 return;
 
             _disposed = true;
