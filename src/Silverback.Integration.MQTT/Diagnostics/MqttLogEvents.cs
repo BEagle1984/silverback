@@ -56,6 +56,6 @@ namespace Silverback.Diagnostics
             "Producer queue processing was canceled.");
 
         private static EventId GetEventId(int id, string name) =>
-            new(4000 + id, $"Silverback.Integration.Kafka_{name}");
+            new(4000 + id, $"Silverback.Integration.MQTT_{name}");
     }
 }
