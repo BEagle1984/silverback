@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Confluent.Kafka;
 using Silverback.Util;
@@ -18,6 +19,9 @@ namespace Silverback.Messaging.Configuration.Kafka
         private string[]? _topicNames;
 
         private TopicPartitionOffset[]? _topicPartitionOffsets;
+
+        private Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>?
+            _topicPartitionsResolver;
 
         private Action<KafkaConsumerConfig>? _configAction;
 
@@ -56,6 +60,7 @@ namespace Silverback.Messaging.Configuration.Kafka
 
             _topicNames = topicNames;
             _topicPartitionOffsets = null;
+            _topicPartitionsResolver = null;
 
             return this;
         }
@@ -65,9 +70,10 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             Check.HasNoNulls(topicPartitions, nameof(topicPartitions));
 
-            _topicNames = null;
             _topicPartitionOffsets = topicPartitions
                 .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset)).ToArray();
+            _topicNames = null;
+            _topicPartitionsResolver = null;
 
             return this;
         }
@@ -77,8 +83,44 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             Check.HasNoNulls(topicPartitions, nameof(topicPartitions));
 
-            _topicNames = null;
             _topicPartitionOffsets = topicPartitions;
+            _topicNames = null;
+            _topicPartitionsResolver = null;
+
+            return this;
+        }
+
+        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.ConsumeFrom(string, Func{IReadOnlyCollection{TopicPartition},IEnumerable{TopicPartition}})" />
+        public IKafkaConsumerEndpointBuilder ConsumeFrom(
+            string topicName,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>> topicPartitionsResolver) =>
+            ConsumeFrom(new[] { topicName }, topicPartitionsResolver);
+
+        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.ConsumeFrom(string, Func{IReadOnlyCollection{TopicPartition},IEnumerable{TopicPartitionOffset}})" />
+        public IKafkaConsumerEndpointBuilder ConsumeFrom(
+            string topicName,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>
+                topicPartitionsResolver) =>
+            ConsumeFrom(new[] { topicName }, topicPartitionsResolver);
+
+        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.ConsumeFrom(string[], Func{IReadOnlyCollection{TopicPartition},IEnumerable{TopicPartition}})" />
+        public IKafkaConsumerEndpointBuilder ConsumeFrom(
+            string[] topicNames,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>> topicPartitionsResolver) =>
+            ConsumeFrom(
+                topicNames,
+                topicPartitions => topicPartitionsResolver(topicPartitions)
+                    .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset)));
+
+        /// <inheritdoc cref="IKafkaConsumerEndpointBuilder.ConsumeFrom(string[], Func{IReadOnlyCollection{TopicPartition},IEnumerable{TopicPartitionOffset}})" />
+        public IKafkaConsumerEndpointBuilder ConsumeFrom(
+            string[] topicNames,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>
+                topicPartitionsResolver)
+        {
+            _topicNames = topicNames;
+            _topicPartitionsResolver = topicPartitionsResolver;
+            _topicPartitionOffsets = null;
 
             return this;
         }
@@ -128,9 +170,14 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <inheritdoc cref="EndpointBuilder{TEndpoint,TBuilder}.CreateEndpoint" />
         protected override KafkaConsumerEndpoint CreateEndpoint()
         {
-            var endpoint = _topicPartitionOffsets != null
-                ? new KafkaConsumerEndpoint(_topicPartitionOffsets, _clientConfig)
-                : new KafkaConsumerEndpoint(_topicNames ?? Array.Empty<string>(), _clientConfig);
+            KafkaConsumerEndpoint endpoint;
+
+            if (_topicNames != null && _topicPartitionsResolver != null)
+                endpoint = new KafkaConsumerEndpoint(_topicNames, _topicPartitionsResolver, _clientConfig);
+            else if (_topicPartitionOffsets != null)
+                endpoint = new KafkaConsumerEndpoint(_topicPartitionOffsets, _clientConfig);
+            else
+                endpoint = new KafkaConsumerEndpoint(_topicNames ?? Array.Empty<string>(), _clientConfig);
 
             _configAction?.Invoke(endpoint.Configuration);
 

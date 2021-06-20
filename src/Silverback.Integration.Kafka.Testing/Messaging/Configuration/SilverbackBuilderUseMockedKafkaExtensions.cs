@@ -40,9 +40,11 @@ namespace Microsoft.Extensions.DependencyInjection
             builder.Services
                 .RemoveAll<IConfluentConsumerBuilder>()
                 .RemoveAll<IConfluentProducerBuilder>()
+                .RemoveAll<IConfluentAdminClientBuilder>()
                 .AddSingleton<IMockedKafkaOptions>(new MockedKafkaOptions())
                 .AddTransient<IConfluentProducerBuilder, MockedConfluentProducerBuilder>()
                 .AddTransient<IConfluentConsumerBuilder, MockedConfluentConsumerBuilder>()
+                .AddTransient<IConfluentAdminClientBuilder, MockedConfluentAdminClientBuilder>()
                 .AddSingleton<IInMemoryTopicCollection, InMemoryTopicCollection>()
                 .AddSingleton<IKafkaTestingHelper, KafkaTestingHelper>();
 

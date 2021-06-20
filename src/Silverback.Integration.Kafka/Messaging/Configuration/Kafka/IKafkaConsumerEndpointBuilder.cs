@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Confluent.Kafka;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
@@ -45,6 +46,76 @@ namespace Silverback.Messaging.Configuration.Kafka
         ///     The <see cref="IKafkaConsumerEndpointBuilder" /> so that additional calls can be chained.
         /// </returns>
         IKafkaConsumerEndpointBuilder ConsumeFrom(params TopicPartitionOffset[] topicPartitions);
+
+        /// <summary>
+        ///     Specifies the name of the topic to be consumed and a function that returns the partitions to be assigned.
+        /// </summary>
+        /// <param name="topicName">
+        ///     The name of the topic.
+        /// </param>
+        /// <param name="topicPartitionsResolver">
+        ///     A function that receives all available <see cref="TopicPartition" /> for the topic and returns the
+        ///     collection of <see cref="TopicPartition" /> to be assigned.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IKafkaConsumerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IKafkaConsumerEndpointBuilder ConsumeFrom(
+            string topicName,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>> topicPartitionsResolver);
+
+        /// <summary>
+        ///     Specifies the name of the topic to be consumed and a function that returns the partitions to be assigned.
+        /// </summary>
+        /// <param name="topicName">
+        ///     The name of the topic.
+        /// </param>
+        /// <param name="topicPartitionsResolver">
+        ///     A function that receives all available <see cref="TopicPartition" /> for the topic and returns the
+        ///     collection of <see cref="TopicPartitionOffset" /> to be assigned.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IKafkaConsumerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IKafkaConsumerEndpointBuilder ConsumeFrom(
+            string topicName,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>
+                topicPartitionsResolver);
+
+        /// <summary>
+        ///     Specifies the name of the topic to be consumed and a function that returns the partitions to be assigned.
+        /// </summary>
+        /// <param name="topicNames">
+        ///     The name of the topics.
+        /// </param>
+        /// <param name="topicPartitionsResolver">
+        ///     A function that receives all available <see cref="TopicPartition" /> for the topics and returns the
+        ///     collection of <see cref="TopicPartition" /> to be assigned.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IKafkaConsumerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IKafkaConsumerEndpointBuilder ConsumeFrom(
+            string[] topicNames,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>> topicPartitionsResolver);
+
+        /// <summary>
+        ///     Specifies the name of the topic to be consumed and a function that returns the partitions to be assigned.
+        /// </summary>
+        /// <param name="topicNames">
+        ///     The name of the topics.
+        /// </param>
+        /// <param name="topicPartitionsResolver">
+        ///     A function that receives all available <see cref="TopicPartition" /> for the topics and returns the
+        ///     collection of <see cref="TopicPartitionOffset" /> to be assigned.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IKafkaConsumerEndpointBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IKafkaConsumerEndpointBuilder ConsumeFrom(
+            string[] topicNames,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>
+                topicPartitionsResolver);
 
         /// <summary>
         ///     Configures the Kafka client properties.

@@ -4,7 +4,7 @@ uid: streaming
 
 # Streaming
 
-The <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> can be used to consume an endpoint in a streaming fashion and it is the only way to consume sequences (see for example [batch consuming](xref:inbound#batch-processing)). This stream will be forwarded to the subscribed method as soon as the first message is consumed and it is then asynchronously pushed with the next messages.
+The <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> can be used to consume an endpoint in a streaming fashion and it is the only way to consume sequences (see for example [batch processing](xref:inbound#batch-processing)). This stream will be forwarded to the subscribed method as soon as the first message is consumed and it is then asynchronously pushed with the next messages.
  
 <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> implements both [IEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1) and [IAsyncEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1) and the subscriber method can either declare an <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1>, an [IEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1) or an [IAsyncEnumerable<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1) as argument.
 
@@ -25,7 +25,7 @@ public class StreamSubscriber
 }
 ```
 
-A single instance of <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> is created and published per each queue/topic/partition and the messages are acknowledged (committed) after a single iteration completes, unless sequencing (e.g. [batch consuming](xref:inbound#batch-processing)) is configured or a sequence is automatically recognized by Silverback (e.g. a dataset). In that case an instance is published per each sequence and the entire sequence is atomically committed.
+A single instance of <xref:Silverback.Messaging.Messages.IMessageStreamEnumerable`1> is created and published per each queue/topic/partition and the messages are acknowledged (committed) after a single iteration completes, unless sequencing (e.g. [batch processing](xref:inbound#batch-processing)) is configured or a sequence is automatically recognized by Silverback (e.g. a dataset). In that case an instance is published per each sequence and the entire sequence is atomically committed.
 
 # Rx (Observable)
 

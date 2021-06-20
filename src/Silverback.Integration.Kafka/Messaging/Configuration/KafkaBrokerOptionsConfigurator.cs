@@ -30,6 +30,7 @@ namespace Silverback.Messaging.Configuration
                 .Services
                 .AddTransient<IConfluentProducerBuilder, ConfluentProducerBuilder>()
                 .AddTransient<IConfluentConsumerBuilder, ConfluentConsumerBuilder>()
+                .AddTransient<IConfluentAdminClientBuilder, ConfluentAdminClientBuilder>()
                 .AddSingleton<IConfluentProducersCache, ConfluentProducersCache>()
                 .AddSingleton<IBrokerLogEnricher<KafkaProducerEndpoint>, KafkaLogEnricher>()
                 .AddSingleton<IBrokerLogEnricher<KafkaConsumerEndpoint>, KafkaLogEnricher>()

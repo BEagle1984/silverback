@@ -370,11 +370,25 @@ namespace Silverback.Messaging.Broker
         {
             _confluentConsumer = _confluentConsumerBuilder.Build();
 
-            if (Endpoint.TopicPartitions == null)
+            if (Endpoint.TopicPartitionsResolver != null && Endpoint.TopicPartitions == null)
             {
-                _confluentConsumer.Subscribe(Endpoint.Names);
+                using var adminClient = ServiceProvider
+                    .GetRequiredService<IConfluentAdminClientBuilder>()
+                    .Build(Endpoint.Configuration.GetConfluentConfig());
+
+                var availablePartitions = Endpoint.Names
+                    .SelectMany(
+                        topicName =>
+                            adminClient.GetMetadata(topicName, TimeSpan.FromMinutes(5))
+                                .Topics[0]
+                                .Partitions
+                                .Select(metadata => new TopicPartition(topicName, metadata.PartitionId)))
+                    .ToList();
+
+                Endpoint.TopicPartitions = Endpoint.TopicPartitionsResolver(availablePartitions).AsReadOnlyCollection();
             }
-            else
+
+            if (Endpoint.TopicPartitions != null)
             {
                 _confluentConsumer.Assign(Endpoint.TopicPartitions);
 
@@ -382,6 +396,10 @@ namespace Silverback.Messaging.Broker
                     topicPartitionOffset => _logger.LogPartitionManuallyAssigned(topicPartitionOffset, this));
 
                 SetReadyStatus();
+            }
+            else
+            {
+                _confluentConsumer.Subscribe(Endpoint.Names);
             }
         }
 

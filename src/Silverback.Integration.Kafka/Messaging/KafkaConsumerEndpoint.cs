@@ -108,7 +108,7 @@ namespace Silverback.Messaging
         ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
         /// </summary>
         /// <param name="topicPartitions">
-        ///     The topics and partitions to be assigned.
+        ///     The topics and partitions to be consumed.
         /// </param>
         /// <param name="clientConfig">
         ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
@@ -125,9 +125,8 @@ namespace Silverback.Messaging
             TopicPartitions = topicPartitions.ToArray();
 
             var topicNames = TopicPartitions
-                .Select(
-                    topicPartitionOffset =>
-                        $"{topicPartitionOffset.Topic}[{topicPartitionOffset.Partition.Value}]")
+                .Select(topicPartitionOffset => topicPartitionOffset.Topic)
+                .Distinct()
                 .ToArray();
 
             if (topicNames.Length == 0)
@@ -137,11 +136,135 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
-        ///     Gets the topic and partitions to be consumed. If the collection is <c>null</c> the topics from the
-        ///     <see cref="Names" /> property will be subscribed and the partitions will be automatically assigned by the
-        ///     broker. If the collection is empty no partition will be consumed.
+        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
         /// </summary>
-        public IReadOnlyCollection<TopicPartitionOffset>? TopicPartitions { get; }
+        /// <param name="topicName">
+        ///     The name of the topic.
+        /// </param>
+        /// <param name="topicPartitionsResolver">
+        ///     The function that returns the topics and partitions to be consumed.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaConsumerConfig" />.
+        /// </param>
+        public KafkaConsumerEndpoint(
+            string topicName,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>> topicPartitionsResolver,
+            KafkaClientConfig? clientConfig = null)
+            : this(
+                new[] { topicName },
+                topicPartitionsResolver,
+                clientConfig)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
+        /// </summary>
+        /// <param name="topicNames">
+        ///     The name of the topics.
+        /// </param>
+        /// <param name="topicPartitionsResolver">
+        ///     The function that returns the topics and partitions to be consumed.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaConsumerConfig" />.
+        /// </param>
+        public KafkaConsumerEndpoint(
+            string[] topicNames,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>> topicPartitionsResolver,
+            KafkaClientConfig? clientConfig = null)
+            : this(
+                topicNames,
+                topicPartitions => topicPartitionsResolver(topicPartitions)
+                    .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset)),
+                clientConfig)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
+        /// </summary>
+        /// <param name="topicName">
+        ///     The name of the topic.
+        /// </param>
+        /// <param name="topicPartitionsResolver">
+        ///     The function that returns the topics and partitions to be consumed.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaConsumerConfig" />.
+        /// </param>
+        public KafkaConsumerEndpoint(
+            string topicName,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>
+                topicPartitionsResolver,
+            KafkaClientConfig? clientConfig = null)
+            : this(
+                new[] { topicName },
+                topicPartitionsResolver,
+                clientConfig)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
+        /// </summary>
+        /// <param name="topicNames">
+        ///     The name of the topics.
+        /// </param>
+        /// <param name="topicPartitionsResolver">
+        ///     The function that returns the topics and partitions to be consumed.
+        /// </param>
+        /// <param name="clientConfig">
+        ///     The <see cref="KafkaClientConfig" /> to be used to initialize the
+        ///     <see cref="KafkaConsumerConfig" />.
+        /// </param>
+        public KafkaConsumerEndpoint(
+            string[] topicNames,
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>
+                topicPartitionsResolver,
+            KafkaClientConfig? clientConfig = null)
+            : this(topicNames, clientConfig)
+        {
+            if (topicPartitionsResolver == null)
+                return;
+
+            TopicPartitionsResolver = topicPartitionsResolver;
+        }
+
+        /// <summary>
+        ///     <para>
+        ///         Gets the function that returns the topics and partitions to be consumed.
+        ///     </para>
+        ///     <para>
+        ///         If both <see cref="TopicPartitions" /> and <see cref="TopicPartitionsResolver" /> are <c>null</c> the
+        ///         topics from the <see cref="Names" /> property will be subscribed and the partitions will be
+        ///         automatically assigned by the broker.
+        ///     </para>
+        ///     <para>
+        ///         If an empty collection is returned by the function no partition will be consumed.
+        ///     </para>
+        /// </summary>
+        public Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>?
+            TopicPartitionsResolver { get; }
+
+        /// <summary>
+        ///     <para>
+        ///         Gets the topics and partitions to be consumed.
+        ///     </para>
+        ///     <para>
+        ///         If both <see cref="TopicPartitions" /> and <see cref="TopicPartitionsResolver" /> are <c>null</c> the
+        ///         topics from the <see cref="Names" /> property will be subscribed and the partitions will be
+        ///         automatically assigned by the broker.
+        ///     </para>
+        ///     <para>
+        ///         If the collection is empty no partition will be consumed.
+        ///     </para>
+        /// </summary>
+        public IReadOnlyCollection<TopicPartitionOffset>? TopicPartitions { get; internal set; }
 
         /// <summary>
         ///     Gets the name of the topics.
