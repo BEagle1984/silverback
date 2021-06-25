@@ -409,7 +409,7 @@ namespace Silverback.Messaging.Broker
 
         private void InitAndStartChannelsManager(IReadOnlyList<TopicPartition> partitions)
         {
-            _channelsManager ??= new ConsumerChannelsManager(partitions, this, SequenceStores, _logger);
+            _channelsManager ??= new ConsumerChannelsManager(partitions, this, _callbacksInvoker, SequenceStores, _logger);
 
             _consumeLoopHandler?.SetChannelsManager(_channelsManager);
 

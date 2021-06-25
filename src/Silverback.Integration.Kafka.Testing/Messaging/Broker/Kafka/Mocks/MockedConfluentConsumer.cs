@@ -402,7 +402,10 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
                 if (pulled && Assignment.Contains(result!.TopicPartition))
                 {
-                    _currentOffsets[result.Topic][result.Partition] = result.Offset + 1;
+                    if (!result!.IsPartitionEOF)
+                    {
+                        _currentOffsets[result.Topic][result.Partition] = result.Offset + 1;
+                    }
 
                     return true;
                 }
