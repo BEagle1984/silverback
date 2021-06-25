@@ -36,7 +36,7 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="IServiceScopeFactory" />.
         /// </param>
         /// <param name="applicationLifetime">
-        ///     The <see cref="IApplicationLifetime" />.
+        ///     The <see cref="IHostApplicationLifetime" />.
         /// </param>
         /// <param name="brokersCollection">
         ///     The <see cref="IBrokerCollection" />.

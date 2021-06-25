@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using NSubstitute;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Publishing;
@@ -47,7 +49,9 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                         .AddBroker<TestOtherBroker>())
                 .AddSingletonSubscriber(_testSubscriber);
 
-            services.AddLoggerSubstitute();
+            services
+                .AddSingleton(Substitute.For<IHostApplicationLifetime>())
+                .AddLoggerSubstitute();
 
             _serviceProvider = services.BuildServiceProvider();
 

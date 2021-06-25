@@ -189,9 +189,13 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 
 ### Manual partitions assignment
 
-In some cases you don't want to let the broker randomly distribute the partitions among the consumers. This is especially useful when dealing with large sequences (e.g. large messages/files being [chunked](xref:chunking)), to prevent that a rebalance occurs in the middle of a sequence, forcing the consumer to abort and restart from the beginning.
+In some cases you don't want to let the broker randomly distribute the partitions among the consumers.
 
-# [Fluent](#tab/assignment-fluent)
+This might also be useful when dealing with large sequences (e.g. large messages/files being [chunked](xref:chunking) or when [batch processing](xref:inbound#batch-processing)), to prevent that a rebalance occurs in the middle of a sequence, forcing the consumer to abort and restart from the beginning.
+
+The assignment can either be completely static or dynamic using a resolver function that will receive all available partitions as input (see <xref:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder> and <xref:Silverback.Messaging.KafkaConsumerEndpoint> for details). 
+
+# [Fluent (static)](#tab/assignment-fluent)
 ```csharp
 public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -212,7 +216,29 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                         })));
 }
 ```
-# [Legacy](#tab/assignment-legacy)
+# [Fluent (dynamic)](#tab/assignment-fluent2)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddKafkaEndpoints(endpoints => endpoints
+                .Configure(config => 
+                    {
+                        config.BootstrapServers = "PLAINTEXT://kafka:9092"; 
+                    })
+                .AddInbound(endpoint => endpoint
+                    .ConsumeFrom(
+                        "order-events",
+                        partitions => partitions
+                            .Where(partition => partition.Partition % 2 == 0))
+                    .Configure(config =>
+                        {
+                            config.GroupId = "my-consumer";
+                        })));
+}
+```
+# [Legacy (static)](#tab/assignment-legacy)
 ```csharp
 public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
@@ -226,7 +252,27 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = "PLAINTEXT://kafka:9092",
-                        GroupId = "my-consumer",
+                        GroupId = "my-consumer"
+                    } 
+                });
+}
+```
+# [Legacy (dynamic)](#tab/assignment-legacy2)
+```csharp
+public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =>
+        builder
+            .AddInbound(
+                new KafkaConsumerEndpoint(
+                    "order-events",
+                    partitions => partitions
+                        .Where(partition => partition.Partition % 2 == 0))
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = "PLAINTEXT://kafka:9092",
+                        GroupId = "my-consumer"
                     } 
                 });
 }

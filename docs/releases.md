@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.1.0-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v3.1.0-beta.1)
+## [3.1.0-beta.2](https://github.com/BEagle1984/silverback/releases/tag/v3.1.0-beta.2)
 
 ### What's new
 
@@ -14,12 +14,17 @@ uid: releases
     * Revert the Kafka consumer status from `Ready` to `Connected` whenever partitions are revoked or a poll timeout occurs
     * Adapt consumer health check to monitor the new status and report unhealthy if not `Ready` (see [Health Monitoring](xref:message-broker#health-monitoring))
 * Try to automatically recover from Kafka maximum poll interval exceed errors
+* Improve Kafka static partition assignment with resolver function and fetching the available partitions (see <xref:kafka-partitioning>)
 * Upgrade to [Confluent.Kafka 1.7.0](https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.7.0)
 * Upgrade to [MQTTnet 3.0.15](https://github.com/chkr1011/MQTTnet/releases/tag/v3.0.15)
 
 ### Fixes
 
 * Prevent possible race condition causing messages to be skipped when a `RetryPolicy` kicks in for messages from multiple Kafka partitions simultaneously
+* Prevent `ObjectDisposedException` to be thrown when Kafka events (e.g. statistics) are fired during the application shutdown
+* Prevent `ObjectDisposedException` to be thrown when `Consumer.Dispose` is called multiple times
+* Properly clear the trace context (`Activity`) when reconnecting the consumer to prevent the newly started consume loop to be tracked under the current message traceId
+* Fix wrong prefix in MQTT log event names 
 
 ## [3.0.1](https://github.com/BEagle1984/silverback/releases/tag/v3.0.1)
 

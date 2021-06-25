@@ -2,6 +2,8 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Confluent.Kafka;
 using FluentAssertions;
 using Silverback.Messaging;
@@ -86,8 +88,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             builder.ConsumeFrom(new TopicPartition("topic", 2));
             var endpoint = builder.Build();
 
-            endpoint.Name.Should().Be("topic[2]");
-            endpoint.Names.Should().BeEquivalentTo("topic[2]");
+            endpoint.Name.Should().Be("topic");
+            endpoint.Names.Should().BeEquivalentTo("topic");
             endpoint.TopicPartitions.Should().BeEquivalentTo(
                 new TopicPartitionOffset("topic", 2, Offset.Unset));
         }
@@ -108,8 +110,8 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
                 new TopicPartition("topic2", 3));
             var endpoint = builder.Build();
 
-            endpoint.Name.Should().Be("[topic1[0],topic1[1],topic2[2],topic2[3]]");
-            endpoint.Names.Should().BeEquivalentTo("topic1[0]", "topic1[1]", "topic2[2]", "topic2[3]");
+            endpoint.Name.Should().Be("[topic1,topic2]");
+            endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
             endpoint.TopicPartitions.Should().BeEquivalentTo(
                 new TopicPartitionOffset("topic1", 0, Offset.Unset),
                 new TopicPartitionOffset("topic1", 1, Offset.Unset),
@@ -133,13 +135,105 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
                 new TopicPartitionOffset("topic2", 3, Offset.Unset));
             var endpoint = builder.Build();
 
-            endpoint.Name.Should().Be("[topic1[0],topic1[1],topic2[2],topic2[3]]");
-            endpoint.Names.Should().BeEquivalentTo("topic1[0]", "topic1[1]", "topic2[2]", "topic2[3]");
+            endpoint.Name.Should().Be("[topic1,topic2]");
+            endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
             endpoint.TopicPartitions.Should().BeEquivalentTo(
                 new TopicPartitionOffset("topic1", 0, Offset.Beginning),
                 new TopicPartitionOffset("topic1", 1, Offset.End),
                 new TopicPartitionOffset("topic2", 2, 42),
                 new TopicPartitionOffset("topic2", 3, Offset.Unset));
+        }
+
+        [Fact]
+        public void ConsumeFrom_SingleTopicAndPartitionResolver_TopicsAndResolverSet()
+        {
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ConsumeFrom(
+                "topic1",
+                partitions => partitions);
+            var endpoint = builder.Build();
+
+            endpoint.Name.Should().Be("topic1");
+            endpoint.Names.Should().BeEquivalentTo("topic1");
+            endpoint.TopicPartitions.Should().BeNull();
+            endpoint.TopicPartitionsResolver.Should().NotBeNull();
+            endpoint.TopicPartitionsResolver.Should()
+                .BeOfType<Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>>();
+        }
+
+        [Fact]
+        public void ConsumeFrom_MultipleTopicsAndPartitionResolver_TopicsAndResolverSet()
+        {
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder.ConsumeFrom(
+                new[] { "topic1", "topic2" },
+                partitions => partitions);
+            var endpoint = builder.Build();
+
+            endpoint.Name.Should().Be("[topic1,topic2]");
+            endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
+            endpoint.TopicPartitions.Should().BeNull();
+            endpoint.TopicPartitionsResolver.Should().NotBeNull();
+            endpoint.TopicPartitionsResolver.Should()
+                .BeOfType<Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>>();
+        }
+
+        [Fact]
+        public void ConsumeFrom_SingleTopicAndPartitionResolverWithOffsets_TopicsAndResolverSet()
+        {
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>> resolver =
+                partitions => partitions.Select(
+                    partition => new TopicPartitionOffset(partition, Offset.Beginning));
+
+            builder.ConsumeFrom(
+                "topic1",
+                resolver);
+            var endpoint = builder.Build();
+
+            endpoint.Name.Should().Be("topic1");
+            endpoint.Names.Should().BeEquivalentTo("topic1");
+            endpoint.TopicPartitions.Should().BeNull();
+            endpoint.TopicPartitionsResolver.Should().Be(resolver);
+        }
+
+        [Fact]
+        public void ConsumeFrom_MultipleTopicsAndPartitionResolverWithOffsets_TopicsAndResolverSet()
+        {
+            var builder = new KafkaConsumerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>> resolver =
+                partitions => partitions.Select(
+                    partition => new TopicPartitionOffset(partition, Offset.Beginning));
+
+            builder.ConsumeFrom(
+                new[] { "topic1", "topic2" },
+                resolver);
+            var endpoint = builder.Build();
+
+            endpoint.Name.Should().Be("[topic1,topic2]");
+            endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
+            endpoint.TopicPartitions.Should().BeNull();
+            endpoint.TopicPartitionsResolver.Should().Be(resolver);
         }
 
         [Fact]

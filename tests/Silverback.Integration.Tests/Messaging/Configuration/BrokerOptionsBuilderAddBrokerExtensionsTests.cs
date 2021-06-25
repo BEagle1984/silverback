@@ -4,6 +4,8 @@
 using System.Linq;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using NSubstitute;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
@@ -49,6 +51,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void AddBroker_BrokerRegisteredForDI()
         {
             var serviceProvider = new ServiceCollection()
+                .AddSingleton(Substitute.For<IHostApplicationLifetime>())
                 .AddLoggerSubstitute()
                 .AddSilverback()
                 .WithConnectionToMessageBroker(
