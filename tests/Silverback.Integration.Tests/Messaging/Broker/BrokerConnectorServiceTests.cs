@@ -169,8 +169,10 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             BrokerConnectionMode mode)
         {
             var appStoppingTokenSource = new CancellationTokenSource();
+            var appStoppedTokenSource = new CancellationTokenSource();
             var lifetimeEvents = Substitute.For<IHostApplicationLifetime>();
             lifetimeEvents.ApplicationStopping.Returns(appStoppingTokenSource.Token);
+            lifetimeEvents.ApplicationStopped.Returns(appStoppedTokenSource.Token);
 
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
@@ -194,6 +196,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             testBroker.IsConnected.Should().BeTrue();
 
             appStoppingTokenSource.Cancel();
+            appStoppedTokenSource.Cancel();
 
             testBroker.IsConnected.Should().BeFalse();
         }

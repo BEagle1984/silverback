@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Configuration;
@@ -19,22 +18,19 @@ namespace Silverback.Messaging.Broker
     /// </summary>
     public class BrokerConnectorService : BackgroundService
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-
-        private readonly IHostApplicationLifetime _applicationLifetime;
-
         private readonly IBrokerCollection _brokerCollection;
 
         private readonly BrokerConnectionOptions _connectionOptions;
 
         private readonly ISilverbackLogger<BrokerConnectorService> _logger;
 
+        private readonly CancellationToken _applicationStoppingToken;
+
+        private readonly TaskCompletionSource<bool> _brokerDisconnectedTaskCompletionSource = new();
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="BrokerConnectorService" /> class.
         /// </summary>
-        /// <param name="serviceScopeFactory">
-        ///     The <see cref="IServiceScopeFactory" />.
-        /// </param>
         /// <param name="applicationLifetime">
         ///     The <see cref="IHostApplicationLifetime" />.
         /// </param>
@@ -48,56 +44,51 @@ namespace Silverback.Messaging.Broker
         ///     The <see cref="ISilverbackLogger" />.
         /// </param>
         public BrokerConnectorService(
-            IServiceScopeFactory serviceScopeFactory,
             IHostApplicationLifetime applicationLifetime,
             IBrokerCollection brokersCollection,
             BrokerConnectionOptions connectionOptions,
             ISilverbackLogger<BrokerConnectorService> logger)
         {
-            _serviceScopeFactory = Check.NotNull(serviceScopeFactory, nameof(serviceScopeFactory));
-            _applicationLifetime = Check.NotNull(applicationLifetime, nameof(applicationLifetime));
             _brokerCollection = Check.NotNull(brokersCollection, nameof(brokersCollection));
             _connectionOptions = Check.NotNull(connectionOptions, nameof(connectionOptions));
             _logger = Check.NotNull(logger, nameof(logger));
+
+            Check.NotNull(applicationLifetime, nameof(applicationLifetime));
+            applicationLifetime.ApplicationStarted.Register(OnApplicationStarted);
+            applicationLifetime.ApplicationStopping.Register(OnApplicationStopping);
+            applicationLifetime.ApplicationStopped.Register(OnApplicationStopped);
+
+            _applicationStoppingToken = applicationLifetime.ApplicationStopping;
         }
 
         /// <inheritdoc cref="BackgroundService.ExecuteAsync" />
-        [SuppressMessage("", "VSTHRD101", Justification = "All exceptions are catched")]
-        [SuppressMessage("", "CA1031", Justification = "Catch all to avoid crashes")]
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken) =>
+            _connectionOptions.Mode == BrokerConnectionMode.Startup
+                ? ConnectAsync()
+                : Task.CompletedTask;
+
+        private void OnApplicationStarted()
         {
-            using var scope = _serviceScopeFactory.CreateScope();
-
-            _applicationLifetime.ApplicationStopping.Register(
-                () => AsyncHelper.RunSynchronously(() => _brokerCollection.DisconnectAsync()));
-
-            switch (_connectionOptions.Mode)
-            {
-                case BrokerConnectionMode.Startup:
-                    return ConnectAsync(stoppingToken);
-                case BrokerConnectionMode.AfterStartup:
-                    _applicationLifetime.ApplicationStarted.Register(
-                        async () =>
-                        {
-                            try
-                            {
-                                await ConnectAsync(stoppingToken).ConfigureAwait(false);
-                            }
-                            catch
-                            {
-                                // Swallow everything to avoid crashing the process
-                            }
-                        });
-                    return Task.CompletedTask;
-                default:
-                    return Task.CompletedTask;
-            }
+            if (_connectionOptions.Mode == BrokerConnectionMode.AfterStartup)
+                ConnectAsync().FireAndForget();
         }
 
+        private void OnApplicationStopping() =>
+            Task.Run(
+                    async () =>
+                    {
+                        await _brokerCollection.DisconnectAsync().ConfigureAwait(false);
+                        _brokerDisconnectedTaskCompletionSource.SetResult(true);
+                    })
+                .FireAndForget();
+
+        private void OnApplicationStopped() =>
+            _brokerDisconnectedTaskCompletionSource.Task.Wait();
+
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task ConnectAsync(CancellationToken stoppingToken)
+        private async Task ConnectAsync()
         {
-            while (!stoppingToken.IsCancellationRequested)
+            while (!_applicationStoppingToken.IsCancellationRequested)
             {
                 try
                 {
@@ -110,12 +101,29 @@ namespace Silverback.Messaging.Broker
 
                     if (!_connectionOptions.RetryOnFailure)
                         break;
-
-                    if (_connectionOptions.Mode == BrokerConnectionMode.Startup)
-                        Thread.Sleep(_connectionOptions.RetryInterval);
-                    else
-                        await Task.Delay(_connectionOptions.RetryInterval, stoppingToken).ConfigureAwait(false);
                 }
+
+                await DelayRetryAsync().ConfigureAwait(false);
+            }
+        }
+
+        private async Task DelayRetryAsync()
+        {
+            if (_connectionOptions.Mode == BrokerConnectionMode.Startup)
+            {
+                // We have to synchronously wait, to ensure the connection is awaited before starting
+                Thread.Sleep(_connectionOptions.RetryInterval);
+                return;
+            }
+
+            try
+            {
+                await Task.Delay(_connectionOptions.RetryInterval, _applicationStoppingToken)
+                    .ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore, the application is just shutting down
             }
         }
     }
