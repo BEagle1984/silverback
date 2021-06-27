@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Namespace Silverback.Messaging.Broker.Kafka
+    <title>Interface IConfluentAdminClientBuilder
    | Silverback </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Namespace Silverback.Messaging.Broker.Kafka
+    <meta name="title" content="Interface IConfluentAdminClientBuilder
    | Silverback ">
     <meta name="generator" content="docfx 2.57.2.0">
     
@@ -85,48 +85,72 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.Kafka">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder">
   
-  <h1 id="Silverback_Messaging_Broker_Kafka" data-uid="Silverback.Messaging.Broker.Kafka" class="text-break">Namespace Silverback.Messaging.Broker.Kafka
+  
+  <h1 id="Silverback_Messaging_Broker_Kafka_IConfluentAdminClientBuilder" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder" class="text-break">Interface IConfluentAdminClientBuilder
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Used to build the <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
-  <div class="markdown level0 remarks"></div>
-    <h3 id="classes">Classes
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Kafka.html">Silverback.Messaging.Broker.Kafka</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
+  <h5 id="Silverback_Messaging_Broker_Kafka_IConfluentAdminClientBuilder_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IConfluentAdminClientBuilder</code></pre>
+  </div>
+  <h3 id="methods">Methods
   </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.html">ConfluentAdminClientBuilder</a></h4>
-      <section><p>Wraps the <span class="xref">Confluent.Kafka.AdminClientBuilder</span>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentConsumerBuilder.html">ConfluentConsumerBuilder</a></h4>
-      <section><p>Wraps the <span class="xref">Confluent.Kafka.ConsumerBuilder`2</span>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.ConfluentProducerBuilder.html">ConfluentProducerBuilder</a></h4>
-      <section><p>Wraps the <span class="xref">Confluent.Kafka.ProducerBuilder`2</span>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.html">MockedConfluentAdminClientBuilder</a></h4>
-      <section><p>The builder for the <span class="xref">Silverback.Messaging.Broker.Kafka.Mocks.MockedConfluentAdminClient</span>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.html">MockedConfluentConsumerBuilder</a></h4>
-      <section><p>The builder for the <span class="xref">Silverback.Messaging.Broker.Kafka.Mocks.MockedConfluentConsumer</span>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.MockedConfluentProducerBuilder.html">MockedConfluentProducerBuilder</a></h4>
-      <section><p>The builder for the <span class="xref">Silverback.Messaging.Broker.Kafka.Mocks.MockedConfluentProducer</span>.</p>
-</section>
-    <h3 id="interfaces">Interfaces
-  </h3>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.html">IConfluentAdminClientBuilder</a></h4>
-      <section><p>Used to build the <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.html">IConfluentConsumerBuilder</a></h4>
-      <section><p>The <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span> builder used by the <a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentProducerBuilder.html">IConfluentProducerBuilder</a></h4>
-      <section><p>The <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span> builder used by the <a class="xref" href="Silverback.Messaging.Broker.KafkaProducer.html">KafkaProducer</a>.</p>
-</section>
-      <h4><a class="xref" href="Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.html">IConfluentProducersCache</a></h4>
-      <section><p>Creates and stores the <span class="xref">Confluent.Kafka.IProducer&lt;TKey, TValue&gt;</span> instances in order to reuse them for the
-same <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerConfig.html">KafkaProducerConfig</a> configuration.</p>
-</section>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Kafka_IConfluentAdminClientBuilder_Build_Confluent_Kafka_ClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.Build(Confluent.Kafka.ClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Kafka/IConfluentAdminClientBuilder.cs/#L22">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Broker_Kafka_IConfluentAdminClientBuilder_Build_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.Build*"></a>
+  <h4 id="Silverback_Messaging_Broker_Kafka_IConfluentAdminClientBuilder_Build_Confluent_Kafka_ClientConfig_" data-uid="Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.Build(Confluent.Kafka.ClientConfig)">Build(ClientConfig)</h4>
+  <div class="markdown level1 summary"><p>Returns an <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IAdminClient Build(ClientConfig config)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Confluent.Kafka.ClientConfig</span></td>
+        <td><span class="parametername">config</span></td>
+        <td><p>The client configuration.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Confluent.Kafka.IAdminClient</span></td>
+        <td><p>The <span class="xref">Confluent.Kafka.IAdminClient</span>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
           
@@ -134,6 +158,12 @@ same <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProduce
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
+                  <li>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Kafka_IConfluentAdminClientBuilder.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Kafka/IConfluentAdminClientBuilder.cs/#L11" class="contribution-link">View source</a>
+                  </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">

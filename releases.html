@@ -79,7 +79,7 @@
             <article class="content wrap" id="_content" data-uid="releases">
 <h1 id="releases">Releases</h1>
 
-<h2 id="310-beta1"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.1.0-beta.1">3.1.0-beta.1</a></h2>
+<h2 id="310-beta2"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.1.0-beta.2">3.1.0-beta.2</a></h2>
 <h3 id="whats-new">What's new</h3>
 <ul>
 <li>Add new ways to configure headers and kafka key (see <a class="xref" href="concepts/broker/headers.html">Message Headers</a> and <a class="xref" href="concepts/broker/kafka/kafka-partitioning.html">Kafka Partitioning and Message Key</a>)</li>
@@ -91,12 +91,17 @@
 </ul>
 </li>
 <li>Try to automatically recover from Kafka maximum poll interval exceed errors</li>
+<li>Improve Kafka static partition assignment with resolver function and fetching the available partitions (see <a class="xref" href="concepts/broker/kafka/kafka-partitioning.html">Kafka Partitioning and Message Key</a>)</li>
 <li>Upgrade to <a href="https://github.com/confluentinc/confluent-kafka-dotnet/releases/tag/v1.7.0">Confluent.Kafka 1.7.0</a></li>
 <li>Upgrade to <a href="https://github.com/chkr1011/MQTTnet/releases/tag/v3.0.15">MQTTnet 3.0.15</a></li>
 </ul>
 <h3 id="fixes">Fixes</h3>
 <ul>
 <li>Prevent possible race condition causing messages to be skipped when a <code>RetryPolicy</code> kicks in for messages from multiple Kafka partitions simultaneously</li>
+<li>Prevent <code>ObjectDisposedException</code> to be thrown when Kafka events (e.g. statistics) are fired during the application shutdown</li>
+<li>Prevent <code>ObjectDisposedException</code> to be thrown when <code>Consumer.Dispose</code> is called multiple times</li>
+<li>Properly clear the trace context (<code>Activity</code>) when reconnecting the consumer to prevent the newly started consume loop to be tracked under the current message traceId</li>
+<li>Fix wrong prefix in MQTT log event names</li>
 </ul>
 <h2 id="301"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.0.1">3.0.1</a></h2>
 <h3 id="fixes-1">Fixes</h3>

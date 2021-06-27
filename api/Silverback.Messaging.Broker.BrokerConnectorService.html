@@ -148,19 +148,19 @@ application is being stopped.</p>
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerConnectorService__ctor_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Microsoft_Extensions_Hosting_IHostApplicationLifetime_Silverback_Messaging_Broker_IBrokerCollection_Silverback_Messaging_Configuration_BrokerConnectionOptions_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Broker_BrokerConnectorService__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerConnectorService.%23ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory%2CMicrosoft.Extensions.Hosting.IHostApplicationLifetime%2CSilverback.Messaging.Broker.IBrokerCollection%2CSilverback.Messaging.Configuration.BrokerConnectionOptions%2CSilverback.Diagnostics.ISilverbackLogger%7BSilverback.Messaging.Broker.BrokerConnectorService%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerConnectorService__ctor_Microsoft_Extensions_Hosting_IHostApplicationLifetime_Silverback_Messaging_Broker_IBrokerCollection_Silverback_Messaging_Configuration_BrokerConnectionOptions_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Broker_BrokerConnectorService__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerConnectorService.%23ctor(Microsoft.Extensions.Hosting.IHostApplicationLifetime%2CSilverback.Messaging.Broker.IBrokerCollection%2CSilverback.Messaging.Configuration.BrokerConnectionOptions%2CSilverback.Diagnostics.ISilverbackLogger%7BSilverback.Messaging.Broker.BrokerConnectorService%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/BrokerConnectorService.cs/#L50">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/BrokerConnectorService.cs/#L46">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_BrokerConnectorService__ctor_" data-uid="Silverback.Messaging.Broker.BrokerConnectorService.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Broker_BrokerConnectorService__ctor_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Microsoft_Extensions_Hosting_IHostApplicationLifetime_Silverback_Messaging_Broker_IBrokerCollection_Silverback_Messaging_Configuration_BrokerConnectionOptions_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Broker_BrokerConnectorService__" data-uid="Silverback.Messaging.Broker.BrokerConnectorService.#ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Hosting.IHostApplicationLifetime,Silverback.Messaging.Broker.IBrokerCollection,Silverback.Messaging.Configuration.BrokerConnectionOptions,Silverback.Diagnostics.ISilverbackLogger{Silverback.Messaging.Broker.BrokerConnectorService})">BrokerConnectorService(IServiceScopeFactory, IHostApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger&lt;BrokerConnectorService&gt;)</h4>
+  <h4 id="Silverback_Messaging_Broker_BrokerConnectorService__ctor_Microsoft_Extensions_Hosting_IHostApplicationLifetime_Silverback_Messaging_Broker_IBrokerCollection_Silverback_Messaging_Configuration_BrokerConnectionOptions_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Broker_BrokerConnectorService__" data-uid="Silverback.Messaging.Broker.BrokerConnectorService.#ctor(Microsoft.Extensions.Hosting.IHostApplicationLifetime,Silverback.Messaging.Broker.IBrokerCollection,Silverback.Messaging.Configuration.BrokerConnectionOptions,Silverback.Diagnostics.ISilverbackLogger{Silverback.Messaging.Broker.BrokerConnectorService})">BrokerConnectorService(IHostApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger&lt;BrokerConnectorService&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Broker.BrokerConnectorService.html">BrokerConnectorService</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public BrokerConnectorService(IServiceScopeFactory serviceScopeFactory, IHostApplicationLifetime applicationLifetime, IBrokerCollection brokersCollection, BrokerConnectionOptions connectionOptions, ISilverbackLogger&lt;BrokerConnectorService&gt; logger)</code></pre>
+    <pre><code class="lang-csharp hljs">public BrokerConnectorService(IHostApplicationLifetime applicationLifetime, IBrokerCollection brokersCollection, BrokerConnectionOptions connectionOptions, ISilverbackLogger&lt;BrokerConnectorService&gt; logger)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -173,15 +173,9 @@ application is being stopped.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Microsoft.Extensions.DependencyInjection.IServiceScopeFactory</span></td>
-        <td><span class="parametername">serviceScopeFactory</span></td>
-        <td><p>The <span class="xref">Microsoft.Extensions.DependencyInjection.IServiceScopeFactory</span>.</p>
-</td>
-      </tr>
-      <tr>
         <td><span class="xref">Microsoft.Extensions.Hosting.IHostApplicationLifetime</span></td>
         <td><span class="parametername">applicationLifetime</span></td>
-        <td><p>The <span class="xref">Microsoft.Extensions.Hosting.IApplicationLifetime</span>.</p>
+        <td><p>The <span class="xref">Microsoft.Extensions.Hosting.IHostApplicationLifetime</span>.</p>
 </td>
       </tr>
       <tr>
@@ -273,7 +267,7 @@ application is being stopped.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_BrokerConnectorService.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.BrokerConnectorService%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/BrokerConnectorService.cs/#L20" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/BrokerConnectorService.cs/#L19" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

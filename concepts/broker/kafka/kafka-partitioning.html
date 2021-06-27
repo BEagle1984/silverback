@@ -288,14 +288,22 @@
 </section>
 </div>
 <h3 id="manual-partitions-assignment">Manual partitions assignment</h3>
-<p>In some cases you don't want to let the broker randomly distribute the partitions among the consumers. This is especially useful when dealing with large sequences (e.g. large messages/files being <a class="xref" href="../chunking.html">chunked</a>), to prevent that a rebalance occurs in the middle of a sequence, forcing the consumer to abort and restart from the beginning.</p>
+<p>In some cases you don't want to let the broker randomly distribute the partitions among the consumers.</p>
+<p>This might also be useful when dealing with large sequences (e.g. large messages/files being <a class="xref" href="../chunking.html">chunked</a> or when <a class="xref" href="../inbound.html#batch-processing">batch processing</a>), to prevent that a rebalance occurs in the middle of a sequence, forcing the consumer to abort and restart from the beginning.</p>
+<p>The assignment can either be completely static or dynamic using a resolver function that will receive all available partitions as input (see <a class="xref" href="../../../api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html">IKafkaConsumerEndpointBuilder</a> and <a class="xref" href="../../../api/Silverback.Messaging.KafkaConsumerEndpoint.html">KafkaConsumerEndpoint</a> for details).</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-3">
 <ul role="tablist">
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-3_assignment-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_assignment-fluent" data-tab="assignment-fluent" tabindex="0" aria-selected="true">Fluent</a>
+<a href="#tabpanel_bHGHmlrG6S-3_assignment-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_assignment-fluent" data-tab="assignment-fluent" tabindex="0" aria-selected="true">Fluent (static)</a>
 </li>
 <li role="presentation">
-<a href="#tabpanel_bHGHmlrG6S-3_assignment-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_assignment-legacy" data-tab="assignment-legacy" tabindex="-1">Legacy</a>
+<a href="#tabpanel_bHGHmlrG6S-3_assignment-fluent2" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_assignment-fluent2" data-tab="assignment-fluent2" tabindex="-1">Fluent (dynamic)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-3_assignment-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_assignment-legacy" data-tab="assignment-legacy" tabindex="-1">Legacy (static)</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-3_assignment-legacy2" role="tab" aria-controls="tabpanel_bHGHmlrG6S-3_assignment-legacy2" data-tab="assignment-legacy2" tabindex="-1">Legacy (dynamic)</a>
 </li>
 </ul>
 <section id="tabpanel_bHGHmlrG6S-3_assignment-fluent" role="tabpanel" data-tab="assignment-fluent">
@@ -320,6 +328,29 @@
 }
 </code></pre>
 </section>
+<section id="tabpanel_bHGHmlrG6S-3_assignment-fluent2" role="tabpanel" data-tab="assignment-fluent2" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(
+                        &quot;order-events&quot;,
+                        partitions =&gt; partitions
+                            .Where(partition =&gt; partition.Partition % 2 == 0))
+                    .Configure(config =&gt;
+                        {
+                            config.GroupId = &quot;my-consumer&quot;;
+                        })));
+}
+</code></pre>
+</section>
 <section id="tabpanel_bHGHmlrG6S-3_assignment-legacy" role="tabpanel" data-tab="assignment-legacy" aria-hidden="true" hidden="hidden">
 
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
@@ -334,7 +365,28 @@
                     Configuration = new KafkaConsumerConfig
                     {
                         BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;,
-                        GroupId = &quot;my-consumer&quot;,
+                        GroupId = &quot;my-consumer&quot;
+                    } 
+                });
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-3_assignment-legacy2" role="tabpanel" data-tab="assignment-legacy2" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddInbound(
+                new KafkaConsumerEndpoint(
+                    &quot;order-events&quot;,
+                    partitions =&gt; partitions
+                        .Where(partition =&gt; partition.Partition % 2 == 0))
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;,
+                        GroupId = &quot;my-consumer&quot;
                     } 
                 });
 }

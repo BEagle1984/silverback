@@ -7807,15 +7807,15 @@ references:
   commentId: T:Silverback.Messaging.Broker.BrokerConnectorService
   fullName: Silverback.Messaging.Broker.BrokerConnectorService
   nameWithType: BrokerConnectorService
-- uid: Silverback.Messaging.Broker.BrokerConnectorService.#ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Hosting.IHostApplicationLifetime,Silverback.Messaging.Broker.IBrokerCollection,Silverback.Messaging.Configuration.BrokerConnectionOptions,Silverback.Diagnostics.ISilverbackLogger{Silverback.Messaging.Broker.BrokerConnectorService})
-  name: BrokerConnectorService(IServiceScopeFactory, IHostApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger<BrokerConnectorService>)
-  href: api/Silverback.Messaging.Broker.BrokerConnectorService.html#Silverback_Messaging_Broker_BrokerConnectorService__ctor_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Microsoft_Extensions_Hosting_IHostApplicationLifetime_Silverback_Messaging_Broker_IBrokerCollection_Silverback_Messaging_Configuration_BrokerConnectionOptions_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Broker_BrokerConnectorService__
-  commentId: M:Silverback.Messaging.Broker.BrokerConnectorService.#ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Hosting.IHostApplicationLifetime,Silverback.Messaging.Broker.IBrokerCollection,Silverback.Messaging.Configuration.BrokerConnectionOptions,Silverback.Diagnostics.ISilverbackLogger{Silverback.Messaging.Broker.BrokerConnectorService})
-  name.vb: BrokerConnectorService(IServiceScopeFactory, IHostApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger(Of BrokerConnectorService))
-  fullName: Silverback.Messaging.Broker.BrokerConnectorService.BrokerConnectorService(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory, Microsoft.Extensions.Hosting.IHostApplicationLifetime, Silverback.Messaging.Broker.IBrokerCollection, Silverback.Messaging.Configuration.BrokerConnectionOptions, Silverback.Diagnostics.ISilverbackLogger<Silverback.Messaging.Broker.BrokerConnectorService>)
-  fullName.vb: Silverback.Messaging.Broker.BrokerConnectorService.BrokerConnectorService(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory, Microsoft.Extensions.Hosting.IHostApplicationLifetime, Silverback.Messaging.Broker.IBrokerCollection, Silverback.Messaging.Configuration.BrokerConnectionOptions, Silverback.Diagnostics.ISilverbackLogger(Of Silverback.Messaging.Broker.BrokerConnectorService))
-  nameWithType: BrokerConnectorService.BrokerConnectorService(IServiceScopeFactory, IHostApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger<BrokerConnectorService>)
-  nameWithType.vb: BrokerConnectorService.BrokerConnectorService(IServiceScopeFactory, IHostApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger(Of BrokerConnectorService))
+- uid: Silverback.Messaging.Broker.BrokerConnectorService.#ctor(Microsoft.Extensions.Hosting.IHostApplicationLifetime,Silverback.Messaging.Broker.IBrokerCollection,Silverback.Messaging.Configuration.BrokerConnectionOptions,Silverback.Diagnostics.ISilverbackLogger{Silverback.Messaging.Broker.BrokerConnectorService})
+  name: BrokerConnectorService(IHostApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger<BrokerConnectorService>)
+  href: api/Silverback.Messaging.Broker.BrokerConnectorService.html#Silverback_Messaging_Broker_BrokerConnectorService__ctor_Microsoft_Extensions_Hosting_IHostApplicationLifetime_Silverback_Messaging_Broker_IBrokerCollection_Silverback_Messaging_Configuration_BrokerConnectionOptions_Silverback_Diagnostics_ISilverbackLogger_Silverback_Messaging_Broker_BrokerConnectorService__
+  commentId: M:Silverback.Messaging.Broker.BrokerConnectorService.#ctor(Microsoft.Extensions.Hosting.IHostApplicationLifetime,Silverback.Messaging.Broker.IBrokerCollection,Silverback.Messaging.Configuration.BrokerConnectionOptions,Silverback.Diagnostics.ISilverbackLogger{Silverback.Messaging.Broker.BrokerConnectorService})
+  name.vb: BrokerConnectorService(IHostApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger(Of BrokerConnectorService))
+  fullName: Silverback.Messaging.Broker.BrokerConnectorService.BrokerConnectorService(Microsoft.Extensions.Hosting.IHostApplicationLifetime, Silverback.Messaging.Broker.IBrokerCollection, Silverback.Messaging.Configuration.BrokerConnectionOptions, Silverback.Diagnostics.ISilverbackLogger<Silverback.Messaging.Broker.BrokerConnectorService>)
+  fullName.vb: Silverback.Messaging.Broker.BrokerConnectorService.BrokerConnectorService(Microsoft.Extensions.Hosting.IHostApplicationLifetime, Silverback.Messaging.Broker.IBrokerCollection, Silverback.Messaging.Configuration.BrokerConnectionOptions, Silverback.Diagnostics.ISilverbackLogger(Of Silverback.Messaging.Broker.BrokerConnectorService))
+  nameWithType: BrokerConnectorService.BrokerConnectorService(IHostApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger<BrokerConnectorService>)
+  nameWithType.vb: BrokerConnectorService.BrokerConnectorService(IHostApplicationLifetime, IBrokerCollection, BrokerConnectionOptions, ISilverbackLogger(Of BrokerConnectorService))
 - uid: Silverback.Messaging.Broker.BrokerConnectorService.#ctor*
   name: BrokerConnectorService
   href: api/Silverback.Messaging.Broker.BrokerConnectorService.html#Silverback_Messaging_Broker_BrokerConnectorService__ctor_
@@ -11372,6 +11372,25 @@ references:
   commentId: N:Silverback.Messaging.Broker.Kafka
   fullName: Silverback.Messaging.Broker.Kafka
   nameWithType: Silverback.Messaging.Broker.Kafka
+- uid: Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder
+  name: ConfluentAdminClientBuilder
+  href: api/Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.html
+  commentId: T:Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder
+  fullName: Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder
+  nameWithType: ConfluentAdminClientBuilder
+- uid: Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.Build(Confluent.Kafka.ClientConfig)
+  name: Build(ClientConfig)
+  href: api/Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientBuilder_Build_Confluent_Kafka_ClientConfig_
+  commentId: M:Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.Build(Confluent.Kafka.ClientConfig)
+  fullName: Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.Build(Confluent.Kafka.ClientConfig)
+  nameWithType: ConfluentAdminClientBuilder.Build(ClientConfig)
+- uid: Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.Build*
+  name: Build
+  href: api/Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.html#Silverback_Messaging_Broker_Kafka_ConfluentAdminClientBuilder_Build_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.Build
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.ConfluentAdminClientBuilder.Build
+  nameWithType: ConfluentAdminClientBuilder.Build
 - uid: Silverback.Messaging.Broker.Kafka.ConfluentConsumerBuilder
   name: ConfluentConsumerBuilder
   href: api/Silverback.Messaging.Broker.Kafka.ConfluentConsumerBuilder.html
@@ -11582,6 +11601,25 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.ConfluentProducerBuilder.SetStatisticsHandler
   nameWithType: ConfluentProducerBuilder.SetStatisticsHandler
+- uid: Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder
+  name: IConfluentAdminClientBuilder
+  href: api/Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.html
+  commentId: T:Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder
+  fullName: Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder
+  nameWithType: IConfluentAdminClientBuilder
+- uid: Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.Build(Confluent.Kafka.ClientConfig)
+  name: Build(ClientConfig)
+  href: api/Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.html#Silverback_Messaging_Broker_Kafka_IConfluentAdminClientBuilder_Build_Confluent_Kafka_ClientConfig_
+  commentId: M:Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.Build(Confluent.Kafka.ClientConfig)
+  fullName: Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.Build(Confluent.Kafka.ClientConfig)
+  nameWithType: IConfluentAdminClientBuilder.Build(ClientConfig)
+- uid: Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.Build*
+  name: Build
+  href: api/Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.html#Silverback_Messaging_Broker_Kafka_IConfluentAdminClientBuilder_Build_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.Build
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.IConfluentAdminClientBuilder.Build
+  nameWithType: IConfluentAdminClientBuilder.Build
 - uid: Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder
   name: IConfluentConsumerBuilder
   href: api/Silverback.Messaging.Broker.Kafka.IConfluentConsumerBuilder.html
@@ -11824,6 +11862,38 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.IConfluentProducersCache.GetProducer
   nameWithType: IConfluentProducersCache.GetProducer
+- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder
+  name: MockedConfluentAdminClientBuilder
+  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.html
+  commentId: T:Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder
+  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder
+  nameWithType: MockedConfluentAdminClientBuilder
+- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.#ctor(Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
+  name: MockedConfluentAdminClientBuilder(IMockedKafkaOptions)
+  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentAdminClientBuilder__ctor_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptions_
+  commentId: M:Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.#ctor(Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
+  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.MockedConfluentAdminClientBuilder(Silverback.Messaging.Configuration.Kafka.IMockedKafkaOptions)
+  nameWithType: MockedConfluentAdminClientBuilder.MockedConfluentAdminClientBuilder(IMockedKafkaOptions)
+- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.#ctor*
+  name: MockedConfluentAdminClientBuilder
+  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentAdminClientBuilder__ctor_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.#ctor
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.MockedConfluentAdminClientBuilder
+  nameWithType: MockedConfluentAdminClientBuilder.MockedConfluentAdminClientBuilder
+- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.Build(Confluent.Kafka.ClientConfig)
+  name: Build(ClientConfig)
+  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentAdminClientBuilder_Build_Confluent_Kafka_ClientConfig_
+  commentId: M:Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.Build(Confluent.Kafka.ClientConfig)
+  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.Build(Confluent.Kafka.ClientConfig)
+  nameWithType: MockedConfluentAdminClientBuilder.Build(ClientConfig)
+- uid: Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.Build*
+  name: Build
+  href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.html#Silverback_Messaging_Broker_Kafka_MockedConfluentAdminClientBuilder_Build_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.Build
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.MockedConfluentAdminClientBuilder.Build
+  nameWithType: MockedConfluentAdminClientBuilder.Build
 - uid: Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder
   name: MockedConfluentConsumerBuilder
   href: api/Silverback.Messaging.Broker.Kafka.MockedConfluentConsumerBuilder.html
@@ -18844,6 +18914,24 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(Confluent.Kafka.TopicPartitionOffset())
   nameWithType: IKafkaConsumerEndpointBuilder.ConsumeFrom(TopicPartitionOffset[])
   nameWithType.vb: IKafkaConsumerEndpointBuilder.ConsumeFrom(TopicPartitionOffset())
+- uid: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}})
+  name: ConsumeFrom(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>)
+  href: api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_ConsumeFrom_System_String_System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition___
+  commentId: M:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}})
+  name.vb: ConsumeFrom(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)))
+  fullName: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String, System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartition>>)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String, System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartition)))
+  nameWithType: IKafkaConsumerEndpointBuilder.ConsumeFrom(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>)
+  nameWithType.vb: IKafkaConsumerEndpointBuilder.ConsumeFrom(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)))
+- uid: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}})
+  name: ConsumeFrom(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>)
+  href: api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_ConsumeFrom_System_String_System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionOffset___
+  commentId: M:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}})
+  name.vb: ConsumeFrom(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)))
+  fullName: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String, System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartitionOffset>>)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String, System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartitionOffset)))
+  nameWithType: IKafkaConsumerEndpointBuilder.ConsumeFrom(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>)
+  nameWithType.vb: IKafkaConsumerEndpointBuilder.ConsumeFrom(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)))
 - uid: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String[])
   name: ConsumeFrom(String[])
   href: api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_ConsumeFrom_System_String___
@@ -18853,6 +18941,24 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String())
   nameWithType: IKafkaConsumerEndpointBuilder.ConsumeFrom(String[])
   nameWithType.vb: IKafkaConsumerEndpointBuilder.ConsumeFrom(String())
+- uid: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}})
+  name: ConsumeFrom(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>)
+  href: api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_ConsumeFrom_System_String___System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition___
+  commentId: M:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}})
+  name.vb: ConsumeFrom(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)))
+  fullName: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String[], System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartition>>)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String(), System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartition)))
+  nameWithType: IKafkaConsumerEndpointBuilder.ConsumeFrom(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>)
+  nameWithType.vb: IKafkaConsumerEndpointBuilder.ConsumeFrom(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)))
+- uid: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}})
+  name: ConsumeFrom(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>)
+  href: api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_ConsumeFrom_System_String___System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionOffset___
+  commentId: M:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}})
+  name.vb: ConsumeFrom(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)))
+  fullName: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String[], System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartitionOffset>>)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom(System.String(), System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartitionOffset)))
+  nameWithType: IKafkaConsumerEndpointBuilder.ConsumeFrom(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>)
+  nameWithType.vb: IKafkaConsumerEndpointBuilder.ConsumeFrom(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)))
 - uid: Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.ConsumeFrom*
   name: ConsumeFrom
   href: api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_ConsumeFrom_
@@ -19416,6 +19522,24 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(Confluent.Kafka.TopicPartitionOffset())
   nameWithType: KafkaConsumerEndpointBuilder.ConsumeFrom(TopicPartitionOffset[])
   nameWithType.vb: KafkaConsumerEndpointBuilder.ConsumeFrom(TopicPartitionOffset())
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}})
+  name: ConsumeFrom(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>)
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerEndpointBuilder_ConsumeFrom_System_String_System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition___
+  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}})
+  name.vb: ConsumeFrom(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)))
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String, System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartition>>)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String, System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartition)))
+  nameWithType: KafkaConsumerEndpointBuilder.ConsumeFrom(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>)
+  nameWithType.vb: KafkaConsumerEndpointBuilder.ConsumeFrom(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)))
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}})
+  name: ConsumeFrom(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>)
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerEndpointBuilder_ConsumeFrom_System_String_System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionOffset___
+  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}})
+  name.vb: ConsumeFrom(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)))
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String, System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartitionOffset>>)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String, System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartitionOffset)))
+  nameWithType: KafkaConsumerEndpointBuilder.ConsumeFrom(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>)
+  nameWithType.vb: KafkaConsumerEndpointBuilder.ConsumeFrom(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)))
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String[])
   name: ConsumeFrom(String[])
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerEndpointBuilder_ConsumeFrom_System_String___
@@ -19425,6 +19549,24 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String())
   nameWithType: KafkaConsumerEndpointBuilder.ConsumeFrom(String[])
   nameWithType.vb: KafkaConsumerEndpointBuilder.ConsumeFrom(String())
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}})
+  name: ConsumeFrom(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>)
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerEndpointBuilder_ConsumeFrom_System_String___System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition___
+  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}})
+  name.vb: ConsumeFrom(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)))
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String[], System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartition>>)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String(), System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartition)))
+  nameWithType: KafkaConsumerEndpointBuilder.ConsumeFrom(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>)
+  nameWithType.vb: KafkaConsumerEndpointBuilder.ConsumeFrom(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)))
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}})
+  name: ConsumeFrom(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>)
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerEndpointBuilder_ConsumeFrom_System_String___System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionOffset___
+  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}})
+  name.vb: ConsumeFrom(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)))
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String[], System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartitionOffset>>)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom(System.String(), System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartitionOffset)))
+  nameWithType: KafkaConsumerEndpointBuilder.ConsumeFrom(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>)
+  nameWithType.vb: KafkaConsumerEndpointBuilder.ConsumeFrom(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)))
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.ConsumeFrom*
   name: ConsumeFrom
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerEndpointBuilder_ConsumeFrom_
@@ -26490,6 +26632,24 @@ references:
   commentId: M:Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String,Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
   fullName: Silverback.Messaging.KafkaConsumerEndpoint.KafkaConsumerEndpoint(System.String, Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
   nameWithType: KafkaConsumerEndpoint.KafkaConsumerEndpoint(String, KafkaClientConfig)
+- uid: Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  name: KafkaConsumerEndpoint(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>, KafkaClientConfig)
+  href: api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String_System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition___Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_
+  commentId: M:Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  name.vb: KafkaConsumerEndpoint(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)), KafkaClientConfig)
+  fullName: Silverback.Messaging.KafkaConsumerEndpoint.KafkaConsumerEndpoint(System.String, System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartition>>, Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  fullName.vb: Silverback.Messaging.KafkaConsumerEndpoint.KafkaConsumerEndpoint(System.String, System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartition)), Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  nameWithType: KafkaConsumerEndpoint.KafkaConsumerEndpoint(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>, KafkaClientConfig)
+  nameWithType.vb: KafkaConsumerEndpoint.KafkaConsumerEndpoint(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)), KafkaClientConfig)
+- uid: Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  name: KafkaConsumerEndpoint(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>, KafkaClientConfig)
+  href: api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String_System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionOffset___Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_
+  commentId: M:Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String,System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  name.vb: KafkaConsumerEndpoint(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)), KafkaClientConfig)
+  fullName: Silverback.Messaging.KafkaConsumerEndpoint.KafkaConsumerEndpoint(System.String, System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartitionOffset>>, Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  fullName.vb: Silverback.Messaging.KafkaConsumerEndpoint.KafkaConsumerEndpoint(System.String, System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartitionOffset)), Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  nameWithType: KafkaConsumerEndpoint.KafkaConsumerEndpoint(String, Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>, KafkaClientConfig)
+  nameWithType.vb: KafkaConsumerEndpoint.KafkaConsumerEndpoint(String, Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)), KafkaClientConfig)
 - uid: Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String[])
   name: KafkaConsumerEndpoint(String[])
   href: api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String___
@@ -26508,6 +26668,24 @@ references:
   fullName.vb: Silverback.Messaging.KafkaConsumerEndpoint.KafkaConsumerEndpoint(System.String(), Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
   nameWithType: KafkaConsumerEndpoint.KafkaConsumerEndpoint(String[], KafkaClientConfig)
   nameWithType.vb: KafkaConsumerEndpoint.KafkaConsumerEndpoint(String(), KafkaClientConfig)
+- uid: Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  name: KafkaConsumerEndpoint(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>, KafkaClientConfig)
+  href: api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String___System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartition___Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_
+  commentId: M:Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartition}},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  name.vb: KafkaConsumerEndpoint(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)), KafkaClientConfig)
+  fullName: Silverback.Messaging.KafkaConsumerEndpoint.KafkaConsumerEndpoint(System.String[], System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartition>>, Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  fullName.vb: Silverback.Messaging.KafkaConsumerEndpoint.KafkaConsumerEndpoint(System.String(), System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartition)), Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  nameWithType: KafkaConsumerEndpoint.KafkaConsumerEndpoint(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartition>>, KafkaClientConfig)
+  nameWithType.vb: KafkaConsumerEndpoint.KafkaConsumerEndpoint(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartition)), KafkaClientConfig)
+- uid: Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  name: KafkaConsumerEndpoint(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>, KafkaClientConfig)
+  href: api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint__ctor_System_String___System_Func_System_Collections_Generic_IReadOnlyCollection_Confluent_Kafka_TopicPartition__System_Collections_Generic_IEnumerable_Confluent_Kafka_TopicPartitionOffset___Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_
+  commentId: M:Silverback.Messaging.KafkaConsumerEndpoint.#ctor(System.String[],System.Func{System.Collections.Generic.IReadOnlyCollection{Confluent.Kafka.TopicPartition},System.Collections.Generic.IEnumerable{Confluent.Kafka.TopicPartitionOffset}},Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  name.vb: KafkaConsumerEndpoint(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)), KafkaClientConfig)
+  fullName: Silverback.Messaging.KafkaConsumerEndpoint.KafkaConsumerEndpoint(System.String[], System.Func<System.Collections.Generic.IReadOnlyCollection<Confluent.Kafka.TopicPartition>, System.Collections.Generic.IEnumerable<Confluent.Kafka.TopicPartitionOffset>>, Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  fullName.vb: Silverback.Messaging.KafkaConsumerEndpoint.KafkaConsumerEndpoint(System.String(), System.Func(Of System.Collections.Generic.IReadOnlyCollection(Of Confluent.Kafka.TopicPartition), System.Collections.Generic.IEnumerable(Of Confluent.Kafka.TopicPartitionOffset)), Silverback.Messaging.Configuration.Kafka.KafkaClientConfig)
+  nameWithType: KafkaConsumerEndpoint.KafkaConsumerEndpoint(String[], Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>, KafkaClientConfig)
+  nameWithType.vb: KafkaConsumerEndpoint.KafkaConsumerEndpoint(String(), Func(Of IReadOnlyCollection(Of TopicPartition), IEnumerable(Of TopicPartitionOffset)), KafkaClientConfig)
 - uid: Silverback.Messaging.KafkaConsumerEndpoint.#ctor*
   name: KafkaConsumerEndpoint
   href: api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint__ctor_
@@ -26638,6 +26816,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.KafkaConsumerEndpoint.TopicPartitions
   nameWithType: KafkaConsumerEndpoint.TopicPartitions
+- uid: Silverback.Messaging.KafkaConsumerEndpoint.TopicPartitionsResolver
+  name: TopicPartitionsResolver
+  href: api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint_TopicPartitionsResolver
+  commentId: P:Silverback.Messaging.KafkaConsumerEndpoint.TopicPartitionsResolver
+  fullName: Silverback.Messaging.KafkaConsumerEndpoint.TopicPartitionsResolver
+  nameWithType: KafkaConsumerEndpoint.TopicPartitionsResolver
+- uid: Silverback.Messaging.KafkaConsumerEndpoint.TopicPartitionsResolver*
+  name: TopicPartitionsResolver
+  href: api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint_TopicPartitionsResolver_
+  commentId: Overload:Silverback.Messaging.KafkaConsumerEndpoint.TopicPartitionsResolver
+  isSpec: "True"
+  fullName: Silverback.Messaging.KafkaConsumerEndpoint.TopicPartitionsResolver
+  nameWithType: KafkaConsumerEndpoint.TopicPartitionsResolver
 - uid: Silverback.Messaging.KafkaConsumerEndpoint.Validate
   name: Validate()
   href: api/Silverback.Messaging.KafkaConsumerEndpoint.html#Silverback_Messaging_KafkaConsumerEndpoint_Validate

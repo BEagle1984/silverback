@@ -88,7 +88,7 @@
 
 <p>An inbound endpoint is used to configure Silverback to automatically consume a topic/queue and relay the messages to the internal bus. If no exception is thrown by the subscribers, the message is acknowledged and the next one is consumed.</p>
 <p>The endpoint object identifies the topic/queue that is being connected and the client configuration, such the connection options. The endpoint object is therefore very specific and every broker type will define it's own implementation of <a class="xref" href="../../api/Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a>.</p>
-<p>The options in the endpoint object are also used to tweak the Silverback behavior (e.g. the <a class="xref" href="serialization.html">deserialization</a>) and to enable additional features such as <a href="#batch-processing">batch consuming</a>, <a class="xref" href="encryption.html">decryption</a>, etc.</p>
+<p>The options in the endpoint object are also used to tweak the Silverback behavior (e.g. the <a class="xref" href="serialization.html">deserialization</a>) and to enable additional features such as <a href="#batch-processing">batch processing</a>, <a class="xref" href="encryption.html">decryption</a>, etc.</p>
 <div class="NOTE">
 <h5>Note</h5>
 <p>Silverback abstracts the message broker completely and the messages are automatically acknowledged if the subscribers complete without throwing an exception.</p>

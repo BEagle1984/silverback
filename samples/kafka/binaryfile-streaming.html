@@ -366,16 +366,12 @@ namespace Silverback.Samples.Kafka.BinaryFileStreaming.Consumer
                                 // broker to rebalance in the middle of a potentially
                                 // huge sequence of chunks. This is just an
                                 // optimization and isn't strictly necessary.
-                                // (In the final solution the &quot;0&quot; and &quot;1&quot; constant
-                                // values should be replaced by a configuration
-                                // setting.)
+                                // (The partitions resolver function returns the
+                                // untouched collection to assign all available
+                                // partitions.)
                                 .ConsumeFrom(
-                                    new TopicPartition(
-                                        &quot;samples-binary-file-streaming&quot;,
-                                        0),
-                                    new TopicPartition(
-                                        &quot;samples-binary-file-streaming&quot;,
-                                        1))
+                                    &quot;samples-binary-file-streaming&quot;,
+                                    partitions =&gt; partitions)
                                 .Configure(
                                     config =&gt;
                                     {
