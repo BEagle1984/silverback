@@ -191,7 +191,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Microsoft.Extensions.DependencyInjection.IBrokerOptionsBuilder.html",
-          "hash": "iwlIEl08uYTSw+v9IW388y4elDydxVWjhdNUVkExfYs="
+          "hash": "aD66v2lv/Ah1GRIvpWwNLzHfkk9JePl4+h0w9sryjMk="
         }
       },
       "is_incremental": false,
@@ -2567,7 +2567,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html",
-          "hash": "BnJJ21KFcAbHC+uorgc5h5zcxtK7lNkfKzFeX8inIoM="
+          "hash": "h5Jeio8HJTrG6kCnKuiLRyCMrG1AUep8Ob8bl8fGFz0="
         }
       },
       "is_incremental": false,
@@ -2831,7 +2831,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html",
-          "hash": "SpIdueb4zIqwht85mByGmprb1tyVTD3I6svLL66Va/Q="
+          "hash": "xCoU/TWv5KkWQuH2tH9pmX/pK7+Ks25Ittx/ungE+oE="
         }
       },
       "is_incremental": false,
@@ -2951,7 +2951,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.IProducerEndpointBuilder-1.html",
-          "hash": "PzfFraT7+0AuW7VSZ10oY55QTnNN20HZvoQdX3f9664="
+          "hash": "qGr3MSUfW5WuDLXETONNz/VQwbJp8EPYZKCPf0UtB34="
         }
       },
       "is_incremental": false,
@@ -2963,7 +2963,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ISilverbackBuilder.html",
-          "hash": "FH/ZYlyngHXmOF3eBCFf8NAMVZ8Hc05EScqtNFsUAwU="
+          "hash": "UryUsTr+XGfvBgTZjgFeN6eMSYMlFMKZPZTX5XHr7I8="
         }
       },
       "is_incremental": false,
@@ -3359,7 +3359,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Silverback.Messaging.Configuration.ProducerEndpointBuilder-2.html",
-          "hash": "VY9xcopOAniNQgc3lHH3gCK3xsZdpec/Gw+jkpiH3Rs="
+          "hash": "d4msfO5atSpdfvUpdzCjoa1Dxk5TgBImkSOg7pyrt/Y="
         }
       },
       "is_incremental": false,
@@ -7367,7 +7367,7 @@
       "output": {
         ".html": {
           "relative_path": "concepts/broker/testing.html",
-          "hash": "y0QHo1n6AN1N+U8DVBeZD6198k8n0MfG0lSRefqBY28="
+          "hash": "ucygLaU1xQQ9mpg4D5LYqeySi/LxeL53xG6MFqylLyU="
         }
       },
       "is_incremental": false,
@@ -7947,7 +7947,7 @@
       "output": {
         ".html": {
           "relative_path": "releases.html",
-          "hash": "13xJrUogUzhcpQW6O0n4FfyDbX1y9WvDNYiR2+CEhjM="
+          "hash": "Ylm/9dEasJbOFyZbVsMkaodi+yD6V8SX7sZiI9Pusa4="
         }
       },
       "is_incremental": false,
@@ -8075,13 +8075,13 @@
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 46,
-          "skipped_file_count": 42
+          "skipped_file_count": 44
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 588,
-          "skipped_file_count": 51
+          "skipped_file_count": 567
         },
         "ResourceDocumentProcessor": {
           "can_incremental": false,

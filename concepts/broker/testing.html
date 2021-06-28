@@ -111,7 +111,7 @@
             // Register Silverback as usual
             .AddSilverback()
             // Register the mocked KafkaBroker
-            .WithConnectionTo(config =&gt; config.AddMockedKafka())
+            .WithConnectionToMessageBroker(config =&gt; config.AddMockedKafka())
             // Configure inbound and outbound endpoints
             .AddKafkaEndpoints(endpoints =&gt; endpoints
                 .Configure(config =&gt; 
@@ -135,12 +135,12 @@
     }
 
     [Fact]
-    public void SampleTest()
+    public async Task SampleTest()
     {
         // Arrange
 
         // Connect the broker
-        _serviceProvider.GetRequiredService&lt;IBroker&gt;().Connect();
+        await _serviceProvider.GetRequiredService&lt;IBroker&gt;().ConnectAsync();
 
         // Create a producer to push to test-topic
         var producer = _serviceProvider
@@ -148,8 +148,8 @@
             .GetProducer(new KafkaProducerEndpoint(&quot;test-topic&quot;));
 
         // Act
-        producer.Produce(new TestMessage { Content = &quot;hello!&quot; });
-        producer.Produce(new TestMessage { Content = &quot;hello 2!&quot; });
+        await producer.ProduceAsync(new TestMessage { Content = &quot;hello!&quot; });
+        await producer.ProduceAsync(new TestMessage { Content = &quot;hello 2!&quot; });
 
         // Assert
         // ...your assertions...
