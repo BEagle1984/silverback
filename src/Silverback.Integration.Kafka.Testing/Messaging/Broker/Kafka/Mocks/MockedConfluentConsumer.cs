@@ -40,13 +40,13 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             IInMemoryTopicCollection topics,
             IMockedKafkaOptions options)
         {
-            Check.NotNull(config, nameof(config));
             _topics = Check.NotNull(topics, nameof(topics));
             _options = Check.NotNull(options, nameof(options));
 
             Name = $"{config.ClientId ?? "mocked"}.{Guid.NewGuid():N}";
             GroupId = config.GroupId;
             MemberId = Guid.NewGuid().ToString("N");
+            EnablePartitionEof = config.EnablePartitionEof ?? false;
 
             if (config.EnableAutoCommit ?? true)
             {
@@ -63,6 +63,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public string Name { get; }
 
         public string MemberId { get; }
+
+        public bool EnablePartitionEof { get; }
 
         public List<TopicPartition> Assignment { get; } = new();
 
@@ -402,7 +404,10 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
                 if (pulled && Assignment.Contains(result!.TopicPartition))
                 {
-                    _currentOffsets[result.Topic][result.Partition] = result.Offset + 1;
+                    if (!result!.IsPartitionEOF)
+                    {
+                        _currentOffsets[result.Topic][result.Partition] = result.Offset + 1;
+                    }
 
                     return true;
                 }

@@ -12,6 +12,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
     {
         private readonly List<Message<byte[]?, byte[]?>> _messages = new();
 
+        private long? _lastReportedOffsetForEndOfPartition;
+
         public InMemoryPartition(in int index, InMemoryTopic topic)
         {
             Partition = new Partition(index);
@@ -48,12 +50,27 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             }
         }
 
-        public bool TryPull(Offset offset, out ConsumeResult<byte[]?, byte[]?>? result)
+        public bool TryPull(Offset offset, bool enablePartitionEof, out ConsumeResult<byte[]?, byte[]?>? result)
         {
             lock (_messages)
             {
                 if (offset.Value > LastOffset || _messages.Count == 0)
                 {
+                    if (enablePartitionEof &&
+                        (_lastReportedOffsetForEndOfPartition < offset.Value ||
+                         _lastReportedOffsetForEndOfPartition == null && _messages.Count == 0))
+                    {
+                        result = new ConsumeResult<byte[]?, byte[]?>
+                        {
+                            IsPartitionEOF = true,
+                            Offset = offset,
+                            Topic = Topic.Name,
+                            Partition = Partition
+                        };
+                        _lastReportedOffsetForEndOfPartition = offset.Value;
+                        return true;
+                    }
+
                     result = null;
                     return false;
                 }

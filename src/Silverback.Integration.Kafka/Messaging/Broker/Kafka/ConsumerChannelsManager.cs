@@ -10,6 +10,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Silverback.Diagnostics;
+using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Messaging.Sequences;
 using Silverback.Util;
@@ -22,6 +23,8 @@ namespace Silverback.Messaging.Broker.Kafka
 
         [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
         private readonly KafkaConsumer _consumer;
+
+        private readonly IBrokerCallbacksInvoker _callbacksInvoker;
 
         private readonly IList<ISequenceStore> _sequenceStores;
 
@@ -40,12 +43,14 @@ namespace Silverback.Messaging.Broker.Kafka
         public ConsumerChannelsManager(
             IReadOnlyList<TopicPartition> partitions,
             KafkaConsumer consumer,
+            IBrokerCallbacksInvoker callbacksInvoker,
             IList<ISequenceStore> sequenceStores,
             ISilverbackLogger logger)
         {
             // Copy the partitions array to avoid concurrency issues if a rebalance occurs while initializing
             _partitions = Check.NotNull(partitions, nameof(partitions)).ToList();
             _consumer = Check.NotNull(consumer, nameof(consumer));
+            _callbacksInvoker = Check.NotNull(callbacksInvoker, nameof(callbacksInvoker));
             _sequenceStores = Check.NotNull(sequenceStores, nameof(sequenceStores));
             _logger = Check.NotNull(logger, nameof(logger));
 
@@ -267,6 +272,10 @@ namespace Silverback.Messaging.Broker.Kafka
             if (consumeResult.IsPartitionEOF)
             {
                 _logger.LogEndOfPartition(consumeResult, _consumer);
+                _callbacksInvoker.Invoke<IKafkaPartitionEofCallback>(
+                        handler => handler.OnEndOfTopicPartitionReached(
+                            consumeResult.TopicPartition,
+                            _consumer));
                 return;
             }
 

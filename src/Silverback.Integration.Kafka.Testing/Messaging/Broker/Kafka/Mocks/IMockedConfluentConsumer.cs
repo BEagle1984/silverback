@@ -29,5 +29,10 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         ///     Gets a value indicating whether this instance was disposed.
         /// </summary>
         bool Disposed { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether PartitionEofEnable is enabled or disabled.
+        /// </summary>
+        bool EnablePartitionEof { get; }
     }
 }
