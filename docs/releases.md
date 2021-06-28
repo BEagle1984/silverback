@@ -10,8 +10,6 @@ uid: releases
 
 * Invoke broker callbacks during the application shutdown to allow custom code to be run when disconnecting
 
-# Releases
-
 ## [3.1.0](https://github.com/BEagle1984/silverback/releases/tag/v3.1.0)
 
 ### What's new
