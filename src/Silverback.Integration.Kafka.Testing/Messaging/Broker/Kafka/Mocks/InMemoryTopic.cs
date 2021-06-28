@@ -79,7 +79,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 foreach (var partitionOffset in partitionOffsets.OrderBy(
                     partitionOffset => partitionOffset.Offset.Value))
                 {
-                    if (_partitions[partitionOffset.Partition].TryPull(partitionOffset.Offset, out result))
+                    if (_partitions[partitionOffset.Partition].TryPull(partitionOffset.Offset, consumer.EnablePartitionEof, out result))
                         return true;
                 }
 
