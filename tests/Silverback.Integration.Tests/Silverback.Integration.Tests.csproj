@@ -40,8 +40,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Messaging\Broker\Events" />
-  </ItemGroup>
 </Project>

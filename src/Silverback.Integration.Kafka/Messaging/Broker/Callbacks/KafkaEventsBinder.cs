@@ -61,7 +61,8 @@ namespace Silverback.Messaging.Broker.Callbacks
                 handler => handler.OnProducerStatistics(
                     KafkaStatisticsDeserializer.TryDeserialize(statistics, logger),
                     statistics,
-                    producer));
+                    producer),
+                invokeDuringShutdown: false);
         }
 
         private static void OnStatistics(
@@ -76,7 +77,8 @@ namespace Silverback.Messaging.Broker.Callbacks
                 handler => handler.OnConsumerStatistics(
                     KafkaStatisticsDeserializer.TryDeserialize(statistics, logger),
                     statistics,
-                    consumer));
+                    consumer),
+                invokeDuringShutdown: false);
         }
 
         [SuppressMessage(

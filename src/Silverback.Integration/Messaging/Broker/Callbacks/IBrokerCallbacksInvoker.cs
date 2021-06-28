@@ -20,12 +20,16 @@ namespace Silverback.Messaging.Broker.Callbacks
         /// <param name="scopedServiceProvider">
         ///     The scoped <see cref="IServiceProvider" />. If not provided a new scope will be created.
         /// </param>
+        /// <param name="invokeDuringShutdown">
+        ///     Specifies whether the callback must be called even if the application is shutting down.
+        /// </param>
         /// <typeparam name="THandler">
         ///     The type of the handler.
         /// </typeparam>
         void Invoke<THandler>(
             Action<THandler> action,
-            IServiceProvider? scopedServiceProvider = null);
+            IServiceProvider? scopedServiceProvider = null,
+            bool invokeDuringShutdown = true);
 
         /// <summary>
         ///     Resolves and invokes all handlers of the specified type.
@@ -36,6 +40,9 @@ namespace Silverback.Messaging.Broker.Callbacks
         /// <param name="scopedServiceProvider">
         ///     The scoped <see cref="IServiceProvider" />. If not provided a new scope will be created.
         /// </param>
+        /// <param name="invokeDuringShutdown">
+        ///     Specifies whether the callback must be called even if the application is shutting down.
+        /// </param>
         /// <typeparam name="THandler">
         ///     The type of the handler.
         /// </typeparam>
@@ -44,6 +51,7 @@ namespace Silverback.Messaging.Broker.Callbacks
         /// </returns>
         Task InvokeAsync<THandler>(
             Func<THandler, Task> action,
-            IServiceProvider? scopedServiceProvider = null);
+            IServiceProvider? scopedServiceProvider = null,
+            bool invokeDuringShutdown = true);
     }
 }

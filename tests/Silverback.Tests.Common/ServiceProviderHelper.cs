@@ -11,10 +11,11 @@ namespace Silverback.Tests
     public static class ServiceProviderHelper
     {
         public static IServiceProvider GetServiceProvider(
-            Action<IServiceCollection> servicesConfigurationAction)
+            Action<IServiceCollection> servicesConfigurationAction,
+            IHostApplicationLifetime? hostApplicationLifetime = null)
         {
             var services = new ServiceCollection();
-            services.AddSingleton(Substitute.For<IHostApplicationLifetime>());
+            services.AddSingleton(hostApplicationLifetime ?? Substitute.For<IHostApplicationLifetime>());
 
             servicesConfigurationAction(services);
 

@@ -143,6 +143,50 @@ namespace Silverback.Tests.Integration.Messaging.Broker.Callbacks
         }
 
         [Fact]
+        public void Invoke_DuringApplicationShutdown_CallbackInvoked()
+        {
+            var callbackOneHandlerOne = new CallbackOneHandlerOne();
+            var hostApplicationLifetime = new FakeHostApplicationLifetime();
+
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
+                    .AddSingletonBrokerCallbackHandler(callbackOneHandlerOne),
+                hostApplicationLifetime);
+
+            hostApplicationLifetime.TriggerApplicationStopping();
+
+            var invoker = serviceProvider.GetRequiredService<IBrokerCallbacksInvoker>();
+            invoker.Invoke<ICallbackOneHandler>(handler => handler.Handle());
+
+            callbackOneHandlerOne.CallCount.Should().Be(1);
+        }
+
+        [Fact]
+        public void Invoke_DisablingCallbackDuringShutdown_CallbackNotInvoked()
+        {
+            var callbackOneHandlerOne = new CallbackOneHandlerOne();
+            var hostApplicationLifetime = new FakeHostApplicationLifetime();
+
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
+                    .AddSingletonBrokerCallbackHandler(callbackOneHandlerOne),
+                hostApplicationLifetime);
+
+            hostApplicationLifetime.TriggerApplicationStopping();
+
+            var invoker = serviceProvider.GetRequiredService<IBrokerCallbacksInvoker>();
+            invoker.Invoke<ICallbackOneHandler>(handler => handler.Handle(), invokeDuringShutdown: false);
+
+            callbackOneHandlerOne.CallCount.Should().Be(0);
+        }
+
+        [Fact]
         public async Task InvokeAsync_SomeHandlers_MatchingHandlersInvoked()
         {
             var callbackOneHandlerOne = new CallbackOneHandlerOneAsync();
@@ -254,6 +298,52 @@ namespace Silverback.Tests.Integration.Messaging.Broker.Callbacks
                 invoker.InvokeAsync<ICallbackOneHandlerAsync>(handler => handler.HandleAsync());
 
             act.Should().ThrowExactly<BrokerCallbackInvocationException>();
+        }
+
+        [Fact]
+        public async Task InvokeAsync_DuringApplicationShutdown_CallbackInvoked()
+        {
+            var callbackOneHandlerOne = new CallbackOneHandlerOneAsync();
+            var hostApplicationLifetime = new FakeHostApplicationLifetime();
+
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
+                    .AddSingletonBrokerCallbackHandler(callbackOneHandlerOne),
+                hostApplicationLifetime);
+
+            hostApplicationLifetime.TriggerApplicationStopping();
+
+            var invoker = serviceProvider.GetRequiredService<IBrokerCallbacksInvoker>();
+            await invoker.InvokeAsync<ICallbackOneHandlerAsync>(handler => handler.HandleAsync());
+
+            callbackOneHandlerOne.CallCount.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task InvokeAsync_DisablingCallbackDuringShutdown_CallbackNotInvoked()
+        {
+            var callbackOneHandlerOne = new CallbackOneHandlerOneAsync();
+            var hostApplicationLifetime = new FakeHostApplicationLifetime();
+
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddFakeLogger()
+                    .AddSilverback()
+                    .WithConnectionToMessageBroker(options => options.AddBroker<TestBroker>())
+                    .AddSingletonBrokerCallbackHandler(callbackOneHandlerOne),
+                hostApplicationLifetime);
+
+            hostApplicationLifetime.TriggerApplicationStopping();
+
+            var invoker = serviceProvider.GetRequiredService<IBrokerCallbacksInvoker>();
+            await invoker.InvokeAsync<ICallbackOneHandlerAsync>(
+                handler => handler.HandleAsync(),
+                invokeDuringShutdown: false);
+
+            callbackOneHandlerOne.CallCount.Should().Be(0);
         }
 
         private class CallbackOneHandlerOne : ICallbackOneHandler

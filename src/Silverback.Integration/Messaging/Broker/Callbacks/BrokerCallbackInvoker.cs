@@ -33,25 +33,15 @@ namespace Silverback.Messaging.Broker.Callbacks
             applicationLifetime.ApplicationStopping.Register(() => _appStopping = true);
         }
 
-        /// <summary>
-        ///     Resolves and invokes all callbacks of the specified type.
-        /// </summary>
-        /// <param name="action">
-        ///     The action to be executed for each callback.
-        /// </param>
-        /// <param name="scopedServiceProvider">
-        ///     The scoped <see cref="IServiceProvider" />. If not provided a new scope will be created.
-        /// </param>
-        /// <typeparam name="TCallback">
-        ///     The type of the callback.
-        /// </typeparam>
+        /// <inheritdoc cref="IBrokerCallbacksInvoker.Invoke{THandler}"/>
         public void Invoke<TCallback>(
             Action<TCallback> action,
-            IServiceProvider? scopedServiceProvider = null)
+            IServiceProvider? scopedServiceProvider = null,
+            bool invokeDuringShutdown = true)
         {
             try
             {
-                InvokeCore(action, scopedServiceProvider);
+                InvokeCore(action, scopedServiceProvider, invokeDuringShutdown);
             }
             catch (Exception ex)
             {
@@ -60,28 +50,15 @@ namespace Silverback.Messaging.Broker.Callbacks
             }
         }
 
-        /// <summary>
-        ///     Resolves and invokes all callbacks of the specified type.
-        /// </summary>
-        /// <param name="action">
-        ///     The action to be executed for each callback.
-        /// </param>
-        /// <param name="scopedServiceProvider">
-        ///     The scoped <see cref="IServiceProvider" />. If not provided a new scope will be created.
-        /// </param>
-        /// <typeparam name="TCallback">
-        ///     The type of the callback.
-        /// </typeparam>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
+        /// <inheritdoc cref="IBrokerCallbacksInvoker.InvokeAsync{THandler}"/>
         public async Task InvokeAsync<TCallback>(
             Func<TCallback, Task> action,
-            IServiceProvider? scopedServiceProvider = null)
+            IServiceProvider? scopedServiceProvider = null,
+            bool invokeDuringShutdown = true)
         {
             try
             {
-                await InvokeCoreAsync(action, scopedServiceProvider).ConfigureAwait(false);
+                await InvokeCoreAsync(action, scopedServiceProvider, invokeDuringShutdown).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -122,9 +99,10 @@ namespace Silverback.Messaging.Broker.Callbacks
 
         private void InvokeCore<TCallback>(
             Action<TCallback> action,
-            IServiceProvider? scopedServiceProvider)
+            IServiceProvider? scopedServiceProvider,
+            bool invokeDuringShutdown)
         {
-            if (_appStopping || !HasAny<TCallback>())
+            if (!HasAny<TCallback>() || _appStopping && !invokeDuringShutdown)
                 return;
 
             IServiceScope? scope = null;
@@ -163,9 +141,10 @@ namespace Silverback.Messaging.Broker.Callbacks
 
         private async Task InvokeCoreAsync<TCallback>(
             Func<TCallback, Task> action,
-            IServiceProvider? scopedServiceProvider)
+            IServiceProvider? scopedServiceProvider,
+            bool invokeDuringShutdown)
         {
-            if (_appStopping || !HasAny<TCallback>())
+            if (!HasAny<TCallback>() || _appStopping && !invokeDuringShutdown)
                 return;
 
             IServiceScope? scope = null;

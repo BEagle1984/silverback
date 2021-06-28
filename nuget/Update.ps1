@@ -36,7 +36,6 @@ function Check-Location()
 
 function Check-Args([string[]]$argsArray)
 {
-    Write-Host $argsArray.Length
     if (!$argsArray)
     {
         return
