@@ -7898,15 +7898,15 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke
   nameWithType: IBrokerCallbacksInvoker.Invoke
-- uid: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke``1(System.Action{``0},System.IServiceProvider)
-  name: Invoke<THandler>(Action<THandler>, IServiceProvider)
-  href: api/Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.html#Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_Invoke__1_System_Action___0__System_IServiceProvider_
-  commentId: M:Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke``1(System.Action{``0},System.IServiceProvider)
-  name.vb: Invoke(Of THandler)(Action(Of THandler), IServiceProvider)
-  fullName: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke<THandler>(System.Action<THandler>, System.IServiceProvider)
-  fullName.vb: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke(Of THandler)(System.Action(Of THandler), System.IServiceProvider)
-  nameWithType: IBrokerCallbacksInvoker.Invoke<THandler>(Action<THandler>, IServiceProvider)
-  nameWithType.vb: IBrokerCallbacksInvoker.Invoke(Of THandler)(Action(Of THandler), IServiceProvider)
+- uid: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke``1(System.Action{``0},System.IServiceProvider,System.Boolean)
+  name: Invoke<THandler>(Action<THandler>, IServiceProvider, Boolean)
+  href: api/Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.html#Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_Invoke__1_System_Action___0__System_IServiceProvider_System_Boolean_
+  commentId: M:Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke``1(System.Action{``0},System.IServiceProvider,System.Boolean)
+  name.vb: Invoke(Of THandler)(Action(Of THandler), IServiceProvider, Boolean)
+  fullName: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke<THandler>(System.Action<THandler>, System.IServiceProvider, System.Boolean)
+  fullName.vb: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke(Of THandler)(System.Action(Of THandler), System.IServiceProvider, System.Boolean)
+  nameWithType: IBrokerCallbacksInvoker.Invoke<THandler>(Action<THandler>, IServiceProvider, Boolean)
+  nameWithType.vb: IBrokerCallbacksInvoker.Invoke(Of THandler)(Action(Of THandler), IServiceProvider, Boolean)
 - uid: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync*
   name: InvokeAsync
   href: api/Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.html#Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_InvokeAsync_
@@ -7914,15 +7914,15 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync
   nameWithType: IBrokerCallbacksInvoker.InvokeAsync
-- uid: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync``1(System.Func{``0,System.Threading.Tasks.Task},System.IServiceProvider)
-  name: InvokeAsync<THandler>(Func<THandler, Task>, IServiceProvider)
-  href: api/Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.html#Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_InvokeAsync__1_System_Func___0_System_Threading_Tasks_Task__System_IServiceProvider_
-  commentId: M:Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync``1(System.Func{``0,System.Threading.Tasks.Task},System.IServiceProvider)
-  name.vb: InvokeAsync(Of THandler)(Func(Of THandler, Task), IServiceProvider)
-  fullName: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync<THandler>(System.Func<THandler, System.Threading.Tasks.Task>, System.IServiceProvider)
-  fullName.vb: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync(Of THandler)(System.Func(Of THandler, System.Threading.Tasks.Task), System.IServiceProvider)
-  nameWithType: IBrokerCallbacksInvoker.InvokeAsync<THandler>(Func<THandler, Task>, IServiceProvider)
-  nameWithType.vb: IBrokerCallbacksInvoker.InvokeAsync(Of THandler)(Func(Of THandler, Task), IServiceProvider)
+- uid: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync``1(System.Func{``0,System.Threading.Tasks.Task},System.IServiceProvider,System.Boolean)
+  name: InvokeAsync<THandler>(Func<THandler, Task>, IServiceProvider, Boolean)
+  href: api/Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.html#Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_InvokeAsync__1_System_Func___0_System_Threading_Tasks_Task__System_IServiceProvider_System_Boolean_
+  commentId: M:Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync``1(System.Func{``0,System.Threading.Tasks.Task},System.IServiceProvider,System.Boolean)
+  name.vb: InvokeAsync(Of THandler)(Func(Of THandler, Task), IServiceProvider, Boolean)
+  fullName: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync<THandler>(System.Func<THandler, System.Threading.Tasks.Task>, System.IServiceProvider, System.Boolean)
+  fullName.vb: Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync(Of THandler)(System.Func(Of THandler, System.Threading.Tasks.Task), System.IServiceProvider, System.Boolean)
+  nameWithType: IBrokerCallbacksInvoker.InvokeAsync<THandler>(Func<THandler, Task>, IServiceProvider, Boolean)
+  nameWithType.vb: IBrokerCallbacksInvoker.InvokeAsync(Of THandler)(Func(Of THandler, Task), IServiceProvider, Boolean)
 - uid: Silverback.Messaging.Broker.Callbacks.IEndpointsConfiguredCallback
   name: IEndpointsConfiguredCallback
   href: api/Silverback.Messaging.Broker.Callbacks.IEndpointsConfiguredCallback.html

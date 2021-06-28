@@ -103,19 +103,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_Invoke__1_System_Action___0__System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke%60%601(System.Action%7B%60%600%7D%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_Invoke__1_System_Action___0__System_IServiceProvider_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke%60%601(System.Action%7B%60%600%7D%2CSystem.IServiceProvider%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Callbacks/IBrokerCallbacksInvoker.cs/#L26">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Callbacks/IBrokerCallbacksInvoker.cs/#L29">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_Invoke_" data-uid="Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke*"></a>
-  <h4 id="Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_Invoke__1_System_Action___0__System_IServiceProvider_" data-uid="Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke``1(System.Action{``0},System.IServiceProvider)">Invoke&lt;THandler&gt;(Action&lt;THandler&gt;, IServiceProvider)</h4>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_Invoke__1_System_Action___0__System_IServiceProvider_System_Boolean_" data-uid="Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.Invoke``1(System.Action{``0},System.IServiceProvider,System.Boolean)">Invoke&lt;THandler&gt;(Action&lt;THandler&gt;, IServiceProvider, Boolean)</h4>
   <div class="markdown level1 summary"><p>Resolves and invokes all handlers of the specified type.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">void Invoke&lt;THandler&gt;(Action&lt;THandler&gt; action, IServiceProvider scopedServiceProvider = null)</code></pre>
+    <pre><code class="lang-csharp hljs">void Invoke&lt;THandler&gt;(Action&lt;THandler&gt; action, IServiceProvider scopedServiceProvider = null, bool invokeDuringShutdown = true)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -139,6 +139,12 @@
         <td><p>The scoped <span class="xref">System.IServiceProvider</span>. If not provided a new scope will be created.</p>
 </td>
       </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">invokeDuringShutdown</span></td>
+        <td><p>Specifies whether the callback must be called even if the application is shutting down.</p>
+</td>
+      </tr>
     </tbody>
   </table>
   <h5 class="typeParameters">Type Parameters</h5>
@@ -159,19 +165,19 @@
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_InvokeAsync__1_System_Func___0_System_Threading_Tasks_Task__System_IServiceProvider_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync%60%601(System.Func%7B%60%600%2CSystem.Threading.Tasks.Task%7D%2CSystem.IServiceProvider)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_InvokeAsync__1_System_Func___0_System_Threading_Tasks_Task__System_IServiceProvider_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync%60%601(System.Func%7B%60%600%2CSystem.Threading.Tasks.Task%7D%2CSystem.IServiceProvider%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Callbacks/IBrokerCallbacksInvoker.cs/#L45">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Broker/Callbacks/IBrokerCallbacksInvoker.cs/#L52">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_InvokeAsync_" data-uid="Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync*"></a>
-  <h4 id="Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_InvokeAsync__1_System_Func___0_System_Threading_Tasks_Task__System_IServiceProvider_" data-uid="Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync``1(System.Func{``0,System.Threading.Tasks.Task},System.IServiceProvider)">InvokeAsync&lt;THandler&gt;(Func&lt;THandler, Task&gt;, IServiceProvider)</h4>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_IBrokerCallbacksInvoker_InvokeAsync__1_System_Func___0_System_Threading_Tasks_Task__System_IServiceProvider_System_Boolean_" data-uid="Silverback.Messaging.Broker.Callbacks.IBrokerCallbacksInvoker.InvokeAsync``1(System.Func{``0,System.Threading.Tasks.Task},System.IServiceProvider,System.Boolean)">InvokeAsync&lt;THandler&gt;(Func&lt;THandler, Task&gt;, IServiceProvider, Boolean)</h4>
   <div class="markdown level1 summary"><p>Resolves and invokes all handlers of the specified type.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task InvokeAsync&lt;THandler&gt;(Func&lt;THandler, Task&gt; action, IServiceProvider scopedServiceProvider = null)</code></pre>
+    <pre><code class="lang-csharp hljs">Task InvokeAsync&lt;THandler&gt;(Func&lt;THandler, Task&gt; action, IServiceProvider scopedServiceProvider = null, bool invokeDuringShutdown = true)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -193,6 +199,12 @@
         <td><span class="xref">System.IServiceProvider</span></td>
         <td><span class="parametername">scopedServiceProvider</span></td>
         <td><p>The scoped <span class="xref">System.IServiceProvider</span>. If not provided a new scope will be created.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">invokeDuringShutdown</span></td>
+        <td><p>Specifies whether the callback must be called even if the application is shutting down.</p>
 </td>
       </tr>
     </tbody>
