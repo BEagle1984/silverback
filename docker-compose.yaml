@@ -59,10 +59,10 @@ services:
       - "15672:15672"
       - "5672:5672"
 
-  ### MQTT (mosquitto)
+  ### MQTT (emqx)
   mqtt:
-    container_name: s8k-mqtt-mosquitto
-    image: eclipse-mosquitto
+    container_name: s8k-mqtt-emqx
+    image: emqx/emqx
     ports:
       - "1883:1883"
       - "9001:9001"
