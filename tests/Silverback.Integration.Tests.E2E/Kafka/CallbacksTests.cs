@@ -4,7 +4,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using FluentAssertions;
@@ -114,7 +113,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Where(service => service is SimpleCallbackHandler)
                 .ToList();
             callbackHandlers.Should().HaveCount(2);
-            callbackHandlers.Cast<SimpleCallbackHandler>().Should().OnlyContain(handler => handler.CallCount == 1);
+            callbackHandlers.Cast<SimpleCallbackHandler>().Should()
+                .OnlyContain(handler => handler.CallCount == 1);
         }
 
         [Fact]
@@ -196,7 +196,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             await publisher.PublishAsync(message);
 
-            var callbackHandlerKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host.ScopedServiceProvider
+            var callbackHandlerKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host
+                .ScopedServiceProvider
                 .GetServices<IBrokerCallback>()
                 .First(service => service is KafkaPartitionEofCallback);
 
@@ -223,7 +224,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerCallbackHandler<KafkaPartitionEofCallback>()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddMockedKafka(options => options.WithDefaultPartitionsCount(5)))
+                                .AddMockedKafka(
+                                    mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(5)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(
@@ -252,7 +254,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            var callbackHandlerKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host.ScopedServiceProvider
+            var callbackHandlerKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host
+                .ScopedServiceProvider
                 .GetServices<IBrokerCallback>()
                 .First(service => service is KafkaPartitionEofCallback);
 
@@ -282,7 +285,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerCallbackHandler<KafkaPartitionEofCallback>()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddMockedKafka(options => options.WithDefaultPartitionsCount(2)))
+                                .AddMockedKafka(
+                                    mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(2)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(
@@ -309,7 +313,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-            var callbackHandlerKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host.ScopedServiceProvider
+            var callbackHandlerKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host
+                .ScopedServiceProvider
                 .GetServices<IBrokerCallback>()
                 .First(service => service is KafkaPartitionEofCallback);
 
@@ -368,7 +373,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task PartitionEofCallback_PublishSeveralMessages_HandlerShouldBeInvokedForRightPartition()
+        public async Task
+            PartitionEofCallback_PublishSeveralMessages_HandlerShouldBeInvokedForRightPartition()
         {
             var messageEventOne = new TestEventOne
             {
@@ -388,7 +394,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSingletonBrokerCallbackHandler<KafkaPartitionEofCallback>()
                         .WithConnectionToMessageBroker(
                             options => options
-                                .AddMockedKafka(options => options.WithDefaultPartitionsCount(2)))
+                                .AddMockedKafka(
+                                    mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(2)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(
@@ -415,7 +422,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-            var callbackHandlerKafkaPartitionEofCallback = (KafkaPartitionEofCallback)Host.ScopedServiceProvider
+            var callbackHandlerKafkaPartitionEofCallback = (KafkaPartitionEofCallback)Host
+                .ScopedServiceProvider
                 .GetServices<IBrokerCallback>()
                 .First(service => service is KafkaPartitionEofCallback);
 
@@ -425,8 +433,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             callbackHandlerKafkaPartitionEofCallback.AllPartitionsEofCallbackCount.Should().Be(2);
-            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition0).Should().Be(1);
-            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition1).Should().Be(1);
+            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition0).Should()
+                .Be(1);
+            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition1).Should()
+                .Be(1);
 
             await kafkaTestingHelper.Broker.Consumers[0].DisconnectAsync();
 
@@ -439,8 +449,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             kafkaTestingHelper.Spy.InboundEnvelopes.Should().HaveCount(1);
 
             callbackHandlerKafkaPartitionEofCallback.AllPartitionsEofCallbackCount.Should().Be(3);
-            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition0).Should().Be(2);
-            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition1).Should().Be(1);
+            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition0).Should()
+                .Be(2);
+            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition1).Should()
+                .Be(1);
 
             await kafkaTestingHelper.Broker.Consumers[0].DisconnectAsync();
 
@@ -451,8 +463,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
             callbackHandlerKafkaPartitionEofCallback.AllPartitionsEofCallbackCount.Should().Be(4);
-            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition0).Should().Be(2);
-            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition1).Should().Be(2);
+            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition0).Should()
+                .Be(2);
+            callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition1).Should()
+                .Be(2);
         }
 
         private class SimpleCallbackHandler : IEndpointsConfiguredCallback
@@ -480,28 +494,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             "ReSharper",
             "ClassNeverInstantiated.Local",
             Justification = Justifications.CalledBySilverback)]
-        private class KafkaPartitionEofCallback : IKafkaPartitionEofCallback
-        {
-            public int AllPartitionsEofCallbackCount => PartitionEofCallbacksDictionary.Sum(dictionaryItem => dictionaryItem.Value);
-
-            private ConcurrentDictionary<TopicPartition, int> PartitionEofCallbacksDictionary { get; } = new();
-
-            public void OnEndOfTopicPartitionReached(TopicPartition topicPartition, KafkaConsumer consumer)
-            {
-                PartitionEofCallbacksDictionary.AddOrUpdate(topicPartition, 1, (key, value) => value + 1);
-            }
-
-            public int GetPartitionEofCallbackCount(TopicPartition topicPartition)
-            {
-                return PartitionEofCallbacksDictionary[topicPartition];
-            }
-        }
-
-        [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
-        [SuppressMessage(
-            "ReSharper",
-            "ClassNeverInstantiated.Local",
-            Justification = Justifications.CalledBySilverback)]
         private class MessageSendingCallbackHandler : IEndpointsConfiguredCallback
         {
             private readonly IPublisher _publisher;
@@ -515,6 +507,30 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             {
                 var message = new TestEventOne();
                 await _publisher.PublishAsync(message);
+            }
+        }
+
+        [SuppressMessage("", "CA1812", Justification = Justifications.CalledBySilverback)]
+        [SuppressMessage(
+            "ReSharper",
+            "ClassNeverInstantiated.Local",
+            Justification = Justifications.CalledBySilverback)]
+        private class KafkaPartitionEofCallback : IKafkaPartitionEofCallback
+        {
+            public int AllPartitionsEofCallbackCount =>
+                PartitionEofCallbacksDictionary.Sum(pair => pair.Value);
+
+            private ConcurrentDictionary<TopicPartition, int> PartitionEofCallbacksDictionary { get; } =
+                new();
+
+            public void OnEndOfTopicPartitionReached(TopicPartition topicPartition, KafkaConsumer consumer)
+            {
+                PartitionEofCallbacksDictionary.AddOrUpdate(topicPartition, 1, (_, value) => value + 1);
+            }
+
+            public int GetPartitionEofCallbackCount(TopicPartition topicPartition)
+            {
+                return PartitionEofCallbacksDictionary[topicPartition];
             }
         }
     }
