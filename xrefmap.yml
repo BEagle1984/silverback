@@ -8018,6 +8018,25 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.OnOffsetsCommitted
   nameWithType: IKafkaOffsetCommittedCallback.OnOffsetsCommitted
+- uid: Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback
+  name: IKafkaPartitionEofCallback
+  href: api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html
+  commentId: T:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback
+  fullName: Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback
+  nameWithType: IKafkaPartitionEofCallback
+- uid: Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached(Confluent.Kafka.TopicPartition,Silverback.Messaging.Broker.KafkaConsumer)
+  name: OnEndOfTopicPartitionReached(TopicPartition, KafkaConsumer)
+  href: api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_Confluent_Kafka_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer_
+  commentId: M:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached(Confluent.Kafka.TopicPartition,Silverback.Messaging.Broker.KafkaConsumer)
+  fullName: Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached(Confluent.Kafka.TopicPartition, Silverback.Messaging.Broker.KafkaConsumer)
+  nameWithType: IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached(TopicPartition, KafkaConsumer)
+- uid: Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached*
+  name: OnEndOfTopicPartitionReached
+  href: api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_
+  commentId: Overload:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached
+  nameWithType: IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached
 - uid: Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback
   name: IKafkaPartitionsAssignedCallback
   href: api/Silverback.Messaging.Broker.Callbacks.IKafkaPartitionsAssignedCallback.html
@@ -12484,6 +12503,19 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.Disposed
   nameWithType: IMockedConfluentConsumer.Disposed
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.EnablePartitionEof
+  name: EnablePartitionEof
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_EnablePartitionEof
+  commentId: P:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.EnablePartitionEof
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.EnablePartitionEof
+  nameWithType: IMockedConfluentConsumer.EnablePartitionEof
+- uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.EnablePartitionEof*
+  name: EnablePartitionEof
+  href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_EnablePartitionEof_
+  commentId: Overload:Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.EnablePartitionEof
+  isSpec: "True"
+  fullName: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.EnablePartitionEof
+  nameWithType: IMockedConfluentConsumer.EnablePartitionEof
 - uid: Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.GroupId
   name: GroupId
   href: api/Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer.html#Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_GroupId

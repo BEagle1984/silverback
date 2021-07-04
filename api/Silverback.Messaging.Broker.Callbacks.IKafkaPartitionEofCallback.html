@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Interface IBinaryFileMessageSerializerBuilder
+    <title>Interface IKafkaPartitionEofCallback
    | Silverback </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Interface IBinaryFileMessageSerializerBuilder
+    <meta name="title" content="Interface IKafkaPartitionEofCallback
    | Silverback ">
     <meta name="generator" content="docfx 2.57.2.0">
     
@@ -85,73 +85,71 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder">
+            <article class="content wrap" id="_content" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback">
   
   
-  <h1 id="Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder" data-uid="Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder" class="text-break">Interface IBinaryFileMessageSerializerBuilder
+  <h1 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback" class="text-break">Interface IKafkaPartitionEofCallback
   </h1>
-  <div class="markdown level0 summary"><p>Builds the <a class="xref" href="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer-1.html">BinaryFileMessageSerializer&lt;TModel&gt;</a> or
-<a class="xref" href="Silverback.Messaging.BinaryFiles.BinaryFileMessageSerializer-1.html">BinaryFileMessageSerializer&lt;TModel&gt;</a>.</p>
+  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_Confluent_Kafka_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer_">OnEndOfTopicPartitionReached(TopicPartition, KafkaConsumer)</a> event handler.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Configuration.html">Silverback.Messaging.Configuration</a></h6>
-  <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
-  <h5 id="Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder_syntax">Syntax</h5>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Callbacks.html">Silverback.Messaging.Broker.Callbacks</a></h6>
+  <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.dll</h6>
+  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IBinaryFileMessageSerializerBuilder</code></pre>
+    <pre><code class="lang-csharp hljs">public interface IKafkaPartitionEofCallback : IBrokerCallback</code></pre>
   </div>
+  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_EnablePartitionEof">EnablePartitionEof</a> must be set to <code>true</code> in the
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a>, otherwise the underlying library will not emit this event.</p>
+</div>
   <h3 id="methods">Methods
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder_UseModel__1.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder.UseModel%60%601%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_Confluent_Kafka_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached(Confluent.Kafka.TopicPartition%2CSilverback.Messaging.Broker.KafkaConsumer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/IBinaryFileMessageSerializerBuilder.cs/#L24">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionEofCallback.cs/#L32">View source</a>
   </span>
-  <a id="Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder_UseModel_" data-uid="Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder.UseModel*"></a>
-  <h4 id="Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder_UseModel__1" data-uid="Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder.UseModel``1">UseModel&lt;TModel&gt;()</h4>
-  <div class="markdown level1 summary"><p>Specifies a custom model to wrap the binary file.</p>
+  <a id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached*"></a>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_Confluent_Kafka_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached(Confluent.Kafka.TopicPartition,Silverback.Messaging.Broker.KafkaConsumer)">OnEndOfTopicPartitionReached(TopicPartition, KafkaConsumer)</h4>
+  <div class="markdown level1 summary"><p>Called to report that the end of a partition has been reached, meaning that it has been completely
+consumed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">IBinaryFileMessageSerializerBuilder UseModel&lt;TModel&gt;()
-
-    where TModel : IBinaryFileMessage, new()</code></pre>
+    <pre><code class="lang-csharp hljs">void OnEndOfTopicPartitionReached(TopicPartition topicPartition, KafkaConsumer consumer)</code></pre>
   </div>
-  <h5 class="returns">Returns</h5>
+  <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
         <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder.html">IBinaryFileMessageSerializerBuilder</a></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder.html">IBinaryFileMessageSerializerBuilder</a> so that additional calls can be chained.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="typeParameters">Type Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
         <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><span class="parametername">TModel</span></td>
-        <td><p>The type of the <a class="xref" href="Silverback.Messaging.Messages.IBinaryFileMessage.html">IBinaryFileMessage</a> implementation.</p>
+        <td><span class="xref">Confluent.Kafka.TopicPartition</span></td>
+        <td><span class="parametername">topicPartition</span></td>
+        <td><p>The topic partition.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.KafkaConsumer.html">KafkaConsumer</a></td>
+        <td><span class="parametername">consumer</span></td>
+        <td><p>The related consumer.</p>
 </td>
       </tr>
     </tbody>
   </table>
+  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_Confluent_Kafka_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_EnablePartitionEof">EnablePartitionEof</a> must be set to <code>true</code> in the
+<a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a>, otherwise the underlying library will not emit this event.</p>
+</div>
 </article>
           </div>
           
@@ -160,10 +158,10 @@
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_IBinaryFileMessageSerializerBuilder.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.IBinaryFileMessageSerializerBuilder%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
+                    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/IBinaryFileMessageSerializerBuilder.cs/#L13" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionEofCallback.cs/#L16" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

@@ -462,6 +462,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">IMqttProducerEndpointBuilder ProduceTo&lt;TMessage&gt;(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, IServiceProvider, string&gt; topicNameFunction)
+
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -529,6 +530,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">IMqttProducerEndpointBuilder ProduceTo&lt;TMessage&gt;(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, string&gt; topicNameFunction)
+
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -596,6 +598,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">IMqttProducerEndpointBuilder ProduceTo&lt;TMessage&gt;(string topicNameFormatString, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, string[]&gt; topicNameArgumentsFunction)
+
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -704,6 +707,7 @@ actual endpoint name and partition.</p>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">IMqttProducerEndpointBuilder UseEndpointNameResolver&lt;TResolver&gt;()
+
     where TResolver : IProducerEndpointNameResolver</code></pre>
   </div>
   <h5 class="returns">Returns</h5>

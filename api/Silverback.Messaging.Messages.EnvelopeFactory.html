@@ -281,6 +281,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static IInboundEnvelope&lt;TMessage&gt; Create&lt;TMessage&gt;(TMessage message, IRawInboundEnvelope rawInboundEnvelope)
+
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -354,6 +355,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static IOutboundEnvelope&lt;TMessage&gt; Create&lt;TMessage&gt;(TMessage message, MessageHeaderCollection headers, IProducerEndpoint endpoint)
+
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>

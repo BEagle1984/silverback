@@ -197,6 +197,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">TBuilder AddHeader&lt;TMessage&gt;(string name, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, object&gt; valueProvider)
+
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -270,6 +271,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">TBuilder AddHeader&lt;TMessage&gt;(string name, object value)
+
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -619,6 +621,7 @@ asynchronously sending the messages to the message broker.</p>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">TBuilder WithMessageId&lt;TMessage&gt;(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, object&gt; valueProvider)
+
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
