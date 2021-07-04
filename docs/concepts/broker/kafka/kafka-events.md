@@ -4,7 +4,7 @@ uid: kafka-events
 
 # Kafka Events
 
-The underlying library ([Confluent.Kafka](https://github.com/confluentinc/confluent-kafka-dotnet)) uses some events to let you catch important information and interact with the partitions assignment process.
+The underlying library ([Confluent.Kafka](https://github.com/confluentinc/confluent-kafka-dotnet)) uses some events to let you catch important information, interact with the partitions assignment process, etc.
 
 Silverback proxies those events to give you full access to those features.
 
@@ -17,6 +17,7 @@ These callbacks are available:
 * <xref:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback>
 * <xref:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerStatisticsCallback>
 * <xref:Silverback.Messaging.Broker.Callbacks.IKafkaConsumerLogCallback>
+* <xref:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback>
 
 ### Offset reset example
 

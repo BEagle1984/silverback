@@ -156,7 +156,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task KafkaEndOfTopicPartitionConfigured_PartitionEofDisabled_HandlerShouldNotBeInvoked()
+        public async Task PartitionEofCallback_PartitionEofDisabled_HandlerShouldNotBeInvoked()
         {
             var message = new TestEventOne
             {
@@ -208,7 +208,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task KafkaEndOfTopicPartitionConfigured_PartitionEofEnabled_HandlerShouldBeInvoked()
+        public async Task PartitionEofCallback_PartitionEofEnabled_HandlerShouldBeInvoked()
         {
             var message = new TestEventOne
             {
@@ -262,7 +262,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task KafkaEndOfTopicPartitionConfigured_PublishSeveralMessages_HandlerShouldBeInvoked()
+        public async Task PartitionEofCallback_PublishSeveralMessages_HandlerShouldBeInvoked()
         {
             var messageEventOne = new TestEventOne
             {
@@ -368,7 +368,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task KafkaEndOfTopicPartitionConfigured_PublishSeveralMessages_HandlerShouldBeInvokedForRightPartition()
+        public async Task PartitionEofCallback_PublishSeveralMessages_HandlerShouldBeInvokedForRightPartition()
         {
             var messageEventOne = new TestEventOne
             {

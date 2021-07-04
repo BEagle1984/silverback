@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [3.2.0-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v3.2.0-beta.1)
+
+### What's new
+
+* Add new Kafka partition EOF callback to be notified when the end of a partition is reached by the consumer (see <xref:kafka-events> and <xref:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback>)
+
 ## [3.1.1](https://github.com/BEagle1984/silverback/releases/tag/v3.1.1)
 
 ### Fixes

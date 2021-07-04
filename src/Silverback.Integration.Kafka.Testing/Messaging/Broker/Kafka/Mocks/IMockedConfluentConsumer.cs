@@ -12,9 +12,14 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
     public interface IMockedConfluentConsumer : IConsumer<byte[]?, byte[]?>
     {
         /// <summary>
-        ///     Gets the consumer group id from the 'group.id' configuration parameter.
+        ///     Gets the consumer group id.
         /// </summary>
         string GroupId { get; }
+
+        /// <summary>
+        ///     Gets a value indicating whether the partition EOF event has to be emitted.
+        /// </summary>
+        bool EnablePartitionEof { get; }
 
         /// <summary>
         ///     Gets a value indicating whether the partitions have been assigned to the consumer.
@@ -29,10 +34,5 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         ///     Gets a value indicating whether this instance was disposed.
         /// </summary>
         bool Disposed { get; }
-
-        /// <summary>
-        ///     Gets a value indicating whether PartitionEofEnable is enabled or disabled.
-        /// </summary>
-        bool EnablePartitionEof { get; }
     }
 }
