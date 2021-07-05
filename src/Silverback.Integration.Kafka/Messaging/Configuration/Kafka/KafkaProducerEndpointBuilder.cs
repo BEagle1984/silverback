@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Outbound.Routing;
@@ -16,11 +17,11 @@ namespace Silverback.Messaging.Configuration.Kafka
     {
         private readonly KafkaClientConfig? _clientConfig;
 
+        private readonly List<Action<KafkaProducerConfig>> _configActions = new();
+
         private Func<KafkaProducerEndpoint>? _endpointFactory;
 
         private IOutboundMessageEnricher? _kafkaKeyEnricher;
-
-        private Action<KafkaProducerConfig>? _configAction;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaProducerEndpointBuilder" /> class.
@@ -202,7 +203,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             Check.NotNull(configAction, nameof(configAction));
 
-            _configAction = configAction;
+            _configActions.Add(configAction);
 
             return this;
         }
@@ -218,7 +219,7 @@ namespace Silverback.Messaging.Configuration.Kafka
 
             var endpoint = _endpointFactory.Invoke();
 
-            _configAction?.Invoke(endpoint.Configuration);
+            _configActions.ForEach(action => action.Invoke(endpoint.Configuration));
 
             if (_kafkaKeyEnricher != null)
                 endpoint.MessageEnrichers.Add(_kafkaKeyEnricher);

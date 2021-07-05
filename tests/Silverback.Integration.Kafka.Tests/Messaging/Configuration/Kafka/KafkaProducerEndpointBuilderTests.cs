@@ -339,6 +339,33 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             baseConfig.MessageMaxBytes.Should().Be(42);
         }
 
+        [Fact]
+        public void Configure_MultipleConfigurationActions_MergedConfigurationSet()
+        {
+            var builder = new KafkaProducerEndpointBuilder(
+                new KafkaClientConfig
+                {
+                    BootstrapServers = "PLAINTEXT://tests"
+                });
+
+            builder
+                .ProduceTo("some-topic")
+                .Configure(
+                    config =>
+                    {
+                        config.ThrowIfNotAcknowledged = false;
+                    })
+                .Configure(
+                    config =>
+                    {
+                        config.MessageTimeoutMs = 42;
+                    });
+            var endpoint = builder.Build();
+
+            endpoint.Configuration.ThrowIfNotAcknowledged.Should().BeFalse();
+            endpoint.Configuration.MessageTimeoutMs.Should().Be(42);
+        }
+
         private class TestEndpointNameResolver : IKafkaProducerEndpointNameResolver
         {
             public string GetName(IOutboundEnvelope envelope) => "some-topic";

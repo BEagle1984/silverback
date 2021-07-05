@@ -4,11 +4,12 @@ uid: releases
 
 # Releases
 
-## [3.2.0-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v3.2.0-beta.1)
+## [3.2.0-beta.2](https://github.com/BEagle1984/silverback/releases/tag/v3.2.0-beta.2)
 
 ### What's new
 
 * Add new Kafka partition EOF callback to be notified when the end of a partition is reached by the consumer (see <xref:kafka-events> and <xref:Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback>)
+* Allow multiple calls to [IKafkaConsumerEndpointBuilder.Configure](xref:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig__) or [IKafkaProducerEndpointBuilder.Configure](xref:Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder#Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig__) for the same endpoint
 
 ## [3.1.1](https://github.com/BEagle1984/silverback/releases/tag/v3.1.1)
 

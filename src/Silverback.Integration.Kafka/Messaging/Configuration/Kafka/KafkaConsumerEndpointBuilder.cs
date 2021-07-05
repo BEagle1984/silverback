@@ -16,14 +16,14 @@ namespace Silverback.Messaging.Configuration.Kafka
     {
         private readonly KafkaClientConfig? _clientConfig;
 
+        private readonly List<Action<KafkaConsumerConfig>> _configActions = new();
+
         private string[]? _topicNames;
 
         private TopicPartitionOffset[]? _topicPartitionOffsets;
 
         private Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>?
             _topicPartitionsResolver;
-
-        private Action<KafkaConsumerConfig>? _configAction;
 
         private bool? _processPartitionsIndependently;
 
@@ -130,7 +130,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         {
             Check.NotNull(configAction, nameof(configAction));
 
-            _configAction = configAction;
+            _configActions.Add(configAction);
 
             return this;
         }
@@ -179,7 +179,7 @@ namespace Silverback.Messaging.Configuration.Kafka
             else
                 endpoint = new KafkaConsumerEndpoint(_topicNames ?? Array.Empty<string>(), _clientConfig);
 
-            _configAction?.Invoke(endpoint.Configuration);
+            _configActions.ForEach(action => action.Invoke(endpoint.Configuration));
 
             if (_processPartitionsIndependently != null)
                 endpoint.ProcessPartitionsIndependently = _processPartitionsIndependently.Value;

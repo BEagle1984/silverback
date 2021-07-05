@@ -289,6 +289,32 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         }
 
         [Fact]
+        public void Configure_MultipleConfigurationActions_MergedConfigurationSet()
+        {
+            var builder = new KafkaConsumerEndpointBuilder();
+
+            builder
+                .ConsumeFrom("topic")
+                .Configure(
+                    config =>
+                    {
+                        config.BootstrapServers = "PLAINTEXT://tests";
+                        config.EnableAutoCommit = false;
+                    })
+                .Configure(
+                    config =>
+                    {
+                        config.CommitOffsetEach = 42;
+                        config.GroupId = "group1";
+                    });
+            var endpoint = builder.Build();
+
+            endpoint.Configuration.EnableAutoCommit.Should().Be(false);
+            endpoint.Configuration.CommitOffsetEach.Should().Be(42);
+            endpoint.Configuration.GroupId.Should().Be("group1");
+        }
+
+        [Fact]
         public void ProcessPartitionsIndependently_ProcessPartitionsIndependentlySet()
         {
             var builder = new KafkaConsumerEndpointBuilder(
