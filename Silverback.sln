@@ -105,6 +105,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tools.LogEventsD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Tools.KafkaConfigClassGenerator", "tools\Silverback.Tools.KafkaConfigClassGenerator\Silverback.Tools.KafkaConfigClassGenerator.csproj", "{504138DE-E59C-4CDA-9118-F90B7E6AF7D7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silverback.Integration.HealthChecks.Tests", "tests\Silverback.Integration.HealthChecks.Tests\Silverback.Integration.HealthChecks.Tests.csproj", "{7FD94CD1-2A5B-4F26-8926-F893FFA31713}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -239,6 +241,10 @@ Global
 		{504138DE-E59C-4CDA-9118-F90B7E6AF7D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{504138DE-E59C-4CDA-9118-F90B7E6AF7D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{504138DE-E59C-4CDA-9118-F90B7E6AF7D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FD94CD1-2A5B-4F26-8926-F893FFA31713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FD94CD1-2A5B-4F26-8926-F893FFA31713}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FD94CD1-2A5B-4F26-8926-F893FFA31713}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FD94CD1-2A5B-4F26-8926-F893FFA31713}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -264,6 +270,7 @@ Global
 		{82389BE6-8BAF-47B1-85A2-69023C94C42E} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 		{FA851A59-335E-43C7-9F99-23ADD44A99B0} = {9818A770-01ED-4340-BD4A-CFDDA6C56168}
 		{504138DE-E59C-4CDA-9118-F90B7E6AF7D7} = {9818A770-01ED-4340-BD4A-CFDDA6C56168}
+		{7FD94CD1-2A5B-4F26-8926-F893FFA31713} = {6AFB87A3-501B-4A87-B94C-205AEB118D97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89DA4AF5-B982-42AD-A829-8A72BCB21227}

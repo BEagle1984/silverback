@@ -119,6 +119,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
         /// </returns>
+        /// <remarks>
+        ///     The <see cref="ConsumerStatus.Ready" /> is considered healthy and a default grace period of 30 seconds is
+        ///     applied.
+        /// </remarks>
         public static IHealthChecksBuilder AddConsumersCheck(
             this IHealthChecksBuilder builder,
             string name = "Consumers",
@@ -148,9 +152,49 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>
         ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
         /// </returns>
+        /// <remarks>
+        ///     A default grace period of 30 seconds is applied.
+        /// </remarks>
         public static IHealthChecksBuilder AddConsumersCheck(
             this IHealthChecksBuilder builder,
             ConsumerStatus minHealthyStatus,
+            string name = "Consumers",
+            HealthStatus? failureStatus = null,
+            IEnumerable<string>? tags = null) =>
+            AddConsumersCheck(
+                builder,
+                minHealthyStatus,
+                TimeSpan.FromSeconds(30),
+                name,
+                failureStatus,
+                tags);
+
+        /// <summary>
+        ///     Adds a health check that verifies that all consumers are connected.
+        /// </summary>
+        /// <param name="builder">
+        ///     The <see cref="IHealthChecksBuilder" />.
+        /// </param>
+        /// <param name="gracePeriod">
+        ///     The grace period to observe before a consumer is considered unhealthy, when its status is reverted from
+        ///     fully connected (e.g. because all Kafka partitions gets revoked during a rebalance).
+        /// </param>
+        /// <param name="name">
+        ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
+        /// </param>
+        /// <param name="failureStatus">
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
+        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
+        /// </param>
+        /// <param name="tags">
+        ///     An optional list of tags that can be used for filtering health checks.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static IHealthChecksBuilder AddConsumersCheck(
+            this IHealthChecksBuilder builder,
+            TimeSpan gracePeriod,
             string name = "Consumers",
             HealthStatus? failureStatus = null,
             IEnumerable<string>? tags = null)
@@ -169,7 +213,60 @@ namespace Microsoft.Extensions.DependencyInjection
             IHealthCheck CreateService(IServiceProvider serviceProvider)
                 => new ConsumersHealthCheck(
                     serviceProvider.GetRequiredService<IConsumersHealthCheckService>(),
-                    minHealthyStatus);
+                    ConsumerStatus.Ready,
+                    gracePeriod);
+        }
+
+        /// <summary>
+        ///     Adds a health check that verifies that all consumers are connected.
+        /// </summary>
+        /// <param name="builder">
+        ///     The <see cref="IHealthChecksBuilder" />.
+        /// </param>
+        /// <param name="minHealthyStatus">
+        ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered healthy.
+        /// </param>
+        /// <param name="gracePeriod">
+        ///     The grace period to observe before a consumer is considered unhealthy, when its status is reverted from
+        ///     fully connected (e.g. because all Kafka partitions gets revoked during a rebalance).
+        /// </param>
+        /// <param name="name">
+        ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
+        /// </param>
+        /// <param name="failureStatus">
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
+        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
+        /// </param>
+        /// <param name="tags">
+        ///     An optional list of tags that can be used for filtering health checks.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public static IHealthChecksBuilder AddConsumersCheck(
+            this IHealthChecksBuilder builder,
+            ConsumerStatus minHealthyStatus,
+            TimeSpan gracePeriod,
+            string name = "Consumers",
+            HealthStatus? failureStatus = null,
+            IEnumerable<string>? tags = null)
+        {
+            Check.NotNull(builder, nameof(builder));
+
+            builder.Services.AddSingleton<IConsumersHealthCheckService, ConsumersHealthCheckService>();
+
+            return builder.Add(
+                new HealthCheckRegistration(
+                    name,
+                    CreateService,
+                    failureStatus,
+                    tags));
+
+            IHealthCheck CreateService(IServiceProvider serviceProvider)
+                => new ConsumersHealthCheck(
+                    serviceProvider.GetRequiredService<IConsumersHealthCheckService>(),
+                    minHealthyStatus,
+                    gracePeriod);
         }
     }
 }

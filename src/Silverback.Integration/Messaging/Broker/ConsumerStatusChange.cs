@@ -8,9 +8,14 @@ namespace Silverback.Messaging.Broker
     internal class ConsumerStatusChange : IConsumerStatusChange
     {
         public ConsumerStatusChange(ConsumerStatus status)
+            : this(status, DateTime.UtcNow)
+        {
+        }
+
+        public ConsumerStatusChange(ConsumerStatus status, DateTime timestamp)
         {
             Status = status;
-            Timestamp = DateTime.Now;
+            Timestamp = timestamp;
         }
 
         public ConsumerStatus Status { get; }

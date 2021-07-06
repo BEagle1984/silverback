@@ -38,7 +38,9 @@ namespace Silverback.Messaging.HealthChecks
         }
 
         /// <inheritdoc cref="IConsumersHealthCheckService.GetDisconnectedConsumersAsync" />
-        public Task<IReadOnlyCollection<IConsumer>> GetDisconnectedConsumersAsync(ConsumerStatus minStatus)
+        public Task<IReadOnlyCollection<IConsumer>> GetDisconnectedConsumersAsync(
+            ConsumerStatus minStatus,
+            TimeSpan? gracePeriod = null)
         {
             // The check is skipped when the application is shutting down, because all consumers will be
             // disconnected and since the shutdown could take a while we don't want to report the application
@@ -47,11 +49,31 @@ namespace Silverback.Messaging.HealthChecks
                 return Task.FromResult((IReadOnlyCollection<IConsumer>)Array.Empty<IConsumer>());
 
             IReadOnlyCollection<IConsumer> disconnectedConsumers =
-                _brokerCollection.SelectMany(
-                        broker => broker.Consumers.Where(consumer => consumer.StatusInfo.Status < minStatus))
-                    .ToList();
+                _brokerCollection
+                    .SelectMany(broker => GetDisconnectedConsumers(broker, minStatus, gracePeriod)).ToList();
 
             return Task.FromResult(disconnectedConsumers);
         }
+
+        private static IEnumerable<IConsumer> GetDisconnectedConsumers(
+            IBroker broker,
+            ConsumerStatus minStatus,
+            TimeSpan? gracePeriod) =>
+            broker.Consumers.Where(consumer => IsDisconnected(consumer, minStatus, gracePeriod));
+
+        private static bool IsDisconnected(
+            IConsumer consumer,
+            ConsumerStatus minStatus,
+            TimeSpan? gracePeriod) =>
+            consumer.StatusInfo.Status < minStatus &&
+            (gracePeriod == null ||
+             consumer.StatusInfo.History.Count == 0 ||
+             GracePeriodElapsed(consumer, minStatus, gracePeriod.Value));
+
+        // Grace period is taken into account only if the minStatus has been previously matched,
+        // otherwise it's considered elapsed to immediately report the not yet connected consumer
+        private static bool GracePeriodElapsed(IConsumer consumer, ConsumerStatus minStatus, TimeSpan gracePeriod) =>
+            consumer.StatusInfo.History.All(statusChange => statusChange.Status < minStatus) ||
+            consumer.StatusInfo.History.Last().Timestamp < DateTime.UtcNow.Subtract(gracePeriod);
     }
 }

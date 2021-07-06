@@ -21,6 +21,8 @@ namespace Silverback.Messaging.HealthChecks
 
         private readonly ConsumerStatus _minHealthyStatus;
 
+        private readonly TimeSpan? _gracePeriod;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConsumersHealthCheck" /> class.
         /// </summary>
@@ -30,12 +32,18 @@ namespace Silverback.Messaging.HealthChecks
         /// <param name="minHealthyStatus">
         ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered healthy.
         /// </param>
+        /// <param name="gracePeriod">
+        ///     The grace period to observe before a consumer is considered unhealthy, when its status is reverted from
+        ///     fully connected (e.g. because all Kafka partitions gets revoked during a rebalance).
+        /// </param>
         public ConsumersHealthCheck(
             IConsumersHealthCheckService service,
-            ConsumerStatus minHealthyStatus)
+            ConsumerStatus minHealthyStatus,
+            TimeSpan? gracePeriod)
         {
             _service = service;
             _minHealthyStatus = minHealthyStatus;
+            _gracePeriod = gracePeriod;
         }
 
         /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
@@ -46,7 +54,7 @@ namespace Silverback.Messaging.HealthChecks
             Check.NotNull(context, nameof(context));
 
             IReadOnlyCollection<IConsumer> disconnectedConsumers =
-                await _service.GetDisconnectedConsumersAsync(_minHealthyStatus).ConfigureAwait(false);
+                await _service.GetDisconnectedConsumersAsync(_minHealthyStatus, _gracePeriod).ConfigureAwait(false);
 
             if (disconnectedConsumers.Count == 0)
                 return new HealthCheckResult(HealthStatus.Healthy);

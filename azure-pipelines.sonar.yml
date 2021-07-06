@@ -42,7 +42,7 @@ steps:
       scannerMode: 'MSBuild'
       projectKey: 'silverback'
       projectName: 'silverback'
-      projectVersion: '3.0.0'
+      projectVersion: '3.2.0'
       extraProperties: |
         sonar.exclusions=**/obj/**,**/*.dll
         sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker;
@@ -19,10 +20,16 @@ namespace Silverback.Messaging.HealthChecks
         /// <param name="minStatus">
         ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered fully connected.
         /// </param>
+        /// <param name="gracePeriod">
+        ///     The grace period to observe before a consumer is considered unhealthy, when its status is reverted from
+        ///     fully connected (e.g. because all Kafka partitions gets revoked during a rebalance).
+        /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
         ///     consumers that aren't fully connected.
         /// </returns>
-        Task<IReadOnlyCollection<IConsumer>> GetDisconnectedConsumersAsync(ConsumerStatus minStatus);
+        Task<IReadOnlyCollection<IConsumer>> GetDisconnectedConsumersAsync(
+            ConsumerStatus minStatus,
+            TimeSpan? gracePeriod = null);
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -141,6 +142,96 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready);
 
             result.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task GetDisconnectedConsumersAsync_GracePeriod_EmptyCollectionReturned()
+        {
+            var statusInfo = Substitute.For<IConsumerStatusInfo>();
+            statusInfo.Status.Returns(ConsumerStatus.Connected);
+            var consumer = Substitute.For<IConsumer>();
+            consumer.StatusInfo.Returns(statusInfo);
+            consumer.StatusInfo.History.Returns(
+                new List<IConsumerStatusChange>
+                {
+                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-30)),
+                    new ConsumerStatusChange(ConsumerStatus.Ready, DateTime.UtcNow.AddSeconds(-20)),
+                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-5)),
+                });
+
+            var broker = Substitute.For<IBroker>();
+            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
+            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker.Consumers.Returns(new[] { consumer });
+
+            var brokerCollection = new BrokerCollection(new[] { broker });
+            var hostApplicationLifetime = Substitute.For<IHostApplicationLifetime>();
+            var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
+
+            IReadOnlyCollection<IConsumer> result =
+                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready, TimeSpan.FromSeconds(10));
+
+            result.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task GetDisconnectedConsumersAsync_NeverConnected_ConsumersListReturnedDespiteGracePeriod()
+        {
+            var statusInfo = Substitute.For<IConsumerStatusInfo>();
+            statusInfo.Status.Returns(ConsumerStatus.Connected);
+            var consumer = Substitute.For<IConsumer>();
+            consumer.StatusInfo.Returns(statusInfo);
+            consumer.StatusInfo.History.Returns(
+                new List<IConsumerStatusChange>
+                {
+                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-5)),
+                });
+
+            var broker = Substitute.For<IBroker>();
+            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
+            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker.Consumers.Returns(new[] { consumer });
+
+            var brokerCollection = new BrokerCollection(new[] { broker });
+            var hostApplicationLifetime = Substitute.For<IHostApplicationLifetime>();
+            var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
+
+            IReadOnlyCollection<IConsumer> result =
+                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready, TimeSpan.FromSeconds(10));
+
+            result.Should().HaveCount(1);
+            result.Should().BeEquivalentTo(consumer);
+        }
+
+        [Fact]
+        public async Task GetDisconnectedConsumersAsync_ElapsedGracePeriod_ConsumersListReturned()
+        {
+            var statusInfo = Substitute.For<IConsumerStatusInfo>();
+            statusInfo.Status.Returns(ConsumerStatus.Connected);
+            var consumer = Substitute.For<IConsumer>();
+            consumer.StatusInfo.Returns(statusInfo);
+            consumer.StatusInfo.History.Returns(
+                new List<IConsumerStatusChange>
+                {
+                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-30)),
+                    new ConsumerStatusChange(ConsumerStatus.Ready, DateTime.UtcNow.AddSeconds(-20)),
+                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-15)),
+                });
+
+            var broker = Substitute.For<IBroker>();
+            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
+            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker.Consumers.Returns(new[] { consumer });
+
+            var brokerCollection = new BrokerCollection(new[] { broker });
+            var hostApplicationLifetime = Substitute.For<IHostApplicationLifetime>();
+            var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
+
+            IReadOnlyCollection<IConsumer> result =
+                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready, TimeSpan.FromSeconds(10));
+
+            result.Should().HaveCount(1);
+            result.Should().BeEquivalentTo(consumer);
         }
     }
 }
