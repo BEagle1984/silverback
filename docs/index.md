@@ -12,7 +12,7 @@ title: "Home"
                         Silverback
                     </h1>
                     <p class="lead">
-                        A simple but feature-rich framework to build reactive/event-driven applications with .net core
+                        A simple but feature-rich message bus for .NET core
                     </p>
                     <p>
                         <a href="https://github.com/BEagle1984/silverback/" class="btn"><i class="fab fa-github"></i> View on GitHub</a>
@@ -38,7 +38,7 @@ title: "Home"
                 <i class="icon fas fa-plug"></i>
                 <h2>Message broker abstraction</h2>
                 <p>
-                    The bus can be connected with a message broker to integrate different services or application. The integration happens configuratively at startup and it is then completely abstracted.
+                    The bus can be connected with a message broker to integrate different services or applications. The integration happens configuratively at startup.
                 </p>
                 <p>
                     Silverback corrently provides a package to connect with the very popular <a href="https://kafka.apache.org/">Apache Kafka</a> message broker, <a href="https://www.rabbitmq.com/">RabbitMQ</a> or any <a href="https://mqtt.org/">MQTT</a> broker.
@@ -60,6 +60,34 @@ title: "Home"
         </div>
         <div class="row">
             <div class="col-md-4 key">
+                <i class="icon fas fa-exclamation-triangle"></i>
+                <h2>Error handling policies</h2>
+                <p>
+                    Sooner or later you will run into an issue with a message that cannot be processed and you therefore have to handle the exception and decide what to do with the message.
+                    With Silverback you can configure some error handling policies for each inbound endpoint. The built-in policies are:
+                    <ul>
+                        <li><b>Skip</b>: simply ignore the message</li>
+                        <li><b>Retry</b>: retry the same message (delays can be specified)</li>
+                        <li><b>Move</b>: move the message to another topic/queue (or re-enqueue it at the end of the same one)</li>
+                    </ul>
+                </p>
+                <p>
+                    These 3 policies can be combined to build effective error handling strategies.
+                </p>
+            </div>
+            <div class="col-md-4 key">
+                <i class="icon fas fa-puzzle-piece"></i>
+                <h2>Advanced use cases</h2>
+                <p>
+                    Silverback supports many advanced use cases out-of-the-box:
+                    <ul>
+                        <li><b>Chunking</b>: a larger message can be automatically split into smaller parts and transparently rebuilt on the other end</li>
+                        <li><b>Batch processing</b>: optimize your application handling multiple messages together, avoiding micro-transactions</li>
+                        <li>...and more!</li>
+                    </ul>
+                </p>
+            </div>
+            <div class="col-md-4 key">
                 <i class="icon fas fa-pencil-ruler"></i>
                 <h2>Domain Driven Design</h2>
                 <p>
@@ -69,6 +97,8 @@ title: "Home"
                     When properly configured, these events can be automatically be forwarded to the message broker of choice.
                 </p>
             </div>
+        </div>
+        <div class="row">
             <div class="col-md-4 key">
                 <i class="icon fas fa-thumbs-up"></i>
                 <h2>Exactly-once processing</h2>
@@ -79,24 +109,6 @@ title: "Home"
                     This information can be stored in the database to be again transactional with the changes made to the local data, ensuring that the changes are applied once and only once to the data.
                 </p>
             </div>
-            <div class="col-md-4 key">
-                <i class="icon fas fa-exclamation-triangle"></i>
-                <h2>Error handling policies</h2>
-                <p>
-                    Sooner or later you will run into an issue with a message that cannot be processed and you therefore have to handle the exception and decide what to do with the message.
-With Silverback you can configure some error handling policies for each inbound endpoint. The built-in policies are:
-                    <ul>
-                        <li><b>Skip</b>: simply ignore the message</li>
-                        <li><b>Retry</b>: retry the same message (delays can be specified)</li>
-                        <li><b>Move</b>: move the message to another topic/queue (or re-enqueue it at the end of the same one)</li>
-                    </ul>
-                </p>
-                <p>
-                    Combining this three policies you will be able to implement pretty much any use case.
-                </p>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-md-4 key">
                 <i class="icon fas fa-shoe-prints"></i>
                 <h2>Distributed tracing</h2>
