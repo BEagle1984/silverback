@@ -152,7 +152,8 @@ figcaption {
     animation-delay: 0.25s;
 }
 .hero .lead {
-    max-width: 768px;
+    /* max-width: 768px; */
+    max-width: 400px;
 }
 .hero::after {
     clear: both;
