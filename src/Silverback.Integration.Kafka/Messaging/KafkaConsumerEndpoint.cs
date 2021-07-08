@@ -324,7 +324,7 @@ namespace Silverback.Messaging
         public override string GetUniqueConsumerGroupName() =>
             !string.IsNullOrEmpty(Configuration.GroupId)
                 ? Configuration.GroupId
-                : Name;
+                : DisplayName;
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(KafkaConsumerEndpoint? other)

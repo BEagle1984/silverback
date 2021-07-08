@@ -74,6 +74,10 @@ namespace Silverback.Diagnostics
         public static void LogProducerQueueProcessingCanceled(
             this ISilverbackLogger logger,
             MqttProducer producer) =>
-            ProducerQueueProcessingCanceled(logger.InnerLogger, producer.Id, producer.Endpoint.Name, null);
+            ProducerQueueProcessingCanceled(
+                logger.InnerLogger,
+                producer.Id,
+                producer.Endpoint.DisplayName,
+                null);
     }
 }

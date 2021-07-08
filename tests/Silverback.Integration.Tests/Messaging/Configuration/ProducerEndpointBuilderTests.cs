@@ -26,6 +26,16 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         }
 
         [Fact]
+        public void WithName_DisplayNameSet()
+        {
+            var builder = new TestProducerEndpointBuilder();
+
+            var endpoint = builder.WithName("display-name").Build();
+
+            endpoint.DisplayName.Should().Be("display-name [test]");
+        }
+
+        [Fact]
         public void SerializeUsing_Serializer_SerializerSet()
         {
             var builder = new TestProducerEndpointBuilder();

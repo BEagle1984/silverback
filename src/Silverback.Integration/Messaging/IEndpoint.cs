@@ -18,6 +18,11 @@ namespace Silverback.Messaging
         string Name { get; }
 
         /// <summary>
+        ///     Gets the name to be displayed in the human-targeted output (e.g. logs, health checks result, etc.).
+        /// </summary>
+        string DisplayName { get; }
+
+        /// <summary>
         ///     Gets the <see cref="IMessageSerializer" /> to be used to serialize or deserialize the messages being
         ///     produced or consumed.
         /// </summary>

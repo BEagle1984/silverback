@@ -246,7 +246,7 @@ namespace Silverback.Diagnostics
             KafkaExceptionAutoRecovery(
                 logger.InnerLogger,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 exception);
 
         public static void LogKafkaExceptionNoAutoRecovery(
@@ -256,7 +256,7 @@ namespace Silverback.Diagnostics
             KafkaExceptionNoAutoRecovery(
                 logger.InnerLogger,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 exception);
 
         public static void LogConsumingCanceled(
@@ -266,7 +266,7 @@ namespace Silverback.Diagnostics
             ConsumingCanceled(
                 logger.InnerLogger,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 exception);
 
         public static void LogCreatingConfluentProducer(
@@ -275,7 +275,7 @@ namespace Silverback.Diagnostics
             CreatingConfluentProducer(
                 logger.InnerLogger,
                 producer.Id,
-                producer.Endpoint.Name,
+                producer.Endpoint.DisplayName,
                 null);
 
         public static void LogProduceNotAcknowledged(
@@ -284,7 +284,7 @@ namespace Silverback.Diagnostics
             ProduceNotAcknowledged(
                 logger.InnerLogger,
                 producer.Id,
-                producer.Endpoint.Name,
+                producer.Endpoint.DisplayName,
                 null);
 
         public static void LogPartitionAssigned(
@@ -366,7 +366,7 @@ namespace Silverback.Diagnostics
                 GetErrorReason(error),
                 (int)error.Code,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 null);
         }
 
@@ -377,7 +377,7 @@ namespace Silverback.Diagnostics
             KafkaConsumerErrorHandlerError(
                 logger.InnerLogger,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 exception);
 
         public static void LogKafkaLogHandlerError(
@@ -387,7 +387,7 @@ namespace Silverback.Diagnostics
             KafkaConsumerLogHandlerError(
                 logger.InnerLogger,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 exception);
 
         public static void LogKafkaLogHandlerError(
@@ -397,7 +397,7 @@ namespace Silverback.Diagnostics
             KafkaProducerLogHandlerError(
                 logger.InnerLogger,
                 producer.Id,
-                producer.Endpoint.Name,
+                producer.Endpoint.DisplayName,
                 exception);
 
         public static void LogConsumerStatisticsReceived(
@@ -408,7 +408,7 @@ namespace Silverback.Diagnostics
                 logger.InnerLogger,
                 statisticsJson,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 null);
 
         public static void LogProducerStatisticsReceived(
@@ -419,7 +419,7 @@ namespace Silverback.Diagnostics
                 logger.InnerLogger,
                 statisticsJson,
                 producer.Id,
-                producer.Endpoint.Name,
+                producer.Endpoint.DisplayName,
                 null);
 
         public static void LogStatisticsDeserializationError(
@@ -452,7 +452,7 @@ namespace Silverback.Diagnostics
                 GetErrorReason(error),
                 (int)error.Code,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 null);
         }
 
@@ -463,7 +463,7 @@ namespace Silverback.Diagnostics
             ConfluentConsumerDisconnectError(
                 logger.InnerLogger,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 exception);
 
         public static void LogPollTimeoutAutoRecovery(
@@ -475,7 +475,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 null);
 
         public static void LogPollTimeoutNoAutoRecovery(
@@ -487,7 +487,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 null);
 
         public static void LogConfluentProducerLogCritical(
@@ -499,7 +499,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 producer.Id,
-                producer.Endpoint.Name,
+                producer.Endpoint.DisplayName,
                 null);
 
         public static void LogConfluentProducerLogError(
@@ -511,7 +511,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 producer.Id,
-                producer.Endpoint.Name,
+                producer.Endpoint.DisplayName,
                 null);
 
         public static void LogConfluentProducerLogWarning(
@@ -523,7 +523,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 producer.Id,
-                producer.Endpoint.Name,
+                producer.Endpoint.DisplayName,
                 null);
 
         public static void LogConfluentProducerLogInformation(
@@ -535,7 +535,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 producer.Id,
-                producer.Endpoint.Name,
+                producer.Endpoint.DisplayName,
                 null);
 
         public static void LogConfluentProducerLogDebug(
@@ -547,7 +547,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 producer.Id,
-                producer.Endpoint.Name,
+                producer.Endpoint.DisplayName,
                 null);
 
         public static void LogConfluentConsumerLogCritical(
@@ -559,7 +559,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 null);
 
         public static void LogConfluentConsumerLogError(
@@ -571,7 +571,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 null);
 
         public static void LogConfluentConsumerLogWarning(
@@ -583,7 +583,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 null);
 
         public static void LogConfluentConsumerLogInformation(
@@ -595,7 +595,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 null);
 
         public static void LogConfluentConsumerLogDebug(
@@ -607,7 +607,7 @@ namespace Silverback.Diagnostics
                 logMessage.Level.ToString(),
                 logMessage.Message,
                 consumer.Id,
-                consumer.Endpoint.Name,
+                consumer.Endpoint.DisplayName,
                 null);
 
         private static string GetErrorReason(Error error) =>

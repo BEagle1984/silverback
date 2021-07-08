@@ -143,7 +143,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
-        public async Task OutboxProduceStrategy_WithEndpointNameFunction_ProducedToProperEndpoint()
+        public async Task OutboxProduceStrategy_EndpointNameFunction_ProducedToProperEndpoint()
         {
             Host
                 .WithTestDbContext()
@@ -215,6 +215,72 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             topic1.MessagesCount.Should().Be(1);
             topic2.MessagesCount.Should().Be(1);
             topic3.MessagesCount.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task OutboxProduceStrategy_NamedEndpoints_ProducedAndConsumed()
+        {
+            Host
+                .WithTestDbContext()
+                .ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .UseDbContext<TestDbContext>()
+                        .WithConnectionToMessageBroker(
+                            options => options
+                                .AddMockedKafka()
+                                .AddOutboxDatabaseTable()
+                                .AddOutboxWorker(TimeSpan.FromMilliseconds(100)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .Named("my-topic-display-name")
+                                        .ProduceToOutbox())
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            })))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            for (int i = 0; i < 3; i++)
+            {
+                using var scope = Host.ServiceProvider.CreateScope();
+                var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+                var dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+
+                for (int j = (i * 5) + 1; j <= (i + 1) * 5; j++)
+                {
+                    await publisher.PublishAsync(new TestEventOne { Content = $"{j}" });
+                }
+
+                dbContext.Outbox.ForEach(
+                    message => message.EndpointName.Should().Be("my-topic-display-name [default-e2e-topic]"));
+
+                await dbContext.SaveChangesAsync();
+            }
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            (await Helper.IsOutboxEmptyAsync()).Should().Be(true);
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+            Helper.Spy.InboundEnvelopes
+                .Select(envelope => ((TestEventOne)envelope.Message!).Content)
+                .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
         }
     }
 }

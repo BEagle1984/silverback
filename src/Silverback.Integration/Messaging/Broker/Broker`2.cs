@@ -125,7 +125,10 @@ namespace Silverback.Messaging.Broker
             if (_producers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            return _producers.First(producer => producer.Endpoint.Name == endpointName);
+            return _producers.First(
+                producer => producer.Endpoint.Name == endpointName ||
+                            producer.Endpoint is Endpoint endpointClass &&
+                            endpointClass.FriendlyName == endpointName);
         }
 
         /// <inheritdoc cref="IBroker.AddConsumer" />

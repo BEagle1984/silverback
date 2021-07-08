@@ -9,6 +9,12 @@ namespace Silverback.Messaging
     /// <inheritdoc cref="IEndpoint" />
     public abstract class Endpoint : IEndpoint
     {
+        private string _name;
+
+        private string? _friendlyName;
+
+        private string? _displayName;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Endpoint" /> class.
         /// </summary>
@@ -17,16 +23,44 @@ namespace Silverback.Messaging
         /// </param>
         protected Endpoint(string name)
         {
-            Name = name;
+            _name = name;
         }
 
         /// <summary>
         ///     Gets the default serializer (a <see cref="JsonMessageSerializer" /> with default settings).
         /// </summary>
-        public static IMessageSerializer DefaultSerializer { get; } = JsonMessageSerializer.Default;
+        public static IMessageSerializer DefaultSerializer => JsonMessageSerializer.Default;
+
+        /// <inheritdoc cref="IEndpoint.DisplayName" />
+        public string DisplayName => _displayName ?? _name;
 
         /// <inheritdoc cref="IEndpoint.Name" />
-        public string Name { get; protected set; }
+        public string Name
+        {
+            get => _name;
+
+            protected set
+            {
+                _name = value;
+                UpdateDisplayName();
+            }
+        }
+
+        /// <summary>
+        ///     Gets or sets an optional friendly name to be used to identify in the endpoint. This name will primarily
+        ///     be used to compose the <see cref="DisplayName" /> and it will be shown in the human-targeted output (e.g.
+        ///     logs, health checks result, etc.).
+        /// </summary>
+        public string? FriendlyName
+        {
+            get => _friendlyName;
+
+            set
+            {
+                _friendlyName = string.IsNullOrWhiteSpace(value) || value == _name ? null : value;
+                UpdateDisplayName();
+            }
+        }
 
         /// <summary>
         ///     Gets or sets the <see cref="IMessageSerializer" /> to be used to serialize or deserialize the messages
@@ -79,7 +113,13 @@ namespace Silverback.Messaging
             if (ReferenceEquals(this, other))
                 return true;
 
-            return Name == other.Name && Equals(Serializer, other.Serializer);
+            return Name == other.Name && DisplayName == other.DisplayName &&
+                   Equals(Serializer, other.Serializer);
+        }
+
+        private void UpdateDisplayName()
+        {
+            _displayName = _friendlyName != null ? $"{_friendlyName} [{_name}]" : null;
         }
     }
 }

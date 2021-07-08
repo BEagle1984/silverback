@@ -34,23 +34,32 @@ namespace Silverback.Diagnostics
             this ISilverbackLogger logger,
             string deliveryTag,
             RabbitConsumer consumer) =>
-            ConsumingMessage(logger.InnerLogger, deliveryTag, consumer.Id, consumer.Endpoint.Name, null);
+            ConsumingMessage(
+                logger.InnerLogger,
+                deliveryTag,
+                consumer.Id,
+                consumer.Endpoint.DisplayName,
+                null);
 
         public static void LogCommit(
             this ISilverbackLogger logger,
             string deliveryTag,
             RabbitConsumer consumer) =>
-            Commit(logger.InnerLogger, deliveryTag, consumer.Id, consumer.Endpoint.Name, null);
+            Commit(logger.InnerLogger, deliveryTag, consumer.Id, consumer.Endpoint.DisplayName, null);
 
         public static void LogRollback(
             this ISilverbackLogger logger,
             string deliveryTag,
             RabbitConsumer consumer) =>
-            Rollback(logger.InnerLogger, deliveryTag, consumer.Id, consumer.Endpoint.Name, null);
+            Rollback(logger.InnerLogger, deliveryTag, consumer.Id, consumer.Endpoint.DisplayName, null);
 
         public static void LogProducerQueueProcessingCanceled(
             this ISilverbackLogger logger,
             RabbitProducer producer) =>
-            ProducerQueueProcessingCanceled(logger.InnerLogger, producer.Id, producer.Endpoint.Name, null);
+            ProducerQueueProcessingCanceled(
+                logger.InnerLogger,
+                producer.Id,
+                producer.Endpoint.DisplayName,
+                null);
     }
 }

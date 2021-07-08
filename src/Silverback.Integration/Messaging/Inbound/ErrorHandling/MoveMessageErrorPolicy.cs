@@ -139,7 +139,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
 
             private async Task PublishToNewEndpointAsync(IRawInboundEnvelope envelope, Exception exception)
             {
-                envelope.Headers.AddOrReplace(DefaultMessageHeaders.SourceEndpoint, envelope.Endpoint.Name);
+                envelope.Headers.AddOrReplace(DefaultMessageHeaders.SourceEndpoint, envelope.ActualEndpointName);
 
                 var outboundEnvelope =
                     envelope is IInboundEnvelope deserializedEnvelope

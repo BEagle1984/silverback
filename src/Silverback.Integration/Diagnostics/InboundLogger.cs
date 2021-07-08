@@ -198,7 +198,7 @@ namespace Silverback.Diagnostics
 
             _messageMoved.Invoke(
                 logger.InnerLogger,
-                targetEndpoint.Name,
+                targetEndpoint.DisplayName,
                 envelope.ActualEndpointName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),

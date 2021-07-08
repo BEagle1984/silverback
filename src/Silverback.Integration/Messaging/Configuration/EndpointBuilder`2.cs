@@ -20,6 +20,8 @@ namespace Silverback.Messaging.Configuration
         where TEndpoint : Endpoint
         where TBuilder : IEndpointBuilder<TBuilder>
     {
+        private string? _friendlyName;
+
         private IMessageSerializer? _serializer;
 
         private EncryptionSettings? _encryptionSettings;
@@ -49,6 +51,13 @@ namespace Silverback.Messaging.Configuration
         /// </remarks>
         protected abstract TBuilder This { get; }
 
+        /// <inheritdoc cref="IEndpointBuilder{TBuilder}.WithName" />
+        public TBuilder WithName(string friendlyName)
+        {
+            _friendlyName = friendlyName;
+            return This;
+        }
+
         /// <inheritdoc cref="IEndpointBuilder{TBuilder}.UseSerializer" />
         public TBuilder UseSerializer(IMessageSerializer serializer)
         {
@@ -72,6 +81,9 @@ namespace Silverback.Messaging.Configuration
         public virtual TEndpoint Build()
         {
             var endpoint = CreateEndpoint();
+
+            if (_friendlyName != null)
+                endpoint.FriendlyName = _friendlyName;
 
             if (_serializer != null)
                 endpoint.Serializer = _serializer;

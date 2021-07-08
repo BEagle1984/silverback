@@ -63,7 +63,7 @@ namespace Silverback.Messaging.HealthChecks
                 (current, consumer) =>
                     $"{current}{Environment.NewLine}- " +
                     $"[{consumer.Id}] " +
-                    $"{consumer.Endpoint.Name} " +
+                    $"{consumer.Endpoint.DisplayName} " +
                     $"({consumer.Endpoint.GetUniqueConsumerGroupName()})");
 
             return new HealthCheckResult(context.Registration.FailureStatus, errorMessage);

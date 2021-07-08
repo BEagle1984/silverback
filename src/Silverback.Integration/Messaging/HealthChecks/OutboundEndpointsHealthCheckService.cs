@@ -67,12 +67,12 @@ namespace Silverback.Messaging.HealthChecks
             try
             {
                 await _brokerCollection.GetProducer(endpoint).ProduceAsync(PingMessage.New()).ConfigureAwait(false);
-                return new EndpointCheckResult(endpoint.Name, true);
+                return new EndpointCheckResult(endpoint.DisplayName, true);
             }
             catch (Exception ex)
             {
                 return new EndpointCheckResult(
-                    endpoint.Name,
+                    endpoint.DisplayName,
                     false,
                     $"[{ex.GetType().FullName}] {ex.Message}");
             }

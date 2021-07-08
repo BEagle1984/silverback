@@ -113,7 +113,7 @@ namespace Silverback.Messaging.Outbound.Routing
                     message,
                     messageBytes,
                     headers,
-                    Endpoint.Name,
+                    Endpoint.DisplayName,
                     actualEndpointName)
                 .ConfigureAwait(false);
 
@@ -153,7 +153,7 @@ namespace Silverback.Messaging.Outbound.Routing
                     message,
                     messageBytes,
                     headers,
-                    Endpoint.Name,
+                    Endpoint.DisplayName,
                     actualEndpointName)
                 .ConfigureAwait(false);
 

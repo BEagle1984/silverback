@@ -67,8 +67,8 @@ namespace Silverback.Domain.Util
             catch (Exception ex)
             {
                 throw new EventSourcingException(
-                    $"Couldn't map property {sourcePropertyInfo.DeclaringType.Name}.{sourcePropertyInfo.Name} " +
-                    $"to  {destPropertyInfo.DeclaringType.Name}.{destPropertyInfo.Name}." +
+                    $"Couldn't map property {sourcePropertyInfo.DeclaringType?.Name}.{sourcePropertyInfo.Name} " +
+                    $"to  {destPropertyInfo.DeclaringType?.Name}.{destPropertyInfo.Name}." +
                     "See inner exception for details.",
                     ex);
             }

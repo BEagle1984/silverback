@@ -7,7 +7,7 @@ using Silverback.Messaging.Serialization;
 namespace Silverback.Messaging.Configuration
 {
     /// <summary>
-    ///     Builds the <see cref="Endpoint"/>.
+    ///     Builds the <see cref="Endpoint" />.
     /// </summary>
     /// <typeparam name="TBuilder">
     ///     The actual builder type.
@@ -16,10 +16,23 @@ namespace Silverback.Messaging.Configuration
         where TBuilder : IEndpointBuilder<TBuilder>
     {
         /// <summary>
-        ///     Specifies the <see cref="IMessageSerializer"/> to be used serialize or deserialize the messages.
+        ///     Specifies an optional friendly name to be used to identify the endpoint. This name will primarily
+        ///     be used to compose the <see cref="IEndpoint.DisplayName" /> and it will be shown in the human-targeted
+        ///     output (e.g. logs, health checks result, etc.).
+        /// </summary>
+        /// <param name="friendlyName">
+        ///     The friendly name.
+        /// </param>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        TBuilder WithName(string friendlyName);
+
+        /// <summary>
+        ///     Specifies the <see cref="IMessageSerializer" /> to be used serialize or deserialize the messages.
         /// </summary>
         /// <param name="serializer">
-        ///    The <see cref="IMessageSerializer"/>.
+        ///     The <see cref="IMessageSerializer" />.
         /// </param>
         /// <returns>
         ///     The endpoint builder so that additional calls can be chained.
@@ -30,7 +43,7 @@ namespace Silverback.Messaging.Configuration
         ///     Enables the end-to-end message encryption.
         /// </summary>
         /// <param name="encryptionSettings">
-        ///    The <see cref="EncryptionSettings"/>.
+        ///     The <see cref="EncryptionSettings" />.
         /// </param>
         /// <returns>
         ///     The endpoint builder so that additional calls can be chained.

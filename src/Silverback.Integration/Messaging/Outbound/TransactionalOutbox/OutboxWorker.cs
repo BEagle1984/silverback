@@ -198,7 +198,10 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                         message.Headers,
                         endpoint,
                         message.ActualEndpointName ?? endpoint.Name,
-                        _ => { Interlocked.Decrement(ref _pendingProduceOperations); },
+                        _ =>
+                        {
+                            Interlocked.Decrement(ref _pendingProduceOperations);
+                        },
                         exception =>
                         {
                             failedMessages.Add(message);
@@ -244,7 +247,8 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
 
             var targetEndpoint = outboundRoutes
                 .SelectMany(route => route.GetOutboundRouter(serviceProvider).Endpoints)
-                .FirstOrDefault(endpoint => endpoint.Name == endpointName);
+                .FirstOrDefault(
+                    endpoint => endpoint.Name == endpointName || endpoint.DisplayName == endpointName);
 
             if (targetEndpoint == null)
             {
