@@ -319,6 +319,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .First(service => service is KafkaPartitionEofCallback);
 
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await AsyncTestingUtil.WaitAsync(
+                () => callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount == 2);
 
             callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount.Should().Be(2);
 
@@ -330,6 +332,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await kafkaTestingHelper.Broker.Consumers[0].ConnectAsync();
 
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await AsyncTestingUtil.WaitAsync(
+                () => callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount == 4);
 
             kafkaTestingHelper.Spy.InboundEnvelopes.Should().HaveCount(2);
 
@@ -343,6 +347,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await kafkaTestingHelper.Broker.Consumers[0].ConnectAsync();
 
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await AsyncTestingUtil.WaitAsync(
+                () => callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount == 6);
 
             kafkaTestingHelper.Spy.InboundEnvelopes.Should().HaveCount(4);
             callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount.Should().Be(6);
@@ -355,6 +361,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await kafkaTestingHelper.Broker.Consumers[0].ConnectAsync();
 
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await AsyncTestingUtil.WaitAsync(
+                () => callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount == 8);
 
             kafkaTestingHelper.Spy.InboundEnvelopes.Should().HaveCount(6);
             callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount.Should().Be(8);
@@ -367,6 +375,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await kafkaTestingHelper.Broker.Consumers[0].ConnectAsync();
 
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await AsyncTestingUtil.WaitAsync(
+                () => callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount == 10);
 
             kafkaTestingHelper.Spy.InboundEnvelopes.Should().HaveCount(8);
             callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount.Should().Be(10);
@@ -431,6 +441,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var topicPartition1 = new TopicPartition(DefaultTopicName, new Partition(1));
 
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await AsyncTestingUtil.WaitAsync(
+                () => callbackHandlerKafkaPartitionEofCallback.AllPartitionsEofCallbackCount == 2);
 
             callbackHandlerKafkaPartitionEofCallback.AllPartitionsEofCallbackCount.Should().Be(2);
             callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition0).Should()
@@ -445,6 +457,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await kafkaTestingHelper.Broker.Consumers[0].ConnectAsync();
 
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await AsyncTestingUtil.WaitAsync(
+                () => callbackHandlerKafkaPartitionEofCallback.AllPartitionsEofCallbackCount == 2);
 
             kafkaTestingHelper.Spy.InboundEnvelopes.Should().HaveCount(1);
 
@@ -461,6 +475,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await kafkaTestingHelper.Broker.Consumers[0].ConnectAsync();
 
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
+            await AsyncTestingUtil.WaitAsync(
+                () => callbackHandlerKafkaPartitionEofCallback.AllPartitionsEofCallbackCount == 4);
 
             callbackHandlerKafkaPartitionEofCallback.AllPartitionsEofCallbackCount.Should().Be(4);
             callbackHandlerKafkaPartitionEofCallback.GetPartitionEofCallbackCount(topicPartition0).Should()
