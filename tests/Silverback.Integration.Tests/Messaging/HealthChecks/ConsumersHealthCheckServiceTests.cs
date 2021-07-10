@@ -200,7 +200,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             consumer.StatusInfo.History.Returns(
                 new List<IConsumerStatusChange>
                 {
-                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddMilliseconds(-50))
+                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow)
                 });
 
             var broker = Substitute.For<IBroker>();
@@ -219,7 +219,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
 
             result.Should().HaveCount(0);
 
-            await Task.Delay(50);
+            await Task.Delay(100);
 
             result = await service.GetDisconnectedConsumersAsync(
                     ConsumerStatus.Ready,
