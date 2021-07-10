@@ -176,8 +176,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="IHealthChecksBuilder" />.
         /// </param>
         /// <param name="gracePeriod">
-        ///     The grace period to observe before a consumer is considered unhealthy, when its status is reverted from
-        ///     fully connected (e.g. because all Kafka partitions gets revoked during a rebalance).
+        ///     The grace period to observe after each status change before a consumer is considered unhealthy.
         /// </param>
         /// <param name="name">
         ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
@@ -227,8 +226,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered healthy.
         /// </param>
         /// <param name="gracePeriod">
-        ///     The grace period to observe before a consumer is considered unhealthy, when its status is reverted from
-        ///     fully connected (e.g. because all Kafka partitions gets revoked during a rebalance).
+        ///     The grace period to observe after each status change before a consumer is considered unhealthy.
         /// </param>
         /// <param name="name">
         ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.

@@ -21,8 +21,7 @@ namespace Silverback.Messaging.HealthChecks
         ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered fully connected.
         /// </param>
         /// <param name="gracePeriod">
-        ///     The grace period to observe before a consumer is considered unhealthy, when its status is reverted from
-        ///     fully connected (e.g. because all Kafka partitions gets revoked during a rebalance).
+        ///     The grace period to observe after each status change before a consumer is considered unhealthy.
         /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the

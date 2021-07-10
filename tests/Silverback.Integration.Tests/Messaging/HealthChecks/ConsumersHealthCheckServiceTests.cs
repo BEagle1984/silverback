@@ -175,7 +175,8 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         }
 
         [Fact]
-        public async Task GetDisconnectedConsumersAsync_NeverConnected_ConsumersListReturnedDespiteGracePeriod()
+        public async Task
+            GetDisconnectedConsumersAsync_NeverFullyConnected_ConsumersListReturnedAfterGracePeriod()
         {
             var statusInfo = Substitute.For<IConsumerStatusInfo>();
             statusInfo.Status.Returns(ConsumerStatus.Connected);
@@ -184,7 +185,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             consumer.StatusInfo.History.Returns(
                 new List<IConsumerStatusChange>
                 {
-                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-5)),
+                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddMilliseconds(-50)),
                 });
 
             var broker = Substitute.For<IBroker>();
@@ -196,8 +197,17 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             var hostApplicationLifetime = Substitute.For<IHostApplicationLifetime>();
             var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
 
-            IReadOnlyCollection<IConsumer> result =
-                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready, TimeSpan.FromSeconds(10));
+            IReadOnlyCollection<IConsumer> result = await service.GetDisconnectedConsumersAsync(
+                ConsumerStatus.Ready,
+                TimeSpan.FromMilliseconds(100));
+
+            result.Should().HaveCount(0);
+
+            await Task.Delay(50);
+
+            result = await service.GetDisconnectedConsumersAsync(
+                ConsumerStatus.Ready,
+                TimeSpan.FromMilliseconds(100));
 
             result.Should().HaveCount(1);
             result.Should().BeEquivalentTo(consumer);

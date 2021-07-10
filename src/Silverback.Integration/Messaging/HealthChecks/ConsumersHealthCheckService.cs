@@ -68,12 +68,9 @@ namespace Silverback.Messaging.HealthChecks
             consumer.StatusInfo.Status < minStatus &&
             (gracePeriod == null ||
              consumer.StatusInfo.History.Count == 0 ||
-             GracePeriodElapsed(consumer, minStatus, gracePeriod.Value));
+             GracePeriodElapsed(consumer, gracePeriod.Value));
 
-        // Grace period is taken into account only if the minStatus has been previously matched,
-        // otherwise it's considered elapsed to immediately report the not yet connected consumer
-        private static bool GracePeriodElapsed(IConsumer consumer, ConsumerStatus minStatus, TimeSpan gracePeriod) =>
-            consumer.StatusInfo.History.All(statusChange => statusChange.Status < minStatus) ||
+        private static bool GracePeriodElapsed(IConsumer consumer, TimeSpan gracePeriod) =>
             consumer.StatusInfo.History.Last().Timestamp < DateTime.UtcNow.Subtract(gracePeriod);
     }
 }
