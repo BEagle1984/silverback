@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Silverback.Tests.Integration.E2E.TestHost
@@ -24,6 +25,14 @@ namespace Silverback.Tests.Integration.E2E.TestHost
                 endpoints =>
                 {
                     endpoints.MapHealthChecks("/health");
+                    endpoints.MapHealthChecks(
+                        "/health1",
+                        new HealthCheckOptions
+                            { Predicate = registration => registration.Tags.Contains("1") });
+                    endpoints.MapHealthChecks(
+                        "/health2",
+                        new HealthCheckOptions
+                            { Predicate = registration => registration.Tags.Contains("2") });
                 });
         }
     }

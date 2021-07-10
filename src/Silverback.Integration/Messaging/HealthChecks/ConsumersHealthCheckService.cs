@@ -40,7 +40,8 @@ namespace Silverback.Messaging.HealthChecks
         /// <inheritdoc cref="IConsumersHealthCheckService.GetDisconnectedConsumersAsync" />
         public Task<IReadOnlyCollection<IConsumer>> GetDisconnectedConsumersAsync(
             ConsumerStatus minStatus,
-            TimeSpan? gracePeriod = null)
+            TimeSpan gracePeriod,
+            IEnumerable<string>? endpointNames)
         {
             // The check is skipped when the application is shutting down, because all consumers will be
             // disconnected and since the shutdown could take a while we don't want to report the application
@@ -50,7 +51,9 @@ namespace Silverback.Messaging.HealthChecks
 
             IReadOnlyCollection<IConsumer> disconnectedConsumers =
                 _brokerCollection
-                    .SelectMany(broker => GetDisconnectedConsumers(broker, minStatus, gracePeriod)).ToList();
+                    .SelectMany(
+                        broker => GetDisconnectedConsumers(broker, minStatus, gracePeriod, endpointNames))
+                    .ToList();
 
             return Task.FromResult(disconnectedConsumers);
         }
@@ -58,17 +61,26 @@ namespace Silverback.Messaging.HealthChecks
         private static IEnumerable<IConsumer> GetDisconnectedConsumers(
             IBroker broker,
             ConsumerStatus minStatus,
-            TimeSpan? gracePeriod) =>
-            broker.Consumers.Where(consumer => IsDisconnected(consumer, minStatus, gracePeriod));
+            TimeSpan gracePeriod,
+            IEnumerable<string>? endpointNames) =>
+            broker.Consumers.Where(
+                consumer => IsToBeTested(consumer.Endpoint, endpointNames) &&
+                            IsDisconnected(consumer, minStatus, gracePeriod));
+
+        private static bool IsToBeTested(
+            IConsumerEndpoint consumerEndpoint,
+            IEnumerable<string>? endpointNames) =>
+            endpointNames == null || endpointNames.Any(
+                name => consumerEndpoint.Name == name || consumerEndpoint.FriendlyName == name);
 
         private static bool IsDisconnected(
             IConsumer consumer,
             ConsumerStatus minStatus,
-            TimeSpan? gracePeriod) =>
+            TimeSpan gracePeriod) =>
             consumer.StatusInfo.Status < minStatus &&
-            (gracePeriod == null ||
+            (gracePeriod == TimeSpan.Zero ||
              consumer.StatusInfo.History.Count == 0 ||
-             GracePeriodElapsed(consumer, gracePeriod.Value));
+             GracePeriodElapsed(consumer, gracePeriod));
 
         private static bool GracePeriodElapsed(IConsumer consumer, TimeSpan gracePeriod) =>
             consumer.StatusInfo.History.Last().Timestamp < DateTime.UtcNow.Subtract(gracePeriod);

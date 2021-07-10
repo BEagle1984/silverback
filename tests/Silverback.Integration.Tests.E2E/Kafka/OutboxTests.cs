@@ -243,7 +243,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
-                                        .Named("my-topic-display-name")
+                                        .WithName("my-topic-display-name")
                                         .ProduceToOutbox())
                                 .AddInbound(
                                     endpoint => endpoint

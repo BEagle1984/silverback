@@ -54,7 +54,7 @@ namespace Silverback.Messaging.Broker
         ///     Returns an existing <see cref="IProducer" /> to be used to produce to the specified endpoint.
         /// </summary>
         /// <param name="endpointName">
-        ///     The target endpoint name (or display name).
+        ///     The target endpoint name (or friendly name).
         /// </param>
         /// <returns>
         ///     The <see cref="IProducer" /> for the specified endpoint.

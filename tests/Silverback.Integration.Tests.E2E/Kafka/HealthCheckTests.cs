@@ -2,11 +2,12 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Net.Http;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Xunit;
@@ -71,7 +72,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddConsumersCheck())
                 .Run(waitUntilBrokerConnected: false);
 
-            HttpResponseMessage response = await Host.HttpClient.GetAsync("/health");
+            var response = await Host.HttpClient.GetAsync("/health");
             response.StatusCode.Should().Be(StatusCodes.Status200OK);
         }
 
@@ -131,6 +132,94 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await Task.Delay(100);
 
             response = await Host.HttpClient.GetAsync("/health");
+            response.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+        }
+
+        [Fact]
+        public async Task ConsumerHealthCheck_SplitCheck_CorrectStatusReturned()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions =>
+                                    mockedKafkaOptions.DelayPartitionsAssignment(
+                                        TimeSpan.FromMilliseconds(200))))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom("topic1")
+                                        .WithName("one")
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            }))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom("topic2")
+                                        .WithName("two")
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            }))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom("topic3")
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            })))
+                        .Services
+                        .AddHealthChecks()
+                        .AddConsumersCheck(
+                            endpointNames: new[] { "two" },
+                            gracePeriod: TimeSpan.Zero,
+                            name: "check-2",
+                            tags: new[] { "1" })
+                        .AddConsumersCheck(
+                            endpointNames: new[] { "one", "topic3" },
+                            gracePeriod: TimeSpan.Zero,
+                            name: "check-1-3",
+                            tags: new[] { "2" }))
+                .Run(waitUntilBrokerConnected: false);
+
+            var consumers = Helper.Broker.Consumers;
+            await AsyncTestingUtil.WaitAsync(
+                () => consumers.All(consumer => consumer.StatusInfo.Status > ConsumerStatus.Connected));
+
+            var response = await Host.HttpClient.GetAsync("/health1");
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response = await Host.HttpClient.GetAsync("/health2");
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+            await consumers[1].DisconnectAsync();
+
+            response = await Host.HttpClient.GetAsync("/health1");
+            response.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+            response = await Host.HttpClient.GetAsync("/health2");
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+
+            await consumers[1].ConnectAsync();
+            await AsyncTestingUtil.WaitAsync(
+                () => consumers[1].StatusInfo.Status > ConsumerStatus.Connected);
+            await consumers[2].DisconnectAsync();
+
+            response = await Host.HttpClient.GetAsync("/health1");
+            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response = await Host.HttpClient.GetAsync("/health2");
             response.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
         }
     }

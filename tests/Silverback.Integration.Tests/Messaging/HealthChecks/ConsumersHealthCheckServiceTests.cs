@@ -32,21 +32,33 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             disconnectedStatusInfo.Status.Returns(ConsumerStatus.Disconnected);
             _disconnectedConsumer = Substitute.For<IConsumer>();
             _disconnectedConsumer.StatusInfo.Returns(disconnectedStatusInfo);
+            _disconnectedConsumer.Endpoint.Returns(
+                new TestConsumerEndpoint("topic1")
+                {
+                    FriendlyName = "disconnected"
+                });
 
             var connectedStatusInfo = Substitute.For<IConsumerStatusInfo>();
             connectedStatusInfo.Status.Returns(ConsumerStatus.Connected);
             _connectedConsumer = Substitute.For<IConsumer>();
             _connectedConsumer.StatusInfo.Returns(connectedStatusInfo);
+            _connectedConsumer.Endpoint.Returns(
+                new TestConsumerEndpoint("topic2")
+                {
+                    FriendlyName = "connected"
+                });
 
             var readyStatusInfo = Substitute.For<IConsumerStatusInfo>();
             readyStatusInfo.Status.Returns(ConsumerStatus.Ready);
             _readyConsumer = Substitute.For<IConsumer>();
             _readyConsumer.StatusInfo.Returns(readyStatusInfo);
+            _readyConsumer.Endpoint.Returns(new TestConsumerEndpoint("topic3"));
 
             var consumingStatusInfo = Substitute.For<IConsumerStatusInfo>();
             consumingStatusInfo.Status.Returns(ConsumerStatus.Consuming);
             _consumingConsumer = Substitute.For<IConsumer>();
             _consumingConsumer.StatusInfo.Returns(consumingStatusInfo);
+            _consumingConsumer.Endpoint.Returns(new TestConsumerEndpoint("topic4"));
         }
 
         [Fact]
@@ -74,7 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
 
             IReadOnlyCollection<IConsumer> result =
-                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Connected);
+                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Connected, TimeSpan.Zero, null);
 
             result.Should().BeEmpty();
         }
@@ -104,7 +116,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
 
             IReadOnlyCollection<IConsumer> result =
-                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready);
+                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready, TimeSpan.Zero, null);
 
             result.Should().HaveCount(2);
             result.Should().BeEquivalentTo(_connectedConsumer, _disconnectedConsumer);
@@ -139,7 +151,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             applicationStoppingTokenSource.Cancel();
 
             IReadOnlyCollection<IConsumer> result =
-                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready);
+                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready, TimeSpan.Zero, null);
 
             result.Should().BeEmpty();
         }
@@ -156,7 +168,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 {
                     new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-30)),
                     new ConsumerStatusChange(ConsumerStatus.Ready, DateTime.UtcNow.AddSeconds(-20)),
-                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-5)),
+                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-5))
                 });
 
             var broker = Substitute.For<IBroker>();
@@ -169,7 +181,10 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
 
             IReadOnlyCollection<IConsumer> result =
-                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready, TimeSpan.FromSeconds(10));
+                await service.GetDisconnectedConsumersAsync(
+                    ConsumerStatus.Ready,
+                    TimeSpan.FromSeconds(10),
+                    null);
 
             result.Should().BeEmpty();
         }
@@ -185,7 +200,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             consumer.StatusInfo.History.Returns(
                 new List<IConsumerStatusChange>
                 {
-                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddMilliseconds(-50)),
+                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddMilliseconds(-50))
                 });
 
             var broker = Substitute.For<IBroker>();
@@ -199,15 +214,17 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
 
             IReadOnlyCollection<IConsumer> result = await service.GetDisconnectedConsumersAsync(
                 ConsumerStatus.Ready,
-                TimeSpan.FromMilliseconds(100));
+                TimeSpan.FromMilliseconds(100),
+                null);
 
             result.Should().HaveCount(0);
 
             await Task.Delay(50);
 
             result = await service.GetDisconnectedConsumersAsync(
-                ConsumerStatus.Ready,
-                TimeSpan.FromMilliseconds(100));
+                    ConsumerStatus.Ready,
+                    TimeSpan.FromMilliseconds(100),
+                    null);
 
             result.Should().HaveCount(1);
             result.Should().BeEquivalentTo(consumer);
@@ -225,7 +242,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 {
                     new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-30)),
                     new ConsumerStatusChange(ConsumerStatus.Ready, DateTime.UtcNow.AddSeconds(-20)),
-                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-15)),
+                    new ConsumerStatusChange(ConsumerStatus.Connected, DateTime.UtcNow.AddSeconds(-15))
                 });
 
             var broker = Substitute.For<IBroker>();
@@ -238,10 +255,81 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
 
             IReadOnlyCollection<IConsumer> result =
-                await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready, TimeSpan.FromSeconds(10));
+                await service.GetDisconnectedConsumersAsync(
+                    ConsumerStatus.Ready,
+                    TimeSpan.FromSeconds(10),
+                    null);
 
             result.Should().HaveCount(1);
             result.Should().BeEquivalentTo(consumer);
+        }
+
+        [Fact]
+        public async Task GetDisconnectedConsumersAsync_FilterByName_FilteredConsumersListReturned()
+        {
+            var broker = Substitute.For<IBroker>();
+            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
+            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker.Consumers.Returns(
+                new[]
+                {
+                    _disconnectedConsumer, _connectedConsumer
+                });
+
+            var brokerCollection = new BrokerCollection(new[] { broker });
+            var hostApplicationLifetime = Substitute.For<IHostApplicationLifetime>();
+            var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
+
+            IReadOnlyCollection<IConsumer> result1 =
+                await service.GetDisconnectedConsumersAsync(
+                    ConsumerStatus.Ready,
+                    TimeSpan.Zero,
+                    new[] { "topic1", "topic2" });
+
+            IReadOnlyCollection<IConsumer> result2 =
+                await service.GetDisconnectedConsumersAsync(
+                    ConsumerStatus.Ready,
+                    TimeSpan.Zero,
+                    new[] { "topic1" });
+
+            result1.Should().HaveCount(2);
+            result1.Should().BeEquivalentTo(_disconnectedConsumer, _connectedConsumer);
+            result2.Should().HaveCount(1);
+            result2.Should().BeEquivalentTo(_disconnectedConsumer);
+        }
+
+        [Fact]
+        public async Task GetDisconnectedConsumersAsync_FilterByFriendlyName_FilteredConsumersListReturned()
+        {
+            var broker = Substitute.For<IBroker>();
+            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
+            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker.Consumers.Returns(
+                new[]
+                {
+                    _disconnectedConsumer, _connectedConsumer
+                });
+
+            var brokerCollection = new BrokerCollection(new[] { broker });
+            var hostApplicationLifetime = Substitute.For<IHostApplicationLifetime>();
+            var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
+
+            IReadOnlyCollection<IConsumer> result1 =
+                await service.GetDisconnectedConsumersAsync(
+                    ConsumerStatus.Ready,
+                    TimeSpan.Zero,
+                    new[] { "disconnected", "connected" });
+
+            IReadOnlyCollection<IConsumer> result2 =
+                await service.GetDisconnectedConsumersAsync(
+                    ConsumerStatus.Ready,
+                    TimeSpan.Zero,
+                    new[] { "connected" });
+
+            result1.Should().HaveCount(2);
+            result1.Should().BeEquivalentTo(_disconnectedConsumer, _connectedConsumer);
+            result2.Should().HaveCount(1);
+            result2.Should().BeEquivalentTo(_connectedConsumer);
         }
     }
 }

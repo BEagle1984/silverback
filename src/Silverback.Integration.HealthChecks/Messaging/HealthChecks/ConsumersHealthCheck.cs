@@ -21,7 +21,9 @@ namespace Silverback.Messaging.HealthChecks
 
         private readonly ConsumerStatus _minHealthyStatus;
 
-        private readonly TimeSpan? _gracePeriod;
+        private readonly TimeSpan _gracePeriod;
+
+        private readonly IEnumerable<string>? _endpointNames;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConsumersHealthCheck" /> class.
@@ -35,14 +37,19 @@ namespace Silverback.Messaging.HealthChecks
         /// <param name="gracePeriod">
         ///     The grace period to observe after each status change before a consumer is considered unhealthy.
         /// </param>
+        /// <param name="endpointNames">
+        ///     The name (or friendly name) of the endpoints to be tested.
+        /// </param>
         public ConsumersHealthCheck(
             IConsumersHealthCheckService service,
             ConsumerStatus minHealthyStatus,
-            TimeSpan? gracePeriod)
+            TimeSpan gracePeriod,
+            IEnumerable<string>? endpointNames)
         {
             _service = service;
             _minHealthyStatus = minHealthyStatus;
             _gracePeriod = gracePeriod;
+            _endpointNames = endpointNames;
         }
 
         /// <inheritdoc cref="IHealthCheck.CheckHealthAsync" />
@@ -53,7 +60,8 @@ namespace Silverback.Messaging.HealthChecks
             Check.NotNull(context, nameof(context));
 
             IReadOnlyCollection<IConsumer> disconnectedConsumers =
-                await _service.GetDisconnectedConsumersAsync(_minHealthyStatus, _gracePeriod).ConfigureAwait(false);
+                await _service.GetDisconnectedConsumersAsync(_minHealthyStatus, _gracePeriod, _endpointNames)
+                    .ConfigureAwait(false);
 
             if (disconnectedConsumers.Count == 0)
                 return new HealthCheckResult(HealthStatus.Healthy);

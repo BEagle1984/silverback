@@ -234,7 +234,7 @@ namespace Silverback.Tests.Integration.HealthChecks.Messaging.HealthChecks
                     .Services
                     .AddSingleton<IBrokerCollection>(new BrokerCollection(new[] { broker }))
                     .AddHealthChecks()
-                    .AddConsumersCheck(TimeSpan.FromSeconds(5)));
+                    .AddConsumersCheck(gracePeriod: TimeSpan.FromSeconds(5)));
 
             var (healthCheck, context) = GetHealthCheck(serviceProvider);
 

@@ -47,7 +47,7 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
-        ///     Gets or sets an optional friendly name to be used to identify in the endpoint. This name will primarily
+        ///     Gets or sets an optional friendly name to be used to identify the endpoint. This name will primarily
         ///     be used to compose the <see cref="DisplayName" /> and it will be shown in the human-targeted output (e.g.
         ///     logs, health checks result, etc.).
         /// </summary>

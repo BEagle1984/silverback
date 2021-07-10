@@ -117,7 +117,7 @@ namespace Silverback.Messaging.Broker
             return producer;
         }
 
-        /// <inheritdoc cref="IBroker.GetProducer(IProducerEndpoint)" />
+        /// <inheritdoc cref="IBroker.GetProducer(string)" />
         public virtual IProducer GetProducer(string endpointName)
         {
             Check.NotEmpty(endpointName, nameof(endpointName));
@@ -127,8 +127,7 @@ namespace Silverback.Messaging.Broker
 
             return _producers.First(
                 producer => producer.Endpoint.Name == endpointName ||
-                            producer.Endpoint is Endpoint endpointClass &&
-                            endpointClass.FriendlyName == endpointName);
+                            producer.Endpoint.FriendlyName == endpointName);
         }
 
         /// <inheritdoc cref="IBroker.AddConsumer" />

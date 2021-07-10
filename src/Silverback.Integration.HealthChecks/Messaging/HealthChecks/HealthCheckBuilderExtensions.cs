@@ -24,11 +24,11 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="IHealthChecksBuilder" />.
         /// </param>
         /// <param name="name">
-        ///     The health check name. If <c>null</c> the name 'OutboundEndpoints' will be used for the name.
+        ///     The health check name. The default is "OutboundEndpoints".
         /// </param>
         /// <param name="failureStatus">
-        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
-        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. The
+        ///     default is <see cref="HealthStatus.Unhealthy" />.
         /// </param>
         /// <param name="tags">
         ///     An optional list of tags that can be used for filtering health checks.
@@ -66,11 +66,11 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     The <see cref="IHealthChecksBuilder" />.
         /// </param>
         /// <param name="name">
-        ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
+        ///     The health check name. The default is "OutboundQueue".
         /// </param>
         /// <param name="failureStatus">
-        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
-        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. The
+        ///     default is <see cref="HealthStatus.Unhealthy" />.
         /// </param>
         /// <param name="tags">
         ///     An optional list of tags that can be used for filtering health checks.
@@ -106,134 +106,21 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="builder">
         ///     The <see cref="IHealthChecksBuilder" />.
         /// </param>
-        /// <param name="name">
-        ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
-        /// </param>
-        /// <param name="failureStatus">
-        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
-        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
-        /// </param>
-        /// <param name="tags">
-        ///     An optional list of tags that can be used for filtering health checks.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        /// <remarks>
-        ///     The <see cref="ConsumerStatus.Ready" /> is considered healthy and a default grace period of 30 seconds is
-        ///     applied.
-        /// </remarks>
-        public static IHealthChecksBuilder AddConsumersCheck(
-            this IHealthChecksBuilder builder,
-            string name = "Consumers",
-            HealthStatus? failureStatus = null,
-            IEnumerable<string>? tags = null) =>
-            AddConsumersCheck(builder, ConsumerStatus.Ready, name, failureStatus, tags);
-
-        /// <summary>
-        ///     Adds a health check that verifies that all consumers are connected.
-        /// </summary>
-        /// <param name="builder">
-        ///     The <see cref="IHealthChecksBuilder" />.
-        /// </param>
-        /// <param name="minHealthyStatus">
-        ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered healthy.
-        /// </param>
-        /// <param name="name">
-        ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
-        /// </param>
-        /// <param name="failureStatus">
-        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
-        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
-        /// </param>
-        /// <param name="tags">
-        ///     An optional list of tags that can be used for filtering health checks.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        /// <remarks>
-        ///     A default grace period of 30 seconds is applied.
-        /// </remarks>
-        public static IHealthChecksBuilder AddConsumersCheck(
-            this IHealthChecksBuilder builder,
-            ConsumerStatus minHealthyStatus,
-            string name = "Consumers",
-            HealthStatus? failureStatus = null,
-            IEnumerable<string>? tags = null) =>
-            AddConsumersCheck(
-                builder,
-                minHealthyStatus,
-                TimeSpan.FromSeconds(30),
-                name,
-                failureStatus,
-                tags);
-
-        /// <summary>
-        ///     Adds a health check that verifies that all consumers are connected.
-        /// </summary>
-        /// <param name="builder">
-        ///     The <see cref="IHealthChecksBuilder" />.
-        /// </param>
-        /// <param name="gracePeriod">
-        ///     The grace period to observe after each status change before a consumer is considered unhealthy.
-        /// </param>
-        /// <param name="name">
-        ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
-        /// </param>
-        /// <param name="failureStatus">
-        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
-        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
-        /// </param>
-        /// <param name="tags">
-        ///     An optional list of tags that can be used for filtering health checks.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IHealthChecksBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IHealthChecksBuilder AddConsumersCheck(
-            this IHealthChecksBuilder builder,
-            TimeSpan gracePeriod,
-            string name = "Consumers",
-            HealthStatus? failureStatus = null,
-            IEnumerable<string>? tags = null)
-        {
-            Check.NotNull(builder, nameof(builder));
-
-            builder.Services.AddSingleton<IConsumersHealthCheckService, ConsumersHealthCheckService>();
-
-            return builder.Add(
-                new HealthCheckRegistration(
-                    name,
-                    CreateService,
-                    failureStatus,
-                    tags));
-
-            IHealthCheck CreateService(IServiceProvider serviceProvider)
-                => new ConsumersHealthCheck(
-                    serviceProvider.GetRequiredService<IConsumersHealthCheckService>(),
-                    ConsumerStatus.Ready,
-                    gracePeriod);
-        }
-
-        /// <summary>
-        ///     Adds a health check that verifies that all consumers are connected.
-        /// </summary>
-        /// <param name="builder">
-        ///     The <see cref="IHealthChecksBuilder" />.
-        /// </param>
         /// <param name="minHealthyStatus">
         ///     The minimum <see cref="ConsumerStatus" /> a consumer must have to be considered healthy.
         /// </param>
         /// <param name="gracePeriod">
         ///     The grace period to observe after each status change before a consumer is considered unhealthy.
         /// </param>
+        /// <param name="endpointNames">
+        ///     The name (or friendly name) of the endpoints to be tested.
+        /// </param>
         /// <param name="name">
-        ///     The health check name. If <c>null</c> the name 'OutboundQueue' will be used for the name.
+        ///     The health check name. The default is "Consumers".
         /// </param>
         /// <param name="failureStatus">
-        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. If the
-        ///     provided value is <c>null</c>, then <see cref="HealthStatus.Unhealthy" /> will be reported.
+        ///     The <see cref="HealthStatus" /> that should be reported when the health check reports a failure. The
+        ///     default is <see cref="HealthStatus.Unhealthy" />.
         /// </param>
         /// <param name="tags">
         ///     An optional list of tags that can be used for filtering health checks.
@@ -243,8 +130,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </returns>
         public static IHealthChecksBuilder AddConsumersCheck(
             this IHealthChecksBuilder builder,
-            ConsumerStatus minHealthyStatus,
-            TimeSpan gracePeriod,
+            ConsumerStatus minHealthyStatus = ConsumerStatus.Ready,
+            TimeSpan? gracePeriod = null,
+            IEnumerable<string>? endpointNames = null,
             string name = "Consumers",
             HealthStatus? failureStatus = null,
             IEnumerable<string>? tags = null)
@@ -264,7 +152,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 => new ConsumersHealthCheck(
                     serviceProvider.GetRequiredService<IConsumersHealthCheckService>(),
                     minHealthyStatus,
-                    gracePeriod);
+                    gracePeriod ?? TimeSpan.FromSeconds(30),
+                    endpointNames);
         }
     }
 }
