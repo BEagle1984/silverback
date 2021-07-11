@@ -43,9 +43,9 @@ namespace Silverback.Messaging
         EncryptionSettings? Encryption { get; }
 
         /// <summary>
-        ///     Gets an optional friendly name to be used to identify the endpoint. This name will primarily be used to
-        ///     compose the <see cref="DisplayName" /> and it will be shown in the human-targeted output (e.g. logs,
-        ///     health checks result, etc.).
+        ///     Gets an optional friendly name to be used to identify the endpoint. This name can be used to
+        ///     filter or retrieve the endpoints and will also be included in the <see cref="IEndpoint.DisplayName" />,
+        ///     to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
         /// </summary>
         string? FriendlyName { get; }
 

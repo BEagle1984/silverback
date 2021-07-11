@@ -16,9 +16,9 @@ namespace Silverback.Messaging.Configuration
         where TBuilder : IEndpointBuilder<TBuilder>
     {
         /// <summary>
-        ///     Specifies an optional friendly name to be used to identify the endpoint. This name will primarily
-        ///     be used to compose the <see cref="IEndpoint.DisplayName" /> and it will be shown in the human-targeted
-        ///     output (e.g. logs, health checks result, etc.).
+        ///     Specifies an optional friendly name to be used to identify the endpoint. This name can be used to
+        ///     filter or retrieve the endpoints and will also be included in the <see cref="IEndpoint.DisplayName" />,
+        ///     to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
         /// </summary>
         /// <param name="friendlyName">
         ///     The friendly name.
