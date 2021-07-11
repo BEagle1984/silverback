@@ -115,6 +115,9 @@
       <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_This">EndpointBuilder&lt;TEndpoint, TBuilder&gt;.This</a>
     </div>
     <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_WithName_System_String_">EndpointBuilder&lt;TEndpoint, TBuilder&gt;.WithName(String)</a>
+    </div>
+    <div>
       <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_UseSerializer_Silverback_Messaging_Serialization_IMessageSerializer_">EndpointBuilder&lt;TEndpoint, TBuilder&gt;.UseSerializer(IMessageSerializer)</a>
     </div>
     <div>
@@ -182,7 +185,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2__ctor_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.%23ctor(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L46">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L46">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2__ctor_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.#ctor*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2__ctor_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.#ctor(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)">ProducerEndpointBuilder(IEndpointsConfigurationBuilder)</h4>
@@ -219,11 +222,12 @@ builder.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader_System_String_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.AddHeader(System.String%2CSystem.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L96">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L96">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader_System_String_System_Object_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader(System.String,System.Object)">AddHeader(String, Object)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds the specified header to all produced messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -242,12 +246,14 @@ builder.</p>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">name</span></td>
-        <td></td>
+        <td><p>The header name.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Object</span></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The header value.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -262,7 +268,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -271,16 +278,16 @@ builder.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader__1_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.AddHeader%60%601(System.String%2CSystem.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%2CSystem.Object%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L111">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L111">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader__1_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader``1(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})">AddHeader&lt;TMessage&gt;(String, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, Object&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds the specified header to all produced messages of the specified type, using a value provider function to determine the header value for each message.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public TBuilder AddHeader&lt;TMessage&gt;(string name, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, object&gt; valueProvider)
-
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -296,12 +303,14 @@ builder.</p>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">name</span></td>
-        <td></td>
+        <td><p>The header name.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, <span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">valueProvider</span></td>
-        <td></td>
+        <td><p>The value provider function.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -316,7 +325,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -331,7 +341,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TMessage</span></td>
-        <td></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -340,16 +351,16 @@ builder.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader__1_System_String_System_Object_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.AddHeader%60%601(System.String%2CSystem.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L103">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L103">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader__1_System_String_System_Object_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader``1(System.String,System.Object)">AddHeader&lt;TMessage&gt;(String, Object)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds the specified header to all produced messages of the specified type.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public TBuilder AddHeader&lt;TMessage&gt;(string name, object value)
-
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -365,12 +376,14 @@ builder.</p>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">name</span></td>
-        <td></td>
+        <td><p>The header name.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Object</span></td>
         <td><span class="parametername">value</span></td>
-        <td></td>
+        <td><p>The header value.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -385,7 +398,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -400,7 +414,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TMessage</span></td>
-        <td></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -409,11 +424,12 @@ builder.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_Build.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.Build%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L127">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L127">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_Build_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.Build*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_Build" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.Build">Build()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Builds the endpoint instance.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -430,7 +446,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TEndpoint</span></td>
-        <td></td>
+        <td><p>The endpoint.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -441,11 +458,12 @@ builder.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_EnableChunking_System_Int32_System_Boolean_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.EnableChunking(System.Int32%2CSystem.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L79">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L79">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_EnableChunking_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.EnableChunking*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_EnableChunking_System_Int32_System_Boolean_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.EnableChunking(System.Int32,System.Boolean)">EnableChunking(Int32, Boolean)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Enables chunking, splitting the larger messages into smaller chunks.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -464,12 +482,16 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Int32</span></td>
         <td><span class="parametername">chunkSize</span></td>
-        <td></td>
+        <td><p>The maximum chunk size in bytes.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">alwaysAddHeaders</span></td>
-        <td></td>
+        <td><p>A value indicating whether the <code>x-chunk-index</code> and related headers have to be added to the
+produced message in any case, even if its size doesn't exceed the single chunk size. The default is
+<code>true</code>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -484,7 +506,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -493,11 +516,12 @@ builder.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_Encrypt_Silverback_Messaging_Encryption_EncryptionSettings_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.Encrypt(Silverback.Messaging.Encryption.EncryptionSettings)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L55">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L55">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_Encrypt_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.Encrypt*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_Encrypt_Silverback_Messaging_Encryption_EncryptionSettings_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.Encrypt(Silverback.Messaging.Encryption.EncryptionSettings)">Encrypt(EncryptionSettings)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies the <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a> to be used to encrypt the messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -516,7 +540,8 @@ builder.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a></td>
         <td><span class="parametername">encryptionSettings</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -531,7 +556,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -540,11 +566,13 @@ builder.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_ProduceDirectly.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.ProduceDirectly%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L65">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L65">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_ProduceDirectly_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.ProduceDirectly*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_ProduceDirectly" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.ProduceDirectly">ProduceDirectly()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies that the <span class="xref">Silverback.Messaging.Outbound.DefaultProduceStrategy</span> has to be used, producing directly to the
+message broker.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -561,7 +589,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -570,11 +599,15 @@ builder.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_ProduceToOutbox.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.ProduceToOutbox%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L72">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L72">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_ProduceToOutbox_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.ProduceToOutbox*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_ProduceToOutbox" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.ProduceToOutbox">ProduceToOutbox()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies that the<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a> has to be used, storing the messages into the
+transactional outbox table. The operation is therefore included in the database transaction applying
+the message side effects to the local database. The <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> takes care of
+asynchronously sending the messages to the message broker.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -591,7 +624,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -600,11 +634,12 @@ builder.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_SerializeUsing_Silverback_Messaging_Serialization_IMessageSerializer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.SerializeUsing(Silverback.Messaging.Serialization.IMessageSerializer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L52">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L52">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_SerializeUsing_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.SerializeUsing*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_SerializeUsing_Silverback_Messaging_Serialization_IMessageSerializer_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.SerializeUsing(Silverback.Messaging.Serialization.IMessageSerializer)">SerializeUsing(IMessageSerializer)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies the <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> to be used to serialize the messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -623,7 +658,8 @@ builder.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a></td>
         <td><span class="parametername">serializer</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -638,7 +674,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -647,11 +684,12 @@ builder.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_UseStrategy_Silverback_Messaging_Outbound_IProduceStrategy_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.UseStrategy(Silverback.Messaging.Outbound.IProduceStrategy)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L58">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L58">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_UseStrategy_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.UseStrategy*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_UseStrategy_Silverback_Messaging_Outbound_IProduceStrategy_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.UseStrategy(Silverback.Messaging.Outbound.IProduceStrategy)">UseStrategy(IProduceStrategy)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Specifies the strategy to be used to produce the messages.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -670,7 +708,8 @@ builder.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Outbound.IProduceStrategy.html">IProduceStrategy</a></td>
         <td><span class="parametername">strategy</span></td>
-        <td></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Outbound.IProduceStrategy.html">IProduceStrategy</a>.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -685,7 +724,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -694,16 +734,16 @@ builder.</p>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_WithMessageId__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602.WithMessageId%60%601(System.Func%7BSilverback.Messaging.Messages.IOutboundEnvelope%7B%60%600%7D%2CSystem.Object%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L119">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L119">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_WithMessageId_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.WithMessageId*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_WithMessageId__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.WithMessageId``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})">WithMessageId&lt;TMessage&gt;(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, Object&gt;)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Uses the specified value provider function to set the message id header for each produced message.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public TBuilder WithMessageId&lt;TMessage&gt;(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, object&gt; valueProvider)
-
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -719,7 +759,8 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, <span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">valueProvider</span></td>
-        <td></td>
+        <td><p>The value provider function.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -734,7 +775,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -749,7 +791,8 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TMessage</span></td>
-        <td></td>
+        <td><p>The type of the messages to be enriched with this header.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -787,7 +830,7 @@ builder.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ProducerEndpointBuilder_2.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ProducerEndpointBuilder%602%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L26" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/Configuration/ProducerEndpointBuilder`2.cs/#L26" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

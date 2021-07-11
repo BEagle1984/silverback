@@ -98,15 +98,19 @@
       <section><p>The base class for all <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementations.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.BrokerCollection.html">BrokerCollection</a></h4>
-      <section></section>
+      <section><p>Holds a reference to all the registered <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementations and is able to
+resolve the right instance according to the <a class="xref" href="Silverback.Messaging.IEndpoint.html">IEndpoint</a> type.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.BrokerConnectorService.html">BrokerConnectorService</a></h4>
       <section><p>Automatically connects the message brokers when the application starts and disconnects them when the
 application is being stopped.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Consumer.html">Consumer</a></h4>
-      <section></section>
+      <section><p>Consumes an endpoint and invokes a callback delegate when a message is received.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Consumer-3.html">Consumer&lt;TBroker, TEndpoint, TIdentifier&gt;</a></h4>
-      <section></section>
+      <section><p>Consumes an endpoint and invokes a callback delegate when a message is received.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.KafkaBroker.html">KafkaBroker</a></h4>
       <section><p>An <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementation for Apache Kafka.</p>
 </section>
@@ -128,32 +132,38 @@ eventually reconnect but this allows to accurately track its status.</p>
       <section><p>An <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementation for MQTT.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.MqttConsumer.html">MqttConsumer</a></h4>
-      <section></section>
+      <section><p>Consumes an endpoint and invokes a callback delegate when a message is received.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.MqttMessageIdentifier.html">MqttMessageIdentifier</a></h4>
       <section><p>The MQTT broker doesn't provide any message identifier, so the identifier is either the
 <a class="xref" href="Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_MessageId">MessageId</a> header value or a client-side generated
 <span class="xref">System.Guid</span>.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.MqttProducer.html">MqttProducer</a></h4>
-      <section></section>
+      <section><p>Produces to an endpoint.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.ProduceException.html">ProduceException</a></h4>
       <section><p>The exception that is thrown by the <a class="xref" href="Silverback.Messaging.Broker.IProducer.html">IProducer</a> when the message cannot be produced or
 the message broker didn't acknowledge it.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Producer.html">Producer</a></h4>
-      <section></section>
+      <section><p>Produces to an endpoint.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.Producer-2.html">Producer&lt;TBroker, TEndpoint&gt;</a></h4>
-      <section></section>
+      <section><p>Produces to an endpoint.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.RabbitBroker.html">RabbitBroker</a></h4>
       <section><p>An <a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a> implementation for RabbitMQ.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.RabbitConsumer.html">RabbitConsumer</a></h4>
-      <section></section>
+      <section><p>Consumes an endpoint and invokes a callback delegate when a message is received.</p>
+</section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.RabbitDeliveryTag.html">RabbitDeliveryTag</a></h4>
       <section><p>Represents the unique message identifier assigned by the message broker.</p>
 </section>
       <h4><a class="xref" href="Silverback.Messaging.Broker.RabbitProducer.html">RabbitProducer</a></h4>
-      <section></section>
+      <section><p>Produces to an endpoint.</p>
+</section>
     <h3 id="interfaces">Interfaces
   </h3>
       <h4><a class="xref" href="Silverback.Messaging.Broker.IBroker.html">IBroker</a></h4>
