@@ -119,7 +119,7 @@ namespace Silverback.Messaging
 
         private void UpdateDisplayName()
         {
-            _displayName = _friendlyName != null ? $"{_friendlyName} [{_name}]" : null;
+            _displayName = _friendlyName != null ? $"{_friendlyName} ({_name})" : null;
         }
     }
 }

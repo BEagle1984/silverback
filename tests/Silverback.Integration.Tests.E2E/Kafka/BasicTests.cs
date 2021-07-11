@@ -123,10 +123,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         config.BootstrapServers = "PLAINTEXT://tests";
                                     })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                    endpoint => endpoint.WithName("OUT").ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
+                                        .WithName("IN")
                                         .Configure(
                                             config =>
                                             {

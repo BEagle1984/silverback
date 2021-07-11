@@ -24,7 +24,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
 
             endpoint.FriendlyName = "display-name";
 
-            endpoint.DisplayName.Should().Be("display-name [name]");
+            endpoint.DisplayName.Should().Be("display-name (name)");
         }
     }
 }

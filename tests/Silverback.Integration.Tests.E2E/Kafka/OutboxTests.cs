@@ -268,7 +268,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 }
 
                 dbContext.Outbox.ForEach(
-                    message => message.EndpointName.Should().Be("my-topic-display-name [default-e2e-topic]"));
+                    message => message.EndpointName.Should().Be("my-topic-display-name (default-e2e-topic)"));
 
                 await dbContext.SaveChangesAsync();
             }

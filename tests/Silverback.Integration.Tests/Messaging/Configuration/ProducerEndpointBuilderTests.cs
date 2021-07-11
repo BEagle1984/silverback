@@ -32,7 +32,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             var endpoint = builder.WithName("display-name").Build();
 
-            endpoint.DisplayName.Should().Be("display-name [test]");
+            endpoint.DisplayName.Should().Be("display-name (test)");
         }
 
         [Fact]
