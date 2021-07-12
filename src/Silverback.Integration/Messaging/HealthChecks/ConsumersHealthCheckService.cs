@@ -41,7 +41,7 @@ namespace Silverback.Messaging.HealthChecks
         public Task<IReadOnlyCollection<IConsumer>> GetDisconnectedConsumersAsync(
             ConsumerStatus minStatus,
             TimeSpan gracePeriod,
-            IEnumerable<string>? endpointNames)
+            Func<IConsumerEndpoint, bool>? endpointsFilter)
         {
             // The check is skipped when the application is shutting down, because all consumers will be
             // disconnected and since the shutdown could take a while we don't want to report the application
@@ -52,7 +52,7 @@ namespace Silverback.Messaging.HealthChecks
             IReadOnlyCollection<IConsumer> disconnectedConsumers =
                 _brokerCollection
                     .SelectMany(
-                        broker => GetDisconnectedConsumers(broker, minStatus, gracePeriod, endpointNames))
+                        broker => GetDisconnectedConsumers(broker, minStatus, gracePeriod, endpointsFilter))
                     .ToList();
 
             return Task.FromResult(disconnectedConsumers);
@@ -62,16 +62,15 @@ namespace Silverback.Messaging.HealthChecks
             IBroker broker,
             ConsumerStatus minStatus,
             TimeSpan gracePeriod,
-            IEnumerable<string>? endpointNames) =>
+            Func<IConsumerEndpoint, bool>? endpointsFilter) =>
             broker.Consumers.Where(
-                consumer => IsToBeTested(consumer.Endpoint, endpointNames) &&
+                consumer => IsToBeTested(consumer.Endpoint, endpointsFilter) &&
                             IsDisconnected(consumer, minStatus, gracePeriod));
 
         private static bool IsToBeTested(
             IConsumerEndpoint consumerEndpoint,
-            IEnumerable<string>? endpointNames) =>
-            endpointNames == null || endpointNames.Any(
-                name => consumerEndpoint.Name == name || consumerEndpoint.FriendlyName == name);
+            Func<IConsumerEndpoint, bool>? endpointNames) =>
+            endpointNames == null || endpointNames.Invoke(consumerEndpoint);
 
         private static bool IsDisconnected(
             IConsumer consumer,

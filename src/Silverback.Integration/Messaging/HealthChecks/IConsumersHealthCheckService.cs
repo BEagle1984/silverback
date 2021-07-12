@@ -23,8 +23,8 @@ namespace Silverback.Messaging.HealthChecks
         /// <param name="gracePeriod">
         ///     The grace period to observe after each status change before a consumer is considered unhealthy.
         /// </param>
-        /// <param name="endpointNames">
-        ///     The name (or friendly name) of the endpoints to be tested.
+        /// <param name="endpointsFilter">
+        ///     An optional filter to be applied to the endpoints to be tested.
         /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains the
@@ -33,6 +33,6 @@ namespace Silverback.Messaging.HealthChecks
         Task<IReadOnlyCollection<IConsumer>> GetDisconnectedConsumersAsync(
             ConsumerStatus minStatus,
             TimeSpan gracePeriod,
-            IEnumerable<string>? endpointNames);
+            Func<IConsumerEndpoint, bool>? endpointsFilter);
     }
 }

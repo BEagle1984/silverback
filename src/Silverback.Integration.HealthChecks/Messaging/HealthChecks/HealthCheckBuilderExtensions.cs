@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.HealthChecks;
 using Silverback.Util;
@@ -112,8 +113,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="gracePeriod">
         ///     The grace period to observe after each status change before a consumer is considered unhealthy.
         /// </param>
-        /// <param name="endpointNames">
-        ///     The name (or friendly name) of the endpoints to be tested.
+        /// <param name="endpointsFilter">
+        ///     An optional filter to be applied to the endpoints to be tested.
         /// </param>
         /// <param name="name">
         ///     The health check name. The default is "Consumers".
@@ -132,7 +133,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this IHealthChecksBuilder builder,
             ConsumerStatus minHealthyStatus = ConsumerStatus.Ready,
             TimeSpan? gracePeriod = null,
-            IEnumerable<string>? endpointNames = null,
+            Func<IConsumerEndpoint, bool>? endpointsFilter = null,
             string name = "Consumers",
             HealthStatus? failureStatus = null,
             IEnumerable<string>? tags = null)
@@ -153,7 +154,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     serviceProvider.GetRequiredService<IConsumersHealthCheckService>(),
                     minHealthyStatus,
                     gracePeriod ?? TimeSpan.FromSeconds(30),
-                    endpointNames);
+                    endpointsFilter);
         }
     }
 }

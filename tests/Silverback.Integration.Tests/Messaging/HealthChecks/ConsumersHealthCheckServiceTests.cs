@@ -32,21 +32,13 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             disconnectedStatusInfo.Status.Returns(ConsumerStatus.Disconnected);
             _disconnectedConsumer = Substitute.For<IConsumer>();
             _disconnectedConsumer.StatusInfo.Returns(disconnectedStatusInfo);
-            _disconnectedConsumer.Endpoint.Returns(
-                new TestConsumerEndpoint("topic1")
-                {
-                    FriendlyName = "disconnected"
-                });
+            _disconnectedConsumer.Endpoint.Returns(new TestConsumerEndpoint("topic1"));
 
             var connectedStatusInfo = Substitute.For<IConsumerStatusInfo>();
             connectedStatusInfo.Status.Returns(ConsumerStatus.Connected);
             _connectedConsumer = Substitute.For<IConsumer>();
             _connectedConsumer.StatusInfo.Returns(connectedStatusInfo);
-            _connectedConsumer.Endpoint.Returns(
-                new TestConsumerEndpoint("topic2")
-                {
-                    FriendlyName = "connected"
-                });
+            _connectedConsumer.Endpoint.Returns(new TestConsumerEndpoint("topic2"));
 
             var readyStatusInfo = Substitute.For<IConsumerStatusInfo>();
             readyStatusInfo.Status.Returns(ConsumerStatus.Ready);
@@ -222,9 +214,9 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             await Task.Delay(100);
 
             result = await service.GetDisconnectedConsumersAsync(
-                    ConsumerStatus.Ready,
-                    TimeSpan.FromMilliseconds(100),
-                    null);
+                ConsumerStatus.Ready,
+                TimeSpan.FromMilliseconds(100),
+                null);
 
             result.Should().HaveCount(1);
             result.Should().BeEquivalentTo(consumer);
@@ -265,7 +257,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         }
 
         [Fact]
-        public async Task GetDisconnectedConsumersAsync_FilterByName_FilteredConsumersListReturned()
+        public async Task GetDisconnectedConsumersAsync_Filter_FilteredConsumersListReturned()
         {
             var broker = Substitute.For<IBroker>();
             broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
@@ -284,52 +276,18 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 await service.GetDisconnectedConsumersAsync(
                     ConsumerStatus.Ready,
                     TimeSpan.Zero,
-                    new[] { "topic1", "topic2" });
+                    endpoint => endpoint.Name is "topic1" or "topic2");
 
             IReadOnlyCollection<IConsumer> result2 =
                 await service.GetDisconnectedConsumersAsync(
                     ConsumerStatus.Ready,
                     TimeSpan.Zero,
-                    new[] { "topic1" });
+                    endpoint => endpoint.Name == "topic1");
 
             result1.Should().HaveCount(2);
             result1.Should().BeEquivalentTo(_disconnectedConsumer, _connectedConsumer);
             result2.Should().HaveCount(1);
             result2.Should().BeEquivalentTo(_disconnectedConsumer);
-        }
-
-        [Fact]
-        public async Task GetDisconnectedConsumersAsync_FilterByFriendlyName_FilteredConsumersListReturned()
-        {
-            var broker = Substitute.For<IBroker>();
-            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
-            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
-            broker.Consumers.Returns(
-                new[]
-                {
-                    _disconnectedConsumer, _connectedConsumer
-                });
-
-            var brokerCollection = new BrokerCollection(new[] { broker });
-            var hostApplicationLifetime = Substitute.For<IHostApplicationLifetime>();
-            var service = new ConsumersHealthCheckService(brokerCollection, hostApplicationLifetime);
-
-            IReadOnlyCollection<IConsumer> result1 =
-                await service.GetDisconnectedConsumersAsync(
-                    ConsumerStatus.Ready,
-                    TimeSpan.Zero,
-                    new[] { "disconnected", "connected" });
-
-            IReadOnlyCollection<IConsumer> result2 =
-                await service.GetDisconnectedConsumersAsync(
-                    ConsumerStatus.Ready,
-                    TimeSpan.Zero,
-                    new[] { "connected" });
-
-            result1.Should().HaveCount(2);
-            result1.Should().BeEquivalentTo(_disconnectedConsumer, _connectedConsumer);
-            result2.Should().HaveCount(1);
-            result2.Should().BeEquivalentTo(_connectedConsumer);
         }
     }
 }

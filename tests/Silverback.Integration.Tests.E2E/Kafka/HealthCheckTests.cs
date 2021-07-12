@@ -185,12 +185,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .Services
                         .AddHealthChecks()
                         .AddConsumersCheck(
-                            endpointNames: new[] { "two" },
+                            endpointsFilter: endpoint => endpoint.FriendlyName == "two",
                             gracePeriod: TimeSpan.Zero,
                             name: "check-2",
                             tags: new[] { "1" })
                         .AddConsumersCheck(
-                            endpointNames: new[] { "one", "topic3" },
+                            endpointsFilter: endpoint => endpoint.FriendlyName != "two",
                             gracePeriod: TimeSpan.Zero,
                             name: "check-1-3",
                             tags: new[] { "2" }))
