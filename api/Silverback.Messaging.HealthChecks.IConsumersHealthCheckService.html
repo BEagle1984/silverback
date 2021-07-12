@@ -103,20 +103,20 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_System_TimeSpan_System_Collections_Generic_IEnumerable_System_String__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus%2CSystem.TimeSpan%2CSystem.Collections.Generic.IEnumerable%7BSystem.String%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_System_TimeSpan_System_Func_Silverback_Messaging_IConsumerEndpoint_System_Boolean__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus%2CSystem.TimeSpan%2CSystem.Func%7BSilverback.Messaging.IConsumerEndpoint%2CSystem.Boolean%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/HealthChecks/IConsumersHealthCheckService.cs/#L33">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/HealthChecks/IConsumersHealthCheckService.cs/#L33">View source</a>
   </span>
   <a id="Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_" data-uid="Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync*"></a>
-  <h4 id="Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_System_TimeSpan_System_Collections_Generic_IEnumerable_System_String__" data-uid="Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Collections.Generic.IEnumerable{System.String})">GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, IEnumerable&lt;String&gt;)</h4>
+  <h4 id="Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_System_TimeSpan_System_Func_Silverback_Messaging_IConsumerEndpoint_System_Boolean__" data-uid="Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Func{Silverback.Messaging.IConsumerEndpoint,System.Boolean})">GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, Func&lt;IConsumerEndpoint, Boolean&gt;)</h4>
   <div class="markdown level1 summary"><p>Checks the status of all the consumers and returns a collection containing the consumer instances that
 don't appear to be fully connected (Status &gt;= <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Ready">Ready</a>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;IReadOnlyCollection&lt;IConsumer&gt;&gt; GetDisconnectedConsumersAsync(ConsumerStatus minStatus, TimeSpan gracePeriod, IEnumerable&lt;string&gt; endpointNames)</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;IReadOnlyCollection&lt;IConsumer&gt;&gt; GetDisconnectedConsumersAsync(ConsumerStatus minStatus, TimeSpan gracePeriod, Func&lt;IConsumerEndpoint, bool&gt; endpointsFilter)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -141,9 +141,9 @@ don't appear to be fully connected (Status &gt;= <a class="xref" href="Silverbac
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IEnumerable</span>&lt;<span class="xref">System.String</span>&gt;</td>
-        <td><span class="parametername">endpointNames</span></td>
-        <td><p>The name (or friendly name) of the endpoints to be tested.</p>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a>, <span class="xref">System.Boolean</span>&gt;</td>
+        <td><span class="parametername">endpointsFilter</span></td>
+        <td><p>An optional filter to be applied to the endpoints to be tested.</p>
 </td>
       </tr>
     </tbody>
@@ -176,7 +176,7 @@ consumers that aren't fully connected.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_HealthChecks_IConsumersHealthCheckService.md&amp;value=---%0Auid%3A%20Silverback.Messaging.HealthChecks.IConsumersHealthCheckService%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/feature/healthcheck-split/src/Silverback.Integration/Messaging/HealthChecks/IConsumersHealthCheckService.cs/#L14" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/HealthChecks/IConsumersHealthCheckService.cs/#L14" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

@@ -170,7 +170,6 @@
   <h5 id="Silverback_EventStore_DbEventStoreRepository_4_syntax">Syntax</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public abstract class DbEventStoreRepository&lt;TDomainEntity, TKey, TEventStoreEntity, TEventEntity&gt; : EventStoreRepository&lt;TDomainEntity, TEventStoreEntity, TEventEntity&gt; where TDomainEntity : class, IEventSourcingDomainEntity&lt;TKey&gt; where TEventStoreEntity : EventStoreEntity&lt;TEventEntity&gt;, new()
-
     where TEventEntity : class, IEventEntity, new()</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
@@ -290,7 +289,8 @@ class.</p>
   </span>
   <a id="Silverback_EventStore_DbEventStoreRepository_4_AddEventStoreEntity_" data-uid="Silverback.EventStore.DbEventStoreRepository`4.AddEventStoreEntity*"></a>
   <h4 id="Silverback_EventStore_DbEventStoreRepository_4_AddEventStoreEntity__2_" data-uid="Silverback.EventStore.DbEventStoreRepository`4.AddEventStoreEntity(`2)">AddEventStoreEntity(TEventStoreEntity)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Adds the new event store entity to the storage, without committing yet.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -309,12 +309,17 @@ class.</p>
       <tr>
         <td><span class="xref">TEventStoreEntity</span></td>
         <td><span class="parametername">eventStoreEntity</span></td>
-        <td></td>
+        <td><p>The event store entity to be added.</p>
+</td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><span class="xref">Silverback.EventStore.EventStoreRepository&lt;TDomainEntity, TEventStoreEntity, TEventEntity&gt;.AddEventStoreEntity(TEventStoreEntity)</span></div>
+  <h5 id="Silverback_EventStore_DbEventStoreRepository_4_AddEventStoreEntity__2__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>In EF Core this equals to adding the entity to the <code>DbSet</code> without calling <code>SaveChanges</code>
+(that will be called later by the framework).</p>
+</div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_EventStore_DbEventStoreRepository_4_Find_System_Linq_Expressions_Expression_System_Func__2_System_Boolean___System_Nullable_System_DateTime__.md&amp;value=---%0Auid%3A%20Silverback.EventStore.DbEventStoreRepository%604.Find(System.Linq.Expressions.Expression%7BSystem.Func%7B%602%2CSystem.Boolean%7D%7D%2CSystem.Nullable%7BSystem.DateTime%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
@@ -443,7 +448,8 @@ domain entity or <code>null</code> if not found.</p>
   </span>
   <a id="Silverback_EventStore_DbEventStoreRepository_4_GetEventStoreEntity_" data-uid="Silverback.EventStore.DbEventStoreRepository`4.GetEventStoreEntity*"></a>
   <h4 id="Silverback_EventStore_DbEventStoreRepository_4_GetEventStoreEntity__0_" data-uid="Silverback.EventStore.DbEventStoreRepository`4.GetEventStoreEntity(`0)">GetEventStoreEntity(TDomainEntity)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns the event store entity related to the specified domain entity.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -462,7 +468,8 @@ domain entity or <code>null</code> if not found.</p>
       <tr>
         <td><span class="xref">TDomainEntity</span></td>
         <td><span class="parametername">domainEntity</span></td>
-        <td></td>
+        <td><p>The domain entity.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -477,7 +484,8 @@ domain entity or <code>null</code> if not found.</p>
     <tbody>
       <tr>
         <td><span class="xref">TEventStoreEntity</span></td>
-        <td></td>
+        <td><p>The event store entity.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -492,7 +500,8 @@ domain entity or <code>null</code> if not found.</p>
   </span>
   <a id="Silverback_EventStore_DbEventStoreRepository_4_GetEventStoreEntityAsync_" data-uid="Silverback.EventStore.DbEventStoreRepository`4.GetEventStoreEntityAsync*"></a>
   <h4 id="Silverback_EventStore_DbEventStoreRepository_4_GetEventStoreEntityAsync__0_" data-uid="Silverback.EventStore.DbEventStoreRepository`4.GetEventStoreEntityAsync(`0)">GetEventStoreEntityAsync(TDomainEntity)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Returns the event store entity related to the specified domain entity.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -511,7 +520,8 @@ domain entity or <code>null</code> if not found.</p>
       <tr>
         <td><span class="xref">TDomainEntity</span></td>
         <td><span class="parametername">domainEntity</span></td>
-        <td></td>
+        <td><p>The domain entity.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -526,7 +536,9 @@ domain entity or <code>null</code> if not found.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TEventStoreEntity&gt;</td>
-        <td></td>
+        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
+event store entity.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -541,7 +553,8 @@ domain entity or <code>null</code> if not found.</p>
   </span>
   <a id="Silverback_EventStore_DbEventStoreRepository_4_RemoveCore_" data-uid="Silverback.EventStore.DbEventStoreRepository`4.RemoveCore*"></a>
   <h4 id="Silverback_EventStore_DbEventStoreRepository_4_RemoveCore__2_" data-uid="Silverback.EventStore.DbEventStoreRepository`4.RemoveCore(`2)">RemoveCore(TEventStoreEntity)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Removes the event store entity and all related events from the store.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -560,7 +573,8 @@ domain entity or <code>null</code> if not found.</p>
       <tr>
         <td><span class="xref">TEventStoreEntity</span></td>
         <td><span class="parametername">eventStore</span></td>
-        <td></td>
+        <td><p>The entity to be removed.</p>
+</td>
       </tr>
     </tbody>
   </table>

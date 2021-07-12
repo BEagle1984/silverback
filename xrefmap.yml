@@ -396,15 +396,15 @@ references:
   commentId: T:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions
   fullName: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions
   nameWithType: HealthCheckBuilderExtensions
-- uid: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,Silverback.Messaging.Broker.ConsumerStatus,System.Nullable{System.TimeSpan},System.Collections.Generic.IEnumerable{System.String},System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String})
-  name: AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, Nullable<TimeSpan>, IEnumerable<String>, String, Nullable<HealthStatus>, IEnumerable<String>)
-  href: api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_Nullable_System_TimeSpan__System_Collections_Generic_IEnumerable_System_String__System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__
-  commentId: M:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,Silverback.Messaging.Broker.ConsumerStatus,System.Nullable{System.TimeSpan},System.Collections.Generic.IEnumerable{System.String},System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String})
-  name.vb: AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, Nullable(Of TimeSpan), IEnumerable(Of String), String, Nullable(Of HealthStatus), IEnumerable(Of String))
-  fullName: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder, Silverback.Messaging.Broker.ConsumerStatus, System.Nullable<System.TimeSpan>, System.Collections.Generic.IEnumerable<System.String>, System.String, System.Nullable<Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus>, System.Collections.Generic.IEnumerable<System.String>)
-  fullName.vb: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder, Silverback.Messaging.Broker.ConsumerStatus, System.Nullable(Of System.TimeSpan), System.Collections.Generic.IEnumerable(Of System.String), System.String, System.Nullable(Of Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus), System.Collections.Generic.IEnumerable(Of System.String))
-  nameWithType: HealthCheckBuilderExtensions.AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, Nullable<TimeSpan>, IEnumerable<String>, String, Nullable<HealthStatus>, IEnumerable<String>)
-  nameWithType.vb: HealthCheckBuilderExtensions.AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, Nullable(Of TimeSpan), IEnumerable(Of String), String, Nullable(Of HealthStatus), IEnumerable(Of String))
+- uid: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,Silverback.Messaging.Broker.ConsumerStatus,System.Nullable{System.TimeSpan},System.Func{Silverback.Messaging.IConsumerEndpoint,System.Boolean},System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String})
+  name: AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, Nullable<TimeSpan>, Func<IConsumerEndpoint, Boolean>, String, Nullable<HealthStatus>, IEnumerable<String>)
+  href: api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_Nullable_System_TimeSpan__System_Func_Silverback_Messaging_IConsumerEndpoint_System_Boolean__System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__
+  commentId: M:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder,Silverback.Messaging.Broker.ConsumerStatus,System.Nullable{System.TimeSpan},System.Func{Silverback.Messaging.IConsumerEndpoint,System.Boolean},System.String,System.Nullable{Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus},System.Collections.Generic.IEnumerable{System.String})
+  name.vb: AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, Nullable(Of TimeSpan), Func(Of IConsumerEndpoint, Boolean), String, Nullable(Of HealthStatus), IEnumerable(Of String))
+  fullName: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder, Silverback.Messaging.Broker.ConsumerStatus, System.Nullable<System.TimeSpan>, System.Func<Silverback.Messaging.IConsumerEndpoint, System.Boolean>, System.String, System.Nullable<Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus>, System.Collections.Generic.IEnumerable<System.String>)
+  fullName.vb: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck(Microsoft.Extensions.DependencyInjection.IHealthChecksBuilder, Silverback.Messaging.Broker.ConsumerStatus, System.Nullable(Of System.TimeSpan), System.Func(Of Silverback.Messaging.IConsumerEndpoint, System.Boolean), System.String, System.Nullable(Of Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus), System.Collections.Generic.IEnumerable(Of System.String))
+  nameWithType: HealthCheckBuilderExtensions.AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, Nullable<TimeSpan>, Func<IConsumerEndpoint, Boolean>, String, Nullable<HealthStatus>, IEnumerable<String>)
+  nameWithType.vb: HealthCheckBuilderExtensions.AddConsumersCheck(IHealthChecksBuilder, ConsumerStatus, Nullable(Of TimeSpan), Func(Of IConsumerEndpoint, Boolean), String, Nullable(Of HealthStatus), IEnumerable(Of String))
 - uid: Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.AddConsumersCheck*
   name: AddConsumersCheck
   href: api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_
@@ -24843,15 +24843,15 @@ references:
   commentId: T:Silverback.Messaging.HealthChecks.ConsumersHealthCheck
   fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheck
   nameWithType: ConsumersHealthCheck
-- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.#ctor(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService,Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Collections.Generic.IEnumerable{System.String})
-  name: ConsumersHealthCheck(IConsumersHealthCheckService, ConsumerStatus, TimeSpan, IEnumerable<String>)
-  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheck__ctor_Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_Silverback_Messaging_Broker_ConsumerStatus_System_TimeSpan_System_Collections_Generic_IEnumerable_System_String__
-  commentId: M:Silverback.Messaging.HealthChecks.ConsumersHealthCheck.#ctor(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService,Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Collections.Generic.IEnumerable{System.String})
-  name.vb: ConsumersHealthCheck(IConsumersHealthCheckService, ConsumerStatus, TimeSpan, IEnumerable(Of String))
-  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.ConsumersHealthCheck(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService, Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Collections.Generic.IEnumerable<System.String>)
-  fullName.vb: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.ConsumersHealthCheck(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService, Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Collections.Generic.IEnumerable(Of System.String))
-  nameWithType: ConsumersHealthCheck.ConsumersHealthCheck(IConsumersHealthCheckService, ConsumerStatus, TimeSpan, IEnumerable<String>)
-  nameWithType.vb: ConsumersHealthCheck.ConsumersHealthCheck(IConsumersHealthCheckService, ConsumerStatus, TimeSpan, IEnumerable(Of String))
+- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.#ctor(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService,Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Func{Silverback.Messaging.IConsumerEndpoint,System.Boolean})
+  name: ConsumersHealthCheck(IConsumersHealthCheckService, ConsumerStatus, TimeSpan, Func<IConsumerEndpoint, Boolean>)
+  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheck__ctor_Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_Silverback_Messaging_Broker_ConsumerStatus_System_TimeSpan_System_Func_Silverback_Messaging_IConsumerEndpoint_System_Boolean__
+  commentId: M:Silverback.Messaging.HealthChecks.ConsumersHealthCheck.#ctor(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService,Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Func{Silverback.Messaging.IConsumerEndpoint,System.Boolean})
+  name.vb: ConsumersHealthCheck(IConsumersHealthCheckService, ConsumerStatus, TimeSpan, Func(Of IConsumerEndpoint, Boolean))
+  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.ConsumersHealthCheck(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService, Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Func<Silverback.Messaging.IConsumerEndpoint, System.Boolean>)
+  fullName.vb: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.ConsumersHealthCheck(Silverback.Messaging.HealthChecks.IConsumersHealthCheckService, Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Func(Of Silverback.Messaging.IConsumerEndpoint, System.Boolean))
+  nameWithType: ConsumersHealthCheck.ConsumersHealthCheck(IConsumersHealthCheckService, ConsumerStatus, TimeSpan, Func<IConsumerEndpoint, Boolean>)
+  nameWithType.vb: ConsumersHealthCheck.ConsumersHealthCheck(IConsumersHealthCheckService, ConsumerStatus, TimeSpan, Func(Of IConsumerEndpoint, Boolean))
 - uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheck.#ctor*
   name: ConsumersHealthCheck
   href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheck__ctor_
@@ -24891,15 +24891,15 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.ConsumersHealthCheckService
   nameWithType: ConsumersHealthCheckService.ConsumersHealthCheckService
-- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Collections.Generic.IEnumerable{System.String})
-  name: GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, IEnumerable<String>)
-  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_System_TimeSpan_System_Collections_Generic_IEnumerable_System_String__
-  commentId: M:Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Collections.Generic.IEnumerable{System.String})
-  name.vb: GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, IEnumerable(Of String))
-  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Collections.Generic.IEnumerable<System.String>)
-  fullName.vb: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Collections.Generic.IEnumerable(Of System.String))
-  nameWithType: ConsumersHealthCheckService.GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, IEnumerable<String>)
-  nameWithType.vb: ConsumersHealthCheckService.GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, IEnumerable(Of String))
+- uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Func{Silverback.Messaging.IConsumerEndpoint,System.Boolean})
+  name: GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, Func<IConsumerEndpoint, Boolean>)
+  href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_System_TimeSpan_System_Func_Silverback_Messaging_IConsumerEndpoint_System_Boolean__
+  commentId: M:Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Func{Silverback.Messaging.IConsumerEndpoint,System.Boolean})
+  name.vb: GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, Func(Of IConsumerEndpoint, Boolean))
+  fullName: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Func<Silverback.Messaging.IConsumerEndpoint, System.Boolean>)
+  fullName.vb: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Func(Of Silverback.Messaging.IConsumerEndpoint, System.Boolean))
+  nameWithType: ConsumersHealthCheckService.GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, Func<IConsumerEndpoint, Boolean>)
+  nameWithType.vb: ConsumersHealthCheckService.GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, Func(Of IConsumerEndpoint, Boolean))
 - uid: Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync*
   name: GetDisconnectedConsumersAsync
   href: api/Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_ConsumersHealthCheckService_GetDisconnectedConsumersAsync_
@@ -24971,15 +24971,15 @@ references:
   commentId: T:Silverback.Messaging.HealthChecks.IConsumersHealthCheckService
   fullName: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService
   nameWithType: IConsumersHealthCheckService
-- uid: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Collections.Generic.IEnumerable{System.String})
-  name: GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, IEnumerable<String>)
-  href: api/Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_System_TimeSpan_System_Collections_Generic_IEnumerable_System_String__
-  commentId: M:Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Collections.Generic.IEnumerable{System.String})
-  name.vb: GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, IEnumerable(Of String))
-  fullName: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Collections.Generic.IEnumerable<System.String>)
-  fullName.vb: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Collections.Generic.IEnumerable(Of System.String))
-  nameWithType: IConsumersHealthCheckService.GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, IEnumerable<String>)
-  nameWithType.vb: IConsumersHealthCheckService.GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, IEnumerable(Of String))
+- uid: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Func{Silverback.Messaging.IConsumerEndpoint,System.Boolean})
+  name: GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, Func<IConsumerEndpoint, Boolean>)
+  href: api/Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_System_TimeSpan_System_Func_Silverback_Messaging_IConsumerEndpoint_System_Boolean__
+  commentId: M:Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Func{Silverback.Messaging.IConsumerEndpoint,System.Boolean})
+  name.vb: GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, Func(Of IConsumerEndpoint, Boolean))
+  fullName: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Func<Silverback.Messaging.IConsumerEndpoint, System.Boolean>)
+  fullName.vb: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus, System.TimeSpan, System.Func(Of Silverback.Messaging.IConsumerEndpoint, System.Boolean))
+  nameWithType: IConsumersHealthCheckService.GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, Func<IConsumerEndpoint, Boolean>)
+  nameWithType.vb: IConsumersHealthCheckService.GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, Func(Of IConsumerEndpoint, Boolean))
 - uid: Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.GetDisconnectedConsumersAsync*
   name: GetDisconnectedConsumersAsync
   href: api/Silverback.Messaging.HealthChecks.IConsumersHealthCheckService.html#Silverback_Messaging_HealthChecks_IConsumersHealthCheckService_GetDisconnectedConsumersAsync_
