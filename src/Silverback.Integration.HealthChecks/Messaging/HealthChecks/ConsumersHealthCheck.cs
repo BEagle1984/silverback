@@ -70,9 +70,8 @@ namespace Silverback.Messaging.HealthChecks
                 "One or more consumers are not connected:",
                 (current, consumer) =>
                     $"{current}{Environment.NewLine}- " +
-                    $"[{consumer.Id}] " +
                     $"{consumer.Endpoint.DisplayName} " +
-                    $"({consumer.Endpoint.GetUniqueConsumerGroupName()})");
+                    $"[{consumer.Id}]");
 
             return new HealthCheckResult(context.Registration.FailureStatus, errorMessage);
         }

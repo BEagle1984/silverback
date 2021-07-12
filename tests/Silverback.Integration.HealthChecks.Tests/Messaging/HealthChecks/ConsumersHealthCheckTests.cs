@@ -72,9 +72,44 @@ namespace Silverback.Tests.Integration.HealthChecks.Messaging.HealthChecks
             var result = await healthCheck.CheckHealthAsync(context);
 
             result.Status.Should().Be(HealthStatus.Unhealthy);
-            result.Description.Should().StartWith(
+            result.Description.Should().Be(
                 $"One or more consumers are not connected:{Environment.NewLine}" +
-                "- [00000000-0000-0000-0000-000000000000] topic1");
+                "- topic1 [00000000-0000-0000-0000-000000000000]");
+        }
+
+        [Fact]
+        public async Task CheckHealthAsync_ConsumerWithFriendlyName_FriendlyNameAddedToDescription()
+        {
+            var statusInfo = Substitute.For<IConsumerStatusInfo>();
+            statusInfo.Status.Returns(ConsumerStatus.Connected);
+            var consumer = Substitute.For<IConsumer>();
+            consumer.StatusInfo.Returns(statusInfo);
+            consumer.Id.Returns(new InstanceIdentifier(Guid.Empty));
+            consumer.Endpoint.Returns(new TestConsumerEndpoint("topic1")
+            {
+                FriendlyName = "friendly-one"
+            });
+            var broker = Substitute.For<IBroker>();
+            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
+            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker.Consumers.Returns(new[] { consumer });
+
+            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+                services => services
+                    .AddSilverback()
+                    .Services
+                    .AddSingleton<IBrokerCollection>(new BrokerCollection(new[] { broker }))
+                    .AddHealthChecks()
+                    .AddConsumersCheck());
+
+            var (healthCheck, context) = GetHealthCheck(serviceProvider);
+
+            var result = await healthCheck.CheckHealthAsync(context);
+
+            result.Status.Should().Be(HealthStatus.Unhealthy);
+            result.Description.Should().Be(
+                $"One or more consumers are not connected:{Environment.NewLine}" +
+                "- friendly-one (topic1) [00000000-0000-0000-0000-000000000000]");
         }
 
         [Fact]
@@ -104,9 +139,9 @@ namespace Silverback.Tests.Integration.HealthChecks.Messaging.HealthChecks
             var result = await healthCheck.CheckHealthAsync(context);
 
             result.Status.Should().Be(HealthStatus.Degraded);
-            result.Description.Should().StartWith(
+            result.Description.Should().Be(
                 $"One or more consumers are not connected:{Environment.NewLine}" +
-                "- [00000000-0000-0000-0000-000000000000] topic1");
+                "- topic1 [00000000-0000-0000-0000-000000000000]");
         }
 
         [Fact]
@@ -204,9 +239,9 @@ namespace Silverback.Tests.Integration.HealthChecks.Messaging.HealthChecks
             var result = await healthCheck.CheckHealthAsync(context);
 
             result.Status.Should().Be(HealthStatus.Unhealthy);
-            result.Description.Should().StartWith(
+            result.Description.Should().Be(
                 $"One or more consumers are not connected:{Environment.NewLine}" +
-                "- [00000000-0000-0000-0000-000000000000] topic1");
+                "- topic1 [00000000-0000-0000-0000-000000000000]");
         }
 
         [Fact]
