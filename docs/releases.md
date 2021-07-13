@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.2.0-beta.4](https://github.com/BEagle1984/silverback/releases/tag/v3.2.0-beta.4)
+## [3.2.0](https://github.com/BEagle1984/silverback/releases/tag/v3.2.0)
 
 ### What's new
 
