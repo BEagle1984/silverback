@@ -3,6 +3,7 @@
 
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
+using Silverback.Messaging.Validation;
 
 namespace Silverback.Messaging
 {
@@ -82,6 +83,12 @@ namespace Silverback.Messaging
         ///     </para>
         /// </summary>
         public EncryptionSettings? Encryption { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the message validation mode. This option can be used to determines if validation has to be performed and if
+        ///     should throw an exception.
+        /// </summary>
+        public MessageValidationMode MessageValidationMode { get; set; } = MessageValidationMode.LogWarning;
 
         /// <inheritdoc cref="IEndpoint.Validate" />
         public virtual void Validate()

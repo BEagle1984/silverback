@@ -397,7 +397,11 @@ namespace Silverback.Tests.Integration.Diagnostics
                 consumer,
                 new InvalidProgramException());
 
-            _loggerSubstitute.Received(LogLevel.Warning, typeof(InvalidProgramException), expectedMessage, 1131);
+            _loggerSubstitute.Received(
+                LogLevel.Warning,
+                typeof(InvalidProgramException),
+                expectedMessage,
+                1131);
         }
 
         [Fact]
@@ -475,6 +479,36 @@ namespace Silverback.Tests.Integration.Diagnostics
         }
 
         [Fact]
+        public void LogInvalidMessageProduced_Logged()
+        {
+            var expectedMessage =
+                $"An invalid message has been produced. | validation errors:{Environment.NewLine}- The Id field is required.";
+
+            _silverbackLogger.LogInvalidMessageProduced($"{Environment.NewLine}- The Id field is required.");
+
+            _loggerSubstitute.Received(
+                LogLevel.Warning,
+                null,
+                expectedMessage,
+                1079);
+        }
+
+        [Fact]
+        public void LogInvalidMessageProcessed_Logged()
+        {
+            var expectedMessage =
+                $"An invalid message has been processed. | validation errors:{Environment.NewLine}- The Id field is required.";
+
+            _silverbackLogger.LogInvalidMessageProcessed($"{Environment.NewLine}- The Id field is required.");
+
+            _loggerSubstitute.Received(
+                LogLevel.Warning,
+                null,
+                expectedMessage,
+                1080);
+        }
+
+        [Fact]
         public void LogInvalidEndpointConfiguration_Logged()
         {
             var expectedMessage = "Invalid configuration for endpoint 'test'.";
@@ -497,7 +531,10 @@ namespace Silverback.Tests.Integration.Diagnostics
                 "Error occurred configuring the endpoints. | configurator: GenericEndpointsConfigurator";
 
             _silverbackLogger.LogEndpointConfiguratorError(
-                new GenericEndpointsConfigurator(_ => { }),
+                new GenericEndpointsConfigurator(
+                    _ =>
+                    {
+                    }),
                 new EndpointConfigurationException());
 
             _loggerSubstitute.Received(

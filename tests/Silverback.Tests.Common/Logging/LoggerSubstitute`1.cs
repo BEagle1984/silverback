@@ -28,6 +28,14 @@ namespace Silverback.Tests.Logging
             string? exceptionMessage = null) =>
             _logger.Received(logLevel, exceptionType, message, eventId, exceptionMessage);
 
+        public bool DidNotReceive(
+            LogLevel logLevel,
+            Type? exceptionType,
+            string? message = null,
+            int? eventId = null,
+            string? exceptionMessage = null) =>
+            _logger.DidNotReceive(logLevel, exceptionType, message, eventId, exceptionMessage);
+
         public void Log<TState>(
             LogLevel logLevel,
             EventId eventId,

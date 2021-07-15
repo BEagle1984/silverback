@@ -49,5 +49,24 @@ namespace Silverback.Messaging.Configuration
         ///     The endpoint builder so that additional calls can be chained.
         /// </returns>
         TBuilder WithEncryption(EncryptionSettings? encryptionSettings);
+
+        /// <summary>
+        ///     Enables the message validation.
+        /// </summary>
+        /// <param name="throwException">
+        ///     A value that specifies whether an exception should be thrown if the message is invalid.
+        /// </param>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        TBuilder ValidateMessage(bool throwException);
+
+        /// <summary>
+        ///     Disables the message validation.
+        /// </summary>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        TBuilder DisableMessageValidation();
     }
 }

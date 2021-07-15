@@ -28,13 +28,12 @@ namespace Silverback.Tests.Logging
             int? eventId = null,
             string? exceptionMessage = null)
         {
-            bool containsMatchingCall = _receivedCalls.Any(
-                call =>
-                    call.LogLevel == logLevel &&
-                    call.Exception?.GetType() == exceptionType
-                    && (message == null || call.Message == message)
-                    && (eventId == null || call.EventId == eventId)
-                    && (exceptionMessage == null || call.Exception?.Message == exceptionMessage));
+            bool containsMatchingCall = ContainsMatchingCall(
+                logLevel,
+                exceptionType,
+                message,
+                eventId,
+                exceptionMessage);
 
             if (!containsMatchingCall)
             {
@@ -47,6 +46,19 @@ namespace Silverback.Tests.Logging
                     $"No matching call received. Received calls: {receivedCallsDump}");
             }
         }
+
+        public bool DidNotReceive(
+            LogLevel logLevel,
+            Type? exceptionType,
+            string? message = null,
+            int? eventId = null,
+            string? exceptionMessage = null) =>
+            !ContainsMatchingCall(
+                logLevel,
+                exceptionType,
+                message,
+                eventId,
+                exceptionMessage);
 
         public void Log<TState>(
             LogLevel logLevel,
@@ -66,6 +78,20 @@ namespace Silverback.Tests.Logging
         public bool IsEnabled(LogLevel logLevel) => logLevel >= _factory.MinLevel;
 
         public IDisposable BeginScope<TState>(TState state) => null!;
+
+        private bool ContainsMatchingCall(
+            LogLevel logLevel,
+            Type? exceptionType,
+            string? message,
+            int? eventId,
+            string? exceptionMessage) =>
+            _receivedCalls.Any(
+                call =>
+                    call.LogLevel == logLevel &&
+                    call.Exception?.GetType() == exceptionType
+                    && (message == null || call.Message == message)
+                    && (eventId == null || call.EventId == eventId)
+                    && (exceptionMessage == null || call.Exception?.Message == exceptionMessage));
 
         private class ReceivedCall
         {

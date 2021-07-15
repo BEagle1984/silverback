@@ -169,6 +169,12 @@ namespace Silverback.Diagnostics
         private static readonly Action<ILogger, Exception?> ErrorProcessingOutbox =
             SilverbackLoggerMessage.Define(IntegrationLogEvents.ErrorProcessingOutbox);
 
+        private static readonly Action<ILogger, string, Exception?> InvalidMessageProduced =
+            SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.InvalidMessageProduced);
+
+        private static readonly Action<ILogger, string, Exception?> InvalidMessageProcessed =
+            SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.InvalidMessageProcessed);
+
         private static readonly Action<ILogger, string, Exception?> InvalidEndpointConfiguration =
             SilverbackLoggerMessage.Define<string>(IntegrationLogEvents.InvalidEndpointConfiguration);
 
@@ -444,6 +450,12 @@ namespace Silverback.Diagnostics
             this ISilverbackLogger logger,
             Exception exception) =>
             ErrorProcessingOutbox(logger.InnerLogger, exception);
+
+        public static void LogInvalidMessageProduced(this ISilverbackLogger logger, string validationErrors) =>
+            InvalidMessageProduced(logger.InnerLogger, validationErrors, null);
+
+        public static void LogInvalidMessageProcessed(this ISilverbackLogger logger, string validationErrors) =>
+            InvalidMessageProcessed(logger.InnerLogger, validationErrors, null);
 
         public static void LogInvalidEndpointConfiguration(
             this ISilverbackLogger logger,
