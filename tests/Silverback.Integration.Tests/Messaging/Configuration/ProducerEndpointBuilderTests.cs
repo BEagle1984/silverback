@@ -8,6 +8,7 @@ using Silverback.Messaging.BinaryFiles;
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Outbound;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
+using Silverback.Messaging.Validation;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -102,6 +103,46 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             endpoint.Chunk.Should().NotBeNull();
             endpoint.Chunk!.Size.Should().Be(42);
             endpoint.Chunk!.AlwaysAddHeaders.Should().BeFalse();
+        }
+
+        [Fact]
+        public void MessageValidationMode_ByDefault_IsLogWarning()
+        {
+            var builder = new TestProducerEndpointBuilder();
+
+            var endpoint = builder.Build();
+
+            endpoint.MessageValidationMode.Should().Be(MessageValidationMode.LogWarning);
+        }
+
+        [Fact]
+        public void DisableMessageValidation_MessageValidationMode_IsNone()
+        {
+            var builder = new TestProducerEndpointBuilder();
+
+            var endpoint = builder.DisableMessageValidation().Build();
+
+            endpoint.MessageValidationMode.Should().Be(MessageValidationMode.None);
+        }
+
+        [Fact]
+        public void ValidateMessage_NoThrowException_MessageValidationModeIsLogWarning()
+        {
+            var builder = new TestProducerEndpointBuilder();
+
+            var endpoint = builder.ValidateMessage(false).Build();
+
+            endpoint.MessageValidationMode.Should().Be(MessageValidationMode.LogWarning);
+        }
+
+        [Fact]
+        public void ValidateMessage_ThrowException_MessageValidationModeIsThrowException()
+        {
+            var builder = new TestProducerEndpointBuilder();
+
+            var endpoint = builder.ValidateMessage(true).Build();
+
+            endpoint.MessageValidationMode.Should().Be(MessageValidationMode.ThrowException);
         }
     }
 }

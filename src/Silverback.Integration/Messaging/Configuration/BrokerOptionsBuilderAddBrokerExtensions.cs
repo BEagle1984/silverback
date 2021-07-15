@@ -20,6 +20,7 @@ using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
+using Silverback.Messaging.Validation;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
@@ -64,6 +65,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 brokerOptionsBuilder.SilverbackBuilder
                     .AddSingletonBrokerBehavior<ActivityProducerBehavior>()
                     .AddSingletonBrokerBehavior<ActivityConsumerBehavior>();
+
+                // Pipeline - Validation
+                brokerOptionsBuilder.SilverbackBuilder
+                    .AddSingletonBrokerBehavior<ValidatorProducerBehavior>()
+                    .AddSingletonBrokerBehavior<ValidatorConsumerBehavior>();
 
                 // Pipeline - Serialization
                 brokerOptionsBuilder.SilverbackBuilder

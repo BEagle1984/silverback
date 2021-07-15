@@ -10,6 +10,7 @@ using Silverback.Messaging.Outbound.TransactionalOutbox;
 using Silverback.Messaging.Sequences.Batch;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Messaging.Serialization;
+using Silverback.Messaging.Validation;
 
 namespace Silverback.Diagnostics
 {
@@ -521,6 +522,24 @@ namespace Silverback.Diagnostics
             LogLevel.Error,
             GetEventId(78, nameof(ErrorProcessingOutbox)),
             "Error occurred processing the outbox.");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an invalid message
+        ///     has been produced (see <see cref="MessageValidationMode"/>).
+        /// </summary>
+        public static LogEvent InvalidMessageProduced { get; } = new(
+            LogLevel.Warning,
+            GetEventId(79, nameof(InvalidMessageProduced)),
+            "An invalid message has been produced. | validation errors:{validationErrors}");
+
+        /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an invalid message
+        ///     has been processed (see <see cref="MessageValidationMode"/>).
+        /// </summary>
+        public static LogEvent InvalidMessageProcessed { get; } = new(
+            LogLevel.Warning,
+            GetEventId(80, nameof(InvalidMessageProcessed)),
+            "An invalid message has been processed. | validation errors:{validationErrors}");
 
         /// <summary>
         ///     Gets the <see cref="LogEvent" /> representing the log that is written when trying to connect an endpoint

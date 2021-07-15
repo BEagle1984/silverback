@@ -28,6 +28,8 @@
           href: broker/headers.md
         - name: Serialization
           href: broker/serialization.md
+        - name: Message Validation
+          href: broker/validation.md
         - name: Tombstone Message
           href: broker/tombstone.md
         - name: Message Identifier

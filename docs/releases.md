@@ -4,12 +4,13 @@ uid: releases
 
 # Releases
 
-## [3.3.0-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v3.3.0-beta.1)
+## [3.3.0-beta.2](https://github.com/BEagle1984/silverback/releases/tag/v3.3.0-beta.2)
 
 ### What's new
 
 * Optimize in-memory mocked Kafka (avoid spawning too many threads)
 * Support multiple brokers (with overlapping topic names) in mocked Kafka and MQTT
+* Add message validation for both producer and consumer (see <xref:validation>)
 
 ### Fixes
 

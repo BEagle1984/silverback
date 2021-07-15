@@ -3,6 +3,7 @@
 
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
+using Silverback.Messaging.Validation;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
@@ -25,6 +26,8 @@ namespace Silverback.Messaging.Configuration
         private IMessageSerializer? _serializer;
 
         private EncryptionSettings? _encryptionSettings;
+
+        private MessageValidationMode _messageValidationMode = MessageValidationMode.LogWarning;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="EndpointBuilder{TEndpoint,TBuilder}" /> class.
@@ -72,6 +75,22 @@ namespace Silverback.Messaging.Configuration
             return This;
         }
 
+        /// <inheritdoc cref="IEndpointBuilder{TBuilder}.ValidateMessage" />
+        public TBuilder ValidateMessage(bool throwException)
+        {
+            _messageValidationMode = throwException
+                ? MessageValidationMode.ThrowException
+                : MessageValidationMode.LogWarning;
+            return This;
+        }
+
+        /// <inheritdoc cref="IEndpointBuilder{TBuilder}.DisableMessageValidation" />
+        public TBuilder DisableMessageValidation()
+        {
+            _messageValidationMode = MessageValidationMode.None;
+            return This;
+        }
+
         /// <summary>
         ///     Builds the endpoint instance.
         /// </summary>
@@ -89,6 +108,8 @@ namespace Silverback.Messaging.Configuration
                 endpoint.Serializer = _serializer;
 
             endpoint.Encryption = _encryptionSettings;
+
+            endpoint.MessageValidationMode = _messageValidationMode;
 
             endpoint.Validate();
 

@@ -3,6 +3,7 @@
 
 using Silverback.Messaging.Encryption;
 using Silverback.Messaging.Serialization;
+using Silverback.Messaging.Validation;
 
 namespace Silverback.Messaging
 {
@@ -48,6 +49,12 @@ namespace Silverback.Messaging
         ///     to be shown in the human-targeted output (e.g. logs, health checks result, etc.).
         /// </summary>
         string? FriendlyName { get; }
+
+        /// <summary>
+        ///     Gets the message validation mode. This option can be used to specify if the messages have to be validated
+        ///     and whether an exception must be thrown if the message is not valid.
+        /// </summary>
+        MessageValidationMode MessageValidationMode { get; }
 
         /// <summary>
         ///     Validates the endpoint configuration and throws an <see cref="EndpointConfigurationException" /> if

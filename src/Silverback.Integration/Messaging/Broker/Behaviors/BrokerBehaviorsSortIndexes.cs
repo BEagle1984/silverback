@@ -13,6 +13,7 @@ using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
+using Silverback.Messaging.Validation;
 
 namespace Silverback.Messaging.Broker.Behaviors
 {
@@ -58,6 +59,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             ///     The <see cref="BinaryFileHandlerProducerBehavior" /> sort index.
             /// </summary>
             public const int BinaryFileHandler = 500;
+
+            /// <summary>
+            ///     The <see cref="ValidatorProducerBehavior" /> sort index.
+            /// </summary>
+            public const int Validator = 550;
 
             /// <summary>
             ///     The <see cref="SerializerProducerBehavior" /> sort index.
@@ -134,6 +140,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             ///     The <see cref="DeserializerConsumerBehavior" /> sort index.
             /// </summary>
             public const int Deserializer = 900;
+
+            /// <summary>
+            ///     The <see cref="ValidatorConsumerBehavior" /> sort index.
+            /// </summary>
+            public const int Validator = 950;
 
             /// <summary>
             ///     The <see cref="HeadersReaderConsumerBehavior" /> sort index.
