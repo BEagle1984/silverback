@@ -4,6 +4,16 @@ uid: releases
 
 # Releases
 
+## [3.3.0-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v3.3.0-beta.1)
+
+### What's new
+
+* Optimize in-memory mocked Kafka (avoid spawning too many threads)
+
+### Fixes
+
+* Invoke the Kafka partition EOF callback for all connected consumers
+
 ## [3.2.0](https://github.com/BEagle1984/silverback/releases/tag/v3.2.0)
 
 ### What's new

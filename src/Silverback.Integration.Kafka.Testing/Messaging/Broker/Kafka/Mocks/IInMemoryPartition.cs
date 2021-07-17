@@ -30,5 +30,19 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         ///     Gets the messages written to the partition.
         /// </summary>
         IReadOnlyCollection<Message<byte[]?, byte[]?>> Messages { get; }
+
+        /// <summary>
+        ///     Pulls the next message from the partition, if available.
+        /// </summary>
+        /// <param name="offset">
+        ///     The offset of the next message to be pulled.
+        /// </param>
+        /// <param name="result">
+        ///     The <see cref="ConsumeResult{TKey,TValue}" /> wrapping the pulled message.
+        /// </param>
+        /// <returns>
+        ///     A value indicating whether a message was available for pulling.
+        /// </returns>
+        bool TryPull(Offset offset, out ConsumeResult<byte[]?, byte[]?>? result);
     }
 }

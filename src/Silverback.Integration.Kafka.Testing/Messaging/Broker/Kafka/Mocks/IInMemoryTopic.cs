@@ -54,26 +54,6 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         Offset Push(int partition, Message<byte[]?, byte[]?> message);
 
         /// <summary>
-        ///     Pulls the next message from the topic, if available.
-        /// </summary>
-        /// <param name="consumer">
-        ///     The consumer.
-        /// </param>
-        /// <param name="partitionOffsets">
-        ///     The offset of the next message in each partition.
-        /// </param>
-        /// <param name="result">
-        ///     The <see cref="ConsumeResult{TKey,TValue}" /> wrapping the pulled message.
-        /// </param>
-        /// <returns>
-        ///     A value indicating whether a message was available for pulling.
-        /// </returns>
-        bool TryPull(
-            IMockedConfluentConsumer consumer,
-            IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
-            out ConsumeResult<byte[]?, byte[]?>? result);
-
-        /// <summary>
         ///     Ensures that a partition assignment has been given to the specified consumer, otherwise
         ///     triggers the assignment process.
         /// </summary>

@@ -63,35 +63,6 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public Offset Push(int partition, Message<byte[]?, byte[]?> message) =>
             _partitions[partition].Add(message);
 
-        public bool TryPull(
-            IMockedConfluentConsumer consumer,
-            IReadOnlyCollection<TopicPartitionOffset> partitionOffsets,
-            out ConsumeResult<byte[]?, byte[]?>? result)
-        {
-            try
-            {
-                if (!_committedOffsets.ContainsKey(consumer.GroupId))
-                {
-                    result = null;
-                    return false;
-                }
-
-                foreach (var partitionOffset in partitionOffsets.OrderBy(
-                    partitionOffset => partitionOffset.Offset.Value))
-                {
-                    if (_partitions[partitionOffset.Partition].TryPull(partitionOffset.Offset, consumer.EnablePartitionEof, out result))
-                        return true;
-                }
-
-                result = null;
-                return false;
-            }
-            catch (Exception exception)
-            {
-                throw new KafkaException(new Error(ErrorCode.Unknown), exception);
-            }
-        }
-
         [SuppressMessage("ReSharper", "InconsistentlySynchronizedField", Justification = "Sync writes only")]
         public void EnsurePartitionsAssigned(
             IMockedConfluentConsumer consumer,

@@ -26,6 +26,10 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _storedOffsets
             = new();
 
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>
+            _lastPartitionEof
+                = new();
+
         private readonly List<TopicPartitionOffset> _temporaryAssignment = new();
 
         private readonly List<string> _topicAssignments = new();
@@ -102,8 +106,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 if (TryConsume(cancellationToken, out var result))
                     return result!;
 
-                AsyncHelper.RunSynchronously(
-                    () => Task.Delay(TimeSpan.FromMilliseconds(10), cancellationToken));
+                Thread.Sleep(10);
             }
         }
 
@@ -368,48 +371,58 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
             _currentOffsets.Clear();
             _storedOffsets.Clear();
+            _lastPartitionEof.Clear();
         }
 
         private bool TryConsume(
             CancellationToken cancellationToken,
             out ConsumeResult<byte[]?, byte[]?>? result)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             Subscription.ForEach(
                 topic => _topics[topic].EnsurePartitionsAssigned(
                     this,
                     _options.PartitionsAssignmentDelay,
                     cancellationToken));
 
-            // Process the topics starting from the one that consumed less messages
-            var topicPairs = _currentOffsets
-                .OrderBy(topicPair => topicPair.Value.Sum(partitionPair => partitionPair.Value.Value));
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            foreach (var topicPair in topicPairs)
-            {
-                bool pulled = _topics[topicPair.Key].TryPull(
-                    this,
-                    topicPair.Value
-                        .Where(partitionPair => !IsPaused(topicPair.Key, partitionPair.Key))
-                        .Select(
+            // Process the assigned partitions starting from the one that consumed less messages
+            var topicPartitionsOffsets = _currentOffsets
+                .SelectMany(
+                    topicPair =>
+                        topicPair.Value.Select(
                             partitionPair => new TopicPartitionOffset(
                                 topicPair.Key,
                                 partitionPair.Key,
-                                partitionPair.Value))
-                        .ToList(),
-                    out result);
+                                partitionPair.Value)))
+                .Where(
+                    topicPartitionOffset => !IsPaused(
+                        topicPartitionOffset.Topic,
+                        topicPartitionOffset.Partition))
+                .OrderBy(topicPartitionOffset => (int)topicPartitionOffset.Offset);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var topicPartitionOffset in topicPartitionsOffsets)
+            {
+                var inMemoryPartition =
+                    _topics[topicPartitionOffset.Topic]
+                        .Partitions[topicPartitionOffset.Partition];
+
+                bool pulled = inMemoryPartition.TryPull(topicPartitionOffset.Offset, out result);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                if (pulled && Assignment.Contains(result!.TopicPartition))
+                if (Assignment.Contains(topicPartitionOffset.TopicPartition))
                 {
-                    if (!result!.IsPartitionEOF)
+                    if (pulled)
                     {
-                        _currentOffsets[result.Topic][result.Partition] = result.Offset + 1;
+                        _currentOffsets[result!.Topic][result.Partition] = result.Offset + 1;
+                        return true;
                     }
 
-                    return true;
+                    if (EnablePartitionEof && GetEofMessageIfNeeded(topicPartitionOffset, out result))
+                        return true;
                 }
             }
 
@@ -465,6 +478,45 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
                 await Task.Delay(_autoCommitIntervalMs).ConfigureAwait(false);
             }
+        }
+
+        private bool GetEofMessageIfNeeded(
+            TopicPartitionOffset topicPartitionOffset,
+            out ConsumeResult<byte[]?, byte[]?>? result)
+        {
+            if (!_lastPartitionEof.ContainsKey(topicPartitionOffset.Topic))
+            {
+                _lastPartitionEof[topicPartitionOffset.Topic] =
+                    new ConcurrentDictionary<Partition, Offset>();
+            }
+
+            if (!_lastPartitionEof[topicPartitionOffset.Topic]
+                .ContainsKey(topicPartitionOffset.Partition))
+            {
+                _lastPartitionEof[topicPartitionOffset.Topic][topicPartitionOffset.Partition] = -1;
+            }
+
+            var lastEofOffset =
+                _lastPartitionEof[topicPartitionOffset.Topic][topicPartitionOffset.Partition];
+
+            if (lastEofOffset < topicPartitionOffset.Offset)
+            {
+                _lastPartitionEof[topicPartitionOffset.Topic][topicPartitionOffset.Partition] =
+                    topicPartitionOffset.Offset;
+
+                result = new ConsumeResult<byte[]?, byte[]?>
+                {
+                    IsPartitionEOF = true,
+                    Offset = topicPartitionOffset.Offset - 1,
+                    Topic = topicPartitionOffset.Topic,
+                    Partition = topicPartitionOffset.Partition
+                };
+
+                return true;
+            }
+
+            result = null;
+            return false;
         }
     }
 }
