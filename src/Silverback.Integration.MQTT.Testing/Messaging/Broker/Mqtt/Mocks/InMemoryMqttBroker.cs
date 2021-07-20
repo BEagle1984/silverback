@@ -90,14 +90,17 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             "ReSharper",
             "InconsistentlySynchronizedField",
             Justification = "Lock (dis-)connect only")]
-        public Task PublishAsync(string clientId, MqttApplicationMessage message)
+        public Task PublishAsync(
+            string clientId,
+            MqttApplicationMessage message,
+            IMqttClientOptions clientOptions)
         {
             if (!_sessions.TryGetValue(clientId, out var publisherSession) || !publisherSession.IsConnected)
                 throw new InvalidOperationException("The client is not connected.");
 
             StoreMessage(message);
 
-            return _sessions.Values.ForEachAsync(session => session.PushAsync(message).AsTask());
+            return _sessions.Values.ForEachAsync(session => session.PushAsync(message, clientOptions).AsTask());
         }
 
         [SuppressMessage(

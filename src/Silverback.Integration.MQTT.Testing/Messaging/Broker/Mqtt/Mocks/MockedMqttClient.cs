@@ -137,7 +137,10 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         {
             Check.NotNull(applicationMessage, nameof(applicationMessage));
 
-            await _broker.PublishAsync(ClientId, applicationMessage).ConfigureAwait(false);
+            if (Options == null)
+                throw new InvalidOperationException("The client is not connected.");
+
+            await _broker.PublishAsync(ClientId, applicationMessage, Options).ConfigureAwait(false);
 
             return new MqttClientPublishResult
             {

@@ -1190,6 +1190,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             }
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
+            await AsyncTestingUtil.WaitAsync(() => !Helper.Broker.Consumers[0].IsConnected);
 
             Helper.Broker.Consumers[0].IsConnected.Should().BeFalse();
             batchesCount.Should().BeGreaterThan(1);

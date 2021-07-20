@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Confluent.Kafka;
 using Silverback.Messaging.Configuration.Kafka;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
@@ -25,9 +26,17 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public int Count => _topics.Count;
 
-        public IInMemoryTopic this[string name] => _topics.GetOrAdd(
-            name,
-            _ => new InMemoryTopic(name, _options.DefaultPartitionsCount, _consumersLock));
+        public IInMemoryTopic Get(string name, ClientConfig clientConfig) =>
+            Get(name, clientConfig.BootstrapServers);
+
+        public IInMemoryTopic Get(string name, string bootstrapServers) =>
+            _topics.GetOrAdd(
+                $"{bootstrapServers.ToUpperInvariant()}|{name}",
+                _ => new InMemoryTopic(
+                    name,
+                    bootstrapServers,
+                    _options.DefaultPartitionsCount,
+                    _consumersLock));
 
         public IEnumerator<IInMemoryTopic> GetEnumerator() => _topics.Values.GetEnumerator();
 

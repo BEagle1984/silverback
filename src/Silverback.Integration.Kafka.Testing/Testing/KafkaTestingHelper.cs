@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Silverback.Diagnostics;
+using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Kafka.Mocks;
 
@@ -19,6 +20,8 @@ namespace Silverback.Testing
     public class KafkaTestingHelper : TestingHelper<KafkaBroker>, IKafkaTestingHelper
     {
         private readonly IInMemoryTopicCollection? _topics;
+
+        private readonly KafkaBroker _kafkaBroker;
 
         private readonly ILogger<KafkaTestingHelper> _logger;
 
@@ -37,16 +40,51 @@ namespace Silverback.Testing
             : base(serviceProvider, logger)
         {
             _topics = serviceProvider.GetService<IInMemoryTopicCollection>();
+            _kafkaBroker = serviceProvider.GetRequiredService<KafkaBroker>();
             _logger = logger;
         }
 
-        /// <inheritdoc cref="IKafkaTestingHelper.GetTopic" />
-        public IInMemoryTopic GetTopic(string name)
+        /// <inheritdoc cref="IKafkaTestingHelper.GetTopic(string)" />
+        public IInMemoryTopic GetTopic(string name) =>
+            GetTopics(name).First();
+
+        /// <inheritdoc cref="IKafkaTestingHelper.GetTopic(string,string)" />
+        public IInMemoryTopic GetTopic(string name, string bootstrapServers) =>
+            GetTopics(name, bootstrapServers).First();
+
+        /// <inheritdoc cref="IKafkaTestingHelper.GetTopics" />
+        public IReadOnlyCollection<IInMemoryTopic> GetTopics(string name, string? bootstrapServers = null)
         {
             if (_topics == null)
                 throw new InvalidOperationException("The IInMemoryTopicCollection is not initialized.");
 
-            return _topics[name];
+            List<IInMemoryTopic> topics = _topics.Where(
+                    topic =>
+                        topic.Name == name &&
+                        (bootstrapServers == null || string.Equals(
+                            bootstrapServers,
+                            topic.BootstrapServers,
+                            StringComparison.OrdinalIgnoreCase)))
+                .ToList();
+
+            if (topics.Count != 0)
+                return topics;
+
+            if (bootstrapServers != null)
+                return new[] { _topics.Get(name, bootstrapServers) };
+
+            // If the topic wasn't created yet, just create one per each broker
+            return _kafkaBroker
+                .Producers.Select(
+                    producer => ((KafkaProducerEndpoint)producer.Endpoint).Configuration.BootstrapServers)
+                .Union(
+                    _kafkaBroker.Consumers.Select(
+                        producer =>
+                            ((KafkaConsumerEndpoint)producer.Endpoint).Configuration.BootstrapServers))
+                .Select(servers => servers.ToUpperInvariant())
+                .Distinct()
+                .Select(servers => _topics.Get(name, servers))
+                .ToList();
         }
 
         /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" />

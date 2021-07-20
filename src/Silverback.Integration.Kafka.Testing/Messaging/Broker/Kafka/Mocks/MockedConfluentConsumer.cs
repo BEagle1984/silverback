@@ -16,6 +16,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
     internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
+        private readonly ConsumerConfig _config;
+
         private readonly IInMemoryTopicCollection _topics;
 
         private readonly IMockedKafkaOptions _options;
@@ -44,6 +46,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             IInMemoryTopicCollection topics,
             IMockedKafkaOptions options)
         {
+            _config = Check.NotNull(config, nameof(config));
             _topics = Check.NotNull(topics, nameof(topics));
             _options = Check.NotNull(options, nameof(options));
 
@@ -121,7 +124,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             }
 
             var topicsList =
-                EnumerableAsCollectionExtensions.AsReadOnlyList(Check.NotNull(topics, nameof(topics)));
+                Check.NotNull(topics, nameof(topics)).AsReadOnlyList();
             Check.NotEmpty(topicsList, nameof(topics));
             Check.HasNoEmpties(topicsList, nameof(topics));
 
@@ -129,7 +132,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             {
                 Subscription.Clear();
                 Subscription.AddRange(topicsList);
-                Subscription.ForEach(topic => _topics[topic].Subscribe(this));
+                Subscription.ForEach(topic => _topics.Get(topic, _config).Subscribe(this));
             }
         }
 
@@ -141,7 +144,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             {
                 foreach (var topic in Subscription)
                 {
-                    _topics[topic].Unsubscribe(this);
+                    _topics.Get(topic, _config).Unsubscribe(this);
                 }
 
                 Subscription.Clear();
@@ -162,7 +165,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             foreach (var topicPartitionOffset in partitions)
             {
                 Assignment.Add(topicPartitionOffset.TopicPartition);
-                _topics[topicPartitionOffset.Topic].Assign(this, topicPartitionOffset.Partition);
+                _topics.Get(topicPartitionOffset.Topic, _config).Assign(this, topicPartitionOffset.Partition);
                 Seek(GetStartingOffset(topicPartitionOffset));
             }
 
@@ -217,7 +220,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             var actualCommittedOffsets = new List<TopicPartitionOffset>();
             foreach (var group in topicPartitionOffsetsByTopic)
             {
-                actualCommittedOffsets.AddRange(_topics[group.Key].Commit(GroupId, group));
+                actualCommittedOffsets.AddRange(_topics.Get(group.Key, _config).Commit(GroupId, group));
             }
 
             if (actualCommittedOffsets.Count > 0)
@@ -361,7 +364,9 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 Assignment.Where(topicPartition => topicPartition.Topic == topicName).Select(
                         partition => new TopicPartitionOffset(
                             partition,
-                            _topics[partition.Topic].GetCommittedOffset(partition.Partition, GroupId)))
+                            _topics.Get(partition.Topic, _config).GetCommittedOffset(
+                                partition.Partition,
+                                GroupId)))
                     .ToList());
         }
 
@@ -381,10 +386,11 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             cancellationToken.ThrowIfCancellationRequested();
 
             Subscription.ForEach(
-                topic => _topics[topic].EnsurePartitionsAssigned(
-                    this,
-                    _options.PartitionsAssignmentDelay,
-                    cancellationToken));
+                topic => _topics.Get(topic, _config)
+                    .EnsurePartitionsAssigned(
+                        this,
+                        _options.PartitionsAssignmentDelay,
+                        cancellationToken));
 
             // Process the assigned partitions starting from the one that consumed less messages
             var topicPartitionsOffsets = _currentOffsets
@@ -406,7 +412,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             foreach (var topicPartitionOffset in topicPartitionsOffsets)
             {
                 var inMemoryPartition =
-                    _topics[topicPartitionOffset.Topic]
+                    _topics.Get(topicPartitionOffset.Topic, _config)
                         .Partitions[topicPartitionOffset.Partition];
 
                 bool pulled = inMemoryPartition.TryPull(topicPartitionOffset.Offset, out result);
@@ -443,7 +449,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             if (!topicPartitionOffset.Offset.IsSpecial)
                 return topicPartitionOffset;
 
-            var topic = _topics[topicPartitionOffset.Topic];
+            var topic = _topics.Get(topicPartitionOffset.Topic, _config);
 
             var offset = topicPartitionOffset.Offset;
 

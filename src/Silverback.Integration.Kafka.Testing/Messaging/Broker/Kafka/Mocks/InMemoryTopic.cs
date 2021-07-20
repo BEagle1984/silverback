@@ -31,9 +31,10 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         private readonly Dictionary<string, Dictionary<IMockedConfluentConsumer, List<Partition>>>
             _assignmentsDictionary = new();
 
-        public InMemoryTopic(string name, int partitions, object consumersLock)
+        public InMemoryTopic(string name, string bootstrapServers, int partitions, object consumersLock)
         {
             Name = Check.NotEmpty(name, nameof(name));
+            BootstrapServers = Check.NotEmpty(bootstrapServers, nameof(bootstrapServers));
 
             if (partitions < 1)
             {
@@ -51,6 +52,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         }
 
         public string Name { get; }
+
+        public string BootstrapServers { get; }
 
         public IReadOnlyList<IInMemoryPartition> Partitions => _partitions;
 

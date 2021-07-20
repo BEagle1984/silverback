@@ -16,11 +16,13 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
     {
         private static readonly Random RandomInstance = new();
 
+        private readonly ProducerConfig _config;
+
         private readonly IInMemoryTopicCollection _topics;
 
         public MockedConfluentProducer(ProducerConfig config, IInMemoryTopicCollection topics)
         {
-            Check.NotNull(config, nameof(config));
+            _config = Check.NotNull(config, nameof(config));
             _topics = Check.NotNull(topics, nameof(topics));
 
             Name = $"{config.ClientId ?? "mocked"}.{Guid.NewGuid():N}";
@@ -157,7 +159,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             Message<byte[]?, byte[]?> message,
             out Offset offset)
         {
-            var inMemoryTopic = _topics[topicPartition.Topic];
+            var inMemoryTopic = _topics.Get(topicPartition.Topic, _config);
 
             var partitionIndex =
                 topicPartition.Partition == Partition.Any

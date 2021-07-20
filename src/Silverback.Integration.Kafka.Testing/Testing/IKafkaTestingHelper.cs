@@ -17,7 +17,7 @@ namespace Silverback.Testing
         ///     Returns the <see cref="IInMemoryTopic" /> with the specified name.
         /// </summary>
         /// <remarks>
-        ///     This method works with the mocked MQTT broker only. See
+        ///     This method works with the mocked Kafka broker only. See
         ///     <see cref="SilverbackBuilderUseMockedKafkaExtensions.UseMockedKafka" /> or
         ///     <see cref="BrokerOptionsBuilderAddMockedKafkaExtensions.AddMockedKafka" />.
         /// </remarks>
@@ -30,11 +30,49 @@ namespace Silverback.Testing
         IInMemoryTopic GetTopic(string name);
 
         /// <summary>
+        ///     Returns the <see cref="IInMemoryTopic" /> with the specified name.
+        /// </summary>
+        /// <remarks>
+        ///     This method works with the mocked Kafka broker only. See
+        ///     <see cref="SilverbackBuilderUseMockedKafkaExtensions.UseMockedKafka" /> or
+        ///     <see cref="BrokerOptionsBuilderAddMockedKafkaExtensions.AddMockedKafka" />.
+        /// </remarks>
+        /// <param name="name">
+        ///     The name of the topic.
+        /// </param>
+        /// <param name="bootstrapServers">
+        ///     The bootstrap servers string used to identify the target broker.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IInMemoryTopic" />.
+        /// </returns>
+        IInMemoryTopic GetTopic(string name, string bootstrapServers);
+
+        /// <summary>
+        ///     Returns the collection of <see cref="IInMemoryTopic" /> with the specified name.
+        /// </summary>
+        /// <remarks>
+        ///     This method works with the mocked Kafka broker only. See
+        ///     <see cref="SilverbackBuilderUseMockedKafkaExtensions.UseMockedKafka" /> or
+        ///     <see cref="BrokerOptionsBuilderAddMockedKafkaExtensions.AddMockedKafka" />.
+        /// </remarks>
+        /// <param name="name">
+        ///     The name of the topic.
+        /// </param>
+        /// <param name="bootstrapServers">
+        ///     The bootstrap servers string used to identify the target broker.
+        /// </param>
+        /// <returns>
+        ///     The collection of <see cref="IInMemoryTopic" />.
+        /// </returns>
+        IReadOnlyCollection<IInMemoryTopic> GetTopics(string name, string? bootstrapServers = null);
+
+        /// <summary>
         ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
         ///     processed and committed.
         /// </summary>
         /// <remarks>
-        ///     This method works with the mocked MQTT broker only. See
+        ///     This method works with the mocked Kafka broker only. See
         ///     <see cref="SilverbackBuilderUseMockedKafkaExtensions.UseMockedKafka" /> or
         ///     <see cref="BrokerOptionsBuilderAddMockedKafkaExtensions.AddMockedKafka" />.
         /// </remarks>

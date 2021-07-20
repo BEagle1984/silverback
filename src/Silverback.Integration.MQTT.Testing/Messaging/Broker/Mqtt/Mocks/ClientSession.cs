@@ -79,7 +79,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
                     if (_subscriptions.Any(subscription => subscription.Topic == topic))
                         continue;
 
-                    _subscriptions.Add(new Subscription(topic, GetSubscriptionRegex(topic)));
+                    _subscriptions.Add(new Subscription(ClientOptions, topic));
                 }
             }
         }
@@ -92,11 +92,11 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             }
         }
 
-        public async ValueTask PushAsync(MqttApplicationMessage message)
+        public async ValueTask PushAsync(MqttApplicationMessage message, IMqttClientOptions clientOptions)
         {
             lock (_subscriptions)
             {
-                if (_subscriptions.All(subscription => !subscription.Regex.IsMatch(message.Topic)))
+                if (_subscriptions.All(subscription => !subscription.IsMatch(message.Topic, clientOptions)))
                     return;
             }
 
@@ -110,15 +110,6 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             Disconnect();
 
             _readCancellationTokenSource.Dispose();
-        }
-
-        private static Regex GetSubscriptionRegex(string topic)
-        {
-            var pattern = Regex.Escape(topic)
-                .Replace("\\+", "[\\w]*", StringComparison.Ordinal)
-                .Replace("\\#", "[\\w\\/]*", StringComparison.Ordinal);
-
-            return new Regex($"^{pattern}$", RegexOptions.Compiled);
         }
 
         private async Task ReadChannelAsync(CancellationToken cancellationToken)
@@ -139,20 +130,44 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             }
         }
 
-        // TODO: Convert to short record declaration as soon as the StyleCop.Analyzers is updated,
-        //       see https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3181
-        // private record Subscription(string Topic, Regex Regex);
-        private record Subscription
+        private class Subscription
         {
-            public Subscription(string topic, Regex regex)
+            public Subscription(IMqttClientOptions clientOptions, string topic)
             {
                 Topic = topic;
-                Regex = regex;
+                Regex = GetSubscriptionRegex(topic, clientOptions);
             }
 
             public string Topic { get; }
 
             public Regex Regex { get; }
+
+            public bool IsMatch(string topic, IMqttClientOptions clientOptions) =>
+                Regex.IsMatch(GetFullTopicName(topic, clientOptions));
+
+            private static Regex GetSubscriptionRegex(string topic, IMqttClientOptions clientOptions)
+            {
+                var pattern = Regex.Escape(GetFullTopicName(topic, clientOptions))
+                    .Replace("\\+", "[\\w]*", StringComparison.Ordinal)
+                    .Replace("\\#", "[\\w\\/]*", StringComparison.Ordinal);
+
+                return new Regex($"^{pattern}$", RegexOptions.Compiled);
+            }
+
+            private static string GetFullTopicName(string topic, IMqttClientOptions clientOptions) =>
+                $"{GetBrokerIdentifier(clientOptions)}|{topic}";
+
+            private static string GetBrokerIdentifier(IMqttClientOptions clientOptions) =>
+                clientOptions.ChannelOptions switch
+                {
+                    MqttClientTcpOptions tcpOptions =>
+                        $"{tcpOptions.Server.ToUpperInvariant()}-{tcpOptions.GetPort()}",
+                    MqttClientWebSocketOptions socketOptions =>
+                        socketOptions.Uri.ToUpperInvariant(),
+                    _ => throw new InvalidOperationException(
+                        "Expecting ChannelOptions to be of type " +
+                        "MqttClientTcpOptions or MqttClientWebSocketOptions.")
+                };
         }
     }
 }

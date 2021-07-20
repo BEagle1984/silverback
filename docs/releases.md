@@ -9,6 +9,7 @@ uid: releases
 ### What's new
 
 * Optimize in-memory mocked Kafka (avoid spawning too many threads)
+* Support multiple brokers (with overlapping topic names) in mocked Kafka and MQTT
 
 ### Fixes
 

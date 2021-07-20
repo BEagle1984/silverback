@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MQTTnet;
+using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using MQTTnet.Client.Receiving;
 
@@ -90,10 +91,16 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         /// <param name="message">
         ///     The <see cref="MqttApplicationMessage" /> to be published.
         /// </param>
+        /// <param name="clientOptions">
+        ///     The <see cref="IMqttClientOptions" /> of the producing <see cref="MqttClient" />.
+        /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task PublishAsync(string clientId, MqttApplicationMessage message);
+        Task PublishAsync(
+            string clientId,
+            MqttApplicationMessage message,
+            IMqttClientOptions clientOptions);
 
         /// <summary>
         ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been

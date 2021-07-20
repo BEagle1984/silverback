@@ -22,6 +22,11 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         string Name { get; }
 
         /// <summary>
+        ///     Gets the bootstrap servers string used to identify the target broker.
+        /// </summary>
+        string BootstrapServers { get; }
+
+        /// <summary>
         ///     Gets the partitions in the topic.
         /// </summary>
         IReadOnlyList<IInMemoryPartition> Partitions { get; }
