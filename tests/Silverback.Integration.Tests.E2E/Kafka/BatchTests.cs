@@ -912,6 +912,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequences.Should().HaveCount(batchesCount);
             sequences.ForEach(sequence => sequence.IsAborted.Should().BeTrue());
 
+            await AsyncTestingUtil.WaitAsync(() => abortedCount == batchesCount);
+
             abortedCount.Should().Be(batchesCount);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
         }
@@ -1162,7 +1164,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(10)))
                         .AddDelegateSubscriber(
-                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventWithKafkaKey> eventsStream) =>
                             {
                                 int batchIndex = Interlocked.Increment(ref batchesCount);
 
@@ -1184,9 +1186,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-            for (int i = 1; i <= 10; i++)
+            for (int i = 0; i < 10; i++)
             {
-                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
+                await publisher.PublishAsync(new TestEventWithKafkaKey
+                {
+                    KafkaKey = i, // Set kafka key for predictable partitioning
+                    Content = $"{i}"
+                });
             }
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();

@@ -247,6 +247,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
+            var callbackHandlerKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host
+                .ScopedServiceProvider
+                .GetServices<IBrokerCallback>()
+                .First(service => service is KafkaPartitionEofCallback);
+
+            await AsyncTestingUtil.WaitAsync(
+                () => callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount == 5);
+
             var kafkaTestingHelper = Host.ServiceProvider.GetRequiredService<IKafkaTestingHelper>();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -254,10 +262,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await kafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync();
 
-            var callbackHandlerKafkaEndOfPartitionReached = (KafkaPartitionEofCallback)Host
-                .ScopedServiceProvider
-                .GetServices<IBrokerCallback>()
-                .First(service => service is KafkaPartitionEofCallback);
+            await AsyncTestingUtil.WaitAsync(
+                () => callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount == 6);
 
             // There are 5 partitions and one message will be published, so in fact 6 times the end of the partition should be reached
             callbackHandlerKafkaEndOfPartitionReached.AllPartitionsEofCallbackCount.Should().Be(6);
