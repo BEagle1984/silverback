@@ -103,7 +103,14 @@ namespace Silverback.Messaging.Broker.Kafka
             int channelIndex = GetChannelIndex(topicPartition);
 
             if (!_readCancellationTokenSource[channelIndex].IsCancellationRequested)
+            {
+                _logger.LogConsumerLowLevelTrace(
+                    _consumer,
+                    "Stopping channel {channelIndex} processing loop.",
+                    () => new object[] { channelIndex });
+
                 _readCancellationTokenSource[channelIndex].Cancel();
+            }
 
             if (!IsReading[channelIndex])
                 _readTaskCompletionSources[channelIndex].TrySetResult(true);
@@ -273,9 +280,9 @@ namespace Silverback.Messaging.Broker.Kafka
             {
                 _logger.LogEndOfPartition(consumeResult, _consumer);
                 _callbacksInvoker.Invoke<IKafkaPartitionEofCallback>(
-                        handler => handler.OnEndOfTopicPartitionReached(
-                            consumeResult.TopicPartition,
-                            _consumer));
+                    handler => handler.OnEndOfTopicPartitionReached(
+                        consumeResult.TopicPartition,
+                        _consumer));
                 return;
             }
 
