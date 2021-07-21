@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback" class="text-break">Interface IKafkaOffsetCommittedCallback
   </h1>
-  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback_OnOffsetsCommitted_Confluent_Kafka_CommittedOffsets_Silverback_Messaging_Broker_KafkaConsumer_">OnOffsetsCommitted(CommittedOffsets, KafkaConsumer)</a> event handler.</p>
+  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback_OnOffsetsCommitted_CommittedOffsets_Silverback_Messaging_Broker_KafkaConsumer_">OnOffsetsCommitted(CommittedOffsets, KafkaConsumer)</a> event handler.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Callbacks.html">Silverback.Messaging.Broker.Callbacks</a></h6>
@@ -103,13 +103,13 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback_OnOffsetsCommitted_Confluent_Kafka_CommittedOffsets_Silverback_Messaging_Broker_KafkaConsumer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.OnOffsetsCommitted(Confluent.Kafka.CommittedOffsets%2CSilverback.Messaging.Broker.KafkaConsumer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback_OnOffsetsCommitted_CommittedOffsets_Silverback_Messaging_Broker_KafkaConsumer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.OnOffsetsCommitted(CommittedOffsets%2CSilverback.Messaging.Broker.KafkaConsumer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaOffsetCommittedCallback.cs/#L41">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback_OnOffsetsCommitted_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.OnOffsetsCommitted*"></a>
-  <h4 id="Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback_OnOffsetsCommitted_Confluent_Kafka_CommittedOffsets_Silverback_Messaging_Broker_KafkaConsumer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.OnOffsetsCommitted(Confluent.Kafka.CommittedOffsets,Silverback.Messaging.Broker.KafkaConsumer)">OnOffsetsCommitted(CommittedOffsets, KafkaConsumer)</h4>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback_OnOffsetsCommitted_CommittedOffsets_Silverback_Messaging_Broker_KafkaConsumer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaOffsetCommittedCallback.OnOffsetsCommitted(CommittedOffsets,Silverback.Messaging.Broker.KafkaConsumer)">OnOffsetsCommitted(CommittedOffsets, KafkaConsumer)</h4>
   <div class="markdown level1 summary"><p>Called to report the result of offset commits.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -128,7 +128,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Confluent.Kafka.CommittedOffsets</span></td>
+        <td><span class="xref">CommittedOffsets</span></td>
         <td><span class="parametername">offsets</span></td>
         <td><p>The per-partition offsets and success or error information and the overall operation success or error information.</p>
 </td>
@@ -141,7 +141,7 @@
       </tr>
     </tbody>
   </table>
-  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback_OnOffsetsCommitted_Confluent_Kafka_CommittedOffsets_Silverback_Messaging_Broker_KafkaConsumer__remarks">Remarks</h5>
+  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaOffsetCommittedCallback_OnOffsetsCommitted_CommittedOffsets_Silverback_Messaging_Broker_KafkaConsumer__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Possible error conditions: <ul><li>
 Entire request failed: <code>Error</code> is set, but not per-partition errors.<p>
 </li><li>
@@ -149,7 +149,7 @@ Entire request failed: <code>Error</code> is set, but not per-partition errors.<
     each partition may have different errors.
 </li><li>
     Some partitions failed: global <code>Error</code> is success
-    (<span class="xref">Confluent.Kafka.ErrorCode.NoError</span>).
+    (<see cref="!:Confluent.Kafka.ErrorCode.NoError"></see>).
 </li></ul>
 </div>
 </article>

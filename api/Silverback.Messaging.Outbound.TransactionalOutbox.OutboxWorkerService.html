@@ -90,21 +90,15 @@
   
   <h1 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService" data-uid="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorkerService" class="text-break">Class OutboxWorkerService
   </h1>
-  <div class="markdown level0 summary"><p>The <span class="xref">Microsoft.Extensions.Hosting.IHostedService</span> that triggers the outbound queue worker at regular intervals.</p>
+  <div class="markdown level0 summary"><p>The <see cref="!:IHostedService"></see> that triggers the outbound queue worker at regular intervals.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">Microsoft.Extensions.Hosting.BackgroundService</span></div>
-    <div class="level2"><a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a></div>
-    <div class="level3"><a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a></div>
-    <div class="level4"><span class="xref">OutboxWorkerService</span></div>
-  </div>
-  <div classs="implements">
-    <h5>Implements</h5>
-    <div><span class="xref">Microsoft.Extensions.Hosting.IHostedService</span></div>
-    <div><span class="xref">System.IDisposable</span></div>
+    <div class="level1"><a class="xref" href="Silverback.Background.DistributedBackgroundService.html">DistributedBackgroundService</a></div>
+    <div class="level2"><a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html">RecurringDistributedBackgroundService</a></div>
+    <div class="level3"><span class="xref">OutboxWorkerService</span></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -123,42 +117,12 @@
     <div>
       <a class="xref" href="Silverback.Background.DistributedBackgroundService.html#Silverback_Background_DistributedBackgroundService_ExecuteAsync_System_Threading_CancellationToken_">DistributedBackgroundService.ExecuteAsync(CancellationToken)</a>
     </div>
-    <div>
-      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.StartAsync(System.Threading.CancellationToken)</span>
-    </div>
-    <div>
-      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.StopAsync(System.Threading.CancellationToken)</span>
-    </div>
-    <div>
-      <span class="xref">Microsoft.Extensions.Hosting.BackgroundService.Dispose()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetHashCode()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.GetType()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.MemberwiseClone()</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-    </div>
-    <div>
-      <span class="xref">System.Object.ToString()</span>
-    </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.html">Silverback.Messaging.Outbound.TransactionalOutbox</a></h6>
   <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Outbound_TransactionalOutbox_OutboxWorkerService_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class OutboxWorkerService : RecurringDistributedBackgroundService, IHostedService, IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public class OutboxWorkerService : RecurringDistributedBackgroundService</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -274,13 +238,6 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Silverback.Background.RecurringDistributedBackgroundService.html#Silverback_Background_RecurringDistributedBackgroundService_ExecuteRecurringAsync_System_Threading_CancellationToken_">RecurringDistributedBackgroundService.ExecuteRecurringAsync(CancellationToken)</a></div>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <span class="xref">Microsoft.Extensions.Hosting.IHostedService</span>
-  </div>
-  <div>
-      <span class="xref">System.IDisposable</span>
-  </div>
 </article>
           </div>
           

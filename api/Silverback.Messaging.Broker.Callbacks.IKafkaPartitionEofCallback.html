@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback" class="text-break">Interface IKafkaPartitionEofCallback
   </h1>
-  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_Confluent_Kafka_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer_">OnEndOfTopicPartitionReached(TopicPartition, KafkaConsumer)</a> event handler.</p>
+  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer_">OnEndOfTopicPartitionReached(TopicPartition, KafkaConsumer)</a> event handler.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Callbacks.html">Silverback.Messaging.Broker.Callbacks</a></h6>
@@ -107,13 +107,13 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_Confluent_Kafka_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached(Confluent.Kafka.TopicPartition%2CSilverback.Messaging.Broker.KafkaConsumer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached(TopicPartition%2CSilverback.Messaging.Broker.KafkaConsumer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaPartitionEofCallback.cs/#L32">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached*"></a>
-  <h4 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_Confluent_Kafka_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached(Confluent.Kafka.TopicPartition,Silverback.Messaging.Broker.KafkaConsumer)">OnEndOfTopicPartitionReached(TopicPartition, KafkaConsumer)</h4>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaPartitionEofCallback.OnEndOfTopicPartitionReached(TopicPartition,Silverback.Messaging.Broker.KafkaConsumer)">OnEndOfTopicPartitionReached(TopicPartition, KafkaConsumer)</h4>
   <div class="markdown level1 summary"><p>Called to report that the end of a partition has been reached, meaning that it has been completely
 consumed.</p>
 </div>
@@ -133,7 +133,7 @@ consumed.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Confluent.Kafka.TopicPartition</span></td>
+        <td><span class="xref">TopicPartition</span></td>
         <td><span class="parametername">topicPartition</span></td>
         <td><p>The topic partition.</p>
 </td>
@@ -146,7 +146,7 @@ consumed.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_Confluent_Kafka_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer__remarks">Remarks</h5>
+  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaPartitionEofCallback_OnEndOfTopicPartitionReached_TopicPartition_Silverback_Messaging_Broker_KafkaConsumer__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>The <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html#Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_EnablePartitionEof">EnablePartitionEof</a> must be set to <code>true</code> in the
 <a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaConsumerConfig.html">KafkaConsumerConfig</a>, otherwise the underlying library will not emit this event.</p>
 </div>

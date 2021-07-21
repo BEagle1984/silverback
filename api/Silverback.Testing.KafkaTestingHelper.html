@@ -153,13 +153,13 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_KafkaTestingHelper__ctor_System_IServiceProvider_Microsoft_Extensions_Logging_ILogger_Silverback_Testing_KafkaTestingHelper__.md&amp;value=---%0Auid%3A%20Silverback.Testing.KafkaTestingHelper.%23ctor(System.IServiceProvider%2CMicrosoft.Extensions.Logging.ILogger%7BSilverback.Testing.KafkaTestingHelper%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_KafkaTestingHelper__ctor_System_IServiceProvider_ILogger_Silverback_Testing_KafkaTestingHelper__.md&amp;value=---%0Auid%3A%20Silverback.Testing.KafkaTestingHelper.%23ctor(System.IServiceProvider%2CILogger%7BSilverback.Testing.KafkaTestingHelper%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L34">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L37">View source</a>
   </span>
   <a id="Silverback_Testing_KafkaTestingHelper__ctor_" data-uid="Silverback.Testing.KafkaTestingHelper.#ctor*"></a>
-  <h4 id="Silverback_Testing_KafkaTestingHelper__ctor_System_IServiceProvider_Microsoft_Extensions_Logging_ILogger_Silverback_Testing_KafkaTestingHelper__" data-uid="Silverback.Testing.KafkaTestingHelper.#ctor(System.IServiceProvider,Microsoft.Extensions.Logging.ILogger{Silverback.Testing.KafkaTestingHelper})">KafkaTestingHelper(IServiceProvider, ILogger&lt;KafkaTestingHelper&gt;)</h4>
+  <h4 id="Silverback_Testing_KafkaTestingHelper__ctor_System_IServiceProvider_ILogger_Silverback_Testing_KafkaTestingHelper__" data-uid="Silverback.Testing.KafkaTestingHelper.#ctor(System.IServiceProvider,ILogger{Silverback.Testing.KafkaTestingHelper})">KafkaTestingHelper(IServiceProvider, ILogger&lt;KafkaTestingHelper&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Testing.KafkaTestingHelper.html">KafkaTestingHelper</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -184,9 +184,9 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">Microsoft.Extensions.Logging.ILogger</span>&lt;<a class="xref" href="Silverback.Testing.KafkaTestingHelper.html">KafkaTestingHelper</a>&gt;</td>
+        <td><span class="xref">ILogger</span>&lt;<a class="xref" href="Silverback.Testing.KafkaTestingHelper.html">KafkaTestingHelper</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
+        <td><p>The <see cref="!:ISilverbackLogger"></see>.</p>
 </td>
       </tr>
     </tbody>
@@ -198,7 +198,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_KafkaTestingHelper_GetTopic_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Testing.KafkaTestingHelper.GetTopic(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L44">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L48">View source</a>
   </span>
   <a id="Silverback_Testing_KafkaTestingHelper_GetTopic_" data-uid="Silverback.Testing.KafkaTestingHelper.GetTopic*"></a>
   <h4 id="Silverback_Testing_KafkaTestingHelper_GetTopic_System_String_" data-uid="Silverback.Testing.KafkaTestingHelper.GetTopic(System.String)">GetTopic(String)</h4>
@@ -244,16 +244,138 @@
     </tbody>
   </table>
   <h5 id="Silverback_Testing_KafkaTestingHelper_GetTopic_System_String__remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method works with the mocked MQTT broker only. See
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only. See
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_KafkaTestingHelper_GetTopic_System_String_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Testing.KafkaTestingHelper.GetTopic(System.String%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L52">View source</a>
+  </span>
+  <a id="Silverback_Testing_KafkaTestingHelper_GetTopic_" data-uid="Silverback.Testing.KafkaTestingHelper.GetTopic*"></a>
+  <h4 id="Silverback_Testing_KafkaTestingHelper_GetTopic_System_String_System_String_" data-uid="Silverback.Testing.KafkaTestingHelper.GetTopic(System.String,System.String)">GetTopic(String, String)</h4>
+  <div class="markdown level1 summary"><p>Returns the <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a> with the specified name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IInMemoryTopic GetTopic(string name, string bootstrapServers)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>The name of the topic.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">bootstrapServers</span></td>
+        <td><p>The bootstrap servers string used to identify the target broker.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a></td>
+        <td><p>The <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Testing_KafkaTestingHelper_GetTopic_System_String_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only. See
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
+</div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_KafkaTestingHelper_GetTopics_System_String_System_String_.md&amp;value=---%0Auid%3A%20Silverback.Testing.KafkaTestingHelper.GetTopics(System.String%2CSystem.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L56">View source</a>
+  </span>
+  <a id="Silverback_Testing_KafkaTestingHelper_GetTopics_" data-uid="Silverback.Testing.KafkaTestingHelper.GetTopics*"></a>
+  <h4 id="Silverback_Testing_KafkaTestingHelper_GetTopics_System_String_System_String_" data-uid="Silverback.Testing.KafkaTestingHelper.GetTopics(System.String,System.String)">GetTopics(String, String)</h4>
+  <div class="markdown level1 summary"><p>Returns the collection of <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a> with the specified name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IReadOnlyCollection&lt;IInMemoryTopic&gt; GetTopics(string name, string bootstrapServers = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td><p>The name of the topic.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">bootstrapServers</span></td>
+        <td><p>The bootstrap servers string used to identify the target broker.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a>&gt;</td>
+        <td><p>The collection of <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Silverback_Testing_KafkaTestingHelper_GetTopics_System_String_System_String__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only. See
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Collections_Generic_IReadOnlyCollection_System_String__System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Collections.Generic.IReadOnlyCollection%7BSystem.String%7D%2CSystem.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L57">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L95">View source</a>
   </span>
   <a id="Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_" data-uid="Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync*"></a>
   <h4 id="Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Collections_Generic_IReadOnlyCollection_System_String__System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Collections.Generic.IReadOnlyCollection{System.String},System.Nullable{System.TimeSpan})">WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection&lt;String&gt;, Nullable&lt;TimeSpan&gt;)</h4>
@@ -306,16 +428,16 @@ processed and committed.</p>
     </tbody>
   </table>
   <h5 id="Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Collections_Generic_IReadOnlyCollection_System_String__System_Nullable_System_TimeSpan___remarks">Remarks</h5>
-  <div class="markdown level1 remarks"><p>This method works with the mocked MQTT broker only. See
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
+  <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only. See
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__.md&amp;value=---%0Auid%3A%20Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable%7BSystem.TimeSpan%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L53">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L91">View source</a>
   </span>
   <a id="Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_" data-uid="Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync*"></a>
   <h4 id="Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Nullable_System_TimeSpan__" data-uid="Silverback.Testing.KafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(System.Nullable{System.TimeSpan})">WaitUntilAllMessagesAreConsumedAsync(Nullable&lt;TimeSpan&gt;)</h4>
@@ -384,7 +506,7 @@ processed and committed.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_KafkaTestingHelper.md&amp;value=---%0Auid%3A%20Silverback.Testing.KafkaTestingHelper%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L19" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L20" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>
