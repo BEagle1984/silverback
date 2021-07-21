@@ -157,6 +157,12 @@
       <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_WithEncryption_Silverback_Messaging_Encryption_EncryptionSettings_">EndpointBuilder&lt;MqttProducerEndpoint, IMqttProducerEndpointBuilder&gt;.WithEncryption(EncryptionSettings)</a>
     </div>
     <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_ValidateMessage_System_Boolean_">EndpointBuilder&lt;MqttProducerEndpoint, IMqttProducerEndpointBuilder&gt;.ValidateMessage(Boolean)</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_DisableMessageValidation">EndpointBuilder&lt;MqttProducerEndpoint, IMqttProducerEndpointBuilder&gt;.DisableMessageValidation()</a>
+    </div>
+    <div>
       <a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html#Silverback_Messaging_Configuration_EndpointBuilder_2_CreateEndpoint">EndpointBuilder&lt;MqttProducerEndpoint, IMqttProducerEndpointBuilder&gt;.CreateEndpoint()</a>
     </div>
     <div>
@@ -1052,13 +1058,13 @@ message expiry interval is set, the broker must store the message for matching s
   </table>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointBuilder_WithQualityOfServiceLevel_MqttQualityOfServiceLevel_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointBuilder.WithQualityOfServiceLevel(MqttQualityOfServiceLevel)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointBuilder_WithQualityOfServiceLevel_MQTTnet_Protocol_MqttQualityOfServiceLevel_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointBuilder.WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttProducerEndpointBuilder.cs/#L172">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointBuilder_WithQualityOfServiceLevel_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointBuilder.WithQualityOfServiceLevel*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointBuilder_WithQualityOfServiceLevel_MqttQualityOfServiceLevel_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointBuilder.WithQualityOfServiceLevel(MqttQualityOfServiceLevel)">WithQualityOfServiceLevel(MqttQualityOfServiceLevel)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttProducerEndpointBuilder_WithQualityOfServiceLevel_MQTTnet_Protocol_MqttQualityOfServiceLevel_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointBuilder.WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel)">WithQualityOfServiceLevel(MqttQualityOfServiceLevel)</h4>
   <div class="markdown level1 summary"><p>Specifies the desired quality of service level.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -1077,9 +1083,9 @@ message expiry interval is set, the broker must store the message for matching s
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MqttQualityOfServiceLevel</span></td>
+        <td><span class="xref">MQTTnet.Protocol.MqttQualityOfServiceLevel</span></td>
         <td><span class="parametername">qosLevel</span></td>
-        <td><p>The <see cref="!:MqttQualityOfServiceLevel"></see>.</p>
+        <td><p>The <span class="xref">MQTTnet.Protocol.MqttQualityOfServiceLevel</span>.</p>
 </td>
       </tr>
     </tbody>
@@ -1111,6 +1117,9 @@ message expiry interval is set, the broker must store the message for matching s
       <a class="xref" href="Silverback.Messaging.Configuration.IEndpointBuilder-1.html">IEndpointBuilder&lt;TBuilder&gt;</a>
   </div>
   <h3 id="extensionmethods">Extension Methods</h3>
+  <div>
+      <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointBuilderSerializeAsAvroExtensions.html#Silverback_Messaging_Configuration_ProducerEndpointBuilderSerializeAsAvroExtensions_SerializeAsAvro__1_Silverback_Messaging_Configuration_IProducerEndpointBuilder___0__System_Action_Silverback_Messaging_Configuration_IAvroMessageSerializerBuilder__">ProducerEndpointBuilderSerializeAsAvroExtensions.SerializeAsAvro&lt;TBuilder&gt;(IProducerEndpointBuilder&lt;TBuilder&gt;, Action&lt;IAvroMessageSerializerBuilder&gt;)</a>
+  </div>
   <div>
       <a class="xref" href="Silverback.Messaging.Configuration.ProducerEndpointBuilderSerializeAsJsonUsingNewtonsoftExtensions.html#Silverback_Messaging_Configuration_ProducerEndpointBuilderSerializeAsJsonUsingNewtonsoftExtensions_SerializeAsJsonUsingNewtonsoft__1_Silverback_Messaging_Configuration_IProducerEndpointBuilder___0__System_Action_Silverback_Messaging_Configuration_INewtonsoftJsonMessageSerializerBuilder__">ProducerEndpointBuilderSerializeAsJsonUsingNewtonsoftExtensions.SerializeAsJsonUsingNewtonsoft&lt;TBuilder&gt;(IProducerEndpointBuilder&lt;TBuilder&gt;, Action&lt;INewtonsoftJsonMessageSerializerBuilder&gt;)</a>
   </div>

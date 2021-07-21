@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback" class="text-break">Interface IKafkaConsumerErrorCallback
   </h1>
-  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback_OnConsumerError_Error_Silverback_Messaging_Broker_KafkaConsumer_">OnConsumerError(Error, KafkaConsumer)</a> event handler.</p>
+  <div class="markdown level0 summary"><p>Declares the <a class="xref" href="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.html#Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback_OnConsumerError_Confluent_Kafka_Error_Silverback_Messaging_Broker_KafkaConsumer_">OnConsumerError(Error, KafkaConsumer)</a> event handler.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Callbacks.html">Silverback.Messaging.Broker.Callbacks</a></h6>
@@ -103,13 +103,13 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback_OnConsumerError_Error_Silverback_Messaging_Broker_KafkaConsumer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.OnConsumerError(Error%2CSilverback.Messaging.Broker.KafkaConsumer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback_OnConsumerError_Confluent_Kafka_Error_Silverback_Messaging_Broker_KafkaConsumer_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.OnConsumerError(Confluent.Kafka.Error%2CSilverback.Messaging.Broker.KafkaConsumer)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Broker/Callbacks/IKafkaConsumerErrorCallback.cs/#L30">View source</a>
   </span>
   <a id="Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback_OnConsumerError_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.OnConsumerError*"></a>
-  <h4 id="Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback_OnConsumerError_Error_Silverback_Messaging_Broker_KafkaConsumer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.OnConsumerError(Error,Silverback.Messaging.Broker.KafkaConsumer)">OnConsumerError(Error, KafkaConsumer)</h4>
+  <h4 id="Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback_OnConsumerError_Confluent_Kafka_Error_Silverback_Messaging_Broker_KafkaConsumer_" data-uid="Silverback.Messaging.Broker.Callbacks.IKafkaConsumerErrorCallback.OnConsumerError(Confluent.Kafka.Error,Silverback.Messaging.Broker.KafkaConsumer)">OnConsumerError(Error, KafkaConsumer)</h4>
   <div class="markdown level1 summary"><p>Called when an error is reported by the underlying consumer.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -128,9 +128,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Error</span></td>
+        <td><span class="xref">Confluent.Kafka.Error</span></td>
         <td><span class="parametername">error</span></td>
-        <td><p>An <see cref="!:Error"></see> containing the error details.</p>
+        <td><p>An <span class="xref">Confluent.Kafka.Error</span> containing the error details.</p>
 </td>
       </tr>
       <tr>
@@ -158,7 +158,7 @@ any other way by Silverback.</p>
       </tr>
     </tbody>
   </table>
-  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback_OnConsumerError_Error_Silverback_Messaging_Broker_KafkaConsumer__remarks">Remarks</h5>
+  <h5 id="Silverback_Messaging_Broker_Callbacks_IKafkaConsumerErrorCallback_OnConsumerError_Confluent_Kafka_Error_Silverback_Messaging_Broker_KafkaConsumer__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>Note that the system (either the Kafka client itself or Silverback) will try to automatically
 recover from all errors automatically, so these errors have to be considered mostly informational.</p>
 </div>

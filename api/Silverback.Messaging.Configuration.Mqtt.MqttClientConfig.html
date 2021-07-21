@@ -91,7 +91,7 @@
   <h1 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfig" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig" class="text-break">Class MqttClientConfig
   </h1>
   <div class="markdown level0 summary"><p>The configuration used to connect with the MQTT broker. This is actually a wrapper around the
-<see cref="!:MqttClientOptions"></see> from the MQTTnet library.</p>
+<span class="xref">MQTTnet.Client.Options.MqttClientOptions</span> from the MQTTnet library.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -132,19 +132,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfig__ctor_System_Nullable_MqttClientOptions__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.%23ctor(System.Nullable%7BMqttClientOptions%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Mqtt_MqttClientConfig__ctor_MQTTnet_Client_Options_MqttClientOptions_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.%23ctor(MQTTnet.Client.Options.MqttClientOptions)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.MQTT/Messaging/Configuration/Mqtt/MqttClientConfig.cs/#L40">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfig__ctor_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfig__ctor_System_Nullable_MqttClientOptions__" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.#ctor(System.Nullable{MqttClientOptions})">MqttClientConfig(Nullable&lt;MqttClientOptions&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfig__ctor_MQTTnet_Client_Options_MqttClientOptions_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.#ctor(MQTTnet.Client.Options.MqttClientOptions)">MqttClientConfig(MqttClientOptions)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.html">MqttClientConfig</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public MqttClientConfig(MqttClientOptions? clientOptions = default(MqttClientOptions? ))</code></pre>
+    <pre><code class="lang-csharp hljs">public MqttClientConfig(MqttClientOptions clientOptions = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -157,9 +157,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">MqttClientOptions</span>&gt;</td>
+        <td><span class="xref">MQTTnet.Client.Options.MqttClientOptions</span></td>
         <td><span class="parametername">clientOptions</span></td>
-        <td><p>The <see cref="!:MqttClientOptions"></see> to be wrapped.</p>
+        <td><p>The <span class="xref">MQTTnet.Client.Options.MqttClientOptions</span> to be wrapped.</p>
 </td>
       </tr>
     </tbody>
@@ -237,13 +237,13 @@
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_ChannelOptions_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.ChannelOptions*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_ChannelOptions" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.ChannelOptions">ChannelOptions</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the channel options (either <see cref="!:MqttClientTcpOptions"></see> or
-<see cref="!:MqttClientWebSocketOptions"></see>).</p>
+  <div class="markdown level1 summary"><p>Gets or sets the channel options (either <span class="xref">MQTTnet.Client.Options.MqttClientTcpOptions</span> or
+<span class="xref">MQTTnet.Client.Options.MqttClientWebSocketOptions</span>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IMqttClientChannelOptions? ChannelOptions { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IMqttClientChannelOptions ChannelOptions { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -255,7 +255,7 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IMqttClientChannelOptions</span>&gt;</td>
+        <td><span class="xref">MQTTnet.Client.Options.IMqttClientChannelOptions</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -368,7 +368,7 @@ client. The default is <code>true</code>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IMqttClientCredentials? Credentials { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IMqttClientCredentials Credentials { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -380,7 +380,7 @@ client. The default is <code>true</code>.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IMqttClientCredentials</span>&gt;</td>
+        <td><span class="xref">MQTTnet.Client.Options.IMqttClientCredentials</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -399,7 +399,7 @@ client. The default is <code>true</code>.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public IMqttExtendedAuthenticationExchangeHandler? ExtendedAuthenticationExchangeHandler { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public IMqttExtendedAuthenticationExchangeHandler ExtendedAuthenticationExchangeHandler { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -411,7 +411,7 @@ client. The default is <code>true</code>.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IMqttExtendedAuthenticationExchangeHandler</span>&gt;</td>
+        <td><span class="xref">MQTTnet.Client.ExtendedAuthenticationExchange.IMqttExtendedAuthenticationExchangeHandler</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -489,7 +489,7 @@ seconds.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_ProtocolVersion_" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.ProtocolVersion*"></a>
   <h4 id="Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_ProtocolVersion" data-uid="Silverback.Messaging.Configuration.Mqtt.MqttClientConfig.ProtocolVersion">ProtocolVersion</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the MQTT protocol version. The default is <see cref="!:MqttProtocolVersion.V500"></see>.</p>
+  <div class="markdown level1 summary"><p>Gets or sets the MQTT protocol version. The default is <span class="xref">MQTTnet.Formatter.MqttProtocolVersion.V500</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -506,7 +506,7 @@ seconds.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">MqttProtocolVersion</span></td>
+        <td><span class="xref">MQTTnet.Formatter.MqttProtocolVersion</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -702,7 +702,7 @@ connection related properties from the client to the server.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.IList</span>&lt;<span class="xref">MqttUserProperty</span>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.IList</span>&lt;<span class="xref">MQTTnet.Packets.MqttUserProperty</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -753,7 +753,7 @@ reconnects between this interval the message will not be sent.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public MqttApplicationMessage? WillMessage { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public MqttApplicationMessage WillMessage { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -765,7 +765,7 @@ reconnects between this interval the message will not be sent.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">MqttApplicationMessage</span>&gt;</td>
+        <td><span class="xref">MQTTnet.MqttApplicationMessage</span></td>
         <td></td>
       </tr>
     </tbody>

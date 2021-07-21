@@ -90,7 +90,7 @@
   
   <h1 id="Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy" class="text-break">Class ConfluentConsumerConfigProxy
   </h1>
-  <div class="markdown level0 summary"><p>Wraps the <see cref="!:Confluent.Kafka.ConsumerConfig"></see>.</p>
+  <div class="markdown level0 summary"><p>Wraps the <span class="xref">Confluent.Kafka.ConsumerConfig</span>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -339,19 +339,19 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy__ctor_System_Nullable_ClientConfig__.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.%23ctor(System.Nullable%7BClientConfig%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy__ctor_Confluent_Kafka_ClientConfig_.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.%23ctor(Confluent.Kafka.ClientConfig)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka/Messaging/Configuration/Kafka/ConfluentClientConfigProxies.cs/#L886">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy__ctor_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.#ctor*"></a>
-  <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy__ctor_System_Nullable_ClientConfig__" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.#ctor(System.Nullable{ClientConfig})">ConfluentConsumerConfigProxy(Nullable&lt;ClientConfig&gt;)</h4>
+  <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy__ctor_Confluent_Kafka_ClientConfig_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.#ctor(Confluent.Kafka.ClientConfig)">ConfluentConsumerConfigProxy(ClientConfig)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.html">ConfluentConsumerConfigProxy</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected ConfluentConsumerConfigProxy(ClientConfig? clientConfig = default(ClientConfig? ))</code></pre>
+    <pre><code class="lang-csharp hljs">protected ConfluentConsumerConfigProxy(ClientConfig clientConfig = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -364,10 +364,10 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">ClientConfig</span>&gt;</td>
+        <td><span class="xref">Confluent.Kafka.ClientConfig</span></td>
         <td><span class="parametername">clientConfig</span></td>
-        <td><p>The <see cref="!:Confluent.Kafka.ClientConfig"></see> to be used to initialize the
-<see cref="!:Confluent.Kafka.ConsumerConfig"></see>.</p>
+        <td><p>The <span class="xref">Confluent.Kafka.ClientConfig</span> to be used to initialize the
+<span class="xref">Confluent.Kafka.ConsumerConfig</span>.</p>
 </td>
       </tr>
     </tbody>
@@ -475,7 +475,7 @@ which is retrieved by consuming messages and checking 'message-&gt;err'.
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">AutoOffsetReset</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Confluent.Kafka.AutoOffsetReset</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -523,7 +523,7 @@ occurred. This check comes at slightly increased CPU usage.
   </span>
   <a id="Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_ConfluentConfig_" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.ConfluentConfig*"></a>
   <h4 id="Silverback_Messaging_Configuration_Kafka_ConfluentConsumerConfigProxy_ConfluentConfig" data-uid="Silverback.Messaging.Configuration.Kafka.ConfluentConsumerConfigProxy.ConfluentConfig">ConfluentConfig</h4>
-  <div class="markdown level1 summary"><p>Gets the <see cref="!:Confluent.Kafka.ClientConfig"></see> instance being wrapped.</p>
+  <div class="markdown level1 summary"><p>Gets the <span class="xref">Confluent.Kafka.ClientConfig</span> instance being wrapped.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -540,7 +540,7 @@ occurred. This check comes at slightly increased CPU usage.
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">ConsumerConfig</span></td>
+        <td><span class="xref">Confluent.Kafka.ConsumerConfig</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -1024,7 +1024,7 @@ which have been aborted.
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">IsolationLevel</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Confluent.Kafka.IsolationLevel</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -1135,7 +1135,7 @@ strategies: range, roundrobin, cooperative-sticky.
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">PartitionAssignmentStrategy</span>&gt;</td>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">Confluent.Kafka.PartitionAssignmentStrategy</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>

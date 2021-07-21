@@ -90,15 +90,129 @@
   
   <h1 id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer" data-uid="Silverback.Messaging.Broker.Kafka.Mocks.IMockedConfluentConsumer" class="text-break">Interface IMockedConfluentConsumer
   </h1>
-  <div class="markdown level0 summary"><p>A mocked implementation of <see cref="!:IConsumer&lt;TKey,TValue>"></see> from Confluent.Kafka that consumes
+  <div class="markdown level0 summary"><p>A mocked implementation of <span class="xref">Confluent.Kafka.IConsumer&lt;TKey, TValue&gt;</span> from Confluent.Kafka that consumes
 from an <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.IInMemoryTopic.html">IInMemoryTopic</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Consume(System.Int32)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Consume(System.Threading.CancellationToken)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Consume(System.TimeSpan)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Subscribe(System.Collections.Generic.IEnumerable&lt;System.String&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Subscribe(System.String)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Unsubscribe()</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Assign(Confluent.Kafka.TopicPartition)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Assign(Confluent.Kafka.TopicPartitionOffset)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Assign(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartitionOffset&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Assign(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.IncrementalAssign(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartitionOffset&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.IncrementalAssign(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.IncrementalUnassign(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Unassign()</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.StoreOffset(Confluent.Kafka.ConsumeResult&lt;System.Byte[], System.Byte[]&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.StoreOffset(Confluent.Kafka.TopicPartitionOffset)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Commit()</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Commit(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartitionOffset&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Commit(Confluent.Kafka.ConsumeResult&lt;System.Byte[], System.Byte[]&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Seek(Confluent.Kafka.TopicPartitionOffset)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Pause(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Resume(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Committed(System.TimeSpan)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Committed(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartition&gt;, System.TimeSpan)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Position(Confluent.Kafka.TopicPartition)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.OffsetsForTimes(System.Collections.Generic.IEnumerable&lt;Confluent.Kafka.TopicPartitionTimestamp&gt;, System.TimeSpan)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.GetWatermarkOffsets(Confluent.Kafka.TopicPartition)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.QueryWatermarkOffsets(Confluent.Kafka.TopicPartition, System.TimeSpan)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Close()</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.MemberId</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Assignment</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.Subscription</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IConsumer&lt;System.Byte[], System.Byte[]&gt;.ConsumerGroupMetadata</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IClient.AddBrokers(System.String)</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IClient.Handle</span>
+    </div>
+    <div>
+      <span class="xref">Confluent.Kafka.IClient.Name</span>
+    </div>
+    <div>
+      <span class="xref">System.IDisposable.Dispose()</span>
+    </div>
+  </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Silverback.Messaging.Broker.Kafka.Mocks.html">Silverback.Messaging.Broker.Kafka.Mocks</a></h6>
   <h6><strong>Assembly</strong>: Silverback.Integration.Kafka.Testing.dll</h6>
   <h5 id="Silverback_Messaging_Broker_Kafka_Mocks_IMockedConfluentConsumer_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface IMockedConfluentConsumer : IConsumer&lt;byte[], byte[]&gt;</code></pre>
+    <pre><code class="lang-csharp hljs">public interface IMockedConfluentConsumer : IConsumer&lt;byte[], byte[]&gt;, IClient, IDisposable</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>

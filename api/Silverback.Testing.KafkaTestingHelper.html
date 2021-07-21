@@ -153,13 +153,13 @@
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_KafkaTestingHelper__ctor_System_IServiceProvider_ILogger_Silverback_Testing_KafkaTestingHelper__.md&amp;value=---%0Auid%3A%20Silverback.Testing.KafkaTestingHelper.%23ctor(System.IServiceProvider%2CILogger%7BSilverback.Testing.KafkaTestingHelper%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Testing_KafkaTestingHelper__ctor_System_IServiceProvider_Microsoft_Extensions_Logging_ILogger_Silverback_Testing_KafkaTestingHelper__.md&amp;value=---%0Auid%3A%20Silverback.Testing.KafkaTestingHelper.%23ctor(System.IServiceProvider%2CMicrosoft.Extensions.Logging.ILogger%7BSilverback.Testing.KafkaTestingHelper%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
     <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration.Kafka.Testing/Testing/KafkaTestingHelper.cs/#L37">View source</a>
   </span>
   <a id="Silverback_Testing_KafkaTestingHelper__ctor_" data-uid="Silverback.Testing.KafkaTestingHelper.#ctor*"></a>
-  <h4 id="Silverback_Testing_KafkaTestingHelper__ctor_System_IServiceProvider_ILogger_Silverback_Testing_KafkaTestingHelper__" data-uid="Silverback.Testing.KafkaTestingHelper.#ctor(System.IServiceProvider,ILogger{Silverback.Testing.KafkaTestingHelper})">KafkaTestingHelper(IServiceProvider, ILogger&lt;KafkaTestingHelper&gt;)</h4>
+  <h4 id="Silverback_Testing_KafkaTestingHelper__ctor_System_IServiceProvider_Microsoft_Extensions_Logging_ILogger_Silverback_Testing_KafkaTestingHelper__" data-uid="Silverback.Testing.KafkaTestingHelper.#ctor(System.IServiceProvider,Microsoft.Extensions.Logging.ILogger{Silverback.Testing.KafkaTestingHelper})">KafkaTestingHelper(IServiceProvider, ILogger&lt;KafkaTestingHelper&gt;)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Silverback.Testing.KafkaTestingHelper.html">KafkaTestingHelper</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
@@ -184,9 +184,9 @@
 </td>
       </tr>
       <tr>
-        <td><span class="xref">ILogger</span>&lt;<a class="xref" href="Silverback.Testing.KafkaTestingHelper.html">KafkaTestingHelper</a>&gt;</td>
+        <td><span class="xref">Microsoft.Extensions.Logging.ILogger</span>&lt;<a class="xref" href="Silverback.Testing.KafkaTestingHelper.html">KafkaTestingHelper</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <see cref="!:ISilverbackLogger"></see>.</p>
+        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
 </td>
       </tr>
     </tbody>
@@ -245,8 +245,8 @@
   </table>
   <h5 id="Silverback_Testing_KafkaTestingHelper_GetTopic_System_String__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only. See
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
@@ -306,8 +306,8 @@
   </table>
   <h5 id="Silverback_Testing_KafkaTestingHelper_GetTopic_System_String_System_String__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only. See
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
@@ -367,8 +367,8 @@
   </table>
   <h5 id="Silverback_Testing_KafkaTestingHelper_GetTopics_System_String_System_String__remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only. See
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
@@ -429,8 +429,8 @@ processed and committed.</p>
   </table>
   <h5 id="Silverback_Testing_KafkaTestingHelper_WaitUntilAllMessagesAreConsumedAsync_System_Collections_Generic_IReadOnlyCollection_System_String__System_Nullable_System_TimeSpan___remarks">Remarks</h5>
   <div class="markdown level1 remarks"><p>This method works with the mocked Kafka broker only. See
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
-<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.SilverbackBuilderUseMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_SilverbackBuilderUseMockedKafkaExtensions_UseMockedKafka_Silverback_Messaging_Configuration_ISilverbackBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">UseMockedKafka(ISilverbackBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a> or
+<a class="xref" href="Microsoft.Extensions.DependencyInjection.BrokerOptionsBuilderAddMockedKafkaExtensions.html#Microsoft_Extensions_DependencyInjection_BrokerOptionsBuilderAddMockedKafkaExtensions_AddMockedKafka_Microsoft_Extensions_DependencyInjection_IBrokerOptionsBuilder_System_Action_Silverback_Messaging_Configuration_Kafka_IMockedKafkaOptionsBuilder__">AddMockedKafka(IBrokerOptionsBuilder, Action&lt;IMockedKafkaOptionsBuilder&gt;)</a>.</p>
 </div>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
