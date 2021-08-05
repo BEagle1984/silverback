@@ -3,6 +3,7 @@
 
 using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Encryption
@@ -39,6 +40,14 @@ namespace Silverback.Messaging.Encryption
                 context.Envelope.RawMessage = _streamFactory.GetEncryptStream(
                     context.Envelope.RawMessage,
                     context.Envelope.Endpoint.Encryption);
+
+                if (context.Envelope.Endpoint.Encryption is SymmetricEncryptionSettings settings &&
+                    settings.KeyIdentifier != null)
+                {
+                    context.Envelope.Headers.AddOrReplace(
+                        DefaultMessageHeaders.EncryptionKeyId,
+                        settings.KeyIdentifier);
+                }
             }
 
             await next(context).ConfigureAwait(false);

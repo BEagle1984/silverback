@@ -25,14 +25,20 @@ namespace Silverback.Messaging.Encryption
         ///     The inner <see cref="Stream" /> to read the encrypted message from.
         /// </param>
         /// <param name="settings">
-        ///     The <see cref="SymmetricEncryptionSettings" /> specifying the cryptographic algorithm settings.
+        ///     The <see cref="SymmetricDecryptionSettings" /> specifying the cryptographic algorithm settings.
         /// </param>
-        public SymmetricDecryptStream(Stream stream, SymmetricEncryptionSettings settings)
+        /// <param name="keyIdentifier">
+        ///     The key identifier to retrieve the encryption key.
+        /// </param>
+        public SymmetricDecryptStream(
+            Stream stream,
+            SymmetricDecryptionSettings settings,
+            string? keyIdentifier = null)
         {
             Check.NotNull(stream, nameof(stream));
             Check.NotNull(settings, nameof(settings));
 
-            _cryptoTransform = CreateCryptoTransform(settings, stream);
+            _cryptoTransform = CreateCryptoTransform(settings, stream, keyIdentifier);
             _cryptoStream = new CryptoStream(stream, _cryptoTransform, CryptoStreamMode.Read);
         }
 
@@ -51,19 +57,33 @@ namespace Silverback.Messaging.Encryption
             base.Dispose(disposing);
         }
 
-        private static ICryptoTransform CreateCryptoTransform(SymmetricEncryptionSettings settings, Stream stream)
+        private static ICryptoTransform CreateCryptoTransform(
+            SymmetricDecryptionSettings settings,
+            Stream stream,
+            string? keyIdentifier)
         {
             Check.NotNull(settings, nameof(settings));
             Check.NotNull(stream, nameof(stream));
 
-            using var algorithm = SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings);
+            byte[]? encryptionKey;
+
+            if (keyIdentifier != null && settings.KeyProvider != null)
+            {
+                encryptionKey = settings.KeyProvider(keyIdentifier);
+            }
+            else
+            {
+                encryptionKey = settings.Key;
+            }
+
+            using var algorithm = SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings, encryptionKey);
 
             if (settings.InitializationVector == null)
             {
                 // Read the IV prepended to the message
                 byte[] buffer = new byte[algorithm.IV.Length];
 
-                int totalReadCount = 0;
+                var totalReadCount = 0;
                 while (totalReadCount < algorithm.IV.Length)
                 {
                     int readCount = stream.Read(buffer, totalReadCount, algorithm.IV.Length - totalReadCount);
@@ -71,7 +91,7 @@ namespace Silverback.Messaging.Encryption
                     if (readCount == 0)
                         break;
 
-                    totalReadCount = totalReadCount + readCount;
+                    totalReadCount += readCount;
                 }
 
                 algorithm.IV = buffer;

@@ -37,13 +37,21 @@ namespace Silverback.Messaging.Encryption
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            if (context.Envelope.Endpoint.Encryption != null &&
-                !context.Envelope.Headers.Contains(DefaultMessageHeaders.Decrypted) &&
-                context.Envelope.RawMessage != null)
+            if (context.Envelope.Endpoint.Encryption != null && context.Envelope.RawMessage != null)
             {
+                string? keyIdentifier = null;
+
+                if (context.Envelope.Endpoint.Encryption is SymmetricDecryptionSettings settings &&
+                    settings.KeyProvider != null)
+                {
+                    keyIdentifier =
+                        context.Envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId);
+                }
+
                 context.Envelope.RawMessage = _streamFactory.GetDecryptStream(
                     context.Envelope.RawMessage,
-                    context.Envelope.Endpoint.Encryption);
+                    context.Envelope.Endpoint.Encryption,
+                    keyIdentifier);
             }
 
             await next(context).ConfigureAwait(false);

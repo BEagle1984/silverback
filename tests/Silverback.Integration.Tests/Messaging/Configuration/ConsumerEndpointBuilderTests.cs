@@ -22,7 +22,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         {
             var builder = new TestConsumerEndpointBuilder();
 
-            Action act = () => builder.Decrypt(new SymmetricEncryptionSettings()).Build();
+            Action act = () => builder.Decrypt(new SymmetricDecryptionSettings()).Build();
 
             act.Should().ThrowExactly<EndpointConfigurationException>();
         }
@@ -52,7 +52,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void Decrypt_EncryptionSettings_EncryptionSet()
         {
             var builder = new TestConsumerEndpointBuilder();
-            var encryptionSettings = new SymmetricEncryptionSettings
+            var encryptionSettings = new SymmetricDecryptionSettings
             {
                 AlgorithmName = "TripleDES",
                 Key = new byte[10]
