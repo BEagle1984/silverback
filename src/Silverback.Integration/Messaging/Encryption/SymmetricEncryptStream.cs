@@ -102,7 +102,7 @@ namespace Silverback.Messaging.Encryption
         [SuppressMessage("", "CA5401", Justification = "User choice to use a fix IV")]
         private ICryptoTransform CreateCryptoTransform(SymmetricEncryptionSettings settings)
         {
-            using var algorithm = SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings);
+            using var algorithm = SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings, settings.Key);
 
             if (settings.InitializationVector == null)
                 _prefixBuffer = algorithm.IV;

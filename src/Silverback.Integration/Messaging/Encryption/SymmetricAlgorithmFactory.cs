@@ -7,7 +7,9 @@ namespace Silverback.Messaging.Encryption
 {
     internal static class SymmetricAlgorithmFactory
     {
-        public static SymmetricAlgorithm CreateSymmetricAlgorithm(SymmetricEncryptionSettings encryptionSettings)
+        public static SymmetricAlgorithm CreateSymmetricAlgorithm(
+            SymmetricEncryptionSettingsBase encryptionSettings,
+            byte[]? encryptionKey)
         {
             var algorithm = SymmetricAlgorithm.Create(encryptionSettings.AlgorithmName);
 
@@ -23,7 +25,7 @@ namespace Silverback.Messaging.Encryption
             if (encryptionSettings.InitializationVector != null)
                 algorithm.IV = encryptionSettings.InitializationVector;
 
-            algorithm.Key = encryptionSettings.Key;
+            algorithm.Key = encryptionKey;
 
             if (encryptionSettings.CipherMode != null)
                 algorithm.Mode = encryptionSettings.CipherMode.Value;

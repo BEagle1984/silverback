@@ -29,7 +29,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
             var cryptoStream = new SymmetricDecryptStream(
                 cypherMessage,
-                new SymmetricEncryptionSettings
+                new SymmetricDecryptionSettings
                 {
                     Key = GenerateKey(256)
                 });
@@ -52,7 +52,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
             var cryptoStream = new SymmetricDecryptStream(
                 cypherMessage,
-                new SymmetricEncryptionSettings
+                new SymmetricDecryptionSettings
                 {
                     Key = GenerateKey(256)
                 });
@@ -76,7 +76,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
             var cryptoStream = new SymmetricDecryptStream(
                 cypherMessage,
-                new SymmetricEncryptionSettings
+                new SymmetricDecryptionSettings
                 {
                     AlgorithmName = "Rijndael",
                     BlockSize = 128,
@@ -105,7 +105,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
             var cryptoStream = new SymmetricDecryptStream(
                 cypherMessage,
-                new SymmetricEncryptionSettings
+                new SymmetricDecryptionSettings
                 {
                     AlgorithmName = "Rijndael",
                     BlockSize = 128,
@@ -132,7 +132,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
             var cryptoStream = new SymmetricDecryptStream(
                 cypherMessage,
-                new SymmetricEncryptionSettings
+                new SymmetricDecryptionSettings
                 {
                     Key = GenerateKey(256),
                     InitializationVector = GenerateKey(128)
@@ -155,7 +155,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
             var cryptoStream = new SymmetricDecryptStream(
                 cypherMessage,
-                new SymmetricEncryptionSettings
+                new SymmetricDecryptionSettings
                 {
                     Key = GenerateKey(256),
                     InitializationVector = GenerateKey(128)
@@ -180,7 +180,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
             var cryptoStream = new SymmetricDecryptStream(
                 cypherMessage,
-                new SymmetricEncryptionSettings
+                new SymmetricDecryptionSettings
                 {
                     Key = GenerateKey(256)
                 });
@@ -204,7 +204,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
 
             var cryptoStream = new SymmetricDecryptStream(
                 cypherMessage,
-                new SymmetricEncryptionSettings
+                new SymmetricDecryptionSettings
                 {
                     Key = GenerateKey(256)
                 });
@@ -220,7 +220,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
         {
             var cryptoStream = new SymmetricDecryptStream(
                 new MemoryStream(),
-                new SymmetricEncryptionSettings
+                new SymmetricDecryptionSettings
                 {
                     Key = GenerateKey(256)
                 });
@@ -234,7 +234,7 @@ namespace Silverback.Tests.Integration.Messaging.Encryption
         {
             var cryptoStream = new SymmetricDecryptStream(
                 new MemoryStream(),
-                new SymmetricEncryptionSettings
+                new SymmetricDecryptionSettings
                 {
                     Key = GenerateKey(256)
                 });

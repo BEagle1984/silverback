@@ -1,7 +1,9 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using Silverback.Messaging.Encryption;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
@@ -40,10 +42,49 @@ namespace Silverback.Messaging.Configuration
             Check.NotNull(endpointBuilder, nameof(endpointBuilder));
 
             endpointBuilder.Decrypt(
-                new SymmetricEncryptionSettings
+                new SymmetricDecryptionSettings
                 {
                     AlgorithmName = "AES",
                     Key = key,
+                    InitializationVector = initializationVector
+                });
+
+            return (TBuilder)endpointBuilder;
+        }
+
+        /// <summary>
+        ///     Specifies that the AES algorithm has to be used to decrypt the messages.
+        /// </summary>
+        /// <typeparam name="TBuilder">
+        ///     The actual builder type.
+        /// </typeparam>
+        /// <param name="endpointBuilder">
+        ///     The endpoint builder.
+        /// </param>
+        /// <param name="decryptionKeyCallback">
+        ///     The function to be used to retrieve the encryption key according to the encryption key identifier passed
+        ///     in the header (see <see cref="DefaultMessageHeaders.EncryptionKeyId" />).
+        /// </param>
+        /// <param name="initializationVector">
+        ///     The optional initialization vector (IV) for the symmetric algorithm. If <c>null</c> it is expected
+        ///     that the IV is prepended to the actual encrypted message.
+        /// </param>
+        /// <returns>
+        ///     The endpoint builder so that additional calls can be chained.
+        /// </returns>
+        public static TBuilder DecryptUsingAes<TBuilder>(
+            this IConsumerEndpointBuilder<TBuilder> endpointBuilder,
+            Func<string, byte[]> decryptionKeyCallback,
+            byte[]? initializationVector = null)
+            where TBuilder : IConsumerEndpointBuilder<TBuilder>
+        {
+            Check.NotNull(endpointBuilder, nameof(endpointBuilder));
+
+            endpointBuilder.Decrypt(
+                new SymmetricDecryptionSettings
+                {
+                    AlgorithmName = "AES",
+                    KeyProvider = decryptionKeyCallback,
                     InitializationVector = initializationVector
                 });
 

@@ -10,27 +10,27 @@ namespace Silverback.Messaging.Encryption
     public class SilverbackCryptoStreamFactory : ISilverbackCryptoStreamFactory
     {
         /// <inheritdoc cref="ISilverbackCryptoStreamFactory.GetEncryptStream" />
-        public SilverbackCryptoStream GetEncryptStream(Stream stream, EncryptionSettings settings)
-        {
-            switch (settings)
+        public SilverbackCryptoStream GetEncryptStream(Stream stream, EncryptionSettings settings) =>
+            settings switch
             {
-                case SymmetricEncryptionSettings symmetricEncryptionSettings:
-                    return new SymmetricEncryptStream(stream, symmetricEncryptionSettings);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(settings), settings, null);
-            }
-        }
+                SymmetricEncryptionSettings symmetricEncryptionSettings => new SymmetricEncryptStream(
+                    stream,
+                    symmetricEncryptionSettings),
+                _ => throw new ArgumentOutOfRangeException(nameof(settings), settings, null)
+            };
 
         /// <inheritdoc cref="ISilverbackCryptoStreamFactory.GetDecryptStream" />
-        public SilverbackCryptoStream GetDecryptStream(Stream stream, EncryptionSettings settings)
-        {
-            switch (settings)
+        public SilverbackCryptoStream GetDecryptStream(
+            Stream stream,
+            EncryptionSettings settings,
+            string? keyIdentifier = null) =>
+            settings switch
             {
-                case SymmetricEncryptionSettings symmetricEncryptionSettings:
-                    return new SymmetricDecryptStream(stream, symmetricEncryptionSettings);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(settings), settings, null);
-            }
-        }
+                SymmetricDecryptionSettings symmetricEncryptionSettings => new SymmetricDecryptStream(
+                    stream,
+                    symmetricEncryptionSettings,
+                    keyIdentifier),
+                _ => throw new ArgumentOutOfRangeException(nameof(settings), settings, null)
+            };
     }
 }
