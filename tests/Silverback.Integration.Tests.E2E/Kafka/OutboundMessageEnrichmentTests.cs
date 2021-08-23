@@ -249,5 +249,42 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             messages[1].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("two"));
             messages[2].Key.Should().BeEquivalentTo(Encoding.UTF8.GetBytes("three"));
         }
+
+        [Fact]
+        public async Task WithKafkaKey_Null_NullMessageKeySet()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://tests";
+                                    })
+                                .AddOutbound<TestEventOne>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(_ => null)))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new TestEventOne { Content = "one" });
+            await publisher.PublishAsync(new TestEventOne { Content = "two" });
+            await publisher.PublishAsync(new TestEventOne { Content = "three" });
+
+            var messages = DefaultTopic.GetAllMessages();
+            messages.Should().HaveCount(3);
+            messages[0].Key.Should().BeNull();
+            messages[1].Key.Should().BeNull();
+            messages[2].Key.Should().BeNull();
+        }
     }
 }

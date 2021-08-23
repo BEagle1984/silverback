@@ -43,7 +43,7 @@ namespace Silverback.Messaging.Messages
         public MessageHeader(string name, string? value)
         {
             _name = Check.NotNull(name, nameof(name));
-            Value = value ?? string.Empty;
+            Value = value;
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Used to be used to deserialize")]

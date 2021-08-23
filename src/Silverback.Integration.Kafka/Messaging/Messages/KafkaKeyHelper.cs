@@ -30,8 +30,11 @@ namespace Silverback.Messaging.Messages
                         })
                     .ToList();
 
-            if (!keysDictionary.Any())
+            if (!keysDictionary.Any() ||
+                keysDictionary.All(keyValue => string.IsNullOrEmpty(keyValue.Value)))
+            {
                 return null;
+            }
 
             return keysDictionary.Count == 1
                 ? keysDictionary.First().Value

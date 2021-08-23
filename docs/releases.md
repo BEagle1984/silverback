@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.3.0-beta.2](https://github.com/BEagle1984/silverback/releases/tag/v3.3.0-beta.2)
+## [3.3.0-beta.3](https://github.com/BEagle1984/silverback/releases/tag/v3.3.0-beta.3)
 
 ### What's new
 
@@ -15,6 +15,7 @@ uid: releases
 ### Fixes
 
 * Invoke the Kafka partition EOF callback for all connected consumers
+* Ignore null or empty Kafka key in producer
 
 ## [3.2.0](https://github.com/BEagle1984/silverback/releases/tag/v3.2.0)
 
