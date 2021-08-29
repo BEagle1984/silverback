@@ -79,16 +79,18 @@
             <article class="content wrap" id="_content" data-uid="releases">
 <h1 id="releases">Releases</h1>
 
-<h2 id="330-beta2"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.3.0-beta.2">3.3.0-beta.2</a></h2>
+<h2 id="330"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.3.0">3.3.0</a></h2>
 <h3 id="whats-new">What's new</h3>
 <ul>
 <li>Optimize in-memory mocked Kafka (avoid spawning too many threads)</li>
 <li>Support multiple brokers (with overlapping topic names) in mocked Kafka and MQTT</li>
 <li>Add message validation for both producer and consumer (see <a class="xref" href="concepts/broker/validation.html">Message Validation</a>)</li>
+<li>Add new <code>AddInbound</code> overloads specifying message type for a more compact configuration when using the typed deserializer (see <a class="xref" href="concepts/broker/serialization.html">Serialization</a>)</li>
 </ul>
 <h3 id="fixes">Fixes</h3>
 <ul>
 <li>Invoke the Kafka partition EOF callback for all connected consumers</li>
+<li>Ignore null or empty Kafka key in producer</li>
 </ul>
 <h2 id="320"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.2.0">3.2.0</a></h2>
 <h3 id="whats-new-1">What's new</h3>

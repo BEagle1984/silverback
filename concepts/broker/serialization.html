@@ -123,6 +123,20 @@
                     .ProduceTo(&quot;inventory-events&quot;)
                     .SerializeAsJson(serializer =&gt; serializer
                         .UseFixedType&lt;InventoryEvent&gt;()))
+                
+                // Specifying the message type will automatically
+                // switch to the JsonMessageSerializer&lt;TMessage&gt;
+                // and deserialize the specified type without
+                // needing the type header
+                .AddInbound&lt;OrderEvent&gt;(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;order-events&quot;)
+                    .Configure(config =&gt; 
+                        {
+                            config.GroupId = &quot;my-consumer&quot;;
+                        }))
+                
+                // The following configurations is equivalent to the
+                // previous one, but more verbose
                 .AddInbound(endpoint =&gt; endpoint
                     .ConsumeFrom(&quot;order-events&quot;)
                     .Configure(config =&gt; 

@@ -15308,14 +15308,14 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.ConsumerEndpointBuilder(Of TEndpoint, TBuilder)
   nameWithType: ConsumerEndpointBuilder<TEndpoint, TBuilder>
   nameWithType.vb: ConsumerEndpointBuilder(Of TEndpoint, TBuilder)
-- uid: Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.#ctor(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
-  name: ConsumerEndpointBuilder(IEndpointsConfigurationBuilder)
-  href: api/Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2__ctor_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_
-  commentId: M:Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.#ctor(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
-  fullName: Silverback.Messaging.Configuration.ConsumerEndpointBuilder<TEndpoint, TBuilder>.ConsumerEndpointBuilder(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
-  fullName.vb: Silverback.Messaging.Configuration.ConsumerEndpointBuilder(Of TEndpoint, TBuilder).ConsumerEndpointBuilder(Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
-  nameWithType: ConsumerEndpointBuilder<TEndpoint, TBuilder>.ConsumerEndpointBuilder(IEndpointsConfigurationBuilder)
-  nameWithType.vb: ConsumerEndpointBuilder(Of TEndpoint, TBuilder).ConsumerEndpointBuilder(IEndpointsConfigurationBuilder)
+- uid: Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.#ctor(System.Type,Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
+  name: ConsumerEndpointBuilder(Type, IEndpointsConfigurationBuilder)
+  href: api/Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2__ctor_System_Type_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_
+  commentId: M:Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.#ctor(System.Type,Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
+  fullName: Silverback.Messaging.Configuration.ConsumerEndpointBuilder<TEndpoint, TBuilder>.ConsumerEndpointBuilder(System.Type, Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
+  fullName.vb: Silverback.Messaging.Configuration.ConsumerEndpointBuilder(Of TEndpoint, TBuilder).ConsumerEndpointBuilder(System.Type, Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
+  nameWithType: ConsumerEndpointBuilder<TEndpoint, TBuilder>.ConsumerEndpointBuilder(Type, IEndpointsConfigurationBuilder)
+  nameWithType.vb: ConsumerEndpointBuilder(Of TEndpoint, TBuilder).ConsumerEndpointBuilder(Type, IEndpointsConfigurationBuilder)
 - uid: Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.#ctor*
   name: ConsumerEndpointBuilder
   href: api/Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2__ctor_
@@ -15454,6 +15454,23 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.ConsumerEndpointBuilder(Of TEndpoint, TBuilder).IgnoreUnhandledMessages
   nameWithType: ConsumerEndpointBuilder<TEndpoint, TBuilder>.IgnoreUnhandledMessages
   nameWithType.vb: ConsumerEndpointBuilder(Of TEndpoint, TBuilder).IgnoreUnhandledMessages
+- uid: Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.MessageType
+  name: MessageType
+  href: api/Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_MessageType
+  commentId: P:Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.MessageType
+  fullName: Silverback.Messaging.Configuration.ConsumerEndpointBuilder<TEndpoint, TBuilder>.MessageType
+  fullName.vb: Silverback.Messaging.Configuration.ConsumerEndpointBuilder(Of TEndpoint, TBuilder).MessageType
+  nameWithType: ConsumerEndpointBuilder<TEndpoint, TBuilder>.MessageType
+  nameWithType.vb: ConsumerEndpointBuilder(Of TEndpoint, TBuilder).MessageType
+- uid: Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.MessageType*
+  name: MessageType
+  href: api/Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_MessageType_
+  commentId: Overload:Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.MessageType
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.ConsumerEndpointBuilder<TEndpoint, TBuilder>.MessageType
+  fullName.vb: Silverback.Messaging.Configuration.ConsumerEndpointBuilder(Of TEndpoint, TBuilder).MessageType
+  nameWithType: ConsumerEndpointBuilder<TEndpoint, TBuilder>.MessageType
+  nameWithType.vb: ConsumerEndpointBuilder(Of TEndpoint, TBuilder).MessageType
 - uid: Silverback.Messaging.Configuration.ConsumerEndpointBuilder`2.OnError(Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy)
   name: OnError(IErrorPolicy)
   href: api/Silverback.Messaging.Configuration.ConsumerEndpointBuilder-2.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilder_2_OnError_Silverback_Messaging_Inbound_ErrorHandling_IErrorPolicy_
@@ -16644,6 +16661,23 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.IConsumerEndpointBuilder(Of TBuilder).IgnoreUnhandledMessages
   nameWithType: IConsumerEndpointBuilder<TBuilder>.IgnoreUnhandledMessages
   nameWithType.vb: IConsumerEndpointBuilder(Of TBuilder).IgnoreUnhandledMessages
+- uid: Silverback.Messaging.Configuration.IConsumerEndpointBuilder`1.MessageType
+  name: MessageType
+  href: api/Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_MessageType
+  commentId: P:Silverback.Messaging.Configuration.IConsumerEndpointBuilder`1.MessageType
+  fullName: Silverback.Messaging.Configuration.IConsumerEndpointBuilder<TBuilder>.MessageType
+  fullName.vb: Silverback.Messaging.Configuration.IConsumerEndpointBuilder(Of TBuilder).MessageType
+  nameWithType: IConsumerEndpointBuilder<TBuilder>.MessageType
+  nameWithType.vb: IConsumerEndpointBuilder(Of TBuilder).MessageType
+- uid: Silverback.Messaging.Configuration.IConsumerEndpointBuilder`1.MessageType*
+  name: MessageType
+  href: api/Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_MessageType_
+  commentId: Overload:Silverback.Messaging.Configuration.IConsumerEndpointBuilder`1.MessageType
+  isSpec: "True"
+  fullName: Silverback.Messaging.Configuration.IConsumerEndpointBuilder<TBuilder>.MessageType
+  fullName.vb: Silverback.Messaging.Configuration.IConsumerEndpointBuilder(Of TBuilder).MessageType
+  nameWithType: IConsumerEndpointBuilder<TBuilder>.MessageType
+  nameWithType.vb: IConsumerEndpointBuilder(Of TBuilder).MessageType
 - uid: Silverback.Messaging.Configuration.IConsumerEndpointBuilder`1.OnError(Silverback.Messaging.Inbound.ErrorHandling.IErrorPolicy)
   name: OnError(IErrorPolicy)
   href: api/Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html#Silverback_Messaging_Configuration_IConsumerEndpointBuilder_1_OnError_Silverback_Messaging_Inbound_ErrorHandling_IErrorPolicy_
@@ -17102,6 +17136,12 @@ references:
   commentId: T:Silverback.Messaging.Configuration.IJsonMessageSerializerBuilder
   fullName: Silverback.Messaging.Configuration.IJsonMessageSerializerBuilder
   nameWithType: IJsonMessageSerializerBuilder
+- uid: Silverback.Messaging.Configuration.IJsonMessageSerializerBuilder.UseFixedType(System.Type)
+  name: UseFixedType(Type)
+  href: api/Silverback.Messaging.Configuration.IJsonMessageSerializerBuilder.html#Silverback_Messaging_Configuration_IJsonMessageSerializerBuilder_UseFixedType_System_Type_
+  commentId: M:Silverback.Messaging.Configuration.IJsonMessageSerializerBuilder.UseFixedType(System.Type)
+  fullName: Silverback.Messaging.Configuration.IJsonMessageSerializerBuilder.UseFixedType(System.Type)
+  nameWithType: IJsonMessageSerializerBuilder.UseFixedType(Type)
 - uid: Silverback.Messaging.Configuration.IJsonMessageSerializerBuilder.UseFixedType*
   name: UseFixedType
   href: api/Silverback.Messaging.Configuration.IJsonMessageSerializerBuilder.html#Silverback_Messaging_Configuration_IJsonMessageSerializerBuilder_UseFixedType_
@@ -17203,6 +17243,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.Configure
   nameWithType: INewtonsoftJsonMessageSerializerBuilder.Configure
+- uid: Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.UseFixedType(System.Type)
+  name: UseFixedType(Type)
+  href: api/Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.html#Silverback_Messaging_Configuration_INewtonsoftJsonMessageSerializerBuilder_UseFixedType_System_Type_
+  commentId: M:Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.UseFixedType(System.Type)
+  fullName: Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.UseFixedType(System.Type)
+  nameWithType: INewtonsoftJsonMessageSerializerBuilder.UseFixedType(Type)
 - uid: Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.UseFixedType*
   name: UseFixedType
   href: api/Silverback.Messaging.Configuration.INewtonsoftJsonMessageSerializerBuilder.html#Silverback_Messaging_Configuration_INewtonsoftJsonMessageSerializerBuilder_UseFixedType_
@@ -17466,6 +17512,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.Build
   nameWithType: JsonMessageSerializerBuilder.Build
+- uid: Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.UseFixedType(System.Type)
+  name: UseFixedType(Type)
+  href: api/Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.html#Silverback_Messaging_Configuration_JsonMessageSerializerBuilder_UseFixedType_System_Type_
+  commentId: M:Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.UseFixedType(System.Type)
+  fullName: Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.UseFixedType(System.Type)
+  nameWithType: JsonMessageSerializerBuilder.UseFixedType(Type)
 - uid: Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.UseFixedType*
   name: UseFixedType
   href: api/Silverback.Messaging.Configuration.JsonMessageSerializerBuilder.html#Silverback_Messaging_Configuration_JsonMessageSerializerBuilder_UseFixedType_
@@ -19212,6 +19264,15 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound(System.Action(Of Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder), System.Int32)
   nameWithType: IKafkaEndpointsConfigurationBuilder.AddInbound(Action<IKafkaConsumerEndpointBuilder>, Int32)
   nameWithType.vb: IKafkaEndpointsConfigurationBuilder.AddInbound(Action(Of IKafkaConsumerEndpointBuilder), Int32)
+- uid: Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound(System.Type,System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder},System.Int32)
+  name: AddInbound(Type, Action<IKafkaConsumerEndpointBuilder>, Int32)
+  href: api/Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddInbound_System_Type_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder__System_Int32_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound(System.Type,System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder},System.Int32)
+  name.vb: AddInbound(Type, Action(Of IKafkaConsumerEndpointBuilder), Int32)
+  fullName: Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound(System.Type, System.Action<Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder>, System.Int32)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound(System.Type, System.Action(Of Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder), System.Int32)
+  nameWithType: IKafkaEndpointsConfigurationBuilder.AddInbound(Type, Action<IKafkaConsumerEndpointBuilder>, Int32)
+  nameWithType.vb: IKafkaEndpointsConfigurationBuilder.AddInbound(Type, Action(Of IKafkaConsumerEndpointBuilder), Int32)
 - uid: Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound*
   name: AddInbound
   href: api/Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddInbound_
@@ -19219,6 +19280,15 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound
   nameWithType: IKafkaEndpointsConfigurationBuilder.AddInbound
+- uid: Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound``1(System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder},System.Int32)
+  name: AddInbound<TMessage>(Action<IKafkaConsumerEndpointBuilder>, Int32)
+  href: api/Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddInbound__1_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder__System_Int32_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound``1(System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder},System.Int32)
+  name.vb: AddInbound(Of TMessage)(Action(Of IKafkaConsumerEndpointBuilder), Int32)
+  fullName: Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound<TMessage>(System.Action<Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder>, System.Int32)
+  fullName.vb: Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddInbound(Of TMessage)(System.Action(Of Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder), System.Int32)
+  nameWithType: IKafkaEndpointsConfigurationBuilder.AddInbound<TMessage>(Action<IKafkaConsumerEndpointBuilder>, Int32)
+  nameWithType.vb: IKafkaEndpointsConfigurationBuilder.AddInbound(Of TMessage)(Action(Of IKafkaConsumerEndpointBuilder), Int32)
 - uid: Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.AddOutbound(System.Type,Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter{System.Object,Silverback.Messaging.KafkaProducerEndpoint}.RouterFunction,System.Collections.Generic.IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder}},System.Boolean)
   name: AddOutbound(Type, DictionaryOutboundRouter<Object, KafkaProducerEndpoint>.RouterFunction, IReadOnlyDictionary<String, Action<IKafkaProducerEndpointBuilder>>, Boolean)
   href: api/Silverback.Messaging.Configuration.Kafka.IKafkaEndpointsConfigurationBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaEndpointsConfigurationBuilder_AddOutbound_System_Type_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_System_Object_Silverback_Messaging_KafkaProducerEndpoint__RouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder___System_Boolean_
@@ -19654,12 +19724,12 @@ references:
   commentId: T:Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder
   fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder
   nameWithType: KafkaConsumerEndpointBuilder
-- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.#ctor(Silverback.Messaging.Configuration.Kafka.KafkaClientConfig,Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
-  name: KafkaConsumerEndpointBuilder(KafkaClientConfig, IEndpointsConfigurationBuilder)
-  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerEndpointBuilder__ctor_Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_
-  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.#ctor(Silverback.Messaging.Configuration.Kafka.KafkaClientConfig,Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
-  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.KafkaConsumerEndpointBuilder(Silverback.Messaging.Configuration.Kafka.KafkaClientConfig, Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
-  nameWithType: KafkaConsumerEndpointBuilder.KafkaConsumerEndpointBuilder(KafkaClientConfig, IEndpointsConfigurationBuilder)
+- uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.#ctor(Silverback.Messaging.Configuration.Kafka.KafkaClientConfig,System.Type,Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
+  name: KafkaConsumerEndpointBuilder(KafkaClientConfig, Type, IEndpointsConfigurationBuilder)
+  href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerEndpointBuilder__ctor_Silverback_Messaging_Configuration_Kafka_KafkaClientConfig_System_Type_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_
+  commentId: M:Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.#ctor(Silverback.Messaging.Configuration.Kafka.KafkaClientConfig,System.Type,Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
+  fullName: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.KafkaConsumerEndpointBuilder(Silverback.Messaging.Configuration.Kafka.KafkaClientConfig, System.Type, Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
+  nameWithType: KafkaConsumerEndpointBuilder.KafkaConsumerEndpointBuilder(KafkaClientConfig, Type, IEndpointsConfigurationBuilder)
 - uid: Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.#ctor*
   name: KafkaConsumerEndpointBuilder
   href: api/Silverback.Messaging.Configuration.Kafka.KafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_KafkaConsumerEndpointBuilder__ctor_
@@ -20711,6 +20781,15 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound(System.Action(Of Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder))
   nameWithType: IMqttEndpointsConfigurationBuilder.AddInbound(Action<IMqttConsumerEndpointBuilder>)
   nameWithType.vb: IMqttEndpointsConfigurationBuilder.AddInbound(Action(Of IMqttConsumerEndpointBuilder))
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound(System.Type,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder})
+  name: AddInbound(Type, Action<IMqttConsumerEndpointBuilder>)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddInbound_System_Type_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttConsumerEndpointBuilder__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound(System.Type,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder})
+  name.vb: AddInbound(Type, Action(Of IMqttConsumerEndpointBuilder))
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound(System.Type, System.Action<Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound(System.Type, System.Action(Of Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder))
+  nameWithType: IMqttEndpointsConfigurationBuilder.AddInbound(Type, Action<IMqttConsumerEndpointBuilder>)
+  nameWithType.vb: IMqttEndpointsConfigurationBuilder.AddInbound(Type, Action(Of IMqttConsumerEndpointBuilder))
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound*
   name: AddInbound
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddInbound_
@@ -20718,6 +20797,15 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound
   nameWithType: IMqttEndpointsConfigurationBuilder.AddInbound
+- uid: Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound``1(System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder})
+  name: AddInbound<TMessage>(Action<IMqttConsumerEndpointBuilder>)
+  href: api/Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddInbound__1_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttConsumerEndpointBuilder__
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound``1(System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder})
+  name.vb: AddInbound(Of TMessage)(Action(Of IMqttConsumerEndpointBuilder))
+  fullName: Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound<TMessage>(System.Action<Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder>)
+  fullName.vb: Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddInbound(Of TMessage)(System.Action(Of Silverback.Messaging.Configuration.Mqtt.IMqttConsumerEndpointBuilder))
+  nameWithType: IMqttEndpointsConfigurationBuilder.AddInbound<TMessage>(Action<IMqttConsumerEndpointBuilder>)
+  nameWithType.vb: IMqttEndpointsConfigurationBuilder.AddInbound(Of TMessage)(Action(Of IMqttConsumerEndpointBuilder))
 - uid: Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.AddOutbound(System.Type,Silverback.Messaging.Outbound.Routing.DictionaryOutboundRouter{System.Object,Silverback.Messaging.MqttProducerEndpoint}.RouterFunction,System.Collections.Generic.IReadOnlyDictionary{System.String,System.Action{Silverback.Messaging.Configuration.Mqtt.IMqttProducerEndpointBuilder}},System.Boolean)
   name: AddOutbound(Type, DictionaryOutboundRouter<Object, MqttProducerEndpoint>.RouterFunction, IReadOnlyDictionary<String, Action<IMqttProducerEndpointBuilder>>, Boolean)
   href: api/Silverback.Messaging.Configuration.Mqtt.IMqttEndpointsConfigurationBuilder.html#Silverback_Messaging_Configuration_Mqtt_IMqttEndpointsConfigurationBuilder_AddOutbound_System_Type_Silverback_Messaging_Outbound_Routing_DictionaryOutboundRouter_System_Object_Silverback_Messaging_MqttProducerEndpoint__RouterFunction_System_Collections_Generic_IReadOnlyDictionary_System_String_System_Action_Silverback_Messaging_Configuration_Mqtt_IMqttProducerEndpointBuilder___System_Boolean_
@@ -21927,12 +22015,12 @@ references:
   commentId: T:Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder
   fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder
   nameWithType: MqttConsumerEndpointBuilder
-- uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.#ctor(Silverback.Messaging.Configuration.Mqtt.MqttClientConfig,Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
-  name: MqttConsumerEndpointBuilder(MqttClientConfig, IEndpointsConfigurationBuilder)
-  href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpointBuilder__ctor_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_
-  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.#ctor(Silverback.Messaging.Configuration.Mqtt.MqttClientConfig,Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
-  fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.MqttConsumerEndpointBuilder(Silverback.Messaging.Configuration.Mqtt.MqttClientConfig, Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
-  nameWithType: MqttConsumerEndpointBuilder.MqttConsumerEndpointBuilder(MqttClientConfig, IEndpointsConfigurationBuilder)
+- uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.#ctor(Silverback.Messaging.Configuration.Mqtt.MqttClientConfig,System.Type,Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
+  name: MqttConsumerEndpointBuilder(MqttClientConfig, Type, IEndpointsConfigurationBuilder)
+  href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpointBuilder__ctor_Silverback_Messaging_Configuration_Mqtt_MqttClientConfig_System_Type_Silverback_Messaging_Configuration_IEndpointsConfigurationBuilder_
+  commentId: M:Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.#ctor(Silverback.Messaging.Configuration.Mqtt.MqttClientConfig,System.Type,Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
+  fullName: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.MqttConsumerEndpointBuilder(Silverback.Messaging.Configuration.Mqtt.MqttClientConfig, System.Type, Silverback.Messaging.Configuration.IEndpointsConfigurationBuilder)
+  nameWithType: MqttConsumerEndpointBuilder.MqttConsumerEndpointBuilder(MqttClientConfig, Type, IEndpointsConfigurationBuilder)
 - uid: Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.#ctor*
   name: MqttConsumerEndpointBuilder
   href: api/Silverback.Messaging.Configuration.Mqtt.MqttConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Mqtt_MqttConsumerEndpointBuilder__ctor_
@@ -22490,6 +22578,12 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.Configure
   nameWithType: NewtonsoftJsonMessageSerializerBuilder.Configure
+- uid: Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.UseFixedType(System.Type)
+  name: UseFixedType(Type)
+  href: api/Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.html#Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_UseFixedType_System_Type_
+  commentId: M:Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.UseFixedType(System.Type)
+  fullName: Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.UseFixedType(System.Type)
+  nameWithType: NewtonsoftJsonMessageSerializerBuilder.UseFixedType(Type)
 - uid: Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.UseFixedType*
   name: UseFixedType
   href: api/Silverback.Messaging.Configuration.NewtonsoftJsonMessageSerializerBuilder.html#Silverback_Messaging_Configuration_NewtonsoftJsonMessageSerializerBuilder_UseFixedType_

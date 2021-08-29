@@ -334,18 +334,14 @@ namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
                                         .ProduceTo(&quot;samples/testaments&quot;)))
 
                         // Consume the samples/basic topic
-                        .AddInbound(
+                        // Note: It is mandatory to specify the message type, since
+                        // MQTT 3 doesn't support message headers (aka user
+                        // properties)
+                        .AddInbound&lt;SampleMessage&gt;(
                             endpoint =&gt; endpoint
                                 .ConsumeFrom(&quot;samples/basic&quot;)
                                 .WithQualityOfServiceLevel(
                                     MqttQualityOfServiceLevel.AtLeastOnce)
-
-                                // It is mandatory to specify the message type, since
-                                // MQTT 3 doesn't support message headers (aka user
-                                // properties)
-                                .DeserializeJson(
-                                    serializer =&gt; serializer
-                                        .UseFixedType&lt;SampleMessage&gt;())
 
                                 // Silently skip the messages in case of exception
                                 .OnError(policy =&gt; policy.Skip())));
