@@ -27,8 +27,6 @@ namespace Silverback.Tests.Integration.E2E.TestHost
         private readonly List<Action<IServiceCollection>>
             _configurationActions = new();
 
-        private bool _addDbContext;
-
         private SqliteConnection? _sqliteConnection;
 
         private WebApplicationFactory<Startup>? _applicationFactory;
@@ -58,9 +56,7 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
         public TestApplicationHost<THelper> WithTestDbContext()
         {
-            _addDbContext = true;
-
-            _sqliteConnection = new SqliteConnection("DataSource=:memory:");
+            _sqliteConnection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
             _sqliteConnection.Open();
 
             return this;
@@ -102,18 +98,18 @@ namespace Silverback.Tests.Integration.E2E.TestHost
 
                                 _configurationActions.ForEach(configAction => configAction(services));
 
-                                if (_addDbContext)
+                                if (_sqliteConnection != null)
                                 {
                                     services.AddDbContext<TestDbContext>(
                                         options => options
-                                            .UseSqlite(_sqliteConnection!));
+                                            .UseSqlite(_sqliteConnection.ConnectionString));
                                 }
                             })
                         .UseSolutionRelativeContentRoot(appRoot));
 
             _httpClient = _applicationFactory.CreateClient();
 
-            if (_addDbContext)
+            if (_sqliteConnection != null)
                 InitDatabase();
 
             _configurationActions.Clear();
