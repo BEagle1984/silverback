@@ -42,15 +42,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
                                         .SerializeAsJson(serializer => serializer.UseFixedType<TestEventOne>()))
-                                .AddInbound(
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .Configure(
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                            })
-                                        .DeserializeJson(serializer => serializer.UseFixedType<TestEventOne>())))
+                                            })))
                         .AddIntegrationSpy())
                 .Run();
 
@@ -84,15 +83,14 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddInbound(
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .Configure(
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
-                                            })
-                                        .DeserializeJson(serializer => serializer.UseFixedType<TestEventOne>())))
+                                            })))
                         .AddIntegrationSpy())
                 .Run();
 
@@ -177,7 +175,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .ProduceTo(DefaultTopicName)
                                         .SerializeAsJsonUsingNewtonsoft(
                                             serializer => serializer.UseFixedType<TestEventOne>()))
-                                .AddInbound(
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .Configure(
@@ -185,8 +183,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             {
                                                 config.GroupId = "consumer1";
                                             })
-                                        .DeserializeJsonUsingNewtonsoft(
-                                            serializer => serializer.UseFixedType<TestEventOne>())))
+                                        .DeserializeJsonUsingNewtonsoft()))
                         .AddIntegrationSpy())
                 .Run();
 
@@ -220,7 +217,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddKafkaEndpoints(
                             endpoints => endpoints
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddInbound(
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
                                         .Configure(
@@ -228,8 +225,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             {
                                                 config.GroupId = "consumer1";
                                             })
-                                        .DeserializeJsonUsingNewtonsoft(
-                                            serializer => serializer.UseFixedType<TestEventOne>())))
+                                        .DeserializeJsonUsingNewtonsoft()))
                         .AddIntegrationSpy())
                 .Run();
 

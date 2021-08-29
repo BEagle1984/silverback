@@ -290,7 +290,6 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
 }
 ```
 
-
 ### Publishing events
 
 Messages can be published when a policy is applied, in order to execute custom code.

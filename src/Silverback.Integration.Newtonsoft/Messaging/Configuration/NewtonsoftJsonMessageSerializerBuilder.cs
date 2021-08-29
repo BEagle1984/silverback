@@ -24,8 +24,17 @@ namespace Silverback.Messaging.Configuration
             return this;
         }
 
+        /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.UseFixedType(Type)"/>
+        public INewtonsoftJsonMessageSerializerBuilder UseFixedType(Type messageType)
+        {
+            var serializerType = typeof(NewtonsoftJsonMessageSerializer<>).MakeGenericType(messageType);
+            _serializer = (NewtonsoftJsonMessageSerializerBase)Activator.CreateInstance(serializerType);
+            return this;
+        }
+
         /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.Configure" />
-        public INewtonsoftJsonMessageSerializerBuilder Configure(Action<JsonSerializerSettings> configureAction)
+        public INewtonsoftJsonMessageSerializerBuilder Configure(
+            Action<JsonSerializerSettings> configureAction)
         {
             Check.NotNull(configureAction, nameof(configureAction));
 

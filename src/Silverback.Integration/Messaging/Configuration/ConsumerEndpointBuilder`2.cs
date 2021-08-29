@@ -42,14 +42,23 @@ namespace Silverback.Messaging.Configuration
         /// <summary>
         ///     Initializes a new instance of the <see cref="ConsumerEndpointBuilder{TEndpoint,TBuilder}" /> class.
         /// </summary>
+        /// <param name="messageType">
+        ///     Gets the type of the message being consumed.
+        /// </param>
         /// <param name="endpointsConfigurationBuilder">
         ///     The optional reference to the <see cref="IEndpointsConfigurationBuilder" /> that instantiated the
         ///     builder.
         /// </param>
-        protected ConsumerEndpointBuilder(IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
+        protected ConsumerEndpointBuilder(
+            Type? messageType = null,
+            IEndpointsConfigurationBuilder? endpointsConfigurationBuilder = null)
             : base(endpointsConfigurationBuilder)
         {
+            MessageType = messageType;
         }
+
+        /// <inheritdoc cref="IConsumerEndpointBuilder{TBuilder}.MessageType" />
+        public Type? MessageType { get; }
 
         /// <inheritdoc cref="IConsumerEndpointBuilder{TBuilder}.DeserializeUsing" />
         public TBuilder DeserializeUsing(IMessageSerializer serializer) =>

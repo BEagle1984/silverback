@@ -200,5 +200,54 @@ namespace Silverback.Messaging.Configuration.Mqtt
         /// </returns>
         public IMqttEndpointsConfigurationBuilder AddInbound(
             Action<IMqttConsumerEndpointBuilder> endpointBuilderAction);
+
+        /// <summary>
+        ///     Adds an inbound endpoint and instantiates a <see cref="MqttConsumer"/> to consume from a Mqtt topic.
+        /// </summary>
+        /// <remarks>
+        ///     Multiple calls to this methods will cause multiple consumers to be instantiated, which means
+        ///     multiple connections being issues and more resources being used. The <see cref="MqttConsumerEndpoint" />
+        ///     allows to define multiple topics to be consumed, to efficiently instantiate a single consumer for all of
+        ///     them.
+        /// </remarks>
+        /// <typeparam name="TMessage">
+        ///     The type of the messages that will be consumed from this endpoint. Specifying the message type will
+        ///     usually automatically switch to the typed message serializer and deserialize this specific type,
+        ///     regardless of the message headers.
+        /// </typeparam>
+        /// <param name="endpointBuilderAction">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="IMqttConsumerEndpointBuilder" /> and configures
+        ///     it.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttEndpointsConfigurationBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public IMqttEndpointsConfigurationBuilder AddInbound<TMessage>(
+            Action<IMqttConsumerEndpointBuilder> endpointBuilderAction);
+
+        /// <summary>
+        ///     Adds an inbound endpoint and instantiates a <see cref="MqttConsumer"/> to consume from a Mqtt topic.
+        /// </summary>
+        /// <remarks>
+        ///     Multiple calls to this methods will cause multiple consumers to be instantiated, which means
+        ///     multiple connections being issues and more resources being used. The <see cref="MqttConsumerEndpoint" />
+        ///     allows to define multiple topics to be consumed, to efficiently instantiate a single consumer for all of
+        ///     them.
+        /// </remarks>
+        /// <param name="messageType">
+        ///     The type of the messages that will be consumed from this endpoint. Specifying the message type will
+        ///     usually automatically switch to the typed message serializer and deserialize this specific type,
+        ///     regardless of the message headers.
+        /// </param>
+        /// <param name="endpointBuilderAction">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="IMqttConsumerEndpointBuilder" /> and configures
+        ///     it.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="IMqttEndpointsConfigurationBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public IMqttEndpointsConfigurationBuilder AddInbound(
+            Type? messageType,
+            Action<IMqttConsumerEndpointBuilder> endpointBuilderAction);
     }
 }

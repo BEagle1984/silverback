@@ -114,11 +114,24 @@ namespace Silverback.Messaging.Configuration.Kafka
 
         public IKafkaEndpointsConfigurationBuilder AddInbound(
             Action<IKafkaConsumerEndpointBuilder> endpointBuilderAction,
+            int consumersCount = 1) =>
+            AddInbound(null, endpointBuilderAction, consumersCount);
+
+        public IKafkaEndpointsConfigurationBuilder AddInbound<TMessage>(
+            Action<IKafkaConsumerEndpointBuilder> endpointBuilderAction,
+            int consumersCount = 1) =>
+            AddInbound(typeof(TMessage), endpointBuilderAction, consumersCount);
+
+        public IKafkaEndpointsConfigurationBuilder AddInbound(
+            Type? messageType,
+            Action<IKafkaConsumerEndpointBuilder> endpointBuilderAction,
             int consumersCount = 1)
         {
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
 
-            var builder = new KafkaConsumerEndpointBuilder(ClientConfig, this);
+            var builder = new KafkaConsumerEndpointBuilder(ClientConfig, messageType, this);
+            builder.DeserializeJson();
+
             endpointBuilderAction.Invoke(builder);
 
             _endpointsConfigurationBuilder.AddInbound(builder.Build(), consumersCount);

@@ -123,11 +123,22 @@ namespace Silverback.Messaging.Configuration.Mqtt
         }
 
         public IMqttEndpointsConfigurationBuilder AddInbound(
+            Action<IMqttConsumerEndpointBuilder> endpointBuilderAction) =>
+            AddInbound(null, endpointBuilderAction);
+
+        public IMqttEndpointsConfigurationBuilder AddInbound<TMessage>(
+            Action<IMqttConsumerEndpointBuilder> endpointBuilderAction) =>
+            AddInbound(typeof(TMessage), endpointBuilderAction);
+
+        public IMqttEndpointsConfigurationBuilder AddInbound(
+            Type? messageType,
             Action<IMqttConsumerEndpointBuilder> endpointBuilderAction)
         {
             Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
 
-            var builder = new MqttConsumerEndpointBuilder(ClientConfig, this);
+            var builder = new MqttConsumerEndpointBuilder(ClientConfig, messageType, this);
+            builder.DeserializeJson();
+
             endpointBuilderAction.Invoke(builder);
 
             _endpointsConfigurationBuilder.AddInbound(builder.Build());

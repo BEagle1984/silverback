@@ -25,6 +25,18 @@ namespace Silverback.Messaging.Configuration
         INewtonsoftJsonMessageSerializerBuilder UseFixedType<TMessage>();
 
         /// <summary>
+        ///     Specifies a fixed message type. This will prevent the message type header to be written when
+        ///     serializing and the header will be ignored when deserializing.
+        /// </summary>
+        /// <param name="messageType">
+        ///     The type of the message to serialize or deserialize.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="JsonMessageSerializerBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        INewtonsoftJsonMessageSerializerBuilder UseFixedType(Type messageType);
+
+        /// <summary>
         ///     Configures the <see cref="JsonSerializerSettings" />.
         /// </summary>
         /// <param name="configureAction">

@@ -25,11 +25,24 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         }
 
         [Fact]
+        public void SerializeAsJson_UseFixedTypeWithGenericArgument_SerializerSet()
+        {
+            var builder = new TestProducerEndpointBuilder();
+
+            var endpoint = builder.SerializeAsJson(serializer => serializer.UseFixedType<TestEventOne>())
+                .Build();
+
+            endpoint.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+        }
+
+        [Fact]
         public void SerializeAsJson_UseFixedType_SerializerSet()
         {
             var builder = new TestProducerEndpointBuilder();
 
-            var endpoint = builder.SerializeAsJson(serializer => serializer.UseFixedType<TestEventOne>()).Build();
+            var endpoint = builder
+                .SerializeAsJson(serializer => serializer.UseFixedType(typeof(TestEventOne)))
+                .Build();
 
             endpoint.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
         }

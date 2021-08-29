@@ -107,12 +107,9 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .UseProtocolVersion(MqttProtocolVersion.V311))
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .DeserializeJson(
-                                            serializer => serializer
-                                                .UseFixedType<TestEventOne>())
                                         .OnError(policy => policy.Retry())))
                         .AddIntegrationSpy()
                         .AddDelegateSubscriber(

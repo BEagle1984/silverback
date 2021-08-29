@@ -40,6 +40,8 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                     .ProduceTo("inventory-events")
                     .SerializeAsJson(serializer => serializer
                         .UseFixedType<InventoryEvent>()))
+                // The following configurations are equivalent, the second
+                // one being more implicit
                 .AddInbound(endpoint => endpoint
                     .ConsumeFrom("order-events")
                     .Configure(config => 
@@ -47,7 +49,13 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                             config.GroupId = "my-consumer";
                         })
                     .DeserializeJson(serializer => serializer
-                        .UseFixedType<OrderEvent>())));
+                        .UseFixedType<OrderEvent>()))
+                .AddInbound<OrderEvent>(endpoint => endpoint
+                    .ConsumeFrom("order-events")
+                    .Configure(config => 
+                        {
+                            config.GroupId = "my-consumer";
+                        })));
 }
 ```
 # [Legacy](#tab/json-fixed-type-legacy)

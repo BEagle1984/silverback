@@ -24,11 +24,34 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Configuration
         }
 
         [Fact]
+        public void DeserializeJsonUsingNewtonsoft_WithSetMessageType_TypedSerializerSet()
+        {
+            var builder = new TestConsumerEndpointBuilder(typeof(TestEventOne));
+
+            var endpoint = builder.DeserializeJsonUsingNewtonsoft().Build();
+
+            endpoint.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<TestEventOne>>();
+        }
+
+        [Fact]
+        public void DeserializeJsonUsingNewtonsoft_UseFixedTypeWithGenericArgument_SerializerSet()
+        {
+            var builder = new TestConsumerEndpointBuilder();
+
+            var endpoint = builder
+                .DeserializeJsonUsingNewtonsoft(serializer => serializer.UseFixedType<TestEventOne>())
+                .Build();
+
+            endpoint.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<TestEventOne>>();
+        }
+
+        [Fact]
         public void DeserializeJsonUsingNewtonsoft_UseFixedType_SerializerSet()
         {
             var builder = new TestConsumerEndpointBuilder();
 
-            var endpoint = builder.DeserializeJsonUsingNewtonsoft(serializer => serializer.UseFixedType<TestEventOne>())
+            var endpoint = builder
+                .DeserializeJsonUsingNewtonsoft(serializer => serializer.UseFixedType(typeof(TestEventOne)))
                 .Build();
 
             endpoint.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<TestEventOne>>();
@@ -40,7 +63,11 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Configuration
             var builder = new TestConsumerEndpointBuilder();
 
             var endpoint = builder.DeserializeJsonUsingNewtonsoft(
-                serializer => serializer.Configure(settings => { settings.MaxDepth = 42; })).Build();
+                serializer => serializer.Configure(
+                    settings =>
+                    {
+                        settings.MaxDepth = 42;
+                    })).Build();
 
             endpoint.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer>();
             endpoint.Serializer.As<NewtonsoftJsonMessageSerializer>().Settings.MaxDepth.Should().Be(42);
@@ -55,7 +82,8 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Configuration
                 serializer => serializer.WithEncoding(MessageEncoding.Unicode)).Build();
 
             endpoint.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer>();
-            endpoint.Serializer.As<NewtonsoftJsonMessageSerializer>().Encoding.Should().Be(MessageEncoding.Unicode);
+            endpoint.Serializer.As<NewtonsoftJsonMessageSerializer>().Encoding.Should()
+                .Be(MessageEncoding.Unicode);
         }
 
         [Fact]
@@ -66,10 +94,15 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Configuration
             var endpoint = builder.DeserializeJsonUsingNewtonsoft(
                 serializer => serializer
                     .UseFixedType<TestEventOne>()
-                    .Configure(settings => { settings.MaxDepth = 42; })).Build();
+                    .Configure(
+                        settings =>
+                        {
+                            settings.MaxDepth = 42;
+                        })).Build();
 
             endpoint.Serializer.Should().BeOfType<NewtonsoftJsonMessageSerializer<TestEventOne>>();
-            endpoint.Serializer.As<NewtonsoftJsonMessageSerializer<TestEventOne>>().Settings.MaxDepth.Should().Be(42);
+            endpoint.Serializer.As<NewtonsoftJsonMessageSerializer<TestEventOne>>().Settings.MaxDepth.Should()
+                .Be(42);
         }
     }
 }

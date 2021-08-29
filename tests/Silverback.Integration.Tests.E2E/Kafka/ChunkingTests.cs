@@ -1459,7 +1459,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var originalSequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             originalSequence.Should().NotBeNull();
             originalSequence!.IsComplete.Should().BeFalse();
-            originalSequence!.IsAborted.Should().BeFalse();
+            originalSequence.IsAborted.Should().BeFalse();
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -1916,7 +1916,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             sequence.Should().NotBeNull();
             sequence!.Length.Should().Be(2);
-            sequence!.IsAborted.Should().BeFalse();
+            sequence.IsAborted.Should().BeFalse();
 
             await Helper.Broker.DisconnectAsync();
 
@@ -2004,7 +2004,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             sequence.Should().NotBeNull();
             sequence!.Length.Should().Be(2);
-            sequence!.IsAborted.Should().BeFalse();
+            sequence.IsAborted.Should().BeFalse();
 
             await Helper.Broker.DisconnectAsync();
 
@@ -2078,7 +2078,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             sequence.Should().NotBeNull();
             sequence!.Length.Should().Be(2);
-            sequence!.IsAborted.Should().BeFalse();
+            sequence.IsAborted.Should().BeFalse();
 
             DefaultTopic.Rebalance();
 
@@ -2168,7 +2168,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             sequence.Should().NotBeNull();
             sequence!.Length.Should().Be(2);
-            sequence!.IsAborted.Should().BeFalse();
+            sequence.IsAborted.Should().BeFalse();
 
             DefaultTopic.Rebalance();
 

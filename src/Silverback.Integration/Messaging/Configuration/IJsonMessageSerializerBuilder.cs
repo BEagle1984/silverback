@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Text.Json;
 using Silverback.Messaging.Serialization;
 
@@ -22,6 +23,18 @@ namespace Silverback.Messaging.Configuration
         ///     The <see cref="JsonMessageSerializerBuilder" /> so that additional calls can be chained.
         /// </returns>
         IJsonMessageSerializerBuilder UseFixedType<TMessage>();
+
+        /// <summary>
+        ///     Specifies a fixed message type. This will prevent the message type header to be written when
+        ///     serializing and the header will be ignored when deserializing.
+        /// </summary>
+        /// <param name="messageType">
+        ///     The type of the message to serialize or deserialize.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="JsonMessageSerializerBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        IJsonMessageSerializerBuilder UseFixedType(Type messageType);
 
         /// <summary>
         ///     Specifies the <see cref="JsonSerializerOptions" />.

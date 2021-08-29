@@ -25,7 +25,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
         }
 
         [Fact]
-        public void OnConnected_DefaultSettings_CallbackInvoked()
+        public async Task OnConnected_DefaultSettings_CallbackInvoked()
         {
             var callbackHandler = new FakeConnectedCallbackHandler();
 
@@ -49,6 +49,8 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                         .AddSingletonBrokerCallbackHandler(callbackHandler)
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
+
+            await AsyncTestingUtil.WaitAsync(() => callbackHandler.CallsCount > 0);
 
             callbackHandler.CallsCount.Should().Be(1);
         }

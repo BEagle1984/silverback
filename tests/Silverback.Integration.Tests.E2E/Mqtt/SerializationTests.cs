@@ -48,11 +48,10 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .ProduceTo(DefaultTopicName)
                                         .SerializeAsJson(
                                             serializer => serializer.UseFixedType<TestEventOne>()))
-                                .AddInbound(
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .DeserializeJson(
-                                            serializer => serializer.UseFixedType<TestEventOne>())))
+                                        .DeserializeJson()))
                         .AddIntegrationSpy())
                 .Run();
 
@@ -88,11 +87,10 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .ProduceTo(DefaultTopicName)
                                         .SerializeAsJson(
                                             serializer => serializer.UseFixedType<TestEventOne>()))
-                                .AddInbound(
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .DeserializeJson(
-                                            serializer => serializer.UseFixedType<TestEventOne>())))
+                                        .DeserializeJson()))
                         .AddIntegrationSpy())
                 .Run();
 
@@ -135,11 +133,9 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .ProduceTo(DefaultTopicName)
                                         .SerializeAsJson(
                                             serializer => serializer.UseFixedType<TestEventOne>()))
-                                .AddInbound(
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DeserializeJson(
-                                            serializer => serializer.UseFixedType<TestEventOne>())))
+                                        .ConsumeFrom(DefaultTopicName)))
                         .AddIntegrationSpy())
                 .Run();
 

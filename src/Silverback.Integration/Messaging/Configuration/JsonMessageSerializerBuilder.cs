@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Text.Json;
 using Silverback.Messaging.Serialization;
 
@@ -17,6 +18,14 @@ namespace Silverback.Messaging.Configuration
         public IJsonMessageSerializerBuilder UseFixedType<TMessage>()
         {
             _serializer = new JsonMessageSerializer<TMessage>();
+            return this;
+        }
+
+        /// <inheritdoc cref="IJsonMessageSerializerBuilder.UseFixedType(Type)"/>
+        public IJsonMessageSerializerBuilder UseFixedType(Type messageType)
+        {
+            var serializerType = typeof(JsonMessageSerializer<>).MakeGenericType(messageType);
+            _serializer = (JsonMessageSerializerBase)Activator.CreateInstance(serializerType);
             return this;
         }
 

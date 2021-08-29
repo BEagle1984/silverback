@@ -157,13 +157,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         })
                                     .AddOutbound<IIntegrationEvent>(
                                         endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                    .AddInbound(
+                                    .AddInbound<TestValidationMessage>(
                                         endpoint => endpoint
                                             .ConsumeFrom(DefaultTopicName)
-                                            .DeserializeJson(
-                                                serializerBuilderAction =>
-                                                    serializerBuilderAction
-                                                        .UseFixedType<TestValidationMessage>())
                                             .ValidateMessage(true)
                                             .Configure(
                                                 config =>
@@ -214,13 +210,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         })
                                     .AddOutbound<IIntegrationEvent>(
                                         endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                    .AddInbound(
+                                    .AddInbound<TestValidationMessage>(
                                         endpoint => endpoint
                                             .ConsumeFrom(DefaultTopicName)
-                                            .DeserializeJson(
-                                                serializerBuilderAction =>
-                                                    serializerBuilderAction
-                                                        .UseFixedType<TestValidationMessage>())
                                             .DisableMessageValidation()
                                             .Configure(
                                                 config =>
@@ -271,13 +263,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         })
                                     .AddOutbound<IIntegrationEvent>(
                                         endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                    .AddInbound(
+                                    .AddInbound<TestValidationMessage>(
                                         endpoint => endpoint
                                             .ConsumeFrom(DefaultTopicName)
-                                            .DeserializeJson(
-                                                serializerBuilderAction =>
-                                                    serializerBuilderAction
-                                                        .UseFixedType<TestValidationMessage>())
                                             .ValidateMessage(false)
                                             .Configure(
                                                 config =>

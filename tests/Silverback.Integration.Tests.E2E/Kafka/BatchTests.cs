@@ -1479,7 +1479,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
                                 await foreach (var message in eventsStream)
                                 {
-                                    list.Add(message!);
+                                    list.Add(message);
                                 }
 
                                 Interlocked.Increment(ref completedBatches);

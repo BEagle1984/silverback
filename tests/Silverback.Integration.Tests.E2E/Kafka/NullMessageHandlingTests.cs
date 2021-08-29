@@ -149,12 +149,10 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .Configure(config => { config.BootstrapServers = "PLAINTEXT://tests"; })
                                 .AddOutbound<IIntegrationMessage>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .Configure(config => config.GroupId = "group1")
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DeserializeJson(
-                                            serializer => serializer.UseFixedType<TestEventOne>())))
+                                        .ConsumeFrom(DefaultTopicName)))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 

@@ -45,6 +45,10 @@ namespace Silverback.Messaging.Configuration
             Check.NotNull(endpointBuilder, nameof(endpointBuilder));
 
             var serializerBuilder = new JsonMessageSerializerBuilder();
+
+            if (endpointBuilder.MessageType != null)
+                serializerBuilder.UseFixedType(endpointBuilder.MessageType);
+
             serializerBuilderAction?.Invoke(serializerBuilder);
             endpointBuilder.DeserializeUsing(serializerBuilder.Build());
 

@@ -86,12 +86,9 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .UseProtocolVersion(MqttProtocolVersion.V311))
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .DeserializeJson(
-                                            serializer => serializer
-                                                .UseFixedType<TestEventOne>())))
+                                        .ConsumeFrom(DefaultTopicName)))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
@@ -179,20 +176,14 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                                         .UseProtocolVersion(MqttProtocolVersion.V311))
                                 .AddOutbound<IIntegrationEvent>(
                                     endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(config => config.WithClientId("client1"))
-                                        .DeserializeJson(
-                                            serializer => serializer
-                                                .UseFixedType<TestEventOne>()))
-                                .AddInbound(
+                                        .Configure(config => config.WithClientId("client1")))
+                                .AddInbound<TestEventOne>(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(config => config.WithClientId("client2"))
-                                        .DeserializeJson(
-                                            serializer => serializer
-                                                .UseFixedType<TestEventOne>())))
+                                        .Configure(config => config.WithClientId("client2"))))
                         .AddDelegateSubscriber(
                             (IRawInboundEnvelope envelope) =>
                             {
