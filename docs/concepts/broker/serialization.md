@@ -40,8 +40,20 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                     .ProduceTo("inventory-events")
                     .SerializeAsJson(serializer => serializer
                         .UseFixedType<InventoryEvent>()))
-                // The following configurations are equivalent, the second
-                // one being more implicit
+                
+                // Specifying the message type will automatically
+                // switch to the JsonMessageSerializer<TMessage>
+                // and deserialize the specified type without
+                // needing the type header
+                .AddInbound<OrderEvent>(endpoint => endpoint
+                    .ConsumeFrom("order-events")
+                    .Configure(config => 
+                        {
+                            config.GroupId = "my-consumer";
+                        }))
+                
+                // The following configurations is equivalent to the
+                // previous one, but more verbose
                 .AddInbound(endpoint => endpoint
                     .ConsumeFrom("order-events")
                     .Configure(config => 
@@ -49,13 +61,7 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                             config.GroupId = "my-consumer";
                         })
                     .DeserializeJson(serializer => serializer
-                        .UseFixedType<OrderEvent>()))
-                .AddInbound<OrderEvent>(endpoint => endpoint
-                    .ConsumeFrom("order-events")
-                    .Configure(config => 
-                        {
-                            config.GroupId = "my-consumer";
-                        })));
+                        .UseFixedType<OrderEvent>())));
 }
 ```
 # [Legacy](#tab/json-fixed-type-legacy)
@@ -111,7 +117,18 @@ public class MyEndpointsConfigurator : IEndpointsConfigurator
                         {
                             config.GroupId = "my-consumer";
                         })
-                    .DeserializeJsonUsingNewtonsoft()));
+                    .DeserializeJsonUsingNewtonsoft())
+
+                // Specifying the message type will automatically
+                // switch to the NewtonsoftJsonMessageSerializer<TMessage>
+                .AddInbound<DeliveryNotification>(endpoint => endpoint
+                    .ConsumeFrom("delivery-notification-events")
+                    .Configure(config => 
+                        {
+                            config.GroupId = "my-consumer";
+                        })
+                    .DeserializeJsonUsingNewtonsoft())
+                    );
 }
 ```
 # [Legacy](#tab/newtonsoft-legacy)
