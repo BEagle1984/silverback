@@ -185,6 +185,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(0);
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
             received.Should().BeFalse();
+
+            await AsyncTestingUtil.WaitAsync(() => Helper.Broker.Consumers[0].IsConnected == false);
             Helper.Broker.Consumers[0].IsConnected.Should().BeFalse();
         }
 
