@@ -14,11 +14,13 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
     internal sealed class MockedConfluentProducer : IMockedConfluentProducer
     {
-        private static readonly Random RandomInstance = new();
-
         private readonly ProducerConfig _config;
 
         private readonly IInMemoryTopicCollection _topics;
+
+        private readonly object _roundRobinLockObject = new();
+
+        private int _lastPushedPartition = -1;
 
         public MockedConfluentProducer(ProducerConfig config, IInMemoryTopicCollection topics)
         {
@@ -146,10 +148,10 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         }
 
         [SuppressMessage("", "CA5394", Justification = "Usecure randomness is fine here")]
-        private static int GetPartitionIndex(IInMemoryTopic topic, byte[]? messageKey)
+        private int GetPartitionIndex(IInMemoryTopic topic, byte[]? messageKey)
         {
             if (messageKey == null)
-                return RandomInstance.Next(0, topic.Partitions.Count);
+                return GetNextRoundRobinPartition(topic);
 
             return messageKey.Last() % topic.Partitions.Count;
         }
@@ -168,6 +170,17 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
             offset = inMemoryTopic.Push(partitionIndex, message);
             return partitionIndex;
+        }
+
+        private int GetNextRoundRobinPartition(IInMemoryTopic topic)
+        {
+            lock (_roundRobinLockObject)
+            {
+                if (++_lastPushedPartition >= topic.Partitions.Count)
+                    _lastPushedPartition = 0;
+
+                return _lastPushedPartition;
+            }
         }
     }
 }

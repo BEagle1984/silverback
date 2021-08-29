@@ -592,9 +592,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            if (receivedStreams.Count != 3)
-                receivedStreams.Should().HaveCount(3);
-
+            receivedStreams.Should().HaveCount(3);
             receivedMessages.Should().HaveCount(15);
             receivedMessages.Select(message => message.Content)
                 .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
