@@ -81,8 +81,7 @@ namespace Silverback.Util
 
         public static IReadOnlyCollection<T> HasNoNulls<T>(
             IReadOnlyCollection<T?>? value,
-            [InvokerParameterName] [System.Diagnostics.CodeAnalysis.NotNull]
-            string parameterName)
+            [InvokerParameterName] string parameterName)
             where T : class
         {
             value = NotNull(value, parameterName);
@@ -99,8 +98,7 @@ namespace Silverback.Util
 
         public static IReadOnlyCollection<string?> HasNoEmpties(
             IReadOnlyCollection<string?>? value,
-            [InvokerParameterName] [System.Diagnostics.CodeAnalysis.NotNull]
-            string parameterName)
+            [InvokerParameterName] string parameterName)
         {
             value = NotNull(value, parameterName);
 

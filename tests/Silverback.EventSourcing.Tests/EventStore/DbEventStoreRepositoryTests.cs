@@ -82,7 +82,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             var person = repo.Find(p => p.Id == 12);
 
             person!.ChangeName("Sergio");
-            person!.ChangeAge(35);
+            person.ChangeAge(35);
 
             repo.Store(person);
             _dbContext.SaveChanges();
@@ -109,7 +109,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             var person = await repo.FindAsync(p => p.Id == 12);
 
             person!.ChangeName("Sergio");
-            person!.ChangeAge(35);
+            person.ChangeAge(35);
 
             await repo.StoreAsync(person);
             await _dbContext.SaveChangesAsync();
@@ -164,7 +164,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             var person = repo.Find(p => p.Id == 12);
 
             person!.ChangeName("Sergio");
-            person!.ChangeAge(35);
+            person.ChangeAge(35);
 
             repo.Store(person);
 
@@ -189,7 +189,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             var person = repo.Find(p => p.Id == 12);
 
             person!.ChangeName("Sergio");
-            person!.ChangeAge(35);
+            person.ChangeAge(35);
 
             await repo.StoreAsync(person);
 
@@ -215,9 +215,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             var person2 = repo.Find(p => p.Id == 12);
 
             person!.ChangeName("Sergio");
-            person!.ChangeAge(35);
+            person.ChangeAge(35);
             person2!.ChangeName("Sergio");
-            person2!.ChangeAge(35);
+            person2.ChangeAge(35);
 
             repo.Store(person);
             Action act = () => repo.Store(person2);
@@ -244,9 +244,9 @@ namespace Silverback.Tests.EventSourcing.EventStore
             var person2 = repo.Find(p => p.Id == 12);
 
             person!.ChangeName("Sergio");
-            person!.ChangeAge(35);
+            person.ChangeAge(35);
             person2!.ChangeName("Sergio");
-            person2!.ChangeAge(35);
+            person2.ChangeAge(35);
 
             await repo.StoreAsync(person);
             Func<Task> act = async () => await repo.StoreAsync(person2);
@@ -301,7 +301,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             entity.Should().NotBeNull();
             entity!.Name.Should().Be("Silverback");
-            entity!.Age.Should().Be(35);
+            entity.Age.Should().Be(35);
         }
 
         [Fact]
@@ -364,7 +364,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             entity.Should().NotBeNull();
             entity!.Name.Should().Be("Silverback");
-            entity!.Age.Should().Be(35);
+            entity.Age.Should().Be(35);
         }
 
         [Fact]
@@ -424,7 +424,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             entity.Should().NotBeNull();
             entity!.Name.Should().Be("Silverback");
-            entity!.Age.Should().Be(35);
+            entity.Age.Should().Be(35);
         }
 
         [Fact]
@@ -487,7 +487,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             entity.Should().NotBeNull();
             entity!.Name.Should().Be("Silverback");
-            entity!.Age.Should().Be(35);
+            entity.Age.Should().Be(35);
         }
 
         [Fact]
@@ -545,7 +545,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             entity.Should().NotBeNull();
             entity!.Name.Should().Be("Sergio");
-            entity!.Age.Should().Be(16);
+            entity.Age.Should().Be(16);
         }
 
         [Fact]
@@ -595,7 +595,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             entity.Should().NotBeNull();
             entity!.Name.Should().Be("Sergio");
-            entity!.Age.Should().Be(16);
+            entity.Age.Should().Be(16);
         }
 
         [Fact]

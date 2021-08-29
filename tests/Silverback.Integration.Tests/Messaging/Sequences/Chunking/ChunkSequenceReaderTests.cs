@@ -86,7 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
             var sequence = await new ChunkSequenceReader().GetSequenceAsync(context);
 
             sequence.Should().NotBeNull();
-            sequence!.TotalLength.Should().Be(4);
+            sequence.TotalLength.Should().Be(4);
             sequence.IsNew.Should().BeTrue();
         }
 
@@ -126,7 +126,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             sequence1.Should().NotBeNull();
             sequence1.Should().BeOfType<ChunkSequence>();
-            sequence1!.TotalLength.Should().Be(4);
+            sequence1.TotalLength.Should().Be(4);
             sequence1.IsNew.Should().BeTrue();
 
             var context2 = ConsumerPipelineContextHelper.CreateSubstitute(
@@ -137,7 +137,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
             sequence2.Should().NotBeNull();
             sequence2.Should().BeSameAs(sequence1);
-            sequence2!.IsNew.Should().BeFalse();
+            sequence2.IsNew.Should().BeFalse();
         }
 
         [Fact]

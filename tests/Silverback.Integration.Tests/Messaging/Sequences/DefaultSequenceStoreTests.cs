@@ -110,7 +110,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences
 
             sequence = (await store.GetAsync<ChunkSequence>("abc"))!;
 
-            sequence!.IsNew.Should().BeFalse();
+            sequence.IsNew.Should().BeFalse();
         }
 
         [Fact]

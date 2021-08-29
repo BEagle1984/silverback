@@ -55,7 +55,9 @@ namespace Silverback.Messaging.Outbound.Enrichers
         /// <inheritdoc cref="IOutboundMessageEnricher.Enrich" />
         public void Enrich(IOutboundEnvelope envelope)
         {
-            if (envelope == null || envelope is not IOutboundEnvelope<TMessage> typedEnvelope)
+            Check.NotNull(envelope, nameof(envelope));
+
+            if (envelope is not IOutboundEnvelope<TMessage> typedEnvelope)
                 return;
 
             envelope.Headers.AddOrReplace(_name, _valueProvider.Invoke(typedEnvelope));

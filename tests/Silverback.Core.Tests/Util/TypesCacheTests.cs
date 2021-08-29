@@ -30,7 +30,7 @@ namespace Silverback.Tests.Core.Util
 
             var type = TypesCache.GetType(typeName);
 
-            type!.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+            type.AssemblyQualifiedName.Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
         }
 
         [Fact]

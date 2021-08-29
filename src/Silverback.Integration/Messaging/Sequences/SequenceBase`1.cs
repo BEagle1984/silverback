@@ -583,7 +583,7 @@ namespace Silverback.Messaging.Sequences
             }
             catch (Exception newException)
             {
-                ((ISequenceImplementation)this).NotifyProcessingFailed(newException!);
+                ((ISequenceImplementation)this).NotifyProcessingFailed(newException);
             }
 
             return done;

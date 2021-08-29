@@ -112,7 +112,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
 
         private static IBrokerMessageOffset InstantiateOffset(string clrType, string key, string value)
         {
-            var offsetType = TypesCache.GetType(clrType)!;
+            var offsetType = TypesCache.GetType(clrType);
             var offset = (IBrokerMessageOffset)Activator.CreateInstance(
                 offsetType,
                 key,

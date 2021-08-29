@@ -62,6 +62,7 @@ namespace Silverback.Messaging.Validation
         ///     destination.
         /// </param>
         protected MessageValidationException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }
