@@ -21,9 +21,11 @@ namespace Silverback.Tests.Performance
              * await ProduceStrategiesComparisonRunner.Run(50_000, 3, 5);
              *
              * await RawProduceComparison.RunAsync();
+             *
+             * await BenchmarkRunner.Run(typeof(MessageValidatorBenchmark));
              */
 
-            BenchmarkRunner.Run(typeof(MessageValidatorBenchmark));
+            BenchmarkRunner.Run(typeof(KafkaKeyHelperBenchmark));
         }
     }
 }
