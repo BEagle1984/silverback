@@ -2,43 +2,87 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Globalization;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
-using Silverback.Messaging.HealthChecks;
+using System.Reflection;
+using System.Text;
 
 namespace Silverback.Messaging.Messages
 {
     internal static class KafkaKeyHelper
     {
+        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> _typeMessageKeyPropertyInfoCache =
+            new();
+
         public static string? GetMessageKey(object? message)
         {
             if (message == null)
                 return null;
 
-            if (message is PingMessage)
-                return Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture);
+            PropertyInfo[] propertyInfos = GetPropertyInfos(message);
 
-            var keysDictionary =
-                message.GetType()
-                    .GetProperties()
-                    .Where(propertyInfo => propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true))
-                    .Select(
-                        propertyInfo => new
-                        {
-                            propertyInfo.Name,
-                            Value = propertyInfo.GetValue(message, null)?.ToString()
-                        })
-                    .ToList();
-
-            if (!keysDictionary.Any() ||
-                keysDictionary.All(keyValue => string.IsNullOrEmpty(keyValue.Value)))
+            if (propertyInfos.Length == 0)
             {
                 return null;
             }
 
-            return keysDictionary.Count == 1
-                ? keysDictionary.First().Value
-                : string.Join(",", keysDictionary.Select(p => $"{p.Name}={p.Value}"));
+            if (propertyInfos.Length == 1)
+            {
+                var value = propertyInfos[0].GetValue(message, null)?.ToString();
+                return string.IsNullOrEmpty(value) ? null : value;
+            }
+
+            StringBuilder stringBuilder = BuildMessageKey(message, propertyInfos);
+            return stringBuilder.Length == 0 ? null : stringBuilder.ToString();
+        }
+
+        private static PropertyInfo[] GetPropertyInfos(object message)
+        {
+            if (_typeMessageKeyPropertyInfoCache.TryGetValue(
+                message.GetType(),
+                out PropertyInfo[] propertyInfos))
+            {
+                return propertyInfos;
+            }
+
+            Type messageType = message.GetType();
+            propertyInfos = messageType
+                .GetProperties()
+                .Where(static propertyInfo => propertyInfo.IsDefined(typeof(KafkaKeyMemberAttribute), true))
+                .ToArray();
+
+            // Must not fail if there is already an entry for this type
+            _ = _typeMessageKeyPropertyInfoCache.TryAdd(messageType, propertyInfos);
+
+            return propertyInfos;
+        }
+
+        private static StringBuilder BuildMessageKey(
+            object? message,
+            IReadOnlyList<PropertyInfo> propertyInfos)
+        {
+            StringBuilder stringBuilder = new();
+            for (var i = 0; i < propertyInfos.Count; i++)
+            {
+                string name = propertyInfos[i].Name;
+                var value = propertyInfos[i].GetValue(message, null)?.ToString();
+                if (string.IsNullOrEmpty(value))
+                {
+                    continue;
+                }
+
+                if (stringBuilder.Length > 0)
+                {
+                    stringBuilder.Append(',');
+                }
+
+                stringBuilder.Append(name);
+                stringBuilder.Append('=');
+                stringBuilder.Append(value);
+            }
+
+            return stringBuilder;
         }
     }
 }
