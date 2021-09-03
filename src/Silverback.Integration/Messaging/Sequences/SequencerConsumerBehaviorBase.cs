@@ -83,17 +83,26 @@ namespace Silverback.Messaging.Sequences
                 if (sequence == null)
                     return;
 
+                // Loop again if the retrieved sequence has completed already in the meanwhile
+                // ...unless it was a new sequence, in which case it can only mean that an error
+                // occurred in the subscriber before consuming the actual first message and it doesn't
+                // make sense to recreate and publish once again the sequence.
                 if (!sequence.IsPending || sequence.IsCompleting)
+                {
+                    if (sequence.IsNew)
+                        break;
+
                     continue;
+                }
 
                 await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
+
+                _logger.LogMessageAddedToSequence(context.Envelope, sequence);
 
                 AddSequenceTagToActivity(sequence);
 
                 break;
             }
-
-            _logger.LogMessageAddedToSequence(context.Envelope, sequence);
 
             if (sequence.IsComplete)
             {
