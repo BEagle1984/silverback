@@ -6,9 +6,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker
@@ -21,6 +23,8 @@ namespace Silverback.Messaging.Broker
         private readonly IServiceProvider _serviceProvider;
 
         private readonly IOutboundLogger<Producer> _logger;
+
+        private readonly OutboundEnvelopeFactory _envelopeFactory;
 
         private Task? _connectTask;
 
@@ -54,6 +58,8 @@ namespace Silverback.Messaging.Broker
             _behaviors = Check.NotNull(behaviorsProvider, nameof(behaviorsProvider)).GetBehaviorsList();
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
             _logger = Check.NotNull(logger, nameof(logger));
+
+            _envelopeFactory = _serviceProvider.GetRequiredService<OutboundEnvelopeFactory>();
 
             Endpoint.Validate();
         }
@@ -117,7 +123,7 @@ namespace Silverback.Messaging.Broker
         public IBrokerMessageIdentifier? Produce(
             object? message,
             IReadOnlyCollection<MessageHeader>? headers = null) =>
-            Produce(new OutboundEnvelope(message, headers, Endpoint));
+            Produce(_envelopeFactory.CreateOutboundEnvelope(message, headers, Endpoint));
 
         /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope)" />
         [SuppressMessage("", "VSTHRD103", Justification = "Method executes synchronously")]
@@ -162,7 +168,7 @@ namespace Silverback.Messaging.Broker
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
-            Produce(new OutboundEnvelope(message, headers, Endpoint), onSuccess, onError);
+            Produce(_envelopeFactory.CreateOutboundEnvelope(message, headers, Endpoint), onSuccess, onError);
 
         /// <inheritdoc cref="IProducer.Produce(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
         [SuppressMessage("", "VSTHRD103", Justification = "OK to call sync ProduceCore")]
@@ -340,7 +346,7 @@ namespace Silverback.Messaging.Broker
         public Task<IBrokerMessageIdentifier?> ProduceAsync(
             object? message,
             IReadOnlyCollection<MessageHeader>? headers = null) =>
-            ProduceAsync(new OutboundEnvelope(message, headers, Endpoint));
+            ProduceAsync(_envelopeFactory.CreateOutboundEnvelope(message, headers, Endpoint));
 
         /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope)" />
         public async Task<IBrokerMessageIdentifier?> ProduceAsync(IOutboundEnvelope envelope)
@@ -381,7 +387,7 @@ namespace Silverback.Messaging.Broker
             IReadOnlyCollection<MessageHeader>? headers,
             Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
-            ProduceAsync(new OutboundEnvelope(message, headers, Endpoint), onSuccess, onError);
+            ProduceAsync(_envelopeFactory.CreateOutboundEnvelope(message, headers, Endpoint), onSuccess, onError);
 
         /// <inheritdoc cref="IProducer.ProduceAsync(IOutboundEnvelope,Action{IBrokerMessageIdentifier},Action{Exception})" />
         public async Task ProduceAsync(

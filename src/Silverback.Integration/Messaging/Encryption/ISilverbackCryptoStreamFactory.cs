@@ -34,9 +34,15 @@ namespace Silverback.Messaging.Encryption
         /// <param name="settings">
         ///     The <see cref="EncryptionSettings" /> specifying the cryptographic algorithm settings.
         /// </param>
+        /// <param name="keyIdentifier">
+        ///     The encryption key identifier that was submitted as header.
+        /// </param>
         /// <returns>
         ///     A <see cref="SilverbackCryptoStream" /> compatible with the specified settings.
         /// </returns>
-        SilverbackCryptoStream GetDecryptStream(Stream stream, EncryptionSettings settings);
+        SilverbackCryptoStream GetDecryptStream(
+            Stream stream,
+            EncryptionSettings settings,
+            string? keyIdentifier = null);
     }
 }

@@ -23,6 +23,12 @@ namespace Silverback.Messaging.Messages
         string ActualEndpointName { get; }
 
         /// <summary>
+        ///     Gets the name to actual source endpoint (<see cref="ActualEndpointName" />) to be displayed in the
+        ///     human-targeted output (e.g. logs, health checks result, etc.).
+        /// </summary>
+        string ActualEndpointDisplayName { get; }
+
+        /// <summary>
         ///     Gets the message identifier on the message broker (the Kafka offset or similar).
         /// </summary>
         IBrokerMessageIdentifier BrokerMessageIdentifier { get; }

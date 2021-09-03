@@ -25,9 +25,15 @@ namespace Silverback.Messaging.Messages
         IBrokerMessageIdentifier? BrokerMessageIdentifier { get; }
 
         /// <summary>
-        ///     Gets the name of the actual target endpoint resolved by the <see cref="IProducerEndpoint.GetActualName" />
-        ///     method.
+        ///     Gets the name of the actual target endpoint resolved by the
+        ///     <see cref="IProducerEndpoint.GetActualName" /> method.
         /// </summary>
         string ActualEndpointName { get; }
+
+        /// <summary>
+        ///     Gets the name to actual target endpoint (<see cref="ActualEndpointName" />) to be displayed in the
+        ///     human-targeted output (e.g. logs, health checks result, etc.).
+        /// </summary>
+        string ActualEndpointDisplayName { get; }
     }
 }

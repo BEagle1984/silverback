@@ -5,6 +5,7 @@ using System;
 using FluentAssertions;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
@@ -84,6 +85,27 @@ namespace Silverback.Tests.Integration.Messaging.Serialization
             var type = SerializationHelper.GetTypeFromHeaders(new MessageHeaderCollection());
 
             type.Should().BeNull();
+        }
+
+        [Fact]
+        public void CreateTypedInboundEnvelope_EnvelopeReturned()
+        {
+            var endpoint = TestConsumerEndpoint.GetDefault();
+            var rawEnvelope = new RawInboundEnvelope(
+                Array.Empty<byte>(),
+                new[] { new MessageHeader("one", "1"), new MessageHeader("two", "2") },
+                endpoint,
+                "test",
+                new TestOffset());
+            var message = new TestEventOne();
+
+            var envelope = SerializationHelper.CreateTypedInboundEnvelope(rawEnvelope, message, typeof(TestEventOne));
+
+            envelope.Should().BeOfType<InboundEnvelope<TestEventOne>>();
+            envelope.As<InboundEnvelope<TestEventOne>>().Message.Should().Be(message);
+            envelope.Headers.Should().ContainSingle(header => header.Name == "one" && header.Value == "1");
+            envelope.Headers.Should().ContainSingle(header => header.Name == "two" && header.Value == "2");
+            envelope.Endpoint.Should().Be(endpoint);
         }
     }
 }

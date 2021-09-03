@@ -92,8 +92,12 @@ namespace Silverback.Messaging.Messages
         public const string ContentType = "content-type";
 
         /// <summary>
-        ///     Used internally by the consumer pipeline to signal that the message has been decrypted already.
+        ///     The encryption key identifier.
         /// </summary>
-        internal const string Decrypted = "x-internal-decrypted";
+        /// <remarks>
+        ///     The header is required for the key rotation feature. When rotating keys, it will be used on the
+        ///     consumer side to determine the correct key to be used to decrypt the message.
+        /// </remarks>
+        public const string EncryptionKeyId = "x-encryption-key-id";
     }
 }

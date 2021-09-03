@@ -27,10 +27,10 @@ namespace Silverback.Tests.Core.EFCore30
         {
             _publisher = Substitute.For<IPublisher>();
 
-            _connection = new SqliteConnection("DataSource=:memory:");
+            _connection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
             _connection.Open();
             var dbOptions = new DbContextOptionsBuilder<TestDbContext>()
-                .UseSqlite(_connection)
+                .UseSqlite(_connection.ConnectionString)
                 .Options;
 
             _dbContext = new TestDbContext(dbOptions, _publisher);

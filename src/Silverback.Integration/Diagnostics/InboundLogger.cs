@@ -109,7 +109,7 @@ namespace Silverback.Diagnostics
 
             _processingInboundMessage.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -132,7 +132,7 @@ namespace Silverback.Diagnostics
 
             _errorProcessingInboundMessage.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -155,7 +155,7 @@ namespace Silverback.Diagnostics
 
             _consumerFatalError.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -175,7 +175,7 @@ namespace Silverback.Diagnostics
 
             _retryMessageProcessing.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -199,7 +199,7 @@ namespace Silverback.Diagnostics
             _messageMoved.Invoke(
                 logger.InnerLogger,
                 targetEndpoint.DisplayName,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -219,7 +219,7 @@ namespace Silverback.Diagnostics
 
             _messageSkipped.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -243,7 +243,7 @@ namespace Silverback.Diagnostics
             _cannotMoveSequences.Invoke(
                 logger.InnerLogger,
                 sequence.GetType().Name,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -266,7 +266,7 @@ namespace Silverback.Diagnostics
 
             _rollbackToRetryFailed.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -289,7 +289,7 @@ namespace Silverback.Diagnostics
 
             _rollbackToSkipFailed.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -309,7 +309,7 @@ namespace Silverback.Diagnostics
 
             _nullMessageSkipped.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -329,7 +329,7 @@ namespace Silverback.Diagnostics
 
             _messageAlreadyProcessed.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -355,7 +355,7 @@ namespace Silverback.Diagnostics
                 envelope.BrokerMessageIdentifier);
 
             var args = new List<object?>(argumentsProvider?.Invoke() ?? Array.Empty<object?>());
-            args.Add(envelope.ActualEndpointName);
+            args.Add(envelope.ActualEndpointDisplayName);
             args.Add(envelope.Headers.GetValue(DefaultMessageHeaders.MessageType));
             args.Add(envelope.Headers.GetValue(DefaultMessageHeaders.MessageId));
             args.Add(value1);

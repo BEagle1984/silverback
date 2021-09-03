@@ -60,7 +60,7 @@ namespace Silverback.Diagnostics
 
             _messageProduced.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -71,7 +71,7 @@ namespace Silverback.Diagnostics
         public void LogProduced(
             ISilverbackLogger logger,
             IProducerEndpoint endpoint,
-            string actualEndpointName,
+            string actualEndpoint,
             IReadOnlyCollection<MessageHeader>? headers,
             IBrokerMessageIdentifier? brokerMessageIdentifier)
         {
@@ -85,7 +85,7 @@ namespace Silverback.Diagnostics
 
             _messageProduced.Invoke(
                 logger.InnerLogger,
-                actualEndpointName,
+                actualEndpoint,
                 headers?.GetValue(DefaultMessageHeaders.MessageType),
                 headers?.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -105,7 +105,7 @@ namespace Silverback.Diagnostics
 
             _errorProducingMessage.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -116,7 +116,7 @@ namespace Silverback.Diagnostics
         public void LogProduceError(
             ISilverbackLogger logger,
             IProducerEndpoint endpoint,
-            string actualEndpointName,
+            string actualEndpoint,
             IReadOnlyCollection<MessageHeader>? headers,
             Exception exception)
         {
@@ -130,7 +130,7 @@ namespace Silverback.Diagnostics
 
             _errorProducingMessage.Invoke(
                 logger.InnerLogger,
-                actualEndpointName,
+                actualEndpoint,
                 headers?.GetValue(DefaultMessageHeaders.MessageType),
                 headers?.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -150,7 +150,7 @@ namespace Silverback.Diagnostics
 
             _messageWrittenToOutbox.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
@@ -173,7 +173,7 @@ namespace Silverback.Diagnostics
 
             _errorProducingOutboxStoredMessage.Invoke(
                 logger.InnerLogger,
-                envelope.ActualEndpointName,
+                envelope.ActualEndpointDisplayName,
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
                 envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
                 value1,
