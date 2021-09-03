@@ -4,6 +4,12 @@ uid: releases
 
 # Releases
 
+## [3.3.1](https://github.com/BEagle1984/silverback/releases/tag/v3.3.1)
+
+### Fixes
+
+* Fix `AddHeaders<TMessage>` and `WithKafkaKey<TMessage>` not being correctly invoked by all `IProducer.Produce` and `IProducer.ProducerAsync` overloads
+
 ## [3.3.0](https://github.com/BEagle1984/silverback/releases/tag/v3.3.0)
 
 ### What's new

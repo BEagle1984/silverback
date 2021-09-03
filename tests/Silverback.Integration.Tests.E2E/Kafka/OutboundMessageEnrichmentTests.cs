@@ -286,5 +286,107 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             messages[1].Key.Should().BeNull();
             messages[2].Key.Should().BeNull();
         }
+
+        [Fact]
+        public async Task AddHeader_ProducingViaProducer_HeaderAdded()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://tests";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .AddHeader<TestEventOne>(
+                                            "x-something",
+                                            envelope => envelope.Message?.Content)))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            var producer = Helper.Broker.GetProducer(DefaultTopicName);
+            await producer.ProduceAsync(new TestEventOne { Content = "one" });
+            await producer.ProduceAsync(new TestEventOne { Content = "two" });
+            await producer.ProduceAsync(new TestEventOne { Content = "three" });
+
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            Helper.Spy.OutboundEnvelopes[0].Headers.Should()
+                .ContainSingle(header => header.Name == "x-something" && header.Value == "one");
+            Helper.Spy.OutboundEnvelopes[1].Headers.Should()
+                .ContainSingle(header => header.Name == "x-something" && header.Value == "two");
+            Helper.Spy.OutboundEnvelopes[2].Headers.Should()
+                .ContainSingle(header => header.Name == "x-something" && header.Value == "three");
+        }
+
+        [Fact]
+        public async Task AddHeader_ProducingViaProducerWithCallbacks_HeaderAdded()
+        {
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://tests";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .AddHeader<TestEventOne>(
+                                            "x-something",
+                                            envelope => envelope.Message?.Content)))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            var producer = Helper.Broker.GetProducer(DefaultTopicName);
+            await producer.ProduceAsync(
+                new TestEventOne { Content = "one" },
+                null,
+                _ =>
+                {
+                },
+                _ =>
+                {
+                });
+            await producer.ProduceAsync(
+                new TestEventOne { Content = "two" },
+                null,
+                _ =>
+                {
+                },
+                _ =>
+                {
+                });
+            await producer.ProduceAsync(
+                new TestEventOne { Content = "three" },
+                null,
+                _ =>
+                {
+                },
+                _ =>
+                {
+                });
+
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            Helper.Spy.OutboundEnvelopes[0].Headers.Should()
+                .ContainSingle(header => header.Name == "x-something" && header.Value == "one");
+            Helper.Spy.OutboundEnvelopes[1].Headers.Should()
+                .ContainSingle(header => header.Name == "x-something" && header.Value == "two");
+            Helper.Spy.OutboundEnvelopes[2].Headers.Should()
+                .ContainSingle(header => header.Name == "x-something" && header.Value == "three");
+        }
     }
 }

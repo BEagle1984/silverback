@@ -42,6 +42,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddScopedBehavior<OutboundRouterBehavior>()
                 .AddScopedBehavior<ProduceBehavior>()
                 .Services
+                .AddSingleton<OutboundEnvelopeFactory>()
                 .AddSingleton<IOutboundRoutingConfiguration>(new OutboundRoutingConfiguration());
 
             // Broker Collection

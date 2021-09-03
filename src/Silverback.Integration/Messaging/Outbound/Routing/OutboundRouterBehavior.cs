@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
@@ -21,6 +22,8 @@ namespace Silverback.Messaging.Outbound.Routing
         private readonly IPublisher _publisher;
 
         private readonly IOutboundRoutingConfiguration _routingConfiguration;
+
+        private readonly OutboundEnvelopeFactory _envelopeFactory;
 
         private readonly IServiceProvider _serviceProvider;
 
@@ -46,6 +49,8 @@ namespace Silverback.Messaging.Outbound.Routing
             _publisher = Check.NotNull(publisher, nameof(publisher));
             _routingConfiguration = Check.NotNull(routingConfiguration, nameof(routingConfiguration));
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+
+            _envelopeFactory = _serviceProvider.GetRequiredService<OutboundEnvelopeFactory>();
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
@@ -91,15 +96,8 @@ namespace Silverback.Messaging.Outbound.Routing
             var router = _routers.GetOrAdd(route, _ => route.GetOutboundRouter(_serviceProvider));
             var endpoints = router.GetDestinationEndpoints(message, headers);
 
-            foreach (var endpoint in endpoints)
-            {
-                yield return (IOutboundEnvelope)Activator.CreateInstance(
-                    typeof(OutboundEnvelope<>).MakeGenericType(message.GetType()),
-                    message,
-                    headers,
-                    endpoint,
-                    _routingConfiguration.PublishOutboundMessagesToInternalBus);
-            }
+            return endpoints.Select(
+                endpoint => _envelopeFactory.CreateOutboundEnvelope(message, headers, endpoint));
         }
     }
 }
