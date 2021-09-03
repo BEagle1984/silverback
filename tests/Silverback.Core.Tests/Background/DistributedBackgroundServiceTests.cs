@@ -25,7 +25,7 @@ namespace Silverback.Tests.Core.Background
 
         public DistributedBackgroundServiceTests()
         {
-            _connection = new SqliteConnection("DataSource=:memory:");
+            _connection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
             _connection.Open();
 
             var services = new ServiceCollection();
@@ -34,7 +34,7 @@ namespace Silverback.Tests.Core.Background
                 .AddTransient<DbDistributedLockManager>()
                 .AddDbContext<TestDbContext>(
                     opt => opt
-                        .UseSqlite(_connection))
+                        .UseSqlite(_connection.ConnectionString))
                 .AddLoggerSubstitute()
                 .AddSilverback()
                 .UseDbContext<TestDbContext>();

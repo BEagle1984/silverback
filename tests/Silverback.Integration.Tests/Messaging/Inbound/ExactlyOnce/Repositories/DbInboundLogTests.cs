@@ -30,7 +30,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
 
         public DbInboundLogTests()
         {
-            _connection = new SqliteConnection("DataSource=:memory:");
+            _connection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
             _connection.Open();
 
             var services = new ServiceCollection();
@@ -39,7 +39,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                 .AddLoggerSubstitute()
                 .AddDbContext<TestDbContext>(
                     options => options
-                        .UseSqlite(_connection))
+                        .UseSqlite(_connection.ConnectionString))
                 .AddSilverback()
                 .UseDbContext<TestDbContext>();
 

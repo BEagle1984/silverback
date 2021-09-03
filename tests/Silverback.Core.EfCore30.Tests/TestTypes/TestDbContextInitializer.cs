@@ -18,12 +18,12 @@ namespace Silverback.Tests.Core.EFCore30.TestTypes
         {
             if (_connection == null)
             {
-                _connection = new SqliteConnection("DataSource=:memory:");
+                _connection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
                 _connection.Open();
             }
 
             var dbOptions = new DbContextOptionsBuilder<TestDbContext>()
-                .UseSqlite(_connection)
+                .UseSqlite(_connection.ConnectionString)
                 .Options;
 
             var dbContext = new TestDbContext(dbOptions, Substitute.For<IPublisher>());

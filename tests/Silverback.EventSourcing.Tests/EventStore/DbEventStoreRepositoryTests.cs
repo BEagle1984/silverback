@@ -23,10 +23,10 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
         public DbEventStoreRepositoryTests()
         {
-            _connection = new SqliteConnection("DataSource=:memory:");
+            _connection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
             _connection.Open();
 
-            _dbContext = new TestDbContext(new DbContextOptionsBuilder().UseSqlite(_connection).Options);
+            _dbContext = new TestDbContext(new DbContextOptionsBuilder().UseSqlite(_connection.ConnectionString).Options);
             _dbContext.Database.EnsureCreated();
 
             SilverbackQueryableExtensions.Implementation = new EfCoreQueryableExtensions();
