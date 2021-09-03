@@ -4,7 +4,7 @@ uid: contributing
 
 # Contributing
 
-You are encouraged to contribute to Silverback! Please check out the [how to contribute](https://github.com/BEagle1984/silverback/blob/develop/CONTRIBUTING.md) guide for guidelines about how to proceed.
+You are encouraged to contribute to Silverback! Please check out the [how to contribute](https://github.com/BEagle1984/silverback/blob/master/CONTRIBUTING.md) guide for guidelines about how to proceed.
 
 ## Source Code
 

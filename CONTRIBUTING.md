@@ -32,6 +32,7 @@ When submitting a pull request to the [GitHub repository][github] make sure to d
 * Check that new and updated code follows Silverback's existing code formatting and naming standard
 * Run all unit tests to ensure no existing functionality has been affected
 * Write new unit tests to test your changes: all features and fixed bugs must have tests to verify they work
+* Run a code cleanup on the files you touched if using R# or Rider
 
 Read [GitHub help][pullrequesthelp] for more details about creating pull requests.
 
