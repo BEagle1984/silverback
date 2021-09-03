@@ -10,6 +10,10 @@ namespace Silverback.Messaging.Messages
     /// <inheritdoc cref="IRawOutboundEnvelope" />
     internal class RawOutboundEnvelope : RawBrokerEnvelope, IRawOutboundEnvelope
     {
+        private string _actualEndpointName;
+
+        private string? _actualEndpointDisplayName;
+
         public RawOutboundEnvelope(
             IReadOnlyCollection<MessageHeader>? headers,
             IProducerEndpoint endpoint,
@@ -26,13 +30,31 @@ namespace Silverback.Messaging.Messages
             : base(rawMessage, headers, endpoint)
         {
             BrokerMessageIdentifier = brokerMessageIdentifier;
-            ActualEndpointName = endpoint.Name;
+            _actualEndpointName = endpoint.Name;
+            UpdateActualEndpointDisplayName();
         }
 
         public new IProducerEndpoint Endpoint => (IProducerEndpoint)base.Endpoint;
 
         public IBrokerMessageIdentifier? BrokerMessageIdentifier { get; internal set; }
 
-        public string ActualEndpointName { get; internal set; }
+        public string ActualEndpointName
+        {
+            get => _actualEndpointName;
+            internal set
+            {
+                _actualEndpointName = value;
+                UpdateActualEndpointDisplayName();
+            }
+        }
+
+        public string ActualEndpointDisplayName => _actualEndpointDisplayName ?? ActualEndpointName;
+
+        private void UpdateActualEndpointDisplayName()
+        {
+            _actualEndpointDisplayName = Endpoint.FriendlyName != null
+                ? $"{Endpoint.FriendlyName} ({_actualEndpointName})"
+                : null;
+        }
     }
 }

@@ -67,6 +67,36 @@ namespace Silverback.Tests.Integration.Diagnostics
         }
 
         [Fact]
+        public void LogProcessing_WithFriendlyEndpointName_FriendlyNameLogged()
+        {
+            var envelope = new RawInboundEnvelope(
+                Stream.Null,
+                new MessageHeaderCollection
+                {
+                    { DefaultMessageHeaders.MessageType, "Message.Type" },
+                    { DefaultMessageHeaders.MessageId, "1234" }
+                },
+                new TestConsumerEndpoint("test1, test2")
+                {
+                    FriendlyName = "friendly-name"
+                },
+                "test1",
+                new TestOffset("a", "42"));
+
+            var expectedMessage =
+                "Processing inbound message. | " +
+                "endpointName: friendly-name (test1), " +
+                "messageType: Message.Type, " +
+                "messageId: 1234, " +
+                "unused1: (null), " +
+                "unused2: (null)";
+
+            _inboundLogger.LogProcessing(envelope);
+
+            _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1001);
+        }
+
+        [Fact]
         public void LogProcessingError_Logged()
         {
             var envelope = new RawInboundEnvelope(

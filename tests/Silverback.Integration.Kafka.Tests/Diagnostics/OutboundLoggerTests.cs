@@ -65,6 +65,37 @@ namespace Silverback.Tests.Integration.Kafka.Diagnostics
         }
 
         [Fact]
+        public void LogProduced_EnvelopeWithFriendlyEndpointName_FriendlyNameLogged()
+        {
+            var envelope = new OutboundEnvelope(
+                null,
+                new MessageHeaderCollection
+                {
+                    { DefaultMessageHeaders.MessageType, "Message.Type" },
+                    { DefaultMessageHeaders.MessageId, "1234" },
+                    { KafkaMessageHeaders.KafkaMessageKey, "key1234" }
+                },
+                new KafkaProducerEndpoint("test1")
+                {
+                    FriendlyName = "friendly-name"
+                },
+                true,
+                new KafkaOffset("topic2", 2, 42));
+
+            var expectedMessage =
+                "Message produced. | " +
+                "endpointName: friendly-name (test1), " +
+                "messageType: Message.Type, " +
+                "messageId: 1234, " +
+                "offset: [2]@42, " +
+                "kafkaKey: key1234";
+
+            _outboundLogger.LogProduced(envelope);
+
+            _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1031);
+        }
+
+        [Fact]
         public void LogProduced_NoEnvelope_Logged()
         {
             var endpoint = new KafkaProducerEndpoint("[dynamic]");
