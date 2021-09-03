@@ -24,7 +24,6 @@ namespace Silverback.Tests.Performance
     // |              MessagesWithoutKey |  2.860 us | 0.0712 us | 0.2043 us |       - |     - |     - |         - |
     [SimpleJob]
     [MemoryDiagnoser]
-    [SuppressMessage("", "CA1822", Justification = "Benchmarks must be instance methods")]
     public class KafkaKeyHelperBenchmark
     {
         private const int MessageCount = 100;
