@@ -208,7 +208,18 @@
                         {
                             config.GroupId = &quot;my-consumer&quot;;
                         })
-                    .DeserializeJsonUsingNewtonsoft()));
+                    .DeserializeJsonUsingNewtonsoft())
+
+                // Specifying the message type will automatically
+                // switch to the NewtonsoftJsonMessageSerializer&lt;TMessage&gt;
+                .AddInbound&lt;DeliveryNotification&gt;(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;delivery-notification-events&quot;)
+                    .Configure(config =&gt; 
+                        {
+                            config.GroupId = &quot;my-consumer&quot;;
+                        })
+                    .DeserializeJsonUsingNewtonsoft())
+                    );
 }
 </code></pre>
 </section>

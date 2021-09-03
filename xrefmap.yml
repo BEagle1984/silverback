@@ -15609,6 +15609,15 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes(Of TBuilder)(Silverback.Messaging.Configuration.IConsumerEndpointBuilder(Of TBuilder), System.Byte(), System.Byte())
   nameWithType: ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes<TBuilder>(IConsumerEndpointBuilder<TBuilder>, Byte[], Byte[])
   nameWithType.vb: ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes(Of TBuilder)(IConsumerEndpointBuilder(Of TBuilder), Byte(), Byte())
+- uid: Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes``1(Silverback.Messaging.Configuration.IConsumerEndpointBuilder{``0},System.Func{System.String,System.Byte[]},System.Byte[])
+  name: DecryptUsingAes<TBuilder>(IConsumerEndpointBuilder<TBuilder>, Func<String, Byte[]>, Byte[])
+  href: api/Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.html#Silverback_Messaging_Configuration_ConsumerEndpointBuilderDecryptUsingExtensions_DecryptUsingAes__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Func_System_String_System_Byte____System_Byte___
+  commentId: M:Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes``1(Silverback.Messaging.Configuration.IConsumerEndpointBuilder{``0},System.Func{System.String,System.Byte[]},System.Byte[])
+  name.vb: DecryptUsingAes(Of TBuilder)(IConsumerEndpointBuilder(Of TBuilder), Func(Of String, Byte()), Byte())
+  fullName: Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes<TBuilder>(Silverback.Messaging.Configuration.IConsumerEndpointBuilder<TBuilder>, System.Func<System.String, System.Byte[]>, System.Byte[])
+  fullName.vb: Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes(Of TBuilder)(Silverback.Messaging.Configuration.IConsumerEndpointBuilder(Of TBuilder), System.Func(Of System.String, System.Byte()), System.Byte())
+  nameWithType: ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes<TBuilder>(IConsumerEndpointBuilder<TBuilder>, Func<String, Byte[]>, Byte[])
+  nameWithType.vb: ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes(Of TBuilder)(IConsumerEndpointBuilder(Of TBuilder), Func(Of String, Byte()), Byte())
 - uid: Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeAvroExtensions
   name: ConsumerEndpointBuilderDeserializeAvroExtensions
   href: api/Silverback.Messaging.Configuration.ConsumerEndpointBuilderDeserializeAvroExtensions.html
@@ -22833,6 +22842,15 @@ references:
   fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointBuilderEncryptUsingExtensions.EncryptUsingAes(Of TBuilder)(Silverback.Messaging.Configuration.IProducerEndpointBuilder(Of TBuilder), System.Byte(), System.Byte())
   nameWithType: ProducerEndpointBuilderEncryptUsingExtensions.EncryptUsingAes<TBuilder>(IProducerEndpointBuilder<TBuilder>, Byte[], Byte[])
   nameWithType.vb: ProducerEndpointBuilderEncryptUsingExtensions.EncryptUsingAes(Of TBuilder)(IProducerEndpointBuilder(Of TBuilder), Byte(), Byte())
+- uid: Silverback.Messaging.Configuration.ProducerEndpointBuilderEncryptUsingExtensions.EncryptUsingAes``1(Silverback.Messaging.Configuration.IProducerEndpointBuilder{``0},System.Byte[],System.String,System.Byte[])
+  name: EncryptUsingAes<TBuilder>(IProducerEndpointBuilder<TBuilder>, Byte[], String, Byte[])
+  href: api/Silverback.Messaging.Configuration.ProducerEndpointBuilderEncryptUsingExtensions.html#Silverback_Messaging_Configuration_ProducerEndpointBuilderEncryptUsingExtensions_EncryptUsingAes__1_Silverback_Messaging_Configuration_IProducerEndpointBuilder___0__System_Byte___System_String_System_Byte___
+  commentId: M:Silverback.Messaging.Configuration.ProducerEndpointBuilderEncryptUsingExtensions.EncryptUsingAes``1(Silverback.Messaging.Configuration.IProducerEndpointBuilder{``0},System.Byte[],System.String,System.Byte[])
+  name.vb: EncryptUsingAes(Of TBuilder)(IProducerEndpointBuilder(Of TBuilder), Byte(), String, Byte())
+  fullName: Silverback.Messaging.Configuration.ProducerEndpointBuilderEncryptUsingExtensions.EncryptUsingAes<TBuilder>(Silverback.Messaging.Configuration.IProducerEndpointBuilder<TBuilder>, System.Byte[], System.String, System.Byte[])
+  fullName.vb: Silverback.Messaging.Configuration.ProducerEndpointBuilderEncryptUsingExtensions.EncryptUsingAes(Of TBuilder)(Silverback.Messaging.Configuration.IProducerEndpointBuilder(Of TBuilder), System.Byte(), System.String, System.Byte())
+  nameWithType: ProducerEndpointBuilderEncryptUsingExtensions.EncryptUsingAes<TBuilder>(IProducerEndpointBuilder<TBuilder>, Byte[], String, Byte[])
+  nameWithType.vb: ProducerEndpointBuilderEncryptUsingExtensions.EncryptUsingAes(Of TBuilder)(IProducerEndpointBuilder(Of TBuilder), Byte(), String, Byte())
 - uid: Silverback.Messaging.Configuration.ProducerEndpointBuilderProduceBinaryFilesExtensions
   name: ProducerEndpointBuilderProduceBinaryFilesExtensions
   href: api/Silverback.Messaging.Configuration.ProducerEndpointBuilderProduceBinaryFilesExtensions.html
@@ -24160,12 +24178,12 @@ references:
   commentId: T:Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory
   fullName: Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory
   nameWithType: ISilverbackCryptoStreamFactory
-- uid: Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream,Silverback.Messaging.Encryption.EncryptionSettings)
-  name: GetDecryptStream(Stream, EncryptionSettings)
-  href: api/Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.html#Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory_GetDecryptStream_System_IO_Stream_Silverback_Messaging_Encryption_EncryptionSettings_
-  commentId: M:Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream,Silverback.Messaging.Encryption.EncryptionSettings)
-  fullName: Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream, Silverback.Messaging.Encryption.EncryptionSettings)
-  nameWithType: ISilverbackCryptoStreamFactory.GetDecryptStream(Stream, EncryptionSettings)
+- uid: Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream,Silverback.Messaging.Encryption.EncryptionSettings,System.String)
+  name: GetDecryptStream(Stream, EncryptionSettings, String)
+  href: api/Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.html#Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory_GetDecryptStream_System_IO_Stream_Silverback_Messaging_Encryption_EncryptionSettings_System_String_
+  commentId: M:Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream,Silverback.Messaging.Encryption.EncryptionSettings,System.String)
+  fullName: Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream, Silverback.Messaging.Encryption.EncryptionSettings, System.String)
+  nameWithType: ISilverbackCryptoStreamFactory.GetDecryptStream(Stream, EncryptionSettings, String)
 - uid: Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.GetDecryptStream*
   name: GetDecryptStream
   href: api/Silverback.Messaging.Encryption.ISilverbackCryptoStreamFactory.html#Silverback_Messaging_Encryption_ISilverbackCryptoStreamFactory_GetDecryptStream_
@@ -24405,12 +24423,12 @@ references:
   commentId: T:Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory
   fullName: Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory
   nameWithType: SilverbackCryptoStreamFactory
-- uid: Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream,Silverback.Messaging.Encryption.EncryptionSettings)
-  name: GetDecryptStream(Stream, EncryptionSettings)
-  href: api/Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.html#Silverback_Messaging_Encryption_SilverbackCryptoStreamFactory_GetDecryptStream_System_IO_Stream_Silverback_Messaging_Encryption_EncryptionSettings_
-  commentId: M:Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream,Silverback.Messaging.Encryption.EncryptionSettings)
-  fullName: Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream, Silverback.Messaging.Encryption.EncryptionSettings)
-  nameWithType: SilverbackCryptoStreamFactory.GetDecryptStream(Stream, EncryptionSettings)
+- uid: Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream,Silverback.Messaging.Encryption.EncryptionSettings,System.String)
+  name: GetDecryptStream(Stream, EncryptionSettings, String)
+  href: api/Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.html#Silverback_Messaging_Encryption_SilverbackCryptoStreamFactory_GetDecryptStream_System_IO_Stream_Silverback_Messaging_Encryption_EncryptionSettings_System_String_
+  commentId: M:Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream,Silverback.Messaging.Encryption.EncryptionSettings,System.String)
+  fullName: Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.GetDecryptStream(System.IO.Stream, Silverback.Messaging.Encryption.EncryptionSettings, System.String)
+  nameWithType: SilverbackCryptoStreamFactory.GetDecryptStream(Stream, EncryptionSettings, String)
 - uid: Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.GetDecryptStream*
   name: GetDecryptStream
   href: api/Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.html#Silverback_Messaging_Encryption_SilverbackCryptoStreamFactory_GetDecryptStream_
@@ -24431,18 +24449,50 @@ references:
   isSpec: "True"
   fullName: Silverback.Messaging.Encryption.SilverbackCryptoStreamFactory.GetEncryptStream
   nameWithType: SilverbackCryptoStreamFactory.GetEncryptStream
+- uid: Silverback.Messaging.Encryption.SymmetricDecryptionSettings
+  name: SymmetricDecryptionSettings
+  href: api/Silverback.Messaging.Encryption.SymmetricDecryptionSettings.html
+  commentId: T:Silverback.Messaging.Encryption.SymmetricDecryptionSettings
+  fullName: Silverback.Messaging.Encryption.SymmetricDecryptionSettings
+  nameWithType: SymmetricDecryptionSettings
+- uid: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.KeyProvider
+  name: KeyProvider
+  href: api/Silverback.Messaging.Encryption.SymmetricDecryptionSettings.html#Silverback_Messaging_Encryption_SymmetricDecryptionSettings_KeyProvider
+  commentId: P:Silverback.Messaging.Encryption.SymmetricDecryptionSettings.KeyProvider
+  fullName: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.KeyProvider
+  nameWithType: SymmetricDecryptionSettings.KeyProvider
+- uid: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.KeyProvider*
+  name: KeyProvider
+  href: api/Silverback.Messaging.Encryption.SymmetricDecryptionSettings.html#Silverback_Messaging_Encryption_SymmetricDecryptionSettings_KeyProvider_
+  commentId: Overload:Silverback.Messaging.Encryption.SymmetricDecryptionSettings.KeyProvider
+  isSpec: "True"
+  fullName: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.KeyProvider
+  nameWithType: SymmetricDecryptionSettings.KeyProvider
+- uid: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.Validate
+  name: Validate()
+  href: api/Silverback.Messaging.Encryption.SymmetricDecryptionSettings.html#Silverback_Messaging_Encryption_SymmetricDecryptionSettings_Validate
+  commentId: M:Silverback.Messaging.Encryption.SymmetricDecryptionSettings.Validate
+  fullName: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.Validate()
+  nameWithType: SymmetricDecryptionSettings.Validate()
+- uid: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.Validate*
+  name: Validate
+  href: api/Silverback.Messaging.Encryption.SymmetricDecryptionSettings.html#Silverback_Messaging_Encryption_SymmetricDecryptionSettings_Validate_
+  commentId: Overload:Silverback.Messaging.Encryption.SymmetricDecryptionSettings.Validate
+  isSpec: "True"
+  fullName: Silverback.Messaging.Encryption.SymmetricDecryptionSettings.Validate
+  nameWithType: SymmetricDecryptionSettings.Validate
 - uid: Silverback.Messaging.Encryption.SymmetricDecryptStream
   name: SymmetricDecryptStream
   href: api/Silverback.Messaging.Encryption.SymmetricDecryptStream.html
   commentId: T:Silverback.Messaging.Encryption.SymmetricDecryptStream
   fullName: Silverback.Messaging.Encryption.SymmetricDecryptStream
   nameWithType: SymmetricDecryptStream
-- uid: Silverback.Messaging.Encryption.SymmetricDecryptStream.#ctor(System.IO.Stream,Silverback.Messaging.Encryption.SymmetricEncryptionSettings)
-  name: SymmetricDecryptStream(Stream, SymmetricEncryptionSettings)
-  href: api/Silverback.Messaging.Encryption.SymmetricDecryptStream.html#Silverback_Messaging_Encryption_SymmetricDecryptStream__ctor_System_IO_Stream_Silverback_Messaging_Encryption_SymmetricEncryptionSettings_
-  commentId: M:Silverback.Messaging.Encryption.SymmetricDecryptStream.#ctor(System.IO.Stream,Silverback.Messaging.Encryption.SymmetricEncryptionSettings)
-  fullName: Silverback.Messaging.Encryption.SymmetricDecryptStream.SymmetricDecryptStream(System.IO.Stream, Silverback.Messaging.Encryption.SymmetricEncryptionSettings)
-  nameWithType: SymmetricDecryptStream.SymmetricDecryptStream(Stream, SymmetricEncryptionSettings)
+- uid: Silverback.Messaging.Encryption.SymmetricDecryptStream.#ctor(System.IO.Stream,Silverback.Messaging.Encryption.SymmetricDecryptionSettings,System.String)
+  name: SymmetricDecryptStream(Stream, SymmetricDecryptionSettings, String)
+  href: api/Silverback.Messaging.Encryption.SymmetricDecryptStream.html#Silverback_Messaging_Encryption_SymmetricDecryptStream__ctor_System_IO_Stream_Silverback_Messaging_Encryption_SymmetricDecryptionSettings_System_String_
+  commentId: M:Silverback.Messaging.Encryption.SymmetricDecryptStream.#ctor(System.IO.Stream,Silverback.Messaging.Encryption.SymmetricDecryptionSettings,System.String)
+  fullName: Silverback.Messaging.Encryption.SymmetricDecryptStream.SymmetricDecryptStream(System.IO.Stream, Silverback.Messaging.Encryption.SymmetricDecryptionSettings, System.String)
+  nameWithType: SymmetricDecryptStream.SymmetricDecryptStream(Stream, SymmetricDecryptionSettings, String)
 - uid: Silverback.Messaging.Encryption.SymmetricDecryptStream.#ctor*
   name: SymmetricDecryptStream
   href: api/Silverback.Messaging.Encryption.SymmetricDecryptStream.html#Silverback_Messaging_Encryption_SymmetricDecryptStream__ctor_
@@ -24482,110 +24532,129 @@ references:
   commentId: T:Silverback.Messaging.Encryption.SymmetricEncryptionSettings
   fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings
   nameWithType: SymmetricEncryptionSettings
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.AlgorithmName
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier
+  name: KeyIdentifier
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_KeyIdentifier
+  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier
+  nameWithType: SymmetricEncryptionSettings.KeyIdentifier
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier*
+  name: KeyIdentifier
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_KeyIdentifier_
+  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier
+  isSpec: "True"
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier
+  nameWithType: SymmetricEncryptionSettings.KeyIdentifier
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase
+  name: SymmetricEncryptionSettingsBase
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html
+  commentId: T:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase
+  nameWithType: SymmetricEncryptionSettingsBase
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.AlgorithmName
   name: AlgorithmName
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_AlgorithmName
-  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.AlgorithmName
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.AlgorithmName
-  nameWithType: SymmetricEncryptionSettings.AlgorithmName
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.AlgorithmName*
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_AlgorithmName
+  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.AlgorithmName
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.AlgorithmName
+  nameWithType: SymmetricEncryptionSettingsBase.AlgorithmName
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.AlgorithmName*
   name: AlgorithmName
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_AlgorithmName_
-  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.AlgorithmName
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_AlgorithmName_
+  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.AlgorithmName
   isSpec: "True"
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.AlgorithmName
-  nameWithType: SymmetricEncryptionSettings.AlgorithmName
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.BlockSize
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.AlgorithmName
+  nameWithType: SymmetricEncryptionSettingsBase.AlgorithmName
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.BlockSize
   name: BlockSize
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_BlockSize
-  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.BlockSize
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.BlockSize
-  nameWithType: SymmetricEncryptionSettings.BlockSize
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.BlockSize*
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_BlockSize
+  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.BlockSize
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.BlockSize
+  nameWithType: SymmetricEncryptionSettingsBase.BlockSize
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.BlockSize*
   name: BlockSize
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_BlockSize_
-  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.BlockSize
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_BlockSize_
+  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.BlockSize
   isSpec: "True"
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.BlockSize
-  nameWithType: SymmetricEncryptionSettings.BlockSize
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.CipherMode
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.BlockSize
+  nameWithType: SymmetricEncryptionSettingsBase.BlockSize
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.CipherMode
   name: CipherMode
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_CipherMode
-  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.CipherMode
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.CipherMode
-  nameWithType: SymmetricEncryptionSettings.CipherMode
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.CipherMode*
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_CipherMode
+  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.CipherMode
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.CipherMode
+  nameWithType: SymmetricEncryptionSettingsBase.CipherMode
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.CipherMode*
   name: CipherMode
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_CipherMode_
-  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.CipherMode
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_CipherMode_
+  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.CipherMode
   isSpec: "True"
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.CipherMode
-  nameWithType: SymmetricEncryptionSettings.CipherMode
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.FeedbackSize
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.CipherMode
+  nameWithType: SymmetricEncryptionSettingsBase.CipherMode
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.FeedbackSize
   name: FeedbackSize
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_FeedbackSize
-  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.FeedbackSize
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.FeedbackSize
-  nameWithType: SymmetricEncryptionSettings.FeedbackSize
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.FeedbackSize*
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_FeedbackSize
+  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.FeedbackSize
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.FeedbackSize
+  nameWithType: SymmetricEncryptionSettingsBase.FeedbackSize
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.FeedbackSize*
   name: FeedbackSize
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_FeedbackSize_
-  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.FeedbackSize
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_FeedbackSize_
+  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.FeedbackSize
   isSpec: "True"
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.FeedbackSize
-  nameWithType: SymmetricEncryptionSettings.FeedbackSize
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.InitializationVector
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.FeedbackSize
+  nameWithType: SymmetricEncryptionSettingsBase.FeedbackSize
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.InitializationVector
   name: InitializationVector
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_InitializationVector
-  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.InitializationVector
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.InitializationVector
-  nameWithType: SymmetricEncryptionSettings.InitializationVector
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.InitializationVector*
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_InitializationVector
+  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.InitializationVector
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.InitializationVector
+  nameWithType: SymmetricEncryptionSettingsBase.InitializationVector
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.InitializationVector*
   name: InitializationVector
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_InitializationVector_
-  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.InitializationVector
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_InitializationVector_
+  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.InitializationVector
   isSpec: "True"
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.InitializationVector
-  nameWithType: SymmetricEncryptionSettings.InitializationVector
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Key
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.InitializationVector
+  nameWithType: SymmetricEncryptionSettingsBase.InitializationVector
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Key
   name: Key
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Key
-  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Key
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Key
-  nameWithType: SymmetricEncryptionSettings.Key
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Key*
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_Key
+  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Key
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Key
+  nameWithType: SymmetricEncryptionSettingsBase.Key
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Key*
   name: Key
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Key_
-  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Key
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_Key_
+  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Key
   isSpec: "True"
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Key
-  nameWithType: SymmetricEncryptionSettings.Key
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.PaddingMode
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Key
+  nameWithType: SymmetricEncryptionSettingsBase.Key
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.PaddingMode
   name: PaddingMode
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_PaddingMode
-  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.PaddingMode
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.PaddingMode
-  nameWithType: SymmetricEncryptionSettings.PaddingMode
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.PaddingMode*
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_PaddingMode
+  commentId: P:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.PaddingMode
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.PaddingMode
+  nameWithType: SymmetricEncryptionSettingsBase.PaddingMode
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.PaddingMode*
   name: PaddingMode
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_PaddingMode_
-  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.PaddingMode
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_PaddingMode_
+  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.PaddingMode
   isSpec: "True"
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.PaddingMode
-  nameWithType: SymmetricEncryptionSettings.PaddingMode
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Validate
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.PaddingMode
+  nameWithType: SymmetricEncryptionSettingsBase.PaddingMode
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Validate
   name: Validate()
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Validate
-  commentId: M:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Validate
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Validate()
-  nameWithType: SymmetricEncryptionSettings.Validate()
-- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Validate*
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_Validate
+  commentId: M:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Validate
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Validate()
+  nameWithType: SymmetricEncryptionSettingsBase.Validate()
+- uid: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Validate*
   name: Validate
-  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettings.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Validate_
-  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Validate
+  href: api/Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_Validate_
+  commentId: Overload:Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Validate
   isSpec: "True"
-  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Validate
-  nameWithType: SymmetricEncryptionSettings.Validate
+  fullName: Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.Validate
+  nameWithType: SymmetricEncryptionSettingsBase.Validate
 - uid: Silverback.Messaging.Encryption.SymmetricEncryptStream
   name: SymmetricEncryptStream
   href: api/Silverback.Messaging.Encryption.SymmetricEncryptStream.html
@@ -27451,6 +27520,12 @@ references:
   commentId: F:Silverback.Messaging.Messages.DefaultMessageHeaders.ContentType
   fullName: Silverback.Messaging.Messages.DefaultMessageHeaders.ContentType
   nameWithType: DefaultMessageHeaders.ContentType
+- uid: Silverback.Messaging.Messages.DefaultMessageHeaders.EncryptionKeyId
+  name: EncryptionKeyId
+  href: api/Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_EncryptionKeyId
+  commentId: F:Silverback.Messaging.Messages.DefaultMessageHeaders.EncryptionKeyId
+  fullName: Silverback.Messaging.Messages.DefaultMessageHeaders.EncryptionKeyId
+  nameWithType: DefaultMessageHeaders.EncryptionKeyId
 - uid: Silverback.Messaging.Messages.DefaultMessageHeaders.FailedAttempts
   name: FailedAttempts
   href: api/Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_FailedAttempts
@@ -28029,6 +28104,19 @@ references:
   commentId: T:Silverback.Messaging.Messages.IRawInboundEnvelope
   fullName: Silverback.Messaging.Messages.IRawInboundEnvelope
   nameWithType: IRawInboundEnvelope
+- uid: Silverback.Messaging.Messages.IRawInboundEnvelope.ActualEndpointDisplayName
+  name: ActualEndpointDisplayName
+  href: api/Silverback.Messaging.Messages.IRawInboundEnvelope.html#Silverback_Messaging_Messages_IRawInboundEnvelope_ActualEndpointDisplayName
+  commentId: P:Silverback.Messaging.Messages.IRawInboundEnvelope.ActualEndpointDisplayName
+  fullName: Silverback.Messaging.Messages.IRawInboundEnvelope.ActualEndpointDisplayName
+  nameWithType: IRawInboundEnvelope.ActualEndpointDisplayName
+- uid: Silverback.Messaging.Messages.IRawInboundEnvelope.ActualEndpointDisplayName*
+  name: ActualEndpointDisplayName
+  href: api/Silverback.Messaging.Messages.IRawInboundEnvelope.html#Silverback_Messaging_Messages_IRawInboundEnvelope_ActualEndpointDisplayName_
+  commentId: Overload:Silverback.Messaging.Messages.IRawInboundEnvelope.ActualEndpointDisplayName
+  isSpec: "True"
+  fullName: Silverback.Messaging.Messages.IRawInboundEnvelope.ActualEndpointDisplayName
+  nameWithType: IRawInboundEnvelope.ActualEndpointDisplayName
 - uid: Silverback.Messaging.Messages.IRawInboundEnvelope.ActualEndpointName
   name: ActualEndpointName
   href: api/Silverback.Messaging.Messages.IRawInboundEnvelope.html#Silverback_Messaging_Messages_IRawInboundEnvelope_ActualEndpointName
@@ -28074,6 +28162,19 @@ references:
   commentId: T:Silverback.Messaging.Messages.IRawOutboundEnvelope
   fullName: Silverback.Messaging.Messages.IRawOutboundEnvelope
   nameWithType: IRawOutboundEnvelope
+- uid: Silverback.Messaging.Messages.IRawOutboundEnvelope.ActualEndpointDisplayName
+  name: ActualEndpointDisplayName
+  href: api/Silverback.Messaging.Messages.IRawOutboundEnvelope.html#Silverback_Messaging_Messages_IRawOutboundEnvelope_ActualEndpointDisplayName
+  commentId: P:Silverback.Messaging.Messages.IRawOutboundEnvelope.ActualEndpointDisplayName
+  fullName: Silverback.Messaging.Messages.IRawOutboundEnvelope.ActualEndpointDisplayName
+  nameWithType: IRawOutboundEnvelope.ActualEndpointDisplayName
+- uid: Silverback.Messaging.Messages.IRawOutboundEnvelope.ActualEndpointDisplayName*
+  name: ActualEndpointDisplayName
+  href: api/Silverback.Messaging.Messages.IRawOutboundEnvelope.html#Silverback_Messaging_Messages_IRawOutboundEnvelope_ActualEndpointDisplayName_
+  commentId: Overload:Silverback.Messaging.Messages.IRawOutboundEnvelope.ActualEndpointDisplayName
+  isSpec: "True"
+  fullName: Silverback.Messaging.Messages.IRawOutboundEnvelope.ActualEndpointDisplayName
+  nameWithType: IRawOutboundEnvelope.ActualEndpointDisplayName
 - uid: Silverback.Messaging.Messages.IRawOutboundEnvelope.ActualEndpointName
   name: ActualEndpointName
   href: api/Silverback.Messaging.Messages.IRawOutboundEnvelope.html#Silverback_Messaging_Messages_IRawOutboundEnvelope_ActualEndpointName

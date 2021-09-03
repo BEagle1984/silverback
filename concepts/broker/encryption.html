@@ -169,6 +169,98 @@
 <h3 id="random-initialization-vector">Random initialization vector</h3>
 <p>If no static initialization vector is provided, a random one is automatically generated per each message and prepended to the actual encrypted message. The consumer will automatically extract and use it.</p>
 <p>It is recommended to stick to this default behavior, for increased security.</p>
+<h3 id="ket-rotation">Ket rotation</h3>
+<p>You can smoothly rotate the key being used to encrypt the messages.</p>
+<p>In the outbound endpoint you can specify the current key identifier to be submitted as header, while in the inbound endpoint a custom function can be used to provide the correct key, depending on the value in the header. This simple mechanism allows to consume messages that were encrypted using different keys, enabling key rotation and supporting a rolling update of the producers.</p>
+<div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
+<ul role="tablist">
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-1_json-fixed-type-fluent" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_json-fixed-type-fluent" data-tab="json-fixed-type-fluent" tabindex="0" aria-selected="true">Fluent</a>
+</li>
+<li role="presentation">
+<a href="#tabpanel_bHGHmlrG6S-1_json-fixed-type-legacy" role="tab" aria-controls="tabpanel_bHGHmlrG6S-1_json-fixed-type-legacy" data-tab="json-fixed-type-legacy" tabindex="-1">Legacy</a>
+</li>
+</ul>
+<section id="tabpanel_bHGHmlrG6S-1_json-fixed-type-fluent" role="tabpanel" data-tab="json-fixed-type-fluent">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddKafkaEndpoints(endpoints =&gt; endpoints
+                .Configure(config =&gt; 
+                    {
+                        config.BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;; 
+                    })
+                .AddOutbound&lt;InventoryEvent&gt;(endpoint =&gt; endpoint
+                    .ProduceTo(&quot;inventory-events&quot;)
+                    .EncryptUsingAes(encryptionKey, &quot;key1&quot;))
+                .AddInbound(endpoint =&gt; endpoint
+                    .ConsumeFrom(&quot;order-events&quot;)
+                    .Configure(config =&gt; 
+                        {
+                            config.GroupId = &quot;my-consumer&quot;;
+                        })
+                    .DecryptUsingAes(keyIdentifier =&gt; 
+                        {
+                            switch (keyIdentifier)
+                            {
+                                case &quot;key1&quot;:
+                                    return encryptionKey1;
+                                default:
+                                    return encryptionKey2;
+                            }
+                        })));
+}
+</code></pre>
+</section>
+<section id="tabpanel_bHGHmlrG6S-1_json-fixed-type-legacy" role="tabpanel" data-tab="json-fixed-type-legacy" aria-hidden="true" hidden="hidden">
+
+<pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
+{
+    public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
+        builder
+            .AddOutbound&lt;InventoryEvent&gt;(
+                new KafkaProducerEndpoint(&quot;inventory-events&quot;)
+                {
+                    Configuration = new KafkaProducerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;
+                    },
+                    Encryption = new SymmetricEncryptionSettings
+                    {
+                        AlgorithmName = &quot;AES&quot;,
+                        KeyProvider = encryptionKey,
+                        KeyIdentifier = &quot;key1&quot;
+                    } 
+                })
+            .AddInbound(
+                new KafkaConsumerEndpoint(&quot;order-events&quot;)
+                {
+                    Configuration = new KafkaConsumerConfig
+                    {
+                        BootstrapServers = &quot;PLAINTEXT://kafka:9092&quot;,
+                        GroupId = &quot;my-consumer&quot;
+                    },
+                    Encryption = new SymmetricEncryptionSettings
+                    {
+                        AlgorithmName = &quot;AES&quot;,
+                        KeyProvider = keyIdentifier =&gt; 
+                        {
+                            switch (keyIdentifier)
+                            {
+                                case &quot;key1&quot;:
+                                    return encryptionKey1;
+                                default:
+                                    return encryptionKey2;
+                            }
+                        }
+                    } 
+                });
+}
+</code></pre>
+</section>
+</div>
 </article>
           </div>
           

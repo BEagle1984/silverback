@@ -136,7 +136,7 @@
     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilderDecryptUsingExtensions_DecryptUsingAes__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Byte___System_Byte___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes%60%601(Silverback.Messaging.Configuration.IConsumerEndpointBuilder%7B%60%600%7D%2CSystem.Byte%5B%5D%2CSystem.Byte%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilderDecryptUsingExtensions.cs/#L34">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilderDecryptUsingExtensions.cs/#L36">View source</a>
   </span>
   <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderDecryptUsingExtensions_DecryptUsingAes_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes*"></a>
   <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderDecryptUsingExtensions_DecryptUsingAes__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Byte___System_Byte___" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes``1(Silverback.Messaging.Configuration.IConsumerEndpointBuilder{``0},System.Byte[],System.Byte[])">DecryptUsingAes&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Byte[], Byte[])</h4>
@@ -211,6 +211,87 @@ that the IV is prepended to the actual encrypted message.</p>
       </tr>
     </tbody>
   </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilderDecryptUsingExtensions_DecryptUsingAes__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Func_System_String_System_Byte____System_Byte___.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes%60%601(Silverback.Messaging.Configuration.IConsumerEndpointBuilder%7B%60%600%7D%2CSystem.Func%7BSystem.String%2CSystem.Byte%5B%5D%7D%2CSystem.Byte%5B%5D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilderDecryptUsingExtensions.cs/#L75">View source</a>
+  </span>
+  <a id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderDecryptUsingExtensions_DecryptUsingAes_" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes*"></a>
+  <h4 id="Silverback_Messaging_Configuration_ConsumerEndpointBuilderDecryptUsingExtensions_DecryptUsingAes__1_Silverback_Messaging_Configuration_IConsumerEndpointBuilder___0__System_Func_System_String_System_Byte____System_Byte___" data-uid="Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions.DecryptUsingAes``1(Silverback.Messaging.Configuration.IConsumerEndpointBuilder{``0},System.Func{System.String,System.Byte[]},System.Byte[])">DecryptUsingAes&lt;TBuilder&gt;(IConsumerEndpointBuilder&lt;TBuilder&gt;, Func&lt;String, Byte[]&gt;, Byte[])</h4>
+  <div class="markdown level1 summary"><p>Specifies that the AES algorithm has to be used to decrypt the messages.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static TBuilder DecryptUsingAes&lt;TBuilder&gt;(this IConsumerEndpointBuilder&lt;TBuilder&gt; endpointBuilder, Func&lt;string, byte[]&gt; decryptionKeyCallback, byte[] initializationVector = null)
+    where TBuilder : IConsumerEndpointBuilder&lt;TBuilder&gt;</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Silverback.Messaging.Configuration.IConsumerEndpointBuilder-1.html">IConsumerEndpointBuilder</a>&lt;TBuilder&gt;</td>
+        <td><span class="parametername">endpointBuilder</span></td>
+        <td><p>The endpoint builder.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<span class="xref">System.String</span>, <span class="xref">System.Byte</span>[]&gt;</td>
+        <td><span class="parametername">decryptionKeyCallback</span></td>
+        <td><p>The function to be used to retrieve the encryption key according to the encryption key identifier passed
+in the header (see <a class="xref" href="Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_EncryptionKeyId">EncryptionKeyId</a>).</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">initializationVector</span></td>
+        <td><p>The optional initialization vector (IV) for the symmetric algorithm. If <code>null</code> it is expected
+that the IV is prepended to the actual encrypted message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TBuilder</span></td>
+        <td><p>The endpoint builder so that additional calls can be chained.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">TBuilder</span></td>
+        <td><p>The actual builder type.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
 </article>
           </div>
           
@@ -222,7 +303,7 @@ that the IV is prepended to the actual encrypted message.</p>
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Configuration_ConsumerEndpointBuilderDecryptUsingExtensions.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Configuration.ConsumerEndpointBuilderDecryptUsingExtensions%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilderDecryptUsingExtensions.cs/#L13" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Configuration/ConsumerEndpointBuilderDecryptUsingExtensions.cs/#L15" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>

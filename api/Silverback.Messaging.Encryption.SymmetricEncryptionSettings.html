@@ -90,15 +90,15 @@
   
   <h1 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings" class="text-break">Class SymmetricEncryptionSettings
   </h1>
-  <div class="markdown level0 summary"><p>The symmetric encryption settings used to encrypt or decrypt the messages being sent through the
-message broker.</p>
+  <div class="markdown level0 summary"><p>The encryption settings used to encrypt the messages.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a></div>
-    <div class="level2"><span class="xref">SymmetricEncryptionSettings</span></div>
+    <div class="level2"><a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html">SymmetricEncryptionSettingsBase</a></div>
+    <div class="level3"><span class="xref">SymmetricEncryptionSettings</span></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -106,6 +106,30 @@ message broker.</p>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_AlgorithmName">SymmetricEncryptionSettingsBase.AlgorithmName</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_BlockSize">SymmetricEncryptionSettingsBase.BlockSize</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_FeedbackSize">SymmetricEncryptionSettingsBase.FeedbackSize</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_InitializationVector">SymmetricEncryptionSettingsBase.InitializationVector</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_Key">SymmetricEncryptionSettingsBase.Key</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_CipherMode">SymmetricEncryptionSettingsBase.CipherMode</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_PaddingMode">SymmetricEncryptionSettingsBase.PaddingMode</a>
+    </div>
+    <div>
+      <a class="xref" href="Silverback.Messaging.Encryption.SymmetricEncryptionSettingsBase.html#Silverback_Messaging_Encryption_SymmetricEncryptionSettingsBase_Validate">SymmetricEncryptionSettingsBase.Validate()</a>
+    </div>
     <div>
       <span class="xref">System.Object.Equals(System.Object)</span>
     </div>
@@ -132,26 +156,27 @@ message broker.</p>
   <h6><strong>Assembly</strong>: Silverback.Integration.dll</h6>
   <h5 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SymmetricEncryptionSettings : EncryptionSettings, IValidatableEndpointSettings</code></pre>
+    <pre><code class="lang-csharp hljs">public class SymmetricEncryptionSettings : SymmetricEncryptionSettingsBase, IValidatableEndpointSettings</code></pre>
   </div>
   <h3 id="properties">Properties
   </h3>
   <span class="small pull-right mobile-hide">
     <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings_AlgorithmName.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings.AlgorithmName%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
+    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings_KeyIdentifier.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
   </span>
   <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L19">View source</a>
+    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L18">View source</a>
   </span>
-  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_AlgorithmName_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.AlgorithmName*"></a>
-  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_AlgorithmName" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.AlgorithmName">AlgorithmName</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the name of the specific implementation of the <span class="xref">System.Security.Cryptography.SymmetricAlgorithm</span> class
-to use to encrypt or decrypt the messages.</p>
+  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_KeyIdentifier_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier*"></a>
+  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_KeyIdentifier" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.KeyIdentifier">KeyIdentifier</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the key identifier to be sent in the header (see
+<a class="xref" href="Silverback.Messaging.Messages.DefaultMessageHeaders.html#Silverback_Messaging_Messages_DefaultMessageHeaders_EncryptionKeyId">EncryptionKeyId</a>). It will be used on the consumer side to
+determine the correct key to be used to decrypt the message.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string AlgorithmName { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public string KeyIdentifier { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -168,241 +193,6 @@ to use to encrypt or decrypt the messages.</p>
       </tr>
     </tbody>
   </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings_BlockSize.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings.BlockSize%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L29">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_BlockSize_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.BlockSize*"></a>
-  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_BlockSize" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.BlockSize">BlockSize</h4>
-  <div class="markdown level1 summary"><p>
-    Gets or sets the block size, in bits, of the cryptographic operation.
-</p>
-<p>
-    If <code>null</code>, the default value for the specified algorithm will be used.
-</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int? BlockSize { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings_CipherMode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings.CipherMode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L70">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_CipherMode_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.CipherMode*"></a>
-  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_CipherMode" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.CipherMode">CipherMode</h4>
-  <div class="markdown level1 summary"><p>
-    Gets or sets the mode for operation of the symmetric algorithm.
-</p>
-<p>
-    If <code>null</code>, the default value for the specified algorithm will be used.
-</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public CipherMode? CipherMode { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Security.Cryptography.CipherMode</span>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings_FeedbackSize.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings.FeedbackSize%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L40">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_FeedbackSize_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.FeedbackSize*"></a>
-  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_FeedbackSize" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.FeedbackSize">FeedbackSize</h4>
-  <div class="markdown level1 summary"><p>
-    Gets or sets the feedback size, in bits, of the cryptographic operation for the Cipher Feedback
-    (CFB) and Output Feedback (OFB) cipher modes.
-</p>
-<p>
-    If <code>null</code>, the default value for the specified algorithm will be used.
-</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int? FeedbackSize { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings_InitializationVector.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings.InitializationVector%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L53">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_InitializationVector_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.InitializationVector*"></a>
-  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_InitializationVector" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.InitializationVector">InitializationVector</h4>
-  <div class="markdown level1 summary"><p>
-    Gets or sets the optional initialization vector (IV) for the symmetric algorithm.
-</p>
-<p>
-<strong>Important:</strong> If <code>null</code> no fixed IV is provided and the producer will automatically
-generate a random one for each message that will also be prepended to the actual encrypted message
-to be available to the
-consumer.
-</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public byte[] InitializationVector { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Key.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Key%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L59">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Key_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Key*"></a>
-  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Key" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Key">Key</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the secret key for the symmetric algorithm.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public byte[] Key { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings_PaddingMode.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings.PaddingMode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L80">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_PaddingMode_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.PaddingMode*"></a>
-  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_PaddingMode" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.PaddingMode">PaddingMode</h4>
-  <div class="markdown level1 summary"><p>
-    Gets or sets the padding mode used in the symmetric algorithm.
-</p>
-<p>
-    If <code>null</code>, the default value for the specified algorithm will be used.
-</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public PaddingMode? PaddingMode { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Security.Cryptography.PaddingMode</span>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="methods">Methods
-  </h3>
-  <span class="small pull-right mobile-hide">
-    <span class="divider">|</span>
-    <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Validate.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Validate%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this doc</a>
-  </span>
-  <span class="small pull-right mobile-hide">
-    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L83">View source</a>
-  </span>
-  <a id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Validate_" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Validate*"></a>
-  <h4 id="Silverback_Messaging_Encryption_SymmetricEncryptionSettings_Validate" data-uid="Silverback.Messaging.Encryption.SymmetricEncryptionSettings.Validate">Validate()</h4>
-  <div class="markdown level1 summary"><p>Throws an <a class="xref" href="Silverback.Messaging.EndpointConfigurationException.html">EndpointConfigurationException</a> if the current configuration is not valid.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override void Validate()</code></pre>
-  </div>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html#Silverback_Messaging_Encryption_EncryptionSettings_Validate">EncryptionSettings.Validate()</a></div>
   <h3 id="implements">Implements</h3>
   <div>
       <a class="xref" href="Silverback.Messaging.Configuration.IValidatableEndpointSettings.html">IValidatableEndpointSettings</a>
@@ -418,7 +208,7 @@ consumer.
                     <a href="https://github.com/beagle1984/silverback/new/master/docs-ref-overwrite/new?filename=Silverback_Messaging_Encryption_SymmetricEncryptionSettings.md&amp;value=---%0Auid%3A%20Silverback.Messaging.Encryption.SymmetricEncryptionSettings%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this doc</a>
                   </li>
                   <li>
-                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L13" class="contribution-link">View source</a>
+                    <a href="https://github.com/BEagle1984/silverback/blob/master/src/Silverback.Integration/Messaging/Encryption/SymmetricEncryptionSettings.cs/#L11" class="contribution-link">View source</a>
                   </li>
                 </ul>
               </div>
