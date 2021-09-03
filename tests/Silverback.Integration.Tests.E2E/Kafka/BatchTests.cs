@@ -909,7 +909,6 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await Helper.Broker.DisconnectAsync();
 
-            sequences.Should().HaveCount(batchesCount);
             sequences.ForEach(sequence => sequence.IsAborted.Should().BeTrue());
 
             await AsyncTestingUtil.WaitAsync(() => abortedCount == batchesCount);
