@@ -7,21 +7,21 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Tests.Performance
 {
-// Baseline
-// |                          Method |       Mean |      Error |     StdDev |     Median |   Gen 0 | Gen 1 | Gen 2 | Allocated |
-// |-------------------------------- |-----------:|-----------:|-----------:|-----------:|--------:|------:|------:|----------:|
-// |           MessagesWithSimpleKey | 256.076 us | 10.2684 us | 28.9623 us | 248.838 us | 20.0000 |     - |     - |     49 KB |
-// | MessagesWithSimpleKeyButNoValue | 255.138 us |  8.1419 us | 22.8308 us | 253.428 us | 20.0000 |     - |     - |     49 KB |
-// |         MessagesWithCombinedKey | 416.836 us | 14.1230 us | 39.6023 us | 406.556 us | 40.0000 |     - |     - |    100 KB |
-// |              MessagesWithoutKey |   1.863 us |  0.1089 us |  0.3107 us |   1.777 us |       - |     - |     - |      2 KB |
+    // Baseline
+    // |                          Method |       Mean |      Error |     StdDev |     Median |   Gen 0 | Gen 1 | Gen 2 | Allocated |
+    // |-------------------------------- |-----------:|-----------:|-----------:|-----------:|--------:|------:|------:|----------:|
+    // |           MessagesWithSimpleKey | 256.076 us | 10.2684 us | 28.9623 us | 248.838 us | 20.0000 |     - |     - |     49 KB |
+    // | MessagesWithSimpleKeyButNoValue | 255.138 us |  8.1419 us | 22.8308 us | 253.428 us | 20.0000 |     - |     - |     49 KB |
+    // |         MessagesWithCombinedKey | 416.836 us | 14.1230 us | 39.6023 us | 406.556 us | 40.0000 |     - |     - |    100 KB |
+    // |              MessagesWithoutKey |   1.863 us |  0.1089 us |  0.3107 us |   1.777 us |       - |     - |     - |      2 KB |
 
-// Current version
-// |                          Method |      Mean |     Error |    StdDev |   Gen 0 | Gen 1 | Gen 2 | Allocated |
-// |-------------------------------- |----------:|----------:|----------:|--------:|------:|------:|----------:|
-// |           MessagesWithSimpleKey | 13.955 us | 0.4092 us | 1.1674 us |       - |     - |     - |         - |
-// | MessagesWithSimpleKeyButNoValue | 13.471 us | 0.2694 us | 0.7466 us |       - |     - |     - |         - |
-// |         MessagesWithCombinedKey | 75.546 us | 1.6008 us | 4.6186 us | 20.9961 |     - |     - |  44,000 B |
-// |              MessagesWithoutKey |  2.860 us | 0.0712 us | 0.2043 us |       - |     - |     - |         - |
+    // Current version
+    // |                          Method |      Mean |     Error |    StdDev |   Gen 0 | Gen 1 | Gen 2 | Allocated |
+    // |-------------------------------- |----------:|----------:|----------:|--------:|------:|------:|----------:|
+    // |           MessagesWithSimpleKey | 13.955 us | 0.4092 us | 1.1674 us |       - |     - |     - |         - |
+    // | MessagesWithSimpleKeyButNoValue | 13.471 us | 0.2694 us | 0.7466 us |       - |     - |     - |         - |
+    // |         MessagesWithCombinedKey | 75.546 us | 1.6008 us | 4.6186 us | 20.9961 |     - |     - |  44,000 B |
+    // |              MessagesWithoutKey |  2.860 us | 0.0712 us | 0.2043 us |       - |     - |     - |         - |
     [SimpleJob]
     [MemoryDiagnoser]
     [SuppressMessage("", "CA1822", Justification = "Benchmarks must be instance methods")]
@@ -31,9 +31,11 @@ namespace Silverback.Tests.Performance
 
         private readonly MessageWithoutKey[] _messageWithoutKeys = new MessageWithoutKey[MessageCount];
 
-        private readonly MessageWithSimpleKey[] _messageWithSimpleKeys = new MessageWithSimpleKey[MessageCount];
+        private readonly MessageWithSimpleKey[] _messageWithSimpleKeys =
+            new MessageWithSimpleKey[MessageCount];
 
-        private readonly MessageWitCombinedKey[] _messageWitCombinedKeys = new MessageWitCombinedKey[MessageCount];
+        private readonly MessageWitCombinedKey[] _messageWitCombinedKeys =
+            new MessageWitCombinedKey[MessageCount];
 
         public KafkaKeyHelperBenchmark()
         {
@@ -90,6 +92,7 @@ namespace Silverback.Tests.Performance
             }
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Needed for testing purpose")]
         private class MessageWithSimpleKey
         {
             [KafkaKeyMember]
@@ -114,6 +117,7 @@ namespace Silverback.Tests.Performance
             public string? MyProp9 { get; set; }
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Needed for testing purpose")]
         private class MessageWitCombinedKey
         {
             [KafkaKeyMember]
@@ -144,6 +148,7 @@ namespace Silverback.Tests.Performance
             public string? MyProp9 { get; set; }
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Needed for testing purpose")]
         private class MessageWithoutKey
         {
             public string? MyProp1 { get; set; }

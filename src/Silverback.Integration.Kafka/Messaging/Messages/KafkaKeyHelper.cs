@@ -12,7 +12,7 @@ namespace Silverback.Messaging.Messages
 {
     internal static class KafkaKeyHelper
     {
-        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> _typeMessageKeyPropertyInfoCache =
+        private static readonly ConcurrentDictionary<Type, PropertyInfo[]> TypeMessageKeyPropertyInfoCache =
             new();
 
         public static string? GetMessageKey(object? message)
@@ -39,7 +39,7 @@ namespace Silverback.Messaging.Messages
 
         private static PropertyInfo[] GetPropertyInfos(object message)
         {
-            if (_typeMessageKeyPropertyInfoCache.TryGetValue(
+            if (TypeMessageKeyPropertyInfoCache.TryGetValue(
                 message.GetType(),
                 out PropertyInfo[] propertyInfos))
             {
@@ -53,7 +53,7 @@ namespace Silverback.Messaging.Messages
                 .ToArray();
 
             // Must not fail if there is already an entry for this type
-            _ = _typeMessageKeyPropertyInfoCache.TryAdd(messageType, propertyInfos);
+            _ = TypeMessageKeyPropertyInfoCache.TryAdd(messageType, propertyInfos);
 
             return propertyInfos;
         }
