@@ -179,6 +179,76 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [Fact]
+        public async Task Encryption_SimpleMessagesNoKeyIdentifier_EncryptedAndDecrypted()
+        {
+            var message1 = new TestEventOne { Content = "Message 1" };
+            var message2 = new TestEventTwo { Content = "Message 2" };
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .EncryptUsingAes(AesEncryptionKey))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .DecryptUsingAes(
+                                            keyIdentifier =>
+                                            {
+                                                return keyIdentifier switch
+                                                {
+                                                    "another-encryption-key-id" => AesEncryptionKey2,
+                                                    _ => AesEncryptionKey
+                                                };
+                                            })
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = "consumer1";
+                                            })))
+                        .AddIntegrationSpyAndSubscriber())
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(message1);
+            await publisher.PublishAsync(message2);
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.OutboundEnvelopes[0].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
+            Helper.Spy.OutboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should()
+                .BeNull();
+            Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
+            Helper.Spy.OutboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should()
+                .BeNull();
+
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
+            Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
+            Helper.Spy.InboundEnvelopes[0].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should()
+                .BeNull();
+            Helper.Spy.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
+            Helper.Spy.InboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should()
+                .BeNull();
+
+            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
+        }
+
+        [Fact]
         public async Task Encryption_ChunkedMessages_EncryptedAndDecrypted()
         {
             var message1 = new TestEventOne { Content = "Message 1" };
