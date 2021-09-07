@@ -65,37 +65,31 @@ namespace Silverback.Messaging.Encryption
             Check.NotNull(settings, nameof(settings));
             Check.NotNull(stream, nameof(stream));
 
-            byte[]? encryptionKey;
+            byte[]? encryptionKey = settings.KeyProvider != null
+                ? settings.KeyProvider(keyIdentifier ?? string.Empty)
+                : settings.Key;
 
-            if (keyIdentifier != null && settings.KeyProvider != null)
+            using var algorithm =
+                SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings, encryptionKey);
+
+            if (settings.InitializationVector != null)
+                return algorithm.CreateDecryptor();
+
+            // Read the IV prepended to the message
+            byte[] buffer = new byte[algorithm.IV.Length];
+
+            var totalReadCount = 0;
+            while (totalReadCount < algorithm.IV.Length)
             {
-                encryptionKey = settings.KeyProvider(keyIdentifier);
+                int readCount = stream.Read(buffer, totalReadCount, algorithm.IV.Length - totalReadCount);
+
+                if (readCount == 0)
+                    break;
+
+                totalReadCount += readCount;
             }
-            else
-            {
-                encryptionKey = settings.Key;
-            }
 
-            using var algorithm = SymmetricAlgorithmFactory.CreateSymmetricAlgorithm(settings, encryptionKey);
-
-            if (settings.InitializationVector == null)
-            {
-                // Read the IV prepended to the message
-                byte[] buffer = new byte[algorithm.IV.Length];
-
-                var totalReadCount = 0;
-                while (totalReadCount < algorithm.IV.Length)
-                {
-                    int readCount = stream.Read(buffer, totalReadCount, algorithm.IV.Length - totalReadCount);
-
-                    if (readCount == 0)
-                        break;
-
-                    totalReadCount += readCount;
-                }
-
-                algorithm.IV = buffer;
-            }
+            algorithm.IV = buffer;
 
             return algorithm.CreateDecryptor();
         }
