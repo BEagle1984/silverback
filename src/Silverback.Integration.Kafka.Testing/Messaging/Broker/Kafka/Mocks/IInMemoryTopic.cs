@@ -1,10 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Confluent.Kafka;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
@@ -59,104 +56,6 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         Offset Push(int partition, Message<byte[]?, byte[]?> message);
 
         /// <summary>
-        ///     Ensures that a partition assignment has been given to the specified consumer, otherwise
-        ///     triggers the assignment process.
-        /// </summary>
-        /// <param name="consumer">
-        ///     The consumer.
-        /// </param>
-        /// <param name="assignmentDelay">
-        ///     The delay to be applied before assigning the partitions.
-        /// </param>
-        /// <param name="cancellationToken">
-        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
-        /// </param>
-        void EnsurePartitionsAssigned(
-            IMockedConfluentConsumer consumer,
-            TimeSpan assignmentDelay,
-            CancellationToken cancellationToken);
-
-        /// <summary>
-        ///     Subscribes the consumer to the topic.
-        /// </summary>
-        /// <param name="consumer">
-        ///     The <see cref="IMockedConfluentConsumer" /> instance.
-        /// </param>
-        void Subscribe(IMockedConfluentConsumer consumer);
-
-        /// <summary>
-        ///     Unsubscribes the consumer from the topic.
-        /// </summary>
-        /// <param name="consumer">
-        ///     The <see cref="IMockedConfluentConsumer" /> instance.
-        /// </param>
-        void Unsubscribe(IMockedConfluentConsumer consumer);
-
-        /// <summary>
-        ///     Assigns the specified partition to the consumer.
-        /// </summary>
-        /// <param name="consumer">
-        ///     The <see cref="IMockedConfluentConsumer" /> instance.
-        /// </param>
-        /// <param name="partition">
-        ///     The partition.
-        /// </param>
-        void Assign(IMockedConfluentConsumer consumer, Partition partition);
-
-        /// <summary>
-        ///     Commits the offsets of the specified consumer group.
-        /// </summary>
-        /// <param name="groupId">
-        ///     The consumer group id.
-        /// </param>
-        /// <param name="partitionOffsets">
-        ///     The offsets to be committed.
-        /// </param>
-        /// <returns>
-        ///     The actual committed offsets.
-        /// </returns>
-        IReadOnlyCollection<TopicPartitionOffset> Commit(
-            string groupId,
-            IEnumerable<TopicPartitionOffset> partitionOffsets);
-
-        /// <summary>
-        ///     Gets the latest committed <see cref="Offset" /> for the specified partition.
-        /// </summary>
-        /// <param name="partition">
-        ///     The partition.
-        /// </param>
-        /// <param name="groupId">
-        ///     The consumer group id.
-        /// </param>
-        /// <returns>
-        ///     The latest <see cref="Offset" />.
-        /// </returns>
-        Offset GetCommittedOffset(Partition partition, string groupId);
-
-        /// <summary>
-        ///     Gets the latest committed <see cref="Offset" /> for each partition.
-        /// </summary>
-        /// <param name="groupId">
-        ///     The consumer group id.
-        /// </param>
-        /// <returns>
-        ///     The collection containing the latest <see cref="Offset" /> for each partition.
-        /// </returns>
-        IReadOnlyCollection<TopicPartitionOffset> GetCommittedOffsets(string groupId);
-
-        /// <summary>
-        ///     Gets the number of committed offsets for the specified consumer group. This number is usually equal to
-        ///     the number of consumed messages.
-        /// </summary>
-        /// <param name="groupId">
-        ///     The consumer group id.
-        /// </param>
-        /// <returns>
-        ///     The number of committed offsets.
-        /// </returns>
-        long GetCommittedOffsetsCount(string groupId);
-
-        /// <summary>
         ///     Gets the <see cref="Offset" /> of the first message in the specified partition.
         /// </summary>
         /// <param name="partition">
@@ -177,22 +76,5 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         ///     The <see cref="Offset" /> of the latest message in the partition.
         /// </returns>
         Offset GetLastOffset(Partition partition);
-
-        /// <summary>
-        ///     Returns a <see cref="Task" /> that completes when all messages routed to the consumers have been
-        ///     processed and committed.
-        /// </summary>
-        /// <param name="cancellationToken">
-        ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="Task" /> that completes when all messages have been processed.
-        /// </returns>
-        Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken = default);
-
-        /// <summary>
-        ///     Simulates a rebalance and causes all assignments to be revoked and reassigned.
-        /// </summary>
-        void Rebalance();
     }
 }

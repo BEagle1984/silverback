@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = "group1";
                                             })))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
@@ -59,7 +59,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer2";
+                                                config.GroupId = "group2";
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -107,7 +107,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
@@ -123,7 +123,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();

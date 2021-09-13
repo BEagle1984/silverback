@@ -79,7 +79,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             .Configure(
                                                 config =>
                                                 {
-                                                    config.GroupId = "consumer1";
+                                                    config.GroupId = DefaultConsumerGroupId;
                                                 })))
                             .AddDelegateSubscriber(
                                 (BinaryFileMessage binaryFile) =>
@@ -165,7 +165,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeBinaryFiles()))
                         .AddDelegateSubscriber(
@@ -247,7 +247,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeBinaryFiles()))
                         .AddDelegateSubscriber(
@@ -338,7 +338,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeBinaryFiles(
                                             serializer => serializer
@@ -433,7 +433,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeBinaryFiles(
                                             serializer => serializer
@@ -529,7 +529,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeBinaryFiles(
                                             serializer => serializer.UseModel<CustomBinaryFileMessage>())))

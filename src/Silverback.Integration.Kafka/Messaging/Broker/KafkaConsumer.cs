@@ -97,6 +97,11 @@ namespace Silverback.Messaging.Broker
         /// </summary>
         public string MemberId => _confluentConsumer?.MemberId ?? string.Empty;
 
+        /// <summary>
+        ///     Gets the current partition assignment.
+        /// </summary>
+        public IReadOnlyList<TopicPartition>? PartitionAssignment => _confluentConsumer?.Assignment;
+
         internal IConsumer<byte[]?, byte[]?> ConfluentConsumer =>
             _confluentConsumer ?? throw new InvalidOperationException("ConfluentConsumer not set.");
 
@@ -348,9 +353,6 @@ namespace Silverback.Messaging.Broker
                         _confluentConsumer?.Resume(new[] { topicPartition });
                     }
                 }
-
-                if (IsConsuming)
-                    _consumeLoopHandler?.Start();
             }
             catch (Exception ex)
             {
@@ -380,7 +382,8 @@ namespace Silverback.Messaging.Broker
                                 .Select(metadata => new TopicPartition(topicName, metadata.PartitionId)))
                     .ToList();
 
-                Endpoint.TopicPartitions = Endpoint.TopicPartitionsResolver(availablePartitions).AsReadOnlyCollection();
+                Endpoint.TopicPartitions = Endpoint.TopicPartitionsResolver(availablePartitions)
+                    .AsReadOnlyCollection();
             }
 
             if (Endpoint.TopicPartitions != null)
@@ -422,7 +425,12 @@ namespace Silverback.Messaging.Broker
 
         private void InitAndStartChannelsManager(IReadOnlyList<TopicPartition> partitions)
         {
-            _channelsManager ??= new ConsumerChannelsManager(partitions, this, _callbacksInvoker, SequenceStores, _logger);
+            _channelsManager ??= new ConsumerChannelsManager(
+                partitions,
+                this,
+                _callbacksInvoker,
+                SequenceStores,
+                _logger);
 
             _consumeLoopHandler?.SetChannelsManager(_channelsManager);
 

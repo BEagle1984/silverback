@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Threading;
 using Silverback.Testing;
 
 namespace Silverback.Messaging.Configuration.Kafka
@@ -29,8 +30,9 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// </summary>
         /// <remarks>
         ///     This is necessary to speed up the tests, since the
-        ///     <see cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" /> method
-        ///     waits until the offsets are committed.
+        ///     <see cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(TimeSpan?)" /> and
+        ///     <see cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(CancellationToken)" /> methods wait until
+        ///     the offsets are committed.
         /// </remarks>
         /// <param name="intervalMs">
         ///     The desired auto commit interval in milliseconds.

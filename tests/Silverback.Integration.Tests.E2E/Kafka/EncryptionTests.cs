@@ -72,7 +72,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -97,7 +97,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 envelope =>
                     envelope.Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should().BeNull());
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
         }
 
         [Fact]
@@ -148,7 +148,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -175,7 +175,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should()
                 .Be(keyIdentifier2);
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
         }
 
         [Fact]
@@ -218,7 +218,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -245,7 +245,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes[1].Headers.GetValue(DefaultMessageHeaders.EncryptionKeyId).Should()
                 .BeNull();
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
         }
 
         [Fact]
@@ -290,7 +290,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -325,7 +325,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message1);
             Helper.Spy.InboundEnvelopes[1].Message.Should().BeEquivalentTo(message2);
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(12);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(12);
         }
 
         [Fact]
@@ -385,7 +385,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             .Configure(
                                                 config =>
                                                 {
-                                                    config.GroupId = "consumer1";
+                                                    config.GroupId = DefaultConsumerGroupId;
                                                 })))
                             .AddDelegateSubscriber(
                                 (BinaryFileMessage binaryFile) =>
@@ -470,7 +470,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             .Configure(
                                                 config =>
                                                 {
-                                                    config.GroupId = "consumer1";
+                                                    config.GroupId = DefaultConsumerGroupId;
                                                 })))
                             .AddDelegateSubscriber(
                                 (BinaryFileMessage binaryFile) =>

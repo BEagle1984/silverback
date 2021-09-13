@@ -13,7 +13,11 @@ namespace Silverback.Tests.Integration.E2E.TestHost
     {
         protected const string DefaultTopicName = "default-e2e-topic";
 
+        protected const string DefaultConsumerGroupId = "e2e-consumer-group-1";
+
         private IInMemoryTopic? _defaultTopic;
+
+        private IMockedConsumerGroup? _defaultConsumerGroup;
 
         protected KafkaTestFixture(ITestOutputHelper testOutputHelper)
             : base(testOutputHelper)
@@ -21,5 +25,8 @@ namespace Silverback.Tests.Integration.E2E.TestHost
         }
 
         protected IInMemoryTopic DefaultTopic => _defaultTopic ??= Helper.GetTopic(DefaultTopicName);
+
+        protected IMockedConsumerGroup DefaultConsumerGroup =>
+            _defaultConsumerGroup ??= Helper.GetConsumerGroup(DefaultConsumerGroupId);
     }
 }

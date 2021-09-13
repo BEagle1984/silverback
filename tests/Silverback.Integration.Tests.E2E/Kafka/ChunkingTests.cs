@@ -64,7 +64,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -173,7 +173,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -236,7 +236,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -265,7 +265,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -302,7 +302,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -331,7 +331,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -368,7 +368,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -397,7 +397,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -431,7 +431,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -463,7 +463,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(rawMessage);
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -497,7 +497,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -529,7 +529,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(rawMessage);
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -563,7 +563,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -595,7 +595,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(rawMessage);
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -628,7 +628,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -660,7 +660,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(rawMessage);
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -703,7 +703,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -757,7 +757,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Select(envelope => envelope.Message.As<TestEventOne>().Content)
                 .Should().BeEquivalentTo("Message 1", "Message 2");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -792,7 +792,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -848,7 +848,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedFiles.Should().HaveCount(2);
             receivedFiles.Should().BeEquivalentTo(new[] { rawMessage1, rawMessage2 });
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -908,7 +908,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -932,7 +932,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
             await publisher.PublishAsync(message2);
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -947,7 +947,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedFiles.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(message2.Content.ReReadAll());
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(6);
         }
 
         [Fact]
@@ -1004,7 +1004,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -1028,7 +1028,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
             await publisher.PublishAsync(message2);
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -1043,7 +1043,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedFiles.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(message2.Content.ReReadAll());
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(6);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(6);
         }
 
         [Fact]
@@ -1074,7 +1074,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -1106,7 +1106,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
             Helper.Broker.Consumers[0].IsConnected.Should().BeFalse();
         }
 
@@ -1138,7 +1138,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage _) => throw new InvalidOperationException("Test"))
@@ -1163,7 +1163,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
             Helper.Broker.Consumers[0].IsConnected.Should().BeFalse();
         }
 
@@ -1206,7 +1206,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -1241,7 +1241,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Message 2");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -1286,7 +1286,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -1315,7 +1315,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Message 2");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(3);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -1361,7 +1361,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -1396,7 +1396,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Message 2");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -1433,7 +1433,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -1456,9 +1456,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 HeadersHelper.GetChunkHeaders("1", 1, 3, typeof(TestEventOne)));
 
             await AsyncTestingUtil.WaitAsync(
-                () => DefaultTopic.GetCommittedOffsetsCount("consumer1") > 0,
+                () => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) > 0,
                 TimeSpan.FromMilliseconds(200));
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
 
             var sequenceStore = Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0];
             var originalSequence = await sequenceStore.GetAsync<ChunkSequence>("1");
@@ -1480,7 +1480,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
 
             originalSequence.IsAborted.Should().BeTrue();
             sequenceStore.GetPendingSequences().Should().BeEmpty();
@@ -1518,7 +1518,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -1556,13 +1556,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequence.IsAborted.Should().BeFalse();
 
             await AsyncTestingUtil.WaitAsync(
-                () => !sequence.IsPending && DefaultTopic.GetCommittedOffsetsCount("consumer1") >= 2,
+                () => !sequence.IsPending && DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) >= 2,
                 TimeSpan.FromSeconds(1));
             sequence.IsAborted.Should().BeTrue();
 
             sequenceStore.GetPendingSequences().Should().BeEmpty();
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -1578,7 +1578,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Hello E2E!");
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
 
             sequenceStore.GetPendingSequences().Should().BeEmpty();
         }
@@ -1619,7 +1619,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -1674,8 +1674,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequenceStore.GetPendingSequences().Should().BeEmpty();
             enumerationAborted.Should().BeTrue();
 
-            await AsyncTestingUtil.WaitAsync(() => DefaultTopic.GetCommittedOffsetsCount("consumer1") >= 2);
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
+            await AsyncTestingUtil.WaitAsync(() => DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName) >= 2);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
 
             await producer.RawProduceAsync(
                 rawMessage.Take(10).ToArray(),
@@ -1692,7 +1692,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
             receivedFiles.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(rawMessage);
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
 
             sequenceStore.GetPendingSequences().Should().BeEmpty();
         }
@@ -1735,7 +1735,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -1770,7 +1770,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.As<TestEventOne>().Content.Should().Be("Message 2");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -1815,7 +1815,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -1852,7 +1852,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedFiles.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(rawMessage2);
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(5);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
 
             var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
@@ -1889,7 +1889,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -1927,7 +1927,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             sequence.IsAborted.Should().BeTrue();
             sequenceStore.GetPendingSequences().Should().BeEmpty();
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
         }
 
         [Fact]
@@ -1964,7 +1964,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -2017,7 +2017,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequenceStore.GetPendingSequences().Should().BeEmpty();
             enumerationAborted.Should().BeTrue();
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
         }
 
         [Fact]
@@ -2051,7 +2051,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -2085,13 +2085,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequence!.Length.Should().Be(2);
             sequence.IsAborted.Should().BeFalse();
 
-            DefaultTopic.Rebalance();
+            DefaultConsumerGroup.Rebalance();
 
             await AsyncTestingUtil.WaitAsync(() => sequence.IsAborted);
 
             sequence.IsAborted.Should().BeTrue();
             sequenceStore.GetPendingSequences().Should().BeEmpty();
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
         }
 
         [Fact]
@@ -2128,7 +2128,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -2175,7 +2175,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequence!.Length.Should().Be(2);
             sequence.IsAborted.Should().BeFalse();
 
-            DefaultTopic.Rebalance();
+            DefaultConsumerGroup.Rebalance();
 
             await AsyncTestingUtil.WaitAsync(() => sequence.IsAborted && enumerationAborted);
 
@@ -2183,7 +2183,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             sequenceStore.GetPendingSequences().Should().BeEmpty();
             enumerationAborted.Should().BeTrue();
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(0);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
         }
 
         [Fact]
@@ -2217,7 +2217,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -2286,7 +2286,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -2392,7 +2392,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -2469,7 +2469,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -2492,7 +2492,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedFiles[0].Should().BeEquivalentTo(message1.Content.ReReadAll());
             receivedFiles[1].Should().BeEquivalentTo(message2.Content.ReReadAll());
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(2);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(2);
         }
 
         [Fact]
@@ -2547,7 +2547,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
                             (BinaryFileMessage binaryFile) =>
@@ -2571,7 +2571,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(1);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(1);
 
             await publisher.PublishAsync(message2);
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -2586,7 +2586,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             receivedFiles.Should().HaveCount(1);
             receivedFiles[0].Should().BeEquivalentTo(message2.Content.ReReadAll());
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(4);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(4);
         }
     }
 }

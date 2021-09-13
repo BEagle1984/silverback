@@ -61,7 +61,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             }))))
                 .Run();
 
@@ -101,7 +101,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             }))))
                 .Run();
 
@@ -144,7 +144,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -187,7 +187,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnablePartitionEof = false;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
@@ -241,7 +241,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnablePartitionEof = true;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
@@ -298,7 +298,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = "group1";
                                                 config.EnablePartitionEof = true;
                                             }))
                                 .AddInbound(
@@ -307,7 +307,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer2";
+                                                config.GroupId = "group2";
                                                 config.EnablePartitionEof = true;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
@@ -365,7 +365,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnablePartitionEof = true;
                                             })))
                         .AddIntegrationSpyAndSubscriber())
@@ -483,7 +483,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnablePartitionEof = true;
                                             })))
                         .AddIntegrationSpyAndSubscriber())

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,9 +20,9 @@ namespace Silverback.Testing
     {
         private readonly IInMemoryTopicCollection? _topics;
 
-        private readonly KafkaBroker _kafkaBroker;
+        private readonly IMockedConsumerGroupsCollection? _groups;
 
-        private readonly ILogger<KafkaTestingHelper> _logger;
+        private readonly KafkaBroker _kafkaBroker;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaTestingHelper" /> class.
@@ -40,20 +39,30 @@ namespace Silverback.Testing
             : base(serviceProvider, logger)
         {
             _topics = serviceProvider.GetService<IInMemoryTopicCollection>();
+            _groups = serviceProvider.GetService<IMockedConsumerGroupsCollection>();
             _kafkaBroker = serviceProvider.GetRequiredService<KafkaBroker>();
-            _logger = logger;
         }
 
-        /// <inheritdoc cref="IKafkaTestingHelper.GetTopic(string)" />
-        public IInMemoryTopic GetTopic(string name) =>
-            GetTopics(name).First();
+        /// <inheritdoc cref="IKafkaTestingHelper.GetConsumerGroup(string)" />
+        public IMockedConsumerGroup GetConsumerGroup(string groupId)
+        {
+            if (_groups == null)
+                throw new InvalidOperationException("The IInMemoryTopicCollection is not initialized.");
 
-        /// <inheritdoc cref="IKafkaTestingHelper.GetTopic(string,string)" />
-        public IInMemoryTopic GetTopic(string name, string bootstrapServers) =>
-            GetTopics(name, bootstrapServers).First();
+            return _groups.First(group => group.GroupId == groupId);
+        }
 
-        /// <inheritdoc cref="IKafkaTestingHelper.GetTopics" />
-        public IReadOnlyCollection<IInMemoryTopic> GetTopics(string name, string? bootstrapServers = null)
+        /// <inheritdoc cref="IKafkaTestingHelper.GetConsumerGroup(string,string)" />
+        public IMockedConsumerGroup GetConsumerGroup(string groupId, string bootstrapServers)
+        {
+            if (_groups == null)
+                throw new InvalidOperationException("The IInMemoryTopicCollection is not initialized.");
+
+            return _groups.First(group => group.GroupId == groupId && group.BootstrapServers == bootstrapServers);
+        }
+
+        /// <inheritdoc cref="IKafkaTestingHelper.GetTopic(string,string?)" />
+        public IInMemoryTopic GetTopic(string name, string? bootstrapServers = null)
         {
             if (_topics == null)
                 throw new InvalidOperationException("The IInMemoryTopicCollection is not initialized.");
@@ -67,87 +76,37 @@ namespace Silverback.Testing
                             StringComparison.OrdinalIgnoreCase)))
                 .ToList();
 
-            if (topics.Count != 0)
-                return topics;
-
-            if (bootstrapServers != null)
-                return new[] { _topics.Get(name, bootstrapServers) };
-
-            // If the topic wasn't created yet, just create one per each broker
-            return _kafkaBroker
-                .Producers.Select(
-                    producer => ((KafkaProducerEndpoint)producer.Endpoint).Configuration.BootstrapServers)
-                .Union(
-                    _kafkaBroker.Consumers.Select(
-                        producer =>
-                            ((KafkaConsumerEndpoint)producer.Endpoint).Configuration.BootstrapServers))
-                .Select(servers => servers.ToUpperInvariant())
-                .Distinct()
-                .Select(servers => _topics.Get(name, servers))
-                .ToList();
-        }
-
-        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(bool,TimeSpan?)" />
-        public override Task WaitUntilAllMessagesAreConsumedAsync(
-            bool throwTimeoutException,
-            TimeSpan? timeout = null) =>
-            WaitUntilAllMessagesAreConsumedCoreAsync(throwTimeoutException, null, timeout);
-
-        /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection{string}, TimeSpan?)" />
-        public Task WaitUntilAllMessagesAreConsumedAsync(
-            IReadOnlyCollection<string> topicNames,
-            TimeSpan? timeout = null) =>
-            WaitUntilAllMessagesAreConsumedAsync(true, topicNames, timeout);
-
-        /// <inheritdoc cref="IKafkaTestingHelper.WaitUntilAllMessagesAreConsumedAsync(IReadOnlyCollection{string}, TimeSpan?)" />
-        public Task WaitUntilAllMessagesAreConsumedAsync(
-            bool throwTimeoutException,
-            IReadOnlyCollection<string> topicNames,
-            TimeSpan? timeout = null) =>
-            WaitUntilAllMessagesAreConsumedCoreAsync(true, topicNames, timeout);
-
-        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "The tasks are awaited")]
-        private async Task WaitUntilAllMessagesAreConsumedCoreAsync(
-            bool throwTimeoutException,
-            IReadOnlyCollection<string>? topicNames,
-            TimeSpan? timeout = null)
-        {
-            if (_topics == null)
-                return;
-
-            using var cancellationTokenSource =
-                new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
-
-            var topics = topicNames == null
-                ? _topics.ToList()
-                : _topics.Where(topic => topicNames.Contains(topic.Name)).ToList();
-
-            try
+            switch (topics.Count)
             {
-                // Loop until the outbox is empty since the consumers may produce new messages
-                do
-                {
-                    await WaitUntilOutboxIsEmptyAsync(cancellationTokenSource.Token).ConfigureAwait(false);
+                case > 1:
+                    throw new InvalidOperationException(
+                        $"More than one topic '{name}' found. Try specifying the bootstrap servers.");
+                case 0 when bootstrapServers == null:
+                    string[] distinctBootstrapServers =
+                        _kafkaBroker.Producers.Select(
+                                producer => ((KafkaProducerEndpoint)producer.Endpoint).Configuration.BootstrapServers)
+                            .Union(
+                                _kafkaBroker.Consumers.Select(
+                                    consumer => ((KafkaConsumerEndpoint)consumer.Endpoint).Configuration
+                                        .BootstrapServers))
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .ToArray();
+                    if (distinctBootstrapServers.Length == 1)
+                        return GetTopic(name, distinctBootstrapServers[0]);
 
-                    await Task.WhenAll(
-                            topics.Select(
-                                topic =>
-                                    topic.WaitUntilAllMessagesAreConsumedAsync(
-                                        cancellationTokenSource.Token)))
-                        .ConfigureAwait(false);
-                }
-                while (!await IsOutboxEmptyAsync().ConfigureAwait(false));
-            }
-            catch (OperationCanceledException)
-            {
-                const string message =
-                    "The timeout elapsed before all messages could be consumed and processed.";
-
-                if (throwTimeoutException)
-                    throw new TimeoutException(message);
-
-                _logger.LogWarning(message);
+                    throw new InvalidOperationException(
+                        $"Topic '{name}' not found and cannot be created on-the-fly. Try specifying the bootstrap servers.");
+                case 0:
+                    return _topics.Get(name, bootstrapServers);
+                default:
+                    return topics.Single();
             }
         }
+
+        /// <inheritdoc cref="TestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken)" />
+        protected override Task WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken cancellationToken) =>
+            _groups == null
+                ? Task.CompletedTask
+                : Task.WhenAll(_groups.Select(group => @group.WaitUntilAllMessagesAreConsumedAsync(cancellationToken)));
     }
 }

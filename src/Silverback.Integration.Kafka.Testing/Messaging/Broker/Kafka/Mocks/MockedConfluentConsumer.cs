@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -16,25 +15,17 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
     internal sealed class MockedConfluentConsumer : IMockedConfluentConsumer
     {
-        private readonly ConsumerConfig _config;
-
         private readonly IInMemoryTopicCollection _topics;
+
+        private readonly IMockedConsumerGroup _consumerGroup;
 
         private readonly IMockedKafkaOptions _options;
 
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _currentOffsets
-            = new();
+        private readonly Dictionary<TopicPartition, TopicPartitionOffset> _currentOffsets = new();
 
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>> _storedOffsets
-            = new();
+        private readonly Dictionary<TopicPartition, TopicPartitionOffset> _storedOffsets = new();
 
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<Partition, Offset>>
-            _lastPartitionEof
-                = new();
-
-        private readonly List<TopicPartitionOffset> _temporaryAssignment = new();
-
-        private readonly List<string> _topicAssignments = new();
+        private readonly Dictionary<TopicPartition, Offset> _lastEofOffsets = new();
 
         private readonly int _autoCommitIntervalMs;
 
@@ -44,16 +35,21 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public MockedConfluentConsumer(
             ConsumerConfig config,
             IInMemoryTopicCollection topics,
+            IMockedConsumerGroupsCollection consumerGroups,
             IMockedKafkaOptions options)
         {
-            _config = Check.NotNull(config, nameof(config));
             _topics = Check.NotNull(topics, nameof(topics));
             _options = Check.NotNull(options, nameof(options));
 
             Name = $"{config.ClientId ?? "mocked"}.{Guid.NewGuid():N}";
-            GroupId = config.GroupId;
             MemberId = Guid.NewGuid().ToString("N");
-            EnablePartitionEof = config.EnablePartitionEof ?? false;
+            Config = Check.NotNull(config, nameof(config));
+
+            Check.NotNull(consumerGroups, nameof(consumerGroups));
+
+            _consumerGroup = !string.IsNullOrEmpty(Config.GroupId)
+                ? consumerGroups.Get(Config)
+                : consumerGroups.Get(Guid.NewGuid().ToString(), config.BootstrapServers);
 
             if (config.EnableAutoCommit ?? true)
             {
@@ -71,17 +67,15 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public string MemberId { get; }
 
-        public bool EnablePartitionEof { get; }
+        public ConsumerConfig Config { get; }
+
+        public bool PartitionsAssigned { get; private set; }
 
         public List<TopicPartition> Assignment { get; } = new();
 
         public List<string> Subscription { get; } = new();
 
         public IConsumerGroupMetadata ConsumerGroupMetadata => throw new NotSupportedException();
-
-        public string GroupId { get; private set; }
-
-        public bool PartitionsAssigned { get; private set; }
 
         public bool Disposed { get; private set; }
 
@@ -108,7 +102,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             {
                 EnsureNotDisposed();
 
-                if (TryConsume(cancellationToken, out var result))
+                if (TryConsume(cancellationToken, out ConsumeResult<byte[]?, byte[]?>? result))
                     return result!;
 
                 Thread.Sleep(10);
@@ -120,24 +114,15 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public void Subscribe(IEnumerable<string> topics)
         {
             EnsureNotDisposed();
+            CheckGroupIdNotEmpty();
 
-            if (string.IsNullOrEmpty(GroupId))
-            {
-                throw new ArgumentException(
-                    "'group.id' configuration parameter is required and was not specified.");
-            }
-
-            var topicsList =
-                Check.NotNull(topics, nameof(topics)).AsReadOnlyList();
+            var topicsList = Check.NotNull(topics, nameof(topics)).AsReadOnlyList();
             Check.NotEmpty(topicsList, nameof(topics));
             Check.HasNoEmpties(topicsList, nameof(topics));
 
-            lock (Subscription)
-            {
-                Subscription.Clear();
-                Subscription.AddRange(topicsList);
-                Subscription.ForEach(topic => _topics.Get(topic, _config).Subscribe(this));
-            }
+            Subscription.Clear();
+            Subscription.AddRange(topicsList);
+            _consumerGroup.Subscribe(this, topicsList);
         }
 
         public void Subscribe(string topic) => Subscribe(new[] { topic });
@@ -145,40 +130,36 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public void Unsubscribe()
         {
             EnsureNotDisposed();
+            CheckGroupIdNotEmpty();
 
-            lock (Subscription)
-            {
-                foreach (var topic in Subscription)
-                {
-                    _topics.Get(topic, _config).Unsubscribe(this);
-                }
-
-                Subscription.Clear();
-            }
+            _consumerGroup.Unsubscribe(this);
+            Subscription.Clear();
         }
 
-        public void Assign(TopicPartition partition) => throw new NotSupportedException();
+        public void Assign(TopicPartition partition) =>
+            Assign(new[] { new TopicPartitionOffset(partition, Offset.Unset) });
 
-        public void Assign(TopicPartitionOffset partition) => throw new NotSupportedException();
+        public void Assign(TopicPartitionOffset partition) => Assign(new[] { partition });
 
         public void Assign(IEnumerable<TopicPartitionOffset> partitions)
         {
-            if (string.IsNullOrEmpty(GroupId))
-                GroupId = Guid.NewGuid().ToString();
-
             Assignment.Clear();
 
-            foreach (var topicPartitionOffset in partitions)
+            var partitionsList = Check.NotNull(partitions, nameof(partitions)).AsReadOnlyList();
+
+            foreach (var topicPartitionOffset in partitionsList)
             {
                 Assignment.Add(topicPartitionOffset.TopicPartition);
-                _topics.Get(topicPartitionOffset.Topic, _config).Assign(this, topicPartitionOffset.Partition);
                 Seek(GetStartingOffset(topicPartitionOffset));
             }
+
+            _consumerGroup.Assign(this, partitionsList.Select(partition => partition.TopicPartition));
 
             PartitionsAssigned = true;
         }
 
-        public void Assign(IEnumerable<TopicPartition> partitions) => throw new NotSupportedException();
+        public void Assign(IEnumerable<TopicPartition> partitions) =>
+            Assign(partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Unset)));
 
         public void IncrementalAssign(IEnumerable<TopicPartitionOffset> partitions) =>
             throw new NotSupportedException();
@@ -189,14 +170,19 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public void IncrementalUnassign(IEnumerable<TopicPartition> partitions) =>
             throw new NotSupportedException();
 
-        public void Unassign() => throw new NotSupportedException();
+        public void Unassign()
+        {
+            Assignment.Clear();
+            _consumerGroup.Unassign(this);
+
+            PartitionsAssigned = false;
+        }
 
         public void StoreOffset(ConsumeResult<byte[]?, byte[]?> result)
         {
-            EnsureNotDisposed();
+            Check.NotNull(result, nameof(result));
 
-            if (result == null)
-                return;
+            EnsureNotDisposed();
 
             StoreOffset(result.TopicPartitionOffset);
         }
@@ -205,49 +191,37 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         {
             EnsureNotDisposed();
 
-            if (offset == null)
-                return;
+            Check.NotNull(offset, nameof(offset));
 
-            var partitionOffsetDictionary = _storedOffsets.GetOrAdd(
-                offset.Topic,
-                _ => new ConcurrentDictionary<Partition, Offset>());
-
-            partitionOffsetDictionary[offset.Partition] = offset.Offset;
+            lock (_storedOffsets)
+            {
+                _storedOffsets[offset.TopicPartition] = offset;
+            }
         }
 
         public List<TopicPartitionOffset> Commit()
         {
             EnsureNotDisposed();
+            CheckGroupIdNotEmpty();
 
-            var topicPartitionOffsets = _storedOffsets.SelectMany(
-                topicPair => topicPair.Value.Select(
-                    partitionPair => new TopicPartitionOffset(
-                        topicPair.Key,
-                        partitionPair.Key,
-                        partitionPair.Value))).ToList();
-
-            var topicPartitionOffsetsByTopic =
-                topicPartitionOffsets.GroupBy(topicPartitionOffset => topicPartitionOffset.Topic);
-
-            var actualCommittedOffsets = new List<TopicPartitionOffset>();
-            foreach (var group in topicPartitionOffsetsByTopic)
+            lock (_storedOffsets)
             {
-                actualCommittedOffsets.AddRange(_topics.Get(group.Key, _config).Commit(GroupId, group));
-            }
+                if (_storedOffsets.Count == 0)
+                    return new List<TopicPartitionOffset>();
 
-            if (actualCommittedOffsets.Count > 0)
-            {
-                OffsetsCommittedHandler?.Invoke(
-                    this,
-                    new CommittedOffsets(
-                        actualCommittedOffsets
-                            .Select(
-                                topicPartitionOffset =>
-                                    new TopicPartitionOffsetError(topicPartitionOffset, null)).ToList(),
-                        null));
-            }
+                List<TopicPartitionOffset> committedOffsets = _storedOffsets.Values.ToList();
+                _consumerGroup.Commit(committedOffsets);
+                _storedOffsets.Clear();
 
-            return actualCommittedOffsets;
+                List<TopicPartitionOffsetError> topicPartitionOffsetErrors = committedOffsets
+                    .Select(
+                        topicPartitionOffset =>
+                            new TopicPartitionOffsetError(topicPartitionOffset, null))
+                    .ToList();
+                OffsetsCommittedHandler?.Invoke(this, new CommittedOffsets(topicPartitionOffsetErrors, null));
+
+                return committedOffsets;
+            }
         }
 
         public void Commit(IEnumerable<TopicPartitionOffset> offsets) => throw new NotSupportedException();
@@ -258,10 +232,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         {
             Check.NotNull(tpo, nameof(tpo));
 
-            if (!_currentOffsets.ContainsKey(tpo.Topic))
-                _currentOffsets[tpo.Topic] = new ConcurrentDictionary<Partition, Offset>();
-
-            _currentOffsets[tpo.Topic][tpo.Partition] = tpo.Offset;
+            _currentOffsets[tpo.TopicPartition] = tpo;
         }
 
         public void Pause(IEnumerable<TopicPartition> partitions)
@@ -304,47 +275,136 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         public WatermarkOffsets QueryWatermarkOffsets(TopicPartition topicPartition, TimeSpan timeout) =>
             throw new NotSupportedException();
 
-        public void Close()
+        public TopicPartitionOffset GetStoredOffset(TopicPartition topicPartition)
         {
-            // Nothing to close, it's just a mock
+            lock (_storedOffsets)
+            {
+                return _storedOffsets.TryGetValue(topicPartition, out var topicPartitionOffset)
+                    ? topicPartitionOffset
+                    : new TopicPartitionOffset(topicPartition, Offset.Unset);
+            }
         }
 
-        public void Dispose() => Disposed = true;
+        public void Close()
+        {
+            _consumerGroup.Remove(this);
+        }
+
+        public void Dispose()
+        {
+            Close();
+            Disposed = true;
+        }
 
         internal void OnRebalancing()
         {
             PartitionsAssigned = false;
         }
 
-        internal void OnPartitionsRevoked(string topicName)
+        internal void OnPartitionsRevoked(IReadOnlyCollection<TopicPartition> topicPartitions)
         {
-            PartitionsAssigned = false;
+            PartitionsRevokedHandler?.Invoke(
+                this,
+                topicPartitions.Select(
+                        topicPartition => _currentOffsets.GetValueOrDefault(
+                            topicPartition,
+                            new TopicPartitionOffset(topicPartition, Offset.Unset)))
+                    .ToList());
 
-            if (_topicAssignments.Contains(topicName))
-                _topicAssignments.Remove(topicName);
+            if (Config.EnableAutoCommit != false && !string.IsNullOrEmpty(Config.GroupId))
+                Commit();
 
-            if (_topicAssignments.Count > 0)
-                return;
+            foreach (var topicPartition in topicPartitions)
+            {
+                Assignment.Remove(topicPartition);
+                _currentOffsets.Remove(topicPartition);
 
-            InvokePartitionsRevokedHandler(topicName);
+                lock (_storedOffsets)
+                {
+                    _storedOffsets.Remove(topicPartition);
+                }
 
-            ClearPartitionsAssignment();
+                _lastEofOffsets.Remove(topicPartition);
+            }
         }
 
-        internal void OnPartitionsAssigned(string topicName, IReadOnlyCollection<Partition> partitions)
+        private bool TryConsume(
+            CancellationToken cancellationToken,
+            out ConsumeResult<byte[]?, byte[]?>? result)
         {
-            _temporaryAssignment.RemoveAll(topicPartitionOffset => topicPartitionOffset.Topic == topicName);
-            _temporaryAssignment.AddRange(
-                partitions.Select(partition => new TopicPartitionOffset(topicName, partition, Offset.Unset)));
+            cancellationToken.ThrowIfCancellationRequested();
 
-            if (!_topicAssignments.Contains(topicName))
-                _topicAssignments.Add(topicName);
+            EnsurePartitionsAssigned(cancellationToken);
 
-            if (_topicAssignments.Count < Subscription.Count)
+            // Process the assigned partitions starting from the one that consumed less messages
+            var topicPartitionsOffsets =
+                _currentOffsets.Values
+                    .Where(
+                        topicPartitionOffset => !IsPaused(
+                            topicPartitionOffset.Topic,
+                            topicPartitionOffset.Partition))
+                    .OrderBy(topicPartitionOffset => (int)topicPartitionOffset.Offset);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var topicPartitionOffset in topicPartitionsOffsets)
+            {
+                var inMemoryPartition =
+                    _topics.Get(topicPartitionOffset.Topic, Config)
+                        .Partitions[topicPartitionOffset.Partition];
+
+                bool pulled = inMemoryPartition.TryPull(topicPartitionOffset.Offset, out result);
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (!Assignment.Contains(topicPartitionOffset.TopicPartition))
+                    continue;
+
+                if (pulled)
+                {
+                    _currentOffsets[result!.TopicPartition] =
+                        new TopicPartitionOffset(result.TopicPartition, result.Offset + 1);
+
+                    return true;
+                }
+
+                if (Config.EnablePartitionEof == true &&
+                    GetEofMessageIfNeeded(topicPartitionOffset, out result))
+                {
+                    return true;
+                }
+            }
+
+            result = null;
+            return false;
+        }
+
+        private void EnsurePartitionsAssigned(CancellationToken cancellationToken)
+        {
+            if (PartitionsAssigned)
                 return;
 
+            while (_consumerGroup.IsRebalancing)
+            {
+                Task.Delay(10, cancellationToken).Wait(cancellationToken);
+            }
+
+            if (_options.PartitionsAssignmentDelay > TimeSpan.Zero)
+                Task.Delay(_options.PartitionsAssignmentDelay, cancellationToken).Wait(cancellationToken);
+
+            IReadOnlyCollection<TopicPartition> assignedPartitions = _consumerGroup
+                .GetAssignment(this)
+                .Where(topicPartition => !Assignment.Contains(topicPartition))
+                .ToList();
+
             var partitionOffsets =
-                InvokePartitionsAssignedHandler(_temporaryAssignment) ?? _temporaryAssignment;
+                PartitionsAssignedHandler?.Invoke(
+                        this,
+                        assignedPartitions.AsList())
+                    ?.ToList()
+                ?? assignedPartitions
+                    .Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))
+                    .ToList();
 
             foreach (var partitionOffset in partitionOffsets)
             {
@@ -355,114 +415,17 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             PartitionsAssigned = true;
         }
 
-        private List<TopicPartitionOffset>? InvokePartitionsAssignedHandler(
-            IEnumerable<TopicPartitionOffset> partitionOffsets) =>
-            PartitionsAssignedHandler?.Invoke(
-                    this,
-                    partitionOffsets.Select(partitionOffset => partitionOffset.TopicPartition).ToList())
-                ?.ToList();
-
-        private void InvokePartitionsRevokedHandler(string topicName)
-        {
-            if (PartitionsRevokedHandler == null || Assignment.Count == 0)
-                return;
-
-            PartitionsRevokedHandler.Invoke(
-                this,
-                Assignment.Where(topicPartition => topicPartition.Topic == topicName).Select(
-                        partition => new TopicPartitionOffset(
-                            partition,
-                            _topics.Get(partition.Topic, _config).GetCommittedOffset(
-                                partition.Partition,
-                                GroupId)))
-                    .ToList());
-        }
-
-        private void ClearPartitionsAssignment()
-        {
-            Assignment.ToList().ForEach(topicPartition => Assignment.Remove(topicPartition));
-
-            _currentOffsets.Clear();
-            _storedOffsets.Clear();
-            _lastPartitionEof.Clear();
-        }
-
-        private bool TryConsume(
-            CancellationToken cancellationToken,
-            out ConsumeResult<byte[]?, byte[]?>? result)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            Subscription.ForEach(
-                topic => _topics.Get(topic, _config)
-                    .EnsurePartitionsAssigned(
-                        this,
-                        _options.PartitionsAssignmentDelay,
-                        cancellationToken));
-
-            // Process the assigned partitions starting from the one that consumed less messages
-            var topicPartitionsOffsets = _currentOffsets
-                .SelectMany(
-                    topicPair =>
-                        topicPair.Value.Select(
-                            partitionPair => new TopicPartitionOffset(
-                                topicPair.Key,
-                                partitionPair.Key,
-                                partitionPair.Value)))
-                .Where(
-                    topicPartitionOffset => !IsPaused(
-                        topicPartitionOffset.Topic,
-                        topicPartitionOffset.Partition))
-                .OrderBy(topicPartitionOffset => (int)topicPartitionOffset.Offset);
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            foreach (var topicPartitionOffset in topicPartitionsOffsets)
-            {
-                var inMemoryPartition =
-                    _topics.Get(topicPartitionOffset.Topic, _config)
-                        .Partitions[topicPartitionOffset.Partition];
-
-                bool pulled = inMemoryPartition.TryPull(topicPartitionOffset.Offset, out result);
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (Assignment.Contains(topicPartitionOffset.TopicPartition))
-                {
-                    if (pulled)
-                    {
-                        _currentOffsets[result!.Topic][result.Partition] = result.Offset + 1;
-                        return true;
-                    }
-
-                    if (EnablePartitionEof && GetEofMessageIfNeeded(topicPartitionOffset, out result))
-                        return true;
-                }
-            }
-
-            result = null;
-            return false;
-        }
-
-        private bool IsPaused(string topic, Partition partition)
-        {
-            lock (_pausedPartitions)
-            {
-                return _pausedPartitions.Contains(new TopicPartition(topic, partition));
-            }
-        }
-
         private TopicPartitionOffset GetStartingOffset(TopicPartitionOffset topicPartitionOffset)
         {
             if (!topicPartitionOffset.Offset.IsSpecial)
                 return topicPartitionOffset;
 
-            var topic = _topics.Get(topicPartitionOffset.Topic, _config);
-
             var offset = topicPartitionOffset.Offset;
 
             if (offset == Offset.Stored || offset == Offset.Unset)
-                offset = topic.GetCommittedOffset(topicPartitionOffset.Partition, GroupId);
+                offset = _consumerGroup.GetCommittedOffset(topicPartitionOffset.TopicPartition)?.Offset ?? Offset.Unset;
+
+            var topic = _topics.Get(topicPartitionOffset.Topic, Config);
 
             if (offset == Offset.End)
                 offset = topic.GetLastOffset(topicPartitionOffset.Partition);
@@ -474,6 +437,14 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 offset = new Offset(0);
 
             return new TopicPartitionOffset(topicPartitionOffset.TopicPartition, offset);
+        }
+
+        private bool IsPaused(string topic, Partition partition)
+        {
+            lock (_pausedPartitions)
+            {
+                return _pausedPartitions.Contains(new TopicPartition(topic, partition));
+            }
         }
 
         [SuppressMessage("", "CA1031", Justification = "Ensures retry in next iteration")]
@@ -498,25 +469,16 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             TopicPartitionOffset topicPartitionOffset,
             out ConsumeResult<byte[]?, byte[]?>? result)
         {
-            if (!_lastPartitionEof.ContainsKey(topicPartitionOffset.Topic))
+            if (!_lastEofOffsets.ContainsKey(topicPartitionOffset.TopicPartition))
             {
-                _lastPartitionEof[topicPartitionOffset.Topic] =
-                    new ConcurrentDictionary<Partition, Offset>();
+                _lastEofOffsets[topicPartitionOffset.TopicPartition] = -1;
             }
 
-            if (!_lastPartitionEof[topicPartitionOffset.Topic]
-                .ContainsKey(topicPartitionOffset.Partition))
-            {
-                _lastPartitionEof[topicPartitionOffset.Topic][topicPartitionOffset.Partition] = -1;
-            }
-
-            var lastEofOffset =
-                _lastPartitionEof[topicPartitionOffset.Topic][topicPartitionOffset.Partition];
+            var lastEofOffset = _lastEofOffsets[topicPartitionOffset.TopicPartition];
 
             if (lastEofOffset < topicPartitionOffset.Offset)
             {
-                _lastPartitionEof[topicPartitionOffset.Topic][topicPartitionOffset.Partition] =
-                    topicPartitionOffset.Offset;
+                _lastEofOffsets[topicPartitionOffset.TopicPartition] = topicPartitionOffset.Offset;
 
                 result = new ConsumeResult<byte[]?, byte[]?>
                 {
@@ -531,6 +493,12 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
             result = null;
             return false;
+        }
+
+        private void CheckGroupIdNotEmpty()
+        {
+            if (string.IsNullOrEmpty(Config.GroupId))
+                throw new ArgumentException("'group.id' configuration parameter is required and was not specified.");
         }
 
         private void EnsureNotDisposed()

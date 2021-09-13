@@ -17,8 +17,6 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         private readonly ConcurrentDictionary<string, InMemoryTopic> _topics = new();
 
-        private readonly object _consumersLock = new();
-
         public InMemoryTopicCollection(IMockedKafkaOptions options)
         {
             _options = options;
@@ -35,8 +33,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 _ => new InMemoryTopic(
                     name,
                     bootstrapServers,
-                    _options.DefaultPartitionsCount,
-                    _consumersLock));
+                    _options.DefaultPartitionsCount));
 
         public IEnumerator<IInMemoryTopic> GetEnumerator() => _topics.Values.GetEnumerator();
 

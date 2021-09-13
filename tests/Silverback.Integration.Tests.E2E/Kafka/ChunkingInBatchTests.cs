@@ -53,7 +53,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -68,7 +68,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     list.Add(message);
 
                                     var actualCommittedOffsets =
-                                        DefaultTopic.GetCommittedOffsetsCount("consumer1");
+                                        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
                                     var expectedCommittedOffsets = 9 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
@@ -117,7 +117,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             batches[2][1].Content.Should().Be("Long message 8");
             batches[2][2].Content.Should().Be("Long message 9");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(27);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(27);
         }
 
         [Fact]
@@ -149,7 +149,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -162,7 +162,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 await foreach (var message in streamEnumerable)
                                 {
                                     var actualCommittedOffsets =
-                                        DefaultTopic.GetCommittedOffsetsCount("consumer1");
+                                        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
                                     var expectedCommittedOffsets = 10 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
@@ -221,7 +221,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             batches[2][3].Should().Be("Long message 14");
             batches[2][4].Should().Be("Long message 15");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(30);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(30);
         }
 
         [Fact]
@@ -253,7 +253,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -268,7 +268,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     list.Add(message);
 
                                     var actualCommittedOffsets =
-                                        DefaultTopic.GetCommittedOffsetsCount("consumer1");
+                                        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
                                     var expectedCommittedOffsets = 3 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
@@ -317,7 +317,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             batches[2][1].Content.Should().Be("Long message 8");
             batches[2][2].Content.Should().Be("Long message 9");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(9);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(9);
         }
 
         [Fact]
@@ -349,7 +349,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                                 config.EnableAutoCommit = false;
                                                 config.CommitOffsetEach = 1;
                                             })))
@@ -362,7 +362,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 await foreach (var message in streamEnumerable)
                                 {
                                     var actualCommittedOffsets =
-                                        DefaultTopic.GetCommittedOffsetsCount("consumer1");
+                                        DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
                                     var expectedCommittedOffsets = 5 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
@@ -421,7 +421,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             batches[2][3].Should().Be("Long message 14");
             batches[2][4].Should().Be("Long message 15");
 
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(15);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(15);
         }
 
         [Fact(Skip = "Not yet implemented")]

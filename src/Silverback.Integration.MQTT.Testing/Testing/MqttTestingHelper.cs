@@ -19,8 +19,6 @@ namespace Silverback.Testing
     {
         private readonly IInMemoryMqttBroker? _inMemoryMqttBroker;
 
-        private readonly ILogger<MqttTestingHelper> _logger;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttTestingHelper" /> class.
         /// </summary>
@@ -36,43 +34,6 @@ namespace Silverback.Testing
             : base(serviceProvider, logger)
         {
             _inMemoryMqttBroker = serviceProvider.GetService<IInMemoryMqttBroker>();
-            _logger = logger;
-        }
-
-        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(bool,TimeSpan?)" />
-        public override async Task WaitUntilAllMessagesAreConsumedAsync(
-            bool throwTimeoutException,
-            TimeSpan? timeout = null)
-        {
-            if (_inMemoryMqttBroker == null)
-                return;
-
-            using var cancellationTokenSource =
-                new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
-
-            try
-            {
-                // Loop until the outbox is empty since the consumers may produce new messages
-                do
-                {
-                    await WaitUntilOutboxIsEmptyAsync(cancellationTokenSource.Token).ConfigureAwait(false);
-
-                    await _inMemoryMqttBroker
-                        .WaitUntilAllMessagesAreConsumedAsync(cancellationTokenSource.Token)
-                        .ConfigureAwait(false);
-                }
-                while (!await IsOutboxEmptyAsync().ConfigureAwait(false));
-            }
-            catch (OperationCanceledException)
-            {
-                const string message =
-                    "The timeout elapsed before all messages could be consumed and processed.";
-
-                if (throwTimeoutException)
-                    throw new TimeoutException(message);
-
-                _logger.LogWarning(message);
-            }
         }
 
         /// <inheritdoc cref="IMqttTestingHelper.GetClientSession" />
@@ -92,5 +53,11 @@ namespace Silverback.Testing
 
             return _inMemoryMqttBroker.GetMessages(topic);
         }
+
+        /// <inheritdoc cref="TestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken)" />
+        protected override Task WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken cancellationToken) =>
+            _inMemoryMqttBroker == null
+                ? Task.CompletedTask
+                : _inMemoryMqttBroker.WaitUntilAllMessagesAreConsumedAsync(cancellationToken);
     }
 }

@@ -45,6 +45,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddTransient<IConfluentProducerBuilder, MockedConfluentProducerBuilder>()
                 .AddTransient<IConfluentConsumerBuilder, MockedConfluentConsumerBuilder>()
                 .AddTransient<IConfluentAdminClientBuilder, MockedConfluentAdminClientBuilder>()
+                .AddSingleton<IMockedConsumerGroupsCollection, MockedConsumerGroupsCollection>()
                 .AddSingleton<IInMemoryTopicCollection, InMemoryTopicCollection>()
                 .AddSingleton<IKafkaTestingHelper, KafkaTestingHelper>();
 

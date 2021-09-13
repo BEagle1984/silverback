@@ -43,7 +43,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(config => { config.GroupId = "consumer1"; })))
+                                        .Configure(config => { config.GroupId = DefaultConsumerGroupId; })))
                         .AddTransientBrokerCallbackHandler<ResetOffsetPartitionsAssignedCallbackHandler>()
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
@@ -99,7 +99,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(config => { config.GroupId = "consumer1"; })))
+                                        .Configure(config => { config.GroupId = DefaultConsumerGroupId; })))
                         .AddTransientBrokerCallbackHandler<NoResetPartitionsAssignedCallbackHandler>()
                         .AddIntegrationSpyAndSubscriber())
                 .Run();

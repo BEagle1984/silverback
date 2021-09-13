@@ -55,7 +55,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { DefaultMessageHeaders.MessageId, "42" }
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<Tombstone<TestEventOne>>();
@@ -91,7 +91,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { DefaultMessageHeaders.MessageId, "42" }
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.Should().BeAssignableTo<Tombstone>();
@@ -128,7 +128,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { DefaultMessageHeaders.MessageId, "42" }
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.Should().BeAssignableTo<Tombstone>();
@@ -164,7 +164,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { DefaultMessageHeaders.MessageId, "42" }
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].Message.Should().BeOfType<Tombstone<TestEventOne>>();
@@ -202,7 +202,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { DefaultMessageHeaders.MessageId, "42" }
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].RawMessage.Should().BeNull();
@@ -241,7 +241,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     { DefaultMessageHeaders.MessageId, "42" }
                 });
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.RawInboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(0);
@@ -272,7 +272,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var producer = Helper.Broker.GetProducer(DefaultTopicName);
             await producer.RawProduceAsync((byte[]?)null);
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.RawInboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
@@ -309,7 +309,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await publisher.PublishAsync(new Tombstone<TestEventOne>("42"));
             await publisher.PublishAsync(new Tombstone<TestCommandOne>("4200"));
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(2);
             Helper.Spy.InboundEnvelopes[0].RawMessage.Should().BeNull();
@@ -343,7 +343,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
             await publisher.PublishAsync(new Tombstone("42"));
 
-            await DefaultTopic.WaitUntilAllMessagesAreConsumedAsync();
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
             Helper.Spy.InboundEnvelopes[0].RawMessage.Should().BeNull();

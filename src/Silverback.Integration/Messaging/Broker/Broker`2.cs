@@ -30,9 +30,6 @@ namespace Silverback.Messaging.Broker
         where TProducerEndpoint : IProducerEndpoint
         where TConsumerEndpoint : IConsumerEndpoint
     {
-        private const string CannotCreateConsumerIfConnectedExceptionMessage =
-            "The broker is already connected. Disconnect it to get a new consumer.";
-
         private const int MaxConnectParallelism = 2;
 
         private const int MaxDisconnectParallelism = 4;
@@ -138,9 +135,6 @@ namespace Silverback.Messaging.Broker
             if (_consumers == null)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            if (IsConnected)
-                throw new InvalidOperationException(CannotCreateConsumerIfConnectedExceptionMessage);
-
             _logger.LogCreatingNewConsumer(endpoint);
 
             var consumer = InstantiateConsumer(
@@ -152,6 +146,9 @@ namespace Silverback.Messaging.Broker
             {
                 _consumers.Add(consumer);
             }
+
+            if (IsConnected)
+                AsyncHelper.RunSynchronously(() => consumer.ConnectAsync());
 
             return consumer;
         }

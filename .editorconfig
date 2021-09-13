@@ -6,7 +6,7 @@ indent_size = 4
 tab_width = 4
 end_of_line = crlf
 insert_final_newline = true
-max_line_length = 110
+max_line_length = 120
 file_header_template = Copyright (c) 2020 Sergio Aquilini\nThis code is licensed under MIT license (see LICENSE file for details)
 
 # Microsoft.CodeAnalysis.NetAnalyzers

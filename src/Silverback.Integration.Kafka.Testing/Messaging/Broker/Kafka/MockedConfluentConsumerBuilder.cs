@@ -18,6 +18,8 @@ namespace Silverback.Messaging.Broker.Kafka
     {
         private readonly IInMemoryTopicCollection _topics;
 
+        private readonly IMockedConsumerGroupsCollection _consumerGroups;
+
         private readonly IMockedKafkaOptions _options;
 
         private ConsumerConfig? _config;
@@ -40,12 +42,19 @@ namespace Silverback.Messaging.Broker.Kafka
         /// <param name="topics">
         ///     The <see cref="IInMemoryTopicCollection" />.
         /// </param>
+        /// <param name="consumerGroups">
+        ///     The <see cref="IMockedConsumerGroupsCollection"/>.
+        /// </param>
         /// <param name="options">
         ///     The <see cref="IMockedKafkaOptions"/>.
         /// </param>
-        public MockedConfluentConsumerBuilder(IInMemoryTopicCollection topics, IMockedKafkaOptions options)
+        public MockedConfluentConsumerBuilder(
+            IInMemoryTopicCollection topics,
+            IMockedConsumerGroupsCollection consumerGroups,
+            IMockedKafkaOptions options)
         {
             _topics = Check.NotNull(topics, nameof(topics));
+            _consumerGroups = Check.NotNull(consumerGroups, nameof(consumerGroups));
             _options = Check.NotNull(options, nameof(options));
         }
 
@@ -140,7 +149,7 @@ namespace Silverback.Messaging.Broker.Kafka
             if (_config == null)
                 throw new InvalidOperationException("SetConfig must be called to provide the consumer configuration.");
 
-            var consumer = new MockedConfluentConsumer(_config, _topics, _options);
+            var consumer = new MockedConfluentConsumer(_config, _topics, _consumerGroups, _options);
 
             consumer.StatisticsHandler = _statisticsHandler;
             consumer.ErrorHandler = _errorHandler;

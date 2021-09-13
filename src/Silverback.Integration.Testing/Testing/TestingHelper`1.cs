@@ -58,19 +58,27 @@ namespace Silverback.Testing
             WaitUntilConnectedAsync(true, timeout);
 
         /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilConnectedAsync(bool,TimeSpan?)" />
-        public async Task WaitUntilConnectedAsync(bool throwTimeoutException, TimeSpan? timeout = null)
+        public Task WaitUntilConnectedAsync(bool throwTimeoutException, TimeSpan? timeout = null)
         {
-            using var cancellationTokenSource =
-                new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
+            using var cancellationTokenSource = new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
+            return WaitUntilConnectedAsync(cancellationTokenSource.Token);
+        }
 
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilConnectedAsync(CancellationToken)" />
+        public Task WaitUntilConnectedAsync(CancellationToken cancellationToken) =>
+            WaitUntilConnectedAsync(true, cancellationToken);
+
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilConnectedAsync(bool,CancellationToken)" />
+        public async Task WaitUntilConnectedAsync(bool throwTimeoutException, CancellationToken cancellationToken)
+        {
             try
             {
                 while (!_broker.IsConnected || _broker.Consumers.Any(
                            consumer => consumer.StatusInfo.Status < ConsumerStatus.Ready))
                 {
-                    cancellationTokenSource.Token.ThrowIfCancellationRequested();
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    await Task.Delay(10, cancellationTokenSource.Token).ConfigureAwait(false);
+                    await Task.Delay(10, cancellationToken).ConfigureAwait(false);
                 }
             }
             catch (OperationCanceledException)
@@ -90,11 +98,54 @@ namespace Silverback.Testing
             WaitUntilAllMessagesAreConsumedAsync(true, timeout);
 
         /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(bool,TimeSpan?)" />
-        public abstract Task WaitUntilAllMessagesAreConsumedAsync(
-            bool throwTimeoutException,
-            TimeSpan? timeout = null);
+        public Task WaitUntilAllMessagesAreConsumedAsync(bool throwTimeoutException, TimeSpan? timeout = null)
+        {
+            using var cancellationTokenSource = new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
+            return WaitUntilAllMessagesAreConsumedAsync(throwTimeoutException, CancellationToken.None);
+        }
 
-        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilOutboxIsEmptyAsync" />
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(CancellationToken)" />
+        public Task WaitUntilAllMessagesAreConsumedAsync(CancellationToken cancellationToken) =>
+            WaitUntilAllMessagesAreConsumedAsync(true, cancellationToken);
+
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(bool,CancellationToken)" />
+        public async Task WaitUntilAllMessagesAreConsumedAsync(
+            bool throwTimeoutException,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                // Loop until the outbox is empty since the consumers may produce new messages
+                do
+                {
+                    await WaitUntilOutboxIsEmptyAsync(cancellationToken).ConfigureAwait(false);
+
+                    await WaitUntilAllMessagesAreConsumedCoreAsync(cancellationToken).ConfigureAwait(false);
+                }
+                while (!await IsOutboxEmptyAsync().ConfigureAwait(false));
+            }
+            catch (OperationCanceledException)
+            {
+                const string message =
+                    "The timeout elapsed before all messages could be consumed and processed.";
+
+                if (throwTimeoutException)
+                    throw new TimeoutException(message);
+
+                _logger.LogWarning(message);
+            }
+        }
+
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilOutboxIsEmptyAsync(TimeSpan?)" />
+        public Task WaitUntilOutboxIsEmptyAsync(TimeSpan? timeout = null)
+        {
+            using var cancellationTokenSource =
+                new CancellationTokenSource(timeout ?? TimeSpan.FromSeconds(30));
+
+            return WaitUntilOutboxIsEmptyAsync(cancellationTokenSource.Token);
+        }
+
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilOutboxIsEmptyAsync(CancellationToken)" />
         public async Task WaitUntilOutboxIsEmptyAsync(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
@@ -123,5 +174,8 @@ namespace Silverback.Testing
                 return false;
             }
         }
+
+        /// <inheritdoc cref="ITestingHelper{TBroker}.WaitUntilAllMessagesAreConsumedAsync(CancellationToken)" />
+        protected abstract Task WaitUntilAllMessagesAreConsumedCoreAsync(CancellationToken cancellationToken);
     }
 }

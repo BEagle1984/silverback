@@ -54,7 +54,7 @@ namespace Silverback.Tests.Integration.E2E.KafkaAndMqtt
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddDelegateSubscriber(
                             (TestEventOne eventOne) =>
@@ -85,7 +85,7 @@ namespace Silverback.Tests.Integration.E2E.KafkaAndMqtt
 
             eventOneCount.Should().Be(15);
             eventTwoCount.Should().Be(15);
-            DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(15);
+            DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(15);
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -112,7 +112,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -186,7 +186,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -269,7 +269,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -357,7 +357,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -441,7 +441,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -509,7 +509,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -587,7 +587,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -678,7 +678,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -766,7 +766,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -821,7 +821,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -895,7 +895,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -978,7 +978,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -1066,7 +1066,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -1150,7 +1150,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -1218,7 +1218,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -1296,7 +1296,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -1387,7 +1387,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -1481,7 +1481,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
@@ -1558,7 +1558,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         .Configure(
                                             config =>
                                             {
-                                                config.GroupId = "consumer1";
+                                                config.GroupId = DefaultConsumerGroupId;
                                             })
                                         .ConsumeFrom(DefaultTopicName)
                                         .OnError(policy => policy.Skip())))
