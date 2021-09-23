@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Configuration.Kafka
         /// <summary>
         ///     Gets or sets the value to be used instead of the default 5 seconds or the
         ///     configured"ConfluentConsumerConfigProxy.AutoCommitIntervalMs" /> for the inbound topics. Set it to
-        ///     <c>null</c> to disable the feature. The default is 10 milliseconds.
+        ///     <c>null</c> to disable the feature. The default is 50 milliseconds.
         /// </summary>
         public int? OverriddenAutoCommitIntervalMs { get; set; }
 
