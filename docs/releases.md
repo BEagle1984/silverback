@@ -4,13 +4,11 @@ uid: releases
 
 # Releases
 
-## [3.4.0-beta.3](https://github.com/BEagle1984/silverback/releases/tag/v3.4.0-beta.3)
+## [3.4.0](https://github.com/BEagle1984/silverback/releases/tag/v3.4.0)
 
 ### What's new
 
 * Support encryption key rotation (see <xref:encryption>)
-
-# Releases
 
 ## [3.3.1](https://github.com/BEagle1984/silverback/releases/tag/v3.3.1)
 
@@ -41,7 +39,7 @@ uid: releases
 * Allow multiple calls to [IKafkaConsumerEndpointBuilder.Configure](xref:Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig__) or [IKafkaProducerEndpointBuilder.Configure](xref:Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder#Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig__) for the same endpoint
 * Observe a grace period in the <xref:Silverback.Messaging.HealthChecks.ConsumersHealthCheck> to prevent false positives during a normal Kafka rebalance
 * Add optional friendly name to the endpoints (see [IEndpointBuilder<TBuilder>.WithName](xref:Silverback.Messaging.Configuration.IEndpointBuilder`1#Silverback_Messaging_Configuration_IEndpointBuilder_1_WithName_System_String_) and [Endpoint.FriendlyName](xref:Silverback.Messaging.Endpoint#Silverback_Messaging_Endpoint_FriendlyName))
-* Allow filtering the endpoints targeted by the <xref:Silverback.Messaging.HealthChecks.ConsumersHealthCheck> (see [AddConsumersCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_Nullable_System_TimeSpan__System_Collections_Generic_IEnumerable_System_String__System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__))
+* Allow filtering the endpoints targeted by the <xref:Silverback.Messaging.HealthChecks.ConsumersHealthCheck> (see [AddConsumersCheck](xref:Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_Nullable_System_TimeSpan__System_Func_Silverback_Messaging_IConsumerEndpoint_System_Boolean__System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__))
 
 ## [3.1.1](https://github.com/BEagle1984/silverback/releases/tag/v3.1.1)
 
