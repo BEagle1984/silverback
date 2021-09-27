@@ -561,7 +561,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -622,7 +624,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -684,7 +688,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)

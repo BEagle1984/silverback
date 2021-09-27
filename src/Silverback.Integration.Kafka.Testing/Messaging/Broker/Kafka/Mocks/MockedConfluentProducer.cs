@@ -147,7 +147,6 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             // Nothing to dispose, IDisposable is just inherited from IProducer but it's not needed in the mock
         }
 
-        [SuppressMessage("", "CA5394", Justification = "Usecure randomness is fine here")]
         private int GetPartitionIndex(IInMemoryTopic topic, byte[]? messageKey)
         {
             if (messageKey == null)

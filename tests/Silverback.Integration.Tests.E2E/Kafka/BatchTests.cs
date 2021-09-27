@@ -861,7 +861,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -940,7 +942,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -1150,7 +1154,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -1163,7 +1169,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             })
                                         .EnableBatchProcessing(10)))
                         .AddDelegateSubscriber(
-                            async (IAsyncEnumerable<TestEventWithKafkaKey> eventsStream) =>
+                            async (IAsyncEnumerable<TestEventOne> eventsStream) =>
                             {
                                 int batchIndex = Interlocked.Increment(ref batchesCount);
 
@@ -1187,11 +1193,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
             for (int i = 0; i < 10; i++)
             {
-                await publisher.PublishAsync(new TestEventWithKafkaKey
-                {
-                    KafkaKey = i, // Set kafka key for predictable partitioning
-                    Content = $"{i}"
-                });
+                await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
             }
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -1224,7 +1226,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -1705,7 +1709,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -1764,7 +1770,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
