@@ -120,10 +120,7 @@ namespace Silverback.Messaging.Broker
         protected bool IsStopping { get; private set; }
 
         /// <inheritdoc cref="IConsumer.ConnectAsync" />
-        public async Task ConnectAsync()
-        {
-            await ConnectAndStartAsync().ConfigureAwait(false);
-        }
+        public async Task ConnectAsync() => await ConnectAndStartAsync().ConfigureAwait(false);
 
         /// <inheritdoc cref="IConsumer.DisconnectAsync" />
         public async Task DisconnectAsync()

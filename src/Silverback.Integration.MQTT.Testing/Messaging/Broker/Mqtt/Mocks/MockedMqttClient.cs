@@ -33,6 +33,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
         private bool _connecting;
 
+        private bool _disposed;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="MockedMqttClient" /> class.
         /// </summary>
@@ -40,7 +42,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         ///     The <see cref="IInMemoryMqttBroker" />.
         /// </param>
         /// <param name="mockOptions">
-        ///     The <see cref="IMockedMqttOptions"/>.
+        ///     The <see cref="IMockedMqttOptions" />.
         /// </param>
         public MockedMqttClient(IInMemoryMqttBroker broker, IMockedMqttOptions mockOptions)
         {
@@ -75,6 +77,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         {
             Check.NotNull(options, nameof(options));
 
+            EnsureNotDisposed();
+
             if (_connecting)
                 throw new InvalidOperationException("ConnectAsync shouldn't be called concurrently.");
 
@@ -95,6 +99,8 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         /// <inheritdoc cref="IMqttClient.DisconnectAsync" />
         public Task DisconnectAsync(MqttClientDisconnectOptions options, CancellationToken cancellationToken)
         {
+            EnsureNotDisposed();
+
             _broker.Disconnect(ClientId);
 
             IsConnected = false;
@@ -108,6 +114,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             CancellationToken cancellationToken)
         {
             Check.NotNull(options, nameof(options));
+            EnsureNotDisposed();
 
             _broker.Subscribe(ClientId, options.TopicFilters.Select(filter => filter.Topic).ToList());
 
@@ -122,6 +129,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             CancellationToken cancellationToken)
         {
             Check.NotNull(options, nameof(options));
+            EnsureNotDisposed();
 
             _broker.Unsubscribe(ClientId, options.TopicFilters);
 
@@ -136,6 +144,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             CancellationToken cancellationToken)
         {
             Check.NotNull(applicationMessage, nameof(applicationMessage));
+            EnsureNotDisposed();
 
             if (Options == null)
                 throw new InvalidOperationException("The client is not connected.");
@@ -156,17 +165,17 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             MqttExtendedAuthenticationExchangeData data,
             CancellationToken cancellationToken) => Task.CompletedTask;
 
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        public void Dispose()
-        {
-            // Nothing to dispose
-        }
-
         /// <inheritdoc cref="IMqttApplicationMessageReceivedHandler.HandleApplicationMessageReceivedAsync" />
         public Task HandleApplicationMessageReceivedAsync(
             MqttApplicationMessageReceivedEventArgs eventArgs) =>
             ApplicationMessageReceivedHandler?.HandleApplicationMessageReceivedAsync(eventArgs) ??
             Task.CompletedTask;
+
+        /// <inheritdoc cref="IDisposable.Dispose" />
+        public void Dispose()
+        {
+            _disposed = true;
+        }
 
         private static MqttClientSubscribeResultItem MapSubscribeResultItem(MqttTopicFilter topicFilter)
         {
@@ -192,5 +201,11 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
 
         private static MqttClientUnsubscribeResultItem MapUnsubscribeResultItem(string topicFilter) =>
             new(topicFilter, MqttClientUnsubscribeResultCode.Success);
+
+        private void EnsureNotDisposed()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException(GetType().FullName);
+        }
     }
 }

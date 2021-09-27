@@ -31,5 +31,13 @@ namespace Silverback.Util
 
             return enumerable.ToList();
         }
+
+        public static T[] AsArray<T>(this IEnumerable<T> enumerable)
+        {
+            if (enumerable is T[] array)
+                return array;
+
+            return enumerable.ToArray();
+        }
     }
 }

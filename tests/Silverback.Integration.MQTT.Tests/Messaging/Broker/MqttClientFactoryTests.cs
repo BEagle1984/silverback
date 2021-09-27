@@ -192,19 +192,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
         [Fact]
         public void GetClient_ConsumersWithEquivalentClientConfig_ExceptionThrown()
         {
-            var consumer1 = (MqttConsumer)_broker.AddConsumer(
-                new MqttConsumerEndpoint("some-topic")
-                {
-                    Configuration = new MqttClientConfig
-                    {
-                        ClientId = "client1",
-                        ChannelOptions = new MqttClientTcpOptions
-                        {
-                            Server = "mqtt-server"
-                        }
-                    }
-                });
-            var consumer2 = (MqttConsumer)_broker.AddConsumer(
+            _broker.AddConsumer(
                 new MqttConsumerEndpoint("some-topic")
                 {
                     Configuration = new MqttClientConfig
@@ -217,12 +205,18 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                     }
                 });
 
-            var factory = new MqttClientsCache(
-                new MqttNetClientFactory(),
-                Substitute.For<IBrokerCallbacksInvoker>(),
-                _logger);
-            factory.GetClient(consumer1);
-            Action act = () => factory.GetClient(consumer2);
+            Action act = () => _broker.AddConsumer(
+                new MqttConsumerEndpoint("some-topic")
+                {
+                    Configuration = new MqttClientConfig
+                    {
+                        ClientId = "client1",
+                        ChannelOptions = new MqttClientTcpOptions
+                        {
+                            Server = "mqtt-server"
+                        }
+                    }
+                });
 
             act.Should().Throw<InvalidOperationException>();
         }
@@ -230,7 +224,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
         [Fact]
         public void GetClient_ConsumersWithSameClientIdAndDifferentClientConfig_ExceptionThrown()
         {
-            var consumer1 = (MqttConsumer)_broker.AddConsumer(
+            _broker.AddConsumer(
                 new MqttConsumerEndpoint("some-topic")
                 {
                     Configuration = new MqttClientConfig
@@ -242,7 +236,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         }
                     }
                 });
-            var consumer2 = (MqttConsumer)_broker.AddConsumer(
+            Action act = () => _broker.AddConsumer(
                 new MqttConsumerEndpoint("some-topic")
                 {
                     Configuration = new MqttClientConfig
@@ -254,13 +248,6 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
                         }
                     }
                 });
-
-            var factory = new MqttClientsCache(
-                new MqttNetClientFactory(),
-                Substitute.For<IBrokerCallbacksInvoker>(),
-                _logger);
-            factory.GetClient(consumer1);
-            Action act = () => factory.GetClient(consumer2);
 
             act.Should().Throw<InvalidOperationException>();
         }

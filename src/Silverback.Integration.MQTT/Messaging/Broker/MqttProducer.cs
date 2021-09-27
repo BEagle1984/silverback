@@ -22,6 +22,9 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="Producer{TBroker,TEndpoint}" />
     public sealed class MqttProducer : Producer<MqttBroker, MqttProducerEndpoint>, IDisposable
     {
+        [SuppressMessage("", "CA2213", Justification = "Disposed by the MqttClientCache")]
+        private readonly MqttClientWrapper _clientWrapper;
+
         private readonly IOutboundLogger<Producer> _logger;
 
         private readonly Channel<QueuedMessage> _queueChannel = Channel.CreateUnbounded<QueuedMessage>();
@@ -56,16 +59,13 @@ namespace Silverback.Messaging.Broker
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             Check.NotNull(serviceProvider, nameof(serviceProvider));
-            ClientWrapper = serviceProvider
+            _clientWrapper = serviceProvider
                 .GetRequiredService<IMqttClientsCache>()
                 .GetClient(this);
-
             _logger = Check.NotNull(logger, nameof(logger));
 
             Task.Run(() => ProcessQueueAsync(_cancellationTokenSource.Token));
         }
-
-        internal MqttClientWrapper ClientWrapper { get; }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
@@ -77,17 +77,15 @@ namespace Silverback.Messaging.Broker
                 _cancellationTokenSource.Cancel();
                 _cancellationTokenSource.Dispose();
             }
-
-            ClientWrapper.Dispose();
         }
 
         /// <inheritdoc cref="Producer.ConnectCoreAsync" />
         protected override Task ConnectCoreAsync() =>
-            ClientWrapper.ConnectAsync(this);
+            _clientWrapper.ConnectAsync(this);
 
         /// <inheritdoc cref="Producer.DisconnectCoreAsync" />
         protected override Task DisconnectCoreAsync() =>
-            ClientWrapper.DisconnectAsync(this);
+            _clientWrapper.DisconnectAsync(this);
 
         /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string)" />
         protected override IBrokerMessageIdentifier? ProduceCore(
@@ -265,12 +263,12 @@ namespace Silverback.Messaging.Broker
             if (queuedMessage.Headers != null && Endpoint.Configuration.AreHeadersSupported)
                 mqttApplicationMessage.UserProperties = queuedMessage.Headers.ToUserProperties();
 
-            while (!ClientWrapper.MqttClient.IsConnected)
+            while (!_clientWrapper.MqttClient.IsConnected)
             {
                 await Task.Delay(1, cancellationToken).ConfigureAwait(false);
             }
 
-            var result = await ClientWrapper.MqttClient.PublishAsync(
+            var result = await _clientWrapper.MqttClient.PublishAsync(
                     mqttApplicationMessage,
                     cancellationToken)
                 .ConfigureAwait(false);
