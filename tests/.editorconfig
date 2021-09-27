@@ -17,6 +17,8 @@ dotnet_diagnostic.CA1806.severity = none
 dotnet_diagnostic.CA2000.severity = none
 # CA2007: Consider calling ConfigureAwait on the awaited task
 dotnet_diagnostic.CA2007.severity = none
+# CA2213: Disposable fields should be disposed
+dotnet_diagnostic.CA2213.severity = none
 # CA2234: Pass System.Uri objects instead of strings
 dotnet_diagnostic.CA2234.severity = none
 # CA5358: Review cipher mode usage with cryptography experts

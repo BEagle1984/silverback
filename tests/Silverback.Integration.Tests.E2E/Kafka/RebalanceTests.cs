@@ -419,7 +419,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(20);
         }
 
-        private class PartitionCallbacksHandler
+        private sealed class PartitionCallbacksHandler
             : IKafkaPartitionsAssignedCallback, IKafkaPartitionsRevokedCallback
         {
             public ConcurrentDictionary<Consumer, List<TopicPartition>> CurrentPartitions { get; } = new();

@@ -64,22 +64,22 @@ namespace Silverback.Messaging.Broker
             Endpoint.Validate();
         }
 
-        /// <inheritdoc cref="IProducer.Id" />
+        /// <inheritdoc cref="IBrokerConnectedObject.Id" />
         public InstanceIdentifier Id { get; } = new();
 
-        /// <inheritdoc cref="IProducer.Broker" />
+        /// <inheritdoc cref="IBrokerConnectedObject.Broker" />
         public IBroker Broker { get; }
 
         /// <inheritdoc cref="IProducer.Endpoint" />
         public IProducerEndpoint Endpoint { get; }
 
-        /// <inheritdoc cref="IProducer.IsConnecting" />
+        /// <inheritdoc cref="IBrokerConnectedObject.IsConnecting" />
         public bool IsConnecting => _connectTask != null;
 
-        /// <inheritdoc cref="IProducer.IsConnected" />
+        /// <inheritdoc cref="IBrokerConnectedObject.IsConnected" />
         public bool IsConnected { get; private set; }
 
-        /// <inheritdoc cref="IProducer.ConnectAsync" />
+        /// <inheritdoc cref="IBrokerConnectedObject.ConnectAsync" />
         public async Task ConnectAsync()
         {
             if (IsConnected)
@@ -107,7 +107,7 @@ namespace Silverback.Messaging.Broker
             _logger.LogProducerConnected(this);
         }
 
-        /// <inheritdoc cref="IProducer.DisconnectAsync" />
+        /// <inheritdoc cref="IBrokerConnectedObject.DisconnectAsync" />
         public async Task DisconnectAsync()
         {
             if (!IsConnected)

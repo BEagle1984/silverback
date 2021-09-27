@@ -23,7 +23,10 @@ namespace Silverback.Messaging.Broker.Kafka
             _partitionsAssignedHandler;
 
         private Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>?
-            _partitionsRevokedHandler;
+            _partitionsRevokedHandlerFunc;
+
+        private Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>>?
+            _partitionsRevokedHandlerAction;
 
         private Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? _offsetsCommittedHandler;
 
@@ -81,7 +84,8 @@ namespace Silverback.Messaging.Broker.Kafka
             Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>, IEnumerable<TopicPartitionOffset>>
                 partitionsRevokedHandler)
         {
-            _partitionsRevokedHandler = partitionsRevokedHandler;
+            _partitionsRevokedHandlerFunc = partitionsRevokedHandler;
+            _partitionsRevokedHandlerAction = null;
             return this;
         }
 
@@ -89,12 +93,8 @@ namespace Silverback.Messaging.Broker.Kafka
         public IConfluentConsumerBuilder SetPartitionsRevokedHandler(
             Action<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>> partitionsRevokedHandler)
         {
-            _partitionsRevokedHandler = (consumer, partitions) =>
-            {
-                partitionsRevokedHandler(consumer, partitions);
-
-                return Enumerable.Empty<TopicPartitionOffset>();
-            };
+            _partitionsRevokedHandlerAction = (consumer, partitions) => partitionsRevokedHandler(consumer, partitions);
+            _partitionsRevokedHandlerFunc = null;
 
             return this;
         }
@@ -131,8 +131,10 @@ namespace Silverback.Messaging.Broker.Kafka
             if (_partitionsAssignedHandler != null)
                 builder.SetPartitionsAssignedHandler(_partitionsAssignedHandler);
 
-            if (_partitionsRevokedHandler != null)
-                builder.SetPartitionsRevokedHandler(_partitionsRevokedHandler);
+            if (_partitionsRevokedHandlerFunc != null)
+                builder.SetPartitionsRevokedHandler(_partitionsRevokedHandlerFunc);
+            else if (_partitionsRevokedHandlerAction != null)
+                builder.SetPartitionsRevokedHandler(_partitionsRevokedHandlerAction);
 
             if (_offsetsCommittedHandler != null)
                 builder.SetOffsetsCommittedHandler(_offsetsCommittedHandler);

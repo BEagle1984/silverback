@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,8 +61,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     {
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -88,8 +88,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(1);
             tryCount.Should().Be(11);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
-            Helper.Spy.InboundEnvelopes.ForEach(
-                envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -110,8 +109,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     {
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -164,8 +162,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     {
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -407,8 +404,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     {
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -462,8 +458,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     {
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -881,8 +876,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.OutboundEnvelopes[0].RawMessage.ReadAll().Should()
                 .NotBeEquivalentTo(rawMessageStream.ReReadAll());
             Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-            Helper.Spy.InboundEnvelopes.ForEach(
-                envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -955,8 +949,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                     envelope.RawMessage!.Length.Should().BeLessOrEqualTo(10);
                 });
             Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-            Helper.Spy.InboundEnvelopes.ForEach(
-                envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -1107,8 +1100,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     {
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -1121,8 +1113,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config.GroupId = DefaultConsumerGroupId;
                                             })))
                         .AddIntegrationSpy()
-                        .AddDelegateSubscriber(
-                            (IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
+                        .AddDelegateSubscriber((IIntegrationEvent _) => throw new InvalidOperationException("Move!")))
                 .Run();
 
             var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
@@ -1165,8 +1156,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     {
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -1196,8 +1186,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.RawOutboundEnvelopes.Should().HaveCount(11);
             tryCount.Should().Be(11);
             Helper.Spy.InboundEnvelopes.Should().HaveCount(11);
-            Helper.Spy.InboundEnvelopes.ForEach(
-                envelope => envelope.Message.Should().BeEquivalentTo(message));
+            Helper.Spy.InboundEnvelopes.ForEach(envelope => envelope.Message.Should().BeEquivalentTo(message));
         }
 
         [Fact]
@@ -1222,8 +1211,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                     {
                                         config.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -1264,6 +1252,149 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             otherTopic.MessagesCount.Should().Be(1);
             otherTopic.GetAllMessages()[0].Value.Should()
                 .BeEquivalentTo(Helper.Spy.InboundEnvelopes[0].RawMessage.ReReadAll());
+        }
+
+        [Fact]
+        public async Task RetryPolicy_WithMultiplePartitions_ProcessingRetriedMultipleTimes()
+        {
+            int tryCount = 0;
+            int consumedCount = 0;
+            var semaphore = new SemaphoreSlim(0);
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(3)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Retry(2).ThenSkip())
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = DefaultConsumerGroupId;
+                                            })))
+                        .AddIntegrationSpy()
+                        .AddDelegateSubscriber(
+                            (TestEventOne message) =>
+                            {
+                                if (message.Content != "1")
+                                {
+                                    Interlocked.Increment(ref consumedCount);
+                                    return;
+                                }
+
+                                tryCount++;
+
+                                semaphore.Wait();
+                                semaphore.Release();
+                                throw new InvalidOperationException("Retry!");
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "2" });
+
+            await AsyncTestingUtil.WaitAsync(() => tryCount == 1);
+
+            semaphore.Release();
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            tryCount.Should().Be(3);
+            consumedCount.Should().Be(2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(5);
+        }
+
+        [Fact]
+        public async Task RetryPolicy_ProcessingAllPartitionsTogether_ProcessingRetriedMultipleTimes()
+        {
+            int tryCount = 0;
+            int consumedCount = 0;
+            var semaphore = new SemaphoreSlim(0);
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(
+                            options => options.AddMockedKafka(
+                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(3)))
+                        .AddKafkaEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName)
+                                        .WithKafkaKey<TestEventOne>(envelope => envelope.Message?.Content))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .OnError(policy => policy.Retry(2).ThenSkip())
+                                        .ProcessAllPartitionsTogether()
+                                        .Configure(
+                                            config =>
+                                            {
+                                                config.GroupId = DefaultConsumerGroupId;
+                                            })))
+                        .AddIntegrationSpy()
+                        .AddDelegateSubscriber(
+                            (TestEventOne message) =>
+                            {
+                                if (message.Content != "1")
+                                {
+                                    Interlocked.Increment(ref consumedCount);
+                                    return;
+                                }
+
+                                tryCount++;
+
+                                semaphore.Wait();
+                                semaphore.Release();
+                                throw new InvalidOperationException("Retry!");
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new TestEventOne { Content = "1" });
+            await publisher.PublishAsync(new TestEventOne { Content = "2" });
+
+            await AsyncTestingUtil.WaitAsync(() => tryCount == 1);
+
+            semaphore.Release();
+            await publisher.PublishAsync(new TestEventOne { Content = "3" });
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            await AsyncTestingUtil.WaitAsync(() => tryCount == 3, TimeSpan.FromMinutes(2));
+
+            Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
+            tryCount.Should().Be(3);
+            consumedCount.Should().Be(2);
+            Helper.Spy.InboundEnvelopes.Should().HaveCount(5);
         }
 
         [Fact]

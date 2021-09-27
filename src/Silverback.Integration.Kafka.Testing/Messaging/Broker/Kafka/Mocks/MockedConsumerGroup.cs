@@ -15,6 +15,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
     internal class MockedConsumerGroup : IMockedConsumerGroup
     {
         private static readonly SimpleRebalanceStrategy SimpleRebalanceStrategy = new();
+
         private static readonly CooperativeStickyRebalanceStrategy CooperativeStickyRebalanceStrategy = new();
 
         private readonly Dictionary<IMockedConfluentConsumer, PartitionAssignment> _partitionAssignments =
@@ -209,17 +210,14 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             _rebalanceScheduled = true;
         }
 
-        private void EnsurePartitionAssignmentsDictionaryIsInitialized()
-        {
-            foreach (var subscription in _subscriptions)
-            {
-                if (!_partitionAssignments.ContainsKey(subscription.Consumer))
+        private void EnsurePartitionAssignmentsDictionaryIsInitialized() =>
+            _subscriptions
+                .Select(subscription => subscription.Consumer)
+                .Where(consumer => !_partitionAssignments.ContainsKey(consumer))
+                .ForEach(consumer =>
                 {
-                    _partitionAssignments[subscription.Consumer] =
-                        new SubscriptionPartitionAssignment(subscription.Consumer);
-                }
-            }
-        }
+                    _partitionAssignments[consumer] = new SubscriptionPartitionAssignment(consumer);
+                });
 
         private PartitionAssignmentStrategy GetAssignmentStrategy()
         {
@@ -256,10 +254,10 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             {
                 if (result.RevokedPartitions.TryGetValue(
                     consumer,
-                    out IReadOnlyCollection<TopicPartition>? revokedPartitions))
+                    out IReadOnlyCollection<TopicPartition>? revokedPartitions) &&
+                    revokedPartitions.Count > 0)
                 {
-                    if (revokedPartitions.Count > 0)
-                        consumer.OnPartitionsRevoked(revokedPartitions);
+                    consumer.OnPartitionsRevoked(revokedPartitions);
                 }
             }
         }
@@ -289,7 +287,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                 });
         }
 
-        private class ConsumerSubscription
+        private sealed class ConsumerSubscription
         {
             public ConsumerSubscription(MockedConfluentConsumer consumer, string topic)
             {

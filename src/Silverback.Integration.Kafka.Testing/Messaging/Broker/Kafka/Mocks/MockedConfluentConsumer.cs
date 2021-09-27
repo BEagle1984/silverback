@@ -84,10 +84,12 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         internal Action<IConsumer<byte[]?, byte[]?>, Error>? ErrorHandler { get; set; }
 
         internal Func<IConsumer<byte[]?, byte[]?>, List<TopicPartition>, IEnumerable<TopicPartitionOffset>>?
-            PartitionsAssignedHandler { get; set; }
+            PartitionsAssignedHandler
+        { get; set; }
 
         internal Func<IConsumer<byte[]?, byte[]?>, List<TopicPartitionOffset>,
-            IEnumerable<TopicPartitionOffset>>? PartitionsRevokedHandler { get; set; }
+            IEnumerable<TopicPartitionOffset>>? PartitionsRevokedHandler
+        { get; set; }
 
         internal Action<IConsumer<byte[]?, byte[]?>, CommittedOffsets>? OffsetsCommittedHandler { get; set; }
 

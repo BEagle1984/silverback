@@ -98,7 +98,11 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="IBroker.IsConnected" />
         public bool IsConnected { get; private set; }
 
+        private IEnumerable<IBrokerConnectedObject> ConnectedObjects =>
+            _producers.Cast<IBrokerConnectedObject>().Concat(_consumers);
+
         /// <inheritdoc cref="IBroker.GetProducer(IProducerEndpoint)" />
+        // TODO: Make this async
         public virtual IProducer GetProducer(IProducerEndpoint endpoint)
         {
             Check.NotNull(endpoint, nameof(endpoint));
@@ -166,7 +170,7 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogBrokerConnecting(this);
 
-            await ConnectAsync(_producers, _consumers).ConfigureAwait(false);
+            await ConnectAsync(ConnectedObjects).ConfigureAwait(false);
             IsConnected = true;
 
             _logger.LogBrokerConnected(this);
@@ -183,7 +187,7 @@ namespace Silverback.Messaging.Broker
 
             _logger.LogBrokerDisconnecting(this);
 
-            await DisconnectAsync(_producers, _consumers).ConfigureAwait(false);
+            await DisconnectAsync(ConnectedObjects).ConfigureAwait(false);
             IsConnected = false;
 
             _logger.LogBrokerDisconnected(this);
@@ -242,50 +246,16 @@ namespace Silverback.Messaging.Broker
         /// <summary>
         ///     Connects all the consumers and starts consuming.
         /// </summary>
-        /// <param name="producers">
-        ///     The producers to be connected.
-        /// </param>
-        /// <param name="consumers">
-        ///     The consumers to be connected and started.
+        /// <param name="connectedObjects">
+        ///     The producers and consumers to be connected.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        protected virtual async Task ConnectAsync(
-            IReadOnlyCollection<IProducer> producers,
-            IReadOnlyCollection<IConsumer> consumers)
-        {
-            await producers.ParallelForEachAsync(producer => producer.ConnectAsync(), MaxConnectParallelism)
-                .ConfigureAwait(false);
-            await consumers.ParallelForEachAsync(consumer => consumer.ConnectAsync(), MaxConnectParallelism)
-                .ConfigureAwait(false);
-        }
-
-        /// <summary>
-        ///     Disconnects all the consumers and stops consuming.
-        /// </summary>
-        /// <param name="producers">
-        ///     The producers to be disconnected.
-        /// </param>
-        /// <param name="consumers">
-        ///     The consumers to be stopped and disconnected.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        protected virtual async Task DisconnectAsync(
-            IReadOnlyCollection<IProducer> producers,
-            IReadOnlyCollection<IConsumer> consumers)
-        {
-            await producers.ParallelForEachAsync(
-                    producer => producer.DisconnectAsync(),
-                    MaxDisconnectParallelism)
-                .ConfigureAwait(false);
-            await consumers.ParallelForEachAsync(
-                    consumer => consumer.DisconnectAsync(),
-                    MaxDisconnectParallelism)
-                .ConfigureAwait(false);
-        }
+        protected virtual Task ConnectAsync(IEnumerable<IBrokerConnectedObject> connectedObjects) =>
+            connectedObjects.ParallelForEachAsync(
+                connectedObject => connectedObject.ConnectAsync(),
+                MaxConnectParallelism);
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
@@ -302,9 +272,22 @@ namespace Silverback.Messaging.Broker
 
             AsyncHelper.RunSynchronously(DisconnectAsync);
 
-            _consumers.OfType<IDisposable>().ForEach(disposable => disposable.Dispose());
-            _producers.OfType<IDisposable>().ForEach(disposable => disposable.Dispose());
+            ConnectedObjects.OfType<IDisposable>().ForEach(disposable => disposable.Dispose());
         }
+
+        /// <summary>
+        ///     Disconnects all the consumers and stops consuming.
+        /// </summary>
+        /// <param name="connectedObjects">
+        ///     The producers and consumers to be disconnected.
+        /// </param>
+        /// <returns>
+        ///     A <see cref="Task" /> representing the asynchronous operation.
+        /// </returns>
+        protected virtual Task DisconnectAsync(IEnumerable<IBrokerConnectedObject> connectedObjects) =>
+            connectedObjects.ParallelForEachAsync(
+                connectedObject => connectedObject.DisconnectAsync(),
+                MaxDisconnectParallelism);
 
         private IProducer GetOrInstantiateProducer(IProducerEndpoint endpoint)
         {

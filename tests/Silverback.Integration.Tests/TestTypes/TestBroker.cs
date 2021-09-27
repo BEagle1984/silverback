@@ -22,9 +22,7 @@ namespace Silverback.Tests.Integration.TestTypes
 
         public bool SimulateConnectIssues { get; set; }
 
-        protected override Task ConnectAsync(
-            IReadOnlyCollection<IProducer> producers,
-            IReadOnlyCollection<IConsumer> consumers)
+        protected override Task ConnectAsync(IEnumerable<IBrokerConnectedObject> connectedObjects)
         {
             if (SimulateConnectIssues)
             {
@@ -32,7 +30,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 throw new IOException("Simulated exception.");
             }
 
-            return base.ConnectAsync(producers, consumers);
+            return base.ConnectAsync(connectedObjects);
         }
 
         protected override IProducer InstantiateProducer(

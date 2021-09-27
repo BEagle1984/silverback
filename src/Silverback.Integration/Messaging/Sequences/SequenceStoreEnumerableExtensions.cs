@@ -4,28 +4,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Silverback.Util;
 
 namespace Silverback.Messaging.Sequences
 {
     internal static class SequenceStoreEnumerableExtensions
     {
-        public static Task DisposeAllAsync(
+        public static Task AbortAllSequencesAsync(
             this IEnumerable<ISequenceStore> stores,
             SequenceAbortReason abortReason) =>
             stores
                 .SelectMany(store => store)
                 .ToList()
-                .ParallelForEachAsync(
-                    async sequence =>
-                    {
-                        if (sequence.IsPending)
-                        {
-                            await sequence.AbortAsync(abortReason)
-                                .ConfigureAwait(false);
-                        }
-
-                        await sequence.AwaitProcessingAsync(false).ConfigureAwait(false);
-                    });
+                .AbortAllAsync(abortReason);
     }
 }

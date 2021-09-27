@@ -267,7 +267,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -333,7 +333,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -399,7 +399,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -465,7 +465,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -531,7 +531,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -597,7 +597,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -662,7 +662,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -759,7 +759,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -850,7 +850,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(10);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -1243,7 +1243,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -1317,7 +1317,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(3);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -1398,7 +1398,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -1460,7 +1460,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 TimeSpan.FromMilliseconds(200));
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(0);
 
-            var sequenceStore = Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0];
+            var sequenceStore = Helper.Broker.Consumers[0].SequenceStores.Single();
             var originalSequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             originalSequence.Should().NotBeNull();
             originalSequence!.IsComplete.Should().BeFalse();
@@ -1538,12 +1538,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 HeadersHelper.GetChunkHeaders("1", 0, 3, typeof(TestEventOne)));
 
             await AsyncTestingUtil.WaitAsync(
-                () => Helper.Broker.Consumers[0].GetCurrentSequenceStores().Count >= 1 &&
-                      Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0].GetPendingSequences().Any());
+                () => Helper.Broker.Consumers[0].SequenceStores.Count >= 1 &&
+                      Helper.Broker.Consumers[0].SequenceStores.Single().GetPendingSequences().Any());
 
             await Task.Delay(200);
 
-            var sequenceStore = Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0];
+            var sequenceStore = Helper.Broker.Consumers[0].SequenceStores.Single();
             var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             sequence.Should().NotBeNull();
             sequence!.IsAborted.Should().BeFalse();
@@ -1652,12 +1652,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 HeadersHelper.GetChunkHeaders("1", 0));
 
             await AsyncTestingUtil.WaitAsync(
-                () => Helper.Broker.Consumers[0].GetCurrentSequenceStores().Count >= 1 &&
-                      Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0].GetPendingSequences().Any());
+                () => Helper.Broker.Consumers[0].SequenceStores.Count >= 1 &&
+                      Helper.Broker.Consumers[0].SequenceStores.Single().GetPendingSequences().Any());
 
             await Task.Delay(200);
 
-            var sequenceStore = Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0];
+            var sequenceStore = Helper.Broker.Consumers[0].SequenceStores.Single();
             var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             sequence.Should().NotBeNull();
             sequence!.IsAborted.Should().BeFalse();
@@ -1772,7 +1772,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -1854,7 +1854,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName).Should().Be(5);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             sequenceStores.Any(store => store.GetPendingSequences().Any()).Should().BeFalse();
         }
 
@@ -1912,12 +1912,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 HeadersHelper.GetChunkHeaders("1", 1, typeof(TestEventOne)));
 
             await AsyncTestingUtil.WaitAsync(
-                async () => Helper.Broker.Consumers[0].GetCurrentSequenceStores().Count >= 1 &&
-                            Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0].Count == 1 &&
-                            (await Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0]
+                async () => Helper.Broker.Consumers[0].SequenceStores.Count >= 1 &&
+                            Helper.Broker.Consumers[0].SequenceStores.Single().Count == 1 &&
+                            (await Helper.Broker.Consumers[0].SequenceStores.Single()
                                 .GetAsync<ChunkSequence>("1"))?.Length == 2);
 
-            var sequenceStore = Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0];
+            var sequenceStore = Helper.Broker.Consumers[0].SequenceStores.Single();
             var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             sequence.Should().NotBeNull();
             sequence!.Length.Should().Be(2);
@@ -2000,12 +2000,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 HeadersHelper.GetChunkHeaders("1", 1, 3));
 
             await AsyncTestingUtil.WaitAsync(
-                async () => Helper.Broker.Consumers[0].GetCurrentSequenceStores().Count >= 1 &&
-                            Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0].Count == 1 &&
-                            (await Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0]
+                async () => Helper.Broker.Consumers[0].SequenceStores.Count >= 1 &&
+                            Helper.Broker.Consumers[0].SequenceStores.Single().Count == 1 &&
+                            (await Helper.Broker.Consumers[0].SequenceStores.Single()
                                 .GetAsync<ChunkSequence>("1"))?.Length == 2);
 
-            var sequenceStore = Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0];
+            var sequenceStore = Helper.Broker.Consumers[0].SequenceStores.Single();
             var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             sequence.Should().NotBeNull();
             sequence!.Length.Should().Be(2);
@@ -2074,12 +2074,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 HeadersHelper.GetChunkHeaders("1", 1, typeof(TestEventOne)));
 
             await AsyncTestingUtil.WaitAsync(
-                async () => Helper.Broker.Consumers[0].GetCurrentSequenceStores().Count >= 1 &&
-                            Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0].Count == 1 &&
-                            (await Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0]
+                async () => Helper.Broker.Consumers[0].SequenceStores.Count >= 1 &&
+                            Helper.Broker.Consumers[0].SequenceStores.Single().Count == 1 &&
+                            (await Helper.Broker.Consumers[0].SequenceStores.Single()
                                 .GetAsync<ChunkSequence>("1"))?.Length == 2);
 
-            var sequenceStore = Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0];
+            var sequenceStore = Helper.Broker.Consumers[0].SequenceStores.Single();
             var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             sequence.Should().NotBeNull();
             sequence!.Length.Should().Be(2);
@@ -2164,12 +2164,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 HeadersHelper.GetChunkHeaders("1", 1, 3));
 
             await AsyncTestingUtil.WaitAsync(
-                async () => Helper.Broker.Consumers[0].GetCurrentSequenceStores().Count >= 1 &&
-                            Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0].Count == 1 &&
-                            (await Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0]
+                async () => Helper.Broker.Consumers[0].SequenceStores.Count >= 1 &&
+                            Helper.Broker.Consumers[0].SequenceStores.Single().Count == 1 &&
+                            (await Helper.Broker.Consumers[0].SequenceStores.Single()
                                 .GetAsync<ChunkSequence>("1"))?.Length == 2);
 
-            var sequenceStore = Helper.Broker.Consumers[0].GetCurrentSequenceStores()[0];
+            var sequenceStore = Helper.Broker.Consumers[0].SequenceStores.Single();
             var sequence = await sequenceStore.GetAsync<ChunkSequence>("1");
             sequence.Should().NotBeNull();
             sequence!.Length.Should().Be(2);

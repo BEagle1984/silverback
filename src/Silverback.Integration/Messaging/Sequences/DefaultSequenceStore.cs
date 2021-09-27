@@ -27,9 +27,14 @@ namespace Silverback.Messaging.Sequences
 
         public int Count => _store.Count;
 
+        public bool Disposed { get; private set; }
+
         public Task<TSequence?> GetAsync<TSequence>(string sequenceId, bool matchPrefix = false)
             where TSequence : class, ISequence
         {
+            if (Disposed)
+                throw new ObjectDisposedException(GetType().FullName);
+
             ISequence? sequence;
 
             if (matchPrefix)
@@ -52,6 +57,9 @@ namespace Silverback.Messaging.Sequences
             where TSequence : class, ISequence
         {
             Check.NotNull(sequence, nameof(sequence));
+
+            if (Disposed)
+                throw new ObjectDisposedException(GetType().FullName);
 
             _logger.LogLowLevelTrace(
                 "Adding {sequenceType} '{sequenceId}' to store '{sequenceStoreId}'.",
@@ -92,8 +100,11 @@ namespace Silverback.Messaging.Sequences
 
         public IEnumerator<ISequence> GetEnumerator() => _store.Values.GetEnumerator();
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
+            if (Disposed)
+                return;
+
             _logger.LogLowLevelTrace(
                 "Disposing sequence store {sequenceStoreId}",
                 () => new object[]
@@ -101,10 +112,9 @@ namespace Silverback.Messaging.Sequences
                     _id
                 });
 
-            AsyncHelper.RunSynchronously(
-                () => _store.Values
-                    .Where(sequence => sequence.IsPending)
-                    .ForEachAsync(sequence => sequence.AbortAsync(SequenceAbortReason.Disposing)));
+            await _store.Values.AbortAllAsync(SequenceAbortReason.Disposing).ConfigureAwait(false);
+
+            Disposed = true;
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

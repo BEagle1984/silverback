@@ -12,49 +12,12 @@ namespace Silverback.Messaging.Broker
     /// <summary>
     ///     Produces to an endpoint.
     /// </summary>
-    public interface IProducer
+    public interface IProducer : IBrokerConnectedObject
     {
-        /// <summary>
-        ///     Gets the <see cref="InstanceIdentifier" /> uniquely identifying the producer instance.
-        /// </summary>
-        InstanceIdentifier Id { get; }
-
-        /// <summary>
-        ///     Gets the <see cref="IBroker" /> instance that owns this .
-        /// </summary>
-        IBroker Broker { get; }
-
         /// <summary>
         ///     Gets the <see cref="IProducerEndpoint" /> this instance is connected to.
         /// </summary>
         IProducerEndpoint Endpoint { get; }
-
-        /// <summary>
-        ///     Gets a value indicating whether this producer is connected to the message broker and ready to produce
-        ///     messages.
-        /// </summary>
-        bool IsConnected { get; }
-
-        /// <summary>
-        ///     Gets a value indicating whether this producer is trying to connect to the message broker.
-        /// </summary>
-        bool IsConnecting { get; }
-
-        /// <summary>
-        ///     Initializes the connection to the message broker (if needed).
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task ConnectAsync();
-
-        /// <summary>
-        ///     Disconnects from the message broker (if needed).
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task DisconnectAsync();
 
         /// <summary>
         ///     Publishes the specified message.

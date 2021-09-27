@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
-using Silverback.Messaging.Sequences;
 
 namespace Silverback.Messaging.Broker
 {
@@ -104,14 +103,5 @@ namespace Silverback.Messaging.Broker
 
         /// <inheritdoc cref="Consumer.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
         protected abstract Task RollbackCoreAsync(IReadOnlyCollection<TIdentifier> brokerMessageIdentifiers);
-
-        /// <inheritdoc cref="Consumer.GetSequenceStore" />
-        protected override ISequenceStore GetSequenceStore(
-            IBrokerMessageIdentifier brokerMessageIdentifier) =>
-            GetSequenceStore((TIdentifier)brokerMessageIdentifier);
-
-        /// <inheritdoc cref="Consumer.GetSequenceStore" />
-        protected virtual ISequenceStore GetSequenceStore(TIdentifier brokerMessageIdentifier) =>
-            base.GetSequenceStore(brokerMessageIdentifier);
     }
 }

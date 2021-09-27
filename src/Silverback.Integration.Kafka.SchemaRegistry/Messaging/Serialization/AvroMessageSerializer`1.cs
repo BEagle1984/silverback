@@ -56,8 +56,8 @@ namespace Silverback.Messaging.Serialization
         {
             Check.NotEmpty(key, nameof(key));
 
-            byte[]? serializedKey = AsyncHelper.RunValueTaskSynchronously(
-                () => SerializeAsync<string>(key, MessageComponentType.Key, context));
+            byte[]? serializedKey = AsyncHelper.RunSynchronously(
+                () => SerializeAsync<string>(key, MessageComponentType.Key, context).AsTask());
 
             return serializedKey ?? Array.Empty<byte>();
         }

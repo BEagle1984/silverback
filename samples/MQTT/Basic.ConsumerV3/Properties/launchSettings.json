@@ -1,11 +1,10 @@
 ﻿{
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "BinaryFilesStreaming.Producer": {
+    "Default": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:20001",
+      "launchBrowser": false,
+      "applicationUrl": "http://[::1]:0",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

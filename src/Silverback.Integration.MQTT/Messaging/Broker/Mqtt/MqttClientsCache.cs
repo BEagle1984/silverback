@@ -59,7 +59,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             Check.NotNull(clientConfig, nameof(clientConfig));
 
             if (_clients == null)
-                throw new ObjectDisposedException(null);
+                throw new ObjectDisposedException(GetType().FullName);
 
             lock (_clients)
             {

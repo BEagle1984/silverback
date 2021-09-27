@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
+using ActivitySources = Silverback.Messaging.Diagnostics.ActivitySources;
 
 namespace Silverback.Messaging.Sequences
 {
@@ -72,51 +74,15 @@ namespace Silverback.Messaging.Sequences
             // Store the previous sequence since it must be added to the new one (e.g. ChunkSequence into BatchSequence)
             var previousSequence = context.Sequence;
 
-            ISequence? sequence;
+            var sequence = await AddMessageToSequenceAsync(
+                    context,
+                    next,
+                    sequenceReader,
+                    originalEnvelope,
+                    previousSequence)
+                .ConfigureAwait(false);
 
-            // Loop to handle edge cases where the sequence gets completed between the calls to
-            // GetSequenceAsync and AddAsync
-            while (true)
-            {
-                sequence = await GetSequenceAsync(context, next, sequenceReader).ConfigureAwait(false);
-
-                if (sequence == null)
-                    return;
-
-                // Loop again if the retrieved sequence has completed already in the meanwhile
-                // ...unless it was a new sequence, in which case it can only mean that an error
-                // occurred in the subscriber before consuming the actual first message and it doesn't
-                // make sense to recreate and publish once again the sequence.
-                if (!sequence.IsPending || sequence.IsCompleting)
-                {
-                    if (sequence.IsNew)
-                        break;
-
-                    continue;
-                }
-
-                await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
-
-                _logger.LogMessageAddedToSequence(context.Envelope, sequence);
-
-                AddSequenceTagToActivity(sequence);
-
-                break;
-            }
-
-            if (sequence.IsComplete)
-            {
-                await AwaitOtherBehaviorIfNeededAsync(sequence).ConfigureAwait(false);
-
-                // Mark the envelope as the end of the sequence only if the sequence wasn't swapped (e.g. chunk -> batch)
-                if (sequence.Context.Sequence == null || sequence == sequence.Context.Sequence ||
-                    sequence.Context.Sequence.IsCompleting || sequence.Context.Sequence.IsComplete)
-                {
-                    context.SetIsSequenceEnd();
-                }
-
-                _logger.LogSequenceCompleted(sequence);
-            }
+            await HandleCompletedSequenceAsync(context, sequence).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -214,7 +180,7 @@ namespace Silverback.Messaging.Sequences
             if (sequence is ISequenceImplementation sequenceImplementation &&
                 sequenceImplementation.ShouldCreateNewActivity)
             {
-                Activity? sequenceActivity = Diagnostics.ActivitySources.StartSequenceActivity();
+                Activity? sequenceActivity = ActivitySources.StartSequenceActivity();
                 if (sequenceActivity != null)
                 {
                     sequenceImplementation.SetActivity(sequenceActivity);
@@ -222,9 +188,69 @@ namespace Silverback.Messaging.Sequences
             }
         }
 
-        private async Task<ISequence?> GetSequenceAsync(
+        private async Task<ISequence?> AddMessageToSequenceAsync(
             ConsumerPipelineContext context,
             ConsumerBehaviorHandler next,
+            ISequenceReader sequenceReader,
+            IRawInboundEnvelope originalEnvelope,
+            ISequence? previousSequence)
+        {
+            ISequence? sequence;
+
+            // Loop to handle edge cases where the sequence gets completed between the calls to
+            // GetSequenceAsync and AddAsync
+            while (true)
+            {
+                sequence = await GetSequenceAsync(context, sequenceReader).ConfigureAwait(false);
+
+                if (sequence == null)
+                    break;
+
+                await PublishSequenceIfNewAsync(context, next, sequence).ConfigureAwait(false);
+
+                // Loop again if the retrieved sequence has completed already in the meanwhile
+                // ...unless it was a new sequence, in which case it can only mean that an error
+                // occurred in the subscriber before consuming the actual first message and it doesn't
+                // make sense to recreate and publish once again the sequence.
+                if (!sequence.IsPending || sequence.IsCompleting)
+                {
+                    if (sequence.IsNew)
+                        break;
+
+                    continue;
+                }
+
+                await sequence.AddAsync(originalEnvelope, previousSequence).ConfigureAwait(false);
+
+                _logger.LogMessageAddedToSequence(context.Envelope, sequence);
+
+                AddSequenceTagToActivity(sequence);
+
+                break;
+            }
+
+            return sequence;
+        }
+
+        private async Task HandleCompletedSequenceAsync(ConsumerPipelineContext context, ISequence? sequence)
+        {
+            if (sequence != null && sequence.IsComplete)
+            {
+                await AwaitOtherBehaviorIfNeededAsync(sequence).ConfigureAwait(false);
+
+                // Mark the envelope as the end of the sequence only if the sequence wasn't swapped (e.g. chunk -> batch)
+                if (sequence.Context.Sequence == null || sequence == sequence.Context.Sequence ||
+                    sequence.Context.Sequence.IsCompleting || sequence.Context.Sequence.IsComplete)
+                {
+                    context.SetIsSequenceEnd();
+                }
+
+                _logger.LogSequenceCompleted(sequence);
+            }
+        }
+
+        private async Task<ISequence?> GetSequenceAsync(
+            ConsumerPipelineContext context,
             ISequenceReader sequenceReader)
         {
             var sequence = await sequenceReader.GetSequenceAsync(context).ConfigureAwait(false);
@@ -240,6 +266,14 @@ namespace Silverback.Messaging.Sequences
 
             context.SetSequence(sequence, sequence.IsNew);
 
+            return sequence;
+        }
+
+        private async Task PublishSequenceIfNewAsync(
+            ConsumerPipelineContext context,
+            ConsumerBehaviorHandler next,
+            ISequence sequence)
+        {
             if (sequence.IsNew)
             {
                 StartActivityIfNeeded(sequence);
@@ -251,8 +285,6 @@ namespace Silverback.Messaging.Sequences
 
                 _logger.LogSequenceStarted(sequence);
             }
-
-            return sequence;
         }
     }
 }

@@ -20,27 +20,20 @@ namespace Silverback.Messaging.Broker.Callbacks
             IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger logger) =>
             producerBuilder
-                .SetStatisticsHandler(
-                    (_, statistics) => OnStatistics(statistics, producer, callbacksInvoker, logger))
+                .SetStatisticsHandler((_, statistics) => OnStatistics(statistics, producer, callbacksInvoker, logger))
                 .SetLogHandler((_, logMessage) => OnLog(logMessage, producer, callbacksInvoker, logger));
 
         public static void SetEventsHandlers(
             this IConfluentConsumerBuilder consumerBuilder,
             KafkaConsumer consumer,
             IBrokerCallbacksInvoker callbacksInvoker,
-            ISilverbackLogger logger) =>
+            ISilverbackLogger logger)
+        {
             consumerBuilder
-                .SetStatisticsHandler(
-                    (_, statistics) => OnStatistics(statistics, consumer, callbacksInvoker, logger))
+                .SetStatisticsHandler((_, statistics) => OnStatistics(statistics, consumer, callbacksInvoker, logger))
                 .SetPartitionsAssignedHandler(
-                    (_, partitions) => OnPartitionsAssigned(
-                        partitions,
-                        consumer,
-                        callbacksInvoker,
-                        logger))
-                .SetPartitionsRevokedHandler(
-                    (_, partitions) => OnPartitionsRevoked(
-                        partitions,
+                    (_, topicPartitions) => OnPartitionsAssigned(
+                        topicPartitions,
                         consumer,
                         callbacksInvoker,
                         logger))
@@ -48,6 +41,36 @@ namespace Silverback.Messaging.Broker.Callbacks
                     (_, offsets) => OnOffsetsCommitted(offsets, consumer, callbacksInvoker, logger))
                 .SetErrorHandler((_, error) => OnError(error, consumer, callbacksInvoker, logger))
                 .SetLogHandler((_, logMessage) => OnLog(logMessage, consumer, callbacksInvoker, logger));
+
+            if (consumer.Endpoint.Configuration.PartitionAssignmentStrategy != null &&
+                consumer.Endpoint.Configuration.PartitionAssignmentStrategy.Value.HasFlag(
+                    PartitionAssignmentStrategy.CooperativeSticky))
+            {
+                // This is done to discard the result of the revoke handler. Using the SetPartitionsRevokedHandler
+                // overload with a Func<> results in an exception in the internal rebalance method since you are
+                // not supposed to alter the partitions being revoked with the cooperative sticky strategy.
+                consumerBuilder
+                    .SetPartitionsRevokedHandler(
+                        (_, topicPartitionOffsets) =>
+                        {
+                            OnPartitionsRevoked(
+                                topicPartitionOffsets,
+                                consumer,
+                                callbacksInvoker,
+                                logger);
+                        });
+            }
+            else
+            {
+                consumerBuilder
+                    .SetPartitionsRevokedHandler(
+                        (_, topicPartitionOffsets) => OnPartitionsRevoked(
+                            topicPartitionOffsets,
+                            consumer,
+                            callbacksInvoker,
+                            logger));
+            }
+        }
 
         private static void OnStatistics(
             string statistics,
@@ -86,30 +109,28 @@ namespace Silverback.Messaging.Broker.Callbacks
             "CA1508",
             Justification = "False positive: topicPartitionOffsets set in handler action")]
         private static IEnumerable<TopicPartitionOffset> OnPartitionsAssigned(
-            List<TopicPartition> partitions,
+            List<TopicPartition> topicPartitions,
             KafkaConsumer consumer,
             IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger logger)
         {
-            partitions.ForEach(topicPartition => logger.LogPartitionAssigned(topicPartition, consumer));
+            topicPartitions.ForEach(topicPartition => logger.LogPartitionAssigned(topicPartition, consumer));
 
             List<TopicPartitionOffset>? topicPartitionOffsets = null;
 
             callbacksInvoker.Invoke<IKafkaPartitionsAssignedCallback>(
-                handler =>
+                assignedCallback =>
                 {
-                    var result = handler.OnPartitionsAssigned(partitions, consumer);
+                    IEnumerable<TopicPartitionOffset>? result =
+                        assignedCallback.OnPartitionsAssigned(topicPartitions, consumer);
 
                     if (result != null)
                         topicPartitionOffsets = result.ToList();
                 });
 
-            if (topicPartitionOffsets == null)
-            {
-                topicPartitionOffsets = partitions
-                    .Select(partition => new TopicPartitionOffset(partition, Offset.Unset))
-                    .ToList();
-            }
+            topicPartitionOffsets ??= topicPartitions
+                .Select(partition => new TopicPartitionOffset(partition, Offset.Unset))
+                .ToList();
 
             foreach (var topicPartitionOffset in topicPartitionOffsets)
             {
@@ -126,18 +147,18 @@ namespace Silverback.Messaging.Broker.Callbacks
         }
 
         private static void OnPartitionsRevoked(
-            List<TopicPartitionOffset> partitions,
+            List<TopicPartitionOffset> topicPartitionOffsets,
             KafkaConsumer consumer,
             IBrokerCallbacksInvoker callbacksInvoker,
             ISilverbackLogger logger)
         {
-            consumer.OnPartitionsRevoked();
+            consumer.OnPartitionsRevoked(topicPartitionOffsets);
 
-            partitions.ForEach(
+            topicPartitionOffsets.ForEach(
                 topicPartitionOffset => logger.LogPartitionRevoked(topicPartitionOffset, consumer));
 
             callbacksInvoker.Invoke<IKafkaPartitionsRevokedCallback>(
-                handler => handler.OnPartitionsRevoked(partitions, consumer));
+                revokedCallback => revokedCallback.OnPartitionsRevoked(topicPartitionOffsets, consumer));
         }
 
         private static void OnOffsetsCommitted(

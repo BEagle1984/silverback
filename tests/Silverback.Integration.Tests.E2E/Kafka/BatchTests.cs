@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
+using Silverback.Messaging.Sequences;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
@@ -906,8 +907,8 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             receivedMessages.Should().HaveCountGreaterThan(3);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
-            var sequences = sequenceStores.SelectMany(store => store).ToList();
+            ISequenceStoreCollection sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
+            List<ISequence> sequences = sequenceStores.SelectMany(store => store).ToList();
 
             await Helper.Broker.DisconnectAsync();
 
@@ -983,7 +984,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             await Task.Delay(100);
 
-            var sequenceStores = Helper.Broker.Consumers[0].GetCurrentSequenceStores();
+            var sequenceStores = Helper.Broker.Consumers[0].SequenceStores;
             var sequences = sequenceStores.SelectMany(store => store).ToList();
 
             await Helper.Broker.DisconnectAsync();

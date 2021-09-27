@@ -9,6 +9,7 @@ using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Sequences.Chunking;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Types;
+using Silverback.Util;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
@@ -166,7 +167,7 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
 
         public void Dispose()
         {
-            _defaultSequenceStore.Dispose();
+            AsyncHelper.RunSynchronously(() => _defaultSequenceStore.DisposeAsync().AsTask());
         }
     }
 }

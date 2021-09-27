@@ -28,22 +28,6 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void RunValueTaskSynchronously_ReturningValueTask_Executed()
-        {
-            var done = false;
-
-            AsyncHelper.RunValueTaskSynchronously(AsyncMethod);
-
-            done.Should().BeTrue();
-
-            async ValueTask AsyncMethod()
-            {
-                await Task.Delay(50);
-                done = true;
-            }
-        }
-
-        [Fact]
         public void RunSynchronously_ReturningTaskWithResult_Executed()
         {
             var result = AsyncHelper.RunSynchronously(AsyncMethod);
@@ -51,20 +35,6 @@ namespace Silverback.Tests.Core.Util
             result.Should().Be(3);
 
             static async Task<int> AsyncMethod()
-            {
-                await Task.Delay(50);
-                return 3;
-            }
-        }
-
-        [Fact]
-        public void RunValueTaskSynchronously_ReturningValueTaskWithResult_Executed()
-        {
-            var result = AsyncHelper.RunValueTaskSynchronously(AsyncMethod);
-
-            result.Should().Be(3);
-
-            static async ValueTask<int> AsyncMethod()
             {
                 await Task.Delay(50);
                 return 3;
@@ -87,21 +57,6 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void RunValueTaskSynchronously_WithArgumentReturningValueTask_Executed()
-        {
-            int result = 1;
-            AsyncHelper.RunValueTaskSynchronously(() => AsyncMethod(2));
-
-            result.Should().Be(3);
-
-            async ValueTask AsyncMethod(int arg)
-            {
-                await Task.Delay(50);
-                result += arg;
-            }
-        }
-
-        [Fact]
         public void RunSynchronously_ReturningTaskButThrowingException_ExceptionRethrown()
         {
             Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
@@ -116,20 +71,6 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void RunValueTaskSynchronously_ReturningValueTaskButThrowingException_ExceptionRethrown()
-        {
-            Action act = () => AsyncHelper.RunValueTaskSynchronously(AsyncMethod);
-
-            act.Should().Throw<NotSupportedException>();
-
-            static async ValueTask AsyncMethod()
-            {
-                await Task.Delay(50);
-                throw new NotSupportedException("test");
-            }
-        }
-
-        [Fact]
         public void RunSynchronously_ReturningTaskWithResultButThrowingException_ExceptionRethrown()
         {
             Action act = () => AsyncHelper.RunSynchronously(AsyncMethod);
@@ -137,20 +78,6 @@ namespace Silverback.Tests.Core.Util
             act.Should().Throw<NotSupportedException>();
 
             static async Task<int> AsyncMethod()
-            {
-                await Task.Delay(50);
-                throw new NotSupportedException("test");
-            }
-        }
-
-        [Fact]
-        public void RunValueTaskSynchronously_ReturningValueTaskWithResultButThrowingException_ExceptionRethrown()
-        {
-            Action act = () => AsyncHelper.RunValueTaskSynchronously(AsyncMethod);
-
-            act.Should().Throw<NotSupportedException>();
-
-            static async ValueTask<int> AsyncMethod()
             {
                 await Task.Delay(50);
                 throw new NotSupportedException("test");

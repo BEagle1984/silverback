@@ -58,11 +58,12 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.TransactionalOutbox
                 null,
                 new TestProducerEndpoint("topic1"));
             _sampleOutboundEnvelope.RawMessage =
-                AsyncHelper.RunValueTaskSynchronously(
+                AsyncHelper.RunSynchronously(
                     () => new JsonMessageSerializer().SerializeAsync(
                         _sampleOutboundEnvelope.Message,
                         _sampleOutboundEnvelope.Headers,
-                        MessageSerializationContext.Empty));
+                        MessageSerializationContext.Empty)
+                        .AsTask());
         }
 
         [Fact]

@@ -30,17 +30,21 @@ namespace Silverback.Messaging.Broker
 
         private readonly object _messagesSinceCommitLock = new();
 
-        private readonly object _channelsLock = new();
-
         private readonly IKafkaMessageSerializer _serializer;
 
-        private ConsumerChannelsManager? _channelsManager;
+        [SuppressMessage("", "CA2213", Justification = "False positive: DisposeAsync is being called")]
+        private readonly KafkaSequenceStoreCollection _kafkaSequenceStoreCollection;
 
-        private ConsumeLoopHandler? _consumeLoopHandler;
+        private readonly ConsumerChannelsManager _channelsManager;
 
+        private readonly ConsumeLoopHandler _consumeLoopHandler;
+
+        [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
         private IConsumer<byte[]?, byte[]?>? _confluentConsumer;
 
         private int _messagesSinceCommit;
+
+        private bool _disposed;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaConsumer" /> class.
@@ -90,6 +94,12 @@ namespace Silverback.Messaging.Broker
 
             _callbacksInvoker = Check.NotNull(callbacksInvoker, nameof(callbacksInvoker));
             _logger = Check.NotNull(logger, nameof(logger));
+
+            _kafkaSequenceStoreCollection = new KafkaSequenceStoreCollection(
+                serviceProvider,
+                Endpoint.ProcessPartitionsIndependently);
+            _channelsManager = new ConsumerChannelsManager(this, _callbacksInvoker, logger);
+            _consumeLoopHandler = new ConsumeLoopHandler(this, _channelsManager, _logger);
         }
 
         /// <summary>
@@ -105,39 +115,41 @@ namespace Silverback.Messaging.Broker
         internal IConsumer<byte[]?, byte[]?> ConfluentConsumer =>
             _confluentConsumer ?? throw new InvalidOperationException("ConfluentConsumer not set.");
 
-        private ConsumerChannelsManager ChannelsManager =>
-            _channelsManager ?? throw new InvalidOperationException("ChannelsManager not set.");
-
-        internal void OnPartitionsAssigned(IReadOnlyList<TopicPartition> partitions)
+        internal void OnPartitionsAssigned(IReadOnlyList<TopicPartition> topicPartitions)
         {
             if (IsDisconnecting)
                 return;
 
-            lock (_channelsLock)
-            {
-                IsConsuming = true;
+            IsConsuming = true;
 
-                InitAndStartChannelsManager(partitions);
+            StartChannelsManager(topicPartitions);
 
-                SetReadyStatus();
-            }
+            SetReadyStatus();
         }
 
         [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
-        internal void OnPartitionsRevoked()
+        internal void OnPartitionsRevoked(IReadOnlyList<TopicPartitionOffset> topicPartitionOffsets)
         {
+            IEnumerable<TopicPartition> topicPartitions = topicPartitionOffsets.Select(offset => offset.TopicPartition);
+
             RevertReadyStatus();
 
-            StopConsumeLoopHandlerAndChannelsManager();
+            _consumeLoopHandler.StopAsync();
 
-            AsyncHelper.RunSynchronously(WaitUntilChannelsManagerStopsAsync);
+            AsyncHelper.RunSynchronously(
+                () => topicPartitions.ParallelForEachAsync(
+                    async topicPartition =>
+                    {
+                        await _channelsManager.StopReadingAsync(topicPartition).ConfigureAwait(false);
+
+                        await _kafkaSequenceStoreCollection
+                            .GetSequenceStore(topicPartition)
+                            .AbortAllAsync(SequenceAbortReason.ConsumerAborted)
+                            .ConfigureAwait(false);
+                    }));
 
             if (!Endpoint.Configuration.IsAutoCommitEnabled)
                 CommitOffsets();
-
-            AsyncHelper.RunSynchronously(
-                () => SequenceStores.DisposeAllAsync(SequenceAbortReason.ConsumerAborted));
-            SequenceStores.Clear();
 
             // The ConsumeLoopHandler needs to be immediately restarted because the partitions will be
             // reassigned only if Consume is called again.
@@ -193,14 +205,8 @@ namespace Silverback.Messaging.Broker
                 .ConfigureAwait(false);
         }
 
-        internal void CreateSequenceStores(int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                if (SequenceStores.Count <= i)
-                    SequenceStores.Add(ServiceProvider.GetRequiredService<ISequenceStore>());
-            }
-        }
+        /// <inheritdoc cref="Consumer.InitSequenceStore" />
+        protected override ISequenceStoreCollection InitSequenceStore() => _kafkaSequenceStoreCollection;
 
         /// <inheritdoc cref="Consumer.ConnectCoreAsync" />
         protected override Task ConnectCoreAsync()
@@ -224,23 +230,20 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer.StartCoreAsync" />
         protected override Task StartCoreAsync()
         {
-            lock (_channelsLock)
+            // Set IsConsuming before calling the init methods, otherwise they don't start for real
+            IsConsuming = true;
+
+            // Start reading from the channels right away in case of static partitions assignment or if
+            // the consumer is restarting and the partition assignment is set already
+            if (Endpoint.TopicPartitions != null ||
+                _confluentConsumer?.Assignment != null && _confluentConsumer.Assignment.Count > 0)
             {
-                // Set IsConsuming before calling the init methods, otherwise they don't start for real
-                IsConsuming = true;
-
-                // Start reading from the channels right away in case of static partitions assignment or if
-                // the consumer is restarting and the partition assignment is set already
-                if (Endpoint.TopicPartitions != null ||
-                    _confluentConsumer?.Assignment != null && _confluentConsumer.Assignment.Count > 0)
-                {
-                    InitAndStartChannelsManager(ConfluentConsumer.Assignment);
-                }
-
-                // The consume loop must start immediately because the partitions assignment is received
-                // only after Consume is called once
-                InitAndStartConsumeLoopHandler();
+                StartChannelsManager(ConfluentConsumer.Assignment);
             }
+
+            // The consume loop must start immediately because the partitions assignment is received
+            // only after Consume is called once
+            StartConsumeLoopHandler();
 
             return Task.CompletedTask;
         }
@@ -248,17 +251,10 @@ namespace Silverback.Messaging.Broker
         /// <inheritdoc cref="Consumer.StopCoreAsync" />
         protected override Task StopCoreAsync()
         {
-            StopConsumeLoopHandlerAndChannelsManager();
+            _consumeLoopHandler.StopAsync().FireAndForget();
+            _channelsManager.StopReadingAsync().FireAndForget();
 
             return Task.CompletedTask;
-        }
-
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.GetSequenceStore(IBrokerMessageIdentifier)" />
-        protected override ISequenceStore GetSequenceStore(KafkaOffset brokerMessageIdentifier)
-        {
-            Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
-
-            return ChannelsManager.GetSequenceStore(brokerMessageIdentifier.AsTopicPartition());
         }
 
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedCoreAsync" />
@@ -308,16 +304,14 @@ namespace Silverback.Messaging.Broker
             if (IsConsuming)
             {
                 _confluentConsumer?.Pause(
-                    latestTopicPartitionOffsets.Select(
-                        topicPartitionOffset => topicPartitionOffset.TopicPartition));
+                    latestTopicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition));
             }
 
             var channelsManagerStoppingTasks = new List<Task?>(latestTopicPartitionOffsets.Count);
 
             foreach (var topicPartitionOffset in latestTopicPartitionOffsets)
             {
-                channelsManagerStoppingTasks.Add(
-                    _channelsManager?.StopReadingAsync(topicPartitionOffset.TopicPartition));
+                channelsManagerStoppingTasks.Add(_channelsManager.StopReadingAsync(topicPartitionOffset.TopicPartition));
                 ConfluentConsumer.Seek(topicPartitionOffset);
                 _logger.LogPartitionOffsetReset(topicPartitionOffset, this);
             }
@@ -329,6 +323,21 @@ namespace Silverback.Messaging.Broker
                 .FireAndForget();
 
             return Task.CompletedTask;
+        }
+
+        /// <inheritdoc cref="Consumer.Dispose(bool)"/>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (!disposing || _disposed)
+                return;
+
+            _consumeLoopHandler.Dispose();
+            _channelsManager.Dispose();
+            AsyncHelper.RunSynchronously(() => _kafkaSequenceStoreCollection.DisposeAsync().AsTask());
+
+            _disposed = true;
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
@@ -401,41 +410,29 @@ namespace Silverback.Messaging.Broker
             }
         }
 
-        private void InitAndStartConsumeLoopHandler()
+        private void StartConsumeLoopHandler()
         {
-            _consumeLoopHandler ??= new ConsumeLoopHandler(this, _channelsManager, _logger);
+            if (!IsConsuming || IsStopping)
+                return;
 
-            if (_channelsManager != null)
-                _consumeLoopHandler.SetChannelsManager(_channelsManager);
+            _consumeLoopHandler.Start();
 
-            if (IsConsuming && !IsStopping)
-            {
-                _consumeLoopHandler.Start();
-
-                _logger.LogConsumerLowLevelTrace(
-                    this,
-                    "ConsumeLoopHandler started. | instanceId: {instanceId}, taskId: {taskId}",
-                    () => new object[]
-                    {
-                        _consumeLoopHandler.Id,
-                        _consumeLoopHandler.Stopping.Id
-                    });
-            }
+            _logger.LogConsumerLowLevelTrace(
+                this,
+                "ConsumeLoopHandler started. | instanceId: {instanceId}, taskId: {taskId}",
+                () => new object[]
+                {
+                    _consumeLoopHandler.Id,
+                    _consumeLoopHandler.Stopping.Id
+                });
         }
 
-        private void InitAndStartChannelsManager(IReadOnlyList<TopicPartition> partitions)
+        private void StartChannelsManager(IEnumerable<TopicPartition> topicPartitions)
         {
-            _channelsManager ??= new ConsumerChannelsManager(
-                partitions,
-                this,
-                _callbacksInvoker,
-                SequenceStores,
-                _logger);
+            if (!IsConsuming || IsStopping)
+                return;
 
-            _consumeLoopHandler?.SetChannelsManager(_channelsManager);
-
-            if (IsConsuming && !IsStopping)
-                _channelsManager.StartReading();
+            _channelsManager.StartReading(topicPartitions);
         }
 
         private async Task RestartConsumeLoopHandlerAsync()
@@ -444,21 +441,12 @@ namespace Silverback.Messaging.Broker
             {
                 await WaitUntilConsumeLoopHandlerStopsAsync().ConfigureAwait(false);
 
-                InitAndStartConsumeLoopHandler();
+                StartConsumeLoopHandler();
             }
             catch (Exception ex)
             {
                 _logger.LogConsumerStartError(this, ex);
                 throw;
-            }
-        }
-
-        private void StopConsumeLoopHandlerAndChannelsManager()
-        {
-            lock (_channelsLock)
-            {
-                _consumeLoopHandler?.StopAsync().FireAndForget();
-                _channelsManager?.StopReadingAsync().FireAndForget();
             }
         }
 
@@ -488,27 +476,13 @@ namespace Silverback.Messaging.Broker
                     _consumeLoopHandler.Id,
                     _consumeLoopHandler.Stopping.Id
                 });
-
-            _consumeLoopHandler?.Dispose();
-            _consumeLoopHandler = null;
         }
 
         private async Task WaitUntilChannelsManagerStopsAsync()
         {
-            if (_channelsManager == null)
-            {
-                _logger.LogConsumerLowLevelTrace(this, "ChannelsManager is null.");
-                return;
-            }
-
             _logger.LogConsumerLowLevelTrace(this, "Waiting until ChannelsManager stops...");
             await _channelsManager.Stopping.ConfigureAwait(false);
             _logger.LogConsumerLowLevelTrace(this, "ChannelsManager stopped.");
-
-            _channelsManager?.Dispose();
-            _channelsManager = null;
-
-            _logger.LogConsumerLowLevelTrace(this, "ChannelsManager disposed.");
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]

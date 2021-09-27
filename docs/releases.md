@@ -4,6 +4,17 @@ uid: releases
 
 # Releases
 
+## [4.0.0-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v4.0.0-beta.1)
+
+### What's new
+
+* Support Kafka cooperative sticky partition assignment strategy
+* Increase default [KafkaConsumerEndpoint.MaxDegreeOfParallelism](xref:Silverback.Messaging.KafkaConsumerEndpoint#Silverback_Messaging_KafkaConsumerEndpoint_MaxDegreeOfParallelism) to 100.
+
+### Breaking Changes
+
+* Several small changes to the <xref:Silverback.Messaging.Broker.IBroker>/<xref:Silverback.Messaging.Broker.IConsumer> and their implementations
+
 ## [3.6.0](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0)
 
 ### What's new

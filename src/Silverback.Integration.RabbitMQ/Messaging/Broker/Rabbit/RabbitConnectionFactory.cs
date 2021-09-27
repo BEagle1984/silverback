@@ -122,7 +122,7 @@ namespace Silverback.Messaging.Broker.Rabbit
             Check.NotNull(connectionConfig, nameof(connectionConfig));
 
             if (_connections == null)
-                throw new ObjectDisposedException(null);
+                throw new ObjectDisposedException(GetType().FullName);
 
             lock (_connections)
             {

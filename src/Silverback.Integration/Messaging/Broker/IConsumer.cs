@@ -11,38 +11,12 @@ namespace Silverback.Messaging.Broker
     /// <summary>
     ///     Consumes an endpoint and invokes a callback delegate when a message is received.
     /// </summary>
-    public interface IConsumer
+    public interface IConsumer : IBrokerConnectedObject
     {
-        /// <summary>
-        ///     Gets the <see cref="InstanceIdentifier" /> uniquely identifying the consumer instance.
-        /// </summary>
-        InstanceIdentifier Id { get; }
-
-        /// <summary>
-        ///     Gets the <see cref="IBroker" /> that owns this consumer.
-        /// </summary>
-        IBroker Broker { get; }
-
         /// <summary>
         ///     Gets the <see cref="IConsumerEndpoint" /> representing the endpoint that is being consumed.
         /// </summary>
         IConsumerEndpoint Endpoint { get; }
-
-        /// <summary>
-        ///     Gets a value indicating whether this consumer has successfully initialized the connection to the message
-        ///     broker.
-        /// </summary>
-        /// <remarks>
-        ///     This doesn't necessary mean that it is connected and ready to consume. The underlying library might
-        ///     handle the connection process asynchronously in the background or the protocol might require extra steps
-        ///     (e.g. Kafka might require the partitions to be assigned).
-        /// </remarks>
-        bool IsConnected { get; }
-
-        /// <summary>
-        ///     Gets a value indicating whether this consumer is initializing the connection to the message broker.
-        /// </summary>
-        bool IsConnecting { get; }
 
         /// <summary>
         ///     Gets a value indicating whether this consumer is connected and consuming (started).
@@ -56,20 +30,10 @@ namespace Silverback.Messaging.Broker
         IConsumerStatusInfo StatusInfo { get; }
 
         /// <summary>
-        ///     Connects and starts consuming.
+        ///     Gets the <see cref="ISequenceStoreCollection" /> used by this consumer. Some brokers will require
+        ///     multiple stores (e.g. the <c>KafkaConsumer</c> will create a store per each assigned partition).
         /// </summary>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task ConnectAsync();
-
-        /// <summary>
-        ///     Disconnects and stops consuming.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        Task DisconnectAsync();
+        ISequenceStoreCollection SequenceStores { get; }
 
         /// <summary>
         ///     Stops the consumer and starts an asynchronous <see cref="Task" /> to disconnect and reconnect it.
@@ -176,14 +140,5 @@ namespace Silverback.Messaging.Broker
         ///     The current failed attempts count after the increment.
         /// </returns>
         int IncrementFailedAttempts(IRawInboundEnvelope envelope);
-
-        /// <summary>
-        ///     Gets the <see cref="ISequenceStore" /> instances used by this consumer. Some brokers will require
-        ///     multiple stores (e.g. the <c>KafkaConsumer</c> will create a store per each assigned partition).
-        /// </summary>
-        /// <returns>
-        ///     The list of <see cref="ISequenceStore" />.
-        /// </returns>
-        IReadOnlyList<ISequenceStore> GetCurrentSequenceStores();
     }
 }

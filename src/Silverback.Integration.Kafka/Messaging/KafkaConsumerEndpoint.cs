@@ -17,6 +17,8 @@ namespace Silverback.Messaging
     /// </summary>
     public sealed class KafkaConsumerEndpoint : ConsumerEndpoint, IEquatable<KafkaConsumerEndpoint>
     {
+        private bool _processPartitionsIndependently = true;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="KafkaConsumerEndpoint" /> class.
         /// </summary>
@@ -87,8 +89,7 @@ namespace Silverback.Messaging
             IEnumerable<TopicPartition> topicPartitions,
             KafkaClientConfig? clientConfig = null)
             : this(
-                topicPartitions?.Select(
-                    topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))!,
+                topicPartitions?.Select(topicPartition => new TopicPartitionOffset(topicPartition, Offset.Unset))!,
                 clientConfig)
         {
         }
@@ -283,14 +284,27 @@ namespace Silverback.Messaging
         ///     (<see cref="ChunkSequence" />, <see cref="BatchSequence" />, ...) cannot span across the partitions.
         ///     The default is <c>true</c>.
         /// </summary>
-        public bool ProcessPartitionsIndependently { get; set; } = true;
+        /// <remarks>
+        ///     Settings this value to <c>false</c> implicitly sets the <see cref="MaxDegreeOfParallelism"/> to 1.
+        /// </remarks>
+        public bool ProcessPartitionsIndependently
+        {
+            get => _processPartitionsIndependently;
+            set
+            {
+                _processPartitionsIndependently = value;
+
+                if (!value)
+                    MaxDegreeOfParallelism = 1;
+            }
+        }
 
         /// <summary>
         ///     Gets or sets the maximum number of incoming message that can be processed concurrently. Up to a
-        ///     message per each subscribed partition can be processed in parallel.
-        ///     The default is 10.
+        ///     message per each subscribed partition can be processed in parallel when processing them independently.
+        ///     The default is 100.
         /// </summary>
-        public int MaxDegreeOfParallelism { get; set; } = 10;
+        public int MaxDegreeOfParallelism { get; set; } = 100;
 
         /// <summary>
         ///     Gets or sets the maximum number of messages to be consumed and enqueued waiting to be processed.
@@ -309,9 +323,13 @@ namespace Silverback.Messaging
                 throw new EndpointConfigurationException("Configuration cannot be null.");
 
             if (MaxDegreeOfParallelism < 1)
+                throw new EndpointConfigurationException("MaxDegreeOfParallelism must be greater or equal to 1.");
+
+            if (MaxDegreeOfParallelism > 1 && !_processPartitionsIndependently)
             {
                 throw new EndpointConfigurationException(
-                    "MaxDegreeOfParallelism must be greater or equal to 1.");
+                    "MaxDegreeOfParallelism cannot be greater than 1 when the partitions aren't " +
+                    "processed independently.");
             }
 
             if (BackpressureLimit < 1)

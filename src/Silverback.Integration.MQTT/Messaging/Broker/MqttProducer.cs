@@ -133,7 +133,7 @@ namespace Silverback.Messaging.Broker
         {
             var queuedMessage = new QueuedMessage(messageBytes, headers, actualEndpointName);
 
-            AsyncHelper.RunValueTaskSynchronously(() => _queueChannel.Writer.WriteAsync(queuedMessage));
+            AsyncHelper.RunSynchronously(() => _queueChannel.Writer.WriteAsync(queuedMessage).AsTask());
 
             queuedMessage.TaskCompletionSource.Task.ContinueWith(
                 task =>

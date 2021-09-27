@@ -105,11 +105,12 @@ namespace Silverback.Messaging.Configuration.Mqtt
                 throw new EndpointConfigurationException("The topic name was not specified.");
 
             _serializer ??= new JsonMessageSerializer();
-            var payloadStream = AsyncHelper.RunValueTaskSynchronously(
+            var payloadStream = AsyncHelper.RunSynchronously(
                 () => _serializer.SerializeAsync(
                     _message,
                     new MessageHeaderCollection(),
-                    MessageSerializationContext.Empty));
+                    MessageSerializationContext.Empty)
+                    .AsTask());
 
             return new MqttApplicationMessage
             {

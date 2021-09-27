@@ -121,8 +121,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         public void Constructor_SingleTopicAndPartitionResolverWithOffsets_TopicsAndResolverSet()
         {
             Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>> resolver =
-                partitions => partitions.Select(
-                    partition => new TopicPartitionOffset(partition, Offset.Beginning));
+                partitions => partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Beginning));
 
             var endpoint = new KafkaConsumerEndpoint(
                 "topic1",
@@ -138,8 +137,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         public void Constructor_MultipleTopicsAndPartitionResolverWithOffsets_TopicsAndResolverSet()
         {
             Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>> resolver =
-                partitions => partitions.Select(
-                    partition => new TopicPartitionOffset(partition, Offset.Beginning));
+                partitions => partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Beginning));
 
             var endpoint = new KafkaConsumerEndpoint(
                 new[] { "topic1", "topic2" },
@@ -149,6 +147,20 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
             endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
             endpoint.TopicPartitions.Should().BeNull();
             endpoint.TopicPartitionsResolver.Should().Be(resolver);
+        }
+
+        [Theory]
+        [InlineData(true, 100)]
+        [InlineData(false, 1)]
+        public void ProcessPartitionsIndependently_DefaultMaxDegreeOfParallelismSetAccordingly(
+            bool processPartitionsIndependently,
+            int expectedMaxDegreeOfParallelism)
+        {
+            var endpoint = GetValidEndpoint();
+
+            endpoint.ProcessPartitionsIndependently = processPartitionsIndependently;
+
+            endpoint.MaxDegreeOfParallelism.Should().Be(expectedMaxDegreeOfParallelism);
         }
 
         [Fact]
@@ -284,14 +296,22 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
         }
 
         [Theory]
-        [InlineData(1, true)]
-        [InlineData(42, true)]
-        [InlineData(0, false)]
-        [InlineData(-1, false)]
-        public void Validate_MaxDegreeOfParallelism_CorrectlyValidated(int value, bool isValid)
+        [InlineData(1, true, true)]
+        [InlineData(1, false, true)]
+        [InlineData(42, true, true)]
+        [InlineData(42, false, false)]
+        [InlineData(0, true, false)]
+        [InlineData(0, false, false)]
+        [InlineData(-1, true, false)]
+        [InlineData(-1, false, false)]
+        public void Validate_MaxDegreeOfParallelism_CorrectlyValidated(
+            int value,
+            bool processPartitionsIndependently,
+            bool isValid)
         {
             var endpoint = GetValidEndpoint();
 
+            endpoint.ProcessPartitionsIndependently = processPartitionsIndependently;
             endpoint.MaxDegreeOfParallelism = value;
 
             Action act = () => endpoint.Validate();
