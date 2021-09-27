@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Encryption
         /// <summary>
         ///     Gets or sets the function to be used to retrieve the decryption key.
         /// </summary>
-        public Func<string, byte[]>? KeyProvider { get; set; }
+        public Func<string?, byte[]>? KeyProvider { get; set; }
 
         /// <inheritdoc cref="EncryptionSettings.Validate" />
         public override void Validate()

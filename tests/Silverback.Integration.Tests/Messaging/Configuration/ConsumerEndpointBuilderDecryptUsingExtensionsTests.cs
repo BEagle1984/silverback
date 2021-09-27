@@ -34,7 +34,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             var key = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
             var iv = new byte[] { 0x11, 0x12, 0x13, 0x14, 0x15 };
 
-            byte[] DecryptionKeyCallback(string keyIdentifier)
+            byte[] DecryptionKeyCallback(string? keyIdentifier)
             {
                 return key;
             }

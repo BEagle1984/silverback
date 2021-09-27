@@ -74,7 +74,7 @@ namespace Silverback.Messaging.Configuration
         /// </returns>
         public static TBuilder DecryptUsingAes<TBuilder>(
             this IConsumerEndpointBuilder<TBuilder> endpointBuilder,
-            Func<string, byte[]> decryptionKeyCallback,
+            Func<string?, byte[]> decryptionKeyCallback,
             byte[]? initializationVector = null)
             where TBuilder : IConsumerEndpointBuilder<TBuilder>
         {

@@ -66,7 +66,7 @@ namespace Silverback.Messaging.Encryption
             Check.NotNull(stream, nameof(stream));
 
             byte[]? encryptionKey = settings.KeyProvider != null
-                ? settings.KeyProvider(keyIdentifier ?? string.Empty)
+                ? settings.KeyProvider(keyIdentifier)
                 : settings.Key;
 
             using var algorithm =
