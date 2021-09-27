@@ -79,12 +79,11 @@
             <article class="content wrap" id="_content" data-uid="releases">
 <h1 id="releases">Releases</h1>
 
-<h2 id="340-beta1"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.4.0-beta.1">3.4.0-beta.1</a></h2>
+<h2 id="340"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.4.0">3.4.0</a></h2>
 <h3 id="whats-new">What's new</h3>
 <ul>
 <li>Support encryption key rotation (see <a class="xref" href="concepts/broker/encryption.html">Encryption</a>)</li>
 </ul>
-<h1 id="releases-1">Releases</h1>
 <h2 id="331"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.3.1">3.3.1</a></h2>
 <h3 id="fixes">Fixes</h3>
 <ul>
@@ -111,7 +110,7 @@
 <li>Allow multiple calls to <a class="xref" href="api/Silverback.Messaging.Configuration.Kafka.IKafkaConsumerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaConsumerEndpointBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaConsumerConfig__">IKafkaConsumerEndpointBuilder.Configure</a> or <a class="xref" href="api/Silverback.Messaging.Configuration.Kafka.IKafkaProducerEndpointBuilder.html#Silverback_Messaging_Configuration_Kafka_IKafkaProducerEndpointBuilder_Configure_System_Action_Silverback_Messaging_Configuration_Kafka_KafkaProducerConfig__">IKafkaProducerEndpointBuilder.Configure</a> for the same endpoint</li>
 <li>Observe a grace period in the <a class="xref" href="api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html">ConsumersHealthCheck</a> to prevent false positives during a normal Kafka rebalance</li>
 <li>Add optional friendly name to the endpoints (see <a class="xref" href="api/Silverback.Messaging.Configuration.IEndpointBuilder-1.html#Silverback_Messaging_Configuration_IEndpointBuilder_1_WithName_System_String_">IEndpointBuilder<tbuilder>.WithName</tbuilder></a> and <a class="xref" href="api/Silverback.Messaging.Endpoint.html#Silverback_Messaging_Endpoint_FriendlyName">Endpoint.FriendlyName</a>)</li>
-<li>Allow filtering the endpoints targeted by the <a class="xref" href="api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html">ConsumersHealthCheck</a> (see <a class="xref" href="api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_Nullable_System_TimeSpan__System_Collections_Generic_IEnumerable_System_String__System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddConsumersCheck</a>)</li>
+<li>Allow filtering the endpoints targeted by the <a class="xref" href="api/Silverback.Messaging.HealthChecks.ConsumersHealthCheck.html">ConsumersHealthCheck</a> (see <a class="xref" href="api/Microsoft.Extensions.DependencyInjection.HealthCheckBuilderExtensions.html#Microsoft_Extensions_DependencyInjection_HealthCheckBuilderExtensions_AddConsumersCheck_Microsoft_Extensions_DependencyInjection_IHealthChecksBuilder_Silverback_Messaging_Broker_ConsumerStatus_System_Nullable_System_TimeSpan__System_Func_Silverback_Messaging_IConsumerEndpoint_System_Boolean__System_String_System_Nullable_Microsoft_Extensions_Diagnostics_HealthChecks_HealthStatus__System_Collections_Generic_IEnumerable_System_String__">AddConsumersCheck</a>)</li>
 </ul>
 <h2 id="311"><a href="https://github.com/BEagle1984/silverback/releases/tag/v3.1.1">3.1.1</a></h2>
 <h3 id="fixes-2">Fixes</h3>
