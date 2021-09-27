@@ -4,15 +4,11 @@ uid: releases
 
 # Releases
 
-## [3.4.0-beta.2](https://github.com/BEagle1984/silverback/releases/tag/v3.4.0-beta.2)
+## [3.4.0-beta.3](https://github.com/BEagle1984/silverback/releases/tag/v3.4.0-beta.3)
 
 ### What's new
 
 * Support encryption key rotation (see <xref:encryption>)
-
-### Fixes
-
-* Fix decryption with `KeyProvider` when key is `null`
 
 # Releases
 
