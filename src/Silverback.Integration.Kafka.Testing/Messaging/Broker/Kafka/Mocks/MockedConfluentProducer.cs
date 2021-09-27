@@ -22,6 +22,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         private int _lastPushedPartition = -1;
 
+        private bool _disposed;
+
         public MockedConfluentProducer(ProducerConfig config, IInMemoryTopicCollection topics)
         {
             _config = Check.NotNull(config, nameof(config));
@@ -50,6 +52,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             CancellationToken cancellationToken = default)
         {
             Check.NotNull(message, nameof(message));
+            EnsureNotDisposed();
 
             int partitionIndex = PushToTopic(topicPartition, message, out Offset offset);
 
@@ -78,6 +81,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
             Action<DeliveryReport<byte[]?, byte[]?>>? deliveryHandler = null)
         {
             Check.NotNull(message, nameof(message));
+            EnsureNotDisposed();
 
             try
             {
@@ -144,7 +148,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public void Dispose()
         {
-            // Nothing to dispose, IDisposable is just inherited from IProducer but it's not needed in the mock
+            _disposed = true;
         }
 
         private int GetPartitionIndex(IInMemoryTopic topic, byte[]? messageKey)
@@ -180,6 +184,12 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
                 return _lastPushedPartition;
             }
+        }
+
+        private void EnsureNotDisposed()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException(GetType().FullName);
         }
     }
 }

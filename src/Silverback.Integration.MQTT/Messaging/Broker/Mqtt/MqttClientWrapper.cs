@@ -75,7 +75,13 @@ namespace Silverback.Messaging.Broker.Mqtt
                     _connectedObjects.Add(sender);
 
                 if (_connectedObjects.Count > 1 || MqttClient.IsConnected)
+                {
+                    // Ensure OnConnectionEstablishedAsync is called when reconnecting the consumer
+                    if (MqttClient.IsConnected && sender is MqttConsumer mqttConsumer)
+                        return mqttConsumer.OnConnectionEstablishedAsync();
+
                     return Task.CompletedTask;
+                }
 
                 ConnectAndMonitorConnection();
             }
@@ -83,8 +89,11 @@ namespace Silverback.Messaging.Broker.Mqtt
             return Task.CompletedTask;
         }
 
-        public Task SubscribeAsync(params MqttTopicFilter[] topicFilters) =>
-            MqttClient.SubscribeAsync(topicFilters);
+        public Task SubscribeAsync(IReadOnlyCollection<MqttTopicFilter> topicFilters) =>
+            MqttClient.SubscribeAsync(topicFilters.AsArray());
+
+        public Task UnsubscribeAsync(IReadOnlyCollection<string> topicFilters) =>
+            MqttClient.UnsubscribeAsync(topicFilters.AsArray());
 
         public async Task DisconnectAsync(object sender)
         {
@@ -109,10 +118,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             await MqttClient.DisconnectAsync().ConfigureAwait(false);
         }
 
-        public void Dispose()
-        {
-            MqttClient.Dispose();
-        }
+        public void Dispose() => MqttClient.Dispose();
 
         public Task HandleMessageAsync(ConsumedApplicationMessage consumedMessage)
         {

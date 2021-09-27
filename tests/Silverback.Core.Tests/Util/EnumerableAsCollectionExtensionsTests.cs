@@ -72,5 +72,25 @@ namespace Silverback.Tests.Core.Util
 
             collection.Should().BeSameAs(enumerable);
         }
+
+        [Fact]
+        public void AsArray_Enumerable_NewInstanceReturned()
+        {
+            var enumerable = Enumerable.Range(1, 10);
+
+            var collection = enumerable.AsArray();
+
+            collection.Should().NotBeSameAs(enumerable);
+        }
+
+        [Fact]
+        public void AsArray_Array_SameInstanceReturned()
+        {
+            var enumerable = new[] { 1, 2, 3, 4 };
+
+            var collection = enumerable.AsArray();
+
+            collection.Should().BeSameAs(enumerable);
+        }
     }
 }

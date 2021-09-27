@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MQTTnet;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -18,13 +19,11 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}" />
     public class MqttConsumer : Consumer<MqttBroker, MqttConsumerEndpoint, MqttMessageIdentifier>
     {
+        private readonly MqttClientWrapper _clientWrapper;
+
         private readonly IInboundLogger<MqttConsumer> _logger;
 
-        private readonly IMqttClientsCache _clientFactory;
-
         private ConsumerChannelManager? _channelManager;
-
-        private MqttClientWrapper? _clientWrapper;
 
         private ConsumedApplicationMessage? _inProcessingMessage;
 
@@ -55,9 +54,10 @@ namespace Silverback.Messaging.Broker
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             Check.NotNull(serviceProvider, nameof(serviceProvider));
+            _clientWrapper = serviceProvider
+                .GetRequiredService<IMqttClientsCache>()
+                .GetClient(this);
             _logger = Check.NotNull(logger, nameof(logger));
-
-            _clientFactory = serviceProvider.GetRequiredService<IMqttClientsCache>();
         }
 
         internal async Task HandleMessageAsync(ConsumedApplicationMessage message)
@@ -80,9 +80,6 @@ namespace Silverback.Messaging.Broker
 
         internal async Task OnConnectionEstablishedAsync()
         {
-            if (_clientWrapper == null)
-                return;
-
             await _clientWrapper.SubscribeAsync(
                     Endpoint.Topics.Select(
                             topic =>
@@ -93,7 +90,8 @@ namespace Silverback.Messaging.Broker
                         .ToArray())
                 .ConfigureAwait(false);
 
-            await StartAsync().ConfigureAwait(false);
+            if (IsConnected)
+                await StartAsync().ConfigureAwait(false);
 
             SetReadyStatus();
         }
@@ -106,21 +104,13 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer.ConnectCoreAsync" />
-        protected override Task ConnectCoreAsync()
-        {
-            _clientWrapper = _clientFactory.GetClient(this);
-
-            return _clientWrapper.ConnectAsync(this);
-        }
+        protected override Task ConnectCoreAsync() => _clientWrapper.ConnectAsync(this);
 
         /// <inheritdoc cref="Consumer.DisconnectCoreAsync" />
         protected override async Task DisconnectCoreAsync()
         {
-            if (_clientWrapper != null)
-                await _clientWrapper.DisconnectAsync(this).ConfigureAwait(false);
-
-            _clientWrapper?.Dispose();
-            _clientWrapper = null;
+            await _clientWrapper.UnsubscribeAsync(Endpoint.Topics).ConfigureAwait(false);
+            await _clientWrapper.DisconnectAsync(this).ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="Consumer.StartCoreAsync" />

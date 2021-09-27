@@ -106,6 +106,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         {
             while (true)
             {
+                EnsureNotDisposed();
+
                 if (TryConsume(cancellationToken, out var result))
                     return result!;
 
@@ -117,6 +119,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public void Subscribe(IEnumerable<string> topics)
         {
+            EnsureNotDisposed();
+
             if (string.IsNullOrEmpty(GroupId))
             {
                 throw new ArgumentException(
@@ -140,6 +144,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public void Unsubscribe()
         {
+            EnsureNotDisposed();
+
             lock (Subscription)
             {
                 foreach (var topic in Subscription)
@@ -187,6 +193,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public void StoreOffset(ConsumeResult<byte[]?, byte[]?> result)
         {
+            EnsureNotDisposed();
+
             if (result == null)
                 return;
 
@@ -195,6 +203,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public void StoreOffset(TopicPartitionOffset offset)
         {
+            EnsureNotDisposed();
+
             if (offset == null)
                 return;
 
@@ -207,6 +217,8 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         public List<TopicPartitionOffset> Commit()
         {
+            EnsureNotDisposed();
+
             var topicPartitionOffsets = _storedOffsets.SelectMany(
                 topicPair => topicPair.Value.Select(
                     partitionPair => new TopicPartitionOffset(
@@ -523,6 +535,12 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
             result = null;
             return false;
+        }
+
+        private void EnsureNotDisposed()
+        {
+            if (Disposed)
+                throw new ObjectDisposedException(GetType().FullName);
         }
     }
 }
