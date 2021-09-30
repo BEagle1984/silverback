@@ -8,6 +8,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client.Receiving;
+using MQTTnet.Protocol;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Diagnostics;
 using Silverback.Util;
@@ -88,6 +89,7 @@ namespace Silverback.Messaging.Broker.Mqtt
 
             await _channel.Writer.WriteAsync(receivedMessage).ConfigureAwait(false);
 
+            // Wait until the processing is over, including retries
             while (!await receivedMessage.TaskCompletionSource.Task.ConfigureAwait(false))
             {
                 await Task.Delay(10).ConfigureAwait(false);
@@ -100,7 +102,6 @@ namespace Silverback.Messaging.Broker.Mqtt
             _readCancellationTokenSource.Dispose();
         }
 
-        // TODO: Does backpressure limit make sense for MQTT? Will it push multiple messages?
         private static Channel<ConsumedApplicationMessage> CreateBoundedChannel() =>
             Channel.CreateBounded<ConsumedApplicationMessage>(10);
 
@@ -119,7 +120,9 @@ namespace Silverback.Messaging.Broker.Mqtt
             catch (OperationCanceledException)
             {
                 // Ignore
-                _logger.LogConsumerLowLevelTrace(Consumer, "Exiting channel processing loop (operation canceled).");
+                _logger.LogConsumerLowLevelTrace(
+                    Consumer,
+                    "Exiting channel processing loop (operation canceled).");
             }
             catch (Exception ex)
             {

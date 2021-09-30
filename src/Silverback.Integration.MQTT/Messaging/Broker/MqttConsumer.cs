@@ -2,11 +2,11 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using MQTTnet;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
@@ -23,9 +23,10 @@ namespace Silverback.Messaging.Broker
 
         private readonly IInboundLogger<MqttConsumer> _logger;
 
-        private ConsumerChannelManager? _channelManager;
+        private readonly ConcurrentDictionary<string, ConsumedApplicationMessage> _inProcessingMessages =
+            new();
 
-        private ConsumedApplicationMessage? _inProcessingMessage;
+        private ConsumerChannelManager? _channelManager;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttConsumer" /> class.
@@ -68,7 +69,9 @@ namespace Silverback.Messaging.Broker
 
             headers.AddIfNotExists(DefaultMessageHeaders.MessageId, message.Id);
 
-            _inProcessingMessage = message;
+            // If another message is still pending, cancel it's task (might happen in case of timeout)
+            if (!_inProcessingMessages.TryAdd(message.Id, message))
+                throw new InvalidOperationException("The message has been processed already.");
 
             await HandleMessageAsync(
                     message.ApplicationMessage.Payload,
@@ -155,20 +158,12 @@ namespace Silverback.Messaging.Broker
         {
             Check.NotNull(brokerMessageIdentifiers, nameof(brokerMessageIdentifiers));
 
-            var messageId = brokerMessageIdentifiers.Single().MessageId;
+            string messageId = brokerMessageIdentifiers.Single().MessageId;
 
-            if (_inProcessingMessage == null)
+            if (!_inProcessingMessages.TryRemove(messageId, out var message))
                 return Task.CompletedTask;
 
-            if (messageId != _inProcessingMessage.Id)
-            {
-                throw new InvalidOperationException(
-                    "The committed message doesn't match with the current in processing message.");
-            }
-
-            _inProcessingMessage.TaskCompletionSource.SetResult(isSuccess);
-            _inProcessingMessage = null;
-
+            message.TaskCompletionSource.SetResult(isSuccess);
             return Task.CompletedTask;
         }
     }

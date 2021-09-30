@@ -23,7 +23,8 @@ namespace Silverback.Diagnostics
             "Consuming message '{messageId}' from topic '{topic}'.");
 
         /// <summary>
-        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while connecting to the MQTT broker.
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while
+        ///     connecting to the MQTT broker.
         /// </summary>
         public static LogEvent ConnectError { get; } = new(
             LogLevel.Warning,
@@ -31,7 +32,8 @@ namespace Silverback.Diagnostics
             "Error occurred connecting to the MQTT broker. | clientId: {clientId}");
 
         /// <summary>
-        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while retrying to connect to the MQTT broker.
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an error occurs while retrying
+        ///     to connect to the MQTT broker.
         /// </summary>
         public static LogEvent ConnectRetryError { get; } = new(
             LogLevel.Debug,
@@ -39,7 +41,8 @@ namespace Silverback.Diagnostics
             "Error occurred retrying to connect to the MQTT broker. | clientId: {clientId}");
 
         /// <summary>
-        ///     Gets the <see cref="LogEvent" /> representing the log that is written when the connection to the MQTT broker is lost.
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when the connection to the MQTT
+        ///     broker is lost.
         /// </summary>
         public static LogEvent ConnectionLost { get; } = new(
             LogLevel.Warning,

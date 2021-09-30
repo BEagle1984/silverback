@@ -614,5 +614,5 @@ resharper_web_config_module_not_resolved_highlighting = warning
 resharper_web_config_type_not_resolved_highlighting = warning
 resharper_web_config_wrong_module_highlighting = warning
 
-[*.{csproj,props,yml}]
+[*.{csproj,props,yml,yaml}]
 indent_size = 2

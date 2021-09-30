@@ -46,6 +46,7 @@ namespace Silverback.Messaging
 
         /// <summary>
         ///     Gets or sets the quality of service level (at most once, at least once or exactly once).
+        ///     The default is <see cref="MqttQualityOfServiceLevel.AtMostOnce" />.
         /// </summary>
         public MqttQualityOfServiceLevel QualityOfServiceLevel { get; set; }
 
