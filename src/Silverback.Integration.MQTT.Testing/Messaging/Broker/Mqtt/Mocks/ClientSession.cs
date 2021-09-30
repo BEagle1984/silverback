@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using MQTTnet;
 using MQTTnet.Client.Options;
 using MQTTnet.Client.Receiving;
+using MQTTnet.Protocol;
 using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Mqtt.Mocks
@@ -116,17 +117,21 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                var message = await _channel.Reader.ReadAsync(cancellationToken)
-                    .ConfigureAwait(false);
+                MqttApplicationMessage message =
+                    await _channel.Reader.ReadAsync(cancellationToken).ConfigureAwait(false);
 
                 var eventArgs = new MqttApplicationMessageReceivedEventArgs(
                     ClientOptions.ClientId,
                     message);
 
-                await _messageHandler.HandleApplicationMessageReceivedAsync(eventArgs)
-                    .ConfigureAwait(false);
+                Task messageHandlingTask =
+                    _messageHandler.HandleApplicationMessageReceivedAsync(eventArgs)
+                        .ContinueWith(
+                            _ => Interlocked.Decrement(ref _pendingMessagesCount),
+                            TaskScheduler.Default);
 
-                Interlocked.Decrement(ref _pendingMessagesCount);
+                if (message.QualityOfServiceLevel > MqttQualityOfServiceLevel.AtMostOnce)
+                    await messageHandlingTask.ConfigureAwait(false);
             }
         }
 

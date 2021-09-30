@@ -62,7 +62,7 @@ services:
   ### MQTT (emqx)
   mqtt:
     container_name: s8k-mqtt-emqx
-    image: emqx/emqx
+    image: emqx/emqx:4.2.14  # Fixed version because of crash at startup, probably related to https://github.com/emqx/emqx/issues/3996
     ports:
       - "1883:1883"
       - "9001:9001"
