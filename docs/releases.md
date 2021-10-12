@@ -4,6 +4,13 @@ uid: releases
 
 # Releases
 
+## [3.5.0](https://github.com/BEagle1984/silverback/releases/tag/v3.4.0)
+
+### What's new
+
+* Update several dependencies
+* Upgrade to [RabbitMQ.Client 6.2.2](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.2.2)
+
 ## [3.4.1-beta.3](https://github.com/BEagle1984/silverback/releases/tag/v3.4.1-beta.3)
 
 ### Fixes
