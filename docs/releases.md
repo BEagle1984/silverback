@@ -9,6 +9,7 @@ uid: releases
 ### What's new
 
 * Update several dependencies
+* Upgrade to [MQTTnet 3.0.16](https://github.com/chkr1011/MQTTnet/releases/tag/v3.0.16)
 * Upgrade to [RabbitMQ.Client 6.2.2](https://github.com/rabbitmq/rabbitmq-dotnet-client/releases/tag/v6.2.2)
 
 ## [3.4.1-beta.3](https://github.com/BEagle1984/silverback/releases/tag/v3.4.1-beta.3)
