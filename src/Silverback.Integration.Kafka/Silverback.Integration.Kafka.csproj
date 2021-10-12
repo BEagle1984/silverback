@@ -31,7 +31,7 @@ This package contains an implementation of Silverback.Integration for the popula
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="1.7.0" />
+    <PackageReference Include="Confluent.Kafka" Version="1.8.1" />
   </ItemGroup>
 
   <ItemGroup>
