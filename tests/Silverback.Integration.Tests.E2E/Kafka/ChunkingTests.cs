@@ -197,7 +197,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 envelope => envelope.Message.Should().BeOfType<BinaryFileMessage>());
 
             receivedFiles.Should().HaveCount(2);
-            receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
+            receivedFiles.Should().BeEquivalentTo(
+                new[]
+                {
+                    message1.Content.ReReadAll(),
+                    message2.Content.ReReadAll()
+                });
         }
 
         [Fact]
@@ -841,7 +846,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             Helper.Spy.InboundEnvelopes.Should().HaveCount(4);
             receivedFiles.Should().HaveCount(2);
-            receivedFiles.Should().BeEquivalentTo(rawMessage1, rawMessage2);
+            receivedFiles.Should().BeEquivalentTo(new[] { rawMessage1, rawMessage2 });
 
             DefaultTopic.GetCommittedOffsetsCount("consumer1").Should().Be(10);
 
@@ -2343,7 +2348,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             receivedFilesCount.Should().Be(3);
             receivedFiles.Should().HaveCount(3);
-            receivedFiles.Should().BeEquivalentTo(rawMessage1, rawMessage2, rawMessage3);
+            receivedFiles.Should().BeEquivalentTo(new[] { rawMessage1, rawMessage2, rawMessage3 });
         }
 
         [Fact]

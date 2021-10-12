@@ -701,7 +701,7 @@ namespace Silverback.Tests.Integration.Diagnostics
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public void ExecuteAndTraceConsumerActionAsync_EnterAndExitLogged(bool mustFail)
+        public async Task ExecuteAndTraceConsumerActionAsync_EnterAndExitLogged(bool mustFail)
         {
             var consumer = _serviceProvider.GetRequiredService<TestBroker>()
                 .AddConsumer(TestConsumerEndpoint.GetDefault());
@@ -726,9 +726,9 @@ namespace Silverback.Tests.Integration.Diagnostics
                 () => new object[] { "A", 42, true });
 
             if (mustFail)
-                act.Should().Throw<InvalidCastException>();
+                await act.Should().ThrowAsync<InvalidCastException>();
             else
-                act.Should().NotThrow();
+                await act.Should().NotThrowAsync();
 
             _loggerSubstitute.Received(
                 LogLevel.Trace,
@@ -742,7 +742,7 @@ namespace Silverback.Tests.Integration.Diagnostics
         [Theory]
         [InlineData(true)]
         [InlineData(false)]
-        public void ExecuteAndTraceConsumerActionAsync_EnterAndSuccessOrErrorLogged(bool mustFail)
+        public async Task ExecuteAndTraceConsumerActionAsync_EnterAndSuccessOrErrorLogged(bool mustFail)
         {
             var consumer = _serviceProvider.GetRequiredService<TestBroker>()
                 .AddConsumer(TestConsumerEndpoint.GetDefault());
@@ -769,9 +769,9 @@ namespace Silverback.Tests.Integration.Diagnostics
                 () => new object[] { "A", 42, true });
 
             if (mustFail)
-                act.Should().Throw<InvalidCastException>();
+                await act.Should().ThrowAsync<InvalidCastException>();
             else
-                act.Should().NotThrow();
+                await act.Should().NotThrowAsync();
 
             _loggerSubstitute.Received(
                 LogLevel.Trace,

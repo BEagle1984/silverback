@@ -334,7 +334,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             Func<Task> act = async () => await await Task.WhenAny(tasks);
 
-            act.Should().Throw<TargetInvocationException>();
+            await act.Should().ThrowAsync<TargetInvocationException>();
         }
 
         [Fact]
@@ -374,7 +374,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 
             Func<Task> act = async () => await await Task.WhenAny(tasks);
 
-            act.Should().Throw<TargetInvocationException>();
+            await act.Should().ThrowAsync<TargetInvocationException>();
         }
 
         [Fact]

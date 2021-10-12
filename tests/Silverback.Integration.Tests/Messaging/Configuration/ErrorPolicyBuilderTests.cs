@@ -33,7 +33,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             policy.Should().BeOfType<StopConsumerErrorPolicy>();
             policy.As<StopConsumerErrorPolicy>().ExcludedExceptions.Should()
-                .BeEquivalentTo(typeof(InvalidOperationException));
+                .BeEquivalentTo(new[] { typeof(InvalidOperationException) });
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
 
             policy.Should().BeOfType<SkipMessageErrorPolicy>();
             policy.As<SkipMessageErrorPolicy>().IncludedExceptions.Should()
-                .BeEquivalentTo(typeof(TimeoutException));
+                .BeEquivalentTo(new[] { typeof(TimeoutException) });
         }
 
         [Fact]

@@ -219,7 +219,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
             await repo.StoreAsync(person);
             Func<Task> act = async () => await repo.StoreAsync(person2);
 
-            act.Should().Throw<EventStoreConcurrencyException>();
+            await act.Should().ThrowAsync<EventStoreConcurrencyException>();
         }
 
         [Fact]
@@ -427,7 +427,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
         }
 
         [Fact]
-        public void RemoveAsync_NonExistingEntity_ExceptionThrown()
+        public async Task RemoveAsync_NonExistingEntity_ExceptionThrown()
         {
             var repo = new PersonInMemoryEventStoreRepository();
 
@@ -435,7 +435,7 @@ namespace Silverback.Tests.EventSourcing.EventStore
 
             Func<Task> act = () => repo.RemoveAsync(entity);
 
-            act.Should().Throw<EventStoreNotFoundException>();
+            await act.Should().ThrowAsync<EventStoreNotFoundException>();
         }
     }
 }

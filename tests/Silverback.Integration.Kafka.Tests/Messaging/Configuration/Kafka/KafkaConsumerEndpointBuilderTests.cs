@@ -91,7 +91,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             endpoint.Name.Should().Be("topic");
             endpoint.Names.Should().BeEquivalentTo("topic");
             endpoint.TopicPartitions.Should().BeEquivalentTo(
-                new TopicPartitionOffset("topic", 2, Offset.Unset));
+                new[] { new TopicPartitionOffset("topic", 2, Offset.Unset) });
         }
 
         [Fact]
@@ -113,10 +113,13 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             endpoint.Name.Should().Be("[topic1,topic2]");
             endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
             endpoint.TopicPartitions.Should().BeEquivalentTo(
-                new TopicPartitionOffset("topic1", 0, Offset.Unset),
-                new TopicPartitionOffset("topic1", 1, Offset.Unset),
-                new TopicPartitionOffset("topic2", 2, Offset.Unset),
-                new TopicPartitionOffset("topic2", 3, Offset.Unset));
+                new[]
+                {
+                    new TopicPartitionOffset("topic1", 0, Offset.Unset),
+                    new TopicPartitionOffset("topic1", 1, Offset.Unset),
+                    new TopicPartitionOffset("topic2", 2, Offset.Unset),
+                    new TopicPartitionOffset("topic2", 3, Offset.Unset)
+                });
         }
 
         [Fact]
@@ -138,10 +141,13 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             endpoint.Name.Should().Be("[topic1,topic2]");
             endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
             endpoint.TopicPartitions.Should().BeEquivalentTo(
-                new TopicPartitionOffset("topic1", 0, Offset.Beginning),
-                new TopicPartitionOffset("topic1", 1, Offset.End),
-                new TopicPartitionOffset("topic2", 2, 42),
-                new TopicPartitionOffset("topic2", 3, Offset.Unset));
+                new[]
+                {
+                    new TopicPartitionOffset("topic1", 0, Offset.Beginning),
+                    new TopicPartitionOffset("topic1", 1, Offset.End),
+                    new TopicPartitionOffset("topic2", 2, 42),
+                    new TopicPartitionOffset("topic2", 3, Offset.Unset)
+                });
         }
 
         [Fact]

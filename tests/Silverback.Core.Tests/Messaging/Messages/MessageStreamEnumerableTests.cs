@@ -272,17 +272,17 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await stream.CompleteAsync();
 
             Func<Task> act = async () => await stream.PushAsync(new PushedMessage(1, 1));
-            act.Should().Throw<InvalidOperationException>();
+            await act.Should().ThrowAsync<InvalidOperationException>();
         }
 
         [Fact]
-        public void Dispose_TryPushingAfterDispose_ExceptionThrown()
+        public async Task Dispose_TryPushingAfterDispose_ExceptionThrown()
         {
             var stream = new MessageStreamEnumerable<int>();
             stream.Dispose();
 
             Func<Task> act = async () => await stream.PushAsync(new PushedMessage(1, 1));
-            act.Should().Throw<InvalidOperationException>();
+            await act.Should().ThrowAsync<InvalidOperationException>();
         }
     }
 }

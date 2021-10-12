@@ -283,7 +283,12 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
             Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
 
             receivedFiles.Should().HaveCount(2);
-            receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
+            receivedFiles.Should().BeEquivalentTo(
+                new[]
+                {
+                    message1.Content.ReReadAll(),
+                    message2.Content.ReReadAll()
+                });
         }
     }
 }

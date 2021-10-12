@@ -111,7 +111,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 await service.GetDisconnectedConsumersAsync(ConsumerStatus.Ready, TimeSpan.Zero, null);
 
             result.Should().HaveCount(2);
-            result.Should().BeEquivalentTo(_connectedConsumer, _disconnectedConsumer);
+            result.Should().BeEquivalentTo(new[] { _connectedConsumer, _disconnectedConsumer });
         }
 
         [Fact]
@@ -219,7 +219,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 null);
 
             result.Should().HaveCount(1);
-            result.Should().BeEquivalentTo(consumer);
+            result.Should().BeEquivalentTo(new[] { consumer });
         }
 
         [Fact]
@@ -253,7 +253,7 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                     null);
 
             result.Should().HaveCount(1);
-            result.Should().BeEquivalentTo(consumer);
+            result.Should().BeEquivalentTo(new[] { consumer });
         }
 
         [Fact]
@@ -285,9 +285,9 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                     endpoint => endpoint.Name == "topic1");
 
             result1.Should().HaveCount(2);
-            result1.Should().BeEquivalentTo(_disconnectedConsumer, _connectedConsumer);
+            result1.Should().BeEquivalentTo(new[] { _disconnectedConsumer, _connectedConsumer });
             result2.Should().HaveCount(1);
-            result2.Should().BeEquivalentTo(_disconnectedConsumer);
+            result2.Should().BeEquivalentTo(new[] { _disconnectedConsumer });
         }
     }
 }

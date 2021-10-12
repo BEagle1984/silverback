@@ -349,8 +349,11 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
 
             var config = builder.Build();
             config.UserProperties.Should().BeEquivalentTo(
-                new MqttUserProperty("prop1", "value1"),
-                new MqttUserProperty("prop2", "value2"));
+                new[]
+                {
+                    new MqttUserProperty("prop1", "value1"),
+                    new MqttUserProperty("prop2", "value2")
+                });
         }
 
         [Fact]

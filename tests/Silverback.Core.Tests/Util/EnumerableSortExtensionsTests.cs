@@ -26,12 +26,15 @@ namespace Silverback.Tests.Core.Util
             var sorted = items.SortBySortIndex();
 
             sorted.Should().BeEquivalentTo(
-                new SortedItem(-100),
-                new SortedItem(-50),
-                new Item("unsorted3"),
-                new Item("unsorted2"),
-                new SortedItem(50),
-                new SortedItem(100));
+                new[]
+                {
+                    new SortedItem(-100),
+                    new SortedItem(-50),
+                    new Item("unsorted3"),
+                    new Item("unsorted2"),
+                    new SortedItem(50),
+                    new SortedItem(100)
+                });
         }
 
         private class Item

@@ -249,10 +249,6 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.GetSequenceStore(IBrokerMessageIdentifier)" />
-        [SuppressMessage(
-            "ReSharper",
-            "InconsistentlySynchronizedField",
-            Justification = "Sync start/stop only")]
         protected override ISequenceStore GetSequenceStore(KafkaOffset brokerMessageIdentifier)
         {
             Check.NotNull(brokerMessageIdentifier, nameof(brokerMessageIdentifier));
@@ -291,10 +287,7 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        [SuppressMessage(
-            "ReSharper",
-            "InconsistentlySynchronizedField",
-            Justification = "Sync start/stop only")]
+        [SuppressMessage("", "VSTHRD110", Justification = "stopping tasks awaited in Restart method")]
         protected override Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
             var latestTopicPartitionOffsets =
@@ -456,15 +449,11 @@ namespace Silverback.Messaging.Broker
         {
             lock (_channelsLock)
             {
-                _consumeLoopHandler?.StopAsync();
-                _channelsManager?.StopReadingAsync();
+                _consumeLoopHandler?.StopAsync().FireAndForget();
+                _channelsManager?.StopReadingAsync().FireAndForget();
             }
         }
 
-        [SuppressMessage(
-            "ReSharper",
-            "InconsistentlySynchronizedField",
-            Justification = "Sync start/stop only")]
         [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Synchronously called")]
         private async Task WaitUntilConsumeLoopHandlerStopsAsync()
         {
@@ -496,10 +485,6 @@ namespace Silverback.Messaging.Broker
             _consumeLoopHandler = null;
         }
 
-        [SuppressMessage(
-            "ReSharper",
-            "InconsistentlySynchronizedField",
-            Justification = "Sync start/stop only")]
         private async Task WaitUntilChannelsManagerStopsAsync()
         {
             if (_channelsManager == null)

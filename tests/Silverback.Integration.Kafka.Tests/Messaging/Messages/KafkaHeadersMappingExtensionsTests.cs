@@ -23,8 +23,11 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             var confluentHeaders = headers.ToConfluentHeaders();
 
             confluentHeaders.Should().BeEquivalentTo(
-                new Header("one", Encoding.UTF8.GetBytes("1")),
-                new Header("two", Encoding.UTF8.GetBytes("2")));
+                new[]
+                {
+                    new Header("one", Encoding.UTF8.GetBytes("1")),
+                    new Header("two", Encoding.UTF8.GetBytes("2"))
+                });
         }
 
         [Fact]
@@ -40,8 +43,11 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             var confluentHeaders = headers.ToConfluentHeaders();
 
             confluentHeaders.Should().BeEquivalentTo(
-                new Header("one", Encoding.UTF8.GetBytes("1")),
-                new Header("two", Encoding.UTF8.GetBytes("2")));
+                new[]
+                {
+                    new Header("one", Encoding.UTF8.GetBytes("1")),
+                    new Header("two", Encoding.UTF8.GetBytes("2"))
+                });
         }
 
         [Fact]
@@ -57,8 +63,11 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
             var confluentHeaders = headers.ToConfluentHeaders();
 
             confluentHeaders.Should().BeEquivalentTo(
-                new Header("one", Encoding.UTF8.GetBytes("1")),
-                new Header("two", Encoding.UTF8.GetBytes("2")));
+                new[]
+                {
+                    new Header("one", Encoding.UTF8.GetBytes("1")),
+                    new Header("two", Encoding.UTF8.GetBytes("2"))
+                });
         }
     }
 }

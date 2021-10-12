@@ -25,7 +25,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Enrichers
             enricher.Enrich(envelope);
 
             envelope.Headers.Should().HaveCount(1);
-            envelope.Headers.Should().BeEquivalentTo(new MessageHeader("x-test", "value"));
+            envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "value") });
         }
 
         [Fact]
@@ -44,7 +44,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Enrichers
             enricher.Enrich(envelope);
 
             envelope.Headers.Should().HaveCount(1);
-            envelope.Headers.Should().BeEquivalentTo(new MessageHeader("x-test", "value"));
+            envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "value") });
         }
 
         [Fact]
@@ -110,7 +110,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Enrichers
             enricher.Enrich(envelope);
 
             envelope.Headers.Should().HaveCount(1);
-            envelope.Headers.Should().BeEquivalentTo(new MessageHeader("x-test", "content"));
+            envelope.Headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-test", "content") });
         }
     }
 }

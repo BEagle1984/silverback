@@ -26,12 +26,15 @@ namespace Silverback.Tests.Integration.Messaging.Headers
             var result = HeaderAttributeHelper.GetHeaders(message);
 
             result.Should().BeEquivalentTo(
-                new MessageHeader("x-string", "string1"),
-                new MessageHeader("x-string-default", "string2"),
-                new MessageHeader("x-readonly-string", "readonly"),
-                new MessageHeader("x-int", "1"),
-                new MessageHeader("x-int-default", "2"),
-                new MessageHeader("x-readonly-int", "42"));
+                new[]
+                {
+                    new MessageHeader("x-string", "string1"),
+                    new MessageHeader("x-string-default", "string2"),
+                    new MessageHeader("x-readonly-string", "readonly"),
+                    new MessageHeader("x-int", "1"),
+                    new MessageHeader("x-int-default", "2"),
+                    new MessageHeader("x-readonly-int", "42")
+                });
         }
 
         [Fact]

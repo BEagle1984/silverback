@@ -151,7 +151,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var result = await new BinaryFileMessageSerializer()
                 .SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
-            result.Should().BeEquivalentTo(message.Content);
+            result.Should().BeSameAs(message.Content);
         }
 
         [Fact]
@@ -166,11 +166,11 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             var result = await new BinaryFileMessageSerializer()
                 .SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
-            result.Should().BeEquivalentTo(message.Content);
+            result.Should().BeSameAs(message.Content);
         }
 
         [Fact]
-        public void SerializeAsync_NonBinaryFileMessage_ExceptionThrown()
+        public async Task SerializeAsync_NonBinaryFileMessage_ExceptionThrown()
         {
             var message = new TestEventOne
             {
@@ -181,7 +181,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             Func<Task> act = async () => await new BinaryFileMessageSerializer()
                 .SerializeAsync(message, headers, MessageSerializationContext.Empty);
 
-            act.Should().Throw<ArgumentException>();
+            await act.Should().ThrowAsync<ArgumentException>();
         }
 
         [Fact]
@@ -345,7 +345,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         }
 
         [Fact]
-        public void DeserializeAsync_BadTypeHeader_ExceptionThrown()
+        public async Task DeserializeAsync_BadTypeHeader_ExceptionThrown()
         {
             var rawContent = new MemoryStream(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 });
             var headers = new MessageHeaderCollection
@@ -360,7 +360,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             Func<Task> act = async () => await serializer
                 .DeserializeAsync(rawContent, headers, MessageSerializationContext.Empty);
 
-            act.Should().Throw<TypeLoadException>();
+            await act.Should().ThrowAsync<TypeLoadException>();
         }
 
         private sealed class InheritedBinaryFileMessage : BinaryFileMessage

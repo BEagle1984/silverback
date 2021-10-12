@@ -33,7 +33,7 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         {
             var result = await _publisher.ExecuteAsync(new TestQuery());
 
-            result.Should().BeEquivalentTo(1, 2, 3);
+            result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
         }
 
         [Fact]
@@ -41,15 +41,15 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         {
             var result = _publisher.Execute(new TestQuery());
 
-            result.Should().BeEquivalentTo(1, 2, 3);
+            result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
         }
 
         [Fact]
-        public void ExecuteAsync_UnhandledQuery_ExceptionThrown()
+        public async Task ExecuteAsync_UnhandledQuery_ExceptionThrown()
         {
             Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledQuery(), true);
 
-            act.Should().Throw<UnhandledMessageException>();
+            await act.Should().ThrowAsync<UnhandledMessageException>();
         }
 
         [Fact]

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Silverback.Messaging.Broker;
 
@@ -64,7 +63,6 @@ namespace Silverback.Tests.Types
 
         public string ToVerboseLogString() => $"{Key}@{Value}";
 
-        [SuppressMessage("", "CA1508", Justification = "False positive: is TestOffset")]
         public bool Equals(IBrokerMessageIdentifier? other)
         {
             if (ReferenceEquals(this, other))

@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -166,6 +167,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             CancellationToken cancellationToken) => Task.CompletedTask;
 
         /// <inheritdoc cref="IMqttApplicationMessageReceivedHandler.HandleApplicationMessageReceivedAsync" />
+        [SuppressMessage("", "VSTHRD110", Justification = "False positive: the task is returned")]
         public Task HandleApplicationMessageReceivedAsync(
             MqttApplicationMessageReceivedEventArgs eventArgs) =>
             ApplicationMessageReceivedHandler?.HandleApplicationMessageReceivedAsync(eventArgs) ??

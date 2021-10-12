@@ -47,11 +47,11 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         }
 
         [Fact]
-        public void PublishAsync_UnhandledEvent_ExceptionThrown()
+        public async Task PublishAsync_UnhandledEvent_ExceptionThrown()
         {
             Func<Task> act = () => _publisher.PublishAsync(new UnhandledEvent(), true);
 
-            act.Should().Throw<UnhandledMessageException>();
+            await act.Should().ThrowAsync<UnhandledMessageException>();
         }
 
         [Fact]

@@ -143,7 +143,7 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
         }
 
         [Fact]
-        public void DeserializeAsync_MissingTypeHeader_ExceptionThrown()
+        public async Task DeserializeAsync_MissingTypeHeader_ExceptionThrown()
         {
             var serializer = new NewtonsoftJsonMessageSerializer();
             var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
@@ -152,11 +152,11 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
             Func<Task> act = async () => await serializer
                 .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
 
-            act.Should().Throw<MessageSerializerException>();
+            await act.Should().ThrowAsync<MessageSerializerException>();
         }
 
         [Fact]
-        public void DeserializeAsync_BadTypeHeader_ExceptionThrown()
+        public async Task DeserializeAsync_BadTypeHeader_ExceptionThrown()
         {
             var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
             var headers = new MessageHeaderCollection
@@ -171,7 +171,7 @@ namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
             Func<Task> act = async () => await serializer
                 .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
 
-            act.Should().Throw<TypeLoadException>();
+            await act.Should().ThrowAsync<TypeLoadException>();
         }
 
         [Fact]

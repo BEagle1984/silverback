@@ -105,7 +105,8 @@ namespace Silverback.Tests.EventSourcing.Domain
             person.ChangePhoneNumber("3");
 
             person.GetNewEvents().Should().HaveCount(3);
-            person.GetNewEvents().Select(e => e.Timestamp).ToList().ForEach(t => t.Should().BeAfter(now));
+            person.GetNewEvents().Select(entityEvent => entityEvent.Timestamp).ToList()
+                .ForEach(timestamp => timestamp.Should().BeAfter(now));
         }
 
         [Fact]
@@ -117,7 +118,8 @@ namespace Silverback.Tests.EventSourcing.Domain
             person.ChangePhoneNumber("2");
             person.ChangePhoneNumber("3");
 
-            person.GetNewEvents().Select(e => e.Sequence).Should().BeEquivalentTo(1, 2, 3);
+            person.GetNewEvents().Select(entityEvent => entityEvent.Sequence)
+                .Should().BeEquivalentTo(new[] { 1, 2, 3 });
         }
 
         [Fact]
@@ -129,13 +131,16 @@ namespace Silverback.Tests.EventSourcing.Domain
             person.MergeEvents(
                 new IEntityEvent[]
                 {
-                    new PhoneNumberChangedEvent { NewPhoneNumber = "1", Timestamp = DateTime.Now.AddDays(-3) },
-                    new PhoneNumberChangedEvent { NewPhoneNumber = "2", Timestamp = DateTime.Now.AddDays(-2) },
+                    new PhoneNumberChangedEvent
+                        { NewPhoneNumber = "1", Timestamp = DateTime.Now.AddDays(-3) },
+                    new PhoneNumberChangedEvent
+                        { NewPhoneNumber = "2", Timestamp = DateTime.Now.AddDays(-2) },
                     new PhoneNumberChangedEvent { NewPhoneNumber = "3", Timestamp = DateTime.Now.AddDays(-1) }
                 });
 
             person.GetNewEvents().Should().HaveCount(3);
-            person.GetNewEvents().Select(e => e.Timestamp).ToList().ForEach(t => t.Should().BeBefore(now));
+            person.GetNewEvents().Select(entityEvent => entityEvent.Timestamp).ToList()
+                .ForEach(timestamp => timestamp.Should().BeBefore(now));
         }
 
         [Fact]
@@ -151,7 +156,8 @@ namespace Silverback.Tests.EventSourcing.Domain
                     new PhoneNumberChangedEvent { NewPhoneNumber = "3", Sequence = 102 }
                 });
 
-            person.GetNewEvents().Select(e => e.Sequence).Should().BeEquivalentTo(100, 101, 102);
+            person.GetNewEvents().Select(entityEvent => entityEvent.Sequence)
+                .Should().BeEquivalentTo(new[] { 100, 101, 102 });
         }
 
         [Fact]
@@ -217,7 +223,8 @@ namespace Silverback.Tests.EventSourcing.Domain
             person.ChangePhoneNumber("4");
             person.ChangePhoneNumber("5");
 
-            person.GetNewEvents().Select(e => e.Sequence).Should().BeEquivalentTo(3, 4, 5);
+            person.GetNewEvents().Select(entityEvent => entityEvent.Sequence)
+                .Should().BeEquivalentTo(new[] { 3, 4, 5 });
         }
 
         [Fact]
@@ -262,8 +269,10 @@ namespace Silverback.Tests.EventSourcing.Domain
             person.MergeEvents(
                 new IEntityEvent[]
                 {
-                    new PhoneNumberChangedEvent { NewPhoneNumber = "1", Timestamp = DateTime.Now.AddDays(-3) },
-                    new PhoneNumberChangedEvent { NewPhoneNumber = "2", Timestamp = DateTime.Now.AddDays(-2) },
+                    new PhoneNumberChangedEvent
+                        { NewPhoneNumber = "1", Timestamp = DateTime.Now.AddDays(-3) },
+                    new PhoneNumberChangedEvent
+                        { NewPhoneNumber = "2", Timestamp = DateTime.Now.AddDays(-2) },
                     new PhoneNumberChangedEvent { NewPhoneNumber = "3", Timestamp = DateTime.Now.AddDays(-1) }
                 });
 

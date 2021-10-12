@@ -36,7 +36,6 @@ namespace Silverback.Messaging.Inbound.Transaction
 
         /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
         [SuppressMessage("", "CA2000", Justification = "ServiceScope is disposed with the Context")]
-        [SuppressMessage("", "CA1508", Justification = "False positive: is ISequenceImplementation")]
         public async Task HandleAsync(ConsumerPipelineContext context, ConsumerBehaviorHandler next)
         {
             Check.NotNull(context, nameof(context));

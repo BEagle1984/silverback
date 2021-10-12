@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Silverback.Messaging.Broker
@@ -67,7 +66,6 @@ namespace Silverback.Messaging.Broker
         public string ToVerboseLogString() => $"{Key}@{Value}";
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-        [SuppressMessage("", "CA1508", Justification = "False positive: is RabbitDeliveryTag")]
         public bool Equals(IBrokerMessageIdentifier? other)
         {
             if (ReferenceEquals(this, other))

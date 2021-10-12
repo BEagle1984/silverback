@@ -71,7 +71,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
         }
 
         [Fact]
-        public void HandleAsync_ExceptionThrown_ExceptionRethrown()
+        public async Task HandleAsync_ExceptionThrown_ExceptionRethrown()
         {
             var rawEnvelope = new RawInboundEnvelope(
                 new byte[5],
@@ -88,8 +88,8 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                     Substitute.For<IServiceProvider>()),
                 _ => throw new InvalidCastException());
 
-            act.Should().ThrowExactly<ConsumerPipelineFatalException>()
-                .WithInnerExceptionExactly<InvalidCastException>();
+            await act.Should().ThrowExactlyAsync<ConsumerPipelineFatalException>()
+                .WithInnerExceptionExactly<ConsumerPipelineFatalException, InvalidCastException>();
         }
     }
 }

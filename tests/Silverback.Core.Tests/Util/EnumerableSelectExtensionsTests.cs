@@ -18,7 +18,7 @@ namespace Silverback.Tests.Core.Util
 
             var result = enumerable.ParallelSelect(i => i * 2);
 
-            result.Should().BeEquivalentTo(2, 4, 6, 8, 10);
+            result.Should().BeEquivalentTo(new[] { 2, 4, 6, 8, 10 });
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace Silverback.Tests.Core.Util
 
             var result = await enumerable.ParallelSelectAsync(i => Task.FromResult(i * 2));
 
-            result.Should().BeEquivalentTo(2, 4, 6, 8, 10);
+            result.Should().BeEquivalentTo(new[] { 2, 4, 6, 8, 10 });
         }
 
         [Theory]
@@ -40,7 +40,7 @@ namespace Silverback.Tests.Core.Util
 
             var result = enumerable.Select(i => i * 2, parallel);
 
-            result.Should().BeEquivalentTo(2, 4, 6, 8, 10);
+            result.Should().BeEquivalentTo(new[] { 2, 4, 6, 8, 10 });
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace Silverback.Tests.Core.Util
 
             var result = await enumerable.SelectAsync(i => Task.FromResult(i * 2));
 
-            result.Should().BeEquivalentTo(2, 4, 6, 8, 10);
+            result.Should().BeEquivalentTo(new[] { 2, 4, 6, 8, 10 });
         }
 
         [Theory]
@@ -62,7 +62,7 @@ namespace Silverback.Tests.Core.Util
 
             var result = await enumerable.SelectAsync(i => Task.FromResult(i * 2), parallel);
 
-            result.Should().BeEquivalentTo(2, 4, 6, 8, 10);
+            result.Should().BeEquivalentTo(new[] { 2, 4, 6, 8, 10 });
         }
 
         [Fact]
@@ -70,9 +70,10 @@ namespace Silverback.Tests.Core.Util
         {
             var enumerable = Enumerable.Range(1, 5);
 
-            var result = await enumerable.SelectManyAsync(i => Task.FromResult(new[] { i, i }.AsEnumerable()));
+            var result =
+                await enumerable.SelectManyAsync(i => Task.FromResult(new[] { i, i }.AsEnumerable()));
 
-            result.Should().BeEquivalentTo(1, 1, 2, 2, 3, 3, 4, 4, 5, 5);
+            result.Should().BeEquivalentTo(new[] { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5 });
         }
 
         [Fact]
@@ -80,9 +81,10 @@ namespace Silverback.Tests.Core.Util
         {
             var enumerable = Enumerable.Range(1, 5);
 
-            var result = await enumerable.ParallelSelectManyAsync(i => Task.FromResult(new[] { i, i }.AsEnumerable()));
+            var result =
+                await enumerable.ParallelSelectManyAsync(i => Task.FromResult(new[] { i, i }.AsEnumerable()));
 
-            result.Should().BeEquivalentTo(1, 1, 2, 2, 3, 3, 4, 4, 5, 5);
+            result.Should().BeEquivalentTo(new[] { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5 });
         }
     }
 }

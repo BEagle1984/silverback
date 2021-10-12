@@ -93,9 +93,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             };
 
             collection.Should().BeEquivalentTo(
-                new MessageHeader("one", "1"),
-                new MessageHeader("two", "2"),
-                new MessageHeader("three", "3"));
+                new[]
+                {
+                    new MessageHeader("one", "1"),
+                    new MessageHeader("two", "2"),
+                    new MessageHeader("three", "3")
+                });
         }
 
         // This test is important because it ensures that we will not run into the
@@ -135,8 +138,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             collection.AddOrReplace("one", "1(2)");
 
             collection.Should().BeEquivalentTo(
-                new MessageHeader("one", "1(2)"),
-                new MessageHeader("two", "2"));
+                new[]
+                {
+                    new MessageHeader("one", "1(2)"),
+                    new MessageHeader("two", "2")
+                });
         }
 
         [Fact]
@@ -151,9 +157,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             collection.AddOrReplace("three", "3");
 
             collection.Should().BeEquivalentTo(
-                new MessageHeader("one", "1"),
-                new MessageHeader("two", "2"),
-                new MessageHeader("three", "3"));
+                new[]
+                {
+                    new MessageHeader("one", "1"),
+                    new MessageHeader("two", "2"),
+                    new MessageHeader("three", "3")
+                });
         }
 
         [Fact]
@@ -168,8 +177,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             collection.AddIfNotExists("one", "1(2)");
 
             collection.Should().BeEquivalentTo(
-                new MessageHeader("one", "1"),
-                new MessageHeader("two", "2"));
+                new[]
+                {
+                    new MessageHeader("one", "1"),
+                    new MessageHeader("two", "2")
+                });
         }
 
         [Fact]
@@ -184,9 +196,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             collection.AddIfNotExists("three", "3");
 
             collection.Should().BeEquivalentTo(
-                new MessageHeader("one", "1"),
-                new MessageHeader("two", "2"),
-                new MessageHeader("three", "3"));
+                new[]
+                {
+                    new MessageHeader("one", "1"),
+                    new MessageHeader("two", "2"),
+                    new MessageHeader("three", "3")
+                });
         }
 
         [Fact]
@@ -202,8 +217,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             collection.Remove("two");
 
             collection.Should().BeEquivalentTo(
-                new MessageHeader("one", "1"),
-                new MessageHeader("three", "3"));
+                new[]
+                {
+                    new MessageHeader("one", "1"),
+                    new MessageHeader("three", "3")
+                });
         }
 
         [Fact]
@@ -219,9 +237,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             collection.Remove("four");
 
             collection.Should().BeEquivalentTo(
-                new MessageHeader("one", "1"),
-                new MessageHeader("two", "2"),
-                new MessageHeader("three", "3"));
+                new[]
+                {
+                    new MessageHeader("one", "1"),
+                    new MessageHeader("two", "2"),
+                    new MessageHeader("three", "3")
+                });
         }
 
         [Fact]
@@ -237,8 +258,11 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             collection.Remove(new MessageHeader("two", "2"));
 
             collection.Should().BeEquivalentTo(
-                new MessageHeader("one", "1"),
-                new MessageHeader("three", "3"));
+                new[]
+                {
+                    new MessageHeader("one", "1"),
+                    new MessageHeader("three", "3")
+                });
         }
 
         [Fact]
@@ -254,9 +278,12 @@ namespace Silverback.Tests.Integration.Messaging.Messages
             collection.Remove(new MessageHeader("four", "4"));
 
             collection.Should().BeEquivalentTo(
-                new MessageHeader("one", "1"),
-                new MessageHeader("two", "2"),
-                new MessageHeader("three", "3"));
+                new[]
+                {
+                    new MessageHeader("one", "1"),
+                    new MessageHeader("two", "2"),
+                    new MessageHeader("three", "3")
+                });
         }
 
         // This test is important because it ensures that we will not run into the

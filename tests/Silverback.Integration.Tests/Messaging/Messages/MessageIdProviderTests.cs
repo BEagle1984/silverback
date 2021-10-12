@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.Messaging.Messages
 
             MessageIdProvider.EnsureMessageIdIsInitialized(headers);
 
-            headers.Should().BeEquivalentTo(new MessageHeader("x-message-id", "12345"));
+            headers.Should().BeEquivalentTo(new[] { new MessageHeader("x-message-id", "12345") });
         }
     }
 }

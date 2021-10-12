@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Confluent.Kafka;
 using Silverback.Util;
@@ -221,7 +220,6 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-        [SuppressMessage("", "CA1508", Justification = "False positive: is KafkaOffset")]
         public bool Equals(IBrokerMessageIdentifier? other)
         {
             if (ReferenceEquals(this, other))

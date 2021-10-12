@@ -39,8 +39,8 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             await Task.WhenAll(task1, task2);
 
-            eventsList.Should().BeEquivalentTo(new TestEventOne(), new TestEventTwo());
-            testEventOnesList.Should().BeEquivalentTo(new TestEventOne());
+            eventsList.Should().BeEquivalentTo(new TestEvent[] { new TestEventOne(), new TestEventTwo() });
+            testEventOnesList.Should().BeEquivalentTo(new[] { new TestEventOne() });
         }
 
         [Fact]
@@ -77,7 +77,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await provider.PushAsync(new TestEventOne());
             Func<Task> act = () => provider.PushAsync(new TestEventTwo());
 
-            act.Should().Throw<UnhandledMessageException>();
+            await act.Should().ThrowAsync<UnhandledMessageException>();
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await provider.PushAsync(new TestEventOne());
             Func<Task> act = () => provider.PushAsync(new TestEventTwo(), false);
 
-            act.Should().NotThrow();
+            await act.Should().NotThrowAsync();
         }
 
         [Fact]
@@ -136,8 +136,8 @@ namespace Silverback.Tests.Core.Messaging.Messages
 
             await Task.WhenAll(task1, task2);
 
-            eventsList.Should().BeEquivalentTo(new TestEventOne(), new TestEventTwo());
-            testEventOnesList.Should().BeEquivalentTo(new TestEventOne());
+            eventsList.Should().BeEquivalentTo(new TestEvent[] { new TestEventOne(), new TestEventTwo() });
+            testEventOnesList.Should().BeEquivalentTo(new[] { new TestEventOne() });
         }
 
         [Fact]
@@ -151,7 +151,7 @@ namespace Silverback.Tests.Core.Messaging.Messages
             await provider.PushAsync(new TestEnvelope(new TestEventOne()));
             Func<Task> act = () => provider.PushAsync(new TestEnvelope(new TestEventTwo()));
 
-            act.Should().Throw<UnhandledMessageException>();
+            await act.Should().ThrowAsync<UnhandledMessageException>();
         }
 
         [Fact]
@@ -311,7 +311,11 @@ namespace Silverback.Tests.Core.Messaging.Messages
             var provider = new MessageStreamProvider<int>();
             var stream = provider.CreateStream<int>();
 
-            var enumerationTask = Task.Run(() => { count = stream.Count(); });
+            var enumerationTask = Task.Run(
+                () =>
+                {
+                    count = stream.Count();
+                });
 
             await provider.PushAsync(1);
             await provider.PushAsync(2);
@@ -332,7 +336,11 @@ namespace Silverback.Tests.Core.Messaging.Messages
             var provider = new MessageStreamProvider<int>();
             var stream = provider.CreateStream<int>();
 
-            var enumerationTask = Task.Run(async () => { count = await stream.CountAsync(); });
+            var enumerationTask = Task.Run(
+                async () =>
+                {
+                    count = await stream.CountAsync();
+                });
 
             await provider.PushAsync(1);
             await provider.PushAsync(2);
@@ -353,7 +361,11 @@ namespace Silverback.Tests.Core.Messaging.Messages
             var provider = new MessageStreamProvider<int>();
             var stream = provider.CreateStream<int>();
 
-            var enumerationTask = Task.Run(() => { count = stream.Count(); });
+            var enumerationTask = Task.Run(
+                () =>
+                {
+                    count = stream.Count();
+                });
 
             await provider.PushAsync(1);
             await provider.PushAsync(2);
@@ -376,7 +388,11 @@ namespace Silverback.Tests.Core.Messaging.Messages
             var provider = new MessageStreamProvider<int>();
             var stream = provider.CreateStream<int>();
 
-            var enumerationTask = Task.Run(async () => { count = await stream.CountAsync(); });
+            var enumerationTask = Task.Run(
+                async () =>
+                {
+                    count = await stream.CountAsync();
+                });
 
             await provider.PushAsync(1);
             await provider.PushAsync(2);

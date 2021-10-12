@@ -40,7 +40,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 });
 
             result.Should().NotBeNull();
-            result!.RawMessage.Should().BeEquivalentTo(message.Content);
+            result!.RawMessage.Should().BeSameAs(message.Content);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 });
 
             result.Should().NotBeNull();
-            result!.RawMessage.Should().BeEquivalentTo(message.Content);
+            result!.RawMessage.Should().BeSameAs(message.Content);
         }
 
         [Fact]

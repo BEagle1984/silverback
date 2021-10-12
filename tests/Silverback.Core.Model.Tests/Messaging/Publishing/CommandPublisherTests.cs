@@ -53,7 +53,7 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         {
             var result = await _publisher.ExecuteAsync(new TestCommandWithResult());
 
-            result.Should().BeEquivalentTo(1, 2, 3);
+            result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
         }
 
         [Fact]
@@ -61,15 +61,15 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         {
             var result = _publisher.Execute(new TestCommandWithResult());
 
-            result.Should().BeEquivalentTo(1, 2, 3);
+            result.Should().BeEquivalentTo(new[] { 1, 2, 3 });
         }
 
         [Fact]
-        public void ExecuteAsync_UnhandledCommand_ExceptionThrown()
+        public async Task ExecuteAsync_UnhandledCommand_ExceptionThrown()
         {
             Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommand(), true);
 
-            act.Should().Throw<UnhandledMessageException>();
+            await act.Should().ThrowAsync<UnhandledMessageException>();
         }
 
         [Fact]
@@ -81,11 +81,11 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         }
 
         [Fact]
-        public void ExecuteAsync_UnhandledCommandWithResult_ExceptionThrown()
+        public async Task ExecuteAsync_UnhandledCommandWithResult_ExceptionThrown()
         {
             Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommandWithResult(), true);
 
-            act.Should().Throw<UnhandledMessageException>();
+            await act.Should().ThrowAsync<UnhandledMessageException>();
         }
 
         [Fact]

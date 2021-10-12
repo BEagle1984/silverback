@@ -3,9 +3,9 @@
 
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
@@ -73,7 +73,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Run(waitUntilBrokerConnected: false);
 
             var response = await Host.HttpClient.GetAsync("/health");
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
         [Fact]
@@ -127,12 +127,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Run(waitUntilBrokerConnected: false);
 
             var response = await Host.HttpClient.GetAsync("/health");
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             await Task.Delay(100);
 
             response = await Host.HttpClient.GetAsync("/health");
-            response.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+            response.StatusCode.Should().Be(HttpStatusCode.ServiceUnavailable);
         }
 
         [Fact]
@@ -201,16 +201,16 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 () => consumers.All(consumer => consumer.StatusInfo.Status > ConsumerStatus.Connected));
 
             var response = await Host.HttpClient.GetAsync("/health1");
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
             response = await Host.HttpClient.GetAsync("/health2");
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             await consumers[1].DisconnectAsync();
 
             response = await Host.HttpClient.GetAsync("/health1");
-            response.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+            response.StatusCode.Should().Be(HttpStatusCode.ServiceUnavailable);
             response = await Host.HttpClient.GetAsync("/health2");
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             await consumers[1].ConnectAsync();
             await AsyncTestingUtil.WaitAsync(
@@ -218,9 +218,9 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             await consumers[2].DisconnectAsync();
 
             response = await Host.HttpClient.GetAsync("/health1");
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
             response = await Host.HttpClient.GetAsync("/health2");
-            response.StatusCode.Should().Be(StatusCodes.Status503ServiceUnavailable);
+            response.StatusCode.Should().Be(HttpStatusCode.ServiceUnavailable);
         }
     }
 }

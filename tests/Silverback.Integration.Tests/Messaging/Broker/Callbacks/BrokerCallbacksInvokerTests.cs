@@ -283,7 +283,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker.Callbacks
         }
 
         [Fact]
-        public void InvokeAsync_HandlerThrows_BrokerCallbackHandlerInvocationExceptionThrown()
+        public async Task InvokeAsync_HandlerThrows_BrokerCallbackHandlerInvocationExceptionThrown()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
@@ -297,7 +297,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker.Callbacks
             Func<Task> act = () =>
                 invoker.InvokeAsync<ICallbackOneHandlerAsync>(handler => handler.HandleAsync());
 
-            act.Should().ThrowExactly<BrokerCallbackInvocationException>();
+            await act.Should().ThrowExactlyAsync<BrokerCallbackInvocationException>();
         }
 
         [Fact]

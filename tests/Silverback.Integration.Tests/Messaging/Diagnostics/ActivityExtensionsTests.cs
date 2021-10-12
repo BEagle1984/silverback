@@ -33,10 +33,13 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.AddBaggageRange(itemsToAdd);
 
             activity.Baggage.Should().BeEquivalentTo(
-                new KeyValuePair<string, string>("key0", "value0"),
-                new KeyValuePair<string, string>("key1", "value1"),
-                new KeyValuePair<string, string>("key2", "value2"),
-                new KeyValuePair<string, string>("key3", "value3"));
+                new[]
+                {
+                    new KeyValuePair<string, string>("key0", "value0"),
+                    new KeyValuePair<string, string>("key1", "value1"),
+                    new KeyValuePair<string, string>("key2", "value2"),
+                    new KeyValuePair<string, string>("key3", "value3")
+                });
         }
 
         [Fact]

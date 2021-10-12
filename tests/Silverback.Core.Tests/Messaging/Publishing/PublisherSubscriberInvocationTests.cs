@@ -149,7 +149,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public void PublishAsync_SubscriberThrows_ExceptionReturned()
+        public async Task PublishAsync_SubscriberThrows_ExceptionReturned()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
@@ -161,8 +161,8 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             Func<Task> act1 = async () => await publisher.PublishAsync(new TestEventOne());
             Func<Task> act2 = async () => await publisher.PublishAsync(new TestEventTwo());
 
-            act1.Should().Throw<TargetInvocationException>();
-            act2.Should().Throw<TargetInvocationException>();
+            await act1.Should().ThrowAsync<TargetInvocationException>();
+            await act2.Should().ThrowAsync<TargetInvocationException>();
         }
 
         [Fact]
@@ -179,7 +179,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             publisher.Publish(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandOne());
 
-            subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 2, 3, 4);
+            subscriber.Parallel.Steps.Should().BeEquivalentTo(new[] { 1, 2, 3, 4 });
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             publisher.Publish(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandOne());
 
-            subscriber.Parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
+            subscriber.Parallel.Steps.Should().BeEquivalentTo(new[] { 1, 1, 3, 3 });
         }
 
         [Fact]
@@ -217,7 +217,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             publisher.Publish(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandOne());
 
-            parallel.Steps.Should().BeEquivalentTo(1, 2, 3, 4);
+            parallel.Steps.Should().BeEquivalentTo(new[] { 1, 2, 3, 4 });
         }
 
         [Fact]
@@ -240,7 +240,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
             publisher.Publish(new TestCommandOne());
             await publisher.PublishAsync(new TestCommandOne());
 
-            parallel.Steps.Should().BeEquivalentTo(1, 1, 3, 3);
+            parallel.Steps.Should().BeEquivalentTo(new[] { 1, 1, 3, 3 });
         }
 
         [Fact]
@@ -280,54 +280,63 @@ namespace Silverback.Tests.Core.Messaging.Publishing
         }
 
         [Fact]
-        public void Publish_NotSubscribedMessageWithThrowIfUnhandled_ExceptionThrown()
+        public async Task Publish_NotSubscribedMessageWithThrowIfUnhandled_ExceptionThrown()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddFakeLogger()
                     .AddSilverback()
-                    .AddDelegateSubscriber((IEvent _) => { }));
+                    .AddDelegateSubscriber(
+                        (IEvent _) =>
+                        {
+                        }));
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
             Action actSync = () => publisher.Publish(new UnhandledMessage(), true);
             Func<Task> actAsync = () => publisher.PublishAsync(new UnhandledMessage(), true);
 
             actSync.Should().ThrowExactly<AggregateException>();
-            actAsync.Should().ThrowExactly<UnhandledMessageException>();
+            await actAsync.Should().ThrowExactlyAsync<UnhandledMessageException>();
         }
 
         [Fact]
-        public void Publish_SubscribedMessageWithThrowIfUnhandled_NoExceptionThrown()
+        public async Task Publish_SubscribedMessageWithThrowIfUnhandled_NoExceptionThrown()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddFakeLogger()
                     .AddSilverback()
-                    .AddDelegateSubscriber((IEvent _) => { }));
+                    .AddDelegateSubscriber(
+                        (IEvent _) =>
+                        {
+                        }));
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
             Action actSync = () => publisher.Publish(new TestEventOne(), true);
             Func<Task> actAsync = () => publisher.PublishAsync(new TestEventOne(), true);
 
             actSync.Should().NotThrow();
-            actAsync.Should().NotThrow();
+            await actAsync.Should().NotThrowAsync();
         }
 
         [Fact]
-        public void Publish_NotSubscribedMessageWithoutThrowIfUnhandled_NoExceptionThrown()
+        public async Task Publish_NotSubscribedMessageWithoutThrowIfUnhandled_NoExceptionThrown()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddFakeLogger()
                     .AddSilverback()
-                    .AddDelegateSubscriber((IEvent _) => { }));
+                    .AddDelegateSubscriber(
+                        (IEvent _) =>
+                        {
+                        }));
             var publisher = serviceProvider.GetRequiredService<IPublisher>();
 
             Action actSync = () => publisher.Publish(new UnhandledMessage());
             Func<Task> actAsync = () => publisher.PublishAsync(new UnhandledMessage());
 
             actSync.Should().NotThrow();
-            actAsync.Should().NotThrow();
+            await actAsync.Should().NotThrowAsync();
         }
     }
 }

@@ -404,7 +404,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.OutboundEnvelopes[1].RawMessage.Should().BeOfType<SymmetricEncryptStream>();
 
             receivedFiles.Should().HaveCount(2);
-            receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
+            receivedFiles.Should().BeEquivalentTo(
+                new[]
+                {
+                    message1.Content.ReReadAll(),
+                    message2.Content.ReReadAll()
+                });
         }
 
         [Fact]
@@ -498,7 +503,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             }
 
             receivedFiles.Should().HaveCount(2);
-            receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
+            receivedFiles.Should().BeEquivalentTo(
+                new[]
+                {
+                    message1.Content.ReReadAll(),
+                    message2.Content.ReReadAll()
+                });
         }
     }
 }

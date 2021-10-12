@@ -45,7 +45,6 @@ namespace Silverback.Testing
         }
 
         /// <inheritdoc cref="ITestingHelper{TBroker}.Broker" />
-        [SuppressMessage("", "CA1508", Justification = "False positive")]
         public TBroker Broker => _broker ?? throw new InvalidOperationException(
             $"No broker of type {typeof(TBroker).Name} could be resolved.");
 

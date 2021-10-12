@@ -14,7 +14,7 @@ namespace Silverback.Tests.Core.Util
     public class TaskExtensionsTests
     {
         [Fact]
-        public void CancelOnException_TasksWithoutReturnValue_CanceledAtFirstException()
+        public async Task CancelOnException_TasksWithoutReturnValue_CanceledAtFirstException()
         {
             bool success = false;
 
@@ -25,7 +25,7 @@ namespace Silverback.Tests.Core.Util
 
             Func<Task> act = () => Task.WhenAll(task1, task2);
 
-            act.Should().Throw<TestException>();
+            await act.Should().ThrowAsync<TestException>();
             success.Should().BeFalse();
 
             async Task SuccessTask(CancellationToken cancellationToken)
@@ -42,7 +42,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void CancelOnException_TasksWithReturnValue_CanceledAtFirstException()
+        public async Task CancelOnException_TasksWithReturnValue_CanceledAtFirstException()
         {
             bool success = false;
 
@@ -53,7 +53,7 @@ namespace Silverback.Tests.Core.Util
 
             Func<Task> act = () => Task.WhenAll(task1, task2);
 
-            act.Should().Throw<TestException>();
+            await act.Should().ThrowAsync<TestException>();
             success.Should().BeFalse();
 
             async Task<int> SuccessTask(CancellationToken cancellationToken)

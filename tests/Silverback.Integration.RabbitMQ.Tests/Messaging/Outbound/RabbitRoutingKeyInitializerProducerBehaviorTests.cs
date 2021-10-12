@@ -60,7 +60,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Outbound
         }
 
         [Fact]
-        public void HandleAsync_MultipleRoutingKeyAttributes_KeyHeaderIsSet()
+        public async Task HandleAsync_MultipleRoutingKeyAttributes_KeyHeaderIsSet()
         {
             var envelope = new OutboundEnvelope<MultipleRoutingKeyAttributesMessage>(
                 new MultipleRoutingKeyAttributesMessage
@@ -81,7 +81,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Outbound
                         Substitute.For<IServiceProvider>()),
                     _ => Task.CompletedTask);
 
-            act.Should().Throw<InvalidOperationException>();
+            await act.Should().ThrowAsync<InvalidOperationException>();
         }
     }
 }

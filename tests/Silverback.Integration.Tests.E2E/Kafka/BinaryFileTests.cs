@@ -66,8 +66,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                             .AddKafkaEndpoints(
                                 endpoints => endpoints
-                                    .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                    .AddOutbound<IBinaryFileMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                    .Configure(
+                                        config =>
+                                        {
+                                            config.BootstrapServers = "PLAINTEXT://e2e";
+                                        })
+                                    .AddOutbound<IBinaryFileMessage>(
+                                        endpoint => endpoint.ProduceTo(DefaultTopicName))
                                     .AddInbound(
                                         endpoint => endpoint
                                             .ConsumeFrom(DefaultTopicName)
@@ -75,7 +80,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                                 config =>
                                                 {
                                                     config.GroupId = "consumer1";
-                                                    })))
+                                                })))
                             .AddDelegateSubscriber(
                                 (BinaryFileMessage binaryFile) =>
                                 {
@@ -100,7 +105,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
             receivedFiles.Should().HaveCount(2);
-            receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
+            receivedFiles.Should().BeEquivalentTo(
+                new[]
+                {
+                    message1.Content.ReReadAll(),
+                    message2.Content.ReReadAll()
+                });
         }
 
         [Fact]
@@ -140,7 +150,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IBinaryFileMessage>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
@@ -171,7 +185,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
             receivedFiles.Should().HaveCount(2);
-            receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
+            receivedFiles.Should().BeEquivalentTo(
+                new[]
+                {
+                    message1.Content.ReReadAll(),
+                    message2.Content.ReReadAll()
+                });
         }
 
         [Fact]
@@ -211,7 +230,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IBinaryFileMessage>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
@@ -255,7 +278,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
             receivedFiles.Should().HaveCount(2);
-            receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
+            receivedFiles.Should().BeEquivalentTo(
+                new[]
+                {
+                    message1.Content.ReReadAll(),
+                    message2.Content.ReReadAll()
+                });
         }
 
         [Fact]
@@ -295,7 +323,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IBinaryFileMessage>(
                                     endpoint => endpoint
                                         .ProduceTo(DefaultTopicName)
@@ -341,7 +373,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
             receivedFiles.Should().HaveCount(2);
-            receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
+            receivedFiles.Should().BeEquivalentTo(
+                new[]
+                {
+                    message1.Content.ReReadAll(),
+                    message2.Content.ReReadAll()
+                });
         }
 
         [Fact]
@@ -383,8 +420,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IBinaryFileMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IBinaryFileMessage>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -427,7 +469,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
             receivedFiles.Should().HaveCount(2);
-            receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
+            receivedFiles.Should().BeEquivalentTo(
+                new[]
+                {
+                    message1.Content.ReReadAll(),
+                    message2.Content.ReReadAll()
+                });
         }
 
         [Fact]
@@ -469,8 +516,13 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
-                                .AddOutbound<IBinaryFileMessage>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .Configure(
+                                    config =>
+                                    {
+                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
+                                .AddOutbound<IBinaryFileMessage>(
+                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
@@ -515,7 +567,12 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Should().BeEquivalentTo("application/pdf", "text/plain");
 
             receivedFiles.Should().HaveCount(2);
-            receivedFiles.Should().BeEquivalentTo(message1.Content.ReReadAll(), message2.Content.ReReadAll());
+            receivedFiles.Should().BeEquivalentTo(
+                new[]
+                {
+                    message1.Content.ReReadAll(),
+                    message2.Content.ReReadAll()
+                });
         }
     }
 }
