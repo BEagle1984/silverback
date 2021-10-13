@@ -115,7 +115,8 @@ namespace Silverback.Messaging.Broker.Mqtt
                     handler => handler.OnClientDisconnectingAsync(ClientConfig))
                 .ConfigureAwait(false);
 
-            await MqttClient.DisconnectAsync().ConfigureAwait(false);
+            if (MqttClient.IsConnected)
+                await MqttClient.DisconnectAsync().ConfigureAwait(false);
         }
 
         public void Dispose() => MqttClient.Dispose();
