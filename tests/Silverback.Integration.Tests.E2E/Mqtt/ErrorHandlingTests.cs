@@ -313,6 +313,56 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
         }
 
         [Fact]
+        public async Task RetryAndSkipPolicies_StillFailingAfterRetriesWithV3_MessageCommitted()
+        {
+            var tryCount = 0;
+
+            Host.ConfigureServices(
+                    services => services
+                        .AddLogging()
+                        .AddSilverback()
+                        .UseModel()
+                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                        .AddMqttEndpoints(
+                            endpoints => endpoints
+                                .Configure(
+                                    config => config
+                                        .WithClientId("e2e-test")
+                                        .ConnectViaTcp("e2e-mqtt-broker")
+                                        .UseProtocolVersion(MqttProtocolVersion.V311))
+                                .AddOutbound<IIntegrationEvent>(
+                                    endpoint => endpoint
+                                        .ProduceTo(DefaultTopicName))
+                                .AddInbound(
+                                    endpoint => endpoint
+                                        .ConsumeFrom(DefaultTopicName)
+                                        .DeserializeJson(
+                                            serializer =>
+                                                serializer.UseFixedType<TestEventOne>())
+                                        .OnError(policy => policy.Retry(10).ThenSkip())))
+                        .AddIntegrationSpy()
+                        .AddDelegateSubscriber(
+                            (IIntegrationEvent _) =>
+                            {
+                                tryCount++;
+                                throw new InvalidOperationException("Retry!");
+                            }))
+                .Run();
+
+            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(
+                new TestEventOne
+                {
+                    Content = "Hello E2E!"
+                });
+
+            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+            tryCount.Should().Be(11);
+            Helper.GetClientSession("e2e-test").PendingMessagesCount.Should().Be(0);
+        }
+
+        [Fact]
         public async Task SkipPolicy_JsonDeserializationError_MessageSkipped()
         {
             var message = new TestEventOne { Content = "Hello E2E!" };

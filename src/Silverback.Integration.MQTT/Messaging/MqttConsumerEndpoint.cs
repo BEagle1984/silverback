@@ -8,6 +8,7 @@ using MQTTnet.Client.Options;
 using MQTTnet.Protocol;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Inbound.ErrorHandling;
+using Silverback.Util;
 
 namespace Silverback.Messaging
 {
@@ -58,25 +59,8 @@ namespace Silverback.Messaging
             if (Configuration == null)
                 throw new EndpointConfigurationException("Configuration cannot be null.");
 
-            Configuration.Validate();
-
             if (!Configuration.AreHeadersSupported)
             {
-                if (ErrorPolicy is ErrorPolicyBase errorPolicyBase &&
-                    errorPolicyBase.MaxFailedAttemptsCount > 1)
-                {
-                    throw new EndpointConfigurationException(
-                        "Cannot use MaxFailedAttempts because headers (user properties) are not " +
-                        "supported by MQTT prior to version 5.");
-                }
-
-                if (ErrorPolicy is ErrorPolicyChain)
-                {
-                    throw new EndpointConfigurationException(
-                        "Cannot chain multiple error policies because headers (user properties) are not " +
-                        "supported by MQTT prior to version 5.");
-                }
-
                 if (Serializer.RequireHeaders)
                 {
                     throw new EndpointConfigurationException(
@@ -84,7 +68,19 @@ namespace Silverback.Messaging
                         "supported by MQTT prior to version 5, the serializer must be configured with an " +
                         "hardcoded message type.");
                 }
+
+                switch (ErrorPolicy)
+                {
+                    case ErrorPolicyBase errorPolicyBase:
+                        CheckErrorPolicyMaxFailedAttemptsNotSet(errorPolicyBase);
+                        break;
+                    case ErrorPolicyChain errorPolicyChain:
+                        errorPolicyChain.Policies.ForEach(CheckErrorPolicyMaxFailedAttemptsNotSet);
+                        break;
+                }
             }
+
+            Configuration.Validate();
         }
 
         /// <inheritdoc cref="ConsumerEndpoint.GetUniqueConsumerGroupName" />
@@ -125,5 +121,15 @@ namespace Silverback.Messaging
             "NonReadonlyMemberInGetHashCode",
             Justification = "Protected set is not abused")]
         public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
+
+        private static void CheckErrorPolicyMaxFailedAttemptsNotSet(ErrorPolicyBase errorPolicyBase)
+        {
+            if (errorPolicyBase is not RetryErrorPolicy && errorPolicyBase.MaxFailedAttemptsCount > 1)
+            {
+                throw new EndpointConfigurationException(
+                    "Cannot set MaxFailedAttempts on the error policies (except for the RetryPolicy) " +
+                    "because headers (user properties) are not supported by MQTT prior to version 5.");
+            }
+        }
     }
 }

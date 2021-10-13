@@ -17,8 +17,6 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
     /// </summary>
     public class ErrorPolicyChain : IErrorPolicy
     {
-        private readonly IReadOnlyCollection<ErrorPolicyBase> _policies;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="ErrorPolicyChain" /> class.
         /// </summary>
@@ -38,14 +36,16 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
         /// </param>
         public ErrorPolicyChain(IEnumerable<ErrorPolicyBase> policies)
         {
-            _policies = Check.NotNull(policies, nameof(policies)).ToList();
-            Check.HasNoNulls(_policies, nameof(policies));
+            Policies = Check.NotNull(policies, nameof(policies)).ToList();
+            Check.HasNoNulls(Policies, nameof(policies));
         }
+
+        internal IReadOnlyCollection<ErrorPolicyBase> Policies { get; }
 
         /// <inheritdoc cref="IErrorPolicy.Build" />
         public IErrorPolicyImplementation Build(IServiceProvider serviceProvider) =>
             new ErrorPolicyChainImplementation(
-                StackMaxFailedAttempts(_policies)
+                StackMaxFailedAttempts(Policies)
                     .Select(policy => policy.Build(serviceProvider))
                     .Cast<ErrorPolicyImplementation>(),
                 serviceProvider.GetRequiredService<IInboundLogger<ErrorPolicyChainImplementation>>());

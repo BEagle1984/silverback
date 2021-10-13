@@ -152,7 +152,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging
         }
 
         [Fact]
-        public void Validate_RetryPolicyWithMultipleRetriesOnV311_ExceptionThrown()
+        public void Validate_RetryPolicyWithMultipleRetriesOnV311_NoExceptionThrown()
         {
             var endpoint = new MqttConsumerEndpoint("topic")
             {
@@ -164,16 +164,17 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging
                     },
                     ProtocolVersion = MqttProtocolVersion.V311
                 },
+                Serializer = new JsonMessageSerializer<TestEventOne>(),
                 ErrorPolicy = new RetryErrorPolicy().MaxFailedAttempts(10)
             };
 
             Action act = () => endpoint.Validate();
 
-            act.Should().ThrowExactly<EndpointConfigurationException>();
+            act.Should().NotThrow();
         }
 
         [Fact]
-        public void Validate_ChainedErrorPoliciesOnV311_ExceptionThrown()
+        public void Validate_MovePolicyWithMultipleRetriesOnV311_ExceptionThrown()
         {
             var endpoint = new MqttConsumerEndpoint("topic")
             {
@@ -185,12 +186,57 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging
                     },
                     ProtocolVersion = MqttProtocolVersion.V311
                 },
-                ErrorPolicy = new ErrorPolicyChain(new RetryErrorPolicy(), new SkipMessageErrorPolicy())
+                ErrorPolicy =
+                    new MoveMessageErrorPolicy(GetValidProducerEndpoint()).MaxFailedAttempts(10)
             };
 
             Action act = () => endpoint.Validate();
 
-            act.Should().ThrowExactly<EndpointConfigurationException>();
+            act.Should().Throw<EndpointConfigurationException>();
+        }
+
+        [Fact]
+        public void Validate_ChainedRetryPolicyWithMultipleRetriesOnV311_NoExceptionThrown()
+        {
+            var endpoint = new MqttConsumerEndpoint("topic")
+            {
+                Configuration = new MqttClientConfig
+                {
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "test-server"
+                    },
+                    ProtocolVersion = MqttProtocolVersion.V311
+                },
+                Serializer = new JsonMessageSerializer<TestEventOne>(),
+                ErrorPolicy = new ErrorPolicyChain(new RetryErrorPolicy().MaxFailedAttempts(10))
+            };
+
+            Action act = () => endpoint.Validate();
+
+            act.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Validate_ChainedMovePolicyWithMultipleRetriesOnV311_ExceptionThrown()
+        {
+            var endpoint = new MqttConsumerEndpoint("topic")
+            {
+                Configuration = new MqttClientConfig
+                {
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "test-server"
+                    },
+                    ProtocolVersion = MqttProtocolVersion.V311
+                },
+                ErrorPolicy = new ErrorPolicyChain(
+                    new MoveMessageErrorPolicy(GetValidProducerEndpoint()).MaxFailedAttempts(10))
+            };
+
+            Action act = () => endpoint.Validate();
+
+            act.Should().Throw<EndpointConfigurationException>();
         }
 
         [Fact]
@@ -257,7 +303,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging
         }
 
         [Fact]
-        public void Validate_ChainedErrorPoliciesOnDefaultV500_NoExceptionThrown()
+        public void Validate_MovePolicyWithMultipleRetriesOnV500_NoExceptionThrown()
         {
             var endpoint = new MqttConsumerEndpoint("topic")
             {
@@ -269,7 +315,51 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging
                     },
                     ProtocolVersion = MqttProtocolVersion.V500
                 },
-                ErrorPolicy = new ErrorPolicyChain(new RetryErrorPolicy(), new SkipMessageErrorPolicy())
+                ErrorPolicy =
+                    new MoveMessageErrorPolicy(GetValidProducerEndpoint()).MaxFailedAttempts(10)
+            };
+
+            Action act = () => endpoint.Validate();
+
+            act.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Validate_ChainedRetryPolicyWithMultipleRetriesOnV500_NoExceptionThrown()
+        {
+            var endpoint = new MqttConsumerEndpoint("topic")
+            {
+                Configuration = new MqttClientConfig
+                {
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "test-server"
+                    },
+                    ProtocolVersion = MqttProtocolVersion.V500
+                },
+                ErrorPolicy = new ErrorPolicyChain(new RetryErrorPolicy().MaxFailedAttempts(10))
+            };
+
+            Action act = () => endpoint.Validate();
+
+            act.Should().NotThrow();
+        }
+
+        [Fact]
+        public void Validate_ChainedMovePolicyWithMultipleRetriesOnV500_NoExceptionThrown()
+        {
+            var endpoint = new MqttConsumerEndpoint("topic")
+            {
+                Configuration = new MqttClientConfig
+                {
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "test-server"
+                    },
+                    ProtocolVersion = MqttProtocolVersion.V500
+                },
+                ErrorPolicy = new ErrorPolicyChain(
+                    new MoveMessageErrorPolicy(GetValidProducerEndpoint()).MaxFailedAttempts(10))
             };
 
             Action act = () => endpoint.Validate();
@@ -299,6 +389,18 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging
         }
 
         private static MqttConsumerEndpoint GetValidEndpoint() =>
+            new("test")
+            {
+                Configuration = new MqttClientConfig
+                {
+                    ChannelOptions = new MqttClientTcpOptions
+                    {
+                        Server = "test-server"
+                    }
+                }
+            };
+
+        private static MqttProducerEndpoint GetValidProducerEndpoint() =>
             new("test")
             {
                 Configuration = new MqttClientConfig
