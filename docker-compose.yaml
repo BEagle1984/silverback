@@ -4,7 +4,7 @@ services:
   ### Database ###
   mssql:
     container_name: s8k-mssql
-    image: microsoft/mssql-server-linux:2017-latest
+    image: mcr.microsoft.com/mssql/server:2019-latest
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "mssql2017."
@@ -66,6 +66,8 @@ services:
     ports:
       - "1883:1883"
       - "9001:9001"
+    environment:
+      EMQX_ZONE__EXTERNAL__RETRY_INTERVAL: "10s"
 
 networks:
   default:
