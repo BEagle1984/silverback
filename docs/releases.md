@@ -4,12 +4,13 @@ uid: releases
 
 # Releases
 
-## [3.4.1-beta.1](https://github.com/BEagle1984/silverback/releases/tag/v3.4.1-beta.1)
+## [3.4.1-beta.2](https://github.com/BEagle1984/silverback/releases/tag/v3.4.1-beta.2)
 
 ### Fixes
 
 * Fix <xref:Silverback.Messaging.Broker.MqttConsumer> reconnection issues
 * Handle edge cases related to MQTT acknowledgment timeout in <xref:Silverback.Messaging.Broker.MqttConsumer>
+* Allow max retries specification and error policies chains with MQTT V3
 
 ## [3.4.0](https://github.com/BEagle1984/silverback/releases/tag/v3.4.0)
 
