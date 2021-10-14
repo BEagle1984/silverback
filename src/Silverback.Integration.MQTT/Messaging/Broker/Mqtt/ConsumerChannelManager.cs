@@ -21,6 +21,12 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         private readonly IInboundLogger<IConsumer> _logger;
 
+        // The parallelism is currently fixed to 1 but could be made configurable for QoS=0.
+        // QoS=1+ requires the acks to come in the right order so better not mess with it (in the normal case
+        // the broker doesn't even send the next message before the ack is received and increasing this value
+        // will only cause trouble in edge cases like ack timeouts).
+        private readonly SemaphoreSlim _parallelismLimiterSemaphoreSlim = new(1, 1);
+
         private Channel<ConsumedApplicationMessage> _channel;
 
         private CancellationTokenSource _readCancellationTokenSource;
@@ -48,7 +54,6 @@ namespace Silverback.Messaging.Broker.Mqtt
 
         public bool IsReading { get; private set; }
 
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void StartReading()
         {
             if (IsReading)
@@ -68,7 +73,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             if (_channel.Reader.Completion.IsCompleted)
                 _channel = CreateBoundedChannel();
 
-            Task.Run(ReadChannelAsync);
+            Task.Run(ReadChannelAsync).FireAndForget();
         }
 
         public void StopReading()
@@ -99,6 +104,7 @@ namespace Silverback.Messaging.Broker.Mqtt
         {
             StopReading();
             _readCancellationTokenSource.Dispose();
+            _parallelismLimiterSemaphoreSlim.Dispose();
         }
 
         private static Channel<ConsumedApplicationMessage> CreateBoundedChannel() =>
@@ -146,9 +152,24 @@ namespace Silverback.Messaging.Broker.Mqtt
 
             _logger.LogConsumerLowLevelTrace(Consumer, "Reading channel...");
 
-            var consumedMessage = await _channel.Reader.ReadAsync(_readCancellationTokenSource.Token)
+            ConsumedApplicationMessage consumedMessage =
+                await _channel.Reader.ReadAsync(_readCancellationTokenSource.Token).ConfigureAwait(false);
+
+            await _parallelismLimiterSemaphoreSlim.WaitAsync(_readCancellationTokenSource.Token)
                 .ConfigureAwait(false);
 
+            try
+            {
+                await HandleMessageAsync(consumedMessage).ConfigureAwait(false);
+            }
+            finally
+            {
+                _parallelismLimiterSemaphoreSlim.Release();
+            }
+        }
+
+        private async Task HandleMessageAsync(ConsumedApplicationMessage consumedMessage)
+        {
             // Retry locally until successfully processed (or skipped)
             while (!_readCancellationTokenSource.Token.IsCancellationRequested)
             {
