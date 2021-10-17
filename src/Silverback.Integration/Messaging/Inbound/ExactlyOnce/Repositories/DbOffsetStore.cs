@@ -124,7 +124,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce.Repositories
             $"{endpoint.GetUniqueConsumerGroupName()}|{offsetKey}";
 
         [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Used in Deserialize method")]
-        private class LegacyOffsetModel
+        private sealed class LegacyOffsetModel
         {
             [JsonPropertyName("$type")]
             public string? TypeName { get; set; }

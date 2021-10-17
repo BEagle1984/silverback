@@ -33,21 +33,21 @@ namespace Silverback.Tests.Core.Util
             clone.Nested.Should().BeSameAs(source.Nested);
         }
 
-        private class SomeObject
+        private sealed class SomeObject
         {
             public int Number { get; set; }
 
             public SomeNestedObject? Nested { get; set; }
         }
 
-        private class SomeNestedObject
+        private sealed class SomeNestedObject
         {
             public string? Text { get; set; }
 
             public SomeNestedNestedObject? Nested { get; set; }
         }
 
-        private class SomeNestedNestedObject
+        private sealed class SomeNestedNestedObject
         {
             public double Number { get; set; }
         }

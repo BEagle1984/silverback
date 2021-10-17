@@ -92,7 +92,7 @@ namespace Silverback.Tests.Performance
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Needed for testing purpose")]
-        private class MessageWithSimpleKey
+        private sealed class MessageWithSimpleKey
         {
             [KafkaKeyMember]
             public string? MyKey { get; set; }
@@ -117,7 +117,7 @@ namespace Silverback.Tests.Performance
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Needed for testing purpose")]
-        private class MessageWitCombinedKey
+        private sealed class MessageWitCombinedKey
         {
             [KafkaKeyMember]
             public string? MyKey1 { get; set; }
@@ -148,7 +148,7 @@ namespace Silverback.Tests.Performance
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Needed for testing purpose")]
-        private class MessageWithoutKey
+        private sealed class MessageWithoutKey
         {
             public string? MyProp1 { get; set; }
 

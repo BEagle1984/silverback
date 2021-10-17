@@ -21,7 +21,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce
         public IExactlyOnceStrategyImplementation Build(IServiceProvider serviceProvider) =>
             new OffsetStoreExactlyOnceStrategyImplementation(serviceProvider.GetRequiredService<IOffsetStore>());
 
-        private class OffsetStoreExactlyOnceStrategyImplementation : IExactlyOnceStrategyImplementation
+        private sealed class OffsetStoreExactlyOnceStrategyImplementation : IExactlyOnceStrategyImplementation
         {
             private readonly IOffsetStore _offsetStore;
 

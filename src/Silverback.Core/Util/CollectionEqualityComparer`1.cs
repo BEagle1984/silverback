@@ -3,7 +3,7 @@
 
 namespace Silverback.Util
 {
-    internal class CollectionEqualityComparer<T> : CollectionEqualityComparer<T, T>
+    internal sealed class CollectionEqualityComparer<T> : CollectionEqualityComparer<T, T>
     {
         public CollectionEqualityComparer(bool enforceOrder = false)
             : base(item => item, enforceOrder)

@@ -139,7 +139,7 @@ namespace Silverback.Tests.Integration.RabbitMQ.Messaging.Broker
             result.Should().BeFalse();
         }
 
-        private class TestOtherOffset : IBrokerMessageIdentifier
+        private sealed class TestOtherOffset : IBrokerMessageIdentifier
         {
             public TestOtherOffset(string key, string value)
             {

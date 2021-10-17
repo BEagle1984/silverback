@@ -93,7 +93,7 @@ namespace Silverback.Tests.Logging
                     && (eventId == null || call.EventId == eventId)
                     && (exceptionMessage == null || call.Exception?.Message == exceptionMessage));
 
-        private class ReceivedCall
+        private sealed class ReceivedCall
         {
             public ReceivedCall(LogLevel logLevel, Exception? exception, string message, int eventId)
             {

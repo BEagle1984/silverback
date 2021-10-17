@@ -5,7 +5,7 @@ using System;
 
 namespace Silverback.Messaging.Configuration
 {
-    internal class GenericEndpointsConfigurator : IEndpointsConfigurator
+    internal sealed class GenericEndpointsConfigurator : IEndpointsConfigurator
     {
         private readonly Action<IEndpointsConfigurationBuilder> _configAction;
 

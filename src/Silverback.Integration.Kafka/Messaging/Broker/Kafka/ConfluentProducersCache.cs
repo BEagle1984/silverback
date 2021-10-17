@@ -12,7 +12,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka
 {
-    internal class ConfluentProducersCache : IConfluentProducersCache
+    internal sealed class ConfluentProducersCache : IConfluentProducersCache
     {
         private readonly ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>> _producersCache =
             new(new ConfigurationDictionaryEqualityComparer<string, string>());

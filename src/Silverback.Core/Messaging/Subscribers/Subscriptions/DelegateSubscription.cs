@@ -10,7 +10,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
     /// <summary>
     ///     Represents a subscription initialized with a method delegate.
     /// </summary>
-    internal class DelegateSubscription : ISubscription
+    internal sealed class DelegateSubscription : ISubscription
     {
         private readonly SubscribedMethod _method;
 

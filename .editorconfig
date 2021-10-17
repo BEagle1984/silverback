@@ -178,7 +178,7 @@ dotnet_diagnostic.CA1805.severity = warning
 dotnet_diagnostic.CA1806.severity = warning
 # CA1810: Initialize reference type static fields inline
 dotnet_diagnostic.CA1810.severity = warning
-# CA1812: Avoid uninstantiated internal classes
+# CA1812: Avoid uninstantiated internal sealed classes
 dotnet_diagnostic.CA1812.severity = warning
 # CA1813: Avoid unsealed attributes
 dotnet_diagnostic.CA1813.severity = warning

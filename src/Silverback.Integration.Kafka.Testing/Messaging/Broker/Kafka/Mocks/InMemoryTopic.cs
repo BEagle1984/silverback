@@ -13,7 +13,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
-    internal class InMemoryTopic : IInMemoryTopic
+    internal sealed class InMemoryTopic : IInMemoryTopic
     {
         private readonly List<InMemoryPartition> _partitions;
 

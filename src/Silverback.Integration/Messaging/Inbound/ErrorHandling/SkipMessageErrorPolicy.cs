@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 serviceProvider,
                 serviceProvider.GetRequiredService<IInboundLogger<SkipMessageErrorPolicy>>());
 
-        private class SkipMessageErrorPolicyImplementation : ErrorPolicyImplementation
+        private sealed class SkipMessageErrorPolicyImplementation : ErrorPolicyImplementation
         {
             private readonly IInboundLogger<SkipMessageErrorPolicy> _logger;
 

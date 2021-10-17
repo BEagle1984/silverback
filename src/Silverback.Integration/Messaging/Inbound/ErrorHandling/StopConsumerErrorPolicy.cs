@@ -29,7 +29,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 serviceProvider
                     .GetRequiredService<IInboundLogger<StopConsumerErrorPolicy>>());
 
-        private class StopConsumerErrorPolicyImplementation : ErrorPolicyImplementation
+        private sealed class StopConsumerErrorPolicyImplementation : ErrorPolicyImplementation
         {
             public StopConsumerErrorPolicyImplementation(
                 int? maxFailedAttempts,

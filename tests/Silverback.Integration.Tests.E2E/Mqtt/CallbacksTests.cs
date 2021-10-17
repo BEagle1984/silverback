@@ -150,7 +150,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class FakeConnectedCallbackHandler : IMqttClientConnectedCallback
+        private sealed class FakeConnectedCallbackHandler : IMqttClientConnectedCallback
         {
             public int CallsCount { get; private set; }
 
@@ -162,7 +162,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class SendMessageConnectedCallbackHandler : IMqttClientConnectedCallback
+        private sealed class SendMessageConnectedCallbackHandler : IMqttClientConnectedCallback
         {
             private readonly IPublisher _publisher;
 
@@ -176,7 +176,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class FakeDisconnectingCallbackHandler : IMqttClientDisconnectingCallback
+        private sealed class FakeDisconnectingCallbackHandler : IMqttClientDisconnectingCallback
         {
             public int CallsCount { get; private set; }
 
@@ -188,7 +188,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class SendMessageDisconnectingCallbackHandler : IMqttClientDisconnectingCallback
+        private sealed class SendMessageDisconnectingCallbackHandler : IMqttClientDisconnectingCallback
         {
             private readonly IPublisher _publisher;
 

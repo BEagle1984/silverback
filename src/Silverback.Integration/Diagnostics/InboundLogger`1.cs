@@ -10,7 +10,7 @@ using Silverback.Util;
 
 namespace Silverback.Diagnostics
 {
-    internal class InboundLogger<TCategoryName>
+    internal sealed class InboundLogger<TCategoryName>
         : SilverbackLogger<TCategoryName>, IInboundLogger<TCategoryName>
     {
         private readonly InboundLoggerFactory _loggerFactory;

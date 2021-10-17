@@ -363,7 +363,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             act.Should().Throw<TypeLoadException>();
         }
 
-        private class InheritedBinaryFileMessage : BinaryFileMessage
+        private sealed class InheritedBinaryFileMessage : BinaryFileMessage
         {
         }
     }

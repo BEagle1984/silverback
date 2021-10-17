@@ -64,7 +64,7 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             action.Should().Throw<SilverbackException>();
         }
 
-        private class TestEntity : EventSourcingDomainEntity<TestEntity.TestEntityEvent>
+        private sealed class TestEntity : EventSourcingDomainEntity<TestEntity.TestEntityEvent>
         {
             public int Calls { get; private set; }
 
@@ -76,7 +76,9 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
             [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]
             [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
+#pragma warning disable 628
             protected void Apply(TestEntityEvent2 event2) => Calls++;
+#pragma warning restore 628
 
             [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = Justifications.CalledBySilverback)]
             [SuppressMessage("ReSharper", "UnusedParameter.Local", Justification = Justifications.CalledBySilverback)]

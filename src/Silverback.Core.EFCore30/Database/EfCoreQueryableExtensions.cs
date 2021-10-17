@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 // ReSharper disable once CheckNamespace
 namespace Silverback.Database
 {
-    internal class EfCoreQueryableExtensions : IQueryableExtensions
+    internal sealed class EfCoreQueryableExtensions : IQueryableExtensions
     {
         public Task<bool> AnyAsync<TSource>(
             IQueryable<TSource> source,

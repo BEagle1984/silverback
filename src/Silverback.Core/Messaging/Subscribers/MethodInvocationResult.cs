@@ -3,7 +3,7 @@
 
 namespace Silverback.Messaging.Subscribers
 {
-    internal class MethodInvocationResult
+    internal sealed class MethodInvocationResult
     {
         private MethodInvocationResult(bool wasInvoked)
         {

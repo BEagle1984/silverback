@@ -8,7 +8,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt.Comparers
 {
-    internal class MqttClientCredentialsEqualityComparer : IEqualityComparer<IMqttClientCredentials>
+    internal sealed class MqttClientCredentialsEqualityComparer : IEqualityComparer<IMqttClientCredentials>
     {
         public static MqttClientCredentialsEqualityComparer Instance { get; } = new();
 

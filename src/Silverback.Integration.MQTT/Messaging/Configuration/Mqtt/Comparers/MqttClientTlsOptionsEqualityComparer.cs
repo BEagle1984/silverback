@@ -9,7 +9,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt.Comparers
 {
-    internal class MqttClientTlsOptionsEqualityComparer : IEqualityComparer<MqttClientTlsOptions>
+    internal sealed class MqttClientTlsOptionsEqualityComparer : IEqualityComparer<MqttClientTlsOptions>
     {
         private static readonly CollectionEqualityComparer<X509Certificate> CertificatesComparer = new();
 

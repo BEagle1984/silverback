@@ -72,7 +72,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 serviceProvider
                     .GetRequiredService<IInboundLogger<MoveMessageErrorPolicy>>());
 
-        private class MoveMessageErrorPolicyImplementation : ErrorPolicyImplementation
+        private sealed class MoveMessageErrorPolicyImplementation : ErrorPolicyImplementation
         {
             private readonly IProducerEndpoint _endpoint;
 

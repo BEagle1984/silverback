@@ -265,7 +265,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Broker
             result.Should().BeFalse();
         }
 
-        private class TestOtherOffset : IBrokerMessageOffset
+        private sealed class TestOtherOffset : IBrokerMessageOffset
         {
             public TestOtherOffset(string key, string value)
             {

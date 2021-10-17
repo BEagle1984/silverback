@@ -268,7 +268,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
             }
         }
 
-        private class LoggingEndpoint : ProducerEndpoint
+        private sealed class LoggingEndpoint : ProducerEndpoint
         {
             public LoggingEndpoint(string name)
                 : base(name)

@@ -7,7 +7,7 @@ using Silverback.Diagnostics;
 
 namespace Silverback.Messaging.Configuration
 {
-    internal class LogLevelConfigurator : ILogLevelConfigurator
+    internal sealed class LogLevelConfigurator : ILogLevelConfigurator
     {
         private readonly LogLevelDictionary _logLevelDictionary = new();
 

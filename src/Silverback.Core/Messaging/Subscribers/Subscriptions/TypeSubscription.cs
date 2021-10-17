@@ -13,7 +13,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
     /// <summary>
     ///     Represents a subscription based on a type (can also be a base class or an interface).
     /// </summary>
-    internal class TypeSubscription : ISubscription
+    internal sealed class TypeSubscription : ISubscription
     {
         private readonly bool _autoSubscribeAllPublicMethods;
 

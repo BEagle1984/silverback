@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 serviceProvider,
                 serviceProvider.GetRequiredService<IInboundLogger<RetryErrorPolicy>>());
 
-        private class RetryErrorPolicyImplementation : ErrorPolicyImplementation
+        private sealed class RetryErrorPolicyImplementation : ErrorPolicyImplementation
         {
             private readonly TimeSpan _initialDelay;
 

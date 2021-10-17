@@ -138,7 +138,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
         [UsedImplicitly]
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class Subscriber
+        private sealed class Subscriber
         {
             private int _receivedConsumer1;
 
@@ -165,7 +165,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
         [UsedImplicitly]
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class StreamSubscriber
+        private sealed class StreamSubscriber
         {
             private int _receivedConsumer1;
 

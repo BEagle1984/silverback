@@ -7,7 +7,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
-    internal class BrokerOptionsBuilder : IBrokerOptionsBuilder
+    internal sealed class BrokerOptionsBuilder : IBrokerOptionsBuilder
     {
         public BrokerOptionsBuilder(ISilverbackBuilder silverbackBuilder)
         {

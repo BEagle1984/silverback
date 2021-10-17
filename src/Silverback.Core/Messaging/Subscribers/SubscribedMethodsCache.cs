@@ -7,7 +7,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers
 {
-    internal class SubscribedMethodsCache : ISubscribedMethodsCache
+    internal sealed class SubscribedMethodsCache : ISubscribedMethodsCache
     {
         private readonly SubscribedMethodsCacheSingleton _cacheSingleton;
 

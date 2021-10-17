@@ -11,7 +11,7 @@ using Silverback.Util;
 
 namespace Silverback.Diagnostics
 {
-    internal class InboundLogger
+    internal sealed class InboundLogger
     {
         private readonly IBrokerLogEnricher _logEnricher;
 

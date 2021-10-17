@@ -7,7 +7,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Outbound.Routing
 {
-    internal class OutboundEnvelopeFactory
+    internal sealed class OutboundEnvelopeFactory
     {
         private readonly IOutboundRoutingConfiguration _routingConfiguration;
 

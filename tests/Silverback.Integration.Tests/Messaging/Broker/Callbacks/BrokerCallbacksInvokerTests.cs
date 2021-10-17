@@ -346,21 +346,21 @@ namespace Silverback.Tests.Integration.Messaging.Broker.Callbacks
             callbackOneHandlerOne.CallCount.Should().Be(0);
         }
 
-        private class CallbackOneHandlerOne : ICallbackOneHandler
+        private sealed class CallbackOneHandlerOne : ICallbackOneHandler
         {
             public int CallCount { get; private set; }
 
             public void Handle() => CallCount++;
         }
 
-        private class CallbackOneHandlerTwo : ICallbackOneHandler
+        private sealed class CallbackOneHandlerTwo : ICallbackOneHandler
         {
             public int CallCount { get; private set; }
 
             public void Handle() => CallCount++;
         }
 
-        private class CallbackTwoHandlerOne : ICallbackTwoHandler
+        private sealed class CallbackTwoHandlerOne : ICallbackTwoHandler
         {
             public int CallCount { get; private set; }
 
@@ -368,12 +368,12 @@ namespace Silverback.Tests.Integration.Messaging.Broker.Callbacks
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class ThrowingCallbackOneHandler : ICallbackOneHandler
+        private sealed class ThrowingCallbackOneHandler : ICallbackOneHandler
         {
             public void Handle() => throw new InvalidOperationException("test");
         }
 
-        private class CallbackOneHandlerOneAsync : ICallbackOneHandlerAsync
+        private sealed class CallbackOneHandlerOneAsync : ICallbackOneHandlerAsync
         {
             public int CallCount { get; private set; }
 
@@ -384,7 +384,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker.Callbacks
             }
         }
 
-        private class CallbackOneHandlerTwoAsync : ICallbackOneHandlerAsync
+        private sealed class CallbackOneHandlerTwoAsync : ICallbackOneHandlerAsync
         {
             public int CallCount { get; private set; }
 
@@ -395,7 +395,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker.Callbacks
             }
         }
 
-        private class CallbackTwoHandlerOneAsync : ICallbackTwoHandlerAsync
+        private sealed class CallbackTwoHandlerOneAsync : ICallbackTwoHandlerAsync
         {
             public int CallCount { get; private set; }
 
@@ -407,7 +407,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker.Callbacks
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class ThrowingCallbackOneHandlerAsync : ICallbackOneHandlerAsync
+        private sealed class ThrowingCallbackOneHandlerAsync : ICallbackOneHandlerAsync
         {
             public Task HandleAsync() => throw new InvalidOperationException("test");
         }

@@ -35,7 +35,7 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
             endpoint.Serializer.Should().BeOfType<BinaryFileMessageSerializer<CustomBinaryFileMessage>>();
         }
 
-        private class CustomBinaryFileMessage : BinaryFileMessage
+        private sealed class CustomBinaryFileMessage : BinaryFileMessage
         {
         }
     }

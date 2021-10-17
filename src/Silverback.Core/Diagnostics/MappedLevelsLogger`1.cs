@@ -8,7 +8,7 @@ using Silverback.Util;
 
 namespace Silverback.Diagnostics
 {
-    internal class MappedLevelsLogger<TCategoryName> : IMappedLevelsLogger<TCategoryName>
+    internal sealed class MappedLevelsLogger<TCategoryName> : IMappedLevelsLogger<TCategoryName>
     {
         private readonly ILogLevelDictionary _logLevelDictionary;
 

@@ -8,7 +8,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka
 {
-    internal class KafkaEndpointsConfigurationBuilder : IKafkaEndpointsConfigurationBuilder
+    internal sealed class KafkaEndpointsConfigurationBuilder : IKafkaEndpointsConfigurationBuilder
     {
         private readonly IEndpointsConfigurationBuilder _endpointsConfigurationBuilder;
 

@@ -351,7 +351,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             Helper.Spy.InboundEnvelopes[0].Message.As<Tombstone>().MessageId.Should().Be("42");
         }
 
-        private class CustomSerializer : IMessageSerializer
+        private sealed class CustomSerializer : IMessageSerializer
         {
             public bool RequireHeaders => false;
 

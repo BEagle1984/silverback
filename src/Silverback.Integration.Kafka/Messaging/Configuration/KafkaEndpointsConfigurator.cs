@@ -6,7 +6,7 @@ using Silverback.Messaging.Configuration.Kafka;
 
 namespace Silverback.Messaging.Configuration
 {
-    internal class KafkaEndpointsConfigurator : IEndpointsConfigurator
+    internal sealed class KafkaEndpointsConfigurator : IEndpointsConfigurator
     {
         private readonly Action<IKafkaEndpointsConfigurationBuilder> _configAction;
 

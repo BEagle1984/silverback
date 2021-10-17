@@ -292,7 +292,7 @@ namespace Silverback.Messaging.Broker
             _queueChannel.Reader.Completion.Wait();
         }
 
-        private class QueuedMessage
+        private sealed class QueuedMessage
         {
             public QueuedMessage(
                 byte[]? messageBytes,

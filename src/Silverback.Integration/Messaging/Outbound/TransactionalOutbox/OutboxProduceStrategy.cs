@@ -24,7 +24,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox
                 serviceProvider.GetRequiredService<TransactionalOutboxBroker>(),
                 serviceProvider.GetRequiredService<IOutboundLogger<OutboxProduceStrategy>>());
 
-        private class OutboxProduceStrategyImplementation : IProduceStrategyImplementation
+        private sealed class OutboxProduceStrategyImplementation : IProduceStrategyImplementation
         {
             private readonly TransactionalOutboxBroker _outboundQueueBroker;
 

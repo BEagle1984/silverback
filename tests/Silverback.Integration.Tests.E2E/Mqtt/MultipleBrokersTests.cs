@@ -75,11 +75,11 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                 .Server.Should().Be("e2e-mqtt-broker-2");
         }
 
-        private class Broker1Message : IIntegrationMessage
+        private sealed class Broker1Message : IIntegrationMessage
         {
         }
 
-        private class Broker2Message : IIntegrationMessage
+        private sealed class Broker2Message : IIntegrationMessage
         {
         }
     }

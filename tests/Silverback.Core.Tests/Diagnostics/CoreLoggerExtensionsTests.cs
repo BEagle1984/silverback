@@ -198,7 +198,7 @@ namespace Silverback.Tests.Core.Diagnostics
             _logger.Received(LogLevel.Warning, typeof(TimeoutException), expectedMessage, 53);
         }
 
-        private class FakeBackgroundService : DistributedBackgroundService
+        private sealed class FakeBackgroundService : DistributedBackgroundService
         {
             public FakeBackgroundService()
                 : base(

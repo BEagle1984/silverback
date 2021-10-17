@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Silverback.Messaging.Subscribers.ArgumentResolvers
 {
-    internal class ArgumentsResolversRepository
+    internal sealed class ArgumentsResolversRepository
     {
         private readonly IEnumerable<IArgumentResolver> _argumentResolvers;
 

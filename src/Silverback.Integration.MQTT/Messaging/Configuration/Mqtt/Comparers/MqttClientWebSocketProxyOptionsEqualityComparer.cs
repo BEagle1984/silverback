@@ -8,7 +8,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt.Comparers
 {
-    internal class MqttClientWebSocketProxyOptionsEqualityComparer : IEqualityComparer<MqttClientWebSocketProxyOptions>
+    internal sealed class MqttClientWebSocketProxyOptionsEqualityComparer : IEqualityComparer<MqttClientWebSocketProxyOptions>
     {
         public static MqttClientWebSocketProxyOptionsEqualityComparer Instance { get; } = new();
 

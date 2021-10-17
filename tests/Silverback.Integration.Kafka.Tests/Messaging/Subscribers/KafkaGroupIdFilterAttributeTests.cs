@@ -64,7 +64,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Subscribers
             result.Should().BeFalse();
         }
 
-        private class SomeConsumerEndpoint : ConsumerEndpoint
+        private sealed class SomeConsumerEndpoint : ConsumerEndpoint
         {
             public SomeConsumerEndpoint(string name)
                 : base(name)

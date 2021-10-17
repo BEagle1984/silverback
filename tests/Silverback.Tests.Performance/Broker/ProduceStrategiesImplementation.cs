@@ -331,7 +331,7 @@ namespace Silverback.Tests.Performance.Broker
             _serviceScope.ServiceProvider.GetRequiredService<KafkaBroker>()
                 .Producers.First(producer => producer.Endpoint.Name == endpointName);
 
-        internal class Stats
+        internal sealed class Stats
         {
             private readonly Stopwatch _stopwatch = new();
 

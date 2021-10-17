@@ -168,7 +168,7 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class TestEndpointNameResolver : ProducerEndpointNameResolver<TestEventOne>
+        private sealed class TestEndpointNameResolver : ProducerEndpointNameResolver<TestEventOne>
         {
             protected override string GetName(IOutboundEnvelope<TestEventOne> envelope)
             {

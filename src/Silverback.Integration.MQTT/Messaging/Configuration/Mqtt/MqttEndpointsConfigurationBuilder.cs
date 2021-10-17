@@ -8,7 +8,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt
 {
-    internal class MqttEndpointsConfigurationBuilder : IMqttEndpointsConfigurationBuilder
+    internal sealed class MqttEndpointsConfigurationBuilder : IMqttEndpointsConfigurationBuilder
     {
         private readonly IEndpointsConfigurationBuilder _endpointsConfigurationBuilder;
 

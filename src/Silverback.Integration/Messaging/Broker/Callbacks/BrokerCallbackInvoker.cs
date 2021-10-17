@@ -12,7 +12,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Broker.Callbacks
 {
-    internal class BrokerCallbackInvoker : IBrokerCallbacksInvoker
+    internal sealed class BrokerCallbackInvoker : IBrokerCallbacksInvoker
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 

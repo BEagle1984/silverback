@@ -9,7 +9,7 @@ using Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model;
 
 namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
 {
-    internal class NullOutbox : IOutboxReader, IOutboxWriter
+    internal sealed class NullOutbox : IOutboxReader, IOutboxWriter
     {
         public Task<int> GetLengthAsync() => Task.FromResult(0);
 

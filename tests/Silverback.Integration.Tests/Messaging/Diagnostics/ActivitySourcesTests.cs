@@ -92,7 +92,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new TestOffset("key", "7"));
         }
 
-        private class TestActivityListener : IDisposable
+        private sealed class TestActivityListener : IDisposable
         {
             private readonly ActivityListener _listener;
 

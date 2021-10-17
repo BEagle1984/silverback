@@ -39,7 +39,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 activity => activity.OperationName == "Silverback.Core.Subscribers.InvokeSubscriber");
         }
 
-        private class TestActivityListener : IDisposable
+        private sealed class TestActivityListener : IDisposable
         {
             private readonly ActivityListener _listener;
 

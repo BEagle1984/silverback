@@ -68,7 +68,7 @@ namespace Silverback.Messaging.Broker
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        private class EnqueuedEnvelope
+        private sealed class EnqueuedEnvelope
         {
             public EnqueuedEnvelope(IRawInboundEnvelope envelope, Action<IRawInboundEnvelope>? processedCallback)
             {

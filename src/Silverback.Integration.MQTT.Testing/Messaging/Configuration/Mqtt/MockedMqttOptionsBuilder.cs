@@ -7,7 +7,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Mqtt
 {
-    internal class MockedMqttOptionsBuilder : IMockedMqttOptionsBuilder
+    internal sealed class MockedMqttOptionsBuilder : IMockedMqttOptionsBuilder
     {
         public MockedMqttOptionsBuilder(IServiceCollection services)
         {

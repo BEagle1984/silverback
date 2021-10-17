@@ -8,7 +8,7 @@ using Silverback.Messaging.Broker.Behaviors;
 
 namespace Silverback.Messaging.Diagnostics
 {
-    internal class ActivityEnricherFactory : IActivityEnricherFactory
+    internal sealed class ActivityEnricherFactory : IActivityEnricherFactory
     {
         private static readonly NullEnricher NullEnricherInstance = new();
 
@@ -33,7 +33,7 @@ namespace Silverback.Messaging.Diagnostics
             return activityEnricher ?? NullEnricherInstance;
         }
 
-        private class NullEnricher : IBrokerActivityEnricher
+        private sealed class NullEnricher : IBrokerActivityEnricher
         {
             public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext)
             {

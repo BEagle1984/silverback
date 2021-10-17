@@ -6,7 +6,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
-    internal class EndpointsConfigurationBuilder : IEndpointsConfigurationBuilder
+    internal sealed class EndpointsConfigurationBuilder : IEndpointsConfigurationBuilder
     {
         public EndpointsConfigurationBuilder(IServiceProvider serviceProvider)
         {

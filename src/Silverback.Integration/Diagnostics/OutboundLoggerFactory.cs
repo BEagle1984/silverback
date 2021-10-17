@@ -7,7 +7,7 @@ using Silverback.Messaging;
 
 namespace Silverback.Diagnostics
 {
-    internal class OutboundLoggerFactory
+    internal sealed class OutboundLoggerFactory
     {
         private readonly BrokerLogEnricherFactory _enricherFactory;
 

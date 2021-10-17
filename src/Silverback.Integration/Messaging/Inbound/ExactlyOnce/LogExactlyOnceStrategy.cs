@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Inbound.ExactlyOnce
         public IExactlyOnceStrategyImplementation Build(IServiceProvider serviceProvider) =>
             new LogExactlyOnceStrategyImplementation(serviceProvider.GetRequiredService<IInboundLog>());
 
-        private class LogExactlyOnceStrategyImplementation : IExactlyOnceStrategyImplementation
+        private sealed class LogExactlyOnceStrategyImplementation : IExactlyOnceStrategyImplementation
         {
             private readonly IInboundLog _inboundLog;
 

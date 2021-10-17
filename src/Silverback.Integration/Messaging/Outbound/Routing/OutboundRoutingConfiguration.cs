@@ -8,7 +8,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Outbound.Routing
 {
-    internal class OutboundRoutingConfiguration : IOutboundRoutingConfiguration
+    internal sealed class OutboundRoutingConfiguration : IOutboundRoutingConfiguration
     {
         private readonly List<OutboundRoute> _routes = new();
 

@@ -8,7 +8,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Headers
 {
-    internal class CustomHeadersMappings : ICustomHeadersMappings
+    internal sealed class CustomHeadersMappings : ICustomHeadersMappings
     {
         private Dictionary<string, string>? _mappings;
 

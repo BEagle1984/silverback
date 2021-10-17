@@ -8,7 +8,7 @@ using Confluent.Kafka;
 
 namespace Silverback.Messaging.Broker.Kafka.Mocks
 {
-    internal class InMemoryPartition : IInMemoryPartition
+    internal sealed class InMemoryPartition : IInMemoryPartition
     {
         private readonly List<Message<byte[]?, byte[]?>> _messages = new();
 

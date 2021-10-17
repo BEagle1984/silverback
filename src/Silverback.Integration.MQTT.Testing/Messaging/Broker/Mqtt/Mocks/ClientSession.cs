@@ -130,7 +130,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             }
         }
 
-        private class Subscription
+        private sealed class Subscription
         {
             public Subscription(IMqttClientOptions clientOptions, string topic)
             {

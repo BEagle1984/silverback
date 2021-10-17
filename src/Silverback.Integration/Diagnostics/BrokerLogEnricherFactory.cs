@@ -10,7 +10,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Diagnostics
 {
-    internal class BrokerLogEnricherFactory
+    internal sealed class BrokerLogEnricherFactory
     {
         private static readonly NullEnricher NullEnricherInstance = new();
 
@@ -35,7 +35,7 @@ namespace Silverback.Diagnostics
             return logEnricher ?? NullEnricherInstance;
         }
 
-        private class NullEnricher : IBrokerLogEnricher
+        private sealed class NullEnricher : IBrokerLogEnricher
         {
             public string AdditionalPropertyName1 => "unused1";
 

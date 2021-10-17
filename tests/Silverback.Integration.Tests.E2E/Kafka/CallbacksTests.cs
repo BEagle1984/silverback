@@ -561,7 +561,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             "ReSharper",
             "ClassNeverInstantiated.Local",
             Justification = Justifications.CalledBySilverback)]
-        private class AnotherSimpleCallbackHandler : SimpleCallbackHandler
+        private sealed class AnotherSimpleCallbackHandler : SimpleCallbackHandler
         {
         }
 
@@ -570,7 +570,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             "ReSharper",
             "ClassNeverInstantiated.Local",
             Justification = Justifications.CalledBySilverback)]
-        private class MessageSendingCallbackHandler : IEndpointsConfiguredCallback
+        private sealed class MessageSendingCallbackHandler : IEndpointsConfiguredCallback
         {
             private readonly IPublisher _publisher;
 
@@ -591,7 +591,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             "ReSharper",
             "ClassNeverInstantiated.Local",
             Justification = Justifications.CalledBySilverback)]
-        private class KafkaPartitionEofCallback : IKafkaPartitionEofCallback
+        private sealed class KafkaPartitionEofCallback : IKafkaPartitionEofCallback
         {
             public int AllPartitionsEofCallbackCount =>
                 PartitionEofCallbacksDictionary.Sum(pair => pair.Value);

@@ -8,7 +8,7 @@ using Silverback.Messaging.Subscribers.Subscriptions;
 
 namespace Silverback.Messaging.Configuration
 {
-    internal class BusOptions : IBusOptions
+    internal sealed class BusOptions : IBusOptions
     {
         public BusOptions()
         {

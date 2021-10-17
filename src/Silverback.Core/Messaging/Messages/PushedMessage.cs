@@ -5,7 +5,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Messages
 {
-    internal class PushedMessage
+    internal sealed class PushedMessage
     {
         public PushedMessage(int id, object? message, object? originalMessage = null)
         {

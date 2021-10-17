@@ -7,7 +7,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
-    internal class SilverbackBuilder : ISilverbackBuilder
+    internal sealed class SilverbackBuilder : ISilverbackBuilder
     {
         public SilverbackBuilder(IServiceCollection services)
         {

@@ -181,7 +181,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             "ReSharper",
             "ClassNeverInstantiated.Local",
             Justification = Justifications.CalledBySilverback)]
-        private class TestConfiguratorOne : IEndpointsConfigurator
+        private sealed class TestConfiguratorOne : IEndpointsConfigurator
         {
             public void Configure(IEndpointsConfigurationBuilder builder)
             {
@@ -194,7 +194,7 @@ namespace Silverback.Tests.Integration.Messaging.Broker
             "ReSharper",
             "ClassNeverInstantiated.Local",
             Justification = Justifications.CalledBySilverback)]
-        private class TestConfiguratorTwo : IEndpointsConfigurator
+        private sealed class TestConfiguratorTwo : IEndpointsConfigurator
         {
             public void Configure(IEndpointsConfigurationBuilder builder)
             {

@@ -7,7 +7,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration.Kafka
 {
-    internal class MockedKafkaOptionsBuilder : IMockedKafkaOptionsBuilder
+    internal sealed class MockedKafkaOptionsBuilder : IMockedKafkaOptionsBuilder
     {
         public MockedKafkaOptionsBuilder(IServiceCollection services)
         {

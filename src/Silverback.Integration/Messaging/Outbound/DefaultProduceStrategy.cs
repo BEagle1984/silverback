@@ -10,7 +10,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Outbound
 {
-    internal class DefaultProduceStrategy : IProduceStrategy
+    internal sealed class DefaultProduceStrategy : IProduceStrategy
     {
         private DefaultProduceStrategyImplementation? _implementation;
 
@@ -18,7 +18,7 @@ namespace Silverback.Messaging.Outbound
             _implementation ??= new DefaultProduceStrategyImplementation(
                 serviceProvider.GetRequiredService<IBrokerCollection>());
 
-        private class DefaultProduceStrategyImplementation : IProduceStrategyImplementation
+        private sealed class DefaultProduceStrategyImplementation : IProduceStrategyImplementation
         {
             private readonly IBrokerCollection _brokerCollection;
 

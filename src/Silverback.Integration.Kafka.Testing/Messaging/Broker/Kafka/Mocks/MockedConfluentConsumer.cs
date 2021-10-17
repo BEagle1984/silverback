@@ -256,11 +256,9 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         {
             lock (_pausedPartitions)
             {
-                foreach (var partition in partitions)
-                {
-                    if (!_pausedPartitions.Contains(partition))
-                        _pausedPartitions.Add(partition);
-                }
+                partitions
+                    .Where(partition => !_pausedPartitions.Contains(partition))
+                    .ForEach(partition => _pausedPartitions.Add(partition));
             }
         }
 
@@ -268,11 +266,9 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
         {
             lock (_pausedPartitions)
             {
-                foreach (var partition in partitions)
-                {
-                    if (_pausedPartitions.Contains(partition))
-                        _pausedPartitions.Remove(partition);
-                }
+                partitions
+                    .Where(partition => _pausedPartitions.Contains(partition))
+                    .ForEach(partition => _pausedPartitions.Remove(partition));
             }
         }
 

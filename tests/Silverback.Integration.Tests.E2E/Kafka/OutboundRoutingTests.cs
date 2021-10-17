@@ -878,7 +878,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class TestEndpointNameResolver : KafkaProducerEndpointNameResolver<TestEventOne>
+        private sealed class TestEndpointNameResolver : KafkaProducerEndpointNameResolver<TestEventOne>
         {
             protected override string GetName(IOutboundEnvelope<TestEventOne> envelope)
             {
@@ -910,7 +910,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class TestOutboundRouter : OutboundRouter<TestEventOne>
+        private sealed class TestOutboundRouter : OutboundRouter<TestEventOne>
         {
             private readonly IReadOnlyList<KafkaProducerEndpoint> _endpoints = new[]
             {

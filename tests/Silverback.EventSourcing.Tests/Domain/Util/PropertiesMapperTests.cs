@@ -47,7 +47,7 @@ namespace Silverback.Tests.EventSourcing.Domain.Util
             act.Should().NotThrow();
         }
 
-        private class Book
+        private sealed class Book
         {
             public int Id { get; private set; }
 

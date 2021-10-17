@@ -139,7 +139,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         }
 
         [SuppressMessage("", "CA1812", Justification = "Class used via DI")]
-        private class NoResetPartitionsAssignedCallbackHandler : IKafkaPartitionsAssignedCallback
+        private sealed class NoResetPartitionsAssignedCallbackHandler : IKafkaPartitionsAssignedCallback
         {
             public IEnumerable<TopicPartitionOffset>? OnPartitionsAssigned(
                 IReadOnlyCollection<TopicPartition> topicPartitions,

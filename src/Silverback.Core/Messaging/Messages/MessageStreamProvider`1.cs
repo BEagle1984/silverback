@@ -20,7 +20,7 @@ namespace Silverback.Messaging.Messages
     /// <typeparam name="TMessage">
     ///     The type of the messages being streamed.
     /// </typeparam>
-    internal class MessageStreamProvider<TMessage> : IMessageStreamProvider, IDisposable
+    internal sealed class MessageStreamProvider<TMessage> : IMessageStreamProvider, IDisposable
     {
         private readonly List<ILazyMessageStreamEnumerable> _lazyStreams = new();
 
@@ -49,7 +49,7 @@ namespace Silverback.Messaging.Messages
         ///     when the message has actually been pulled and processed and its result contains the number of
         ///     <see cref="IMessageStreamEnumerable{TMessage}" /> that have been pushed.
         /// </returns>
-        public virtual Task<int> PushAsync(TMessage message, CancellationToken cancellationToken = default) =>
+        public Task<int> PushAsync(TMessage message, CancellationToken cancellationToken = default) =>
             PushAsync(message, true, cancellationToken);
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Silverback.Messaging.Messages
             "ReSharper",
             "ParameterOnlyUsedForPreconditionCheck.Global",
             Justification = "False positive")]
-        public virtual async Task<int> PushAsync(
+        public async Task<int> PushAsync(
             TMessage message,
             bool throwIfUnhandled,
             CancellationToken cancellationToken = default)
@@ -179,22 +179,7 @@ namespace Silverback.Messaging.Messages
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
-        ///     resources.
-        /// </summary>
-        /// <param name="disposing">
-        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
-        ///     finalizer.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-                AsyncHelper.RunSynchronously(() => CompleteAsync());
+            AsyncHelper.RunSynchronously(() => CompleteAsync());
         }
 
         private static ILazyMessageStreamEnumerable<TMessageLinked> CreateLazyStreamCore<TMessageLinked>(

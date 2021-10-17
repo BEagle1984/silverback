@@ -9,7 +9,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Broker.Mqtt
 {
-    internal class ConsumedApplicationMessage
+    internal sealed class ConsumedApplicationMessage
     {
         public ConsumedApplicationMessage(MqttApplicationMessage applicationMessage)
         {

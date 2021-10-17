@@ -6,7 +6,7 @@ using MQTTnet.Client.Options;
 
 namespace Silverback.Messaging.Configuration.Mqtt.Comparers
 {
-    internal class MqttClientChannelOptionsEqualityComparer : IEqualityComparer<IMqttClientChannelOptions>
+    internal sealed class MqttClientChannelOptionsEqualityComparer : IEqualityComparer<IMqttClientChannelOptions>
     {
         private static readonly MqttClientTcpOptionsEqualityComparer TcpOptionsEqualityComparer =
             MqttClientTcpOptionsEqualityComparer.Instance;

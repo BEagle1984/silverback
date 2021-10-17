@@ -682,7 +682,7 @@ namespace Silverback.Tests.Performance.Broker
             }
         }
 
-        private class Stats
+        private sealed class Stats
         {
             public Stats(string label, int count, int messageSize, TimeSpan elapsed)
             {

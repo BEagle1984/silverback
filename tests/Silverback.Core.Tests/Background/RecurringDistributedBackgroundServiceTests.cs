@@ -211,7 +211,7 @@ namespace Silverback.Tests.Core.Background
             _connection.Dispose();
         }
 
-        private class TestRecurringDistributedBackgroundService : RecurringDistributedBackgroundService
+        private sealed class TestRecurringDistributedBackgroundService : RecurringDistributedBackgroundService
         {
             private readonly Func<CancellationToken, Task> _task;
 

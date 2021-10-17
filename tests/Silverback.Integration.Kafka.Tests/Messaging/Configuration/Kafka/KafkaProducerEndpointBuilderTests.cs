@@ -366,7 +366,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
             endpoint.Configuration.MessageTimeoutMs.Should().Be(42);
         }
 
-        private class TestEndpointNameResolver : IKafkaProducerEndpointNameResolver
+        private sealed class TestEndpointNameResolver : IKafkaProducerEndpointNameResolver
         {
             public string GetName(IOutboundEnvelope envelope) => "some-topic";
 

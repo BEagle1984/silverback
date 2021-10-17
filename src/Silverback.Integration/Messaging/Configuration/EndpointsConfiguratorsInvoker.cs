@@ -11,7 +11,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
-    internal class EndpointsConfiguratorsInvoker
+    internal sealed class EndpointsConfiguratorsInvoker
     {
         private readonly IServiceScopeFactory _scopeFactory;
 

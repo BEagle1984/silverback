@@ -120,7 +120,7 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
             result!.Should().BeSameAs(envelope);
         }
 
-        private class InheritedBinaryFileMessage : BinaryFileMessage
+        private sealed class InheritedBinaryFileMessage : BinaryFileMessage
         {
         }
     }

@@ -5,7 +5,7 @@ using System;
 
 namespace Silverback.Messaging.Configuration.Mqtt
 {
-    internal class MqttEndpointsConfigurator : IEndpointsConfigurator
+    internal sealed class MqttEndpointsConfigurator : IEndpointsConfigurator
     {
         private readonly Action<IMqttEndpointsConfigurationBuilder> _configAction;
 

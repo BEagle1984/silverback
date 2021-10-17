@@ -11,7 +11,7 @@ using System.Xml;
 
 namespace Silverback.Tools.KafkaConfigClassGenerator
 {
-    internal class ProxyClassGenerator
+    internal sealed class ProxyClassGenerator
     {
         private readonly Type _proxiedType;
 

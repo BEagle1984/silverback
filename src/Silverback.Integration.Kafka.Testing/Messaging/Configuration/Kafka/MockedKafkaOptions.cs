@@ -5,7 +5,7 @@ using System;
 
 namespace Silverback.Messaging.Configuration.Kafka
 {
-    internal class MockedKafkaOptions : IMockedKafkaOptions
+    internal sealed class MockedKafkaOptions : IMockedKafkaOptions
     {
         public int DefaultPartitionsCount { get; set; } = 5;
 

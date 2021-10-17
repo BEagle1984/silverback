@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Subscribers.ReturnValueHandlers
     /// <summary>
     ///     Calls the registered <see cref="IReturnValueHandler" />'s.
     /// </summary>
-    internal class ReturnValueHandlerService
+    internal sealed class ReturnValueHandlerService
     {
         private readonly IReadOnlyCollection<IReturnValueHandler> _returnValueHandlers;
 

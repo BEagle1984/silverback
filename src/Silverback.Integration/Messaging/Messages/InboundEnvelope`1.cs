@@ -4,7 +4,7 @@
 namespace Silverback.Messaging.Messages
 {
     /// <inheritdoc cref="IInboundEnvelope{TMessage}" />
-    internal class InboundEnvelope<TMessage> : InboundEnvelope, IInboundEnvelope<TMessage>
+    internal sealed class InboundEnvelope<TMessage> : InboundEnvelope, IInboundEnvelope<TMessage>
         where TMessage : class
     {
         public InboundEnvelope(IRawInboundEnvelope envelope, TMessage message)

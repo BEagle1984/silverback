@@ -41,7 +41,7 @@ namespace Silverback.Tests.Core.Util
             public string Id { get; }
         }
 
-        private class SortedItem : Item, ISorted
+        private sealed class SortedItem : Item, ISorted
         {
             public SortedItem(int sortIndex)
                 : base(sortIndex.ToString(CultureInfo.InvariantCulture)) => SortIndex = sortIndex;

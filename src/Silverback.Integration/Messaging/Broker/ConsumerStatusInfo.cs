@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Silverback.Messaging.Broker
 {
-    internal class ConsumerStatusInfo : IConsumerStatusInfo
+    internal sealed class ConsumerStatusInfo : IConsumerStatusInfo
     {
         private readonly List<IConsumerStatusChange> _history = new();
 

@@ -77,7 +77,7 @@ namespace Silverback.Messaging.Headers
                         .Where(decoratedProperty => decoratedProperty.Attribute != null)
                         .ToList());
 
-        private class DecoratedProperty
+        private sealed class DecoratedProperty
         {
             public DecoratedProperty(PropertyInfo propertyInfo, HeaderAttribute attribute)
             {

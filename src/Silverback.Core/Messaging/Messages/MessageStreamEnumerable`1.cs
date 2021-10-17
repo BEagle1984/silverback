@@ -16,7 +16,7 @@ namespace Silverback.Messaging.Messages
     /// <remarks>
     ///     This implementation is not thread-safe.
     /// </remarks>
-    internal class MessageStreamEnumerable<TMessage>
+    internal sealed class MessageStreamEnumerable<TMessage>
         : IMessageStreamEnumerable<TMessage>, IMessageStreamEnumerable, IDisposable
     {
         private readonly SemaphoreSlim _writeSemaphore = new(1, 1);
@@ -107,29 +107,12 @@ namespace Silverback.Messaging.Messages
         /// <inheritdoc cref="IDisposable.Dispose" />
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+            AsyncHelper.RunSynchronously(() => CompleteAsync());
 
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
-        ///     resources.
-        /// </summary>
-        /// <param name="disposing">
-        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
-        ///     finalizer.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                AsyncHelper.RunSynchronously(() => CompleteAsync());
-
-                _readSemaphore.Dispose();
-                _writeSemaphore.Dispose();
-                _processedSemaphore.Dispose();
-                _abortCancellationTokenSource.Dispose();
-            }
+            _readSemaphore.Dispose();
+            _writeSemaphore.Dispose();
+            _processedSemaphore.Dispose();
+            _abortCancellationTokenSource.Dispose();
         }
 
         private static void SafelyRelease(SemaphoreSlim semaphore)

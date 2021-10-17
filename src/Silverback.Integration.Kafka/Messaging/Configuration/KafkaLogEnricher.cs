@@ -8,7 +8,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Configuration
 {
-    internal class KafkaLogEnricher
+    internal sealed class KafkaLogEnricher
         : IBrokerLogEnricher<KafkaProducerEndpoint>, IBrokerLogEnricher<KafkaConsumerEndpoint>
     {
         public string AdditionalPropertyName1 => "offset";

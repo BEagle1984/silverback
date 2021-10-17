@@ -730,7 +730,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             config.Should().NotBeSameAs(baseConfig);
         }
 
-        private class TestExtendedAuthenticationExchangeHandler : IMqttExtendedAuthenticationExchangeHandler
+        private sealed class TestExtendedAuthenticationExchangeHandler : IMqttExtendedAuthenticationExchangeHandler
         {
             public Task HandleRequestAsync(MqttExtendedAuthenticationExchangeContext context) =>
                 Task.CompletedTask;

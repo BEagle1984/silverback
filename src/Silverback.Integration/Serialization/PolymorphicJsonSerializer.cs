@@ -31,7 +31,7 @@ namespace Silverback.Serialization
         }
 
         [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local", Justification = "Used in Deserialize method")]
-        private class TypeInformation
+        private sealed class TypeInformation
         {
             [JsonPropertyName(TypePropertyName)]
             public string? TypeName { get; set; }

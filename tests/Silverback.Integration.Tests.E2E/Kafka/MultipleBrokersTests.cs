@@ -148,11 +148,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 .Configuration.BootstrapServers.Should().Be("PLAINTEXT://tests-2");
         }
 
-        private class Broker1Message : IIntegrationMessage
+        private sealed class Broker1Message : IIntegrationMessage
         {
         }
 
-        private class Broker2Message : IIntegrationMessage
+        private sealed class Broker2Message : IIntegrationMessage
         {
         }
     }

@@ -5,7 +5,7 @@ using System;
 
 namespace Silverback.Messaging.Broker
 {
-    internal class ConsumerStatusChange : IConsumerStatusChange
+    internal sealed class ConsumerStatusChange : IConsumerStatusChange
     {
         public ConsumerStatusChange(ConsumerStatus status)
             : this(status, DateTime.UtcNow)

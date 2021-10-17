@@ -66,7 +66,7 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
             return policies;
         }
 
-        private class ErrorPolicyChainImplementation : IErrorPolicyImplementation
+        private sealed class ErrorPolicyChainImplementation : IErrorPolicyImplementation
         {
             private readonly IInboundLogger<ErrorPolicyChainImplementation> _logger;
 
@@ -89,11 +89,10 @@ namespace Silverback.Messaging.Inbound.ErrorHandling
                 Check.NotNull(context, nameof(context));
                 Check.NotNull(exception, nameof(exception));
 
-                foreach (var policy in _policies)
-                {
-                    if (policy.CanHandle(context, exception))
-                        return policy.HandleErrorAsync(context, exception);
-                }
+                var nextPolicy = _policies.FirstOrDefault(policy => policy.CanHandle(context, exception));
+
+                if (nextPolicy != null)
+                    return nextPolicy.HandleErrorAsync(context, exception);
 
                 _logger.LogInboundTrace(IntegrationLogEvents.PolicyChainCompleted, context.Envelope);
 

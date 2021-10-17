@@ -221,7 +221,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration.Mqtt
             endpoint.MessageExpiryInterval.Should().Be(42 * 60);
         }
 
-        private class TestEndpointNameResolver : IProducerEndpointNameResolver
+        private sealed class TestEndpointNameResolver : IProducerEndpointNameResolver
         {
             public string GetName(IOutboundEnvelope envelope) => "some-topic";
         }

@@ -343,14 +343,16 @@ namespace Silverback.Messaging.Broker
                 await Task.WhenAll(channelsManagerStoppingTasks.Where(task => task != null))
                     .ConfigureAwait(false);
 
-                foreach (var topicPartitionOffset in latestTopicPartitionOffsets)
+                var topicPartitions = latestTopicPartitionOffsets.Select(offset => offset.TopicPartition);
+
+                foreach (var topicPartition in topicPartitions)
                 {
-                    _channelsManager?.Reset(topicPartitionOffset.TopicPartition);
+                    _channelsManager?.Reset(topicPartition);
 
                     if (IsConsuming)
                     {
-                        _channelsManager?.StartReading(topicPartitionOffset.TopicPartition);
-                        _confluentConsumer?.Resume(new[] { topicPartitionOffset.TopicPartition });
+                        _channelsManager?.StartReading(topicPartition);
+                        _confluentConsumer?.Resume(new[] { topicPartition });
                     }
                 }
 

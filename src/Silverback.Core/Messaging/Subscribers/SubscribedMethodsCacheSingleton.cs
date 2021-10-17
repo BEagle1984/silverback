@@ -11,7 +11,7 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers
 {
-    internal class SubscribedMethodsCacheSingleton
+    internal sealed class SubscribedMethodsCacheSingleton
     {
         private readonly Dictionary<Type, IReadOnlyCollection<SubscribedMethod>> _cache = new();
 

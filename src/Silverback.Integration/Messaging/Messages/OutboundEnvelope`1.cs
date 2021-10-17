@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Silverback.Messaging.Messages
 {
-    internal class OutboundEnvelope<TMessage> : OutboundEnvelope, IOutboundEnvelope<TMessage>
+    internal sealed class OutboundEnvelope<TMessage> : OutboundEnvelope, IOutboundEnvelope<TMessage>
         where TMessage : class
     {
         public OutboundEnvelope(

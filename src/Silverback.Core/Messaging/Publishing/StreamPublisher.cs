@@ -7,7 +7,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Publishing
 {
-    internal class StreamPublisher : IStreamPublisher
+    internal sealed class StreamPublisher : IStreamPublisher
     {
         private readonly IPublisher _publisher;
 
