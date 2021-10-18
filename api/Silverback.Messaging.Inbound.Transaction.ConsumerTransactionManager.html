@@ -90,9 +90,7 @@
   
   <h1 id="Silverback_Messaging_Inbound_Transaction_ConsumerTransactionManager" data-uid="Silverback.Messaging.Inbound.Transaction.ConsumerTransactionManager" class="text-break">Class ConsumerTransactionManager
   </h1>
-  <div class="markdown level0 summary"><p>Handles the consumer transaction. It commits or rolls back both the consumer and the enlisted
-transactional services (see <a class="xref" href="Silverback.Messaging.Inbound.Transaction.ITransactional.html">ITransactional</a>).</p>
-</div>
+  <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -170,7 +168,7 @@ transactional services (see <a class="xref" href="Silverback.Messaging.Inbound.T
       <tr>
         <td><a class="xref" href="Silverback.Diagnostics.IInboundLogger-1.html">IInboundLogger</a>&lt;<a class="xref" href="Silverback.Messaging.Inbound.Transaction.ConsumerTransactionManager.html">ConsumerTransactionManager</a>&gt;</td>
         <td><span class="parametername">logger</span></td>
-        <td><p>The <a class="xref" href="Silverback.Diagnostics.ISilverbackLogger.html">ISilverbackLogger</a>.</p>
+        <td><p>The <span class="xref">Silverback.Diagnostics.ISilverbackLogger</span>.</p>
 </td>
       </tr>
     </tbody>
@@ -186,8 +184,7 @@ transactional services (see <a class="xref" href="Silverback.Messaging.Inbound.T
   </span>
   <a id="Silverback_Messaging_Inbound_Transaction_ConsumerTransactionManager_IsCompleted_" data-uid="Silverback.Messaging.Inbound.Transaction.ConsumerTransactionManager.IsCompleted*"></a>
   <h4 id="Silverback_Messaging_Inbound_Transaction_ConsumerTransactionManager_IsCompleted" data-uid="Silverback.Messaging.Inbound.Transaction.ConsumerTransactionManager.IsCompleted">IsCompleted</h4>
-  <div class="markdown level1 summary"><p>Gets a value indicating whether the transaction has completed.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -219,8 +216,7 @@ transactional services (see <a class="xref" href="Silverback.Messaging.Inbound.T
   </span>
   <a id="Silverback_Messaging_Inbound_Transaction_ConsumerTransactionManager_CommitAsync_" data-uid="Silverback.Messaging.Inbound.Transaction.ConsumerTransactionManager.CommitAsync*"></a>
   <h4 id="Silverback_Messaging_Inbound_Transaction_ConsumerTransactionManager_CommitAsync" data-uid="Silverback.Messaging.Inbound.Transaction.ConsumerTransactionManager.CommitAsync">CommitAsync()</h4>
-  <div class="markdown level1 summary"><p>Commits the transaction.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -237,8 +233,7 @@ transactional services (see <a class="xref" href="Silverback.Messaging.Inbound.T
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -251,8 +246,7 @@ transactional services (see <a class="xref" href="Silverback.Messaging.Inbound.T
   </span>
   <a id="Silverback_Messaging_Inbound_Transaction_ConsumerTransactionManager_Enlist_" data-uid="Silverback.Messaging.Inbound.Transaction.ConsumerTransactionManager.Enlist*"></a>
   <h4 id="Silverback_Messaging_Inbound_Transaction_ConsumerTransactionManager_Enlist_Silverback_Messaging_Inbound_Transaction_ITransactional_" data-uid="Silverback.Messaging.Inbound.Transaction.ConsumerTransactionManager.Enlist(Silverback.Messaging.Inbound.Transaction.ITransactional)">Enlist(ITransactional)</h4>
-  <div class="markdown level1 summary"><p>Adds the specified service to the transaction participants to be called upon commit or rollback.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -271,8 +265,7 @@ transactional services (see <a class="xref" href="Silverback.Messaging.Inbound.T
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Inbound.Transaction.ITransactional.html">ITransactional</a></td>
         <td><span class="parametername">transactionalService</span></td>
-        <td><p>The service to be enlisted.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -285,8 +278,7 @@ transactional services (see <a class="xref" href="Silverback.Messaging.Inbound.T
   </span>
   <a id="Silverback_Messaging_Inbound_Transaction_ConsumerTransactionManager_RollbackAsync_" data-uid="Silverback.Messaging.Inbound.Transaction.ConsumerTransactionManager.RollbackAsync*"></a>
   <h4 id="Silverback_Messaging_Inbound_Transaction_ConsumerTransactionManager_RollbackAsync_System_Exception_System_Boolean_System_Boolean_System_Boolean_" data-uid="Silverback.Messaging.Inbound.Transaction.ConsumerTransactionManager.RollbackAsync(System.Exception,System.Boolean,System.Boolean,System.Boolean)">RollbackAsync(Exception, Boolean, Boolean, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Aborts the transaction and causes the uncommitted changes to be rolled back.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -305,27 +297,22 @@ transactional services (see <a class="xref" href="Silverback.Messaging.Inbound.T
       <tr>
         <td><span class="xref">System.Exception</span></td>
         <td><span class="parametername">exception</span></td>
-        <td><p>The exception that caused the rollback.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">commitConsumer</span></td>
-        <td><p>A value indicating whether the consumer have to be committed anyway. This depends on the error policy
-being applied.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">throwIfAlreadyCommitted</span></td>
-        <td><p>A value indicating whether an exception must be thrown if the transaction was already committed.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">stopConsuming</span></td>
-        <td><p>A value indicating whether the consumer must be stopped.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -340,9 +327,7 @@ being applied.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains a
-value indicating whether the rollback was performed.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>

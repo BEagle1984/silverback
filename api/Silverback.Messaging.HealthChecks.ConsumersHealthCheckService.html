@@ -90,8 +90,7 @@
   
   <h1 id="Silverback_Messaging_HealthChecks_ConsumersHealthCheckService" data-uid="Silverback.Messaging.HealthChecks.ConsumersHealthCheckService" class="text-break">Class ConsumersHealthCheckService
   </h1>
-  <div class="markdown level0 summary"><p>Checks that all the consumers are connected.</p>
-</div>
+  <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -185,9 +184,7 @@
   </span>
   <a id="Silverback_Messaging_HealthChecks_ConsumersHealthCheckService_GetDisconnectedConsumersAsync_" data-uid="Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync*"></a>
   <h4 id="Silverback_Messaging_HealthChecks_ConsumersHealthCheckService_GetDisconnectedConsumersAsync_Silverback_Messaging_Broker_ConsumerStatus_System_TimeSpan_System_Func_Silverback_Messaging_IConsumerEndpoint_System_Boolean__" data-uid="Silverback.Messaging.HealthChecks.ConsumersHealthCheckService.GetDisconnectedConsumersAsync(Silverback.Messaging.Broker.ConsumerStatus,System.TimeSpan,System.Func{Silverback.Messaging.IConsumerEndpoint,System.Boolean})">GetDisconnectedConsumersAsync(ConsumerStatus, TimeSpan, Func&lt;IConsumerEndpoint, Boolean&gt;)</h4>
-  <div class="markdown level1 summary"><p>Checks the status of all the consumers and returns a collection containing the consumer instances that
-don't appear to be fully connected (Status &gt;= <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html#Silverback_Messaging_Broker_ConsumerStatus_Ready">Ready</a>).</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -206,20 +203,17 @@ don't appear to be fully connected (Status &gt;= <a class="xref" href="Silverbac
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html">ConsumerStatus</a></td>
         <td><span class="parametername">minStatus</span></td>
-        <td><p>The minimum <a class="xref" href="Silverback.Messaging.Broker.ConsumerStatus.html">ConsumerStatus</a> a consumer must have to be considered fully connected.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">gracePeriod</span></td>
-        <td><p>The grace period to observe after each status change before a consumer is considered unhealthy.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a>, <span class="xref">System.Boolean</span>&gt;</td>
         <td><span class="parametername">endpointsFilter</span></td>
-        <td><p>An optional filter to be applied to the endpoints to be tested.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -234,9 +228,7 @@ don't appear to be fully connected (Status &gt;= <a class="xref" href="Silverbac
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.IReadOnlyCollection</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IConsumer.html">IConsumer</a>&gt;&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
-consumers that aren't fully connected.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>

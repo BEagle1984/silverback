@@ -230,7 +230,7 @@ namespace Silverback.Samples.Mqtt.Basic.ProducerV3
 
                 await ProduceMessageAsync(publisher, ++number);
 
-                await Task.Delay(20000, stoppingToken);
+                await Task.Delay(100, stoppingToken);
             }
         }
 
@@ -350,9 +350,7 @@ namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
 }
 </code></pre></section>
 <section id="tabpanel_bHGHmlrG6S-1_consumer-subscriber" role="tabpanel" data-tab="consumer-subscriber" aria-hidden="true" hidden="hidden">
-<pre><code class="lang-csharp" name="Consumer.Subscriber">using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+<pre><code class="lang-csharp" name="Consumer.Subscriber">using Microsoft.Extensions.Logging;
 using Silverback.Samples.Mqtt.Basic.Common;
 
 namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
@@ -366,14 +364,8 @@ namespace Silverback.Samples.Mqtt.Basic.ConsumerV3
             _logger = logger;
         }
 
-        public async Task OnMessageReceived(SampleMessage message)
-        {
+        public void OnMessageReceived(SampleMessage message) =&gt;
             _logger.LogInformation($&quot;Received {message.Number}&quot;);
-
-            await Task.Delay(95_000);
-
-            throw new ApplicationException(&quot;RAT!&quot;);
-        }
     }
 }
 </code></pre></section>

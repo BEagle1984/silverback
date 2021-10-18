@@ -98,8 +98,6 @@
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><a class="xref" href="Silverback.Messaging.Configuration.EndpointBuilder-2.html">EndpointBuilder</a>&lt;TEndpoint, TBuilder&gt;</div>
     <div class="level2"><span class="xref">ProducerEndpointBuilder&lt;TEndpoint, TBuilder&gt;</span></div>
-      <div class="level3"><a class="xref" href="Silverback.Messaging.Configuration.Kafka.KafkaProducerEndpointBuilder.html">KafkaProducerEndpointBuilder</a></div>
-      <div class="level3"><a class="xref" href="Silverback.Messaging.Configuration.Mqtt.MqttProducerEndpointBuilder.html">MqttProducerEndpointBuilder</a></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -232,8 +230,7 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader_System_String_System_Object_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader(System.String,System.Object)">AddHeader(String, Object)</h4>
-  <div class="markdown level1 summary"><p>Adds the specified header to all produced messages.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -252,14 +249,12 @@ builder.</p>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">name</span></td>
-        <td><p>The header name.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Object</span></td>
         <td><span class="parametername">value</span></td>
-        <td><p>The header value.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -274,8 +269,7 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -288,12 +282,12 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader__1_System_String_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader``1(System.String,System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})">AddHeader&lt;TMessage&gt;(String, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, Object&gt;)</h4>
-  <div class="markdown level1 summary"><p>Adds the specified header to all produced messages of the specified type, using a value provider function to determine the header value for each message.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public TBuilder AddHeader&lt;TMessage&gt;(string name, Func&lt;IOutboundEnvelope&lt;TMessage&gt;, object&gt; valueProvider)
+
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -309,14 +303,12 @@ builder.</p>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">name</span></td>
-        <td><p>The header name.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, <span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">valueProvider</span></td>
-        <td><p>The value provider function.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -331,8 +323,7 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -347,8 +338,7 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TMessage</span></td>
-        <td><p>The type of the messages to be enriched with this header.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -361,12 +351,12 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_AddHeader__1_System_String_System_Object_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.AddHeader``1(System.String,System.Object)">AddHeader&lt;TMessage&gt;(String, Object)</h4>
-  <div class="markdown level1 summary"><p>Adds the specified header to all produced messages of the specified type.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public TBuilder AddHeader&lt;TMessage&gt;(string name, object value)
+
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -382,14 +372,12 @@ builder.</p>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">name</span></td>
-        <td><p>The header name.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Object</span></td>
         <td><span class="parametername">value</span></td>
-        <td><p>The header value.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -404,8 +392,7 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -420,8 +407,7 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TMessage</span></td>
-        <td><p>The type of the messages to be enriched with this header.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -434,8 +420,7 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_Build_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.Build*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_Build" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.Build">Build()</h4>
-  <div class="markdown level1 summary"><p>Builds the endpoint instance.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -452,8 +437,7 @@ builder.</p>
     <tbody>
       <tr>
         <td><span class="xref">TEndpoint</span></td>
-        <td><p>The endpoint.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -468,8 +452,7 @@ builder.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_EnableChunking_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.EnableChunking*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_EnableChunking_System_Int32_System_Boolean_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.EnableChunking(System.Int32,System.Boolean)">EnableChunking(Int32, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Enables chunking, splitting the larger messages into smaller chunks.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -488,16 +471,12 @@ builder.</p>
       <tr>
         <td><span class="xref">System.Int32</span></td>
         <td><span class="parametername">chunkSize</span></td>
-        <td><p>The maximum chunk size in bytes.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">alwaysAddHeaders</span></td>
-        <td><p>A value indicating whether the <code>x-chunk-index</code> and related headers have to be added to the
-produced message in any case, even if its size doesn't exceed the single chunk size. The default is
-<code>true</code>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -512,8 +491,7 @@ produced message in any case, even if its size doesn't exceed the single chunk s
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -526,8 +504,7 @@ produced message in any case, even if its size doesn't exceed the single chunk s
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_Encrypt_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.Encrypt*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_Encrypt_Silverback_Messaging_Encryption_EncryptionSettings_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.Encrypt(Silverback.Messaging.Encryption.EncryptionSettings)">Encrypt(EncryptionSettings)</h4>
-  <div class="markdown level1 summary"><p>Specifies the <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a> to be used to encrypt the messages.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -546,8 +523,7 @@ produced message in any case, even if its size doesn't exceed the single chunk s
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a></td>
         <td><span class="parametername">encryptionSettings</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Encryption.EncryptionSettings.html">EncryptionSettings</a>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -562,8 +538,7 @@ produced message in any case, even if its size doesn't exceed the single chunk s
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -576,9 +551,7 @@ produced message in any case, even if its size doesn't exceed the single chunk s
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_ProduceDirectly_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.ProduceDirectly*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_ProduceDirectly" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.ProduceDirectly">ProduceDirectly()</h4>
-  <div class="markdown level1 summary"><p>Specifies that the <span class="xref">Silverback.Messaging.Outbound.DefaultProduceStrategy</span> has to be used, producing directly to the
-message broker.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -595,8 +568,7 @@ message broker.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -609,11 +581,7 @@ message broker.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_ProduceToOutbox_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.ProduceToOutbox*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_ProduceToOutbox" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.ProduceToOutbox">ProduceToOutbox()</h4>
-  <div class="markdown level1 summary"><p>Specifies that the<a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.OutboxProduceStrategy.html">OutboxProduceStrategy</a> has to be used, storing the messages into the
-transactional outbox table. The operation is therefore included in the database transaction applying
-the message side effects to the local database. The <a class="xref" href="Silverback.Messaging.Outbound.TransactionalOutbox.IOutboxWorker.html">IOutboxWorker</a> takes care of
-asynchronously sending the messages to the message broker.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -630,8 +598,7 @@ asynchronously sending the messages to the message broker.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -644,8 +611,7 @@ asynchronously sending the messages to the message broker.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_SerializeUsing_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.SerializeUsing*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_SerializeUsing_Silverback_Messaging_Serialization_IMessageSerializer_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.SerializeUsing(Silverback.Messaging.Serialization.IMessageSerializer)">SerializeUsing(IMessageSerializer)</h4>
-  <div class="markdown level1 summary"><p>Specifies the <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a> to be used to serialize the messages.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -664,8 +630,7 @@ asynchronously sending the messages to the message broker.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a></td>
         <td><span class="parametername">serializer</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Serialization.IMessageSerializer.html">IMessageSerializer</a>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -680,8 +645,7 @@ asynchronously sending the messages to the message broker.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -694,8 +658,7 @@ asynchronously sending the messages to the message broker.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_UseStrategy_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.UseStrategy*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_UseStrategy_Silverback_Messaging_Outbound_IProduceStrategy_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.UseStrategy(Silverback.Messaging.Outbound.IProduceStrategy)">UseStrategy(IProduceStrategy)</h4>
-  <div class="markdown level1 summary"><p>Specifies the strategy to be used to produce the messages.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -714,8 +677,7 @@ asynchronously sending the messages to the message broker.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Outbound.IProduceStrategy.html">IProduceStrategy</a></td>
         <td><span class="parametername">strategy</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Outbound.IProduceStrategy.html">IProduceStrategy</a>.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -730,8 +692,7 @@ asynchronously sending the messages to the message broker.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -744,12 +705,12 @@ asynchronously sending the messages to the message broker.</p>
   </span>
   <a id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_WithMessageId_" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.WithMessageId*"></a>
   <h4 id="Silverback_Messaging_Configuration_ProducerEndpointBuilder_2_WithMessageId__1_System_Func_Silverback_Messaging_Messages_IOutboundEnvelope___0__System_Object__" data-uid="Silverback.Messaging.Configuration.ProducerEndpointBuilder`2.WithMessageId``1(System.Func{Silverback.Messaging.Messages.IOutboundEnvelope{``0},System.Object})">WithMessageId&lt;TMessage&gt;(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, Object&gt;)</h4>
-  <div class="markdown level1 summary"><p>Uses the specified value provider function to set the message id header for each produced message.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public TBuilder WithMessageId&lt;TMessage&gt;(Func&lt;IOutboundEnvelope&lt;TMessage&gt;, object&gt; valueProvider)
+
     where TMessage : class</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -765,8 +726,7 @@ asynchronously sending the messages to the message broker.</p>
       <tr>
         <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Silverback.Messaging.Messages.IOutboundEnvelope-1.html">IOutboundEnvelope</a>&lt;TMessage&gt;, <span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">valueProvider</span></td>
-        <td><p>The value provider function.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -781,8 +741,7 @@ asynchronously sending the messages to the message broker.</p>
     <tbody>
       <tr>
         <td><span class="xref">TBuilder</span></td>
-        <td><p>The endpoint builder so that additional calls can be chained.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -797,8 +756,7 @@ asynchronously sending the messages to the message broker.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TMessage</span></td>
-        <td><p>The type of the messages to be enriched with this header.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>

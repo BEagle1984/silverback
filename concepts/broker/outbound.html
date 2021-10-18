@@ -90,7 +90,7 @@
 <p>The endpoint object identifies the topic/queue that is being connected and the client configuration, such the connection options. The endpoint object is therefore very specific and every broker type will define it's own implementation of <a class="xref" href="../../api/Silverback.Messaging.IProducerEndpoint.html">IProducerEndpoint</a>.</p>
 <p>The options in the endpoint object are also used to tweak the Silverback behavior (e.g. the <a class="xref" href="serialization.html">serialization</a>) and to enable additional features such as <a class="xref" href="chunking.html">chunking</a>, <a class="xref" href="encryption.html">encryption</a>, etc.</p>
 <h2 id="apache-kafka">Apache Kafka</h2>
-<p>The <a class="xref" href="../../api/Silverback.Messaging.KafkaProducerEndpoint.html">KafkaProducerEndpoint</a> is defined by
+<p>The &lt;xref:Silverback.Messaging.KafkaProducerEndpoint&gt; is defined by
 <a href="https://www.nuget.org/packages/Silverback.Integration.Kafka">Silverback.Integration.Kafka</a> and is used to declare an outbound endpoint connected to Apache Kafka.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
@@ -148,7 +148,7 @@
 <p>For a more in-depth documentation about the Kafka client configuration refer also to the <a href="https://docs.confluent.io/current/clients/confluent-kafka-dotnet/api/Confluent.Kafka.html">confluent-kafka-dotnet documentation</a>.</p>
 </div>
 <h2 id="mqtt">MQTT</h2>
-<p>The <a class="xref" href="../../api/Silverback.Messaging.MqttProducerEndpoint.html">MqttProducerEndpoint</a> is defined by
+<p>The &lt;xref:Silverback.Messaging.MqttProducerEndpoint&gt; is defined by
 <a href="https://www.nuget.org/packages/Silverback.Integration.MQTT">Silverback.Integration.MQTT</a> and is used to declare an outbound endpoint connected to an MQTT broker.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-1">
 <ul role="tablist">
@@ -213,7 +213,7 @@
 <p>For a more in-depth documentation about the MQTT client configuration refer also to the <a href="https://github.com/chkr1011/MQTTnet/wiki">MQTTNet documentation</a>.</p>
 </div>
 <h2 id="rabbitmq">RabbitMQ</h2>
-<p><a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ">Silverback.Integration.RabbitMQ</a> is a bit more intricate and uses 2 different classes to specify an endpoint that connects to a queue (<a class="xref" href="../../api/Silverback.Messaging.RabbitQueueProducerEndpoint.html">RabbitQueueProducerEndpoint</a>) or directly to an exchange (<a class="xref" href="../../api/Silverback.Messaging.RabbitExchangeProducerEndpoint.html">RabbitExchangeProducerEndpoint</a>).</p>
+<p><a href="https://www.nuget.org/packages/Silverback.Integration.RabbitMQ">Silverback.Integration.RabbitMQ</a> is a bit more intricate and uses 2 different classes to specify an endpoint that connects to a queue (&lt;xref:Silverback.Messaging.RabbitQueueProducerEndpoint&gt;) or directly to an exchange (&lt;xref:Silverback.Messaging.RabbitExchangeProducerEndpoint&gt;).</p>
 <pre><code class="lang-csharp">public class MyEndpointsConfigurator : IEndpointsConfigurator
 {
     public void Configure(IEndpointsConfigurationBuilder builder) =&gt;
@@ -269,7 +269,7 @@
 </div>
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p>The current <a class="xref" href="../../api/Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a> cannot scale horizontally and starting multiple instances will cause the messages to be produced multiple times. In the following example a distributed lock (stored in the database) is used to ensure that only one instance is running and another one will <em>immediately</em> take over when it stops (the <code>DbContext</code> must include a <code>DbSet</code> of <a class="xref" href="../../api/Silverback.Database.Model.Lock.html">Lock</a> as well, see also the <a class="xref" href="../dbcontext.html">Sample DbContext (EF Core)</a>).</p>
+<p>The current <a class="xref" href="../../api/Silverback.Messaging.Outbound.TransactionalOutbox.OutboxWorker.html">OutboxWorker</a> cannot scale horizontally and starting multiple instances will cause the messages to be produced multiple times. In the following example a distributed lock (stored in the database) is used to ensure that only one instance is running and another one will <em>immediately</em> take over when it stops (the <code>DbContext</code> must include a <code>DbSet</code> of &lt;xref:Silverback.Database.Model.Lock&gt; as well, see also the <a class="xref" href="../dbcontext.html">Sample DbContext (EF Core)</a>).</p>
 </div>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S-2">
 <ul role="tablist">

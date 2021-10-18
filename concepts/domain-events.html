@@ -90,10 +90,10 @@
 <p>The <a href="https://www.nuget.org/packages/Silverback.Core.Model">Silverback.Core.Model</a> package contains a sample implementation of a <a class="xref" href="../api/Silverback.Domain.DomainEntity.html">DomainEntity</a> but you can also implement you own type.</p>
 <div class="IMPORTANT">
 <h5>Important</h5>
-<p>In case of a custom implementation the only constraint is that you must implement the <a class="xref" href="../api/Silverback.Messaging.Messages.IMessagesSource.html">IMessagesSource</a> interface in order for Silverback to be able to access the associated events.</p>
+<p>In case of a custom implementation the only constraint is that you must implement the &lt;xref:Silverback.Messaging.Messages.IMessagesSource&gt; interface in order for Silverback to be able to access the associated events.</p>
 </div>
-<p>The <a class="xref" href="../api/Silverback.Messaging.Messages.MessagesSource-1.html#Silverback_Messaging_Messages_MessagesSource_1_AddEvent__0_">DomainEntity.AddEvent</a> method adds the domain event to the events collection, to be published when the entity is saved.
-To enable this mechanism we just need to override the various <code>SaveChanges</code> methods to plug-in the <a class="xref" href="../api/Silverback.EntityFrameworkCore.DbContextEventsPublisher.html">DbContextEventsPublisher</a> contained in the <a href="https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore">Silverback.Core.EntityFrameworkCore</a> package.</p>
+<p>The <a href="xref:Silverback.Messaging.Messages.MessagesSource%601#Silverback_Messaging_Messages_MessagesSource_1_AddEvent__0_">DomainEntity.AddEvent</a> method adds the domain event to the events collection, to be published when the entity is saved.
+To enable this mechanism we just need to override the various <code>SaveChanges</code> methods to plug-in the &lt;xref:Silverback.EntityFrameworkCore.DbContextEventsPublisher&gt; contained in the <a href="https://www.nuget.org/packages/Silverback.Core.EntityFrameworkCore">Silverback.Core.EntityFrameworkCore</a> package.</p>
 <div class="tabGroup" id="tabgroup_bHGHmlrG6S">
 <ul role="tablist">
 <li role="presentation">

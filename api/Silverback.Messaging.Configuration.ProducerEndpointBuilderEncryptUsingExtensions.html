@@ -146,6 +146,7 @@
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static TBuilder EncryptUsingAes&lt;TBuilder&gt;(this IProducerEndpointBuilder&lt;TBuilder&gt; endpointBuilder, byte[] key, byte[] initializationVector = null)
+
     where TBuilder : IProducerEndpointBuilder&lt;TBuilder&gt;</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -226,6 +227,7 @@ will be generated for each message and prepended to the actual message payload.<
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static TBuilder EncryptUsingAes&lt;TBuilder&gt;(this IProducerEndpointBuilder&lt;TBuilder&gt; endpointBuilder, byte[] key, string keyIdentifier, byte[] initializationVector = null)
+
     where TBuilder : IProducerEndpointBuilder&lt;TBuilder&gt;</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>

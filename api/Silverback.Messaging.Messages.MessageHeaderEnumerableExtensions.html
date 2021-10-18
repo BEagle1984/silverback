@@ -352,6 +352,7 @@ is not found (or the value cannot be converted to the specified type).</p>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static T? GetValue&lt;T&gt;(this IEnumerable&lt;MessageHeader&gt; headers, string name, bool throwIfNotFound = false)
+
     where T : struct</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
@@ -507,6 +508,7 @@ is not found (or the value cannot be converted to the specified type).</p>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public static T GetValueOrDefault&lt;T&gt;(this IEnumerable&lt;MessageHeader&gt; headers, string name)
+
     where T : struct</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>

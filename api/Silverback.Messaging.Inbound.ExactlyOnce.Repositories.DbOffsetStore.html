@@ -95,7 +95,7 @@
     offsets and guarantee that each message is processed only once.
 </p>
 <p>
-    An <a class="xref" href="Silverback.Database.IDbContext.html">IDbContext</a> is used to store the offsets into the database.
+    An <span class="xref">Silverback.Database.IDbContext</span> is used to store the offsets into the database.
 </p>
 </div>
   <div class="markdown level0 conceptual"></div>
@@ -175,9 +175,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Database.IDbContext.html">IDbContext</a></td>
+        <td><span class="xref">Silverback.Database.IDbContext</span></td>
         <td><span class="parametername">dbContext</span></td>
-        <td><p>The <a class="xref" href="Silverback.Database.IDbContext.html">IDbContext</a> to use as storage.</p>
+        <td><p>The <span class="xref">Silverback.Database.IDbContext</span> to use as storage.</p>
 </td>
       </tr>
     </tbody>
@@ -193,8 +193,7 @@
   </span>
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_DbOffsetStore_CommitAsync_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.DbOffsetStore.CommitAsync*"></a>
   <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_DbOffsetStore_CommitAsync" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.DbOffsetStore.CommitAsync">CommitAsync()</h4>
-  <div class="markdown level1 summary"><p>Called when the message has been successfully processed to commit the transaction.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -211,8 +210,7 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -225,8 +223,7 @@
   </span>
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_DbOffsetStore_GetLatestValueAsync_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.DbOffsetStore.GetLatestValueAsync*"></a>
   <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_DbOffsetStore_GetLatestValueAsync_System_String_Silverback_Messaging_IConsumerEndpoint_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.DbOffsetStore.GetLatestValueAsync(System.String,Silverback.Messaging.IConsumerEndpoint)">GetLatestValueAsync(String, IConsumerEndpoint)</h4>
-  <div class="markdown level1 summary"><p>Returns the latest recorded offset value for the specified offset key and endpoint.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -245,15 +242,12 @@
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">offsetKey</span></td>
-        <td><p>The key of the offset to be retrieved. The offset key uniquely identifies the queue, topic or
-partition.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a></td>
         <td><span class="parametername">endpoint</span></td>
-        <td><p>The endpoint for which the recorded offset has to be be returned.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -268,9 +262,7 @@ partition.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageOffset.html">IBrokerMessageOffset</a>&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
-latest offset.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -283,8 +275,7 @@ latest offset.</p>
   </span>
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_DbOffsetStore_RollbackAsync_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.DbOffsetStore.RollbackAsync*"></a>
   <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_DbOffsetStore_RollbackAsync" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.DbOffsetStore.RollbackAsync">RollbackAsync()</h4>
-  <div class="markdown level1 summary"><p>Called when an exception occurs during the message processing to rollback the transaction.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -301,8 +292,7 @@ latest offset.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -315,8 +305,7 @@ latest offset.</p>
   </span>
   <a id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_DbOffsetStore_StoreAsync_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.DbOffsetStore.StoreAsync*"></a>
   <h4 id="Silverback_Messaging_Inbound_ExactlyOnce_Repositories_DbOffsetStore_StoreAsync_Silverback_Messaging_Broker_IBrokerMessageOffset_Silverback_Messaging_IConsumerEndpoint_" data-uid="Silverback.Messaging.Inbound.ExactlyOnce.Repositories.DbOffsetStore.StoreAsync(Silverback.Messaging.Broker.IBrokerMessageOffset,Silverback.Messaging.IConsumerEndpoint)">StoreAsync(IBrokerMessageOffset, IConsumerEndpoint)</h4>
-  <div class="markdown level1 summary"><p>Stores the offset of the processed message.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -335,14 +324,12 @@ latest offset.</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Broker.IBrokerMessageOffset.html">IBrokerMessageOffset</a></td>
         <td><span class="parametername">offset</span></td>
-        <td><p>The offset to be stored.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.IConsumerEndpoint.html">IConsumerEndpoint</a></td>
         <td><span class="parametername">endpoint</span></td>
-        <td><p>The endpoint the offset belongs to.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -357,8 +344,7 @@ latest offset.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>

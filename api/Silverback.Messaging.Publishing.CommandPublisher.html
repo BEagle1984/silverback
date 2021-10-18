@@ -90,8 +90,7 @@
   
   <h1 id="Silverback_Messaging_Publishing_CommandPublisher" data-uid="Silverback.Messaging.Publishing.CommandPublisher" class="text-break">Class CommandPublisher
   </h1>
-  <div class="markdown level0 summary"><p>Publishes the messages implementing <a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a> or <a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand&lt;TResult&gt;</a>.</p>
-</div>
+  <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -161,9 +160,9 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a></td>
+        <td><span class="xref">Silverback.Messaging.Publishing.IPublisher</span></td>
         <td><span class="parametername">publisher</span></td>
-        <td><p>The <a class="xref" href="Silverback.Messaging.Publishing.IPublisher.html">IPublisher</a> to be wrapped.</p>
+        <td><p>The <span class="xref">Silverback.Messaging.Publishing.IPublisher</span> to be wrapped.</p>
 </td>
       </tr>
     </tbody>
@@ -179,10 +178,7 @@
   </span>
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
   <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute_Silverback_Messaging_Messages_ICommand_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute(Silverback.Messaging.Messages.ICommand)">Execute(ICommand)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the method will not complete until all subscribers have processed it (unless
-using Silverback.Integration to produce and consume the message through a message broker).</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -201,8 +197,7 @@ using Silverback.Integration to produce and consume the message through a messag
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></td>
         <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -215,10 +210,7 @@ using Silverback.Integration to produce and consume the message through a messag
   </span>
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
   <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute_Silverback_Messaging_Messages_ICommand_System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute(Silverback.Messaging.Messages.ICommand,System.Boolean)">Execute(ICommand, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the method will not complete until all subscribers have processed it (unless
-using Silverback.Integration to produce and consume the message through a message broker).</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -237,15 +229,12 @@ using Silverback.Integration to produce and consume the message through a messag
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></td>
         <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
-message.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -258,10 +247,7 @@ message.</p>
   </span>
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
   <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute__1_Silverback_Messaging_Messages_ICommand___0__" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute``1(Silverback.Messaging.Messages.ICommand{``0})">Execute&lt;TResult&gt;(ICommand&lt;TResult&gt;)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the method will not complete until all subscribers have processed it (unless
-using Silverback.Integration to produce and consume the message through a message broker).</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -280,8 +266,7 @@ using Silverback.Integration to produce and consume the message through a messag
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</td>
         <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -296,8 +281,7 @@ using Silverback.Integration to produce and consume the message through a messag
     <tbody>
       <tr>
         <td><span class="xref">TResult</span></td>
-        <td><p>The command result.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -312,8 +296,7 @@ using Silverback.Integration to produce and consume the message through a messag
     <tbody>
       <tr>
         <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -326,10 +309,7 @@ using Silverback.Integration to produce and consume the message through a messag
   </span>
   <a id="Silverback_Messaging_Publishing_CommandPublisher_Execute_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute*"></a>
   <h4 id="Silverback_Messaging_Publishing_CommandPublisher_Execute__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.Execute``1(Silverback.Messaging.Messages.ICommand{``0},System.Boolean)">Execute&lt;TResult&gt;(ICommand&lt;TResult&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the method will not complete until all subscribers have processed it (unless
-using Silverback.Integration to produce and consume the message through a message broker).</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -348,15 +328,12 @@ using Silverback.Integration to produce and consume the message through a messag
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</td>
         <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
-message.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -371,8 +348,7 @@ message.</p>
     <tbody>
       <tr>
         <td><span class="xref">TResult</span></td>
-        <td><p>The command result.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -387,8 +363,7 @@ message.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -401,11 +376,7 @@ message.</p>
   </span>
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
   <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_Silverback_Messaging_Messages_ICommand_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(Silverback.Messaging.Messages.ICommand)">ExecuteAsync(ICommand)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed
-it (unless using Silverback.Integration to produce and consume the message through a message
-broker).</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -424,8 +395,7 @@ broker).</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></td>
         <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -440,8 +410,7 @@ broker).</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -454,11 +423,7 @@ broker).</p>
   </span>
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
   <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_Silverback_Messaging_Messages_ICommand_System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync(Silverback.Messaging.Messages.ICommand,System.Boolean)">ExecuteAsync(ICommand, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed
-it (unless using Silverback.Integration to produce and consume the message through a message
-broker).</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -477,15 +442,12 @@ broker).</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.ICommand.html">ICommand</a></td>
         <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
-message.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -500,8 +462,7 @@ message.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task</span> representing the asynchronous operation.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -514,11 +475,7 @@ message.</p>
   </span>
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
   <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_ICommand___0__" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync``1(Silverback.Messaging.Messages.ICommand{``0})">ExecuteAsync&lt;TResult&gt;(ICommand&lt;TResult&gt;)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed
-it (unless using Silverback.Integration to produce and consume the message through a message
-broker).</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -537,8 +494,7 @@ broker).</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</td>
         <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -553,9 +509,7 @@ broker).</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TResult&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
-command result.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -570,8 +524,7 @@ command result.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -584,11 +537,7 @@ command result.</p>
   </span>
   <a id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync*"></a>
   <h4 id="Silverback_Messaging_Publishing_CommandPublisher_ExecuteAsync__1_Silverback_Messaging_Messages_ICommand___0__System_Boolean_" data-uid="Silverback.Messaging.Publishing.CommandPublisher.ExecuteAsync``1(Silverback.Messaging.Messages.ICommand{``0},System.Boolean)">ExecuteAsync&lt;TResult&gt;(ICommand&lt;TResult&gt;, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Executes the specified command publishing it to the internal bus. The message will be forwarded to
-its subscribers and the <span class="xref">System.Threading.Tasks.Task</span> will not complete until all subscribers have processed
-it (unless using Silverback.Integration to produce and consume the message through a message
-broker).</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -607,15 +556,12 @@ broker).</p>
       <tr>
         <td><a class="xref" href="Silverback.Messaging.Messages.ICommand-1.html">ICommand</a>&lt;TResult&gt;</td>
         <td><span class="parametername">commandMessage</span></td>
-        <td><p>The command to be executed.</p>
-</td>
+        <td></td>
       </tr>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">throwIfUnhandled</span></td>
-        <td><p>A boolean value indicating whether an exception must be thrown if no subscriber is handling the
-message.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -630,9 +576,7 @@ message.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;TResult&gt;</td>
-        <td><p>A <span class="xref">System.Threading.Tasks.Task&lt;TResult&gt;</span> representing the asynchronous operation. The task result contains the
-command result.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -647,8 +591,7 @@ command result.</p>
     <tbody>
       <tr>
         <td><span class="parametername">TResult</span></td>
-        <td><p>The type of the result that is expected to be returned by the subscribers.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
