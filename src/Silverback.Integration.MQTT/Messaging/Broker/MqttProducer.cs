@@ -49,7 +49,6 @@ namespace Silverback.Messaging.Broker
         /// <param name="logger">
         ///     The <see cref="IOutboundLogger{TCategoryName}" />.
         /// </param>
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public MqttProducer(
             MqttBroker broker,
             MqttProducerEndpoint endpoint,
@@ -64,7 +63,7 @@ namespace Silverback.Messaging.Broker
                 .GetClient(this);
             _logger = Check.NotNull(logger, nameof(logger));
 
-            Task.Run(() => ProcessQueueAsync(_cancellationTokenSource.Token));
+            Task.Run(() => ProcessQueueAsync(_cancellationTokenSource.Token)).FireAndForget();
         }
 
         /// <inheritdoc cref="IDisposable.Dispose" />
@@ -93,8 +92,7 @@ namespace Silverback.Messaging.Broker
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName) =>
-            AsyncHelper.RunSynchronously(
-                () => ProduceCoreAsync(message, messageStream, headers, actualEndpointName));
+            AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, messageStream, headers, actualEndpointName));
 
         /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string)" />
         protected override IBrokerMessageIdentifier? ProduceCore(
@@ -102,8 +100,7 @@ namespace Silverback.Messaging.Broker
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
             string actualEndpointName) =>
-            AsyncHelper.RunSynchronously(
-                () => ProduceCoreAsync(message, messageBytes, headers, actualEndpointName));
+            AsyncHelper.RunSynchronously(() => ProduceCoreAsync(message, messageBytes, headers, actualEndpointName));
 
         /// <inheritdoc cref="Producer.ProduceCore(object,Stream,IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
         protected override void ProduceCore(
@@ -122,7 +119,6 @@ namespace Silverback.Messaging.Broker
                 onError);
 
         /// <inheritdoc cref="Producer.ProduceCore(object,byte[],IReadOnlyCollection{MessageHeader},string,Action{IBrokerMessageIdentifier},Action{Exception})" />
-        [SuppressMessage("", "VSTHRD110", Justification = "Result observed via ContinueWith")]
         protected override void ProduceCore(
             object? message,
             byte[]? messageBytes,
@@ -136,14 +132,15 @@ namespace Silverback.Messaging.Broker
             AsyncHelper.RunSynchronously(() => _queueChannel.Writer.WriteAsync(queuedMessage).AsTask());
 
             queuedMessage.TaskCompletionSource.Task.ContinueWith(
-                task =>
-                {
-                    if (task.IsCompletedSuccessfully)
-                        onSuccess.Invoke(task.Result);
-                    else
-                        onError.Invoke(task.Exception);
-                },
-                TaskScheduler.Default);
+                    task =>
+                    {
+                        if (task.IsCompletedSuccessfully)
+                            onSuccess.Invoke(task.Result);
+                        else
+                            onError.Invoke(task.Exception);
+                    },
+                    TaskScheduler.Default)
+                .FireAndForget();
         }
 
         /// <inheritdoc cref="Producer.ProduceCoreAsync(object,Stream,IReadOnlyCollection{MessageHeader},string)" />

@@ -127,14 +127,13 @@ namespace Silverback.Messaging.Broker
             SetReadyStatus();
         }
 
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         internal void OnPartitionsRevoked(IReadOnlyList<TopicPartitionOffset> topicPartitionOffsets)
         {
             IEnumerable<TopicPartition> topicPartitions = topicPartitionOffsets.Select(offset => offset.TopicPartition);
 
             RevertReadyStatus();
 
-            _consumeLoopHandler.StopAsync();
+            _consumeLoopHandler.StopAsync().FireAndForget();
 
             AsyncHelper.RunSynchronously(
                 () => topicPartitions.ParallelForEachAsync(
@@ -157,7 +156,7 @@ namespace Silverback.Messaging.Broker
             // OnPartitionsRevoked callback, before the partitions are revoked because the Consume method is
             // "frozen" during that operation and will never return, therefore the stopping Task would never
             // complete. Therefore, let's start an async Task to await it and restart the ChannelManager.
-            Task.Run(RestartConsumeLoopHandlerAsync);
+            Task.Run(RestartConsumeLoopHandlerAsync).FireAndForget();
         }
 
         internal bool OnPollTimeout(LogMessage logMessage)
@@ -288,7 +287,6 @@ namespace Silverback.Messaging.Broker
         }
 
         /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        [SuppressMessage("", "VSTHRD110", Justification = "stopping tasks awaited in Restart method")]
         protected override Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
         {
             var latestTopicPartitionOffsets =

@@ -31,7 +31,6 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
 
         private readonly List<TopicPartition> _pausedPartitions = new();
 
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public MockedConfluentConsumer(
             ConsumerConfig config,
             IInMemoryTopicCollection topics,
@@ -57,7 +56,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
                                         config.AutoCommitIntervalMs ??
                                         5000;
 
-                Task.Run(AutoCommitAsync);
+                Task.Run(AutoCommitAsync).FireAndForget();
             }
         }
 

@@ -28,7 +28,6 @@ namespace Silverback.Background
         ///     The <see cref="IDistributedLockManager" /> that generated the lock and can be used to keep it alive
         ///     and finally release it.
         /// </param>
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public DistributedLock(DistributedLockSettings settings, IDistributedLockManager lockManager)
         {
             _settings = Check.NotNull(settings, nameof(settings));
@@ -37,10 +36,11 @@ namespace Silverback.Background
             Status = DistributedLockStatus.Acquired;
 
             Task.Factory.StartNew(
-                SendHeartbeatsAsync,
-                CancellationToken.None,
-                TaskCreationOptions.LongRunning,
-                TaskScheduler.Default);
+                    SendHeartbeatsAsync,
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning,
+                    TaskScheduler.Default)
+                .FireAndForget();
         }
 
         /// <summary>

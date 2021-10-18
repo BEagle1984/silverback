@@ -474,7 +474,6 @@ namespace Silverback.Messaging.Sequences
         }
 
         [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         private void ResetTimeout()
         {
             if (!_enforceTimeout)
@@ -493,23 +492,24 @@ namespace Silverback.Messaging.Sequences
             var cancellationToken = _timeoutCancellationTokenSource.Token;
 
             Task.Run(
-                async () =>
-                {
-                    try
+                    async () =>
                     {
-                        await Task.Delay(_timeout, cancellationToken).ConfigureAwait(false);
+                        try
+                        {
+                            await Task.Delay(_timeout, cancellationToken).ConfigureAwait(false);
 
-                        await OnTimeoutElapsedAsync().ConfigureAwait(false);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        // Ignore
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogSequenceAbortingError(this, ex);
-                    }
-                });
+                            await OnTimeoutElapsedAsync().ConfigureAwait(false);
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            // Ignore
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogSequenceAbortingError(this, ex);
+                        }
+                    })
+                .FireAndForget();
         }
 
         private async Task AbortCoreAsync(SequenceAbortReason reason, Exception? exception)

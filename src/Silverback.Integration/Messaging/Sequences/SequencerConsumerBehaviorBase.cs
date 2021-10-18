@@ -128,51 +128,48 @@ namespace Silverback.Messaging.Sequences
             }
         }
 
-        [SuppressMessage(
-            "",
-            "CA1031",
-            Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
+        [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync to be logged and forwarded.")]
         private static void MonitorProcessingTaskPrematureCompletion(Task processingTask, ISequence sequence)
         {
             if (sequence.ParentSequence != null)
                 return;
 
             Task.Run(
-                async () =>
-                {
-                    try
+                    async () =>
                     {
-                        await processingTask.ConfigureAwait(false);
-
-                        // Abort only parent sequences and don't consider the enumeration as aborted if the
-                        // sequence is actually complete
-                        if (sequence.ParentSequence != null || sequence.IsComplete)
-                            return;
-
-                        // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
-                        // The reason behind this call here may be counterintuitive but with
-                        // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
-                        await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted)
-                            .ConfigureAwait(false);
-                    }
-                    catch (Exception exception)
-                    {
-                        if (!sequence.IsPending || sequence.ParentSequence != null)
-                            return;
-
-                        await sequence.AbortAsync(SequenceAbortReason.Error, exception)
-                            .ConfigureAwait(false);
-                    }
-                    finally
-                    {
-                        if (sequence is ISequenceImplementation sequenceImplementation &&
-                            sequenceImplementation.ShouldCreateNewActivity)
+                        try
                         {
-                            sequenceImplementation.Activity?.Stop();
+                            await processingTask.ConfigureAwait(false);
+
+                            // Abort only parent sequences and don't consider the enumeration as aborted if the
+                            // sequence is actually complete
+                            if (sequence.ParentSequence != null || sequence.IsComplete)
+                                return;
+
+                            // Call AbortAsync to abort the uncompleted sequence, to avoid unreleased locks.
+                            // The reason behind this call here may be counterintuitive but with
+                            // SequenceAbortReason.EnumerationAborted a commit is in fact performed.
+                            await sequence.AbortAsync(SequenceAbortReason.EnumerationAborted)
+                                .ConfigureAwait(false);
                         }
-                    }
-                });
+                        catch (Exception exception)
+                        {
+                            if (!sequence.IsPending || sequence.ParentSequence != null)
+                                return;
+
+                            await sequence.AbortAsync(SequenceAbortReason.Error, exception)
+                                .ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            if (sequence is ISequenceImplementation sequenceImplementation &&
+                                sequenceImplementation.ShouldCreateNewActivity)
+                            {
+                                sequenceImplementation.Activity?.Stop();
+                            }
+                        }
+                    })
+                .FireAndForget();
         }
 
         private static void StartActivityIfNeeded(ISequence sequence)

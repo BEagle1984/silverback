@@ -52,7 +52,6 @@ namespace Silverback.Messaging.Broker.Kafka
         public void StartReading(IEnumerable<TopicPartition> topicPartitions) =>
             topicPartitions.ForEach(StartReading);
 
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void StartReading(TopicPartition topicPartition)
         {
             if (_disposed)
@@ -73,11 +72,12 @@ namespace Silverback.Messaging.Broker.Kafka
 
                 // If the cancellation is still pending await it and restart after successful stop
                 Task.Run(
-                    async () =>
-                    {
-                        await partitionChannel.ReadTask.ConfigureAwait(false);
-                        StartReading(topicPartition);
-                    });
+                        async () =>
+                        {
+                            await partitionChannel.ReadTask.ConfigureAwait(false);
+                            StartReading(topicPartition);
+                        })
+                    .FireAndForget();
 
                 return;
             }
@@ -85,7 +85,7 @@ namespace Silverback.Messaging.Broker.Kafka
             if (!partitionChannel.StartReading())
                 return;
 
-            Task.Run(() => ReadChannelAsync(partitionChannel));
+            Task.Run(() => ReadChannelAsync(partitionChannel)).FireAndForget();
         }
 
         public Task StopReadingAsync() =>
@@ -147,7 +147,6 @@ namespace Silverback.Messaging.Broker.Kafka
                 () => partitionChannel.Writer.WriteAsync(consumeResult, cancellationToken).AsTask());
         }
 
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void Dispose()
         {
             if (_disposed)

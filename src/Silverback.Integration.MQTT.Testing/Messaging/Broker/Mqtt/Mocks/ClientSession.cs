@@ -54,7 +54,6 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
         public bool IsConsumerDisconnected =>
             !((_messageHandler as MockedMqttClient)?.Consumer?.IsConnected ?? true);
 
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public void Connect()
         {
             if (IsConnected)
@@ -65,7 +64,7 @@ namespace Silverback.Messaging.Broker.Mqtt.Mocks
             if (_readCancellationTokenSource.IsCancellationRequested)
                 _readCancellationTokenSource = new CancellationTokenSource();
 
-            Task.Run(() => ReadChannelAsync(_readCancellationTokenSource.Token));
+            Task.Run(() => ReadChannelAsync(_readCancellationTokenSource.Token)).FireAndForget();
         }
 
         public void Disconnect()

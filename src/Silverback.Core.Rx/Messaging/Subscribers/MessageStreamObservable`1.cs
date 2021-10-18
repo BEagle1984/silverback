@@ -7,6 +7,7 @@ using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Messaging.Messages;
+using Silverback.Util;
 
 namespace Silverback.Messaging.Subscribers
 {
@@ -25,37 +26,37 @@ namespace Silverback.Messaging.Subscribers
         private bool _disposed;
 
         [SuppressMessage("", "CA1031", Justification = "Exception rethrown by the Subscribe method")]
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         public MessageStreamObservable(IMessageStreamEnumerable<TMessage> messageStreamEnumerable)
         {
             Task.Run(
-                async () =>
-                {
-                    try
+                    async () =>
                     {
-                        await _subscribeSemaphoreSlim.WaitAsync().ConfigureAwait(false); // TODO: Cancellation?
-
-                        if (_disposed)
-                            return;
-
-                        await foreach (var message in messageStreamEnumerable)
+                        try
                         {
-                            _subject.OnNext(message);
+                            await _subscribeSemaphoreSlim.WaitAsync().ConfigureAwait(false); // TODO: Cancellation?
+
+                            if (_disposed)
+                                return;
+
+                            await foreach (var message in messageStreamEnumerable)
+                            {
+                                _subject.OnNext(message);
+                            }
                         }
-                    }
-                    catch (Exception exception)
-                    {
-                        _exception = exception;
-                    }
-                    finally
-                    {
-                        _subject.OnCompleted();
+                        catch (Exception exception)
+                        {
+                            _exception = exception;
+                        }
+                        finally
+                        {
+                            _subject.OnCompleted();
 
-                        _subscription?.Dispose();
+                            _subscription?.Dispose();
 
-                        _completeSemaphoreSlim.Release();
-                    }
-                });
+                            _completeSemaphoreSlim.Release();
+                        }
+                    })
+                .FireAndForget();
         }
 
         public void Dispose()

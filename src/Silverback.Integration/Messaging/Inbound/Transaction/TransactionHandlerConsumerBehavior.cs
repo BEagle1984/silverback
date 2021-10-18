@@ -118,9 +118,8 @@ namespace Silverback.Messaging.Inbound.Transaction
             }
         }
 
-        [SuppressMessage("", "VSTHRD110", Justification = Justifications.FireAndForget)]
         private void StartSequenceProcessingAwaiter(ConsumerPipelineContext context) =>
-            Task.Run(() => AwaitSequenceProcessingAsync(context));
+            Task.Run(() => AwaitSequenceProcessingAsync(context)).FireAndForget();
 
         [SuppressMessage("", "CA1031", Justification = "Exception passed to AbortAsync")]
         [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Logging is sync")]
