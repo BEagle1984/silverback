@@ -79,6 +79,7 @@ namespace Silverback.Messaging.Broker.Mqtt
         public void StopReading()
         {
             _readCancellationTokenSource.Cancel();
+            _channel.Writer.TryComplete();
 
             if (!IsReading)
                 _readTaskCompletionSource.TrySetResult(true);

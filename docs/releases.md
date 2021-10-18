@@ -4,7 +4,7 @@ uid: releases
 
 # Releases
 
-## [3.4.1-beta.2](https://github.com/BEagle1984/silverback/releases/tag/v3.4.1-beta.2)
+## [3.4.1-beta.3](https://github.com/BEagle1984/silverback/releases/tag/v3.4.1-beta.3)
 
 ### Fixes
 

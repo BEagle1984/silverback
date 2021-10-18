@@ -17,13 +17,13 @@ using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
 {
-    public class MqttClientFactoryTests
+    public class MqttNetClientFactoryTests
     {
         private readonly MqttBroker _broker;
 
         private readonly ISilverbackLogger<MqttClientsCache> _logger;
 
-        public MqttClientFactoryTests()
+        public MqttNetClientFactoryTests()
         {
             var serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services

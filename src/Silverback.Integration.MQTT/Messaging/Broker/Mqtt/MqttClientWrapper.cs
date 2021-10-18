@@ -56,6 +56,7 @@ namespace Silverback.Messaging.Broker.Mqtt
         public MqttConsumer? Consumer
         {
             get => _consumer;
+
             set
             {
                 if (_consumer != null)
@@ -93,7 +94,7 @@ namespace Silverback.Messaging.Broker.Mqtt
             MqttClient.SubscribeAsync(topicFilters.AsArray());
 
         public Task UnsubscribeAsync(IReadOnlyCollection<string> topicFilters) =>
-            MqttClient.UnsubscribeAsync(topicFilters.AsArray());
+            _isConnected ? MqttClient.UnsubscribeAsync(topicFilters.AsArray()) : Task.CompletedTask;
 
         public async Task DisconnectAsync(object sender)
         {
