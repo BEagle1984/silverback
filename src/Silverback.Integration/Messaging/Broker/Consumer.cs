@@ -543,8 +543,8 @@ namespace Silverback.Messaging.Broker
 
                 IsDisconnecting = true;
 
-                // Ensure that StopCore is called in any case to avoid deadlocks (when the consumer loop is initialized
-                // but not started)
+                // Ensure that StopCore is called in any case to avoid deadlocks
+                // (when the consumer loop is initialized but not started)
                 if (IsConsuming && !IsStopping)
                     await StopAsync().ConfigureAwait(false);
                 else

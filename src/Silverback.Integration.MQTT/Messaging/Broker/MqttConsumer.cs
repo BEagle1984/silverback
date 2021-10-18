@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,14 +20,15 @@ namespace Silverback.Messaging.Broker
     /// <inheritdoc cref="Consumer{TBroker,TEndpoint, TIdentifier}" />
     public class MqttConsumer : Consumer<MqttBroker, MqttConsumerEndpoint, MqttMessageIdentifier>
     {
+        [SuppressMessage("", "CA2213", Justification = "Disposed by the MqttClientCache")]
         private readonly MqttClientWrapper _clientWrapper;
 
-        private readonly IInboundLogger<MqttConsumer> _logger;
+        private readonly ConsumerChannelManager _channelManager;
 
         private readonly ConcurrentDictionary<string, ConsumedApplicationMessage> _inProcessingMessages =
             new();
 
-        private ConsumerChannelManager? _channelManager;
+        private bool _disposed;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MqttConsumer" /> class.
@@ -55,10 +57,13 @@ namespace Silverback.Messaging.Broker
             : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
         {
             Check.NotNull(serviceProvider, nameof(serviceProvider));
+            Check.NotNull(logger, nameof(logger));
+
             _clientWrapper = serviceProvider
                 .GetRequiredService<IMqttClientsCache>()
                 .GetClient(this);
-            _logger = Check.NotNull(logger, nameof(logger));
+
+            _channelManager = new ConsumerChannelManager(_clientWrapper, logger);
         }
 
         internal async Task HandleMessageAsync(ConsumedApplicationMessage message)
@@ -104,6 +109,8 @@ namespace Silverback.Messaging.Broker
             await StopAsync().ConfigureAwait(false);
 
             RevertReadyStatus();
+
+            await WaitUntilConsumingStoppedCoreAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc cref="Consumer.ConnectCoreAsync" />
@@ -122,25 +129,19 @@ namespace Silverback.Messaging.Broker
             if (_clientWrapper == null)
                 throw new InvalidOperationException("The consumer is not connected.");
 
-            _channelManager = new ConsumerChannelManager(_clientWrapper, _logger);
             _channelManager.StartReading();
-
             return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="Consumer.StopCoreAsync" />
         protected override Task StopCoreAsync()
         {
-            _channelManager?.StopReading();
-            _channelManager?.Dispose();
-            _channelManager = null;
-
+            _channelManager.StopReading();
             return Task.CompletedTask;
         }
 
         /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedCoreAsync" />
-        protected override Task WaitUntilConsumingStoppedCoreAsync() =>
-            _channelManager?.Stopping ?? Task.CompletedTask;
+        protected override Task WaitUntilConsumingStoppedCoreAsync() => _channelManager.Stopping;
 
         /// <inheritdoc cref="Consumer.CommitCoreAsync" />
         protected override Task CommitCoreAsync(
@@ -151,6 +152,19 @@ namespace Silverback.Messaging.Broker
         protected override Task RollbackCoreAsync(
             IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers) =>
             SetProcessingCompletedAsync(brokerMessageIdentifiers, false);
+
+        /// <inheritdoc cref="Consumer.Dispose(bool)" />
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (!disposing || _disposed)
+                return;
+
+            _disposed = true;
+
+            _channelManager.Dispose();
+        }
 
         private Task SetProcessingCompletedAsync(
             IReadOnlyCollection<MqttMessageIdentifier> brokerMessageIdentifiers,
