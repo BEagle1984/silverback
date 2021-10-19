@@ -18,7 +18,6 @@ namespace Silverback.Util
             [NoEnumeration] [ValidatedNotNull]
             T? value,
             [InvokerParameterName] string parameterName)
-            where T : class
         {
             if (ReferenceEquals(value, null))
             {

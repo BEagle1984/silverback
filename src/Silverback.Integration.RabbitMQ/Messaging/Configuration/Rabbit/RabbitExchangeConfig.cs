@@ -12,10 +12,10 @@ namespace Silverback.Messaging.Configuration.Rabbit
     public sealed class RabbitExchangeConfig : RabbitEndpointConfig, IEquatable<RabbitExchangeConfig>
     {
         /// <summary>
-        ///     Gets or sets the exchange type. It should match with one of the constants declared in the
+        ///     Gets the exchange type. It should match with one of the constants declared in the
         ///     <see cref="RabbitMQ.Client.ExchangeType" /> static class.
         /// </summary>
-        public string? ExchangeType { get; set; }
+        public string? ExchangeType { get; init; }
 
         /// <inheritdoc cref="RabbitEndpointConfig.Validate" />
         public override void Validate()
@@ -60,7 +60,6 @@ namespace Silverback.Messaging.Configuration.Rabbit
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode() => HashCode.Combine(IsDurable, IsAutoDeleteEnabled, Arguments, ExchangeType);
     }
 }

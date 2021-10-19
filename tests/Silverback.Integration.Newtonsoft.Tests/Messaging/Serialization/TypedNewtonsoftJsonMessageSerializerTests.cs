@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,260 +9,360 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Serialization;
+using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization
+namespace Silverback.Tests.Integration.Newtonsoft.Messaging.Serialization;
+
+public class NewtonsoftJsonMessageSerializerTests
 {
-    public class TypedNewtonsoftJsonMessageSerializerTests
+    [Fact]
+    public async Task SerializeAsync_WithDefaultSettings_CorrectlySerialized()
     {
-        [Fact]
-        public async Task SerializeDeserializeAsync_Message_CorrectlyDeserialized()
+        TestEventOne message = new() { Content = "the message" };
+        MessageHeaderCollection headers = new();
+
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        Stream? serialized = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
+
+        byte[] expected = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
+        serialized.ReadAll().Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_ChildType_CorrectlySerialized()
+    {
+        TestEventOne message = new() { Content = "the message" };
+        MessageHeaderCollection headers = new();
+
+        NewtonsoftJsonMessageSerializer<object> serializer = new();
+
+        Stream? serialized = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
+
+        byte[] expected = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
+        serialized.ReadAll().Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_TypeImplementingInterface_CorrectlySerialized()
+    {
+        TestEventOne message = new() { Content = "the message" };
+        MessageHeaderCollection headers = new();
+
+        NewtonsoftJsonMessageSerializer<IEvent> serializer = new();
+
+        Stream? serialized = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
+
+        byte[] expected = Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}");
+        serialized.ReadAll().Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_Message_TypeHeaderAdded()
+    {
+        TestEventOne message = new() { Content = "the message" };
+        MessageHeaderCollection headers = new();
+
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
+
+        headers.GetValue("x-message-type").Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_ChildType_TypeHeaderAdded()
+    {
+        TestEventOne message = new() { Content = "the message" };
+        MessageHeaderCollection headers = new();
+
+        NewtonsoftJsonMessageSerializer<object> serializer = new();
+
+        await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
+
+        headers.GetValue("x-message-type").Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_TypeImplementingInterface_TypeHeaderAdded()
+    {
+        TestEventOne message = new() { Content = "the message" };
+        MessageHeaderCollection headers = new();
+
+        NewtonsoftJsonMessageSerializer<IEvent> serializer = new();
+
+        await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
+
+        headers.GetValue("x-message-type").Should().Be(typeof(TestEventOne).AssemblyQualifiedName);
+    }
+
+    [Fact]
+    public async Task SerializeDeserializeAsync_Message_CorrectlyDeserialized()
+    {
+        TestEventOne message = new() { Content = "the message" };
+        MessageHeaderCollection headers = new();
+
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        Stream serialized = (await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault()))!;
+
+        Encoding.UTF8.GetString(serialized.ReadAll()!).Should().NotContain("TestEventOne");
+
+        (object? deserialized, _) = await serializer
+            .DeserializeAsync(serialized, headers, TestConsumerEndpoint.GetDefault());
+
+        TestEventOne? message2 = deserialized as TestEventOne;
+
+        message2.Should().NotBeNull();
+        message2.Should().BeEquivalentTo(message);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_ByteArray_ReturnedUnmodified()
+    {
+        byte[] messageBytes = Encoding.UTF8.GetBytes("test");
+
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        Stream? serialized = await serializer.SerializeAsync(
+            messageBytes,
+            new MessageHeaderCollection(),
+            TestProducerEndpoint.GetDefault());
+
+        serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_Stream_ReturnedUnmodified()
+    {
+        MemoryStream stream = new(Encoding.UTF8.GetBytes("test"));
+
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        Stream? serialized = await serializer.SerializeAsync(
+            stream,
+            new MessageHeaderCollection(),
+            TestProducerEndpoint.GetDefault());
+
+        serialized.Should().BeSameAs(stream);
+    }
+
+    [Fact]
+    public async Task SerializeAsync_NullMessage_NullReturned()
+    {
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        Stream? serialized = await serializer
+            .SerializeAsync(null, new MessageHeaderCollection(), TestProducerEndpoint.GetDefault());
+
+        serialized.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task DeserializeAsync_MissingTypeHeader_Deserialized()
+    {
+        MemoryStream rawMessage = new(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
+        MessageHeaderCollection headers = new();
+
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        (object? deserializedObject, _) = await serializer
+            .DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
+
+        deserializedObject.Should().NotBeNull();
+        deserializedObject.Should().BeOfType<TestEventOne>();
+        deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
+    }
+
+    [Fact]
+    public async Task DeserializeAsync_MissingTypeHeader_TypeReturned()
+    {
+        MemoryStream rawMessage = new(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
+        MessageHeaderCollection headers = new();
+
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        (_, Type type) = await serializer
+            .DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
+
+        type.Should().Be(typeof(TestEventOne));
+    }
+
+    [Fact]
+    public async Task DeserializeAsync_WithTypeHeader_ChildTypeDeserialized()
+    {
+        MemoryStream rawMessage = new(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
+        MessageHeaderCollection headers = new()
         {
-            var message = new TestEventOne { Content = "the message" };
-            var headers = new MessageHeaderCollection();
+            { "x-message-type", typeof(TestEventOne).AssemblyQualifiedName }
+        };
 
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
+        NewtonsoftJsonMessageSerializer<IEvent> serializer = new();
 
-            var serialized = (await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty))!;
+        (object? deserializedObject, _) = await serializer
+            .DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
-            Encoding.UTF8.GetString(serialized.ReadAll()!).Should().NotContain("TestEventOne");
+        deserializedObject.Should().NotBeNull();
+        deserializedObject.Should().BeOfType<TestEventOne>();
+        deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
+    }
 
-            var (deserialized, _) = await serializer
-                .DeserializeAsync(serialized, headers, MessageSerializationContext.Empty);
+    [Fact]
+    public async Task DeserializeAsync_WrongTypeHeader_Deserialized()
+    {
+        MemoryStream rawMessage = new(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
+        MessageHeaderCollection headers = new();
 
-            var message2 = deserialized as TestEventOne;
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
 
-            message2.Should().NotBeNull();
-            message2.Should().BeEquivalentTo(message);
-        }
+        (object? deserializedObject, _) = await serializer
+            .DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
 
-        [Fact]
-        public async Task SerializeAsync_ByteArray_ReturnedUnmodified()
-        {
-            var messageBytes = Encoding.UTF8.GetBytes("test");
+        deserializedObject.Should().NotBeNull();
+        deserializedObject.Should().BeOfType<TestEventOne>();
+        deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
+    }
 
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
+    [Fact]
+    public async Task DeserializeAsync_WrongTypeHeader_TypeReturned()
+    {
+        MemoryStream rawMessage = new(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
+        MessageHeaderCollection headers = new();
 
-            var serialized = await serializer.SerializeAsync(
-                messageBytes,
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        (_, Type type) = await serializer
+            .DeserializeAsync(rawMessage, headers, TestConsumerEndpoint.GetDefault());
+
+        type.Should().Be(typeof(TestEventOne));
+    }
+
+    [Fact]
+    public async Task DeserializeAsync_NullMessage_NullObjectReturned()
+    {
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        (object? deserializedObject, _) = await serializer
+            .DeserializeAsync(null, new MessageHeaderCollection(), TestConsumerEndpoint.GetDefault());
+
+        deserializedObject.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task DeserializeAsync_NullMessage_TypeReturned()
+    {
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        (_, Type type) = await serializer
+            .DeserializeAsync(null, new MessageHeaderCollection(), TestConsumerEndpoint.GetDefault());
+
+        type.Should().Be(typeof(TestEventOne));
+    }
+
+    [Fact]
+    public async Task DeserializeAsync_EmptyStream_NullObjectReturned()
+    {
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        (object? deserializedObject, _) = await serializer
+            .DeserializeAsync(
+                new MemoryStream(),
                 new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
+                TestConsumerEndpoint.GetDefault());
 
-            serialized.ReadAll().Should().BeEquivalentTo(messageBytes);
-        }
+        deserializedObject.Should().BeNull();
+    }
 
-        [Fact]
-        public async Task SerializeAsync_Stream_ReturnedUnmodified()
-        {
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes("test"));
+    [Fact]
+    public async Task DeserializeAsync_EmptyStream_TypeReturned()
+    {
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
 
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
-
-            var serialized = await serializer.SerializeAsync(
-                stream,
+        (_, Type type) = await serializer
+            .DeserializeAsync(
+                new MemoryStream(),
                 new MessageHeaderCollection(),
-                MessageSerializationContext.Empty);
+                TestConsumerEndpoint.GetDefault());
 
-            serialized.Should().BeSameAs(stream);
-        }
+        type.Should().Be(typeof(TestEventOne));
+    }
 
-        [Fact]
-        public async Task SerializeAsync_NullMessage_NullReturned()
+    [Fact]
+    public void Equals_SameInstance_TrueReturned()
+    {
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer = new();
+
+        // ReSharper disable once EqualExpressionComparison
+        bool result = Equals(serializer, serializer);
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Equals_SameSettings_TrueReturned()
+    {
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer1 = new()
         {
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
-
-            var serialized = await serializer
-                .SerializeAsync(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
-
-            serialized.Should().BeNull();
-        }
-
-        [Fact]
-        public async Task DeserializeAsync_MissingTypeHeader_Deserialized()
-        {
-            var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
-            var headers = new MessageHeaderCollection();
-
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
-
-            var (deserializedObject, _) = await serializer
-                .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
-
-            deserializedObject.Should().NotBeNull();
-            deserializedObject.Should().BeOfType<TestEventOne>();
-            deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
-        }
-
-        [Fact]
-        public async Task DeserializeAsync_MissingTypeHeader_TypeReturned()
-        {
-            var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
-            var headers = new MessageHeaderCollection();
-
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
-
-            var (_, type) = await serializer
-                .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
-
-            type.Should().Be(typeof(TestEventOne));
-        }
-
-        [Fact]
-        public async Task DeserializeAsync_WrongTypeHeader_Deserialized()
-        {
-            var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
-            var headers = new MessageHeaderCollection();
-
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
-
-            var (deserializedObject, _) = await serializer
-                .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
-
-            deserializedObject.Should().NotBeNull();
-            deserializedObject.Should().BeOfType<TestEventOne>();
-            deserializedObject.As<TestEventOne>().Content.Should().Be("the message");
-        }
-
-        [Fact]
-        public async Task DeserializeAsync_WrongTypeHeader_TypeReturned()
-        {
-            var rawMessage = new MemoryStream(Encoding.UTF8.GetBytes("{\"Content\":\"the message\"}"));
-            var headers = new MessageHeaderCollection();
-
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
-
-            var (_, type) = await serializer
-                .DeserializeAsync(rawMessage, headers, MessageSerializationContext.Empty);
-
-            type.Should().Be(typeof(TestEventOne));
-        }
-
-        [Fact]
-        public async Task DeserializeAsync_NullMessage_NullObjectReturned()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
-
-            var (deserializedObject, _) = await serializer
-                .DeserializeAsync(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
-
-            deserializedObject.Should().BeNull();
-        }
-
-        [Fact]
-        public async Task DeserializeAsync_NullMessage_TypeReturned()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
-
-            var (_, type) = await serializer
-                .DeserializeAsync(null, new MessageHeaderCollection(), MessageSerializationContext.Empty);
-
-            type.Should().Be(typeof(TestEventOne));
-        }
-
-        [Fact]
-        public async Task DeserializeAsync_EmptyStream_NullObjectReturned()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
-
-            var (deserializedObject, _) = await serializer
-                .DeserializeAsync(
-                    new MemoryStream(),
-                    new MessageHeaderCollection(),
-                    MessageSerializationContext.Empty);
-
-            deserializedObject.Should().BeNull();
-        }
-
-        [Fact]
-        public async Task DeserializeAsync_EmptyStream_TypeReturned()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer<TestEventOne>();
-
-            var (_, type) = await serializer
-                .DeserializeAsync(
-                    new MemoryStream(),
-                    new MessageHeaderCollection(),
-                    MessageSerializationContext.Empty);
-
-            type.Should().Be(typeof(TestEventOne));
-        }
-
-        [Fact]
-        public void Equals_SameInstance_TrueReturned()
-        {
-            var serializer = new NewtonsoftJsonMessageSerializer();
-
-            // ReSharper disable once EqualExpressionComparison
-            var result = Equals(serializer, serializer);
-
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Equals_SameSettings_TrueReturned()
-        {
-            var serializer1 = new NewtonsoftJsonMessageSerializer<TestEventOne>
+            Settings = new JsonSerializerSettings
             {
-                Settings = new JsonSerializerSettings
-                {
-                    MaxDepth = 42,
-                    NullValueHandling = NullValueHandling.Ignore
-                }
-            };
+                MaxDepth = 42,
+                NullValueHandling = NullValueHandling.Ignore
+            }
+        };
 
-            var serializer2 = new NewtonsoftJsonMessageSerializer<TestEventOne>
-            {
-                Settings = new JsonSerializerSettings
-                {
-                    MaxDepth = 42,
-                    NullValueHandling = NullValueHandling.Ignore
-                }
-            };
-
-            // ReSharper disable once EqualExpressionComparison
-            var result = Equals(serializer1, serializer2);
-
-            result.Should().BeTrue();
-        }
-
-        [Fact]
-        public void Equals_DefaultSettings_TrueReturned()
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer2 = new()
         {
-            var serializer1 = new NewtonsoftJsonMessageSerializer<TestEventOne>();
-            var serializer2 = new NewtonsoftJsonMessageSerializer<TestEventOne>();
+            Settings = new JsonSerializerSettings
+            {
+                MaxDepth = 42,
+                NullValueHandling = NullValueHandling.Ignore
+            }
+        };
 
-            // ReSharper disable once EqualExpressionComparison
-            var result = Equals(serializer1, serializer2);
+        // ReSharper disable once EqualExpressionComparison
+        bool result = Equals(serializer1, serializer2);
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Fact]
-        public void Equals_DifferentSettings_FalseReturned()
+    [Fact]
+    public void Equals_DefaultSettings_TrueReturned()
+    {
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer1 = new();
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer2 = new();
+
+        // ReSharper disable once EqualExpressionComparison
+        bool result = Equals(serializer1, serializer2);
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Equals_DifferentSettings_FalseReturned()
+    {
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer1 = new()
         {
-            var serializer1 = new NewtonsoftJsonMessageSerializer<TestEventOne>
+            Settings = new JsonSerializerSettings
             {
-                Settings = new JsonSerializerSettings
-                {
-                    MaxDepth = 42,
-                    NullValueHandling = NullValueHandling.Ignore
-                }
-            };
+                MaxDepth = 42,
+                NullValueHandling = NullValueHandling.Ignore
+            }
+        };
 
-            var serializer2 = new NewtonsoftJsonMessageSerializer<TestEventOne>
+        NewtonsoftJsonMessageSerializer<TestEventOne> serializer2 = new()
+        {
+            Settings = new JsonSerializerSettings
             {
-                Settings = new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Include
-                }
-            };
+                NullValueHandling = NullValueHandling.Include
+            }
+        };
 
-            // ReSharper disable once EqualExpressionComparison
-            var result = Equals(serializer1, serializer2);
+        // ReSharper disable once EqualExpressionComparison
+        bool result = Equals(serializer1, serializer2);
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
     }
 }

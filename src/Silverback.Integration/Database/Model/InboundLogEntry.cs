@@ -16,21 +16,21 @@ namespace Silverback.Database.Model
         /// </summary>
         [Key]
         [MaxLength(300)]
-        public string MessageId { get; set; } = null!;
+        public string MessageId { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the name of the endpoint the message was consumed from.
         /// </summary>
         [Key]
         [MaxLength(300)]
-        public string EndpointName { get; set; } = null!;
+        public string EndpointName { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the unique consumer group name of the consumer that received and processed the message.
         /// </summary>
         [Key]
         [MaxLength(300)]
-        public string ConsumerGroupName { get; set; } = null!;
+        public string ConsumerGroupName { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the datetime when the message was consumed.

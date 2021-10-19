@@ -18,9 +18,9 @@ namespace Silverback.Diagnostics
             _enricherFactory = enricherFactory;
         }
 
-        public InboundLogger GetInboundLogger(IEndpoint endpoint) =>
+        public InboundLogger GetInboundLogger(EndpointConfiguration endpointConfiguration) =>
             _inboundLoggers.GetOrAdd(
-                endpoint.GetType(),
-                _ => new InboundLogger(_enricherFactory.GetLogEnricher(endpoint)));
+                endpointConfiguration.GetType(),
+                _ => new InboundLogger(_enricherFactory.GetLogEnricher(endpointConfiguration)));
     }
 }

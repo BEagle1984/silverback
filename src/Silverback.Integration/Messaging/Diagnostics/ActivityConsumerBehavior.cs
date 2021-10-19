@@ -6,44 +6,43 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Diagnostics
+namespace Silverback.Messaging.Diagnostics;
+
+/// <summary>
+///     Starts an <see cref="Activity" /> with the tracing information from the message headers.
+/// </summary>
+public class ActivityConsumerBehavior : IConsumerBehavior
 {
+    private readonly IActivityEnricherFactory _activityEnricherFactory;
+
     /// <summary>
-    ///     Starts an <see cref="Activity" /> with the tracing information from the message headers.
+    ///     Initializes a new instance of the <see cref="ActivityConsumerBehavior" /> class.
     /// </summary>
-    public class ActivityConsumerBehavior : IConsumerBehavior
+    /// <param name="activityEnricherFactory">
+    ///     The <see cref="IActivityEnricherFactory" /> to resolve the
+    ///     ActivityEnricher.
+    /// </param>
+    public ActivityConsumerBehavior(IActivityEnricherFactory activityEnricherFactory)
     {
-        private readonly IActivityEnricherFactory _activityEnricherFactory;
+        _activityEnricherFactory = activityEnricherFactory;
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ActivityConsumerBehavior" /> class.
-        /// </summary>
-        /// <param name="activityEnricherFactory">
-        ///     The <see cref="IActivityEnricherFactory" /> to resolve the
-        ///     ActivityEnricher.
-        /// </param>
-        public ActivityConsumerBehavior(IActivityEnricherFactory activityEnricherFactory)
-        {
-            _activityEnricherFactory = activityEnricherFactory;
-        }
+    /// <inheritdoc cref="ISorted.SortIndex" />
+    public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Activity;
 
-        /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex => BrokerBehaviorsSortIndexes.Consumer.Activity;
+    /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
+    public async Task HandleAsync(
+        ConsumerPipelineContext context,
+        ConsumerBehaviorHandler next)
+    {
+        Check.NotNull(context, nameof(context));
+        Check.NotNull(next, nameof(next));
 
-        /// <inheritdoc cref="IConsumerBehavior.HandleAsync" />
-        public async Task HandleAsync(
-            ConsumerPipelineContext context,
-            ConsumerBehaviorHandler next)
-        {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(next, nameof(next));
+        using Activity activity = ActivitySources.StartConsumeActivity(context.Envelope);
 
-            using var activity = ActivitySources.StartConsumeActivity(context.Envelope);
+        _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint.Configuration)
+            .EnrichInboundActivity(activity, context);
 
-            _activityEnricherFactory.GetActivityEnricher(context.Envelope.Endpoint)
-                .EnrichInboundActivity(activity, context);
-
-            await next(context).ConfigureAwait(false);
-        }
+        await next(context).ConfigureAwait(false);
     }
 }

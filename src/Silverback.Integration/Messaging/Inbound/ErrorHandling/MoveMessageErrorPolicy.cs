@@ -12,155 +12,153 @@ using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Enrichers;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Inbound.ErrorHandling
+namespace Silverback.Messaging.Inbound.ErrorHandling;
+
+/// <summary>
+///     This policy moves the message that failed to be processed to the configured endpoint.
+/// </summary>
+/// <remarks>
+///     This policy can be used also to move the message at the end of the current topic to retry it later on.
+///     The number of retries can be limited using <see cref="RetryableErrorPolicyBase.MaxFailedAttempts" />.
+/// </remarks>
+public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
 {
+    private Action<IOutboundEnvelope, Exception>? _transformationAction;
+
     /// <summary>
-    ///     This policy moves the message that failed to be processed to the configured endpoint.
+    ///     Initializes a new instance of the <see cref="MoveMessageErrorPolicy" /> class.
     /// </summary>
-    /// <remarks>
-    ///     This policy can be used also to move the message at the end of the current topic to retry it later on.
-    ///     The number of retries can be limited using <see cref="RetryableErrorPolicyBase.MaxFailedAttempts" />.
-    /// </remarks>
-    public class MoveMessageErrorPolicy : RetryableErrorPolicyBase
+    /// <param name="producerConfiguration">
+    ///     The configuration of the producer to be used to move the message.
+    /// </param>
+    public MoveMessageErrorPolicy(ProducerConfiguration producerConfiguration)
     {
-        private Action<IOutboundEnvelope, Exception>? _transformationAction;
+        Check.NotNull(producerConfiguration, nameof(producerConfiguration));
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="MoveMessageErrorPolicy" /> class.
-        /// </summary>
-        /// <param name="endpoint">
-        ///     The endpoint to move the message to.
-        /// </param>
-        public MoveMessageErrorPolicy(IProducerEndpoint endpoint)
-        {
-            Check.NotNull(endpoint, nameof(endpoint));
+        producerConfiguration.Validate();
 
-            endpoint.Validate();
+        ProducerConfiguration = producerConfiguration;
+    }
 
-            Endpoint = endpoint;
-        }
+    internal ProducerConfiguration ProducerConfiguration { get; }
 
-        internal IProducerEndpoint Endpoint { get; }
+    /// <summary>
+    ///     Defines an <see cref="Action{T}" /> to be called to modify (or completely rewrite) the message being
+    ///     moved.
+    /// </summary>
+    /// <param name="transformationAction">
+    ///     The <see cref="Action{T}" /> to be called to modify the message. This function can be used to modify
+    ///     or replace the message body and its headers.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="MoveMessageErrorPolicy" /> so that additional calls can be chained.
+    /// </returns>
+    public MoveMessageErrorPolicy Transform(Action<IOutboundEnvelope, Exception> transformationAction)
+    {
+        _transformationAction = transformationAction;
+        return this;
+    }
 
-        /// <summary>
-        ///     Defines an <see cref="Action{T}" /> to be called to modify (or completely rewrite) the message being
-        ///     moved.
-        /// </summary>
-        /// <param name="transformationAction">
-        ///     The <see cref="Action{T}" /> to be called to modify the message. This function can be used to modify
-        ///     or replace the message body and its headers.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="MoveMessageErrorPolicy" /> so that additional calls can be chained.
-        /// </returns>
-        public MoveMessageErrorPolicy Transform(Action<IOutboundEnvelope, Exception> transformationAction)
-        {
-            _transformationAction = transformationAction;
-            return this;
-        }
+    /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
+    protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
+        new MoveMessageErrorPolicyImplementation(
+            ProducerConfiguration,
+            _transformationAction,
+            MaxFailedAttemptsCount,
+            ExcludedExceptions,
+            IncludedExceptions,
+            ApplyRule,
+            MessageToPublishFactory,
+            serviceProvider
+            .GetRequiredService<IBrokerOutboundMessageEnrichersFactory>(),
+                serviceProvider,serviceProvider
+                .GetRequiredService<IInboundLogger<MoveMessageErrorPolicy>>());
 
-        /// <inheritdoc cref="ErrorPolicyBase.BuildCore" />
-        protected override ErrorPolicyImplementation BuildCore(IServiceProvider serviceProvider) =>
-            new MoveMessageErrorPolicyImplementation(
-                Endpoint,
-                _transformationAction,
-                MaxFailedAttemptsCount,
-                ExcludedExceptions,
-                IncludedExceptions,
-                ApplyRule,
-                MessageToPublishFactory,
-                serviceProvider
-                    .GetRequiredService<IBrokerOutboundMessageEnrichersFactory>(),
-                serviceProvider,
-                serviceProvider
-                    .GetRequiredService<IInboundLogger<MoveMessageErrorPolicy>>());
+    private sealed class MoveMessageErrorPolicyImplementation : ErrorPolicyImplementation
+    {
+        private readonly ProducerConfiguration _producerConfiguration;
 
-        private sealed class MoveMessageErrorPolicyImplementation : ErrorPolicyImplementation
-        {
-            private readonly IProducerEndpoint _endpoint;
+        private readonly Action<IOutboundEnvelope, Exception>? _transformationAction;
 
-            private readonly Action<IOutboundEnvelope, Exception>? _transformationAction;
+        private readonly IInboundLogger<MoveMessageErrorPolicy> _logger;
 
-            private readonly IInboundLogger<MoveMessageErrorPolicy> _logger;
-
-            private readonly IBrokerOutboundMessageEnrichersFactory _enricherFactory;
+        private readonly IBrokerOutboundMessageEnrichersFactory _enricherFactory;
 
             private readonly IProducer _producer;
 
-            public MoveMessageErrorPolicyImplementation(
-                IProducerEndpoint endpoint,
-                Action<IOutboundEnvelope, Exception>? transformationAction,
-                int? maxFailedAttempts,
-                ICollection<Type> excludedExceptions,
-                ICollection<Type> includedExceptions,
-                Func<IRawInboundEnvelope, Exception, bool>? applyRule,
-                Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
-                IBrokerOutboundMessageEnrichersFactory enricherFactory,
-                IServiceProvider serviceProvider,
-                IInboundLogger<MoveMessageErrorPolicy> logger)
-                : base(
-                    maxFailedAttempts,
-                    excludedExceptions,
-                    includedExceptions,
-                    applyRule,
-                    messageToPublishFactory,
-                    serviceProvider,
-                    logger)
-            {
-                _endpoint = Check.NotNull(endpoint, nameof(endpoint));
-                _transformationAction = transformationAction;
-                _enricherFactory = enricherFactory;
-                _logger = logger;
+        public MoveMessageErrorPolicyImplementation(
+            ProducerConfiguration producerConfiguration,
+            Action<IOutboundEnvelope, Exception>? transformationAction,
+            int? maxFailedAttempts,
+            ICollection<Type> excludedExceptions,
+            ICollection<Type> includedExceptions,
+            Func<IRawInboundEnvelope, Exception, bool>? applyRule,
+            Func<IRawInboundEnvelope, Exception, object?>? messageToPublishFactory,
+            IBrokerOutboundMessageEnrichersFactory enricherFactory,IServiceProvider serviceProvider,
+            IInboundLogger<MoveMessageErrorPolicy> logger)
+            : base(
+                maxFailedAttempts,
+                excludedExceptions,
+                includedExceptions,
+                applyRule,
+                messageToPublishFactory,
+                serviceProvider,
+                logger)
+        {
+            _producerConfiguration = Check.NotNull(producerConfiguration, nameof(producerConfiguration));
+            _transformationAction = transformationAction;_enricherFactory = enricherFactory;
+            _logger = logger;
 
-                _producer = serviceProvider.GetRequiredService<IBrokerCollection>().GetProducer(endpoint);
+            _producer = serviceProvider.GetRequiredService<IBrokerCollection>().GetProducer(producerConfiguration);
+        }
+
+        public override bool CanHandle(ConsumerPipelineContext context, Exception exception)
+        {
+            Check.NotNull(context, nameof(context));
+
+            if (context.Sequence != null)
+            {
+                _logger.LogCannotMoveSequences(context.Envelope, context.Sequence);
+                return false;
             }
 
-            public override bool CanHandle(ConsumerPipelineContext context, Exception exception)
-            {
-                Check.NotNull(context, nameof(context));
+            return base.CanHandle(context, exception);
+        }
 
-                if (context.Sequence != null)
-                {
-                    _logger.LogCannotMoveSequences(context.Envelope, context.Sequence);
-                    return false;
-                }
+        protected override async Task<bool> ApplyPolicyAsync(ConsumerPipelineContext context, Exception exception)
+        {
+            Check.NotNull(context, nameof(context));
+            Check.NotNull(exception, nameof(exception));
 
-                return base.CanHandle(context, exception);
-            }
+            _logger.LogMoved(context.Envelope, _producerConfiguration);
 
-            protected override async Task<bool> ApplyPolicyAsync(
-                ConsumerPipelineContext context,
-                Exception exception)
-            {
-                Check.NotNull(context, nameof(context));
-                Check.NotNull(exception, nameof(exception));
+            await PublishToNewEndpointAsync(context.Envelope, context.ServiceProvider, exception)
+                .ConfigureAwait(false);
 
-                _logger.LogMoved(context.Envelope, _endpoint);
+            await context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
 
-                await PublishToNewEndpointAsync(context.Envelope, exception).ConfigureAwait(false);
+            return true;
+        }
 
-                await context.TransactionManager.RollbackAsync(exception, true).ConfigureAwait(false);
+        private async Task PublishToNewEndpointAsync(IRawInboundEnvelope envelope, IServiceProvider serviceProvider, Exception exception)
+        {
+            OutboundEnvelope outboundEnvelope =
+                envelope is IInboundEnvelope deserializedEnvelope
+                    ? new OutboundEnvelope(
+                        deserializedEnvelope.Message,
+                        deserializedEnvelope.Headers,
+                        _producerConfiguration.Endpoint.GetEndpoint(deserializedEnvelope.Message, _producerConfiguration, serviceProvider))
+                    : new OutboundEnvelope(
+                        envelope.RawMessage,
+                        envelope.Headers,
+                        _producerConfiguration.Endpoint.GetEndpoint(envelope.RawMessage, _producerConfiguration, serviceProvider));
 
-                return true;
-            }
-
-            private async Task PublishToNewEndpointAsync(IRawInboundEnvelope envelope, Exception exception)
-            {
-                var outboundEnvelope =
-                    envelope is IInboundEnvelope deserializedEnvelope
-                        ? new OutboundEnvelope(
-                            deserializedEnvelope.Message,
-                            deserializedEnvelope.Headers,
-                            _endpoint)
-                        : new OutboundEnvelope(envelope.RawMessage, envelope.Headers, _endpoint);
-
-                var enricher = _enricherFactory.GetMovePolicyEnricher(envelope.Endpoint);
+            var enricher = _enricherFactory.GetMovePolicyEnricher(envelope.Endpoint);
                 enricher.Enrich(envelope, outboundEnvelope, exception);
 
                 _transformationAction?.Invoke(outboundEnvelope, exception);
 
-                await _producer.ProduceAsync(outboundEnvelope).ConfigureAwait(false);
-            }
+            await _producer.ProduceAsync(outboundEnvelope).ConfigureAwait(false);
         }
     }
 }

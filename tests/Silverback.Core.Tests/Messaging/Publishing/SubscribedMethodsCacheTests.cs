@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers;
 using Silverback.Tests.Core.TestTypes.Messages;
@@ -22,7 +23,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 services => services
                     .AddFakeLogger()
                     .AddSilverback());
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
 
@@ -39,7 +40,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddDelegateSubscriber((TestEventTwo _) => { })
                     .AddDelegateSubscriber((IEnumerable<TestEventThree> _) => { })
                     .AddDelegateSubscriber((IMessageStreamEnumerable<TestEventFour> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
 
@@ -54,7 +55,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((TestEventOne _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
 
@@ -70,7 +71,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddSilverback()
                     .AddDelegateSubscriber((TestEventOne _) => { })
                     .AddDelegateSubscriber((IEnumerable<TestEventOne> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
 
@@ -85,7 +86,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((IEvent _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new TestEventOne());
 
@@ -100,7 +101,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((TestEventOne _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventOne()));
 
@@ -115,7 +116,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((ITestMessage _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventOne()));
 
@@ -130,7 +131,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((TestEventOne _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventOne(), false));
 
@@ -145,7 +146,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((TestEventOne _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new TestEnvelope(new TestEventTwo()));
 
@@ -159,7 +160,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                 services => services
                     .AddFakeLogger()
                     .AddSilverback());
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<IMessage>());
 
@@ -174,7 +175,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((IMessageStreamEnumerable<ICommand> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<IEvent>());
 
@@ -189,7 +190,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((IMessageStreamEnumerable<TestEventOne> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<TestEventOne>());
 
@@ -204,7 +205,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((IMessageStreamEnumerable<ITestMessage> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<IMessage>());
 
@@ -219,7 +220,7 @@ namespace Silverback.Tests.Core.Messaging.Publishing
                     .AddFakeLogger()
                     .AddSilverback()
                     .AddDelegateSubscriber((IMessageStreamEnumerable<IMessage> _) => { }));
-            var subscribedMethodsCache = serviceProvider.GetRequiredService<ISubscribedMethodsCache>();
+            var subscribedMethodsCache = serviceProvider.GetRequiredService<SubscribedMethodsCache>();
 
             var result = subscribedMethodsCache.IsSubscribed(new MessageStreamProvider<ITestMessage>());
 

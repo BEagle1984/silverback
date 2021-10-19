@@ -18,114 +18,113 @@ namespace Silverback.Messaging.Configuration.Rabbit
             ClientPropertiesEqualityComparer = new();
 
         /// <summary>
-        ///     Gets or sets the AMQP URI SSL protocols.
+        ///     Gets the AMQP URI SSL protocols.
         /// </summary>
-        public SslProtocols? AmqpUriSslProtocols { get; set; }
+        public SslProtocols? AmqpUriSslProtocols { get; init; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the automatic connection recovery is enabled. The default is
+        ///     Gets a value indicating whether the automatic connection recovery is enabled. The default is
         ///     <c>true</c>.
         /// </summary>
-        public bool? AutomaticRecoveryEnabled { get; set; }
+        public bool? AutomaticRecoveryEnabled { get; init; }
 
         /// <summary>
-        ///     Gets or sets the name of th e host to connect to.
+        ///     Gets the name of th e host to connect to.
         /// </summary>
-        public string? HostName { get; set; }
+        public string? HostName { get; init; }
 
         /// <summary>
-        ///     Gets or sets the amount of time the client will wait for before re-trying to recover the connection.
+        ///     Gets the amount of time the client will wait for before re-trying to recover the connection.
         /// </summary>
-        public TimeSpan? NetworkRecoveryInterval { get; set; }
+        public TimeSpan? NetworkRecoveryInterval { get; init; }
 
         /// <summary>
-        ///     Gets or sets the amount of time protocol handshake operations are allowed to take before timing out.
+        ///     Gets the amount of time protocol handshake operations are allowed to take before timing out.
         /// </summary>
-        public TimeSpan? HandshakeContinuationTimeout { get; set; }
+        public TimeSpan? HandshakeContinuationTimeout { get; init; }
 
         /// <summary>
-        ///     Gets or sets the amount of time the protocol operations (e.g. <code>queue.declare</code>) are
+        ///     Gets the amount of time the protocol operations (e.g. <code>queue.declare</code>) are
         ///     allowed to take before timing out.
         /// </summary>
-        public TimeSpan? ContinuationTimeout { get; set; }
+        public TimeSpan? ContinuationTimeout { get; init; }
 
         /// <summary>
-        ///     Gets or sets the port to connect on.
+        ///     Gets the port to connect on.
         /// </summary>
-        public int? Port { get; set; }
+        public int? Port { get; init; }
 
         /// <summary>
-        ///     Gets or sets the timeout setting for the connection attempts.
+        ///     Gets the timeout setting for the connection attempts.
         /// </summary>
-        public TimeSpan? RequestedConnectionTimeout { get; set; }
+        public TimeSpan? RequestedConnectionTimeout { get; init; }
 
         /// <summary>
-        ///     Gets or sets the timeout setting for the socket read operations.
+        ///     Gets the timeout setting for the socket read operations.
         /// </summary>
-        public TimeSpan? SocketReadTimeout { get; set; }
+        public TimeSpan? SocketReadTimeout { get; init; }
 
         /// <summary>
-        ///     Gets or sets the timeout setting for the socket write operations.
+        ///     Gets the timeout setting for the socket write operations.
         /// </summary>
-        public TimeSpan? SocketWriteTimeout { get; set; }
+        public TimeSpan? SocketWriteTimeout { get; init; }
 
         /// <summary>
-        ///     Gets or sets the SSL options setting.
+        ///     Gets the SSL options setting.
         /// </summary>
-        public RabbitSslOption Ssl { get; set; } = new();
+        public RabbitSslOption Ssl { get; init; } = new();
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the automatic connection recovery must recover recover also
+        ///     Gets a value indicating whether the automatic connection recovery must recover recover also
         ///     topology (exchanges, queues, bindings, etc). Defaults to true.
         /// </summary>
-        public bool? TopologyRecoveryEnabled { get; set; }
+        public bool? TopologyRecoveryEnabled { get; init; }
 
         /// <summary>
-        ///     Gets or sets the dictionary of client properties to be sent to the server.
+        ///     Gets the dictionary of client properties to be sent to the server.
         /// </summary>
-        [SuppressMessage("", "CA2227", Justification = "DTO")]
-        public IDictionary<string, object> ClientProperties { get; set; } = new Dictionary<string, object>();
+        public IReadOnlyDictionary<string, object> ClientProperties { get; init; } = new Dictionary<string, object>();
 
         /// <summary>
-        ///     Gets or sets the password to use when authenticating to the server.
+        ///     Gets the password to use when authenticating to the server.
         /// </summary>
-        public string? Password { get; set; }
+        public string? Password { get; init; }
 
         /// <summary>
-        ///     Gets or sets the maximum channel number to ask for.
+        ///     Gets the maximum channel number to ask for.
         /// </summary>
-        public ushort? RequestedChannelMax { get; set; }
+        public ushort? RequestedChannelMax { get; init; }
 
         /// <summary>
-        ///     Gets or sets the frame-max parameter to ask for (in bytes).
+        ///     Gets the frame-max parameter to ask for (in bytes).
         /// </summary>
-        public uint? RequestedFrameMax { get; set; }
+        public uint? RequestedFrameMax { get; init; }
 
         /// <summary>
-        ///     Gets or sets the heartbeat timeout to use when negotiating with the server.
+        ///     Gets the heartbeat timeout to use when negotiating with the server.
         /// </summary>
-        public TimeSpan? RequestedHeartbeat { get; set; }
+        public TimeSpan? RequestedHeartbeat { get; init; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether a background thread will be used for the I/O loop.
+        ///     Gets a value indicating whether a background thread will be used for the I/O loop.
         /// </summary>
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "IO is correct")]
-        public bool? UseBackgroundThreadsForIO { get; set; }
+        public bool? UseBackgroundThreadsForIO { get; init; }
 
         /// <summary>
-        ///     Gets or sets the username to use when authenticating to the server.
+        ///     Gets the username to use when authenticating to the server.
         /// </summary>
-        public string? UserName { get; set; }
+        public string? UserName { get; init; }
 
         /// <summary>
-        ///     Gets or sets the virtual host to access during this connection.
+        ///     Gets the virtual host to access during this connection.
         /// </summary>
-        public string? VirtualHost { get; set; }
+        public string? VirtualHost { get; init; }
 
         /// <summary>
-        ///     Gets or sets the default client provided name to be used for connections.
+        ///     Gets the default client provided name to be used for connections.
         /// </summary>
-        public string? ClientProvidedName { get; set; }
+        public string? ClientProvidedName { get; init; }
 
         /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public void Validate()
@@ -181,34 +180,6 @@ namespace Silverback.Messaging.Configuration.Rabbit
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
-        public override int GetHashCode()
-        {
-            var hashCode = default(HashCode);
-
-            hashCode.Add(AmqpUriSslProtocols);
-            hashCode.Add(AutomaticRecoveryEnabled);
-            hashCode.Add(HostName);
-            hashCode.Add(NetworkRecoveryInterval);
-            hashCode.Add(HandshakeContinuationTimeout);
-            hashCode.Add(ContinuationTimeout);
-            hashCode.Add(Port);
-            hashCode.Add(RequestedConnectionTimeout);
-            hashCode.Add(SocketReadTimeout);
-            hashCode.Add(SocketWriteTimeout);
-            hashCode.Add(Ssl);
-            hashCode.Add(TopologyRecoveryEnabled);
-            hashCode.Add(ClientProperties);
-            hashCode.Add(Password);
-            hashCode.Add(RequestedChannelMax);
-            hashCode.Add(RequestedFrameMax);
-            hashCode.Add(RequestedHeartbeat);
-            hashCode.Add(UseBackgroundThreadsForIO);
-            hashCode.Add(UserName);
-            hashCode.Add(VirtualHost);
-            hashCode.Add(ClientProvidedName);
-
-            return hashCode.ToHashCode();
-        }
+        public override int GetHashCode() => HashCode.Combine(HostName);
     }
 }

@@ -7,7 +7,7 @@ using Silverback.Messaging.Messages;
 
 namespace Silverback.Messaging.Outbound.Routing
 {
-    internal sealed class OutboundEnvelopeFactory
+    internal sealed class OutboundEnvelopeFactory : IOutboundEnvelopeFactory
     {
         private readonly IOutboundRoutingConfiguration _routingConfiguration;
 
@@ -16,10 +16,7 @@ namespace Silverback.Messaging.Outbound.Routing
             _routingConfiguration = routingConfiguration;
         }
 
-        public IOutboundEnvelope CreateOutboundEnvelope(
-            object? message,
-            IReadOnlyCollection<MessageHeader>? headers,
-            IProducerEndpoint endpoint) =>
+        public IOutboundEnvelope CreateEnvelope(object? message, IReadOnlyCollection<MessageHeader>? headers, ProducerEndpoint endpoint) =>
             message == null
                 ? new OutboundEnvelope(
                     message,
@@ -31,6 +28,6 @@ namespace Silverback.Messaging.Outbound.Routing
                     message,
                     headers,
                     endpoint,
-                    _routingConfiguration.PublishOutboundMessagesToInternalBus);
+                    _routingConfiguration.PublishOutboundMessagesToInternalBus)!;
     }
 }

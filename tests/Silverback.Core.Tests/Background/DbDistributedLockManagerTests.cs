@@ -9,6 +9,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Background;
+using Silverback.Configuration;
 using Silverback.Database.Model;
 using Silverback.Tests.Core.TestTypes.Database;
 using Silverback.Tests.Logging;

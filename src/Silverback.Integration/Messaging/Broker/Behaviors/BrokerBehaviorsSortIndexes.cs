@@ -10,7 +10,6 @@ using Silverback.Messaging.Inbound;
 using Silverback.Messaging.Inbound.ExactlyOnce;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Outbound.Enrichers;
-using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Messaging.Validation;
@@ -79,11 +78,11 @@ namespace Silverback.Messaging.Broker.Behaviors
             ///     The <see cref="SequencerProducerBehavior" /> sort index.
             /// </summary>
             public const int Sequencer = 800;
-
-            /// <summary>
-            ///     The <see cref="EndpointNameResolverProducerBehavior" /> sort index.
-            /// </summary>
-            public const int EndpointNameResolver = 900;
+            //
+            // /// <summary>
+            // ///     The <see cref="EndpointNameResolverProducerBehavior" /> sort index.
+            // /// </summary>
+            // public const int EndpointNameResolver = 900;
 
             /// <summary>
             ///     The <see cref="CustomHeadersMapperProducerBehavior" /> sort index.

@@ -8,32 +8,32 @@ namespace Silverback.Messaging.Broker
 {
     /// <summary>
     ///     Holds a reference to all the registered <see cref="IBroker" /> implementations and is able to
-    ///     resolve the right instance according to the <see cref="IEndpoint" /> type.
+    ///     resolve the right instance according to the <see cref="IEndpointConfiguration" /> type.
     /// </summary>
     public interface IBrokerCollection : IReadOnlyList<IBroker>
     {
         /// <summary>
         ///     Returns an <see cref="IProducer" /> to be used to produce to the specified endpoint.
         /// </summary>
-        /// <param name="endpoint">
-        ///     The target endpoint.
+        /// <param name="configuration">
+        ///     The producer configuration.
         /// </param>
         /// <returns>
         ///     The <see cref="IProducer" /> for the specified endpoint.
         /// </returns>
-        IProducer GetProducer(IProducerEndpoint endpoint);
+        IProducer GetProducer(ProducerConfiguration configuration);
 
         /// <summary>
         ///     Adds an <see cref="IConsumer" /> that will consume from the specified endpoint as soon as the broker
         ///     is connected. The received messages will be forwarded to the specified callback delegate.
         /// </summary>
-        /// <param name="endpoint">
-        ///     The source endpoint.
+        /// <param name="configuration">
+        ///     The consumer configuration.
         /// </param>
         /// <returns>
         ///     The <see cref="IConsumer" /> for the specified endpoint.
         /// </returns>
-        IConsumer AddConsumer(IConsumerEndpoint endpoint);
+        IConsumer AddConsumer(ConsumerConfiguration configuration);
 
         /// <summary>
         ///     Connect to all message brokers to start consuming.

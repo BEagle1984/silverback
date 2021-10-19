@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Background;
+using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Tests.Core.TestTypes.Database;
 using Silverback.Tests.Logging;
@@ -28,7 +29,7 @@ namespace Silverback.Tests.Core.Background
             _connection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
             _connection.Open();
 
-            var services = new ServiceCollection();
+            ServiceCollection services = new();
 
             services
                 .AddTransient<DbDistributedLockManager>()
@@ -41,7 +42,7 @@ namespace Silverback.Tests.Core.Background
 
             _serviceProvider = services.BuildServiceProvider();
 
-            using var scope = _serviceProvider.CreateScope();
+            using IServiceScope scope = _serviceProvider.CreateScope();
             scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
         }
 
@@ -50,7 +51,7 @@ namespace Silverback.Tests.Core.Background
         {
             bool executed = false;
 
-            var service = new TestDistributedBackgroundService(
+            using TestDistributedBackgroundService service = new(
                 _ =>
                 {
                     executed = true;
@@ -69,7 +70,7 @@ namespace Silverback.Tests.Core.Background
         {
             bool executed = false;
 
-            var service = new TestDistributedBackgroundService(
+            using TestDistributedBackgroundService service = new(
                 _ =>
                 {
                     executed = true;
@@ -90,7 +91,7 @@ namespace Silverback.Tests.Core.Background
             bool executed1 = false;
             bool executed2 = false;
 
-            var service1 = new TestDistributedBackgroundService(
+            using TestDistributedBackgroundService service1 = new(
                 async stoppingToken =>
                 {
                     executed1 = true;
@@ -105,7 +106,7 @@ namespace Silverback.Tests.Core.Background
 
             await AsyncTestingUtil.WaitAsync(() => executed1);
 
-            var service2 = new TestDistributedBackgroundService(
+            using TestDistributedBackgroundService service2 = new(
                 _ =>
                 {
                     executed2 = true;

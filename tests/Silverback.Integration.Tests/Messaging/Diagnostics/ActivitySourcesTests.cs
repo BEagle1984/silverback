@@ -87,8 +87,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             return new RawInboundEnvelope(
                 Stream.Null,
                 headers,
-                new TestConsumerEndpoint("Endpoint"),
-                "Endpoint",
+                new TestConsumerConfiguration("Endpoint").GetDefaultEndpoint(),
                 new TestOffset("key", "7"));
         }
 

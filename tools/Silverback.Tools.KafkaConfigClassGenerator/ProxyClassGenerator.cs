@@ -142,7 +142,7 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
 
                 if (property.Name == "DeliveryReportFields")
                 {
-                    _builder.AppendLine("            set");
+                    _builder.AppendLine("            init");
                     _builder.AppendLine("            {");
                     _builder.AppendLine("                if (value != null)");
                     _builder.AppendLine($"                    ConfluentConfig.{property.Name} = value;");
@@ -150,7 +150,7 @@ namespace Silverback.Tools.KafkaConfigClassGenerator
                 }
                 else if (property.GetSetMethod() != null)
                 {
-                    _builder.AppendLine($"            set => ConfluentConfig.{property.Name} = value;");
+                    _builder.AppendLine($"            init => ConfluentConfig.{property.Name} = value;");
                 }
 
                 _builder.AppendLine("        }");

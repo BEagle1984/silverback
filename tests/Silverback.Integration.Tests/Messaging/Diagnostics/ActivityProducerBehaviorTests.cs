@@ -9,6 +9,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
+using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Diagnostics;
@@ -76,7 +77,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.SetParentId("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
             activity.Start();
 
-            broker.GetProducer(TestProducerEndpoint.GetDefault()).Produce("123");
+            broker.GetProducer(TestProducerConfiguration.GetDefault()).Produce("123");
 
             broker.ProducedMessages.Single().Headers.Should().Contain(
                 header =>
@@ -102,7 +103,7 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
             activity.SetParentId("00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01");
             activity.Start();
 
-            await broker.GetProducer(TestProducerEndpoint.GetDefault()).ProduceAsync("123");
+            await broker.GetProducer(TestProducerConfiguration.GetDefault()).ProduceAsync("123");
 
             broker.ProducedMessages.Single().Headers.Should().Contain(
                 header =>

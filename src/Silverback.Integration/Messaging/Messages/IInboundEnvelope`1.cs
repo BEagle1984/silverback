@@ -1,15 +1,13 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+/// <inheritdoc cref="IInboundEnvelope" />
+public interface IInboundEnvelope<out TMessage> : IInboundEnvelope
 {
-    /// <inheritdoc cref="IInboundEnvelope" />
-    public interface IInboundEnvelope<out TMessage> : IInboundEnvelope
-        where TMessage : class
-    {
-        /// <summary>
-        ///     Gets the deserialized message body.
-        /// </summary>
-        new TMessage? Message { get; }
-    }
+    /// <summary>
+    ///     Gets the deserialized message body.
+    /// </summary>
+    new TMessage? Message { get; }
 }

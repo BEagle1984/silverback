@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Silverback.Messaging.Subscribers.Subscriptions
 {
     /// <summary>
-    ///     Represents a subscription configuration. Each subscription can resolve to multiple
+    ///     A subscription configuration. Each subscription can resolve to multiple
     ///     <see cref="SubscribedMethod" />.
     /// </summary>
     public interface ISubscription
@@ -21,6 +21,6 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
         /// <returns>
         ///     A collection of <see cref="SubscribedMethod" />.
         /// </returns>
-        IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider);
+        IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider);
     }
 }

@@ -33,11 +33,11 @@ namespace Silverback.Messaging.Broker.Mqtt
         }
 
         public MqttClientWrapper GetClient(MqttProducer producer) =>
-            GetClient(producer.Endpoint.Configuration, false);
+            GetClient(producer.Configuration.Client, false);
 
         public MqttClientWrapper GetClient(MqttConsumer consumer)
         {
-            var client = GetClient(consumer.Endpoint.Configuration, true);
+            var client = GetClient(consumer.Configuration.Client, true);
 
             client.Consumer = consumer;
 
@@ -54,9 +54,9 @@ namespace Silverback.Messaging.Broker.Mqtt
             "ReSharper",
             "ParameterOnlyUsedForPreconditionCheck.Local",
             Justification = "Different checks for consumer")]
-        private MqttClientWrapper GetClient(MqttClientConfig clientConfig, bool isForConsumer)
+        private MqttClientWrapper GetClient(MqttClientConfiguration clientConfiguration, bool isForConsumer)
         {
-            Check.NotNull(clientConfig, nameof(clientConfig));
+            Check.NotNull(clientConfiguration, nameof(clientConfiguration));
 
             if (_clients == null)
                 throw new ObjectDisposedException(GetType().FullName);
@@ -64,12 +64,12 @@ namespace Silverback.Messaging.Broker.Mqtt
             lock (_clients)
             {
                 bool clientExists = _clients.TryGetValue(
-                    clientConfig.ClientId,
+                    clientConfiguration.ClientId,
                     out MqttClientWrapper client);
 
                 if (clientExists)
                 {
-                    if (!client.ClientConfig.Equals(clientConfig))
+                    if (!client.ClientConfiguration.Equals(clientConfiguration))
                     {
                         throw new InvalidOperationException(
                             "A client with the same id is already connected but with a different configuration.");
@@ -85,10 +85,10 @@ namespace Silverback.Messaging.Broker.Mqtt
                 {
                     client = new MqttClientWrapper(
                         _mqttClientFactory.CreateClient(),
-                        clientConfig,
+                        clientConfiguration,
                         _callbacksInvoker,
                         _logger);
-                    _clients.Add(clientConfig.ClientId, client);
+                    _clients.Add(clientConfiguration.ClientId, client);
                 }
 
                 return client;

@@ -11,7 +11,7 @@ namespace Silverback.Messaging.Serialization
     {
         public static Type? GetTypeFromHeaders(MessageHeaderCollection messageHeaders, bool throwOnError = true)
         {
-            var typeName = messageHeaders.GetValue(DefaultMessageHeaders.MessageType);
+            string? typeName = messageHeaders.GetValue(DefaultMessageHeaders.MessageType);
 
             if (string.IsNullOrEmpty(typeName))
                 return null;
@@ -26,6 +26,6 @@ namespace Silverback.Messaging.Serialization
             (InboundEnvelope)Activator.CreateInstance(
                 typeof(InboundEnvelope<>).MakeGenericType(messageType),
                 rawInboundEnvelope,
-                deserializedMessage);
+                deserializedMessage)!;
     }
 }

@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
+using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Outbound.TransactionalOutbox;
@@ -58,7 +59,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 Array.Empty<MessageHeader>(),
-                new TestProducerEndpoint("test"));
+                new TestProducerConfiguration("test").GetDefaultEndpoint());
 
             await _behavior.HandleAsync(
                 outboundEnvelope,
@@ -82,10 +83,10 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             var outboundEnvelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 Array.Empty<MessageHeader>(),
-                new TestProducerEndpoint("test")
+                new TestProducerConfiguration("test")
                 {
                     Strategy = new OutboxProduceStrategy()
-                });
+                }.GetDefaultEndpoint());
 
             await _behavior.HandleAsync(
                 outboundEnvelope,

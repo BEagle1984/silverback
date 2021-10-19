@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Diagnostics
                 null,
                 null);
 
-            activity.AddEndpointName(envelope.ActualEndpointName);
+            activity.AddEndpointName(envelope.Endpoint.RawName);
             activity.SetMessageHeaders(envelope.Headers);
 
             return activity;
@@ -46,7 +46,7 @@ namespace Silverback.Messaging.Diagnostics
                 traceIdFromHeader,
                 traceState);
 
-            activity.AddEndpointName(envelope.ActualEndpointName);
+            activity.AddEndpointName(envelope.Endpoint.RawName);
             activity.AddBaggageFromHeaders(headers);
 
             return activity;

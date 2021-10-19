@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.Model.TestTypes.Messages;
 using Silverback.Tests.Logging;
@@ -67,7 +68,7 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         [Fact]
         public async Task ExecuteAsync_UnhandledCommand_ExceptionThrown()
         {
-            Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommand(), true);
+            Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommand());
 
             await act.Should().ThrowAsync<UnhandledMessageException>();
         }
@@ -75,7 +76,7 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         [Fact]
         public void Execute_UnhandledCommand_ExceptionThrown()
         {
-            Action act = () => _publisher.Execute(new UnhandledCommand(), true);
+            Action act = () => _publisher.Execute(new UnhandledCommand());
 
             act.Should().Throw<UnhandledMessageException>();
         }
@@ -83,7 +84,7 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         [Fact]
         public async Task ExecuteAsync_UnhandledCommandWithResult_ExceptionThrown()
         {
-            Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommandWithResult(), true);
+            Func<Task> act = () => _publisher.ExecuteAsync(new UnhandledCommandWithResult());
 
             await act.Should().ThrowAsync<UnhandledMessageException>();
         }
@@ -91,7 +92,7 @@ namespace Silverback.Tests.Core.Model.Messaging.Publishing
         [Fact]
         public void Execute_UnhandledCommandWithResult_ExceptionThrown()
         {
-            Action act = () => _publisher.Execute(new UnhandledCommandWithResult(), true);
+            Action act = () => _publisher.Execute(new UnhandledCommandWithResult());
 
             act.Should().Throw<UnhandledMessageException>();
         }

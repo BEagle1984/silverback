@@ -9,48 +9,49 @@ using Silverback.Tests.Types;
 using Silverback.Tests.Types.Domain;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configuration
+namespace Silverback.Tests.Integration.Kafka.SchemaRegistry.Messaging.Configuration;
+
+public class ProducerEndpointBuilderSerializeAsAvroExtensionsTests
 {
-    public class ProducerEndpointBuilderSerializeAsAvroExtensionsTests
+    [Fact]
+    public void SerializeAsAvro_WithoutType_ExceptionThrown()
     {
-        [Fact]
-        public void SerializeAsAvro_WithoutType_ExceptionThrown()
-        {
-            var builder = new TestProducerEndpointBuilder();
+        TestProducerConfigurationBuilder<object> builder = new();
 
-            Action act = () => builder.SerializeAsAvro();
+        Action act = () => builder.SerializeAsAvro();
 
-            act.Should().Throw<InvalidOperationException>();
-        }
+        act.Should().Throw<InvalidOperationException>();
+    }
 
-        [Fact]
-        public void SerializeAsAvro_Default_SerializerSet()
-        {
-            var builder = new TestProducerEndpointBuilder();
+    [Fact]
+    public void SerializeAsAvro_Default_SerializerSet()
+    {
+        TestProducerConfigurationBuilder<TestEventOne> builder = new();
 
-            var endpoint = builder.SerializeAsAvro(serializer => serializer.UseType<TestEventOne>())
-                .Build();
+        TestProducerConfiguration endpoint = builder.SerializeAsAvro().Build();
 
-            endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
-        }
+        endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+    }
 
-        [Fact]
-        public void SerializeAsAvro_Configure_SchemaRegistryAndSerializerConfigSet()
-        {
-            var builder = new TestProducerEndpointBuilder();
+    [Fact]
+    public void SerializeAsAvro_Configure_SchemaRegistryAndSerializerConfigSet()
+    {
+        TestProducerConfigurationBuilder<TestEventOne> builder = new();
 
-            var endpoint = builder.SerializeAsAvro(
-                serializer => serializer
-                    .UseType<TestEventOne>()
-                    .Configure(
-                        schemaRegistryConfig => { schemaRegistryConfig.Url = "some-url"; },
-                        serializerConfig => { serializerConfig.BufferBytes = 42; })).Build();
+        TestProducerConfiguration endpoint = builder.SerializeAsAvro(
+            serializer => serializer
+                .Configure(
+                    schemaRegistryConfig =>
+                    {
+                        schemaRegistryConfig.Url = "some-url";
+                    },
+                    serializerConfig =>
+                    {
+                        serializerConfig.BufferBytes = 42;
+                    })).Build();
 
-            endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
-            endpoint.Serializer.As<AvroMessageSerializer<TestEventOne>>().SchemaRegistryConfig.Url.Should()
-                .Be("some-url");
-            endpoint.Serializer.As<AvroMessageSerializer<TestEventOne>>().AvroSerializerConfig.BufferBytes.Should()
-                .Be(42);
-        }
+        endpoint.Serializer.Should().BeOfType<AvroMessageSerializer<TestEventOne>>();
+        endpoint.Serializer.As<AvroMessageSerializer<TestEventOne>>().SchemaRegistryConfig.Url.Should().Be("some-url");
+        endpoint.Serializer.As<AvroMessageSerializer<TestEventOne>>().AvroSerializerConfig.BufferBytes.Should().Be(42);
     }
 }

@@ -3,34 +3,21 @@
 
 using Silverback.Messaging.Broker;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+/// <summary>
+///     Wraps the message that is being consumed from an inbound endpoint.
+/// </summary>
+public interface IRawInboundEnvelope : IRawBrokerEnvelope
 {
     /// <summary>
-    ///     Wraps the message that is being consumed from an inbound endpoint.
+    ///     Gets the source endpoint. It is mostly relevant when the <see cref="EndpointConfiguration" /> points to multiple endpoints
+    ///     (for example if consuming multiple topics with a single consumer).
     /// </summary>
-    public interface IRawInboundEnvelope : IRawBrokerEnvelope
-    {
-        /// <summary>
-        ///     Gets the source endpoint.
-        /// </summary>
-        new IConsumerEndpoint Endpoint { get; }
+    new ConsumerEndpoint Endpoint { get; }
 
-        /// <summary>
-        ///     Gets the name of the actual source endpoint (in case the <c>Endpoint</c> configuration points to
-        ///     multiple endpoints, for example if consuming multiple topics with a
-        ///     single <c>KafkaConsumer</c>).
-        /// </summary>
-        string ActualEndpointName { get; }
-
-        /// <summary>
-        ///     Gets the name to actual source endpoint (<see cref="ActualEndpointName" />) to be displayed in the
-        ///     human-targeted output (e.g. logs, health checks result, etc.).
-        /// </summary>
-        string ActualEndpointDisplayName { get; }
-
-        /// <summary>
-        ///     Gets the message identifier on the message broker (the Kafka offset or similar).
-        /// </summary>
-        IBrokerMessageIdentifier BrokerMessageIdentifier { get; }
-    }
+    /// <summary>
+    ///     Gets the message identifier on the message broker (the Kafka offset or similar).
+    /// </summary>
+    IBrokerMessageIdentifier BrokerMessageIdentifier { get; }
 }

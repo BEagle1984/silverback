@@ -83,7 +83,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
         {
             var sender1 = new object();
             var sender2 = new object();
-            var mqttClientConfig = new MqttClientConfig();
+            var mqttClientConfig = new MqttClientConfiguration();
 
             var mqttClient = Substitute.For<IMqttClient>();
             mqttClient.ConnectAsync(Arg.Any<IMqttClientOptions>(), Arg.Any<CancellationToken>())
@@ -123,7 +123,7 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Broker
 
             var clientWrapper = new MqttClientWrapper(
                 mqttClient,
-                new MqttClientConfig(),
+                new MqttClientConfiguration(),
                 Substitute.For<IBrokerCallbacksInvoker>(),
                 Substitute.For<ISilverbackLogger>());
 

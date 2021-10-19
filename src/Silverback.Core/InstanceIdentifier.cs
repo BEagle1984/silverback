@@ -79,7 +79,7 @@ namespace Silverback
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        public override int GetHashCode() => Value.GetHashCode(StringComparison.Ordinal);
+        public override int GetHashCode() => HashCode.Combine(Value);
 
         /// <summary>
         ///     Converts the <see cref="InstanceIdentifier" /> to a string.

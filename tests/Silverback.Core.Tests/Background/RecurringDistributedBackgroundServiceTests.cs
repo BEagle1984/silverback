@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Silverback.Background;
+using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Tests.Core.TestTypes.Database;
 using Silverback.Tests.Logging;
@@ -28,7 +29,7 @@ namespace Silverback.Tests.Core.Background
             _connection = new SqliteConnection($"Data Source={Guid.NewGuid():N};Mode=Memory;Cache=Shared");
             _connection.Open();
 
-            var services = new ServiceCollection();
+            ServiceCollection services = new();
 
             services
                 .AddTransient<DbDistributedLockManager>()
@@ -41,7 +42,7 @@ namespace Silverback.Tests.Core.Background
 
             _serviceProvider = services.BuildServiceProvider();
 
-            using var scope = _serviceProvider.CreateScope();
+            using IServiceScope scope = _serviceProvider.CreateScope();
             scope.ServiceProvider.GetRequiredService<TestDbContext>().Database.EnsureCreated();
         }
 
@@ -51,7 +52,7 @@ namespace Silverback.Tests.Core.Background
         {
             bool executed = false;
 
-            var service = new TestRecurringDistributedBackgroundService(
+            using TestRecurringDistributedBackgroundService service = new(
                 _ =>
                 {
                     executed = true;
@@ -71,7 +72,7 @@ namespace Silverback.Tests.Core.Background
         {
             bool executed = false;
 
-            var service = new TestRecurringDistributedBackgroundService(
+            using TestRecurringDistributedBackgroundService service = new(
                 _ =>
                 {
                     executed = true;
@@ -92,7 +93,7 @@ namespace Silverback.Tests.Core.Background
             bool executed1 = false;
             bool executed2 = false;
 
-            var service1 = new TestRecurringDistributedBackgroundService(
+            using TestRecurringDistributedBackgroundService service1 = new(
                 _ =>
                 {
                     executed1 = true;
@@ -103,7 +104,7 @@ namespace Silverback.Tests.Core.Background
 
             await AsyncTestingUtil.WaitAsync(() => executed1);
 
-            var service2 = new TestRecurringDistributedBackgroundService(
+            using TestRecurringDistributedBackgroundService service2 = new(
                 _ =>
                 {
                     executed2 = true;
@@ -129,7 +130,7 @@ namespace Silverback.Tests.Core.Background
         {
             int executions = 0;
 
-            var service = new TestRecurringDistributedBackgroundService(
+            using TestRecurringDistributedBackgroundService service = new(
                 _ =>
                 {
                     executions++;
@@ -149,7 +150,7 @@ namespace Silverback.Tests.Core.Background
         {
             int executions = 0;
 
-            var service = new TestRecurringDistributedBackgroundService(
+            using TestRecurringDistributedBackgroundService service = new(
                 _ =>
                 {
                     executions++;
@@ -164,7 +165,7 @@ namespace Silverback.Tests.Core.Background
 
             await service.StopAsync(CancellationToken.None);
             await Task.Delay(50);
-            var executionsBeforeStop = executions;
+            int executionsBeforeStop = executions;
 
             await Task.Delay(500);
 
@@ -177,7 +178,7 @@ namespace Silverback.Tests.Core.Background
         {
             int executions = 0;
 
-            var service = new TestRecurringDistributedBackgroundService(
+            using TestRecurringDistributedBackgroundService service = new(
                 _ =>
                 {
                     executions++;
@@ -192,7 +193,7 @@ namespace Silverback.Tests.Core.Background
 
             service.Pause();
             await Task.Delay(50);
-            var executionsBeforeStop = executions;
+            int executionsBeforeStop = executions;
 
             await Task.Delay(500);
 
@@ -219,7 +220,7 @@ namespace Silverback.Tests.Core.Background
                 Func<CancellationToken, Task> task,
                 IDistributedLockManager lockManager)
                 : base(
-                    TimeSpan.FromMilliseconds(10),
+                    TimeSpan.FromMilliseconds(100),
                     new DistributedLockSettings(
                         "test",
                         "unique",

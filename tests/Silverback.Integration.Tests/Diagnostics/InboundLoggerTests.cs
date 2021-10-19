@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
@@ -49,8 +50,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -76,11 +76,12 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2")
-                {
-                    FriendlyName = "friendly-name"
-                },
-                "test1",
+                new TestConsumerEndpoint(
+                    "test1",
+                    new TestConsumerConfiguration("test1", "test2")
+                    {
+                        FriendlyName = "friendly-name"
+                    }),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -106,8 +107,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -133,8 +133,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -160,8 +159,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -187,8 +185,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -199,7 +196,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                 "unused1: (null), " +
                 "unused2: (null)";
 
-            _inboundLogger.LogMoved(envelope, new TestProducerEndpoint("target1"));
+            _inboundLogger.LogMoved(envelope, new TestProducerConfiguration("target1"));
 
             _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1048);
         }
@@ -214,8 +211,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -241,8 +237,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -268,8 +263,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -296,8 +290,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -324,8 +317,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -351,8 +343,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -378,8 +369,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -409,8 +399,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -445,8 +434,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =
@@ -479,8 +467,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestConsumerEndpoint("test1, test2"),
-                "test1",
+                new TestConsumerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 new TestOffset("a", "42"));
 
             var expectedMessage =

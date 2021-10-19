@@ -32,11 +32,11 @@ namespace Silverback.Messaging.Broker
 
             _producerEndpointTypeMap = new ConcurrentDictionary<Type, IBroker>(
                 _brokers.ToDictionary(
-                    broker => broker.ProducerEndpointType,
+                    broker => broker.ProducerConfigurationType,
                     broker => broker));
             _consumerEndpointTypeMap = new ConcurrentDictionary<Type, IBroker>(
                 _brokers.ToDictionary(
-                    broker => broker.ConsumerEndpointType,
+                    broker => broker.ConsumerConfigurationType,
                     broker => broker));
         }
 
@@ -47,31 +47,32 @@ namespace Silverback.Messaging.Broker
         public IBroker this[int index] => _brokers[index];
 
         /// <inheritdoc cref="IBrokerCollection.GetProducer" />
-        public IProducer GetProducer(IProducerEndpoint endpoint)
+        public IProducer GetProducer(ProducerConfiguration settings)
         {
-            Check.NotNull(endpoint, nameof(endpoint));
+            Check.NotNull(settings, nameof(settings));
 
-            var endpointType = endpoint.GetType();
+            // TODO: Should use endpoint.GetType()?
+
+            var endpointType = settings.GetType();
 
             return FindBroker(
-                    broker => broker.ProducerEndpointType,
+                    broker => broker.ProducerConfigurationType,
                     endpointType,
                     _producerEndpointTypeMap)
-                .GetProducer(endpoint);
+                .GetProducer(settings);
         }
 
         /// <inheritdoc cref="IBrokerCollection.AddConsumer" />
-        public IConsumer AddConsumer(IConsumerEndpoint endpoint)
+        public IConsumer AddConsumer(ConsumerConfiguration configuration)
         {
-            Check.NotNull(endpoint, nameof(endpoint));
+            Check.NotNull(configuration, nameof(configuration));
 
-            var endpointType = endpoint.GetType();
+            IBroker broker = FindBroker(
+                broker => broker.ConsumerConfigurationType,
+                configuration.GetType(),
+                _consumerEndpointTypeMap);
 
-            return FindBroker(
-                    broker => broker.ConsumerEndpointType,
-                    endpointType,
-                    _consumerEndpointTypeMap)
-                .AddConsumer(endpoint);
+            return broker.AddConsumer(configuration);
         }
 
         /// <inheritdoc cref="IBrokerCollection.ConnectAsync" />
@@ -87,13 +88,13 @@ namespace Silverback.Messaging.Broker
         IEnumerator IEnumerable.GetEnumerator() => _brokers.GetEnumerator();
 
         private IBroker FindBroker(
-            Func<IBroker, Type> endpointTypePropertySelector,
+            Func<IBroker, Type> configurationTypePropertySelector,
             Type endpointType,
-            ConcurrentDictionary<Type, IBroker> endpointTypeMap) =>
-            endpointTypeMap.GetOrAdd(
+            ConcurrentDictionary<Type, IBroker> configurationTypeMap) =>
+            configurationTypeMap.GetOrAdd(
                 endpointType,
                 _ => _brokers.FirstOrDefault(
-                         broker => endpointTypePropertySelector.Invoke(broker)
+                         broker => configurationTypePropertySelector.Invoke(broker)
                              .IsAssignableFrom(endpointType)) ??
                      throw new InvalidOperationException(
                          $"No message broker could be found to handle the endpoint of type {endpointType.Name}. " +

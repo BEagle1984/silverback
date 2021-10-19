@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Formatter;
+using Silverback.Configuration;
 using Silverback.Messaging;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -15,208 +17,177 @@ using Silverback.Tests.Integration.E2E.TestTypes.Messages;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Silverback.Tests.Integration.E2E.Mqtt
+namespace Silverback.Tests.Integration.E2E.Mqtt;
+
+public class BasicTests : MqttTestFixture
 {
-    public class BasicTests : MqttTestFixture
+    public BasicTests(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper)
     {
-        public BasicTests(ITestOutputHelper testOutputHelper)
-            : base(testOutputHelper)
+    }
+
+    [Fact]
+    public async Task OutboundAndInbound_DefaultSettings_ProducedAndConsumed()
+    {
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                    .AddMqttEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+        for (int i = 1; i <= 15; i++)
         {
+            await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
         }
 
-        [Fact]
-        public async Task OutboundAndInbound_DefaultSettings_ProducedAndConsumed()
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).Content)
+            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+    }
+
+    [Fact]
+    public async Task OutboundAndInbound_DefaultSettingsV311_ProducedAndConsumed()
+    {
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                    .AddMqttEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration => configuration
+                                    .WithClientId("e2e-test")
+                                    .ConnectViaTcp("e2e-mqtt-broker")
+                                    .UseProtocolVersion(MqttProtocolVersion.V311))
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound<TestEventOne>(consumer => consumer.ConsumeFrom(DefaultTopicName)))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+
+        for (int i = 1; i <= 15; i++)
         {
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                        .AddMqttEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config => config
-                                        .WithClientId("e2e-test")
-                                        .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-
-            for (int i = 1; i <= 15; i++)
-            {
-                await publisher.PublishAsync(
-                    new TestEventOne
-                    {
-                        Content = $"{i}"
-                    });
-            }
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
-            Helper.Spy.InboundEnvelopes
-                .Select(envelope => ((TestEventOne)envelope.Message!).Content)
-                .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+            await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
         }
 
-        [Fact]
-        public async Task OutboundAndInbound_DefaultSettingsV311_ProducedAndConsumed()
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
+        Helper.Spy.InboundEnvelopes
+            .Select(envelope => ((TestEventOne)envelope.Message!).Content)
+            .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
+    }
+
+    [Fact]
+    public async Task OutboundAndInbound_MessageWithCustomHeaders_HeadersTransferred()
+    {
+        TestEventWithHeaders message = new()
         {
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                        .AddMqttEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config => config
-                                        .WithClientId("e2e-test")
-                                        .ConnectViaTcp("e2e-mqtt-broker")
-                                        .UseProtocolVersion(MqttProtocolVersion.V311))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
+            Content = "Hello E2E!",
+            CustomHeader = "Hello header!",
+            CustomHeader2 = false
+        };
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                    .AddMqttEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
+                    .AddIntegrationSpy())
+            .Run();
 
-            for (int i = 1; i <= 15; i++)
-            {
-                await publisher.PublishAsync(
-                    new TestEventOne
-                    {
-                        Content = $"{i}"
-                    });
-            }
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+        await publisher.PublishAsync(message);
 
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
 
-            Helper.Spy.OutboundEnvelopes.Should().HaveCount(15);
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(15);
-            Helper.Spy.InboundEnvelopes
-                .Select(envelope => ((TestEventOne)envelope.Message!).Content)
-                .Should().BeEquivalentTo(Enumerable.Range(1, 15).Select(i => $"{i}"));
-        }
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
+        Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
+        Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header", "Hello header!"));
+        Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader("x-custom-header2", "False"));
+    }
 
-        [Fact]
-        public async Task OutboundAndInbound_MessageWithCustomHeaders_HeadersTransferred()
-        {
-            var message = new TestEventWithHeaders
-            {
-                Content = "Hello E2E!",
-                CustomHeader = "Hello header!",
-                CustomHeader2 = false
-            };
+    [Fact]
+    public async Task OutboundAndInbound_MultipleClients_ProducedAndConsumed()
+    {
+        int client1MessagesCount = 0;
+        int client2MessagesCount = 0;
 
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                        .AddMqttEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config => config
-                                        .WithClientId("e2e-test")
-                                        .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)))
-                        .AddIntegrationSpy())
-                .Run();
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
+                    .AddMqttEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration => configuration
+                                    .WithClientId("e2e-test")
+                                    .ConnectViaTcp("e2e-mqtt-broker")
+                                    .UseProtocolVersion(MqttProtocolVersion.V311))
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound<TestEventOne>(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ConfigureClient(configuration => configuration.WithClientId("client1")))
+                            .AddInbound<TestEventOne>(
+                                consumer => consumer
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .ConfigureClient(configuration => configuration.WithClientId("client2"))))
+                    .AddDelegateSubscriber(
+                        (IRawInboundEnvelope envelope) =>
+                        {
+                            MqttConsumerConfiguration consumerConfiguration = (MqttConsumerConfiguration)envelope.Endpoint.Configuration;
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-            await publisher.PublishAsync(message);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(1);
-            Helper.Spy.InboundEnvelopes[0].Message.Should().BeEquivalentTo(message);
-            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-custom-header", "Hello header!"));
-            Helper.Spy.InboundEnvelopes[0].Headers.Should().ContainEquivalentOf(
-                new MessageHeader("x-custom-header2", "False"));
-        }
-
-        [Fact]
-        public async Task OutboundAndInbound_MultipleClients_ProducedAndConsumed()
-        {
-            var client1MessagesCount = 0;
-            var client2MessagesCount = 0;
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
-                        .AddMqttEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config => config
-                                        .WithClientId("e2e-test")
-                                        .ConnectViaTcp("e2e-mqtt-broker")
-                                        .UseProtocolVersion(MqttProtocolVersion.V311))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .Configure(config => config.WithClientId("client1")))
-                                .AddInbound<TestEventOne>(
-                                    endpoint => endpoint
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .Configure(config => config.WithClientId("client2"))))
-                        .AddDelegateSubscriber(
-                            (IRawInboundEnvelope envelope) =>
+                            switch (consumerConfiguration.Client.ClientId)
                             {
-                                var mqttEndpoint = (MqttConsumerEndpoint)envelope.Endpoint;
+                                case "client1":
+                                    client1MessagesCount++;
+                                    break;
+                                case "client2":
+                                    client2MessagesCount++;
+                                    break;
+                                default:
+                                    throw new InvalidOperationException();
+                            }
+                        }))
+            .Run();
 
-                                switch (mqttEndpoint.Configuration.ClientId)
-                                {
-                                    case "client1":
-                                        client1MessagesCount++;
-                                        break;
-                                    case "client2":
-                                        client2MessagesCount++;
-                                        break;
-                                    default:
-                                        throw new InvalidOperationException();
-                                }
-                            }))
-                .Run();
+        IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
-
-            for (int i = 1; i <= 5; i++)
-            {
-                await publisher.PublishAsync(
-                    new TestEventOne
-                    {
-                        Content = $"{i}"
-                    });
-            }
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            client1MessagesCount.Should().Be(5);
-            client2MessagesCount.Should().Be(5);
+        for (int i = 1; i <= 5; i++)
+        {
+            await publisher.PublishAsync(new TestEventOne { Content = $"{i}" });
         }
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        client1MessagesCount.Should().Be(5);
+        client2MessagesCount.Should().Be(5);
     }
 }

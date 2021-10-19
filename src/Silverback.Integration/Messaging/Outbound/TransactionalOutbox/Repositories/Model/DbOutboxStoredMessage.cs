@@ -19,29 +19,24 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model
         /// <param name="id">
         ///     The primary key of the database record.
         /// </param>
-        /// <param name="messageType">
-        ///     The type of the message.
-        /// </param>
         /// <param name="content">
         ///     The message raw binary content (body).
         /// </param>
         /// <param name="headers">
         ///     The message headers.
         /// </param>
-        /// <param name="endpointName">
-        ///     The name of the producer endpoint.
-        /// </param>
-        /// <param name="actualEndpointName">
-        ///     The name of the actual target endpoint that was resolved for the message.
+        /// <param name="endpoint">
+        ///     The producer endpoint.
         /// </param>
         public DbOutboxStoredMessage(
             int id,
             Type? messageType,
             byte[]? content,
-            IEnumerable<MessageHeader> headers,
-            string endpointName,
-            string? actualEndpointName)
-            : base(messageType, content, headers, endpointName, actualEndpointName)
+            IEnumerable<MessageHeader>? headers,
+            string endpointRawName,
+            string? endpointFriendlyName,
+            byte[]? endpoint)
+            : base(messageType, content, headers, endpointRawName, endpointFriendlyName, endpoint)
         {
             Id = id;
         }

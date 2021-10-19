@@ -6,19 +6,17 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration;
+
+internal sealed class KafkaLogEnricher : IBrokerLogEnricher<KafkaProducerConfiguration>, IBrokerLogEnricher<KafkaConsumerConfiguration>
 {
-    internal sealed class KafkaLogEnricher
-        : IBrokerLogEnricher<KafkaProducerEndpoint>, IBrokerLogEnricher<KafkaConsumerEndpoint>
-    {
-        public string AdditionalPropertyName1 => "offset";
+    public string AdditionalPropertyName1 => "offset";
 
-        public string AdditionalPropertyName2 => "kafkaKey";
+    public string AdditionalPropertyName2 => "kafkaKey";
 
-        public (string? Value1, string? Value2) GetAdditionalValues(
-            IEndpoint endpoint,
-            IReadOnlyCollection<MessageHeader>? headers,
-            IBrokerMessageIdentifier? brokerMessageIdentifier) =>
-            (brokerMessageIdentifier?.ToLogString(), headers?.GetValue(KafkaMessageHeaders.KafkaMessageKey));
-    }
+    public (string? Value1, string? Value2) GetAdditionalValues(
+        Endpoint endpoint,
+        IReadOnlyCollection<MessageHeader>? headers,
+        IBrokerMessageIdentifier? brokerMessageIdentifier) =>
+        (brokerMessageIdentifier?.ToLogString(), headers?.GetValue(KafkaMessageHeaders.KafkaMessageKey));
 }

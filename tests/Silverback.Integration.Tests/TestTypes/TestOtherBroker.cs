@@ -3,12 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Outbound.Routing;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestOtherBroker : Broker<TestOtherProducerEndpoint, TestOtherConsumerEndpoint>
+    public class TestOtherBroker : Broker<TestOtherProducerConfiguration, TestOtherConsumerConfiguration>
     {
         public TestOtherBroker(IServiceProvider serviceProvider)
             : base(serviceProvider)
@@ -18,15 +20,20 @@ namespace Silverback.Tests.Integration.TestTypes
         public IList<ProducedMessage> ProducedMessages { get; } = new List<ProducedMessage>();
 
         protected override IProducer InstantiateProducer(
-            TestOtherProducerEndpoint endpoint,
+            TestOtherProducerConfiguration settings,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider) =>
-            new TestOtherProducer(this, endpoint, behaviorsProvider, serviceProvider);
+            new TestOtherProducer(
+                this,
+                settings,
+                behaviorsProvider,
+                serviceProvider.GetRequiredService<IOutboundEnvelopeFactory>(),
+                serviceProvider);
 
         protected override IConsumer InstantiateConsumer(
-            TestOtherConsumerEndpoint endpoint,
+            TestOtherConsumerConfiguration configuration,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider) =>
-            new TestOtherConsumer(this, endpoint, behaviorsProvider, serviceProvider);
+            new TestOtherConsumer(this, configuration, behaviorsProvider, serviceProvider);
     }
 }

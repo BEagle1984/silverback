@@ -31,7 +31,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task AnyAsync_EmptySet_FalseIsReturned()
+        public async Task AnyAsync_EmptySet_FalseReturned()
         {
             var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
                 .AnyAsync();
@@ -40,7 +40,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task AnyAsync_NotEmptySet_TrueIsReturned()
+        public async Task AnyAsync_NotEmptySet_TrueReturned()
         {
             _dbContext.Persons.Add(new Person());
             _dbContext.SaveChanges();
@@ -52,7 +52,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task AnyAsync_WithNotMatchingPredicate_FalseIsReturned()
+        public async Task AnyAsync_WithNotMatchingPredicate_FalseReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 20 });
             _dbContext.Persons.Add(new Person { Age = 30 });
@@ -65,7 +65,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task AnyAsync_WithMatchingPredicate_TrueIsReturned()
+        public async Task AnyAsync_WithMatchingPredicate_TrueReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 20 });
             _dbContext.Persons.Add(new Person { Age = 30 });
@@ -78,7 +78,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task FirstOrDefaultAsync_EmptySet_NullIsReturned()
+        public async Task FirstOrDefaultAsync_EmptySet_NullReturned()
         {
             var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
                 .FirstOrDefaultAsync();
@@ -87,7 +87,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task FirstOrDefaultAsync_NotEmptySet_FirstEntityIsReturned()
+        public async Task FirstOrDefaultAsync_NotEmptySet_FirstEntityReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 20 });
             _dbContext.Persons.Add(new Person { Age = 30 });
@@ -101,7 +101,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task FirstOrDefaultAsync_NotMatchingPredicate_NullIsReturned()
+        public async Task FirstOrDefaultAsync_NotMatchingPredicate_NullReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 20 });
             _dbContext.Persons.Add(new Person { Age = 30 });
@@ -114,7 +114,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task FirstOrDefaultAsync_MatchingPredicate_FirstEntityIsReturned()
+        public async Task FirstOrDefaultAsync_MatchingPredicate_FirstEntityReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 20 });
             _dbContext.Persons.Add(new Person { Age = 30 });
@@ -129,7 +129,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task CountAsync_EmptySet_ZeroIsReturned()
+        public async Task CountAsync_EmptySet_ZeroReturned()
         {
             var result = await _efCoreDbContext.GetDbSet<Person>().AsQueryable()
                 .CountAsync();
@@ -138,7 +138,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task CountAsync_NotEmptySet_CountIsReturned()
+        public async Task CountAsync_NotEmptySet_CountReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 20 });
             _dbContext.Persons.Add(new Person { Age = 30 });
@@ -151,7 +151,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task CountAsync_WithPredicate_CorrectCountIsReturned()
+        public async Task CountAsync_WithPredicate_CorrectCountReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 15 });
             _dbContext.Persons.Add(new Person { Age = 17 });
@@ -165,7 +165,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task ToListAsync_NotEmptySet_ListIsReturned()
+        public async Task ToListAsync_NotEmptySet_ListReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 15 });
             _dbContext.Persons.Add(new Person { Age = 17 });
@@ -181,7 +181,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task ToListAsync_ApplyingWhereClause_FilteredListIsReturned()
+        public async Task ToListAsync_ApplyingWhereClause_FilteredListReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 15 });
             _dbContext.Persons.Add(new Person { Age = 17 });
@@ -198,7 +198,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task ToDictionaryAsync_NotEmptySet_DictionaryIsReturned()
+        public async Task ToDictionaryAsync_NotEmptySet_DictionaryReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 15 });
             _dbContext.Persons.Add(new Person { Age = 17 });
@@ -218,7 +218,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task ToDictionaryAsync_ApplyingWhereClause_DictionaryIsReturned()
+        public async Task ToDictionaryAsync_ApplyingWhereClause_DictionaryReturned()
         {
             _dbContext.Persons.Add(new Person { Age = 15 });
             _dbContext.Persons.Add(new Person { Age = 17 });

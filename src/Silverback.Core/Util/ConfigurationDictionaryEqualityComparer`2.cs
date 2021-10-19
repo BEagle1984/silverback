@@ -11,7 +11,7 @@ namespace Silverback.Util
     ///         This comparer is meant to be used for configuration dictionaries only.
     ///     </para>
     ///     <para>
-    ///         Nome of the applied rules:
+    ///         The applied rules:
     ///         <list type="bullet">
     ///             <item>
     ///                 <description>

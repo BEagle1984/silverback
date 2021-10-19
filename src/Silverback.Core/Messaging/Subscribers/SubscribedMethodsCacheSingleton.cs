@@ -15,13 +15,13 @@ namespace Silverback.Messaging.Subscribers
     {
         private readonly Dictionary<Type, IReadOnlyCollection<SubscribedMethod>> _cache = new();
 
-        private readonly IBusOptions _options;
+        private readonly BusOptions _options;
 
         private bool? _hasAnyMessageStreamSubscriber;
 
         private IReadOnlyCollection<SubscribedMethod>? _subscribedMethods;
 
-        public SubscribedMethodsCacheSingleton(IBusOptions options)
+        public SubscribedMethodsCacheSingleton(BusOptions options)
         {
             _options = Check.NotNull(options, nameof(options));
         }

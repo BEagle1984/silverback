@@ -8,7 +8,7 @@ using Silverback.Messaging.Configuration.Rabbit;
 namespace Silverback.Messaging
 {
     /// <summary>
-    ///     Represents an exchange to produce to.
+    ///     The Rabbit producer configuration to produce to an exchange.
     /// </summary>
     public sealed class RabbitExchangeProducerEndpoint
         : RabbitProducerEndpoint, IEquatable<RabbitExchangeProducerEndpoint>
@@ -25,9 +25,9 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
-        ///     Gets or sets the exchange configuration.
+        ///     Gets the exchange configuration.
         /// </summary>
-        public RabbitExchangeConfig Exchange { get; set; } = new();
+        public RabbitExchangeConfig Exchange { get; init; } = new();
 
         /// <inheritdoc cref="RabbitProducerEndpoint.Validate" />
         public override void Validate()
@@ -68,7 +68,6 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
-        public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
+        public override int GetHashCode() => HashCode.Combine(Name);
     }
 }

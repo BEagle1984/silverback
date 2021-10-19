@@ -10,6 +10,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NSubstitute;
+using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Outbound.Routing;
 using Silverback.Messaging.Publishing;
@@ -34,8 +35,6 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
 
         private readonly TestSubscriber _testSubscriber;
 
-        private readonly IServiceProvider _serviceProvider;
-
         public OutboundRouterBehaviorTests()
         {
             var services = new ServiceCollection();
@@ -53,15 +52,15 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
                 .AddSingleton(Substitute.For<IHostApplicationLifetime>())
                 .AddLoggerSubstitute();
 
-            _serviceProvider = services.BuildServiceProvider();
+            IServiceProvider serviceProvider = services.BuildServiceProvider();
 
-            _behavior = (OutboundRouterBehavior)_serviceProvider.GetServices<IBehavior>()
+            _behavior = (OutboundRouterBehavior)serviceProvider.GetServices<IBehavior>()
                 .First(s => s is OutboundRouterBehavior);
             _routingConfiguration =
-                (OutboundRoutingConfiguration)_serviceProvider
+                (OutboundRoutingConfiguration)serviceProvider
                     .GetRequiredService<IOutboundRoutingConfiguration>();
-            _broker = _serviceProvider.GetRequiredService<TestBroker>();
-            _otherBroker = _serviceProvider.GetRequiredService<TestOtherBroker>();
+            _broker = serviceProvider.GetRequiredService<TestBroker>();
+            _otherBroker = serviceProvider.GetRequiredService<TestOtherBroker>();
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
@@ -78,43 +77,36 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             IIntegrationMessage message,
             string[] expectedEndpointNames)
         {
-            _routingConfiguration.Add<IIntegrationMessage>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("allMessages")));
-            _routingConfiguration.Add<IIntegrationEvent>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("allEvents")));
-            _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
-            _routingConfiguration.Add<TestEventTwo>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventTwo")));
+            _routingConfiguration.AddRoute(typeof(IIntegrationMessage), new TestProducerConfiguration("allMessages"));
+            _routingConfiguration.AddRoute(typeof(IIntegrationEvent), new TestProducerConfiguration("allEvents"));
+            _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
+            _routingConfiguration.AddRoute(typeof(TestEventTwo), new TestProducerConfiguration("eventTwo"));
 
             await _behavior.HandleAsync(
                 message,
                 nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
 
-            foreach (var expectedEndpointName in expectedEndpointNames)
+            foreach (string expectedEndpointName in expectedEndpointNames)
             {
-                _broker.ProducedMessages.Count(envelope => envelope.Endpoint.Name == expectedEndpointName)
-                    .Should()
-                    .Be(1);
+                _broker.ProducedMessages.Count(producedMessage => producedMessage.Endpoint.RawName == expectedEndpointName)
+                    .Should().Be(1);
             }
 
-            var notExpectedEndpointNames = _routingConfiguration
-                .Routes.Select(route => route.GetOutboundRouter(_serviceProvider).Endpoints.First().Name)
-                .Where(r => !expectedEndpointNames.Contains(r));
+            IEnumerable<string> notExpectedEndpointNames = _routingConfiguration
+                .Routes.Select(route => route.ProducerConfiguration.RawName)
+                .Where(endpointName => !expectedEndpointNames.Contains(endpointName));
 
-            foreach (var notExpectedEndpointName in notExpectedEndpointNames)
+            foreach (string notExpectedEndpointName in notExpectedEndpointNames)
             {
-                _broker.ProducedMessages.Count(envelope => envelope.Endpoint.Name == notExpectedEndpointName)
-                    .Should()
-                    .Be(0);
+                _broker.ProducedMessages.Count(producedMessage => producedMessage.Endpoint.RawName == notExpectedEndpointName)
+                    .Should().Be(0);
             }
         }
 
         [Fact]
         public async Task HandleAsync_Message_CorrectlyRouted()
         {
-            _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
+            _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
 
             await _behavior.HandleAsync(
                 new TestEventOne(),
@@ -126,8 +118,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
         [Fact]
         public async Task HandleAsync_Message_RoutedMessageIsFiltered()
         {
-            _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
+            _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
 
             var messages = await _behavior.HandleAsync(
                 new TestEventOne(),
@@ -143,8 +134,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
         [Fact]
         public async Task HandleAsync_Message_RoutedMessageIsRepublishedWithoutAutoUnwrap()
         {
-            _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
+            _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
 
             await _behavior.HandleAsync(
                 new TestEventOne(),
@@ -158,8 +148,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
         public async Task HandleAsync_MessagesWithPublishToInternBusOption_RoutedMessageIsFiltered()
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
-            _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
+            _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
 
             var messages = await _behavior.HandleAsync(
                 new TestEventOne(),
@@ -177,8 +166,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
             HandleAsync_MessagesWithPublishToInternBusOption_RoutedMessageIsRepublishedWithAutoUnwrap()
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
-            _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
+            _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
 
             await _behavior.HandleAsync(
                 new TestEventOne(),
@@ -192,14 +180,13 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
         public async Task HandleAsync_EnvelopeWithPublishToInternBusOption_OutboundEnvelopeIsNotFiltered()
         {
             _routingConfiguration.PublishOutboundMessagesToInternalBus = true;
-            _routingConfiguration.Add<TestEventOne>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
+            _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
 
             var messages = await _behavior.HandleAsync(
                 new OutboundEnvelope<TestEventOne>(
                     new TestEventOne(),
                     null,
-                    new TestProducerEndpoint("eventOne")),
+                    new TestProducerConfiguration("eventOne").GetDefaultEndpoint()),
                 nextMessage => Task.FromResult(new[] { nextMessage }.AsReadOnlyCollection())!);
 
             messages.Should().HaveCount(1);
@@ -212,8 +199,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
              * to be relayed */
 
             var message = new SomeUnhandledMessage { Content = "abc" };
-            _routingConfiguration.Add<SomeUnhandledMessage>(
-                _ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")));
+            _routingConfiguration.AddRoute(typeof(SomeUnhandledMessage), new TestProducerConfiguration("eventOne"));
 
             await _behavior.HandleAsync(
                 message,
@@ -225,10 +211,9 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Routing
         [Fact]
         public async Task HandleAsync_MultipleRoutesToMultipleBrokers_CorrectlyRelayed()
         {
-            _routingConfiguration
-                .Add<TestEventOne>(_ => new StaticOutboundRouter(new TestProducerEndpoint("eventOne")))
-                .Add<TestEventTwo>(_ => new StaticOutboundRouter(new TestOtherProducerEndpoint("eventTwo")))
-                .Add<TestEventThree>(_ => new StaticOutboundRouter(new TestProducerEndpoint("eventThree")));
+            _routingConfiguration.AddRoute(typeof(TestEventOne), new TestProducerConfiguration("eventOne"));
+            _routingConfiguration.AddRoute(typeof(TestEventTwo), new TestOtherProducerConfiguration("eventTwo"));
+            _routingConfiguration.AddRoute(typeof(TestEventThree), new TestProducerConfiguration("eventThree"));
 
             await _behavior.HandleAsync(
                 new TestEventOne(),

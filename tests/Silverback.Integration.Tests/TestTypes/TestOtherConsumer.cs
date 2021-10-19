@@ -12,16 +12,16 @@ using Silverback.Tests.Types;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestOtherConsumer : Consumer<TestOtherBroker, TestOtherConsumerEndpoint, TestOffset>
+    public class TestOtherConsumer : Consumer<TestOtherBroker, TestOtherConsumerConfiguration, TestOffset>
     {
         public TestOtherConsumer(
             TestOtherBroker broker,
-            TestOtherConsumerEndpoint endpoint,
+            TestOtherConsumerConfiguration configuration,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider)
             : base(
                 broker,
-                endpoint,
+                configuration,
                 behaviorsProvider,
                 serviceProvider,
                 serviceProvider.GetRequiredService<IInboundLogger<TestOtherConsumer>>())

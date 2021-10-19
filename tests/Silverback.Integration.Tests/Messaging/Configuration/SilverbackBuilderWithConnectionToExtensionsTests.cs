@@ -3,6 +3,7 @@
 
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging.Broker;
 using Xunit;
 

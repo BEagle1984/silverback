@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -60,8 +61,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                         rawMessage,
                         headers,
                         new TestOffset(),
-                        TestConsumerEndpoint.GetDefault(),
-                        TestConsumerEndpoint.GetDefault().Name)),
+                        TestConsumerEndpoint.GetDefault())),
                 new InvalidOperationException("test"));
 
             result.Should().BeTrue();
@@ -84,11 +84,8 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
             var testPolicy = new TestErrorPolicy();
 
             var chain = new ErrorPolicyChain(
-                    new[]
-                    {
-                        new RetryErrorPolicy().MaxFailedAttempts(3),
-                        testPolicy
-                    })
+                    new RetryErrorPolicy().MaxFailedAttempts(3),
+                    testPolicy)
                 .Build(_serviceProvider);
 
             await chain.HandleErrorAsync(
@@ -97,8 +94,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                         rawMessage,
                         headers,
                         new TestOffset(),
-                        TestConsumerEndpoint.GetDefault(),
-                        TestConsumerEndpoint.GetDefault().Name)),
+                        TestConsumerEndpoint.GetDefault())),
                 new InvalidOperationException("test"));
 
             testPolicy.Applied.Should().Be(failedAttempts > 3);
@@ -138,8 +134,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                         rawMessage,
                         headers,
                         new TestOffset(),
-                        TestConsumerEndpoint.GetDefault(),
-                        TestConsumerEndpoint.GetDefault().Name)),
+                        TestConsumerEndpoint.GetDefault())),
                 new InvalidOperationException("test"));
 
             for (var i = 0; i < policies.Length; i++)

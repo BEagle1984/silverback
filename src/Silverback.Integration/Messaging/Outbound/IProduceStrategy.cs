@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Outbound
     /// <summary>
     ///     The strategy used to produce the messages.
     /// </summary>
-    public interface IProduceStrategy
+    public interface IProduceStrategy : IEquatable<IProduceStrategy>
     {
         /// <summary>
         ///     Returns the actual strategy implementation, built using the provided <see cref="IServiceProvider" />.

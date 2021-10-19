@@ -6,49 +6,42 @@ using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration;
+
+/// <summary>
+///     Adds the <c>MoveToMqttTopic</c> method to the <see cref="ErrorPolicyBuilder" />.
+/// </summary>
+public static class ErrorPolicyBuilderMoveToMqttTopicExtensions
 {
     /// <summary>
-    ///     Adds the <c>MoveToMqttTopic</c> method to the <see cref="IErrorPolicyBuilder" />.
+    ///     Adds a <see cref="MoveMessageErrorPolicy" /> that moves the messages that fail to be processed to the configured MQTT topic.
     /// </summary>
-    public static class ErrorPolicyBuilderMoveToMqttTopicExtensions
+    /// <param name="builder">
+    ///     The <see cref="ErrorPolicyBuilder" />.
+    /// </param>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttProducerConfigurationBuilder{TMessage}" /> and configures it.
+    /// </param>
+    /// <param name="policyConfigurationAction">
+    ///     The optional additional configuration.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public static ErrorPolicyChainBuilder MoveToMqttTopic(
+        this ErrorPolicyBuilder builder,
+        Action<MqttProducerConfigurationBuilder<object>> configurationBuilderAction,
+        Action<MoveMessageErrorPolicy>? policyConfigurationAction = null)
     {
-        /// <summary>
-        ///     Adds a <see cref="MoveMessageErrorPolicy" /> that moves the messages that fail to be processed to the
-        ///     configured endpoint.
-        /// </summary>
-        /// <param name="builder">
-        ///     The <see cref="IErrorPolicyBuilder" />.
-        /// </param>
-        /// <param name="endpointBuilderAction">
-        ///     An <see cref="Action{T}" /> that takes the <see cref="IMqttProducerEndpointBuilder" /> and configures
-        ///     it.
-        /// </param>
-        /// <param name="policyConfigurationAction">
-        ///     The (optional) additional configuration.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IErrorPolicyChainBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IErrorPolicyChainBuilder MoveToMqttTopic(
-            this IErrorPolicyBuilder builder,
-            Action<IMqttProducerEndpointBuilder> endpointBuilderAction,
-            Action<MoveMessageErrorPolicy>? policyConfigurationAction = null)
-        {
-            Check.NotNull(builder, nameof(builder));
-            Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
+        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-            MqttEndpointsConfigurationBuilder? mqttEndpointsConfigurationBuilder =
-                (builder as ErrorPolicyBuilder)?.EndpointsConfigurationBuilder as
-                MqttEndpointsConfigurationBuilder;
+        MqttClientConfiguration? mqttClientConfiguration =
+            (builder.EndpointsConfigurationBuilder as MqttEndpointsConfigurationBuilder)?.ClientConfiguration;
 
-            var mqttClientConfig = mqttEndpointsConfigurationBuilder?.ClientConfig
-                                   ?? throw new InvalidOperationException("Missing ClientConfig.");
+        MqttProducerConfigurationBuilder<object> endpointBuilder = new(mqttClientConfiguration);
+        configurationBuilderAction(endpointBuilder);
 
-            var endpointBuilder = new MqttProducerEndpointBuilder(mqttClientConfig);
-            endpointBuilderAction(endpointBuilder);
-
-            return builder.Move(endpointBuilder.Build(), policyConfigurationAction);
-        }
+        return builder.Move(endpointBuilder.Build(), policyConfigurationAction);
     }
 }

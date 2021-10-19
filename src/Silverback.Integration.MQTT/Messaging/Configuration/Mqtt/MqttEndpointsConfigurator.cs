@@ -3,18 +3,16 @@
 
 using System;
 
-namespace Silverback.Messaging.Configuration.Mqtt
+namespace Silverback.Messaging.Configuration.Mqtt;
+
+internal sealed class MqttEndpointsConfigurator : IEndpointsConfigurator
 {
-    internal sealed class MqttEndpointsConfigurator : IEndpointsConfigurator
+    private readonly Action<MqttEndpointsConfigurationBuilder> _configAction;
+
+    public MqttEndpointsConfigurator(Action<MqttEndpointsConfigurationBuilder> configAction)
     {
-        private readonly Action<IMqttEndpointsConfigurationBuilder> _configAction;
-
-        public MqttEndpointsConfigurator(Action<IMqttEndpointsConfigurationBuilder> configAction)
-        {
-            _configAction = configAction;
-        }
-
-        public void Configure(IEndpointsConfigurationBuilder builder) =>
-            builder.AddMqttEndpoints(_configAction);
+        _configAction = configAction;
     }
+
+    public void Configure(EndpointsConfigurationBuilder builder) => builder.AddMqttEndpoints(_configAction);
 }

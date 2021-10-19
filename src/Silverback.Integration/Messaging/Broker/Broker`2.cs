@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,305 +11,288 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Configuration;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Broker
+namespace Silverback.Messaging.Broker;
+
+/// <summary>
+///     The base class for all <see cref="IBroker" /> implementations.
+/// </summary>
+/// <typeparam name="TProducerConfiguration">
+///     The type of the <see cref="ProducerConfiguration" /> that is used by this broker implementation.
+/// </typeparam>
+/// <typeparam name="TConsumerConfiguration">
+///     The type of the <see cref="ConsumerConfiguration" /> that is used by this broker implementation.
+/// </typeparam>
+public abstract class Broker<TProducerConfiguration, TConsumerConfiguration> : IBroker, IDisposable
+    where TProducerConfiguration : ProducerConfiguration
+    where TConsumerConfiguration : ConsumerConfiguration
 {
+    private const int MaxConnectParallelism = 2;
+
+    private const int MaxDisconnectParallelism = 4;
+
+    private readonly EndpointsConfiguratorsInvoker _endpointsConfiguratorsInvoker;
+
+    private readonly ISilverbackLogger _logger;
+
+    private readonly IServiceProvider _serviceProvider;
+
+    private readonly List<IConsumer> _consumers = new();
+
+    private readonly List<IProducer> _producers = new();
+
+    private readonly Dictionary<ProducerConfiguration, IProducer> _configurationToProducerDictionary = new();
+
+    private bool _disposed;
+
     /// <summary>
-    ///     The base class for all <see cref="IBroker" /> implementations.
+    ///     Initializes a new instance of the <see cref="Broker{TProducerEndpoint, TConsumerEndpoint}" /> class.
     /// </summary>
-    /// <typeparam name="TProducerEndpoint">
-    ///     The type of the <see cref="IProducerEndpoint" /> that is being handled by this broker
-    ///     implementation.
-    /// </typeparam>
-    /// <typeparam name="TConsumerEndpoint">
-    ///     The type of the <see cref="IConsumerEndpoint" /> that is being handled by this broker
-    ///     implementation.
-    /// </typeparam>
-    [SuppressMessage("", "CA1724", Justification = "Preserve backward compatibility since no big deal")]
-    public abstract class Broker<TProducerEndpoint, TConsumerEndpoint> : IBroker, IDisposable
-        where TProducerEndpoint : IProducerEndpoint
-        where TConsumerEndpoint : IConsumerEndpoint
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
+    /// </param>
+    protected Broker(IServiceProvider serviceProvider)
     {
-        private const int MaxConnectParallelism = 2;
+        _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+        _endpointsConfiguratorsInvoker = _serviceProvider.GetRequiredService<EndpointsConfiguratorsInvoker>();
+        _logger = _serviceProvider.GetRequiredService<ISilverbackLogger<Broker<ProducerConfiguration, TConsumerConfiguration>>>();
 
-        private const int MaxDisconnectParallelism = 4;
+        ProducerConfigurationType = typeof(TProducerConfiguration);
+        ConsumerConfigurationType = typeof(TConsumerConfiguration);
+    }
 
-        private readonly EndpointsConfiguratorsInvoker _endpointsConfiguratorsInvoker;
+    /// <inheritdoc cref="IBroker.ProducerConfigurationType" />
+    public Type ProducerConfigurationType { get; }
 
-        private readonly ISilverbackLogger _logger;
+    /// <inheritdoc cref="IBroker.ConsumerConfigurationType" />
+    public Type ConsumerConfigurationType { get; }
 
-        private readonly IServiceProvider _serviceProvider;
+    /// <inheritdoc cref="IBroker.Producers" />
+    public IReadOnlyList<IProducer> Producers => _producers;
 
-        private readonly List<IConsumer> _consumers = new();
-
-        private readonly List<IProducer> _producers = new();
-
-        private readonly Dictionary<IEndpoint, IProducer> _endpointToProducerDictionary = new();
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="Broker{TProducerEndpoint, TConsumerEndpoint}" /> class.
-        /// </summary>
-        /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" /> to be used to resolve the required services.
-        /// </param>
-        protected Broker(IServiceProvider serviceProvider)
+    /// <inheritdoc cref="IBroker.Consumers" />
+    public IReadOnlyList<IConsumer> Consumers
+    {
+        get
         {
-            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-            _endpointsConfiguratorsInvoker =
-                _serviceProvider.GetRequiredService<EndpointsConfiguratorsInvoker>();
-            _logger = _serviceProvider
-                .GetRequiredService<ISilverbackLogger<Broker<IProducerEndpoint, TConsumerEndpoint>>
-                >();
-
-            ProducerEndpointType = typeof(TProducerEndpoint);
-            ConsumerEndpointType = typeof(TConsumerEndpoint);
-        }
-
-        /// <inheritdoc cref="IBroker.ProducerEndpointType" />
-        public Type ProducerEndpointType { get; }
-
-        /// <inheritdoc cref="IBroker.ConsumerEndpointType" />
-        public Type ConsumerEndpointType { get; }
-
-        /// <inheritdoc cref="IBroker.Producers" />
-        public IReadOnlyList<IProducer> Producers
-        {
-            get
-            {
-                if (_producers == null)
-                    throw new ObjectDisposedException(GetType().FullName);
-
-                return _producers;
-            }
-        }
-
-        /// <inheritdoc cref="IBroker.Consumers" />
-        public IReadOnlyList<IConsumer> Consumers
-        {
-            get
-            {
-                if (_consumers == null)
-                    throw new ObjectDisposedException(GetType().FullName);
-
-                return _consumers;
-            }
-        }
-
-        /// <inheritdoc cref="IBroker.IsConnected" />
-        public bool IsConnected { get; private set; }
-
-        private IEnumerable<IBrokerConnectedObject> ConnectedObjects =>
-            _producers.Cast<IBrokerConnectedObject>().Concat(_consumers);
-
-        /// <inheritdoc cref="IBroker.GetProducer(IProducerEndpoint)" />
-        // TODO: Make this async
-        public virtual IProducer GetProducer(IProducerEndpoint endpoint)
-        {
-            Check.NotNull(endpoint, nameof(endpoint));
-
-            if (_producers == null)
+            if (_disposed)
                 throw new ObjectDisposedException(GetType().FullName);
 
-            var producer = GetOrInstantiateProducer(endpoint);
+            return _consumers;
+        }
+    }
 
-            if (!producer.IsConnected && IsConnected)
-                AsyncHelper.RunSynchronously(() => producer.ConnectAsync());
+    /// <inheritdoc cref="IBroker.IsConnected" />
+    public bool IsConnected { get; private set; }
 
+    private IEnumerable<IBrokerConnectedObject> ConnectedObjects => _producers.Cast<IBrokerConnectedObject>().Concat(_consumers);
+
+    /// <inheritdoc cref="IBroker.GetProducer(ProducerConfiguration)" />
+    // TODO: Make this async?
+    public virtual IProducer GetProducer(ProducerConfiguration configuration)
+    {
+        Check.NotNull(configuration, nameof(configuration));
+
+        if (_disposed)
+            throw new ObjectDisposedException(GetType().FullName);
+
+        IProducer producer = GetOrInstantiateProducer(configuration);
+
+        if (!producer.IsConnected && IsConnected)
+            AsyncHelper.RunSynchronously(() => producer.ConnectAsync());
+
+        return producer;
+    }
+
+    /// <inheritdoc cref="IBroker.GetProducer(string)" />
+    public IProducer GetProducer(string endpointName)
+    {
+        Check.NotEmpty(endpointName, nameof(endpointName));
+
+        if (_disposed)
+            throw new ObjectDisposedException(GetType().FullName);
+
+        return _producers.First(producer => producer.Configuration.RawName == endpointName || producer.Configuration.FriendlyName == endpointName);
+    }
+
+    /// <inheritdoc cref="IBroker.AddConsumer" />
+    public virtual IConsumer AddConsumer(ConsumerConfiguration configuration)
+    {
+        Check.NotNull(configuration, nameof(configuration));
+
+        if (_disposed)
+            throw new ObjectDisposedException(GetType().FullName);
+
+        _logger.LogCreatingNewConsumer(configuration);
+
+        IConsumer consumer = InstantiateConsumer(
+            (TConsumerConfiguration)configuration,
+            _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
+            _serviceProvider);
+
+        lock (_consumers)
+        {
+            _consumers.Add(consumer);
+        }
+
+        if (IsConnected)
+            AsyncHelper.RunSynchronously(() => consumer.ConnectAsync());
+
+        return consumer;
+    }
+
+    /// <inheritdoc cref="IBroker.ConnectAsync" />
+    public async Task ConnectAsync()
+    {
+        if (IsConnected)
+            return;
+
+        if (_disposed)
+            throw new ObjectDisposedException(GetType().FullName);
+
+        await _endpointsConfiguratorsInvoker.InvokeAsync().ConfigureAwait(false);
+
+        _logger.LogBrokerConnecting(this);
+
+        await ConnectAsync(ConnectedObjects).ConfigureAwait(false);
+        IsConnected = true;
+
+        _logger.LogBrokerConnected(this);
+    }
+
+    /// <inheritdoc cref="IBroker.DisconnectAsync" />
+    public async Task DisconnectAsync()
+    {
+        if (!IsConnected)
+            return;
+
+        if (_disposed)
+            throw new ObjectDisposedException(GetType().FullName);
+
+        _logger.LogBrokerDisconnecting(this);
+
+        await DisconnectAsync(ConnectedObjects).ConfigureAwait(false);
+        IsConnected = false;
+
+        _logger.LogBrokerDisconnected(this);
+    }
+
+    /// <inheritdoc cref="IDisposable.Dispose" />
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    ///     Returns a new instance of <see cref="IProducer" /> to publish to the specified endpoint. The
+    ///     returned instance will be cached and reused for the same endpoint.
+    /// </summary>
+    /// <param name="configuration">
+    ///     The <see cref="TProducerConfiguration" />.
+    /// </param>
+    /// <param name="behaviorsProvider">
+    ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
+    /// </param>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
+    ///     forwarded to the consumer.
+    /// </param>
+    /// <returns>
+    ///     The instantiated <see cref="IProducer" />.
+    /// </returns>
+    protected abstract IProducer InstantiateProducer(
+        TProducerConfiguration configuration,
+        IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
+        IServiceProvider serviceProvider);
+
+    /// <summary>
+    ///     Returns a new instance of <see cref="IConsumer" /> to subscribe to the specified endpoint.
+    /// </summary>
+    /// <param name="configuration">
+    ///     The <see cref="TConsumerConfiguration" />.
+    /// </param>
+    /// <param name="behaviorsProvider">
+    ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
+    /// </param>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
+    ///     forwarded to the consumer.
+    /// </param>
+    /// <returns>
+    ///     The instantiated <see cref="IConsumer" />.
+    /// </returns>
+    protected abstract IConsumer InstantiateConsumer(
+        TConsumerConfiguration configuration,
+        IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+        IServiceProvider serviceProvider);
+
+    /// <summary>
+    ///     Connects all the consumers and starts consuming.
+    /// </summary>
+    /// <param name="connectedObjects">
+    ///     The producers and consumers to be connected.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    protected virtual Task ConnectAsync(IEnumerable<IBrokerConnectedObject> connectedObjects) =>
+        connectedObjects.ParallelForEachAsync(connectedObject => connectedObject.ConnectAsync(), MaxConnectParallelism);
+
+    /// <summary>
+    ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
+    ///     resources.
+    /// </summary>
+    /// <param name="disposing">
+    ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
+    ///     finalizer.
+    /// </param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposing)
+            return;
+
+        _disposed = true;
+
+        AsyncHelper.RunSynchronously(DisconnectAsync);
+
+        ConnectedObjects.OfType<IDisposable>().ForEach(disposable => disposable.Dispose());
+    }
+
+    /// <summary>
+    ///     Disconnects all the consumers and stops consuming.
+    /// </summary>
+    /// <param name="connectedObjects">
+    ///     The producers and consumers to be disconnected.
+    /// </param>
+    /// <returns>
+    ///     A <see cref="Task" /> representing the asynchronous operation.
+    /// </returns>
+    protected virtual Task DisconnectAsync(IEnumerable<IBrokerConnectedObject> connectedObjects) =>
+        connectedObjects.ParallelForEachAsync(
+            connectedObject => connectedObject.DisconnectAsync(),
+            MaxDisconnectParallelism);
+
+    private IProducer GetOrInstantiateProducer(ProducerConfiguration configuration)
+    {
+        if (_configurationToProducerDictionary.TryGetValue(configuration, out IProducer? producer))
             return producer;
-        }
 
-        /// <inheritdoc cref="IBroker.GetProducer(string)" />
-        public virtual IProducer GetProducer(string endpointName)
+        lock (_producers)
         {
-            Check.NotEmpty(endpointName, nameof(endpointName));
+            if (_configurationToProducerDictionary.TryGetValue(configuration, out producer))
+                return producer;
 
-            if (_producers == null)
-                throw new ObjectDisposedException(GetType().FullName);
+            _logger.LogCreatingNewProducer(configuration);
 
-            return _producers.First(
-                producer => producer.Endpoint.Name == endpointName ||
-                            producer.Endpoint.FriendlyName == endpointName);
-        }
-
-        /// <inheritdoc cref="IBroker.AddConsumer" />
-        public virtual IConsumer AddConsumer(IConsumerEndpoint endpoint)
-        {
-            Check.NotNull(endpoint, nameof(endpoint));
-
-            if (_consumers == null)
-                throw new ObjectDisposedException(GetType().FullName);
-
-            _logger.LogCreatingNewConsumer(endpoint);
-
-            var consumer = InstantiateConsumer(
-                (TConsumerEndpoint)endpoint,
-                _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IConsumerBehavior>>(),
+            producer = InstantiateProducer(
+                (TProducerConfiguration)configuration,
+                _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IProducerBehavior>>(),
                 _serviceProvider);
 
-            lock (_consumers)
-            {
-                _consumers.Add(consumer);
-            }
+            _producers.Add(producer);
+            _configurationToProducerDictionary.Add(configuration, producer);
 
-            if (IsConnected)
-                AsyncHelper.RunSynchronously(() => consumer.ConnectAsync());
-
-            return consumer;
-        }
-
-        /// <inheritdoc cref="IBroker.ConnectAsync" />
-        public async Task ConnectAsync()
-        {
-            if (IsConnected)
-                return;
-
-            if (_producers == null || _consumers == null)
-                throw new ObjectDisposedException(GetType().FullName);
-
-            await _endpointsConfiguratorsInvoker.InvokeAsync().ConfigureAwait(false);
-
-            _logger.LogBrokerConnecting(this);
-
-            await ConnectAsync(ConnectedObjects).ConfigureAwait(false);
-            IsConnected = true;
-
-            _logger.LogBrokerConnected(this);
-        }
-
-        /// <inheritdoc cref="IBroker.DisconnectAsync" />
-        public async Task DisconnectAsync()
-        {
-            if (!IsConnected)
-                return;
-
-            if (_producers == null || _consumers == null)
-                throw new ObjectDisposedException(GetType().FullName);
-
-            _logger.LogBrokerDisconnecting(this);
-
-            await DisconnectAsync(ConnectedObjects).ConfigureAwait(false);
-            IsConnected = false;
-
-            _logger.LogBrokerDisconnected(this);
-        }
-
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        ///     Returns a new instance of <see cref="IProducer" /> to publish to the specified endpoint. The
-        ///     returned instance will be cached and reused for the same endpoint.
-        /// </summary>
-        /// <param name="endpoint">
-        ///     The endpoint.
-        /// </param>
-        /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
-        /// </param>
-        /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
-        ///     forwarded to the consumer.
-        /// </param>
-        /// <returns>
-        ///     The instantiated <see cref="IProducer" />.
-        /// </returns>
-        protected abstract IProducer InstantiateProducer(
-            TProducerEndpoint endpoint,
-            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
-            IServiceProvider serviceProvider);
-
-        /// <summary>
-        ///     Returns a new instance of <see cref="IConsumer" /> to subscribe to the specified endpoint.
-        /// </summary>
-        /// <param name="endpoint">
-        ///     The endpoint.
-        /// </param>
-        /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
-        /// </param>
-        /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" /> instance to be used to resolve the needed types or to be
-        ///     forwarded to the consumer.
-        /// </param>
-        /// <returns>
-        ///     The instantiated <see cref="IConsumer" />.
-        /// </returns>
-        protected abstract IConsumer InstantiateConsumer(
-            TConsumerEndpoint endpoint,
-            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            IServiceProvider serviceProvider);
-
-        /// <summary>
-        ///     Connects all the consumers and starts consuming.
-        /// </summary>
-        /// <param name="connectedObjects">
-        ///     The producers and consumers to be connected.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        protected virtual Task ConnectAsync(IEnumerable<IBrokerConnectedObject> connectedObjects) =>
-            connectedObjects.ParallelForEachAsync(
-                connectedObject => connectedObject.ConnectAsync(),
-                MaxConnectParallelism);
-
-        /// <summary>
-        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged
-        ///     resources.
-        /// </summary>
-        /// <param name="disposing">
-        ///     A value indicating whether the method has been called by the <c>Dispose</c> method and not from the
-        ///     finalizer.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing)
-                return;
-
-            AsyncHelper.RunSynchronously(DisconnectAsync);
-
-            ConnectedObjects.OfType<IDisposable>().ForEach(disposable => disposable.Dispose());
-        }
-
-        /// <summary>
-        ///     Disconnects all the consumers and stops consuming.
-        /// </summary>
-        /// <param name="connectedObjects">
-        ///     The producers and consumers to be disconnected.
-        /// </param>
-        /// <returns>
-        ///     A <see cref="Task" /> representing the asynchronous operation.
-        /// </returns>
-        protected virtual Task DisconnectAsync(IEnumerable<IBrokerConnectedObject> connectedObjects) =>
-            connectedObjects.ParallelForEachAsync(
-                connectedObject => connectedObject.DisconnectAsync(),
-                MaxDisconnectParallelism);
-
-        private IProducer GetOrInstantiateProducer(IProducerEndpoint endpoint)
-        {
-            if (_endpointToProducerDictionary.TryGetValue(endpoint, out var producer))
-                return producer;
-
-            lock (_producers)
-            {
-                if (_endpointToProducerDictionary.TryGetValue(endpoint, out producer))
-                    return producer;
-
-                _logger.LogCreatingNewProducer(endpoint);
-
-                producer = InstantiateProducer(
-                    (TProducerEndpoint)endpoint,
-                    _serviceProvider.GetRequiredService<IBrokerBehaviorsProvider<IProducerBehavior>>(),
-                    _serviceProvider);
-
-                _producers.Add(producer);
-                _endpointToProducerDictionary.Add(endpoint, producer);
-
-                return producer;
-            }
+            return producer;
         }
     }
 }

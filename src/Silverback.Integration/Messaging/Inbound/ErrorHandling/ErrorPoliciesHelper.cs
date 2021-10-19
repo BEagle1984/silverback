@@ -6,27 +6,26 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Inbound.ErrorHandling
+namespace Silverback.Messaging.Inbound.ErrorHandling;
+
+internal static class ErrorPoliciesHelper
 {
-    internal static class ErrorPoliciesHelper
-    {
-        public static async Task<bool> ApplyErrorPoliciesAsync(
+    public static async Task<bool> ApplyErrorPoliciesAsync(
             ConsumerPipelineContext context,
             Exception exception)
-        {
-            var failedAttempts = context.Consumer.IncrementFailedAttempts(context.Envelope);
+    {
+        int failedAttempts = context.Consumer.IncrementFailedAttempts(context.Envelope);
 
-            context.Envelope.Headers.AddOrReplace(DefaultMessageHeaders.FailedAttempts, failedAttempts);
+        context.Envelope.Headers.AddOrReplace(DefaultMessageHeaders.FailedAttempts, failedAttempts);
 
-            var errorPolicyImplementation =
-                context.Envelope.Endpoint.ErrorPolicy.Build(context.ServiceProvider);
+        IErrorPolicyImplementation errorPolicyImplementation =
+                context.Envelope.Endpoint.Configuration.ErrorPolicy.Build(context.ServiceProvider);
 
-            if (!errorPolicyImplementation.CanHandle(context, exception))
-                return false;
+        if (!errorPolicyImplementation.CanHandle(context, exception))
+            return false;
 
-            return await errorPolicyImplementation
-                .HandleErrorAsync(context, exception)
-                .ConfigureAwait(false);
-        }
+        return await errorPolicyImplementation
+            .HandleErrorAsync(context, exception)
+            .ConfigureAwait(false);
     }
 }

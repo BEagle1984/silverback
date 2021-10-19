@@ -122,8 +122,7 @@ namespace Silverback.Messaging.Publishing
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
         ///     collection of <typeparamref name="TResult" />, since multiple subscribers could handle the message and
-        ///     return a
-        ///     value.
+        ///     return a value.
         /// </returns>
         Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message);
 
@@ -144,9 +143,8 @@ namespace Silverback.Messaging.Publishing
         /// </param>
         /// <returns>
         ///     A <see cref="Task{TResult}" /> representing the asynchronous operation. The task result contains a
-        ///     collection  of <typeparamref name="TResult" />, since multiple subscribers could handle the message
-        ///     and return a
-        ///     value.
+        ///     collection of <typeparamref name="TResult" />, since multiple subscribers could handle the message
+        ///     and return a value.
         /// </returns>
         Task<IReadOnlyCollection<TResult>> PublishAsync<TResult>(object message, bool throwIfUnhandled);
     }

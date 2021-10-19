@@ -32,41 +32,41 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
             disconnectedStatusInfo.Status.Returns(ConsumerStatus.Disconnected);
             _disconnectedConsumer = Substitute.For<IConsumer>();
             _disconnectedConsumer.StatusInfo.Returns(disconnectedStatusInfo);
-            _disconnectedConsumer.Endpoint.Returns(new TestConsumerEndpoint("topic1"));
+            _disconnectedConsumer.Configuration.Returns(new TestConsumerConfiguration("topic1"));
 
             var connectedStatusInfo = Substitute.For<IConsumerStatusInfo>();
             connectedStatusInfo.Status.Returns(ConsumerStatus.Connected);
             _connectedConsumer = Substitute.For<IConsumer>();
             _connectedConsumer.StatusInfo.Returns(connectedStatusInfo);
-            _connectedConsumer.Endpoint.Returns(new TestConsumerEndpoint("topic2"));
+            _connectedConsumer.Configuration.Returns(new TestConsumerConfiguration("topic2"));
 
             var readyStatusInfo = Substitute.For<IConsumerStatusInfo>();
             readyStatusInfo.Status.Returns(ConsumerStatus.Ready);
             _readyConsumer = Substitute.For<IConsumer>();
             _readyConsumer.StatusInfo.Returns(readyStatusInfo);
-            _readyConsumer.Endpoint.Returns(new TestConsumerEndpoint("topic3"));
+            _readyConsumer.Configuration.Returns(new TestConsumerConfiguration("topic3"));
 
             var consumingStatusInfo = Substitute.For<IConsumerStatusInfo>();
             consumingStatusInfo.Status.Returns(ConsumerStatus.Consuming);
             _consumingConsumer = Substitute.For<IConsumer>();
             _consumingConsumer.StatusInfo.Returns(consumingStatusInfo);
-            _consumingConsumer.Endpoint.Returns(new TestConsumerEndpoint("topic4"));
+            _consumingConsumer.Configuration.Returns(new TestConsumerConfiguration("topic4"));
         }
 
         [Fact]
         public async Task GetDisconnectedConsumersAsync_AllConsumersConnected_EmptyCollectionReturned()
         {
             var broker1 = Substitute.For<IBroker>();
-            broker1.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
-            broker1.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker1.ProducerConfigurationType.Returns(typeof(TestProducerConfiguration));
+            broker1.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
             broker1.Consumers.Returns(
                 new[]
                 {
                     _connectedConsumer, _consumingConsumer, _readyConsumer
                 });
             var broker2 = Substitute.For<IBroker>();
-            broker2.ProducerEndpointType.Returns(typeof(TestOtherProducerEndpoint));
-            broker2.ConsumerEndpointType.Returns(typeof(TestOtherConsumerEndpoint));
+            broker2.ProducerConfigurationType.Returns(typeof(TestOtherProducerConfiguration));
+            broker2.ConsumerConfigurationType.Returns(typeof(TestOtherConsumerConfiguration));
             broker2.Consumers.Returns(
                 new[]
                 {
@@ -87,16 +87,16 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         public async Task GetDisconnectedConsumersAsync_SomeConsumersNotFullyConnected_ConsumersListReturned()
         {
             var broker1 = Substitute.For<IBroker>();
-            broker1.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
-            broker1.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker1.ProducerConfigurationType.Returns(typeof(TestProducerConfiguration));
+            broker1.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
             broker1.Consumers.Returns(
                 new[]
                 {
                     _readyConsumer, _consumingConsumer, _connectedConsumer
                 });
             var broker2 = Substitute.For<IBroker>();
-            broker2.ProducerEndpointType.Returns(typeof(TestOtherProducerEndpoint));
-            broker2.ConsumerEndpointType.Returns(typeof(TestOtherConsumerEndpoint));
+            broker2.ProducerConfigurationType.Returns(typeof(TestOtherProducerConfiguration));
+            broker2.ConsumerConfigurationType.Returns(typeof(TestOtherConsumerConfiguration));
             broker2.Consumers.Returns(
                 new[]
                 {
@@ -118,16 +118,16 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         public async Task GetDisconnectedConsumersAsync_ShuttingDown_EmptyCollectionReturned()
         {
             var broker1 = Substitute.For<IBroker>();
-            broker1.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
-            broker1.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker1.ProducerConfigurationType.Returns(typeof(TestProducerConfiguration));
+            broker1.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
             broker1.Consumers.Returns(
                 new[]
                 {
                     _readyConsumer, _consumingConsumer, _connectedConsumer
                 });
             var broker2 = Substitute.For<IBroker>();
-            broker2.ProducerEndpointType.Returns(typeof(TestOtherProducerEndpoint));
-            broker2.ConsumerEndpointType.Returns(typeof(TestOtherConsumerEndpoint));
+            broker2.ProducerConfigurationType.Returns(typeof(TestOtherProducerConfiguration));
+            broker2.ConsumerConfigurationType.Returns(typeof(TestOtherConsumerConfiguration));
             broker2.Consumers.Returns(
                 new[]
                 {
@@ -164,8 +164,8 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 });
 
             var broker = Substitute.For<IBroker>();
-            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
-            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker.ProducerConfigurationType.Returns(typeof(TestProducerConfiguration));
+            broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
             broker.Consumers.Returns(new[] { consumer });
 
             var brokerCollection = new BrokerCollection(new[] { broker });
@@ -196,8 +196,8 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 });
 
             var broker = Substitute.For<IBroker>();
-            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
-            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker.ProducerConfigurationType.Returns(typeof(TestProducerConfiguration));
+            broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
             broker.Consumers.Returns(new[] { consumer });
 
             var brokerCollection = new BrokerCollection(new[] { broker });
@@ -238,8 +238,8 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 });
 
             var broker = Substitute.For<IBroker>();
-            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
-            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker.ProducerConfigurationType.Returns(typeof(TestProducerConfiguration));
+            broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
             broker.Consumers.Returns(new[] { consumer });
 
             var brokerCollection = new BrokerCollection(new[] { broker });
@@ -260,8 +260,8 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
         public async Task GetDisconnectedConsumersAsync_Filter_FilteredConsumersListReturned()
         {
             var broker = Substitute.For<IBroker>();
-            broker.ProducerEndpointType.Returns(typeof(TestProducerEndpoint));
-            broker.ConsumerEndpointType.Returns(typeof(TestConsumerEndpoint));
+            broker.ProducerConfigurationType.Returns(typeof(TestProducerConfiguration));
+            broker.ConsumerConfigurationType.Returns(typeof(TestConsumerConfiguration));
             broker.Consumers.Returns(
                 new[]
                 {
@@ -276,13 +276,13 @@ namespace Silverback.Tests.Integration.Messaging.HealthChecks
                 await service.GetDisconnectedConsumersAsync(
                     ConsumerStatus.Ready,
                     TimeSpan.Zero,
-                    endpoint => endpoint.Name is "topic1" or "topic2");
+                    endpoint => endpoint.RawName is "topic1" or "topic2");
 
             IReadOnlyCollection<IConsumer> result2 =
                 await service.GetDisconnectedConsumersAsync(
                     ConsumerStatus.Ready,
                     TimeSpan.Zero,
-                    endpoint => endpoint.Name == "topic1");
+                    endpoint => endpoint.RawName == "topic1");
 
             result1.Should().HaveCount(2);
             result1.Should().BeEquivalentTo(new[] { _disconnectedConsumer, _connectedConsumer });

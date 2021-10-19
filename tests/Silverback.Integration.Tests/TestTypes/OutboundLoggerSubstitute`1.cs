@@ -10,44 +10,41 @@ using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Integration.TestTypes
+namespace Silverback.Tests.Integration.TestTypes;
+
+public class OutboundLoggerSubstitute<TCategory> : IOutboundLogger<TCategory>
 {
-    public class OutboundLoggerSubstitute<TCategory> : IOutboundLogger<TCategory>
+    public ILogger InnerLogger { get; } = Substitute.For<ILogger>();
+
+    public bool IsEnabled(LogEvent logEvent) => true;
+
+    public void LogProduced(IOutboundEnvelope envelope)
     {
-        public ILogger InnerLogger { get; } = Substitute.For<ILogger>();
+    }
 
-        public bool IsEnabled(LogEvent logEvent) => true;
+    public void LogProduced(
+        ProducerEndpoint endpoint,
+        IReadOnlyCollection<MessageHeader>? headers,
+        IBrokerMessageIdentifier? brokerMessageIdentifier)
+    {
+    }
 
-        public void LogProduced(IOutboundEnvelope envelope)
-        {
-        }
+    public void LogProduceError(IOutboundEnvelope envelope, Exception exception)
+    {
+    }
 
-        public void LogProduced(
-            IProducerEndpoint endpoint,
-            string actualEndpointName,
-            IReadOnlyCollection<MessageHeader>? headers,
-            IBrokerMessageIdentifier? brokerMessageIdentifier)
-        {
-        }
+    public void LogProduceError(
+        ProducerEndpoint endpoint,
+        IReadOnlyCollection<MessageHeader>? headers,
+        Exception exception)
+    {
+    }
 
-        public void LogProduceError(IOutboundEnvelope envelope, Exception exception)
-        {
-        }
+    public void LogWrittenToOutbox(IOutboundEnvelope envelope)
+    {
+    }
 
-        public void LogProduceError(
-            IProducerEndpoint endpoint,
-            string actualEndpointName,
-            IReadOnlyCollection<MessageHeader>? headers,
-            Exception exception)
-        {
-        }
-
-        public void LogWrittenToOutbox(IOutboundEnvelope envelope)
-        {
-        }
-
-        public void LogErrorProducingOutboxStoredMessage(IOutboundEnvelope envelope, Exception exception)
-        {
-        }
+    public void LogErrorProducingOutboxStoredMessage(IOutboundEnvelope envelope, Exception exception)
+    {
     }
 }

@@ -23,7 +23,6 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
     {
         [SuppressMessage("ReSharper", "InconsistentNaming", Justification = "TestData")]
         [SuppressMessage("ReSharper", "CA2208", Justification = "Test")]
-
         public static IEnumerable<object[]> ApplyTo_TestData =>
             new[]
             {
@@ -67,8 +66,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                         new MemoryStream(),
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
                         new TestOffset(),
-                        TestConsumerEndpoint.GetDefault(),
-                        TestConsumerEndpoint.GetDefault().Name),
+                        TestConsumerEndpoint.GetDefault()),
                     new ArgumentException(),
                     true
                 },
@@ -78,8 +76,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                         new MemoryStream(),
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "6") },
                         new TestOffset(),
-                        TestConsumerEndpoint.GetDefault(),
-                        TestConsumerEndpoint.GetDefault().Name),
+                        TestConsumerEndpoint.GetDefault()),
                     new ArgumentException(),
                     false
                 },
@@ -89,8 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                         new MemoryStream(),
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
                         new TestOffset(),
-                        TestConsumerEndpoint.GetDefault(),
-                        TestConsumerEndpoint.GetDefault().Name),
+                        TestConsumerEndpoint.GetDefault()),
                     new ArgumentException("no"),
                     false
                 }
@@ -111,8 +107,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                         new MemoryStream(),
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
                         new TestOffset(),
-                        TestConsumerEndpoint.GetDefault(),
-                        TestConsumerEndpoint.GetDefault().Name)),
+                        TestConsumerEndpoint.GetDefault())),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -133,8 +128,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                         new MemoryStream(),
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
                         new TestOffset(),
-                        TestConsumerEndpoint.GetDefault(),
-                        TestConsumerEndpoint.GetDefault().Name)),
+                        TestConsumerEndpoint.GetDefault())),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -158,8 +152,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                         new MemoryStream(),
                         new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "99") },
                         new TestOffset(),
-                        TestConsumerEndpoint.GetDefault(),
-                        TestConsumerEndpoint.GetDefault().Name)),
+                        TestConsumerEndpoint.GetDefault())),
                 exception);
 
             canHandle.Should().Be(mustApply);
@@ -204,8 +197,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                         failedAttempts.ToString(CultureInfo.InvariantCulture))
                 },
                 new TestOffset(),
-                TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name);
+                TestConsumerEndpoint.GetDefault());
 
             var policy = new TestErrorPolicy()
                 .MaxFailedAttempts(3)
@@ -233,8 +225,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new MemoryStream(),
                 new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
                 new TestOffset(),
-                TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name);
+                TestConsumerEndpoint.GetDefault());
 
             await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),
@@ -258,8 +249,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new MemoryStream(),
                 new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
                 new TestOffset(),
-                TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name);
+                TestConsumerEndpoint.GetDefault());
 
             await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),
@@ -282,10 +272,12 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
 
             var envelope = new InboundEnvelope(
                 new MemoryStream(),
-                new[] { new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3") },
+                new[]
+                {
+                    new MessageHeader(DefaultMessageHeaders.FailedAttempts, "3")
+                },
                 new TestOffset(),
-                TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name);
+                TestConsumerEndpoint.GetDefault());
 
             await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, serviceProvider),

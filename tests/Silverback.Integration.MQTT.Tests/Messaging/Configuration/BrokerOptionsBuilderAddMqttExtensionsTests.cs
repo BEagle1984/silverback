@@ -3,7 +3,9 @@
 
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration

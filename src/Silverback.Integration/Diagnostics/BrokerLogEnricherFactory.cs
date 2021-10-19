@@ -23,12 +23,11 @@ namespace Silverback.Diagnostics
             _serviceProvider = serviceProvider;
         }
 
-        public IBrokerLogEnricher GetLogEnricher(IEndpoint endpoint)
+        public IBrokerLogEnricher GetLogEnricher(EndpointConfiguration endpointConfiguration)
         {
             var enricherType = _enricherTypeCache.GetOrAdd(
-                endpoint.GetType(),
-                type => typeof(IBrokerLogEnricher<>)
-                    .MakeGenericType(type));
+                endpointConfiguration.GetType(),
+                type => typeof(IBrokerLogEnricher<>).MakeGenericType(type));
 
             var logEnricher = (IBrokerLogEnricher?)_serviceProvider.GetService(enricherType);
 
@@ -42,7 +41,7 @@ namespace Silverback.Diagnostics
             public string AdditionalPropertyName2 => "unused2";
 
             public (string? Value1, string? Value2) GetAdditionalValues(
-                IEndpoint endpoint,
+                Endpoint endpoint,
                 IReadOnlyCollection<MessageHeader>? headers,
                 IBrokerMessageIdentifier? brokerMessageIdentifier) =>
                 (null, null);

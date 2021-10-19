@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Database;
 using Silverback.Database.Model;
 using Silverback.Messaging.Inbound.ExactlyOnce.Repositories;
@@ -59,9 +60,9 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task Store_SomeOffsets_TableStillEmpty()
         {
-            await _offsetStore.StoreAsync(new TestOffset("topic1", "1"), new TestConsumerEndpoint("topic1"));
-            await _offsetStore.StoreAsync(new TestOffset("topic1", "2"), new TestConsumerEndpoint("topic1"));
-            await _offsetStore.StoreAsync(new TestOffset("topic2", "1"), new TestConsumerEndpoint("topic2"));
+            await _offsetStore.StoreAsync(new TestOffset("topic1", "1"), new TestConsumerConfiguration("topic1"));
+            await _offsetStore.StoreAsync(new TestOffset("topic1", "2"), new TestConsumerConfiguration("topic1"));
+            await _offsetStore.StoreAsync(new TestOffset("topic2", "1"), new TestConsumerConfiguration("topic2"));
 
             _dbContext.StoredOffsets.Should().BeEmpty();
         }
@@ -69,9 +70,9 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task StoreAndCommit_SomeOffsets_OffsetsStored()
         {
-            await _offsetStore.StoreAsync(new TestOffset("topic1", "1"), new TestConsumerEndpoint("topic1"));
-            await _offsetStore.StoreAsync(new TestOffset("topic2", "1"), new TestConsumerEndpoint("topic1"));
-            await _offsetStore.StoreAsync(new TestOffset("topic3", "1"), new TestConsumerEndpoint("topic2"));
+            await _offsetStore.StoreAsync(new TestOffset("topic1", "1"), new TestConsumerConfiguration("topic1"));
+            await _offsetStore.StoreAsync(new TestOffset("topic2", "1"), new TestConsumerConfiguration("topic1"));
+            await _offsetStore.StoreAsync(new TestOffset("topic3", "1"), new TestConsumerConfiguration("topic2"));
 
             await _offsetStore.CommitAsync();
 
@@ -81,9 +82,9 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task StoreAndCommit_MultipleOffsetsForSameTopic_StoredOffsetUpdated()
         {
-            await _offsetStore.StoreAsync(new TestOffset("topic1", "1"), new TestConsumerEndpoint("topic1"));
-            await _offsetStore.StoreAsync(new TestOffset("topic2", "1"), new TestConsumerEndpoint("topic2"));
-            await _offsetStore.StoreAsync(new TestOffset("topic1", "2"), new TestConsumerEndpoint("topic1"));
+            await _offsetStore.StoreAsync(new TestOffset("topic1", "1"), new TestConsumerConfiguration("topic1"));
+            await _offsetStore.StoreAsync(new TestOffset("topic2", "1"), new TestConsumerConfiguration("topic2"));
+            await _offsetStore.StoreAsync(new TestOffset("topic1", "2"), new TestConsumerConfiguration("topic1"));
 
             await _offsetStore.CommitAsync();
 
@@ -96,11 +97,11 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task StoreAndCommit_UpdatedOffsetForSameTopic_StoredOffsetUpdated()
         {
-            await _offsetStore.StoreAsync(new TestOffset("topic1", "1"), new TestConsumerEndpoint("topic1"));
-            await _offsetStore.StoreAsync(new TestOffset("topic2", "1"), new TestConsumerEndpoint("topic2"));
+            await _offsetStore.StoreAsync(new TestOffset("topic1", "1"), new TestConsumerConfiguration("topic1"));
+            await _offsetStore.StoreAsync(new TestOffset("topic2", "1"), new TestConsumerConfiguration("topic2"));
             await _offsetStore.CommitAsync();
 
-            await _offsetStore.StoreAsync(new TestOffset("topic1", "2"), new TestConsumerEndpoint("topic1"));
+            await _offsetStore.StoreAsync(new TestOffset("topic1", "2"), new TestConsumerConfiguration("topic1"));
             await _offsetStore.CommitAsync();
 
             _dbContext.StoredOffsets.Should().HaveCount(2);
@@ -112,9 +113,9 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task StoreAndRollback_SomeOffsets_TableStillEmpty()
         {
-            await _offsetStore.StoreAsync(new TestOffset("topic1", "1"), new TestConsumerEndpoint("topic1"));
-            await _offsetStore.StoreAsync(new TestOffset("topic1", "2"), new TestConsumerEndpoint("topic1"));
-            await _offsetStore.StoreAsync(new TestOffset("topic2", "1"), new TestConsumerEndpoint("topic2"));
+            await _offsetStore.StoreAsync(new TestOffset("topic1", "1"), new TestConsumerConfiguration("topic1"));
+            await _offsetStore.StoreAsync(new TestOffset("topic1", "2"), new TestConsumerConfiguration("topic1"));
+            await _offsetStore.StoreAsync(new TestOffset("topic2", "1"), new TestConsumerConfiguration("topic2"));
 
             await _offsetStore.RollbackAsync();
 
@@ -124,7 +125,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         [Fact]
         public async Task StoreAndCommit_Offset_OffsetCorrectlyStored()
         {
-            await _offsetStore.StoreAsync(new TestOffset("topic1", "42"), new TestConsumerEndpoint("topic1"));
+            await _offsetStore.StoreAsync(new TestOffset("topic1", "42"), new TestConsumerConfiguration("topic1"));
             await _offsetStore.CommitAsync();
 
             var storedOffset = _dbContext.StoredOffsets.First();
@@ -152,7 +153,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                 });
             await _dbContext.SaveChangesAsync();
 
-            var endpoint = new TestConsumerEndpoint("topic1") { GroupId = "group1" };
+            var endpoint = new TestConsumerConfiguration("topic1") { GroupId = "group1" };
             var latestOffset = await _offsetStore.GetLatestValueAsync("topic1", endpoint);
 
             latestOffset.Should().NotBeNull();
@@ -185,7 +186,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                 });
             await _dbContext.SaveChangesAsync();
 
-            var endpoint = new TestConsumerEndpoint("topic1") { GroupId = "group1" };
+            var endpoint = new TestConsumerConfiguration("topic1") { GroupId = "group1" };
             var latestOffset = await _offsetStore.GetLatestValueAsync("topic1", endpoint);
 
             latestOffset.Should().NotBeNull();
@@ -206,7 +207,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                 });
             await _dbContext.SaveChangesAsync();
 
-            var endpoint = new TestConsumerEndpoint("topic1") { GroupId = "group1" };
+            var endpoint = new TestConsumerConfiguration("topic1") { GroupId = "group1" };
             var latestOffset = await _offsetStore.GetLatestValueAsync("topic1", endpoint);
 
             latestOffset.Should().NotBeNull();
@@ -214,9 +215,9 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
         }
 
         [Fact]
-        public async Task GetLatestValue_NoStoredOffsets_NullIsReturned()
+        public async Task GetLatestValue_NoStoredOffsets_NullReturned()
         {
-            var latestOffset = await _offsetStore.GetLatestValueAsync("topic1", new TestConsumerEndpoint("topic1"));
+            var latestOffset = await _offsetStore.GetLatestValueAsync("topic1", new TestConsumerConfiguration("topic1"));
 
             latestOffset.Should().BeNull();
         }

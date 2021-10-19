@@ -6,9 +6,5 @@ namespace Silverback.Messaging.Messages
     /// <inheritdoc cref="IRawInboundEnvelope" />
     public interface IInboundEnvelope : IBrokerEnvelope, IRawInboundEnvelope
     {
-        /// <summary>
-        ///     Gets the source endpoint configuration.
-        /// </summary>
-        new IConsumerEndpoint Endpoint { get; }
     }
 }

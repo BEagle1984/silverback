@@ -7,7 +7,7 @@ using Silverback.Messaging.Configuration.Rabbit;
 namespace Silverback.Messaging
 {
     /// <summary>
-    ///     Represents a queue or exchange to produce to.
+    ///     The Rabbit producer configuration.
     /// </summary>
     public abstract class RabbitProducerEndpoint : ProducerEndpoint
     {
@@ -23,16 +23,16 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
-        ///     Gets or sets the RabbitMQ connection settings.
+        ///     Gets the RabbitMQ connection settings.
         /// </summary>
-        public RabbitConnectionConfig Connection { get; set; } = new();
+        public RabbitConnectionConfig Connection { get; init; } = new();
 
         /// <summary>
-        ///     Gets or sets the maximum amount of time to wait for the message produce to be acknowledge before
+        ///     Gets the maximum amount of time to wait for the message produce to be acknowledge before
         ///     considering it failed. Set it to <c>null</c> to proceed without waiting for a positive or negative
         ///     acknowledgment. The default is a quite conservative 5 seconds.
         /// </summary>
-        public TimeSpan? ConfirmationTimeout { get; set; } = TimeSpan.FromSeconds(5);
+        public TimeSpan? ConfirmationTimeout { get; init; } = TimeSpan.FromSeconds(5);
 
         /// <inheritdoc cref="ProducerEndpoint.Validate" />
         public override void Validate()

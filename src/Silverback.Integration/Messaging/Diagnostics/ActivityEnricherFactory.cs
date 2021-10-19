@@ -6,44 +6,43 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using Silverback.Messaging.Broker.Behaviors;
 
-namespace Silverback.Messaging.Diagnostics
+namespace Silverback.Messaging.Diagnostics;
+
+internal sealed class ActivityEnricherFactory : IActivityEnricherFactory
 {
-    internal sealed class ActivityEnricherFactory : IActivityEnricherFactory
+    private static readonly NullEnricher NullEnricherInstance = new();
+
+    private readonly IServiceProvider _serviceProvider;
+
+    private readonly ConcurrentDictionary<Type, Type> _enricherTypeCache = new();
+
+    public ActivityEnricherFactory(IServiceProvider serviceProvider)
     {
-        private static readonly NullEnricher NullEnricherInstance = new();
+        _serviceProvider = serviceProvider;
+    }
 
-        private readonly IServiceProvider _serviceProvider;
+    public IBrokerActivityEnricher GetActivityEnricher(EndpointConfiguration endpointConfiguration)
+    {
+        Type? enricherType = _enricherTypeCache.GetOrAdd(
+            endpointConfiguration.GetType(),
+            type => typeof(IBrokerActivityEnricher<>)
+                .MakeGenericType(type));
 
-        private readonly ConcurrentDictionary<Type, Type> _enricherTypeCache = new();
+        IBrokerActivityEnricher? activityEnricher = (IBrokerActivityEnricher?)_serviceProvider.GetService(enricherType);
 
-        public ActivityEnricherFactory(IServiceProvider serviceProvider)
+        return activityEnricher ?? NullEnricherInstance;
+    }
+
+    private sealed class NullEnricher : IBrokerActivityEnricher
+    {
+        public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext)
         {
-            _serviceProvider = serviceProvider;
+            // Do nothing
         }
 
-        public IBrokerActivityEnricher GetActivityEnricher(IEndpoint endpoint)
+        public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext)
         {
-            var enricherType = _enricherTypeCache.GetOrAdd(
-                endpoint.GetType(),
-                type => typeof(IBrokerActivityEnricher<>)
-                    .MakeGenericType(type));
-
-            var activityEnricher = (IBrokerActivityEnricher?)_serviceProvider.GetService(enricherType);
-
-            return activityEnricher ?? NullEnricherInstance;
-        }
-
-        private sealed class NullEnricher : IBrokerActivityEnricher
-        {
-            public void EnrichOutboundActivity(Activity activity, ProducerPipelineContext producerContext)
-            {
-                // Do nothing
-            }
-
-            public void EnrichInboundActivity(Activity activity, ConsumerPipelineContext consumerContext)
-            {
-                // Do nothing
-            }
+            // Do nothing
         }
     }
 }

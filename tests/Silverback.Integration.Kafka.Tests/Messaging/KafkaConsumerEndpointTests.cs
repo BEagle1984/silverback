@@ -1,13 +1,9 @@
-﻿// Copyright (c) 2020 Sergio Aquilini
+// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Confluent.Kafka;
 using FluentAssertions;
 using Silverback.Messaging;
-using Silverback.Messaging.Configuration.Kafka;
+using Silverback.Messaging.Configuration;
 using Xunit;
 
 namespace Silverback.Tests.Integration.Kafka.Messaging
@@ -15,339 +11,78 @@ namespace Silverback.Tests.Integration.Kafka.Messaging
     public class KafkaConsumerEndpointTests
     {
         [Fact]
-        public void Constructor_SingleTopic_TopicSet()
+        public void RawName_TopicNameReturned()
         {
-            var endpoint = new KafkaConsumerEndpoint("topic");
+            KafkaConsumerEndpoint endpoint = new("topic", 42, new KafkaConsumerConfiguration());
 
-            endpoint.Name.Should().Be("topic");
-            endpoint.Names.Should().BeEquivalentTo("topic");
-            endpoint.TopicPartitions.Should().BeNull();
+            endpoint.RawName.Should().Be("topic");
         }
 
         [Fact]
-        public void Constructor_MultipleTopics_TopicsSet()
+        public void Equals_SameInstance_TrueReturned()
         {
-            var endpoint = new KafkaConsumerEndpoint("topic1", "topic2");
+            KafkaConsumerEndpoint endpoint1 = new("topic", 42, new KafkaConsumerConfiguration());
+            KafkaConsumerEndpoint endpoint2 = endpoint1;
 
-            endpoint.Name.Should().Be("[topic1,topic2]");
-            endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
-            endpoint.TopicPartitions.Should().BeNull();
+            bool result = endpoint1.Equals(endpoint2);
+
+            result.Should().BeTrue();
         }
 
         [Fact]
-        public void Constructor_SingleTopicPartition_TopicsSet()
+        public void Equals_SameTopic_TrueReturned()
         {
-            var endpoint = new KafkaConsumerEndpoint(new TopicPartition("topic", 2));
+            KafkaConsumerEndpoint endpoint1 = new("topic", 42, new KafkaConsumerConfiguration());
+            KafkaConsumerEndpoint endpoint2 = new("topic", 42, new KafkaConsumerConfiguration());
 
-            endpoint.Name.Should().Be("topic");
-            endpoint.Names.Should().BeEquivalentTo("topic");
-            endpoint.TopicPartitions.Should().BeEquivalentTo(
-                new[] { new TopicPartitionOffset("topic", 2, Offset.Unset) });
+            bool result = endpoint1.Equals(endpoint2);
+
+            result.Should().BeTrue();
         }
 
         [Fact]
-        public void Constructor_MultipleTopicPartitions_TopicsSet()
+        public void Equals_DifferentTopic_FalseReturned()
         {
-            var endpoint = new KafkaConsumerEndpoint(
-                new TopicPartition("topic1", 0),
-                new TopicPartition("topic1", 1),
-                new TopicPartition("topic2", 2),
-                new TopicPartition("topic2", 3));
+            KafkaConsumerEndpoint endpoint1 = new("topic1", 42, new KafkaConsumerConfiguration());
+            KafkaConsumerEndpoint endpoint2 = new("topic2", 42, new KafkaConsumerConfiguration());
 
-            endpoint.Name.Should().Be("[topic1,topic2]");
-            endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
-            endpoint.TopicPartitions.Should().BeEquivalentTo(
-                new[]
+            bool result = endpoint1.Equals(endpoint2);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Equals_DifferentPartition_FalseReturned()
+        {
+            KafkaConsumerEndpoint endpoint1 = new("topic", 1, new KafkaConsumerConfiguration());
+            KafkaConsumerEndpoint endpoint2 = new("topic", 2, new KafkaConsumerConfiguration());
+
+            bool result = endpoint1.Equals(endpoint2);
+
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public void Equals_DifferentEndpointConfiguration_FalseReturned()
+        {
+            KafkaConsumerEndpoint endpoint1 = new(
+                "topic",
+                42,
+                new KafkaConsumerConfiguration()
                 {
-                    new TopicPartitionOffset("topic1", 0, Offset.Unset),
-                    new TopicPartitionOffset("topic1", 1, Offset.Unset),
-                    new TopicPartitionOffset("topic2", 2, Offset.Unset),
-                    new TopicPartitionOffset("topic2", 3, Offset.Unset)
+                    BackpressureLimit = 42
                 });
-        }
-
-        [Fact]
-        public void Constructor_TopicPartitionOffsets_TopicsSet()
-        {
-            var endpoint = new KafkaConsumerEndpoint(
-                new TopicPartitionOffset("topic1", 0, Offset.Beginning),
-                new TopicPartitionOffset("topic1", 1, Offset.End),
-                new TopicPartitionOffset("topic2", 2, 42),
-                new TopicPartitionOffset("topic2", 3, Offset.Unset));
-
-            endpoint.Name.Should().Be("[topic1,topic2]");
-            endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
-            endpoint.TopicPartitions.Should().BeEquivalentTo(
-                new[]
+            KafkaConsumerEndpoint endpoint2 = new(
+                "topic",
+                42,
+                new KafkaConsumerConfiguration()
                 {
-                    new TopicPartitionOffset("topic1", 0, Offset.Beginning),
-                    new TopicPartitionOffset("topic1", 1, Offset.End),
-                    new TopicPartitionOffset("topic2", 2, 42),
-                    new TopicPartitionOffset("topic2", 3, Offset.Unset)
+                    ExactlyOnceStrategy = ExactlyOnceStrategy.OffsetStore()
                 });
+
+            bool result = endpoint1.Equals(endpoint2);
+
+            result.Should().BeFalse();
         }
-
-        [Fact]
-        public void Constructor_SingleTopicAndPartitionResolver_TopicsAndResolverSet()
-        {
-            var endpoint = new KafkaConsumerEndpoint(
-                "topic1",
-                partitions => partitions);
-
-            endpoint.Name.Should().Be("topic1");
-            endpoint.Names.Should().BeEquivalentTo("topic1");
-            endpoint.TopicPartitions.Should().BeNull();
-            endpoint.TopicPartitionsResolver.Should().NotBeNull();
-            endpoint.TopicPartitionsResolver.Should()
-                .BeOfType<Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>>();
-        }
-
-        [Fact]
-        public void Constructor_MultipleTopicsAndPartitionResolver_TopicsAndResolverSet()
-        {
-            var endpoint = new KafkaConsumerEndpoint(
-                new[] { "topic1", "topic2" },
-                partitions => partitions);
-
-            endpoint.Name.Should().Be("[topic1,topic2]");
-            endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
-            endpoint.TopicPartitions.Should().BeNull();
-            endpoint.TopicPartitionsResolver.Should().NotBeNull();
-            endpoint.TopicPartitionsResolver.Should()
-                .BeOfType<Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>>>();
-        }
-
-        [Fact]
-        public void Constructor_SingleTopicAndPartitionResolverWithOffsets_TopicsAndResolverSet()
-        {
-            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>> resolver =
-                partitions => partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Beginning));
-
-            var endpoint = new KafkaConsumerEndpoint(
-                "topic1",
-                resolver);
-
-            endpoint.Name.Should().Be("topic1");
-            endpoint.Names.Should().BeEquivalentTo("topic1");
-            endpoint.TopicPartitions.Should().BeNull();
-            endpoint.TopicPartitionsResolver.Should().Be(resolver);
-        }
-
-        [Fact]
-        public void Constructor_MultipleTopicsAndPartitionResolverWithOffsets_TopicsAndResolverSet()
-        {
-            Func<IReadOnlyCollection<TopicPartition>, IEnumerable<TopicPartitionOffset>> resolver =
-                partitions => partitions.Select(partition => new TopicPartitionOffset(partition, Offset.Beginning));
-
-            var endpoint = new KafkaConsumerEndpoint(
-                new[] { "topic1", "topic2" },
-                resolver);
-
-            endpoint.Name.Should().Be("[topic1,topic2]");
-            endpoint.Names.Should().BeEquivalentTo("topic1", "topic2");
-            endpoint.TopicPartitions.Should().BeNull();
-            endpoint.TopicPartitionsResolver.Should().Be(resolver);
-        }
-
-        [Theory]
-        [InlineData(true, 100)]
-        [InlineData(false, 1)]
-        public void ProcessPartitionsIndependently_DefaultMaxDegreeOfParallelismSetAccordingly(
-            bool processPartitionsIndependently,
-            int expectedMaxDegreeOfParallelism)
-        {
-            var endpoint = GetValidEndpoint();
-
-            endpoint.ProcessPartitionsIndependently = processPartitionsIndependently;
-
-            endpoint.MaxDegreeOfParallelism.Should().Be(expectedMaxDegreeOfParallelism);
-        }
-
-        [Fact]
-        public void Equals_SameEndpointInstance_TrueIsReturned()
-        {
-            var endpoint = new KafkaConsumerEndpoint("topic")
-            {
-                Configuration =
-                {
-                    AutoCommitIntervalMs = 1000
-                }
-            };
-
-            endpoint.Equals(endpoint).Should().BeTrue();
-        }
-
-        [Fact]
-        public void Equals_SameConfiguration_TrueIsReturned()
-        {
-            var endpoint1 = new KafkaConsumerEndpoint("topic")
-            {
-                Configuration =
-                {
-                    AutoCommitIntervalMs = 1000
-                }
-            };
-
-            var endpoint2 = new KafkaConsumerEndpoint("topic")
-            {
-                Configuration =
-                {
-                    AutoCommitIntervalMs = 1000
-                }
-            };
-
-            endpoint1.Equals(endpoint2).Should().BeTrue();
-        }
-
-        [Fact]
-        public void Equals_DifferentTopic_FalseIsReturned()
-        {
-            var endpoint1 = new KafkaConsumerEndpoint("topic")
-            {
-                Configuration =
-                {
-                    AutoCommitIntervalMs = 1000
-                }
-            };
-
-            var endpoint2 = new KafkaConsumerEndpoint("topic2")
-            {
-                Configuration =
-                {
-                    AutoCommitIntervalMs = 1000
-                }
-            };
-
-            endpoint1.Equals(endpoint2).Should().BeFalse();
-        }
-
-        [Fact]
-        public void Equals_DifferentConfiguration_FalseIsReturned()
-        {
-            var endpoint1 = new KafkaConsumerEndpoint("topic")
-            {
-                Configuration =
-                {
-                    AutoCommitIntervalMs = 1000
-                }
-            };
-
-            var endpoint2 = new KafkaConsumerEndpoint("topic")
-            {
-                Configuration =
-                {
-                    BrokerAddressTtl = 2000
-                }
-            };
-
-            endpoint1.Equals(endpoint2).Should().BeFalse();
-        }
-
-        [Fact]
-        public void Validate_ValidTopicAndConfiguration_NoExceptionThrown()
-        {
-            var endpoint = GetValidEndpoint();
-
-            Action act = () => endpoint.Validate();
-
-            act.Should().NotThrow<EndpointConfigurationException>();
-        }
-
-        [Fact]
-        public void Validate_MissingConfiguration_ExceptionThrown()
-        {
-            var endpoint = new KafkaConsumerEndpoint("topic")
-            {
-                Configuration = null!
-            };
-
-            Action act = () => endpoint.Validate();
-
-            act.Should().ThrowExactly<EndpointConfigurationException>();
-        }
-
-        [Fact]
-        public void Validate_InvalidConfiguration_ExceptionThrown()
-        {
-            var endpoint = new KafkaConsumerEndpoint("topic")
-            {
-                Configuration = new KafkaConsumerConfig()
-            };
-
-            Action act = () => endpoint.Validate();
-
-            act.Should().ThrowExactly<EndpointConfigurationException>();
-        }
-
-        [Fact]
-        public void Validate_MissingTopic_ExceptionThrown()
-        {
-            var endpoint = new KafkaConsumerEndpoint(Array.Empty<string>())
-            {
-                Configuration = new KafkaConsumerConfig
-                {
-                    BootstrapServers = "test-server"
-                }
-            };
-
-            Action act = () => endpoint.Validate();
-
-            act.Should().ThrowExactly<EndpointConfigurationException>();
-        }
-
-        [Theory]
-        [InlineData(1, true, true)]
-        [InlineData(1, false, true)]
-        [InlineData(42, true, true)]
-        [InlineData(42, false, false)]
-        [InlineData(0, true, false)]
-        [InlineData(0, false, false)]
-        [InlineData(-1, true, false)]
-        [InlineData(-1, false, false)]
-        public void Validate_MaxDegreeOfParallelism_CorrectlyValidated(
-            int value,
-            bool processPartitionsIndependently,
-            bool isValid)
-        {
-            var endpoint = GetValidEndpoint();
-
-            endpoint.ProcessPartitionsIndependently = processPartitionsIndependently;
-            endpoint.MaxDegreeOfParallelism = value;
-
-            Action act = () => endpoint.Validate();
-
-            if (isValid)
-                act.Should().NotThrow();
-            else
-                act.Should().ThrowExactly<EndpointConfigurationException>();
-        }
-
-        [Theory]
-        [InlineData(1, true)]
-        [InlineData(42, true)]
-        [InlineData(0, false)]
-        [InlineData(-1, false)]
-        public void Validate_BackpressureLimit_CorrectlyValidated(int value, bool isValid)
-        {
-            var endpoint = GetValidEndpoint();
-
-            endpoint.BackpressureLimit = value;
-
-            Action act = () => endpoint.Validate();
-
-            if (isValid)
-                act.Should().NotThrow();
-            else
-                act.Should().ThrowExactly<EndpointConfigurationException>();
-        }
-
-        private static KafkaConsumerEndpoint GetValidEndpoint() =>
-            new("test")
-            {
-                Configuration = new KafkaConsumerConfig
-                {
-                    BootstrapServers = "test-server"
-                }
-            };
     }
 }

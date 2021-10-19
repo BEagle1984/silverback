@@ -15,7 +15,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Enrichers
         [Fact]
         public void Enrich_StaticValues_HeaderAdded()
         {
-            var envelope = EnvelopeFactory.Create(
+            var envelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 null,
                 TestProducerEndpoint.GetDefault());
@@ -31,7 +31,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Enrichers
         [Fact]
         public void Enrich_StaticValues_HeaderReplaced()
         {
-            var envelope = EnvelopeFactory.Create(
+            var envelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 new MessageHeaderCollection
                 {
@@ -50,11 +50,11 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Enrichers
         [Fact]
         public void Enrich_SpecificMessageType_HeaderAddedToMessagesOfMatchingType()
         {
-            var envelopeEventOne = EnvelopeFactory.Create(
+            var envelopeEventOne = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 null,
                 TestProducerEndpoint.GetDefault());
-            var envelopeEventTwo = EnvelopeFactory.Create(
+            var envelopeEventTwo = new OutboundEnvelope<TestEventTwo>(
                 new TestEventTwo(),
                 null,
                 TestProducerEndpoint.GetDefault());
@@ -71,15 +71,15 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Enrichers
         [Fact]
         public void Enrich_SpecificBaseMessageType_HeaderAddedToMessagesOfMatchingType()
         {
-            var envelopeEventOne = EnvelopeFactory.Create(
+            var envelopeEventOne = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne(),
                 null,
                 TestProducerEndpoint.GetDefault());
-            var envelopeEventTwo = EnvelopeFactory.Create(
+            var envelopeEventTwo = new OutboundEnvelope<TestEventTwo>(
                 new TestEventTwo(),
                 null,
                 TestProducerEndpoint.GetDefault());
-            var envelopeBinaryMessage = EnvelopeFactory.Create(
+            var envelopeBinaryMessage = new OutboundEnvelope<BinaryMessage>(
                 new BinaryMessage(),
                 null,
                 TestProducerEndpoint.GetDefault());
@@ -98,7 +98,7 @@ namespace Silverback.Tests.Integration.Messaging.Outbound.Enrichers
         [Fact]
         public void Enrich_ValueProvider_HeaderAdded()
         {
-            var envelope = EnvelopeFactory.Create(
+            var envelope = new OutboundEnvelope<TestEventOne>(
                 new TestEventOne { Content = "content" },
                 null,
                 TestProducerEndpoint.GetDefault());

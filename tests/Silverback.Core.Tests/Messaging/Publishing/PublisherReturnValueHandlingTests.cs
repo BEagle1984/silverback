@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.TestTypes.Messages;
 using Silverback.Tests.Core.TestTypes.Messages.Base;
@@ -17,6 +18,11 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 {
     public class PublisherReturnValueHandlingTests
     {
+        // TODO: Test all cases (return types, sync/async, ...)
+
+
+
+
         [Fact]
         public async Task Publish_SubscriberClassReturnsSingleMessage_MessagesRepublished()
         {

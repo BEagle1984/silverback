@@ -20,11 +20,11 @@ namespace Silverback.Messaging.Sequences
     {
         private static readonly TopicPartition AnyTopicPartition = new(string.Empty, Partition.Any);
 
-        private readonly IServiceProvider _serviceProvider;
-
         private readonly bool _processPartitionsIndependently;
 
         private readonly ConcurrentDictionary<TopicPartition, ISequenceStore> _sequenceStores = new();
+
+        private readonly Func<TopicPartition, ISequenceStore> _sequenceStoreFactory;
 
         private bool _disposed;
 
@@ -32,8 +32,9 @@ namespace Silverback.Messaging.Sequences
             IServiceProvider serviceProvider,
             bool processPartitionsIndependently)
         {
-            _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
+            Check.NotNull(serviceProvider, nameof(serviceProvider));
             _processPartitionsIndependently = processPartitionsIndependently;
+            _sequenceStoreFactory = _ => serviceProvider.GetRequiredService<ISequenceStore>();
         }
 
         public int Count => _sequenceStores.Count;
@@ -53,13 +54,7 @@ namespace Silverback.Messaging.Sequences
             if (!_processPartitionsIndependently)
                 topicPartition = AnyTopicPartition;
 
-            // Try get value before calling GetOrAdd to avoid the closure allocation at every call
-            if (_sequenceStores.TryGetValue(topicPartition, out var sequenceStore))
-                return sequenceStore;
-
-            return _sequenceStores.GetOrAdd(
-                topicPartition,
-                _ => _serviceProvider.GetRequiredService<ISequenceStore>());
+            return _sequenceStores.GetOrAdd(topicPartition, _sequenceStoreFactory);
         }
 
         public async ValueTask DisposeAsync()

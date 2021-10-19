@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Database;
 using Silverback.Messaging.Inbound.ExactlyOnce.Repositories;
 using Silverback.Messaging.Messages;
@@ -67,8 +68,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                         { "x-message-id", "123" }
                     },
                     new TestOffset("topic1", "1"),
-                    new TestConsumerEndpoint("topic1"),
-                    "topic1"));
+                    new TestConsumerConfiguration("topic1").GetDefaultEndpoint()));
             await _inboundLog.AddAsync(
                 new InboundEnvelope(
                     null,
@@ -77,8 +77,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                         { "x-message-id", "456" }
                     },
                     new TestOffset("topic1", "2"),
-                    new TestConsumerEndpoint("topic1"),
-                    "topic1"));
+                    new TestConsumerConfiguration("topic1").GetDefaultEndpoint()));
             await _inboundLog.AddAsync(
                 new InboundEnvelope(
                     null,
@@ -87,8 +86,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                         { "x-message-id", "789" }
                     },
                     new TestOffset("topic2", "1"),
-                    new TestConsumerEndpoint("topic2"),
-                    "topic2"));
+                    new TestConsumerConfiguration("topic2").GetDefaultEndpoint()));
 
             _dbContext.InboundMessages.Should().BeEmpty();
         }
@@ -104,8 +102,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                         { "x-message-id", "123" }
                     },
                     new TestOffset("topic1", "1"),
-                    new TestConsumerEndpoint("topic1"),
-                    "topic1"));
+                    new TestConsumerConfiguration("topic1").GetDefaultEndpoint()));
             await _inboundLog.AddAsync(
                 new InboundEnvelope(
                     null,
@@ -114,8 +111,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                         { "x-message-id", "456" }
                     },
                     new TestOffset("topic1", "2"),
-                    new TestConsumerEndpoint("topic1"),
-                    "topic1"));
+                    new TestConsumerConfiguration("topic1").GetDefaultEndpoint()));
             await _inboundLog.AddAsync(
                 new InboundEnvelope(
                     null,
@@ -124,8 +120,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                         { "x-message-id", "789" }
                     },
                     new TestOffset("topic2", "1"),
-                    new TestConsumerEndpoint("topic2"),
-                    "topic2"));
+                    new TestConsumerConfiguration("topic2").GetDefaultEndpoint()));
 
             await _inboundLog.CommitAsync();
 
@@ -143,8 +138,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                         { "x-message-id", "123" }
                     },
                     new TestOffset("topic1", "1"),
-                    new TestConsumerEndpoint("topic1"),
-                    "topic1"));
+                    new TestConsumerConfiguration("topic1").GetDefaultEndpoint()));
             await _inboundLog.AddAsync(
                 new InboundEnvelope(
                     null,
@@ -153,8 +147,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                         { "x-message-id", "456" }
                     },
                     new TestOffset("topic1", "2"),
-                    new TestConsumerEndpoint("topic1"),
-                    "topic1"));
+                    new TestConsumerConfiguration("topic1").GetDefaultEndpoint()));
             await _inboundLog.AddAsync(
                 new InboundEnvelope(
                     null,
@@ -163,8 +156,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                         { "x-message-id", "789" }
                     },
                     new TestOffset("topic2", "1"),
-                    new TestConsumerEndpoint("topic2"),
-                    "topic2"));
+                    new TestConsumerConfiguration("topic2").GetDefaultEndpoint()));
 
             await _inboundLog.RollbackAsync();
 
@@ -182,8 +174,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                         { "x-message-id", "123" }
                     },
                     new TestOffset("topic1", "1"),
-                    new TestConsumerEndpoint("topic1"),
-                    "topic1"));
+                    new TestConsumerConfiguration("topic1").GetDefaultEndpoint()));
             await _inboundLog.CommitAsync();
 
             var logEntry = _dbContext.InboundMessages.First();
@@ -202,8 +193,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                     { "x-message-id", "123" }
                 },
                 new TestOffset("topic1", "1"),
-                new TestConsumerEndpoint("topic1"),
-                "topic1");
+                new TestConsumerConfiguration("topic1").GetDefaultEndpoint());
 
             await _inboundLog.AddAsync(envelope);
             await _inboundLog.CommitAsync();
@@ -223,8 +213,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                     { "x-message-id", "123" }
                 },
                 new TestOffset("topic1", "1"),
-                new TestConsumerEndpoint("topic1"),
-                "topic1");
+                new TestConsumerConfiguration("topic1").GetDefaultEndpoint());
 
             await _inboundLog.AddAsync(envelope);
             await _inboundLog.CommitAsync();
@@ -247,8 +236,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                         { "x-message-id", "123" }
                     },
                     new TestOffset("topic1", "1"),
-                    new TestConsumerEndpoint("topic1"),
-                    "topic1"));
+                    new TestConsumerConfiguration("topic1").GetDefaultEndpoint()));
             await _inboundLog.CommitAsync();
 
             var envelope = new InboundEnvelope(
@@ -258,8 +246,7 @@ namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositorie
                     { "x-message-id", "123" }
                 },
                 new TestOffset("topic2", "1"),
-                new TestConsumerEndpoint("topic2"),
-                "topic2");
+                new TestConsumerConfiguration("topic2").GetDefaultEndpoint());
 
             var result = await _inboundLog.ExistsAsync(envelope);
 

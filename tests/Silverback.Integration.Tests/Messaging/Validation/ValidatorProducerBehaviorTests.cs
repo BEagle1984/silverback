@@ -10,6 +10,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -176,8 +177,10 @@ namespace Silverback.Tests.Integration.Messaging.Validation
         [MemberData(nameof(HandleAsync_None_WarningIsNotLogged_TestData))]
         public async Task HandleAsync_None_WarningIsNotLogged(IIntegrationMessage message)
         {
-            var endpoint = TestProducerEndpoint.GetDefault();
-            endpoint.MessageValidationMode = MessageValidationMode.None;
+            TestProducerEndpoint endpoint = new TestProducerConfiguration("topic1")
+            {
+                MessageValidationMode = MessageValidationMode.None
+            }.GetDefaultEndpoint();
             var envelope = new OutboundEnvelope(message, null, endpoint);
 
             IOutboundEnvelope? result = null;
@@ -205,8 +208,10 @@ namespace Silverback.Tests.Integration.Messaging.Validation
         {
             var message = new TestValidationMessage
                 { Id = "1", String10 = "123", IntRange = 5, NumbersOnly = "123" };
-            var endpoint = TestProducerEndpoint.GetDefault();
-            endpoint.MessageValidationMode = validationMode;
+            TestProducerEndpoint endpoint = new TestProducerConfiguration("topic1")
+            {
+                MessageValidationMode = validationMode
+            }.GetDefaultEndpoint();
             var envelope = new OutboundEnvelope(message, null, endpoint);
 
             IOutboundEnvelope? result = null;
@@ -233,8 +238,10 @@ namespace Silverback.Tests.Integration.Messaging.Validation
             IIntegrationMessage message,
             string expectedValidationMessage)
         {
-            var endpoint = TestProducerEndpoint.GetDefault();
-            endpoint.MessageValidationMode = MessageValidationMode.LogWarning;
+            TestProducerEndpoint endpoint = new TestProducerConfiguration("topic1")
+            {
+                MessageValidationMode = MessageValidationMode.LogWarning
+            }.GetDefaultEndpoint();
             var envelope = new OutboundEnvelope(message, null, endpoint);
 
             IOutboundEnvelope? result = null;
@@ -261,8 +268,10 @@ namespace Silverback.Tests.Integration.Messaging.Validation
                 { Id = "1", String10 = "123456789abc", IntRange = 5, NumbersOnly = "123" };
             var expectedMessage =
                 $"The message is not valid:{Environment.NewLine}- The field String10 must be a string with a maximum length of 10.";
-            var endpoint = TestProducerEndpoint.GetDefault();
-            endpoint.MessageValidationMode = MessageValidationMode.ThrowException;
+            TestProducerEndpoint endpoint = new TestProducerConfiguration("topic1")
+            {
+                MessageValidationMode = MessageValidationMode.ThrowException
+            }.GetDefaultEndpoint();
             var envelope = new OutboundEnvelope(message, null, endpoint);
 
             IOutboundEnvelope? result = null;

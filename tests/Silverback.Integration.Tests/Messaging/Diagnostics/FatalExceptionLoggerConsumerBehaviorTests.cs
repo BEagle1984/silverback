@@ -7,6 +7,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
@@ -49,7 +50,6 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new byte[5],
                 null,
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name,
                 new TestOffset());
 
             try
@@ -77,7 +77,6 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                 new byte[5],
                 null,
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name,
                 new TestOffset());
 
             Func<Task> act = () => new FatalExceptionLoggerConsumerBehavior(_inboundLogger).HandleAsync(

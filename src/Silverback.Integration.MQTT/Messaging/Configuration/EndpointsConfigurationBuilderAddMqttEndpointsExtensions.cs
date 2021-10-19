@@ -5,37 +5,36 @@ using System;
 using Silverback.Messaging.Configuration.Mqtt;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration;
+
+/// <summary>
+///     Adds the <c>AddMqttEndpoints</c> method to the <see cref="EndpointsConfigurationBuilder" />.
+/// </summary>
+public static class EndpointsConfigurationBuilderAddMqttEndpointsExtensions
 {
     /// <summary>
-    ///     Adds the <c>AddMqttEndpoints</c> method to the <see cref="IEndpointsConfigurationBuilder" />.
+    ///     Adds the MQTT endpoints.
     /// </summary>
-    public static class EndpointsConfigurationBuilderAddMqttEndpointsExtensions
+    /// <param name="endpointsConfigurationBuilder">
+    ///     The <see cref="EndpointsConfigurationBuilder" />.
+    /// </param>
+    /// <param name="mqttEndpointsBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="MqttEndpointsConfigurationBuilder" />,
+    ///     configures the connection to the message broker and adds the inbound and outbound endpoints.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="EndpointsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public static EndpointsConfigurationBuilder AddMqttEndpoints(
+        this EndpointsConfigurationBuilder endpointsConfigurationBuilder,
+        Action<MqttEndpointsConfigurationBuilder> mqttEndpointsBuilderAction)
     {
-        /// <summary>
-        ///     Adds the MQTT endpoints.
-        /// </summary>
-        /// <param name="endpointsConfigurationBuilder">
-        ///     The <see cref="IEndpointsConfigurationBuilder" />.
-        /// </param>
-        /// <param name="mqttEndpointsBuilderAction">
-        ///     An <see cref="Action{T}" /> that takes the <see cref="IMqttEndpointsConfigurationBuilder" />,
-        ///     configures the connection to the message broker and adds the inbound and outbound endpoints.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IEndpointsConfigurationBuilder AddMqttEndpoints(
-            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
-            Action<IMqttEndpointsConfigurationBuilder> mqttEndpointsBuilderAction)
-        {
-            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
-            Check.NotNull(mqttEndpointsBuilderAction, nameof(mqttEndpointsBuilderAction));
+        Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+        Check.NotNull(mqttEndpointsBuilderAction, nameof(mqttEndpointsBuilderAction));
 
-            var mqttEndpointsBuilder = new MqttEndpointsConfigurationBuilder(endpointsConfigurationBuilder);
-            mqttEndpointsBuilderAction.Invoke(mqttEndpointsBuilder);
+        MqttEndpointsConfigurationBuilder mqttEndpointsBuilder = new(endpointsConfigurationBuilder.ServiceProvider);
+        mqttEndpointsBuilderAction.Invoke(mqttEndpointsBuilder);
 
-            return endpointsConfigurationBuilder;
-        }
+        return endpointsConfigurationBuilder;
     }
 }

@@ -14,7 +14,7 @@ namespace Silverback.Tests.Core.Util
         [InlineData("System.String", null)]
         [InlineData("System.Int32", 0)]
         [InlineData("System.Nullable`1[[System.Int32]]", null)]
-        public void GetDefaultValue_DefaultForTypeIsReturned(string typeName, object expected)
+        public void GetDefaultValue_DefaultForTypeReturned(string typeName, object expected)
         {
             Type.GetType(typeName)!.GetDefaultValue().Should().Be(expected);
         }

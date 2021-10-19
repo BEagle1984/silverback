@@ -13,7 +13,7 @@ namespace Silverback.Util
             TKey key,
             Func<TKey, TValue> factory)
         {
-            if (dictionary.TryGetValue(key, out var value))
+            if (dictionary.TryGetValue(key, out TValue? value))
                 return value;
 
             return dictionary[key] = factory(key);

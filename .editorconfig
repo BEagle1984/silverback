@@ -6,7 +6,7 @@ indent_size = 4
 tab_width = 4
 end_of_line = crlf
 insert_final_newline = true
-max_line_length = 120
+max_line_length = 140
 file_header_template = Copyright (c) 2020 Sergio Aquilini\nThis code is licensed under MIT license (see LICENSE file for details)
 
 # Microsoft.CodeAnalysis.NetAnalyzers
@@ -533,8 +533,11 @@ dotnet_diagnostic.IDE0051.severity = warning # increase level since the issue ca
 csharp_new_line_before_members_in_object_initializers = false
 csharp_preferred_modifier_order = public, private, protected, internal, new, abstract, virtual, sealed, override, static, readonly, extern, unsafe, volatile, async:suggestion
 csharp_space_after_cast = false
-csharp_style_var_elsewhere = false:none
-csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = false:none
+csharp_style_var_for_built_in_types = false:warning
+csharp_style_var_elsewhere = false:warning
+csharp_style_implicit_object_creation_when_type_is_apparent = true:warning
+csharp_style_namespace_declarations = file_scoped:warning
 dotnet_naming_rule.method_rule.severity = warning
 dotnet_naming_rule.method_rule.style = upper_camel_case_style
 dotnet_naming_rule.method_rule.symbols = method_symbols
@@ -569,7 +572,7 @@ resharper_csharp_wrap_after_invocation_lpar = true
 resharper_csharp_wrap_arguments_style = chop_if_long
 resharper_csharp_wrap_parameters_style = chop_if_long
 resharper_enforce_line_ending_style = true
-resharper_for_built_in_types = use_var_when_evident
+resharper_for_built_in_types = use_explicit_type
 resharper_indent_nested_foreach_stmt = true
 resharper_indent_nested_for_stmt = true
 resharper_indent_nested_while_stmt = true
@@ -585,10 +588,12 @@ resharper_space_after_cast = false
 resharper_space_within_single_line_array_initializer_braces = true
 resharper_use_indent_from_vs = false
 resharper_wrap_before_extends_colon = true
-resharper_wrap_lines = true
+resharper_wrap_lines = false
 resharper_xmldoc_linebreaks_inside_tags_for_elements_longer_than = 100
 resharper_xmldoc_linebreak_before_multiline_elements = false
 resharper_xmldoc_wrap_tags_and_pi = false
+resharper_use_roslyn_logic_for_evident_types = false
+resharper_csharp_keep_existing_linebreaks = true
 
 # ReSharper inspection severities
 resharper_arrange_redundant_parentheses_highlighting = hint
@@ -604,15 +609,21 @@ resharper_member_can_be_made_static_global_highlighting = warning
 resharper_member_can_be_made_static_local_highlighting = warning
 resharper_redundant_base_qualifier_highlighting = warning
 resharper_redundant_case_label_highlighting = hint
-resharper_suggest_var_or_type_built_in_types_highlighting = hint
-resharper_suggest_var_or_type_elsewhere_highlighting = hint
-resharper_suggest_var_or_type_simple_types_highlighting = hint
+resharper_suggest_var_or_type_built_in_types_highlighting = warning
+resharper_suggest_var_or_type_elsewhere_highlighting = warning
+resharper_suggest_var_or_type_simple_types_highlighting = warning
 resharper_unnecessary_whitespace_highlighting = warning
 resharper_unused_auto_property_accessor_global_highlighting = suggestion
 resharper_unused_auto_property_accessor_local_highlighting = suggestion
 resharper_web_config_module_not_resolved_highlighting = warning
 resharper_web_config_type_not_resolved_highlighting = warning
 resharper_web_config_wrong_module_highlighting = warning
+resharper_lambda_expression_must_be_static_highlighting = warning
+resharper_arrange_missing_parentheses_highlighting = warning
+resharper_arrange_object_creation_when_type_evident_highlighting = warning
+resharper_arrange_object_creation_when_type_not_evident_highlighting = warning
+
+
 
 [*.{csproj,props,yml,yaml}]
 indent_size = 2

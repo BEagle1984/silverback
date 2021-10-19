@@ -43,9 +43,9 @@ namespace Silverback.Messaging.Subscribers
                                 _subject.OnNext(message);
                             }
                         }
-                        catch (Exception exception)
+                        catch (Exception ex)
                         {
-                            _exception = exception;
+                            _exception = ex;
                         }
                         finally
                         {

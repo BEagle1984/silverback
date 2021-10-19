@@ -7,7 +7,7 @@ using Silverback.Messaging.Messages;
 namespace Silverback.Messaging.HealthChecks
 {
     /// <summary>
-    ///     The message that is periodically produced by the <see cref="OutboundEndpointsHealthCheckService" />
+    ///     The message that is periodically produced by the <see cref="ProducersHealthCheckService" />
     ///     to verify that the endpoints are reachable.
     /// </summary>
     public class PingMessage : IMessage

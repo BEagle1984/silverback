@@ -2,40 +2,37 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using Silverback.Messaging.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.ReturnValueHandlers;
 using Silverback.Util;
 
-// ReSharper disable once CheckNamespace
-namespace Microsoft.Extensions.DependencyInjection
+namespace Silverback.Configuration;
+
+/// <summary>
+///     Adds the <see cref="AsObservable"/> method to the <see cref="SilverbackBuilder" />.
+/// </summary>
+public static class SilverbackBuilderAsObservableExtensions
 {
     /// <summary>
-    ///     Adds the <c>AsObservable</c> method to the <see cref="ISilverbackBuilder" />.
+    ///     Allows the subscribers to receive an <see cref="IObservable{T}" /> or an <see cref="IMessageStreamObservable{TMessage}" />
+    ///     as parameter.
     /// </summary>
-    public static class SilverbackBuilderAsObservableExtensions
+    /// <param name="builder">
+    ///     The <see cref="SilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add the services to.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public static SilverbackBuilder AsObservable(this SilverbackBuilder builder)
     {
-        /// <summary>
-        ///     Allows the subscribers to receive an <see cref="IObservable{T}" /> or an
-        ///     <see cref="IMessageStreamObservable{TMessage}" /> as parameter.
-        /// </summary>
-        /// <param name="silverbackBuilder">
-        ///     The <see cref="ISilverbackBuilder" /> that references the <see cref="IServiceCollection" /> to add
-        ///     the services to.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static ISilverbackBuilder AsObservable(this ISilverbackBuilder silverbackBuilder)
-        {
-            Check.NotNull(silverbackBuilder, nameof(silverbackBuilder));
+        Check.NotNull(builder, nameof(builder));
 
-            silverbackBuilder.Services
-                .AddSingleton<IArgumentResolver, ObservableStreamMessageArgumentResolver>()
-                .AddScoped<IReturnValueHandler, ObservableMessagesReturnValueHandler>();
+        builder.Services
+            .AddSingleton<IArgumentResolver, ObservableStreamMessageArgumentResolver>()
+            .AddScoped<IReturnValueHandler, ObservableMessagesReturnValueHandler>();
 
-            return silverbackBuilder;
-        }
+        return builder;
     }
 }

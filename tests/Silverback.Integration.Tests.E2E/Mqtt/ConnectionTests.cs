@@ -4,6 +4,8 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -31,17 +33,13 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                         .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                         .AddMqttEndpoints(
                             endpoints => endpoints
-                                .Configure(
-                                    config => config
-                                        .WithClientId("e2e-test")
-                                        .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
+                                .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                                .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(new TestEventOne());
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -72,17 +70,13 @@ namespace Silverback.Tests.Integration.E2E.Mqtt
                         .WithConnectionToMessageBroker(options => options.AddMockedMqtt())
                         .AddMqttEndpoints(
                             endpoints => endpoints
-                                .Configure(
-                                    config => config
-                                        .WithClientId("e2e-test")
-                                        .ConnectViaTcp("e2e-mqtt-broker"))
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(endpoint => endpoint.ConsumeFrom(DefaultTopicName)))
+                                .ConfigureClient(configuration => configuration.WithClientId("e2e-test").ConnectViaTcp("e2e-mqtt-broker"))
+                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                                .AddInbound(consumer => consumer.ConsumeFrom(DefaultTopicName)))
                         .AddIntegrationSpyAndSubscriber())
                 .Run();
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(new TestEventOne());
             await Helper.WaitUntilAllMessagesAreConsumedAsync();

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using Silverback.Configuration;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Messaging.Inbound.Transaction;
 using Silverback.Messaging.Messages;
@@ -44,8 +45,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new MemoryStream(),
                 null,
                 new TestOffset(),
-                TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name);
+                TestConsumerEndpoint.GetDefault());
 
             var canHandle = policy.CanHandle(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
@@ -63,8 +63,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new MemoryStream(),
                 null,
                 new TestOffset(),
-                TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name);
+                TestConsumerEndpoint.GetDefault());
 
             var result = await policy.HandleErrorAsync(
                 ConsumerPipelineContextHelper.CreateSubstitute(envelope, _serviceProvider),
@@ -84,8 +83,7 @@ namespace Silverback.Tests.Integration.Messaging.ErrorHandling
                 new MemoryStream(Encoding.UTF8.GetBytes("hey oh!")),
                 null,
                 new TestOffset(),
-                new TestConsumerEndpoint("source-endpoint"),
-                "source-endpoint");
+                new TestConsumerConfiguration("source-endpoint").GetDefaultEndpoint());
 
             var transactionManager = Substitute.For<IConsumerTransactionManager>();
 

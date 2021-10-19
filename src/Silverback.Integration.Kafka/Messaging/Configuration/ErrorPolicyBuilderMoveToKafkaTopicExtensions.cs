@@ -6,46 +6,43 @@ using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Messaging.Inbound.ErrorHandling;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration;
+
+/// <summary>
+///     Adds the <c>MoveToKafkaTopic</c> method to the <see cref="ErrorPolicyBuilder" />.
+/// </summary>
+public static class ErrorPolicyBuilderMoveToKafkaTopicExtensions
 {
+    // TODO: Version with typed KafkaProducerConfigurationBuilder?
     /// <summary>
-    ///     Adds the <c>MoveToKafkaTopic</c> method to the <see cref="IErrorPolicyBuilder" />.
+    ///     Adds a <see cref="MoveMessageErrorPolicy" /> that moves the messages that fail to be processed to the configured Kafka topic.
     /// </summary>
-    public static class ErrorPolicyBuilderMoveToKafkaTopicExtensions
+    /// <param name="builder">
+    ///     The <see cref="ErrorPolicyBuilder" />.
+    /// </param>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaProducerConfigurationBuilder{TMessage}" /> and configures it.
+    /// </param>
+    /// <param name="policyConfigurationAction">
+    ///     The optional additional configuration.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="ErrorPolicyChainBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public static ErrorPolicyChainBuilder MoveToKafkaTopic(
+        this ErrorPolicyBuilder builder,
+        Action<KafkaProducerConfigurationBuilder<object>> configurationBuilderAction,
+        Action<MoveMessageErrorPolicy>? policyConfigurationAction = null)
     {
-        /// <summary>
-        ///     Adds a <see cref="MoveMessageErrorPolicy" /> that moves the messages that fail to be processed to the
-        ///     configured endpoint.
-        /// </summary>
-        /// <param name="builder">
-        ///     The <see cref="IErrorPolicyBuilder" />.
-        /// </param>
-        /// <param name="endpointBuilderAction">
-        ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaProducerEndpointBuilder" /> and configures
-        ///     it.
-        /// </param>
-        /// <param name="policyConfigurationAction">
-        ///     The (optional) additional configuration.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IErrorPolicyChainBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IErrorPolicyChainBuilder MoveToKafkaTopic(
-            this IErrorPolicyBuilder builder,
-            Action<IKafkaProducerEndpointBuilder> endpointBuilderAction,
-            Action<MoveMessageErrorPolicy>? policyConfigurationAction = null)
-        {
-            Check.NotNull(builder, nameof(builder));
-            Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
+        Check.NotNull(builder, nameof(builder));
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-            var kafkaClientConfig =
-                ((builder as ErrorPolicyBuilder)?.EndpointsConfigurationBuilder as KafkaEndpointsConfigurationBuilder)
-                ?.ClientConfig;
+        KafkaClientConfiguration? kafkaClientConfig =
+            (builder.EndpointsConfigurationBuilder as KafkaEndpointsConfigurationBuilder)?.ClientConfiguration;
 
-            var endpointBuilder = new KafkaProducerEndpointBuilder(kafkaClientConfig);
-            endpointBuilderAction(endpointBuilder);
+        KafkaProducerConfigurationBuilder<object> endpointBuilder = new(kafkaClientConfig);
+        configurationBuilderAction(endpointBuilder);
 
-            return builder.Move(endpointBuilder.Build(), policyConfigurationAction);
-        }
+        return builder.Move(endpointBuilder.Build(), policyConfigurationAction);
     }
 }

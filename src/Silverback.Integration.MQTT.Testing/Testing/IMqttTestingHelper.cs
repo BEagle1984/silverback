@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MQTTnet;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Mqtt.Mocks;
+using Silverback.Messaging.Configuration;
 
 namespace Silverback.Testing
 {

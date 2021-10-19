@@ -2,32 +2,31 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using Microsoft.EntityFrameworkCore;
+using Silverback.Configuration;
 using Silverback.Database;
-using Silverback.Messaging.Configuration;
 using Silverback.Util;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Contains the <c>UseDbContext</c> extension for the <see cref="ISilverbackBuilder" />.
+    ///     Contains the <see cref="UseDbContext{TDbContext}"/> extension to the <see cref="SilverbackBuilder" />.
     /// </summary>
     public static class SilverbackBuilderUseDbContextExtensions
     {
         /// <summary>
-        ///     Registers the specified <see cref="DbContext" /> to be used as underlying storage for the services
-        ///     requiring it.
+        ///     Registers the specified <see cref="DbContext" /> to be used as underlying storage for the services requiring it.
         /// </summary>
         /// <typeparam name="TDbContext">
         ///     The type of the <see cref="DbContext" /> to be used.
         /// </typeparam>
         /// <param name="builder">
-        ///     The <see cref="ISilverbackBuilder" /> to add the <see cref="DbContext" /> to.
+        ///     The <see cref="SilverbackBuilder" /> to add the <see cref="DbContext" /> to.
         /// </param>
         /// <returns>
-        ///     The <see cref="ISilverbackBuilder" /> so that additional calls can be chained.
+        ///     The <see cref="SilverbackBuilder" /> so that additional calls can be chained.
         /// </returns>
-        public static ISilverbackBuilder UseDbContext<TDbContext>(this ISilverbackBuilder builder)
+        public static SilverbackBuilder UseDbContext<TDbContext>(this SilverbackBuilder builder)
             where TDbContext : DbContext
         {
             Check.NotNull(builder, nameof(builder));

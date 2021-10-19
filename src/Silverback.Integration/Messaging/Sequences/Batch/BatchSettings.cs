@@ -10,54 +10,19 @@ namespace Silverback.Messaging.Sequences.Batch
     /// <summary>
     ///     The batch consuming settings.
     /// </summary>
-    public sealed class BatchSettings : IEquatable<BatchSettings>, IValidatableEndpointSettings
+    public sealed record BatchSettings : IValidatableEndpointSettings
     {
         /// <summary>
-        ///     Gets or sets the number of messages to be processed in batch. Setting this property to a value
+        ///     Gets the number of messages to be processed in batch. Setting this property to a value
         ///     greater than 1 enables batch consuming.
         /// </summary>
-        public int Size { get; set; } = 1;
+        public int Size { get; init; } = 1;
 
         /// <summary>
-        ///     Gets or sets the maximum amount of time to wait for the batch to be filled. After this time the
+        ///     Gets the maximum amount of time to wait for the batch to be filled. After this time the
         ///     batch will be completed even if the specified <c>Size</c> is not reached.
         /// </summary>
-        public TimeSpan? MaxWaitTime { get; set; }
-
-        /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
-        public bool Equals(BatchSettings? other)
-        {
-            if (other is null)
-                return false;
-
-            if (ReferenceEquals(this, other))
-                return true;
-
-            return Size == other.Size &&
-                   MaxWaitTime.Equals(other.MaxWaitTime);
-        }
-
-        /// <inheritdoc cref="object.Equals(object)" />
-        public override bool Equals(object? obj)
-        {
-            if (obj is null)
-                return false;
-
-            if (ReferenceEquals(this, obj))
-                return true;
-
-            if (obj.GetType() != GetType())
-                return false;
-
-            return Equals((BatchSettings)obj);
-        }
-
-        /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage(
-            "ReSharper",
-            "NonReadonlyMemberInGetHashCode",
-            Justification = Justifications.Settings)]
-        public override int GetHashCode() => Size.GetHashCode();
+        public TimeSpan? MaxWaitTime { get; init; }
 
         /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public void Validate()

@@ -17,562 +17,569 @@ using Silverback.Messaging.Sequences;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Broker
+namespace Silverback.Messaging.Broker;
+
+/// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
+public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerConfiguration, KafkaOffset>
 {
-    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TOffset}" />
-    public class KafkaConsumer : Consumer<KafkaBroker, KafkaConsumerEndpoint, KafkaOffset>
+    private readonly IConfluentConsumerBuilder _confluentConsumerBuilder;
+
+    private readonly IBrokerCallbacksInvoker _callbacksInvoker;
+
+    private readonly IInboundLogger<KafkaConsumer> _logger;
+
+    private readonly object _messagesSinceCommitLock = new();
+
+    private readonly IKafkaMessageSerializer _serializer;
+
+    [SuppressMessage("", "CA2213", Justification = "False positive: DisposeAsync is being called")]
+    private readonly KafkaSequenceStoreCollection _kafkaSequenceStoreCollection;
+
+    private readonly ConsumerChannelsManager _channelsManager;
+
+    private readonly ConsumeLoopHandler _consumeLoopHandler;
+
+    private readonly Dictionary<TopicPartition, KafkaConsumerEndpoint> _endpointsCache = new();
+
+    private readonly Func<TopicPartition, KafkaConsumerEndpoint> _endpointFactory;
+
+    [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
+    private IConsumer<byte[]?, byte[]?>? _confluentConsumer;
+
+    private int _messagesSinceCommit;
+
+    private bool _disposed;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="KafkaConsumer" /> class.
+    /// </summary>
+    /// <param name="broker">
+    ///     The <see cref="IBroker" /> that is instantiating the consumer.
+    /// </param>
+    /// <param name="configuration">
+    ///     The <see cref="KafkaConsumerConfiguration"/>.
+    /// </param>
+    /// <param name="behaviorsProvider">
+    ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
+    /// </param>
+    /// <param name="confluentConsumerBuilder">
+    ///     The <see cref="IConfluentConsumerBuilder" />.
+    /// </param>
+    /// <param name="callbacksInvoker">
+    ///     The <see cref="IBrokerCallbacksInvoker" />.
+    /// </param>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
+    /// </param>
+    /// <param name="logger">
+    ///     The <see cref="IInboundLogger{TCategoryName}" />.
+    /// </param>
+    public KafkaConsumer(
+        KafkaBroker broker,
+        KafkaConsumerConfiguration configuration,
+        IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
+        IConfluentConsumerBuilder confluentConsumerBuilder,
+        IBrokerCallbacksInvoker callbacksInvoker,
+        IServiceProvider serviceProvider,
+        IInboundLogger<KafkaConsumer> logger)
+        : base(broker, configuration, behaviorsProvider, serviceProvider, logger)
     {
-        private readonly IConfluentConsumerBuilder _confluentConsumerBuilder;
+        Check.NotNull(configuration, nameof(configuration));
+        Check.NotNull(serviceProvider, nameof(serviceProvider));
 
-        private readonly IBrokerCallbacksInvoker _callbacksInvoker;
+        _confluentConsumerBuilder = Check.NotNull(confluentConsumerBuilder, nameof(confluentConsumerBuilder));
+        _confluentConsumerBuilder.SetConfig(configuration.Client.GetConfluentConfig());
+        _confluentConsumerBuilder.SetEventsHandlers(this, callbacksInvoker, logger);
 
-        private readonly IInboundLogger<KafkaConsumer> _logger;
+        _serializer = configuration.Serializer as IKafkaMessageSerializer ?? new DefaultKafkaMessageSerializer(configuration.Serializer);
 
-        private readonly object _messagesSinceCommitLock = new();
+        _callbacksInvoker = Check.NotNull(callbacksInvoker, nameof(callbacksInvoker));
+        _logger = Check.NotNull(logger, nameof(logger));
 
-        private readonly IKafkaMessageSerializer _serializer;
+        _kafkaSequenceStoreCollection = new KafkaSequenceStoreCollection(serviceProvider, Configuration.ProcessPartitionsIndependently);
+        _channelsManager = new ConsumerChannelsManager(this, _callbacksInvoker, logger);
+        _consumeLoopHandler = new ConsumeLoopHandler(this, _channelsManager, _logger);
 
-        [SuppressMessage("", "CA2213", Justification = "False positive: DisposeAsync is being called")]
-        private readonly KafkaSequenceStoreCollection _kafkaSequenceStoreCollection;
+        _endpointFactory = topicPartition => new KafkaConsumerEndpoint(topicPartition, configuration);
+    }
 
-        private readonly ConsumerChannelsManager _channelsManager;
+    /// <summary>
+    ///     Gets the (dynamic) group member id of this consumer (as set by the broker).
+    /// </summary>
+    public string MemberId => _confluentConsumer?.MemberId ?? string.Empty;
 
-        private readonly ConsumeLoopHandler _consumeLoopHandler;
+    /// <summary>
+    ///     Gets the current partition assignment.
+    /// </summary>
+    public IReadOnlyList<TopicPartition>? PartitionAssignment => _confluentConsumer?.Assignment;
 
-        [SuppressMessage("", "CA2213", Justification = "Doesn't have to be disposed")]
-        private IConsumer<byte[]?, byte[]?>? _confluentConsumer;
+    internal IConsumer<byte[]?, byte[]?> ConfluentConsumer =>
+        _confluentConsumer ?? throw new InvalidOperationException("ConfluentConsumer not set.");
 
-        private int _messagesSinceCommit;
+    internal void OnPartitionsAssigned(IReadOnlyList<TopicPartition> topicPartitions)
+    {
+        if (IsDisconnecting)
+            return;
 
-        private bool _disposed;
+        IsConsuming = true;
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="KafkaConsumer" /> class.
-        /// </summary>
-        /// <param name="broker">
-        ///     The <see cref="IBroker" /> that is instantiating the consumer.
-        /// </param>
-        /// <param name="endpoint">
-        ///     The endpoint to be consumed.
-        /// </param>
-        /// <param name="behaviorsProvider">
-        ///     The <see cref="IBrokerBehaviorsProvider{TBehavior}" />.
-        /// </param>
-        /// <param name="confluentConsumerBuilder">
-        ///     The <see cref="IConfluentConsumerBuilder" />.
-        /// </param>
-        /// <param name="callbacksInvoker">
-        ///     The <see cref="IBrokerCallbacksInvoker" />.
-        /// </param>
-        /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" /> to be used to resolve the needed services.
-        /// </param>
-        /// <param name="logger">
-        ///     The <see cref="IInboundLogger{TCategoryName}" />.
-        /// </param>
-        public KafkaConsumer(
-            KafkaBroker broker,
-            KafkaConsumerEndpoint endpoint,
-            IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
-            IConfluentConsumerBuilder confluentConsumerBuilder,
-            IBrokerCallbacksInvoker callbacksInvoker,
-            IServiceProvider serviceProvider,
-            IInboundLogger<KafkaConsumer> logger)
-            : base(broker, endpoint, behaviorsProvider, serviceProvider, logger)
+        StartChannelsManager(topicPartitions);
+
+        SetReadyStatus();
+    }
+
+    internal void OnPartitionsRevoked(IReadOnlyList<TopicPartitionOffset> topicPartitionOffsets)
+    {
+        IEnumerable<TopicPartition> topicPartitions = topicPartitionOffsets.Select(offset => offset.TopicPartition);
+
+        RevertReadyStatus();
+
+        _consumeLoopHandler.StopAsync().FireAndForget();
+
+        AsyncHelper.RunSynchronously(
+            () => topicPartitions.ParallelForEachAsync(
+                async topicPartition =>
+                {
+                    await _channelsManager.StopReadingAsync(topicPartition).ConfigureAwait(false);
+
+                    await _kafkaSequenceStoreCollection
+                        .GetSequenceStore(topicPartition)
+                        .AbortAllAsync(SequenceAbortReason.ConsumerAborted)
+                        .ConfigureAwait(false);
+                }));
+
+        if (!Configuration.Client.IsAutoCommitEnabled)
+            CommitOffsets();
+
+        // The ConsumeLoopHandler needs to be immediately restarted because the partitions will be
+        // reassigned only if Consume is called again.
+        // Furthermore the ConsumeLoopHandler stopping Task cannot be awaited in the
+        // OnPartitionsRevoked callback, before the partitions are revoked because the Consume method is
+        // "frozen" during that operation and will never return, therefore the stopping Task would never
+        // complete. Therefore, let's start an async Task to await it and restart the ChannelManager.
+        Task.Run(RestartConsumeLoopHandlerAsync).FireAndForget();
+    }
+
+    internal bool OnPollTimeout(LogMessage logMessage)
+    {
+        if (Configuration.Client.EnableAutoRecovery)
         {
-            Check.NotNull(endpoint, nameof(endpoint));
-            Check.NotNull(serviceProvider, nameof(serviceProvider));
-
-            _confluentConsumerBuilder = Check.NotNull(
-                confluentConsumerBuilder,
-                nameof(confluentConsumerBuilder));
-            _confluentConsumerBuilder.SetConfig(endpoint.Configuration.GetConfluentConfig());
-            _confluentConsumerBuilder.SetEventsHandlers(this, callbacksInvoker, logger);
-
-            _serializer = endpoint.Serializer as IKafkaMessageSerializer ??
-                          new DefaultKafkaMessageSerializer(endpoint.Serializer);
-
-            _callbacksInvoker = Check.NotNull(callbacksInvoker, nameof(callbacksInvoker));
-            _logger = Check.NotNull(logger, nameof(logger));
-
-            _kafkaSequenceStoreCollection = new KafkaSequenceStoreCollection(
-                serviceProvider,
-                Endpoint.ProcessPartitionsIndependently);
-            _channelsManager = new ConsumerChannelsManager(this, _callbacksInvoker, logger);
-            _consumeLoopHandler = new ConsumeLoopHandler(this, _channelsManager, _logger);
+            _logger.LogPollTimeoutAutoRecovery(logMessage, this);
+            TriggerReconnectAsync().FireAndForget();
         }
-
-        /// <summary>
-        ///     Gets the (dynamic) group member id of this consumer (as set by the broker).
-        /// </summary>
-        public string MemberId => _confluentConsumer?.MemberId ?? string.Empty;
-
-        /// <summary>
-        ///     Gets the current partition assignment.
-        /// </summary>
-        public IReadOnlyList<TopicPartition>? PartitionAssignment => _confluentConsumer?.Assignment;
-
-        internal IConsumer<byte[]?, byte[]?> ConfluentConsumer =>
-            _confluentConsumer ?? throw new InvalidOperationException("ConfluentConsumer not set.");
-
-        internal void OnPartitionsAssigned(IReadOnlyList<TopicPartition> topicPartitions)
+        else
         {
-            if (IsDisconnecting)
-                return;
-
-            IsConsuming = true;
-
-            StartChannelsManager(topicPartitions);
-
-            SetReadyStatus();
-        }
-
-        internal void OnPartitionsRevoked(IReadOnlyList<TopicPartitionOffset> topicPartitionOffsets)
-        {
-            IEnumerable<TopicPartition> topicPartitions = topicPartitionOffsets.Select(offset => offset.TopicPartition);
-
+            _logger.LogPollTimeoutNoAutoRecovery(logMessage, this);
             RevertReadyStatus();
-
-            _consumeLoopHandler.StopAsync().FireAndForget();
-
-            AsyncHelper.RunSynchronously(
-                () => topicPartitions.ParallelForEachAsync(
-                    async topicPartition =>
-                    {
-                        await _channelsManager.StopReadingAsync(topicPartition).ConfigureAwait(false);
-
-                        await _kafkaSequenceStoreCollection
-                            .GetSequenceStore(topicPartition)
-                            .AbortAllAsync(SequenceAbortReason.ConsumerAborted)
-                            .ConfigureAwait(false);
-                    }));
-
-            if (!Endpoint.Configuration.IsAutoCommitEnabled)
-                CommitOffsets();
-
-            // The ConsumeLoopHandler needs to be immediately restarted because the partitions will be
-            // reassigned only if Consume is called again.
-            // Furthermore the ConsumeLoopHandler stopping Task cannot be awaited in the
-            // OnPartitionsRevoked callback, before the partitions are revoked because the Consume method is
-            // "frozen" during that operation and will never return, therefore the stopping Task would never
-            // complete. Therefore, let's start an async Task to await it and restart the ChannelManager.
-            Task.Run(RestartConsumeLoopHandlerAsync).FireAndForget();
         }
 
-        internal bool OnPollTimeout(LogMessage logMessage)
-        {
-            if (Endpoint.Configuration.EnableAutoRecovery)
-            {
-                _logger.LogPollTimeoutAutoRecovery(logMessage, this);
-                TriggerReconnectAsync().FireAndForget();
-            }
-            else
-            {
-                _logger.LogPollTimeoutNoAutoRecovery(logMessage, this);
-                RevertReadyStatus();
-            }
+        return true;
+    }
 
-            return true;
+    internal async Task HandleMessageAsync(
+        Message<byte[]?, byte[]?> message,
+        TopicPartitionOffset topicPartitionOffset)
+    {
+        MessageHeaderCollection headers = new(message.Headers.ToSilverbackHeaders());
+
+        KafkaConsumerEndpoint endpoint = _endpointsCache.GetOrAdd(topicPartitionOffset.TopicPartition, _endpointFactory);
+
+        if (message.Key != null)
+        {
+            string deserializedKafkaKey = _serializer.DeserializeKey(message.Key, headers, endpoint);
+            headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, deserializedKafkaKey);
+            headers.AddIfNotExists(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
         }
 
-        internal async Task HandleMessageAsync(
-            Message<byte[]?, byte[]?> message,
-            TopicPartitionOffset topicPartitionOffset)
+        headers.AddOrReplace(
+            KafkaMessageHeaders.TimestampKey,
+            message.Timestamp.UtcDateTime.ToString("O"));
+
+        await HandleMessageAsync(
+                message.Value,
+                headers,
+                endpoint,
+                new KafkaOffset(topicPartitionOffset))
+            .ConfigureAwait(false);
+    }
+
+    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.InitSequenceStore" />
+    protected override ISequenceStoreCollection InitSequenceStore() => _kafkaSequenceStoreCollection;
+
+    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.ConnectCoreAsync" />
+    protected override Task ConnectCoreAsync()
+    {
+        InitConfluentConsumer();
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.DisconnectCoreAsync" />
+    protected override Task DisconnectCoreAsync()
+    {
+        if (!Configuration.Client.IsAutoCommitEnabled)
+            CommitOffsets();
+
+        DisposeConfluentConsumer();
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.StartCoreAsync" />
+    protected override Task StartCoreAsync()
+    {
+        // Set IsConsuming before calling the init methods, otherwise they don't start for real
+        IsConsuming = true;
+
+        // Start reading from the channels right away in case of static partitions assignment or if
+        // the consumer is restarting and the partition assignment is set already
+        if (Configuration.IsStaticAssignment ||
+            _confluentConsumer?.Assignment != null && _confluentConsumer.Assignment.Count > 0)
         {
-            var headers = new MessageHeaderCollection(message.Headers.ToSilverbackHeaders());
-
-            if (message.Key != null)
-            {
-                string deserializedKafkaKey = _serializer.DeserializeKey(
-                    message.Key,
-                    headers,
-                    new MessageSerializationContext(Endpoint, topicPartitionOffset.Topic));
-
-                headers.AddOrReplace(KafkaMessageHeaders.KafkaMessageKey, deserializedKafkaKey);
-                headers.AddIfNotExists(DefaultMessageHeaders.MessageId, deserializedKafkaKey);
-            }
-
-            headers.AddOrReplace(
-                KafkaMessageHeaders.TimestampKey,
-                message.Timestamp.UtcDateTime.ToString("O"));
-
-            await HandleMessageAsync(
-                    message.Value,
-                    headers,
-                    topicPartitionOffset.Topic,
-                    new KafkaOffset(topicPartitionOffset))
-                .ConfigureAwait(false);
+            StartChannelsManager(ConfluentConsumer.Assignment);
         }
 
-        /// <inheritdoc cref="Consumer.InitSequenceStore" />
-        protected override ISequenceStoreCollection InitSequenceStore() => _kafkaSequenceStoreCollection;
+        // The consume loop must start immediately because the partitions assignment is received
+        // only after Consume is called once
+        StartConsumeLoopHandler();
 
-        /// <inheritdoc cref="Consumer.ConnectCoreAsync" />
-        protected override Task ConnectCoreAsync()
-        {
-            InitConfluentConsumer();
+        return Task.CompletedTask;
+    }
 
-            return Task.CompletedTask;
-        }
+    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.StopCoreAsync" />
+    protected override Task StopCoreAsync()
+    {
+        _consumeLoopHandler.StopAsync().FireAndForget();
+        _channelsManager.StopReadingAsync().FireAndForget();
 
-        /// <inheritdoc cref="Consumer.DisconnectCoreAsync" />
-        protected override Task DisconnectCoreAsync()
-        {
-            if (!Endpoint.Configuration.IsAutoCommitEnabled)
-                CommitOffsets();
+        return Task.CompletedTask;
+    }
 
-            DisposeConfluentConsumer();
+    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.WaitUntilConsumingStoppedCoreAsync" />
+    protected override Task WaitUntilConsumingStoppedCoreAsync() =>
+        Task.WhenAll(
+            WaitUntilChannelsManagerStopsAsync(),
+            WaitUntilConsumeLoopHandlerStopsAsync());
 
-            return Task.CompletedTask;
-        }
+    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{TIdentifier})" />
+    protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
+    {
+        IEnumerable<TopicPartitionOffset> lastOffsets = brokerMessageIdentifiers
+            .GroupBy(offset => offset.Key)
+            .Select(
+                offsetsGroup => offsetsGroup
+                    .OrderByDescending(offset => offset.Offset)
+                    .First()
+                    .AsTopicPartitionOffset());
 
-        /// <inheritdoc cref="Consumer.StartCoreAsync" />
-        protected override Task StartCoreAsync()
-        {
-            // Set IsConsuming before calling the init methods, otherwise they don't start for real
-            IsConsuming = true;
+        StoreOffset(
+            lastOffsets
+                .Select(
+                    topicPartitionOffset => new TopicPartitionOffset(
+                        topicPartitionOffset.TopicPartition,
+                        topicPartitionOffset.Offset + 1)) // Commit next offset (+1)
+                .ToArray());
 
-            // Start reading from the channels right away in case of static partitions assignment or if
-            // the consumer is restarting and the partition assignment is set already
-            if (Endpoint.TopicPartitions != null ||
-                _confluentConsumer?.Assignment != null && _confluentConsumer.Assignment.Count > 0)
-            {
-                StartChannelsManager(ConfluentConsumer.Assignment);
-            }
+        CommitOffsetsIfNeeded();
 
-            // The consume loop must start immediately because the partitions assignment is received
-            // only after Consume is called once
-            StartConsumeLoopHandler();
+        return Task.CompletedTask;
+    }
 
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc cref="Consumer.StopCoreAsync" />
-        protected override Task StopCoreAsync()
-        {
-            _consumeLoopHandler.StopAsync().FireAndForget();
-            _channelsManager.StopReadingAsync().FireAndForget();
-
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc cref="Consumer.WaitUntilConsumingStoppedCoreAsync" />
-        protected override Task WaitUntilConsumingStoppedCoreAsync() =>
-            Task.WhenAll(
-                WaitUntilChannelsManagerStopsAsync(),
-                WaitUntilConsumeLoopHandlerStopsAsync());
-
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.CommitCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        protected override Task CommitCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
-        {
-            var lastOffsets = brokerMessageIdentifiers
+    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{TIdentifier})" />
+    protected override Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
+    {
+        List<TopicPartitionOffset> latestTopicPartitionOffsets =
+            brokerMessageIdentifiers
                 .GroupBy(offset => offset.Key)
                 .Select(
                     offsetsGroup => offsetsGroup
-                        .OrderByDescending(offset => offset.Offset)
+                        .OrderBy(offset => offset.Offset)
                         .First()
-                        .AsTopicPartitionOffset());
+                        .AsTopicPartitionOffset())
+                .ToList();
 
-            StoreOffset(
-                lastOffsets
-                    .Select(
-                        topicPartitionOffset => new TopicPartitionOffset(
-                            topicPartitionOffset.TopicPartition,
-                            topicPartitionOffset.Offset + 1)) // Commit next offset (+1)
-                    .ToArray());
+        if (IsConsuming)
+            _confluentConsumer?.Pause(latestTopicPartitionOffsets.Select(offset => offset.TopicPartition));
 
-            CommitOffsetsIfNeeded();
+        List<Task?> channelsManagerStoppingTasks = new(latestTopicPartitionOffsets.Count);
 
-            return Task.CompletedTask;
+        foreach (TopicPartitionOffset? topicPartitionOffset in latestTopicPartitionOffsets)
+        {
+            channelsManagerStoppingTasks.Add(_channelsManager.StopReadingAsync(topicPartitionOffset.TopicPartition));
+            ConfluentConsumer.Seek(topicPartitionOffset);
+            _logger.LogPartitionOffsetReset(topicPartitionOffset, this);
         }
 
-        /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.RollbackCoreAsync(IReadOnlyCollection{IBrokerMessageIdentifier})" />
-        protected override Task RollbackCoreAsync(IReadOnlyCollection<KafkaOffset> brokerMessageIdentifiers)
+        Task.Run(
+                () => RestartConsumeLoopAfterRollbackAsync(
+                    channelsManagerStoppingTasks,
+                    latestTopicPartitionOffsets))
+            .FireAndForget();
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc cref="Consumer{TBroker,TEndpoint,TIdentifier}.Dispose(bool)" />
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        if (!disposing || _disposed)
+            return;
+
+        _consumeLoopHandler.Dispose();
+        _channelsManager.Dispose();
+        AsyncHelper.RunSynchronously(() => _kafkaSequenceStoreCollection.DisposeAsync().AsTask());
+
+        _disposed = true;
+    }
+
+    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    private async Task RestartConsumeLoopAfterRollbackAsync(
+        IEnumerable<Task?> channelsManagerStoppingTasks,
+        IReadOnlyCollection<TopicPartitionOffset> latestTopicPartitionOffsets)
+    {
+        try
         {
-            var latestTopicPartitionOffsets =
-                brokerMessageIdentifiers
-                    .GroupBy(offset => offset.Key)
-                    .Select(
-                        offsetsGroup => offsetsGroup
-                            .OrderBy(offset => offset.Offset)
-                            .First()
-                            .AsTopicPartitionOffset())
-                    .ToList();
+            await Task.WhenAll(channelsManagerStoppingTasks.Where(task => task != null))
+                .ConfigureAwait(false);
 
-            if (IsConsuming)
+            IEnumerable<TopicPartition> topicPartitions = latestTopicPartitionOffsets.Select(offset => offset.TopicPartition);
+
+            foreach (TopicPartition? topicPartition in topicPartitions)
             {
-                _confluentConsumer?.Pause(
-                    latestTopicPartitionOffsets.Select(topicPartitionOffset => topicPartitionOffset.TopicPartition));
-            }
+                _channelsManager?.Reset(topicPartition);
 
-            var channelsManagerStoppingTasks = new List<Task?>(latestTopicPartitionOffsets.Count);
-
-            foreach (var topicPartitionOffset in latestTopicPartitionOffsets)
-            {
-                channelsManagerStoppingTasks.Add(_channelsManager.StopReadingAsync(topicPartitionOffset.TopicPartition));
-                ConfluentConsumer.Seek(topicPartitionOffset);
-                _logger.LogPartitionOffsetReset(topicPartitionOffset, this);
-            }
-
-            Task.Run(
-                    () => RestartConsumeLoopAfterRollbackAsync(
-                        channelsManagerStoppingTasks,
-                        latestTopicPartitionOffsets))
-                .FireAndForget();
-
-            return Task.CompletedTask;
-        }
-
-        /// <inheritdoc cref="Consumer.Dispose(bool)"/>
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if (!disposing || _disposed)
-                return;
-
-            _consumeLoopHandler.Dispose();
-            _channelsManager.Dispose();
-            AsyncHelper.RunSynchronously(() => _kafkaSequenceStoreCollection.DisposeAsync().AsTask());
-
-            _disposed = true;
-        }
-
-        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private async Task RestartConsumeLoopAfterRollbackAsync(
-            IEnumerable<Task?> channelsManagerStoppingTasks,
-            IReadOnlyCollection<TopicPartitionOffset> latestTopicPartitionOffsets)
-        {
-            try
-            {
-                await Task.WhenAll(channelsManagerStoppingTasks.Where(task => task != null))
-                    .ConfigureAwait(false);
-
-                var topicPartitions = latestTopicPartitionOffsets.Select(offset => offset.TopicPartition);
-
-                foreach (var topicPartition in topicPartitions)
+                if (IsConsuming)
                 {
-                    _channelsManager?.Reset(topicPartition);
-
-                    if (IsConsuming)
-                    {
-                        _channelsManager?.StartReading(topicPartition);
-                        _confluentConsumer?.Resume(new[] { topicPartition });
-                    }
+                    _channelsManager?.StartReading(topicPartition);
+                    _confluentConsumer?.Resume(new[] { topicPartition });
                 }
             }
-            catch (Exception ex)
-            {
-                _logger.LogConsumerStartError(this, ex);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogConsumerStartError(this, ex);
 
-                // Try to recover from error
-                await TriggerReconnectAsync().ConfigureAwait(false);
-            }
+            // Try to recover from error
+            await TriggerReconnectAsync().ConfigureAwait(false);
+        }
+    }
+
+    private void InitConfluentConsumer()
+    {
+        _confluentConsumer = _confluentConsumerBuilder.Build();
+
+        List<TopicPartitionOffset> staticPartitionAssignment =
+            Configuration.TopicPartitions.Where(topicPartition => topicPartition.Partition != Partition.Any).ToList();
+
+        IReadOnlyCollection<string> anyPartitionTopics =
+            Configuration.TopicPartitions
+                .Where(topicPartition => topicPartition.Partition == Partition.Any)
+                .Select(topicPartition => topicPartition.Topic)
+                .ToList();
+
+        if (staticPartitionAssignment.Count > 0 &&
+            anyPartitionTopics.Count > 0 &&
+            Configuration.PartitionOffsetsProvider == null)
+        {
+            throw new InvalidOperationException(
+                "Cannot mix static partition assignments and subscriptions in the same consumer." +
+                "A PartitionOffsetsProvider is required when mixing Partition.Any with static partition assignments.");
         }
 
-        private void InitConfluentConsumer()
+        if (Configuration.PartitionOffsetsProvider != null && anyPartitionTopics.Count > 0)
         {
-            _confluentConsumer = _confluentConsumerBuilder.Build();
+            using IAdminClient adminClient = ServiceProvider
+                .GetRequiredService<IConfluentAdminClientBuilder>()
+                .Build(Configuration.Client.GetConfluentConfig());
 
-            if (Endpoint.TopicPartitionsResolver != null && Endpoint.TopicPartitions == null)
-            {
-                using var adminClient = ServiceProvider
-                    .GetRequiredService<IConfluentAdminClientBuilder>()
-                    .Build(Endpoint.Configuration.GetConfluentConfig());
+            List<TopicPartition> availablePartitions = Configuration.TopicPartitions
+                .Where(topicPartition => topicPartition.Partition == Partition.Any) // TODO: Test
+                .SelectMany(
+                    topicPartition =>
+                        adminClient
+                            .GetMetadata(topicPartition.Topic, TimeSpan.FromMinutes(5)) // TODO: 5 minutes timeout?
+                            .Topics[0]
+                            .Partitions
+                            .Select(metadata => new TopicPartition(topicPartition.Topic, metadata.PartitionId)))
+                .ToList();
 
-                var availablePartitions = Endpoint.Names
-                    .SelectMany(
-                        topicName =>
-                            adminClient.GetMetadata(topicName, TimeSpan.FromMinutes(5))
-                                .Topics[0]
-                                .Partitions
-                                .Select(metadata => new TopicPartition(topicName, metadata.PartitionId)))
-                    .ToList();
-
-                Endpoint.TopicPartitions = Endpoint.TopicPartitionsResolver(availablePartitions)
-                    .AsReadOnlyCollection();
-            }
-
-            if (Endpoint.TopicPartitions != null)
-            {
-                _confluentConsumer.Assign(Endpoint.TopicPartitions);
-
-                Endpoint.TopicPartitions.ForEach(
-                    topicPartitionOffset => _logger.LogPartitionManuallyAssigned(topicPartitionOffset, this));
-
-                SetReadyStatus();
-            }
-            else
-            {
-                _confluentConsumer.Subscribe(Endpoint.Names);
-            }
+            staticPartitionAssignment.AddRange(Configuration.PartitionOffsetsProvider(availablePartitions));
         }
 
-        private void StartConsumeLoopHandler()
+        if (staticPartitionAssignment.Count > 0)
         {
-            if (!IsConsuming || IsStopping)
-                return;
+            _confluentConsumer.Assign(staticPartitionAssignment);
 
-            _consumeLoopHandler.Start();
+            staticPartitionAssignment.ForEach(topicPartitionOffset => _logger.LogPartitionManuallyAssigned(topicPartitionOffset, this));
 
+            SetReadyStatus();
+        }
+        else
+        {
+            _confluentConsumer.Subscribe(anyPartitionTopics);
+        }
+    }
+
+    private void StartConsumeLoopHandler()
+    {
+        if (!IsConsuming || IsStopping)
+            return;
+
+        _consumeLoopHandler.Start();
+
+        _logger.LogConsumerLowLevelTrace(
+            this,
+            "ConsumeLoopHandler started. | instanceId: {instanceId}, taskId: {taskId}",
+            () => new object[]
+            {
+                _consumeLoopHandler.Id,
+                _consumeLoopHandler.Stopping.Id
+            });
+    }
+
+    private void StartChannelsManager(IEnumerable<TopicPartition> topicPartitions)
+    {
+        if (!IsConsuming || IsStopping)
+            return;
+
+        _channelsManager.StartReading(topicPartitions);
+    }
+
+    private async Task RestartConsumeLoopHandlerAsync()
+    {
+        try
+        {
+            await WaitUntilConsumeLoopHandlerStopsAsync().ConfigureAwait(false);
+
+            StartConsumeLoopHandler();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogConsumerStartError(this, ex);
+            throw;
+        }
+    }
+
+    [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Synchronously called")]
+    private async Task WaitUntilConsumeLoopHandlerStopsAsync()
+    {
+        if (_consumeLoopHandler == null)
+        {
+            _logger.LogConsumerLowLevelTrace(this, "ConsumeLoopHandler is null.");
+            return;
+        }
+
+        _logger.LogConsumerLowLevelTrace(
+            this,
+            "Waiting until ConsumeLoopHandler stops... | instanceId: {instanceId}, taskId: {taskId}",
+            () => new object[]
+            {
+                _consumeLoopHandler.Id,
+                _consumeLoopHandler.Stopping.Id
+            });
+        await _consumeLoopHandler.Stopping.ConfigureAwait(false);
+        _logger.LogConsumerLowLevelTrace(
+            this,
+            "ConsumeLoopHandler stopped | instanceId: {instanceId}, taskId: {taskId}.",
+            () => new object[]
+            {
+                _consumeLoopHandler.Id,
+                _consumeLoopHandler.Stopping.Id
+            });
+    }
+
+    private async Task WaitUntilChannelsManagerStopsAsync()
+    {
+        _logger.LogConsumerLowLevelTrace(this, "Waiting until ChannelsManager stops...");
+        await _channelsManager.Stopping.ConfigureAwait(false);
+        _logger.LogConsumerLowLevelTrace(this, "ChannelsManager stopped.");
+    }
+
+    [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
+    private void DisposeConfluentConsumer()
+    {
+        try
+        {
+            _confluentConsumer?.Close();
+            _confluentConsumer?.Dispose();
+        }
+        catch (OperationCanceledException)
+        {
+            // Ignored
+        }
+        catch (Exception ex)
+        {
+            _logger.LogConfluentConsumerDisconnectError(this, ex);
+        }
+
+        _confluentConsumer = null;
+    }
+
+    private void StoreOffset(IEnumerable<TopicPartitionOffset> offsets)
+    {
+        foreach (TopicPartitionOffset? offset in offsets)
+        {
             _logger.LogConsumerLowLevelTrace(
                 this,
-                "ConsumeLoopHandler started. | instanceId: {instanceId}, taskId: {taskId}",
+                "Storing offset {topic}[{partition}]@{offset}.",
                 () => new object[]
                 {
-                    _consumeLoopHandler.Id,
-                    _consumeLoopHandler.Stopping.Id
+                    offset.Topic,
+                    offset.Partition.Value,
+                    offset.Offset.Value
                 });
+            ConfluentConsumer.StoreOffset(offset);
         }
+    }
 
-        private void StartChannelsManager(IEnumerable<TopicPartition> topicPartitions)
+    private void CommitOffsetsIfNeeded()
+    {
+        if (Configuration.Client.IsAutoCommitEnabled)
+            return;
+
+        lock (_messagesSinceCommitLock)
         {
-            if (!IsConsuming || IsStopping)
+            if (++_messagesSinceCommit < Configuration.Client.CommitOffsetEach)
                 return;
 
-            _channelsManager.StartReading(topicPartitions);
+            _messagesSinceCommit = 0;
         }
 
-        private async Task RestartConsumeLoopHandlerAsync()
-        {
-            try
-            {
-                await WaitUntilConsumeLoopHandlerStopsAsync().ConfigureAwait(false);
+        ConfluentConsumer.Commit();
+    }
 
-                StartConsumeLoopHandler();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogConsumerStartError(this, ex);
-                throw;
-            }
+    private void CommitOffsets()
+    {
+        if (_messagesSinceCommit == 0)
+            return;
+
+        try
+        {
+            List<TopicPartitionOffset>? offsets = ConfluentConsumer.Commit();
+
+            _callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
+                handler => handler.OnOffsetsCommitted(
+                    new CommittedOffsets(
+                        offsets.Select(
+                                offset =>
+                                    new TopicPartitionOffsetError(
+                                        offset,
+                                        new Error(ErrorCode.NoError)))
+                            .ToList(),
+                        new Error(ErrorCode.NoError)),
+                    this));
         }
-
-        [SuppressMessage("ReSharper", "AccessToDisposedClosure", Justification = "Synchronously called")]
-        private async Task WaitUntilConsumeLoopHandlerStopsAsync()
+        catch (TopicPartitionOffsetException ex)
         {
-            if (_consumeLoopHandler == null)
-            {
-                _logger.LogConsumerLowLevelTrace(this, "ConsumeLoopHandler is null.");
-                return;
-            }
+            _callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(handler => handler.OnOffsetsCommitted(new CommittedOffsets(ex.Results, ex.Error), this));
 
-            _logger.LogConsumerLowLevelTrace(
-                this,
-                "Waiting until ConsumeLoopHandler stops... | instanceId: {instanceId}, taskId: {taskId}",
-                () => new object[]
-                {
-                    _consumeLoopHandler.Id,
-                    _consumeLoopHandler.Stopping.Id
-                });
-            await _consumeLoopHandler.Stopping.ConfigureAwait(false);
-            _logger.LogConsumerLowLevelTrace(
-                this,
-                "ConsumeLoopHandler stopped | instanceId: {instanceId}, taskId: {taskId}.",
-                () => new object[]
-                {
-                    _consumeLoopHandler.Id,
-                    _consumeLoopHandler.Stopping.Id
-                });
+            throw;
         }
-
-        private async Task WaitUntilChannelsManagerStopsAsync()
+        catch (KafkaException ex)
         {
-            _logger.LogConsumerLowLevelTrace(this, "Waiting until ChannelsManager stops...");
-            await _channelsManager.Stopping.ConfigureAwait(false);
-            _logger.LogConsumerLowLevelTrace(this, "ChannelsManager stopped.");
-        }
-
-        [SuppressMessage("", "CA1031", Justification = Justifications.ExceptionLogged)]
-        private void DisposeConfluentConsumer()
-        {
-            try
-            {
-                _confluentConsumer?.Close();
-                _confluentConsumer?.Dispose();
-            }
-            catch (OperationCanceledException)
-            {
-                // Ignored
-            }
-            catch (Exception ex)
-            {
-                _logger.LogConfluentConsumerDisconnectError(this, ex);
-            }
-
-            _confluentConsumer = null;
-        }
-
-        private void StoreOffset(IEnumerable<TopicPartitionOffset> offsets)
-        {
-            foreach (var offset in offsets)
-            {
-                _logger.LogConsumerLowLevelTrace(
-                    this,
-                    "Storing offset {topic}[{partition}]@{offset}.",
-                    () => new object[]
-                    {
-                        offset.Topic,
-                        offset.Partition.Value,
-                        offset.Offset.Value
-                    });
-                ConfluentConsumer.StoreOffset(offset);
-            }
-        }
-
-        private void CommitOffsetsIfNeeded()
-        {
-            if (Endpoint.Configuration.IsAutoCommitEnabled)
-                return;
-
-            lock (_messagesSinceCommitLock)
-            {
-                if (++_messagesSinceCommit < Endpoint.Configuration.CommitOffsetEach)
-                    return;
-
-                _messagesSinceCommit = 0;
-            }
-
-            ConfluentConsumer.Commit();
-        }
-
-        private void CommitOffsets()
-        {
-            if (_messagesSinceCommit == 0)
-                return;
-
-            try
-            {
-                var offsets = ConfluentConsumer.Commit();
-
-                _callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
-                    handler => handler.OnOffsetsCommitted(
-                        new CommittedOffsets(
-                            offsets.Select(
-                                    offset =>
-                                        new TopicPartitionOffsetError(
-                                            offset,
-                                            new Error(ErrorCode.NoError)))
-                                .ToList(),
-                            new Error(ErrorCode.NoError)),
-                        this));
-            }
-            catch (TopicPartitionOffsetException ex)
-            {
-                _callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
-                    handler => handler.OnOffsetsCommitted(
-                        new CommittedOffsets(ex.Results, ex.Error),
-                        this));
-
-                throw;
-            }
-            catch (KafkaException ex)
-            {
-                _callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(
-                    handler => handler.OnOffsetsCommitted(
-                        new CommittedOffsets(null, ex.Error),
-                        this));
-            }
+            _callbacksInvoker.Invoke<IKafkaOffsetCommittedCallback>(handler => handler.OnOffsetsCommitted(new CommittedOffsets(null, ex.Error), this));
         }
     }
 }

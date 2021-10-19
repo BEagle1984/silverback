@@ -6,7 +6,7 @@ using Silverback.Messaging.Configuration.Rabbit;
 namespace Silverback.Messaging
 {
     /// <summary>
-    ///     Represents a queue or exchange to consume from.
+    ///     The Rabbit consumer configuration.
     /// </summary>
     public abstract class RabbitConsumerEndpoint : ConsumerEndpoint
     {

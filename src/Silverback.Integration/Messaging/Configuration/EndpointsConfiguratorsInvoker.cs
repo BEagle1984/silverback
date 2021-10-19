@@ -45,10 +45,10 @@ namespace Silverback.Messaging.Configuration
 
         private async Task InvokeCoreAsync()
         {
-            using var scope = _scopeFactory.CreateScope();
-            var endpointsConfigurationBuilder = new EndpointsConfigurationBuilder(scope.ServiceProvider);
+            using IServiceScope? scope = _scopeFactory.CreateScope();
+            EndpointsConfigurationBuilder endpointsConfigurationBuilder = new(scope.ServiceProvider);
 
-            foreach (var configurator in scope.ServiceProvider.GetServices<IEndpointsConfigurator>())
+            foreach (IEndpointsConfigurator? configurator in scope.ServiceProvider.GetServices<IEndpointsConfigurator>())
             {
                 InvokeConfigurator(configurator, endpointsConfigurationBuilder);
             }

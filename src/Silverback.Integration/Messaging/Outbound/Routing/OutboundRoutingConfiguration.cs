@@ -6,41 +6,52 @@ using System.Collections.Generic;
 using System.Linq;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Messaging.Outbound.Routing
+namespace Silverback.Messaging.Outbound.Routing;
+
+internal sealed class OutboundRoutingConfiguration : IOutboundRoutingConfiguration
 {
-    internal sealed class OutboundRoutingConfiguration : IOutboundRoutingConfiguration
+    private readonly List<OutboundRoute> _routes = new();
+
+    public IReadOnlyCollection<IOutboundRoute> Routes => _routes.AsReadOnly();
+
+    public bool PublishOutboundMessagesToInternalBus { get; set; }
+
+    public bool IdempotentEndpointRegistration { get; set; } = true;
+
+    public void AddRoute(Type messageType, ProducerConfiguration producerConfiguration) =>
+        _routes.Add(new OutboundRoute(messageType, producerConfiguration));
+
+    public IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(object message) =>
+        GetRoutesForMessage(message.GetType());
+
+    public IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(Type messageType) =>
+        _routes.Where(
+            route => route.MessageType.IsAssignableFrom(messageType) ||
+                     IsCompatibleTombstone(route, messageType)).ToList();
+
+    public bool IsAlreadyRegistered(Type messageType, ProducerConfiguration producerConfiguration)
     {
-        private readonly List<OutboundRoute> _routes = new();
+        ProducerConfiguration? alreadyRegisteredEndpoint = _routes
+            .Where(route => route.MessageType == messageType && route.ProducerConfiguration.RawName == producerConfiguration.RawName)
+            .Select(route => route.ProducerConfiguration)
+            .FirstOrDefault();
 
-        public IReadOnlyCollection<IOutboundRoute> Routes => _routes.AsReadOnly();
+        if (alreadyRegisteredEndpoint == null)
+            return false;
 
-        public bool PublishOutboundMessagesToInternalBus { get; set; }
-
-        public bool IdempotentEndpointRegistration { get; set; } = true;
-
-        public IOutboundRoutingConfiguration Add<TMessage>(
-            Func<IServiceProvider, IOutboundRouter> outboundRouterFactory) =>
-            Add(typeof(TMessage), outboundRouterFactory);
-
-        public IOutboundRoutingConfiguration Add(
-            Type messageType,
-            Func<IServiceProvider, IOutboundRouter> outboundRouterFactory)
+        if (!producerConfiguration.Equals(alreadyRegisteredEndpoint))
         {
-            _routes.Add(new OutboundRoute(messageType, outboundRouterFactory));
-            return this;
+            throw new EndpointConfigurationException(
+                $"An endpoint \"{producerConfiguration.RawName}\" for message type \"{messageType.FullName}\" " +
+                "is already registered with a different configuration. If this is intentional you can disable " +
+                "this check using the AllowDuplicateEndpointRegistrations.");
         }
 
-        public IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(object message) =>
-            GetRoutesForMessage(message.GetType());
-
-        public IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(Type messageType) =>
-            _routes.Where(
-                route => route.MessageType.IsAssignableFrom(messageType) ||
-                         IsCompatibleTombstone(route, messageType)).ToList();
-
-        private static bool IsCompatibleTombstone(OutboundRoute route, Type messageType) =>
-            typeof(Tombstone).IsAssignableFrom(messageType) &&
-            messageType.GenericTypeArguments.Length == 1 &&
-            route.MessageType.IsAssignableFrom(messageType.GenericTypeArguments[0]);
+        return true;
     }
+
+    private static bool IsCompatibleTombstone(OutboundRoute route, Type messageType) =>
+        typeof(Tombstone).IsAssignableFrom(messageType) &&
+        messageType.GenericTypeArguments.Length == 1 &&
+        route.MessageType.IsAssignableFrom(messageType.GenericTypeArguments[0]);
 }

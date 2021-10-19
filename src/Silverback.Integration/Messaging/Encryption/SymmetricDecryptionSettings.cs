@@ -8,12 +8,12 @@ namespace Silverback.Messaging.Encryption
     /// <summary>
     ///     The decryption settings used to decrypt the messages.
     /// </summary>
-    public class SymmetricDecryptionSettings : SymmetricEncryptionSettingsBase
+    public record SymmetricDecryptionSettings : SymmetricEncryptionSettingsBase
     {
         /// <summary>
-        ///     Gets or sets the function to be used to retrieve the decryption key.
+        ///     Gets the function to be used to retrieve the decryption key.
         /// </summary>
-        public Func<string?, byte[]>? KeyProvider { get; set; }
+        public Func<string?, byte[]>? KeyProvider { get; init; }
 
         /// <inheritdoc cref="EncryptionSettings.Validate" />
         public override void Validate()

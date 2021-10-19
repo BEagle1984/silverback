@@ -10,11 +10,11 @@ namespace Silverback.Diagnostics
 {
     internal sealed class MappedLevelsLogger<TCategoryName> : IMappedLevelsLogger<TCategoryName>
     {
-        private readonly ILogLevelDictionary _logLevelDictionary;
+        private readonly LogLevelDictionary _logLevelDictionary;
 
         private readonly ILogger _innerLogger;
 
-        public MappedLevelsLogger(ILogger<TCategoryName> logger, ILogLevelDictionary logLevelDictionary)
+        public MappedLevelsLogger(LogLevelDictionary logLevelDictionary, ILogger<TCategoryName> logger)
         {
             Check.NotNull(logger, nameof(logger));
             Check.NotNull(logLevelDictionary, nameof(logLevelDictionary));

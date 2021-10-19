@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Broker
 {
     /// <summary>
     ///     <para>
-    ///         Represents the primary identifier used by the message broker to recognize the exact message. This
+    ///         The primary identifier used by the message broker to recognize the exact message. This
     ///         is different than the base <see cref="IBrokerMessageIdentifier" /> because it has a ordinal
     ///         meaning and is comparable.
     ///     </para>

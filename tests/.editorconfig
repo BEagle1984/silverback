@@ -23,6 +23,8 @@ dotnet_diagnostic.CA2213.severity = none
 dotnet_diagnostic.CA2234.severity = none
 # CA5358: Review cipher mode usage with cryptography experts
 dotnet_diagnostic.CA5358.severity = none
+# CA5394: Do not use insecure randomness
+dotnet_diagnostic.CA5394.severity = none
 # CA5398: Avoid hardcoded SslProtocols values
 dotnet_diagnostic.CA5398.severity = none
 
@@ -31,6 +33,8 @@ dotnet_diagnostic.CA5398.severity = none
 dotnet_diagnostic.SA0001.severity = none
 # SA1600: A C# code element is missing a documentation header
 dotnet_diagnostic.SA1600.severity = none
+# SA1601: A C# partial element is missing a documentation header.
+dotnet_diagnostic.SA1601.severity = none
 # SA1602: Enumeration items should be documented
 dotnet_diagnostic.SA1602.severity = none
 

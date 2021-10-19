@@ -30,36 +30,15 @@ namespace Silverback.Messaging.Outbound.Routing
         bool IdempotentEndpointRegistration { get; set; }
 
         /// <summary>
-        ///     Add an outbound routing rule.
-        /// </summary>
-        /// <typeparam name="TMessage">
-        ///     The type of the messages to be routed.
-        /// </typeparam>
-        /// <param name="outboundRouterFactory">
-        ///     The factory method to be used to get the instance of <see cref="IOutboundRouter" /> to be used to
-        ///     determine the destination endpoint.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IOutboundRoutingConfiguration" /> so that additional calls can be chained.
-        /// </returns>
-        IOutboundRoutingConfiguration Add<TMessage>(Func<IServiceProvider, IOutboundRouter> outboundRouterFactory);
-
-        /// <summary>
-        ///     Add an outbound routing rule.
+        ///     Add an outbound route.
         /// </summary>
         /// <param name="messageType">
         ///     The type of the messages to be routed.
         /// </param>
-        /// <param name="outboundRouterFactory">
-        ///     The factory method to be used to get the instance of <see cref="IOutboundRouter" /> to be used to
-        ///     determine the destination endpoint.
+        /// <param name="producerConfiguration">
+        ///     The producer configuration.
         /// </param>
-        /// <returns>
-        ///     The <see cref="IOutboundRoutingConfiguration" /> so that additional calls can be chained.
-        /// </returns>
-        IOutboundRoutingConfiguration Add(
-            Type messageType,
-            Func<IServiceProvider, IOutboundRouter> outboundRouterFactory);
+        void AddRoute(Type messageType, ProducerConfiguration producerConfiguration);
 
         /// <summary>
         ///     Returns the outbound routes that apply to the specified message.
@@ -82,5 +61,22 @@ namespace Silverback.Messaging.Outbound.Routing
         ///     The outbound routes for the specified message.
         /// </returns>
         IReadOnlyCollection<IOutboundRoute> GetRoutesForMessage(Type messageType);
+
+        /// <summary>
+        ///     Returns a value indicating whether the same route has been already registered.
+        /// </summary>
+        /// <remarks>
+        ///     An exception will be thrown if a similar route is registered but with a different configuration.
+        /// </remarks>
+        /// <param name="messageType">
+        ///     The type of the messages to be routed.
+        /// </param>
+        /// <param name="producerConfiguration">
+        ///     The producer configuration.
+        /// </param>
+        /// <returns>
+        ///     A value indicating whether the same route has been already registered.
+        /// </returns>
+        bool IsAlreadyRegistered(Type messageType, ProducerConfiguration producerConfiguration);
     }
 }

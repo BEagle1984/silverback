@@ -15,12 +15,12 @@ namespace Silverback.Messaging.Broker.Callbacks
         /// <summary>
         ///     Called when the underlying <see cref="IMqttClient" /> connects to the broker.
         /// </summary>
-        /// <param name="config">
+        /// <param name="configuration">
         ///     The client configuration.
         /// </param>
         /// <returns>
         ///     A <see cref="Task" /> representing the asynchronous operation.
         /// </returns>
-        Task OnClientConnectedAsync(MqttClientConfig config);
+        Task OnClientConnectedAsync(MqttClientConfiguration configuration);
     }
 }

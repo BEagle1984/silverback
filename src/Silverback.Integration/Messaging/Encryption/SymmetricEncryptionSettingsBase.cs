@@ -10,38 +10,38 @@ namespace Silverback.Messaging.Encryption
     ///     The base class for symmetric encryption settings used to encrypt or decrypt the messages being sent through the
     ///     message broker.
     /// </summary>
-    public abstract class SymmetricEncryptionSettingsBase : EncryptionSettings
+    public abstract record SymmetricEncryptionSettingsBase : EncryptionSettings
     {
         /// <summary>
-        ///     Gets or sets the name of the specific implementation of the <see cref="SymmetricAlgorithm" /> class
+        ///     Gets the name of the specific implementation of the <see cref="SymmetricAlgorithm" /> class
         ///     to use to encrypt or decrypt the messages.
         /// </summary>
-        public string AlgorithmName { get; set; } = "AES";
+        public string AlgorithmName { get; init; } = "AES";
 
         /// <summary>
         ///     <para>
-        ///         Gets or sets the block size, in bits, of the cryptographic operation.
+        ///         Gets the block size, in bits, of the cryptographic operation.
         ///     </para>
         ///     <para>
         ///         If <c>null</c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
-        public int? BlockSize { get; set; }
+        public int? BlockSize { get; init; }
 
         /// <summary>
         ///     <para>
-        ///         Gets or sets the feedback size, in bits, of the cryptographic operation for the Cipher Feedback
+        ///         Gets the feedback size, in bits, of the cryptographic operation for the Cipher Feedback
         ///         (CFB) and Output Feedback (OFB) cipher modes.
         ///     </para>
         ///     <para>
         ///         If <c>null</c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
-        public int? FeedbackSize { get; set; }
+        public int? FeedbackSize { get; init; }
 
         /// <summary>
         ///     <para>
-        ///         Gets or sets the optional initialization vector (IV) for the symmetric algorithm.
+        ///         Gets the optional initialization vector (IV) for the symmetric algorithm.
         ///     </para>
         ///     <para>
         ///         <b>Important:</b> If <c>null</c> no fixed IV is provided and the producer will automatically
@@ -51,33 +51,33 @@ namespace Silverback.Messaging.Encryption
         ///     </para>
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        public byte[]? InitializationVector { get; set; }
+        public byte[]? InitializationVector { get; init; }
 
         /// <summary>
-        ///     Gets or sets the secret key for the symmetric algorithm.
+        ///     Gets the secret key for the symmetric algorithm.
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        public byte[]? Key { get; set; }
+        public byte[]? Key { get; init; }
 
         /// <summary>
         ///     <para>
-        ///         Gets or sets the mode for operation of the symmetric algorithm.
+        ///         Gets the mode for operation of the symmetric algorithm.
         ///     </para>
         ///     <para>
         ///         If <c>null</c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
-        public CipherMode? CipherMode { get; set; }
+        public CipherMode? CipherMode { get; init; }
 
         /// <summary>
         ///     <para>
-        ///         Gets or sets the padding mode used in the symmetric algorithm.
+        ///         Gets the padding mode used in the symmetric algorithm.
         ///     </para>
         ///     <para>
         ///         If <c>null</c>, the default value for the specified algorithm will be used.
         ///     </para>
         /// </summary>
-        public PaddingMode? PaddingMode { get; set; }
+        public PaddingMode? PaddingMode { get; init; }
 
         /// <inheritdoc cref="EncryptionSettings.Validate" />
         public override void Validate()

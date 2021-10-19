@@ -12,138 +12,129 @@ using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositories
+namespace Silverback.Tests.Integration.Messaging.Inbound.ExactlyOnce.Repositories;
+
+public class InMemoryInboundLogTests
 {
-    public class InMemoryInboundLogTests
+    private readonly InMemoryInboundLog _log;
+
+    public InMemoryInboundLogTests()
     {
-        private readonly InMemoryInboundLog _log;
+        _log = new InMemoryInboundLog(new TransactionalListSharedItems<InboundLogEntry>());
+    }
 
-        public InMemoryInboundLogTests()
+    [Fact]
+    public async Task Add_SomeEnvelopesNoCommit_LogStillEmpty()
+    {
+        await _log.AddAsync(GetEnvelope());
+        await _log.AddAsync(GetEnvelope());
+        await _log.AddAsync(GetEnvelope());
+
+        (await _log.GetLengthAsync()).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task Add_SomeEnvelopesAndCommit_Logged()
+    {
+        await _log.AddAsync(GetEnvelope());
+        await _log.AddAsync(GetEnvelope());
+        await _log.AddAsync(GetEnvelope());
+
+        await _log.CommitAsync();
+
+        (await _log.GetLengthAsync()).Should().Be(3);
+    }
+
+    [Fact]
+    public async Task Add_SomeEnvelopesAndRollback_LogStillEmpty()
+    {
+        await _log.AddAsync(GetEnvelope());
+        await _log.AddAsync(GetEnvelope());
+        await _log.AddAsync(GetEnvelope());
+
+        await _log.RollbackAsync();
+
+        (await _log.GetLengthAsync()).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task Exists_LoggedEnvelope_TrueReturned()
+    {
+        Guid messageId = Guid.NewGuid();
+        await _log.AddAsync(GetEnvelope());
+        await _log.AddAsync(GetEnvelope(messageId));
+        await _log.AddAsync(GetEnvelope());
+        await _log.CommitAsync();
+
+        bool result = await _log.ExistsAsync(GetEnvelope(messageId));
+
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task Exists_SameIdInDifferentTopic_FalseReturned()
+    {
+        Guid messageId = Guid.NewGuid();
+        TestConsumerConfiguration configuration1 = new("topic1")
         {
-            _log = new InMemoryInboundLog(new TransactionalListSharedItems<InboundLogEntry>());
-        }
-
-        [Fact]
-        public async Task Add_SomeEnvelopesNoCommit_LogStillEmpty()
+            GroupId = "same"
+        };
+        TestConsumerConfiguration configuration2 = new("topic2")
         {
-            await _log.AddAsync(GetEnvelope());
-            await _log.AddAsync(GetEnvelope());
-            await _log.AddAsync(GetEnvelope());
+            GroupId = "same"
+        };
+        IRawInboundEnvelope envelope1 = GetEnvelope(messageId, configuration1.GetDefaultEndpoint());
+        IRawInboundEnvelope envelope2 = GetEnvelope(messageId, configuration2.GetDefaultEndpoint());
 
-            (await _log.GetLengthAsync()).Should().Be(0);
-        }
+        await _log.AddAsync(envelope1);
+        await _log.CommitAsync();
 
-        [Fact]
-        public async Task Add_SomeEnvelopesAndCommit_Logged()
+        bool result = await _log.ExistsAsync(envelope2);
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Exists_SameIdForDifferentConsumerGroup_FalseReturned()
+    {
+        Guid messageId = Guid.NewGuid();
+        TestConsumerConfiguration configuration1 = new("same")
         {
-            await _log.AddAsync(GetEnvelope());
-            await _log.AddAsync(GetEnvelope());
-            await _log.AddAsync(GetEnvelope());
-
-            await _log.CommitAsync();
-
-            (await _log.GetLengthAsync()).Should().Be(3);
-        }
-
-        [Fact]
-        public async Task Add_SomeEnvelopesAndRollback_LogStillEmpty()
+            GroupId = "group1"
+        };
+        TestConsumerConfiguration configuration2 = new("same")
         {
-            await _log.AddAsync(GetEnvelope());
-            await _log.AddAsync(GetEnvelope());
-            await _log.AddAsync(GetEnvelope());
+            GroupId = "group2"
+        };
+        IRawInboundEnvelope envelope1 = GetEnvelope(messageId, configuration1.GetDefaultEndpoint());
+        IRawInboundEnvelope envelope2 = GetEnvelope(messageId, configuration2.GetDefaultEndpoint());
 
-            await _log.RollbackAsync();
+        await _log.AddAsync(envelope1);
+        await _log.CommitAsync();
 
-            (await _log.GetLengthAsync()).Should().Be(0);
-        }
+        bool result = await _log.ExistsAsync(envelope2);
 
-        [Fact]
-        public async Task Exists_LoggedEnvelope_TrueIsReturned()
-        {
-            var messageId = Guid.NewGuid();
-            await _log.AddAsync(GetEnvelope());
-            await _log.AddAsync(GetEnvelope(messageId));
-            await _log.AddAsync(GetEnvelope());
-            await _log.CommitAsync();
+        result.Should().BeFalse();
+    }
 
-            var result = await _log.ExistsAsync(GetEnvelope(messageId));
+    [Fact]
+    public async Task Exists_NotLoggedEnvelope_FalseReturned()
+    {
+        await _log.AddAsync(GetEnvelope());
+        await _log.AddAsync(GetEnvelope());
+        await _log.AddAsync(GetEnvelope());
 
-            result.Should().BeTrue();
-        }
+        bool result = await _log.ExistsAsync(GetEnvelope());
 
-        [Fact]
-        public async Task Exists_SameIdInDifferentTopic_FalseIsReturned()
-        {
-            var messageId = Guid.NewGuid();
-            var endpoint1 = new TestConsumerEndpoint("topic1")
-            {
-                GroupId = "same"
-            };
-            var endpoint2 = new TestConsumerEndpoint("topic2")
-            {
-                GroupId = "same"
-            };
-            var envelope1 = GetEnvelope(messageId, endpoint1);
-            var envelope2 = GetEnvelope(messageId, endpoint2);
+        result.Should().BeFalse();
+    }
 
-            await _log.AddAsync(envelope1);
-            await _log.CommitAsync();
+    private static IRawInboundEnvelope GetEnvelope(Guid? messageId = null, ConsumerEndpoint? endpoint = null)
+    {
+        endpoint ??= TestConsumerEndpoint.GetDefault();
 
-            var result = await _log.ExistsAsync(envelope2);
+        MessageHeader[] headers = { new("x-message-id", messageId?.ToString() ?? Guid.NewGuid().ToString()) };
 
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public async Task Exists_SameIdForDifferentConsumerGroup_FalseIsReturned()
-        {
-            var messageId = Guid.NewGuid();
-            var endpoint1 = new TestConsumerEndpoint("same")
-            {
-                GroupId = "group1"
-            };
-            var endpoint2 = new TestConsumerEndpoint("same")
-            {
-                GroupId = "group2"
-            };
-            var envelope1 = GetEnvelope(messageId, endpoint1);
-            var envelope2 = GetEnvelope(messageId, endpoint2);
-
-            await _log.AddAsync(envelope1);
-            await _log.CommitAsync();
-
-            var result = await _log.ExistsAsync(envelope2);
-
-            result.Should().BeFalse();
-        }
-
-        [Fact]
-        public async Task Exists_NotLoggedEnvelope_FalseIsReturned()
-        {
-            await _log.AddAsync(GetEnvelope());
-            await _log.AddAsync(GetEnvelope());
-            await _log.AddAsync(GetEnvelope());
-
-            var result = await _log.ExistsAsync(GetEnvelope());
-
-            result.Should().BeFalse();
-        }
-
-        private static IRawInboundEnvelope GetEnvelope(Guid? messageId = null, IConsumerEndpoint? endpoint = null)
-        {
-            endpoint ??= TestConsumerEndpoint.GetDefault();
-
-            var headers = new[]
-            {
-                new MessageHeader("x-message-id", messageId?.ToString() ?? Guid.NewGuid().ToString())
-            };
-
-            return new RawInboundEnvelope(
-                Array.Empty<byte>(),
-                headers,
-                endpoint,
-                endpoint.Name,
-                new TestOffset());
-        }
+        return new RawInboundEnvelope(Array.Empty<byte>(), headers, endpoint, new TestOffset());
     }
 }

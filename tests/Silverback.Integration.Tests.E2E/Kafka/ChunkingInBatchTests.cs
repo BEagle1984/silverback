@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Integration.E2E.TestHost;
@@ -27,7 +29,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task Chunking_JsonConsumedInBatch_ProducedAndConsumed()
         {
-            var batches = new List<List<TestEventOne>>();
+            List<List<TestEventOne>> batches = new();
             string? failedCommit = null;
             string? enumerationAborted = null;
 
@@ -37,39 +39,43 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(
-                            options => options.AddMockedKafka(
-                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                            options => options
+                                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .ConfigureClient(
+                                    configuration =>
+                                    {
+                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint
+                                    producer => producer
                                         .ProduceTo(DefaultTopicName)
                                         .EnableChunking(10))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .EnableBatchProcessing(3)
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                                config.EnableAutoCommit = false;
-                                                config.CommitOffsetEach = 1;
+                                                configuration.GroupId = DefaultConsumerGroupId;
+                                                configuration.EnableAutoCommit = false;
+                                                configuration.CommitOffsetEach = 1;
                                             })))
                         .AddDelegateSubscriber(
                             async (IAsyncEnumerable<TestEventOne> streamEnumerable) =>
                             {
-                                var list = new List<TestEventOne>();
+                                List<TestEventOne> list = new();
                                 batches.ThreadSafeAdd(list);
 
-                                await foreach (var message in streamEnumerable)
+                                await foreach (TestEventOne message in streamEnumerable)
                                 {
                                     list.Add(message);
 
-                                    var actualCommittedOffsets =
+                                    long actualCommittedOffsets =
                                         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
-                                    var expectedCommittedOffsets = 9 * (batches.Count - 1);
+                                    int expectedCommittedOffsets = 9 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
                                     {
@@ -88,7 +94,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= 9; i++)
             {
@@ -123,7 +129,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task Chunking_BinaryFileConsumedInBatch_ProducedAndConsumed()
         {
-            var batches = new List<List<string?>>();
+            List<List<string?>> batches = new();
             string? failedCommit = null;
             string? enumerationAborted = null;
 
@@ -133,37 +139,41 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(
-                            options => options.AddMockedKafka(
-                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                            options => options
+                                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .ConfigureClient(
+                                    configuration =>
+                                    {
+                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    endpoint => endpoint
+                                    producer => producer
                                         .ProduceTo(DefaultTopicName)
                                         .EnableChunking(10))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .EnableBatchProcessing(5)
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                                config.EnableAutoCommit = false;
-                                                config.CommitOffsetEach = 1;
+                                                configuration.GroupId = DefaultConsumerGroupId;
+                                                configuration.EnableAutoCommit = false;
+                                                configuration.CommitOffsetEach = 1;
                                             })))
                         .AddDelegateSubscriber(
                             async (IAsyncEnumerable<BinaryFileMessage> streamEnumerable) =>
                             {
-                                var list = new List<string?>();
+                                List<string?> list = new();
                                 batches.ThreadSafeAdd(list);
 
-                                await foreach (var message in streamEnumerable)
+                                await foreach (BinaryFileMessage message in streamEnumerable)
                                 {
-                                    var actualCommittedOffsets =
+                                    long actualCommittedOffsets =
                                         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
-                                    var expectedCommittedOffsets = 10 * (batches.Count - 1);
+                                    int expectedCommittedOffsets = 10 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
                                     {
@@ -172,7 +182,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             $"({batches.Count}.{list.Count})";
                                     }
 
-                                    var readAll = await message.Content.ReadAllAsync();
+                                    byte[]? readAll = await message.Content.ReadAllAsync();
                                     list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
                                 }
 
@@ -185,12 +195,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             for (int i = 1; i <= 15; i++)
             {
-                await publisher.PublishAsync(
-                    new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
+                await publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
             }
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();
@@ -227,7 +236,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task Chunking_SingleChunkJsonConsumedInBatch_ProducedAndConsumed()
         {
-            var batches = new List<List<TestEventOne>>();
+            List<List<TestEventOne>> batches = new();
             string? failedCommit = null;
             string? enumerationAborted = null;
 
@@ -237,39 +246,43 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(
-                            options => options.AddMockedKafka(
-                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                            options => options
+                                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .ConfigureClient(
+                                    configuration =>
+                                    {
+                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint
+                                    producer => producer
                                         .ProduceTo(DefaultTopicName)
                                         .EnableChunking(50))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .EnableBatchProcessing(3)
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                                config.EnableAutoCommit = false;
-                                                config.CommitOffsetEach = 1;
+                                                configuration.GroupId = DefaultConsumerGroupId;
+                                                configuration.EnableAutoCommit = false;
+                                                configuration.CommitOffsetEach = 1;
                                             })))
                         .AddDelegateSubscriber(
                             async (IAsyncEnumerable<TestEventOne> streamEnumerable) =>
                             {
-                                var list = new List<TestEventOne>();
+                                List<TestEventOne> list = new();
                                 batches.ThreadSafeAdd(list);
 
-                                await foreach (var message in streamEnumerable)
+                                await foreach (TestEventOne message in streamEnumerable)
                                 {
                                     list.Add(message);
 
-                                    var actualCommittedOffsets =
+                                    long actualCommittedOffsets =
                                         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
-                                    var expectedCommittedOffsets = 3 * (batches.Count - 1);
+                                    int expectedCommittedOffsets = 3 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
                                     {
@@ -288,7 +301,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             for (int i = 1; i <= 9; i++)
             {
@@ -323,7 +336,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
         [Fact]
         public async Task Chunking_SingleChunkBinaryFileConsumedInBatch_ProducedAndConsumed()
         {
-            var batches = new List<List<string?>>();
+            List<List<string?>> batches = new();
             string? failedCommit = null;
             string? enumerationAborted = null;
 
@@ -333,37 +346,41 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(
-                            options => options.AddMockedKafka(
-                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                            options => options
+                                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(config => { config.BootstrapServers = "PLAINTEXT://e2e"; })
+                                .ConfigureClient(
+                                    configuration =>
+                                    {
+                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                    })
                                 .AddOutbound<IBinaryFileMessage>(
-                                    endpoint => endpoint
+                                    producer => producer
                                         .ProduceTo(DefaultTopicName)
                                         .EnableChunking(50))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .EnableBatchProcessing(5)
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                                config.EnableAutoCommit = false;
-                                                config.CommitOffsetEach = 1;
+                                                configuration.GroupId = DefaultConsumerGroupId;
+                                                configuration.EnableAutoCommit = false;
+                                                configuration.CommitOffsetEach = 1;
                                             })))
                         .AddDelegateSubscriber(
                             async (IAsyncEnumerable<BinaryFileMessage> streamEnumerable) =>
                             {
-                                var list = new List<string?>();
+                                List<string?> list = new();
                                 batches.ThreadSafeAdd(list);
 
-                                await foreach (var message in streamEnumerable)
+                                await foreach (BinaryFileMessage message in streamEnumerable)
                                 {
-                                    var actualCommittedOffsets =
+                                    long actualCommittedOffsets =
                                         DefaultConsumerGroup.GetCommittedOffsetsCount(DefaultTopicName);
-                                    var expectedCommittedOffsets = 5 * (batches.Count - 1);
+                                    int expectedCommittedOffsets = 5 * (batches.Count - 1);
 
                                     if (actualCommittedOffsets != expectedCommittedOffsets)
                                     {
@@ -372,7 +389,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                             $"({batches.Count}.{list.Count})";
                                     }
 
-                                    var readAll = await message.Content.ReadAllAsync();
+                                    byte[]? readAll = await message.Content.ReadAllAsync();
                                     list.Add(readAll != null ? Encoding.UTF8.GetString(readAll) : null);
                                 }
 
@@ -385,12 +402,11 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                             }))
                 .Run();
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
+            IPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IPublisher>();
 
             for (int i = 1; i <= 15; i++)
             {
-                await publisher.PublishAsync(
-                    new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
+                await publisher.PublishAsync(new BinaryFileMessage(Encoding.UTF8.GetBytes($"Long message {i}")));
             }
 
             await Helper.WaitUntilAllMessagesAreConsumedAsync();

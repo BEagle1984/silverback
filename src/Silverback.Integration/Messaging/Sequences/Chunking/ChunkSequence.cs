@@ -10,7 +10,7 @@ using Silverback.Util;
 namespace Silverback.Messaging.Sequences.Chunking
 {
     /// <summary>
-    ///     Represents a sequence of chunks that belong to the same message.
+    ///     A sequence of chunks that belong to the same message.
     /// </summary>
     public class ChunkSequence : RawSequence
     {

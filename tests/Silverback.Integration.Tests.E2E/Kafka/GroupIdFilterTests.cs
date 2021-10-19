@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers;
@@ -38,34 +40,33 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(
-                                    config =>
+                                .ConfigureClient(
+                                    configuration =>
                                     {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
+                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = "group1";
+                                                configuration.GroupId = "group1";
                                             }))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = "group2";
+                                                configuration.GroupId = "group2";
                                             })))
                         .AddSingletonSubscriber<DecoratedSubscriber>()
                         .AddIntegrationSpy())
                 .Run();
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventOne());
@@ -75,7 +76,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
 
-            var subscriber = Host.ServiceProvider.GetRequiredService<DecoratedSubscriber>();
+            DecoratedSubscriber subscriber = Host.ServiceProvider.GetRequiredService<DecoratedSubscriber>();
             subscriber.ReceivedConsumer1.Should().Be(3);
             subscriber.ReceivedConsumer2.Should().Be(3);
         }
@@ -91,7 +92,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(
+                                .ConfigureClient(
                                     config =>
                                     {
                                         config.BootstrapServers = "PLAINTEXT://tests";
@@ -101,7 +102,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
+                                        .ConfigureClient(
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
@@ -109,7 +110,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
+                                        .ConfigureClient(
                                             config =>
                                             {
                                                 config.GroupId = "consumer2";
@@ -153,7 +154,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(options => options.AddMockedKafka())
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(
+                                .ConfigureClient(
                                     config =>
                                     {
                                         config.BootstrapServers = "PLAINTEXT://tests";
@@ -163,7 +164,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
+                                        .ConfigureClient(
                                             config =>
                                             {
                                                 config.GroupId = "consumer1";
@@ -171,7 +172,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                                 .AddInbound(
                                     endpoint => endpoint
                                         .ConsumeFrom(DefaultTopicName)
-                                        .Configure(
+                                        .ConfigureClient(
                                             config =>
                                             {
                                                 config.GroupId = "consumer2";
@@ -220,40 +221,39 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .UseModel()
                         .WithConnectionToMessageBroker(
-                            options => options.AddMockedKafka(
-                                mockedKafkaOptions => mockedKafkaOptions.WithDefaultPartitionsCount(1)))
+                            options => options
+                                .AddMockedKafka(mockOptions => mockOptions.WithDefaultPartitionsCount(1)))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(
-                                    config =>
+                                .ConfigureClient(
+                                    configuration =>
                                     {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
+                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .EnableBatchProcessing(3)
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = "group1";
+                                                configuration.GroupId = "group1";
                                             }))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom(DefaultTopicName)
                                         .EnableBatchProcessing(3)
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = "group2";
+                                                configuration.GroupId = "group2";
                                             })))
                         .AddSingletonSubscriber<StreamSubscriber>()
                         .AddIntegrationSpy())
                 .Run();
 
-            var publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
+            IEventPublisher publisher = Host.ScopedServiceProvider.GetRequiredService<IEventPublisher>();
 
             await publisher.PublishAsync(new TestEventOne());
             await publisher.PublishAsync(new TestEventOne());
@@ -263,7 +263,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
 
             Helper.Spy.OutboundEnvelopes.Should().HaveCount(3);
 
-            var subscriber = Host.ServiceProvider.GetRequiredService<StreamSubscriber>();
+            StreamSubscriber subscriber = Host.ServiceProvider.GetRequiredService<StreamSubscriber>();
             subscriber.ReceivedConsumer1.Should().Be(3);
             subscriber.ReceivedConsumer2.Should().Be(3);
         }
@@ -311,8 +311,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 "UnusedParameter.Local",
                 Justification = Justifications.CalledBySilverback)]
             [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-            public void OnConsumer1Received(IMessage message) =>
-                Interlocked.Increment(ref _receivedConsumer1);
+            public void OnConsumer1Received(IMessage message) => Interlocked.Increment(ref _receivedConsumer1);
 
             [KafkaGroupIdFilter("group2")]
             [SuppressMessage(
@@ -324,8 +323,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                 "UnusedParameter.Local",
                 Justification = Justifications.CalledBySilverback)]
             [SuppressMessage("", "CA1801", Justification = Justifications.CalledBySilverback)]
-            public void OnConsumer2Received(IMessage message) =>
-                Interlocked.Increment(ref _receivedConsumer2);
+            public void OnConsumer2Received(IMessage message) => Interlocked.Increment(ref _receivedConsumer2);
         }
 
         [UsedImplicitly]

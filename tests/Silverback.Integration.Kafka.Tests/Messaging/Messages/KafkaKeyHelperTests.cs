@@ -12,7 +12,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
     public class KafkaKeyHelperTests
     {
         [Fact]
-        public void GetMessageKey_NullMessage_NullIsReturned()
+        public void GetMessageKey_NullMessage_NullReturned()
         {
             object? message = null;
 
@@ -22,7 +22,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
         }
 
         [Fact]
-        public void GetMessageKey_MessageWithoutProperties_NullIsReturned()
+        public void GetMessageKey_MessageWithoutProperties_NullReturned()
         {
             object message = new { };
 
@@ -32,7 +32,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
         }
 
         [Fact]
-        public void GetMessageKey_NoKeyMembersMessage_NullIsReturned()
+        public void GetMessageKey_NoKeyMembersMessage_NullReturned()
         {
             var message = new NoKeyMembersMessage
             {
@@ -48,7 +48,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
         }
 
         [Fact]
-        public void GetMessageKey_SingleKeyMemberMessage_PropertyValueIsReturned()
+        public void GetMessageKey_SingleKeyMemberMessage_PropertyValueReturned()
         {
             var message = new SingleKeyMemberMessage
             {
@@ -64,7 +64,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
         }
 
         [Fact]
-        public void GetMessageKey_SingleKeyMemberMessage_EmptyKeyResultsInNull()
+        public void GetMessageKey_SingleKeyMemberMessage_NullReturned()
         {
             var message = new SingleKeyMemberMessage
             {
@@ -80,7 +80,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
         }
 
         [Fact]
-        public void GetMessageKey_MultipleKeyMembersMessage_NullIsReturned_WhenStringEmptyValues()
+        public void GetMessageKey_MultipleKeyMembersMessageWithEmptyValues_NullReturned()
         {
             var message = new MultipleKeyMembersMessage
             {
@@ -96,7 +96,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
         }
 
         [Fact]
-        public void GetMessageKey_MultipleKeyMembersMessage_NullIsReturned_WhenNullValues()
+        public void GetMessageKey_MultipleKeyMembersMessageWithNullValues_NullReturned()
         {
             var message = new MultipleKeyMembersMessage
             {
@@ -112,7 +112,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
         }
 
         [Fact]
-        public void GetMessageKey_MultipleKeyMembersMessagesWithSameKey_ComposedKeyIsReturned()
+        public void GetMessageKey_MultipleKeyMembersMessagesWithSameKey_ComposedKeyReturned()
         {
             var message = new MultipleKeyMembersMessage
             {
@@ -128,7 +128,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
         }
 
         [Fact]
-        public void GetMessageKey_MultipleKeyMembersMessagesSecondEmpty_ComposedKeyIsReturned()
+        public void GetMessageKey_MultipleKeyMembersMessagesSecondEmpty_ComposedKeyReturned()
         {
             var message = new MultipleKeyMembersMessage
             {
@@ -144,7 +144,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
         }
 
         [Fact]
-        public void GetMessageKey_DifferentMessagesMixture_CorrectKeyIsReturned()
+        public void GetMessageKey_DifferentMessagesMixture_CorrectKeyReturned()
         {
             // This is actually to test the cache.
             var message1 = new MultipleKeyMembersMessage
@@ -188,7 +188,7 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
         }
 
         [Fact]
-        public void GetMessageKey_MultipleKeyMembersMessagesWithOneKeyEmpty_OneKeyIsReturned()
+        public void GetMessageKey_MultipleKeyMembersMessagesWithOneKeyEmpty_OneKeyReturned()
         {
             var message = new MultipleKeyMembersMessage
             {

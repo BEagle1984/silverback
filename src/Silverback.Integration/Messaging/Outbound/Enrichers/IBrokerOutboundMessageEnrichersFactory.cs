@@ -17,6 +17,6 @@ namespace Silverback.Messaging.Outbound.Enrichers
         /// <returns>
         ///     The <see cref="IMovePolicyMessageEnricher" /> that matches the specified endpoint type.
         /// </returns>
-        IMovePolicyMessageEnricher GetMovePolicyEnricher(IEndpoint endpoint);
+        IMovePolicyMessageEnricher GetMovePolicyEnricher(Endpoint endpoint);
     }
 }

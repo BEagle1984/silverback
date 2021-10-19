@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Messaging.Subscribers.Subscriptions;
@@ -19,6 +20,11 @@ namespace Silverback.Tests.Core.Messaging.Publishing
 {
     public class PublisherSubscriberInvocationTests
     {
+        // TODO: Test all cases...(all delegate types etc.)
+
+
+
+
         [Fact]
         public async Task Publish_ToSubscriberClass_MessagesReceived()
         {

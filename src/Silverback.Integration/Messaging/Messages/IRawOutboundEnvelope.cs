@@ -3,37 +3,25 @@
 
 using Silverback.Messaging.Broker;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+/// <summary>
+///     Wraps the message that is being produced to an outbound endpoint.
+/// </summary>
+public interface IRawOutboundEnvelope : IRawBrokerEnvelope
 {
     /// <summary>
-    ///     Wraps the message that is being produced to an outbound endpoint.
+    ///     Gets the target endpoint for the specific message. It is mostly relevant when the <see cref="EndpointConfiguration" /> is
+    ///     configured to determine a dynamic target endpoint for each message.
     /// </summary>
-    public interface IRawOutboundEnvelope : IRawBrokerEnvelope
-    {
-        /// <summary>
-        ///     Gets the destination endpoint.
-        /// </summary>
-        new IProducerEndpoint Endpoint { get; }
+    new ProducerEndpoint Endpoint { get; }
 
-        /// <summary>
-        ///     Gets the message identifier on the message broker (the Kafka offset or similar).
-        /// </summary>
-        /// <remarks>
-        ///     The identifier value will be set only after the message has been successfully published to the message
-        ///     broker.
-        /// </remarks>
-        IBrokerMessageIdentifier? BrokerMessageIdentifier { get; }
-
-        /// <summary>
-        ///     Gets the name of the actual target endpoint resolved by the
-        ///     <see cref="IProducerEndpoint.GetActualName" /> method.
-        /// </summary>
-        string ActualEndpointName { get; }
-
-        /// <summary>
-        ///     Gets the name to actual target endpoint (<see cref="ActualEndpointName" />) to be displayed in the
-        ///     human-targeted output (e.g. logs, health checks result, etc.).
-        /// </summary>
-        string ActualEndpointDisplayName { get; }
-    }
+    /// <summary>
+    ///     Gets the message identifier on the message broker (the Kafka offset or similar).
+    /// </summary>
+    /// <remarks>
+    ///     The identifier value will be set only after the message has been successfully published to the message
+    ///     broker.
+    /// </remarks>
+    IBrokerMessageIdentifier? BrokerMessageIdentifier { get; }
 }

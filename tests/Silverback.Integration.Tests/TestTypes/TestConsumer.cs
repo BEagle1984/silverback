@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Silverback.Diagnostics;
+using Silverback.Messaging;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
@@ -15,16 +16,16 @@ using Silverback.Util;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestConsumer : Consumer<TestBroker, TestConsumerEndpoint, TestOffset>
+    public class TestConsumer : Consumer<TestBroker, TestConsumerConfiguration, TestOffset>
     {
         public TestConsumer(
             TestBroker broker,
-            TestConsumerEndpoint endpoint,
+            TestConsumerConfiguration configuration,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider)
             : base(
                 broker,
-                endpoint,
+                configuration,
                 behaviorsProvider,
                 serviceProvider,
                 serviceProvider.GetRequiredService<IInboundLogger<TestConsumer>>())
@@ -53,11 +54,11 @@ namespace Silverback.Tests.Integration.TestTypes
             IMessageSerializer? serializer = null)
         {
             if (serializer == null)
-                serializer = new JsonMessageSerializer();
+                serializer = new JsonMessageSerializer<object>();
 
             headers ??= new MessageHeaderCollection();
 
-            var stream = await serializer.SerializeAsync(message, headers, MessageSerializationContext.Empty);
+            var stream = await serializer.SerializeAsync(message, headers, TestProducerEndpoint.GetDefault());
             var buffer = await stream.ReadAllAsync();
 
             await TestHandleMessage(buffer, headers, offset);
@@ -77,7 +78,7 @@ namespace Silverback.Tests.Integration.TestTypes
             await HandleMessageAsync(
                 rawMessage,
                 headers,
-                "test-topic",
+                TestConsumerEndpoint.GetDefault(),
                 offset ?? new TestOffset());
         }
 

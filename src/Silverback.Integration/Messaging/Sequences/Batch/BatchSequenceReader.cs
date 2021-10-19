@@ -6,54 +6,53 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Sequences.Batch
+namespace Silverback.Messaging.Sequences.Batch;
+
+/// <summary>
+///     Enables the batch processing creating a <see cref="BatchSequence" /> containing the configured number
+///     of messages.
+/// </summary>
+public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
 {
-    /// <summary>
-    ///     Enables the batch processing creating a <see cref="BatchSequence" /> containing the configured number
-    ///     of messages.
-    /// </summary>
-    public sealed class BatchSequenceReader : SequenceReaderBase, ISorted
+    private const string SequenceIdPrefix = "batch-";
+
+    /// <inheritdoc cref="ISorted.SortIndex" />
+    public int SortIndex => int.MaxValue; // Ignored if a proper sequence is detected
+
+    /// <inheritdoc cref="SequenceReaderBase.CanHandleAsync" />
+    public override Task<bool> CanHandleAsync(ConsumerPipelineContext context)
     {
-        private const string SequenceIdPrefix = "batch-";
+        Check.NotNull(context, nameof(context));
 
-        /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex => int.MaxValue; // Ignored if a proper sequence is detected
+        bool isBatchEnabled = context.Envelope.Endpoint.Configuration.Batch != null;
 
-        /// <inheritdoc cref="SequenceReaderBase.CanHandleAsync" />
-        public override Task<bool> CanHandleAsync(ConsumerPipelineContext context)
-        {
-            Check.NotNull(context, nameof(context));
+        return Task.FromResult(isBatchEnabled);
+    }
 
-            bool isBatchEnabled = context.Envelope.Endpoint.Batch != null;
+    /// <inheritdoc cref="SequenceReaderBase.GetSequenceIdAsync" />
+    protected override Task<string> GetSequenceIdAsync(ConsumerPipelineContext context) =>
+        Task.FromResult(SequenceIdPrefix);
 
-            return Task.FromResult(isBatchEnabled);
-        }
+    /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />
+    protected override async Task<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)
+    {
+        Check.NotNull(context, nameof(context));
 
-        /// <inheritdoc cref="SequenceReaderBase.GetSequenceIdAsync" />
-        protected override Task<string> GetSequenceIdAsync(ConsumerPipelineContext context) =>
-            Task.FromResult(SequenceIdPrefix);
+        BatchSequence? currentSequence = await context.SequenceStore.GetAsync<BatchSequence>(sequenceId, true)
+            .ConfigureAwait(false);
 
-        /// <inheritdoc cref="SequenceReaderBase.IsNewSequenceAsync" />
-        protected override async Task<bool> IsNewSequenceAsync(string sequenceId, ConsumerPipelineContext context)
-        {
-            Check.NotNull(context, nameof(context));
+        return currentSequence == null || !currentSequence.IsPending || currentSequence.IsCompleting;
+    }
 
-            var currentSequence = await context.SequenceStore.GetAsync<BatchSequence>(sequenceId, true)
-                .ConfigureAwait(false);
+    /// <inheritdoc cref="SequenceReaderBase.CreateNewSequenceCore" />
+    protected override ISequence CreateNewSequenceCore(string sequenceId, ConsumerPipelineContext context) =>
+        new BatchSequence(sequenceId + Guid.NewGuid().ToString("N"), context);
 
-            return currentSequence == null || !currentSequence.IsPending || currentSequence.IsCompleting;
-        }
+    /// <inheritdoc cref="SequenceReaderBase.GetExistingSequenceAsync" />
+    protected override Task<ISequence?> GetExistingSequenceAsync(ConsumerPipelineContext context, string sequenceId)
+    {
+        Check.NotNull(context, nameof(context));
 
-        /// <inheritdoc cref="SequenceReaderBase.CreateNewSequenceCore" />
-        protected override ISequence CreateNewSequenceCore(string sequenceId, ConsumerPipelineContext context) =>
-            new BatchSequence(sequenceId + Guid.NewGuid().ToString("N"), context);
-
-        /// <inheritdoc cref="SequenceReaderBase.GetExistingSequenceAsync" />
-        protected override Task<ISequence?> GetExistingSequenceAsync(ConsumerPipelineContext context, string sequenceId)
-        {
-            Check.NotNull(context, nameof(context));
-
-            return context.SequenceStore.GetAsync<ISequence>(sequenceId, true);
-        }
+        return context.SequenceStore.GetAsync<ISequence>(sequenceId, true);
     }
 }

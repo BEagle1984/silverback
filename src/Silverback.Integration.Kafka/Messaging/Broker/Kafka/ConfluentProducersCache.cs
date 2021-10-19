@@ -10,54 +10,53 @@ using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Broker.Kafka
+namespace Silverback.Messaging.Broker.Kafka;
+
+internal sealed class ConfluentProducersCache : IConfluentProducersCache
 {
-    internal sealed class ConfluentProducersCache : IConfluentProducersCache
+    private readonly ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>> _producersCache =
+        new(new ConfigurationDictionaryEqualityComparer<string, string>());
+
+    private readonly IBrokerCallbacksInvoker _callbacksInvoker;
+
+    private readonly IServiceProvider _serviceProvider;
+
+    private readonly ISilverbackLogger _logger;
+
+    public ConfluentProducersCache(
+        IServiceProvider serviceProvider,
+        IBrokerCallbacksInvoker callbacksInvoker,
+        ISilverbackLogger<ConfluentProducersCache> logger)
     {
-        private readonly ConcurrentDictionary<ProducerConfig, IProducer<byte[]?, byte[]?>> _producersCache =
-            new(new ConfigurationDictionaryEqualityComparer<string, string>());
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+        _callbacksInvoker = callbacksInvoker;
+    }
 
-        private readonly IBrokerCallbacksInvoker _callbacksInvoker;
+    public IProducer<byte[]?, byte[]?> GetProducer(KafkaClientProducerConfiguration configuration, KafkaProducer owner) =>
+        _producersCache.GetOrAdd(
+            configuration.GetConfluentConfig(),
+            _ => CreateConfluentProducer(configuration, owner));
 
-        private readonly IServiceProvider _serviceProvider;
+    public void DisposeProducer(KafkaClientProducerConfiguration configuration)
+    {
+        // Dispose only if still in cache to avoid ObjectDisposedException
+        if (!_producersCache.TryRemove(configuration.GetConfluentConfig(), out IProducer<byte[]?, byte[]?>? producer))
+            return;
 
-        private readonly ISilverbackLogger _logger;
+        producer.Flush(configuration.FlushTimeout);
+        producer.Dispose();
+    }
 
-        public ConfluentProducersCache(
-            IServiceProvider serviceProvider,
-            IBrokerCallbacksInvoker callbacksInvoker,
-            ISilverbackLogger<ConfluentProducersCache> logger)
-        {
-            _serviceProvider = serviceProvider;
-            _logger = logger;
-            _callbacksInvoker = callbacksInvoker;
-        }
+    private IProducer<byte[]?, byte[]?> CreateConfluentProducer(
+        KafkaClientProducerConfiguration configuration,
+        KafkaProducer ownerProducer)
+    {
+        _logger.LogCreatingConfluentProducer(ownerProducer);
 
-        public IProducer<byte[]?, byte[]?> GetProducer(KafkaProducerConfig config, KafkaProducer owner) =>
-            _producersCache.GetOrAdd(
-                config.GetConfluentConfig(),
-                _ => CreateConfluentProducer(config, owner));
-
-        public void DisposeProducer(KafkaProducerConfig config)
-        {
-            // Dispose only if still in cache to avoid ObjectDisposedException
-            if (!_producersCache.TryRemove(config.GetConfluentConfig(), out var producer))
-                return;
-
-            producer.Flush(config.FlushTimeout);
-            producer.Dispose();
-        }
-
-        private IProducer<byte[]?, byte[]?> CreateConfluentProducer(
-            KafkaProducerConfig config,
-            KafkaProducer ownerProducer)
-        {
-            _logger.LogCreatingConfluentProducer(ownerProducer);
-
-            var builder = _serviceProvider.GetRequiredService<IConfluentProducerBuilder>();
-            builder.SetConfig(config.GetConfluentConfig());
-            builder.SetEventsHandlers(ownerProducer, _callbacksInvoker, _logger);
-            return builder.Build();
-        }
+        IConfluentProducerBuilder? builder = _serviceProvider.GetRequiredService<IConfluentProducerBuilder>();
+        builder.SetConfig(configuration.GetConfluentConfig());
+        builder.SetEventsHandlers(ownerProducer, _callbacksInvoker, _logger);
+        return builder.Build();
     }
 }

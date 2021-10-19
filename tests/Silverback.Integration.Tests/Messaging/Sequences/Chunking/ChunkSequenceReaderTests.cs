@@ -23,15 +23,14 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
         public async Task CanHandle_Chunk_TrueReturned()
         {
             var envelope = new RawInboundEnvelope(
-                new byte[] { 0x01, 0x02, 0x03 },
+                BytesUtil.GetRandomBytes(10),
                 new MessageHeaderCollection
                 {
                     { DefaultMessageHeaders.MessageId, "123" },
                     { DefaultMessageHeaders.ChunkIndex, "0" },
                     { DefaultMessageHeaders.ChunksCount, "4" }
                 },
-                new TestConsumerEndpoint("test"),
-                "test",
+                new TestConsumerConfiguration("test").GetDefaultEndpoint(),
                 new TestOffset());
 
             var context = ConsumerPipelineContextHelper.CreateSubstitute(
@@ -47,13 +46,12 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
         public async Task CanHandle_NonChunk_FalseReturned()
         {
             var envelope = new RawInboundEnvelope(
-                new byte[] { 0x01, 0x02, 0x03 },
+                BytesUtil.GetRandomBytes(10),
                 new MessageHeaderCollection
                 {
                     { DefaultMessageHeaders.MessageId, "123" }
                 },
-                new TestConsumerEndpoint("test"),
-                "test",
+                new TestConsumerConfiguration("test").GetDefaultEndpoint(),
                 new TestOffset());
 
             var context = ConsumerPipelineContextHelper.CreateSubstitute(
@@ -69,15 +67,14 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
         public async Task GetSequence_FirstChunk_SequenceReturned()
         {
             var envelope = new RawInboundEnvelope(
-                new byte[] { 0x01, 0x02, 0x03 },
+                BytesUtil.GetRandomBytes(10),
                 new MessageHeaderCollection
                 {
                     { DefaultMessageHeaders.MessageId, "123" },
                     { DefaultMessageHeaders.ChunkIndex, "0" },
                     { DefaultMessageHeaders.ChunksCount, "4" }
                 },
-                new TestConsumerEndpoint("test"),
-                "test",
+                new TestConsumerConfiguration("test").GetDefaultEndpoint(),
                 new TestOffset());
 
             var context = ConsumerPipelineContextHelper.CreateSubstitute(
@@ -95,26 +92,24 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
         public async Task GetSequence_ChunkForExistingSequence_SequenceReturned()
         {
             var envelope1 = new RawInboundEnvelope(
-                new byte[] { 0x01, 0x02, 0x03 },
+                BytesUtil.GetRandomBytes(10),
                 new MessageHeaderCollection
                 {
                     { DefaultMessageHeaders.MessageId, "123" },
                     { DefaultMessageHeaders.ChunkIndex, "0" },
                     { DefaultMessageHeaders.ChunksCount, "4" }
                 },
-                new TestConsumerEndpoint("test"),
-                "test",
+                new TestConsumerConfiguration("test").GetDefaultEndpoint(),
                 new TestOffset());
             var envelope2 = new RawInboundEnvelope(
-                new byte[] { 0x04, 0x05, 0x06 },
+                BytesUtil.GetRandomBytes(10),
                 new MessageHeaderCollection
                 {
                     { DefaultMessageHeaders.MessageId, "123" },
                     { DefaultMessageHeaders.ChunkIndex, "1" },
                     { DefaultMessageHeaders.ChunksCount, "4" }
                 },
-                new TestConsumerEndpoint("test"),
-                "test",
+                new TestConsumerConfiguration("test").GetDefaultEndpoint(),
                 new TestOffset());
 
             var reader = new ChunkSequenceReader();
@@ -145,15 +140,14 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
         public async Task GetSequence_MissingFirstChunk_IncompleteSequenceReturned()
         {
             var envelope = new RawInboundEnvelope(
-                new byte[] { 0x04, 0x05, 0x06 },
+                BytesUtil.GetRandomBytes(10),
                 new MessageHeaderCollection
                 {
                     { DefaultMessageHeaders.MessageId, "123" },
                     { DefaultMessageHeaders.ChunkIndex, "1" },
                     { DefaultMessageHeaders.ChunksCount, "4" }
                 },
-                new TestConsumerEndpoint("test"),
-                "test",
+                new TestConsumerConfiguration("test").GetDefaultEndpoint(),
                 new TestOffset());
 
             var context = ConsumerPipelineContextHelper.CreateSubstitute(

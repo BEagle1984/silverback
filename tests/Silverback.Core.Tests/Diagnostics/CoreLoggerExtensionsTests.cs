@@ -23,7 +23,7 @@ namespace Silverback.Tests.Core.Diagnostics
         {
             var logLevels = new LogLevelDictionary();
             _logger = new LoggerSubstitute<CoreLoggerExtensionsTests>(LogLevel.Trace);
-            var mappedLevelsLogger = new MappedLevelsLogger<CoreLoggerExtensionsTests>(_logger, logLevels);
+            var mappedLevelsLogger = new MappedLevelsLogger<CoreLoggerExtensionsTests>(logLevels, _logger);
             _silverbackLogger = new SilverbackLogger<CoreLoggerExtensionsTests>(mappedLevelsLogger);
         }
 

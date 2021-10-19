@@ -6,7 +6,7 @@ using System.IO;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Represents a binary file that is being transferred over the message broker.
+    ///     A binary file that is being transferred over the message broker.
     /// </summary>
     public interface IBinaryFileMessage
     {

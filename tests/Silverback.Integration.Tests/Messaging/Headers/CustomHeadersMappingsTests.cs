@@ -6,56 +6,103 @@ using Silverback.Messaging.Headers;
 using Silverback.Messaging.Messages;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Headers
+namespace Silverback.Tests.Integration.Messaging.Headers;
+
+public class CustomHeadersMappingsFixture
 {
-    public class CustomHeadersMappingsTests
+    [Fact]
+    public void Apply_ShouldMapHeaderNames()
     {
-        [Fact]
-        public void Apply_SomeMappings_HeadersMapped()
+        CustomHeadersMappings mappings = new();
+        mappings.Add(DefaultMessageHeaders.ChunkIndex, "mapped1");
+        mappings.Add(DefaultMessageHeaders.ChunksCount, "mapped2");
+
+        MessageHeaderCollection headers = new()
         {
-            var mappings = new CustomHeadersMappings();
-            mappings.Add(DefaultMessageHeaders.ChunkIndex, "mapped1");
-            mappings.Add(DefaultMessageHeaders.ChunksCount, "mapped2");
+            { DefaultMessageHeaders.ChunkIndex, 1 },
+            { DefaultMessageHeaders.ChunksCount, 2 },
+            { DefaultMessageHeaders.TraceId, "abc" }
+        };
 
-            var headers = new MessageHeaderCollection
+        mappings.Apply(headers);
+
+        headers.Should().BeEquivalentTo(
+            new[]
             {
-                { DefaultMessageHeaders.ChunkIndex, 1 },
-                { DefaultMessageHeaders.ChunksCount, 2 },
-                { DefaultMessageHeaders.TraceId, "abc" }
-            };
+                new MessageHeader("mapped1", "1"),
+                new MessageHeader("mapped2", "2"),
+                new MessageHeader("traceparent", "abc")
+            });
+    }
 
-            mappings.Apply(headers);
+    [Fact]
+    public void Apply_ShouldDoNothing_WhenNoMappingsAreAdded()
+    {
+        CustomHeadersMappings mappings = new();
 
-            headers.Should().BeEquivalentTo(
-                new[]
-                {
-                    new MessageHeader("mapped1", "1"),
-                    new MessageHeader("mapped2", "2"),
-                    new MessageHeader("traceparent", "abc")
-                });
-        }
-
-        [Fact]
-        public void Apply_NoMappings_HeadersUnchanged()
+        MessageHeaderCollection headers = new()
         {
-            var mappings = new CustomHeadersMappings();
+            { DefaultMessageHeaders.ChunkIndex, 1 },
+            { DefaultMessageHeaders.ChunksCount, 2 },
+            { DefaultMessageHeaders.TraceId, "abc" }
+        };
 
-            var headers = new MessageHeaderCollection
+        mappings.Apply(headers);
+
+        headers.Should().BeEquivalentTo(
+            new[]
             {
-                { DefaultMessageHeaders.ChunkIndex, 1 },
-                { DefaultMessageHeaders.ChunksCount, 2 },
-                { DefaultMessageHeaders.TraceId, "abc" }
-            };
+                new MessageHeader("x-chunk-index", "1"),
+                new MessageHeader("x-chunk-count", "2"),
+                new MessageHeader("traceparent", "abc")
+            });
+    }
 
-            mappings.Apply(headers);
+    [Fact]
+    public void Revert_ShouldMapHeaderNames()
+    {
+        CustomHeadersMappings mappings = new();
+        mappings.Add(DefaultMessageHeaders.ChunkIndex, "mapped1");
+        mappings.Add(DefaultMessageHeaders.ChunksCount, "mapped2");
 
-            headers.Should().BeEquivalentTo(
-                new[]
-                {
-                    new MessageHeader("x-chunk-index", "1"),
-                    new MessageHeader("x-chunk-count", "2"),
-                    new MessageHeader("traceparent", "abc")
-                });
-        }
+        MessageHeaderCollection headers = new()
+        {
+            { "mapped1", 1 },
+            { "mapped2", 2 },
+            { DefaultMessageHeaders.TraceId, "abc" }
+        };
+
+        mappings.Revert(headers);
+
+        headers.Should().BeEquivalentTo(
+            new[]
+            {
+                new MessageHeader("x-chunk-index", "1"),
+                new MessageHeader("x-chunk-count", "2"),
+                new MessageHeader("traceparent", "abc")
+            });
+    }
+
+    [Fact]
+    public void Revert_ShouldDoNothing_WhenNoMappingsAreAdded()
+    {
+        CustomHeadersMappings mappings = new();
+
+        MessageHeaderCollection headers = new()
+        {
+            { "mapped1", 1 },
+            { "mapped2", 2 },
+            { DefaultMessageHeaders.TraceId, "abc" }
+        };
+
+        mappings.Revert(headers);
+
+        headers.Should().BeEquivalentTo(
+            new[]
+            {
+                new MessageHeader("mapped1", "1"),
+                new MessageHeader("mapped2", "2"),
+                new MessageHeader("traceparent", "abc")
+            });
     }
 }

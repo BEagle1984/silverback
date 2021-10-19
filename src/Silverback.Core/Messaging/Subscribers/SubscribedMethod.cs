@@ -10,115 +10,100 @@ using Silverback.Messaging.Subscribers.ArgumentResolvers;
 using Silverback.Messaging.Subscribers.Subscriptions;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Subscribers
+namespace Silverback.Messaging.Subscribers;
+
+/// <summary>
+///     A subscribed method that can process certain messages.
+/// </summary>
+public class SubscribedMethod
 {
+    private readonly Func<IServiceProvider, object> _targetTypeFactory;
+
+    private Type? _messageType;
+
+    private IMessageArgumentResolver? _messageArgumentResolver;
+
+    private IAdditionalArgumentResolver[]? _additionalArgumentsResolvers;
+
     /// <summary>
-    ///     A subscribed method that can process certain messages.
+    ///     Initializes a new instance of the <see cref="SubscribedMethod" /> class.
     /// </summary>
-    public class SubscribedMethod
+    /// <param name="targetTypeFactory">
+    ///     The delegate to be used to resolve an instantiate of the type declaring the subscribed method.
+    /// </param>
+    /// <param name="methodInfo">
+    ///     The <see cref="MethodInfo" /> related to the subscribed method.
+    /// </param>
+    /// <param name="options">
+    ///     The <see cref="SubscriptionOptions" />.
+    /// </param>
+    public SubscribedMethod(
+        Func<IServiceProvider, object> targetTypeFactory,
+        MethodInfo methodInfo,
+        SubscriptionOptions options)
     {
-        private readonly Func<IServiceProvider, object> _targetTypeFactory;
+        _targetTypeFactory = Check.NotNull(targetTypeFactory, nameof(targetTypeFactory));
+        MethodInfo = Check.NotNull(methodInfo, nameof(methodInfo));
+        Options = Check.NotNull(options, nameof(options));
 
-        private Type? _messageArgumentType;
+        Parameters = methodInfo.GetParameters();
 
-        private Type? _messageType;
+        if (Parameters.Count == 0)
+            throw new SubscribedMethodInvocationException(methodInfo, "The subscribed method must have at least 1 argument.");
+    }
 
-        private IMessageArgumentResolver? _messageArgumentResolver;
+    /// <summary>
+    ///     Gets the <see cref="MethodInfo" /> related to the subscribed method.
+    /// </summary>
+    public MethodInfo MethodInfo { get; }
 
-        private IAdditionalArgumentResolver[]? _additionalArgumentsResolvers;
+    /// <summary>
+    ///     Gets the <see cref="ParameterInfo" /> for each parameter of the subscribed method.
+    /// </summary>
+    public IReadOnlyList<ParameterInfo> Parameters { get; }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="SubscribedMethod" /> class.
-        /// </summary>
-        /// <param name="targetTypeFactory">
-        ///     The delegate to be used to resolve an instantiate of the type declaring the subscribed method.
-        /// </param>
-        /// <param name="methodInfo">
-        ///     The <see cref="MethodInfo" /> related to the subscribed method.
-        /// </param>
-        /// <param name="options">
-        ///     The <see cref="SubscriptionOptions" />.
-        /// </param>
-        public SubscribedMethod(
-            Func<IServiceProvider, object> targetTypeFactory,
-            MethodInfo methodInfo,
-            SubscriptionOptions options)
-        {
-            _targetTypeFactory = Check.NotNull(targetTypeFactory, nameof(targetTypeFactory));
-            MethodInfo = Check.NotNull(methodInfo, nameof(methodInfo));
-            Options = Check.NotNull(options, nameof(options));
+    /// <summary>
+    ///     Gets the <see cref="SubscriptionOptions"/>.
+    /// </summary>
+    public SubscriptionOptions Options { get; }
 
-            Parameters = methodInfo.GetParameters();
+    /// <summary>
+    ///     Gets the type of the message (or envelope) being subscribe.
+    /// </summary>
+    public Type MessageType =>
+        _messageType ?? throw new InvalidOperationException("Not initialized.");
 
-            if (Parameters.Count == 0)
-            {
-                throw new SubscribedMethodInvocationException(
-                    methodInfo,
-                    "The subscribed method must have at least 1 argument.");
-            }
-        }
+    /// <summary>
+    ///     Gets the <see cref="IMessageArgumentResolver" /> to be used to invoke the method.
+    /// </summary>
+    public IMessageArgumentResolver MessageArgumentResolver =>
+        _messageArgumentResolver ?? throw new InvalidOperationException("Not initialized.");
 
-        /// <summary>
-        ///     Gets the <see cref="MethodInfo" /> related to the subscribed method.
-        /// </summary>
-        public MethodInfo MethodInfo { get; }
+    /// <summary>
+    ///     Gets the list of <see cref="IAdditionalArgumentResolver" /> to be used to invoke the method.
+    /// </summary>
+    public IReadOnlyList<IAdditionalArgumentResolver> AdditionalArgumentsResolvers =>
+        _additionalArgumentsResolvers ?? throw new InvalidOperationException("Not initialized.");
 
-        /// <summary>
-        ///     Gets the <see cref="ParameterInfo" /> for each parameter of the subscribed method.
-        /// </summary>
-        public IReadOnlyList<ParameterInfo> Parameters { get; }
+    /// <summary>
+    ///     Resolves an instantiate of the type declaring the subscribed method.
+    /// </summary>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" /> to be used to resolve the type or the necessary services.
+    /// </param>
+    /// <returns>
+    ///     The target type .
+    /// </returns>
+    public object ResolveTargetType(IServiceProvider serviceProvider) => _targetTypeFactory(serviceProvider);
 
-        /// <summary>
-        ///     Gets the <see cref="SubscriptionOptions"/>.
-        /// </summary>
-        public SubscriptionOptions Options { get; }
+    internal SubscribedMethod EnsureInitialized(IServiceProvider serviceProvider)
+    {
+        ArgumentsResolversRepository argumentsResolver = serviceProvider.GetRequiredService<ArgumentsResolversRepository>();
 
-        /// <summary>
-        ///     Gets the type of the message argument (e.g. <c>MyMessage</c> or <c>IEnumerable&lt;MyMessage&gt;</c>).
-        /// </summary>
-        public Type MessageArgumentType =>
-            _messageArgumentType ?? throw new InvalidOperationException("Not initialized.");
+        (_messageArgumentResolver, _messageType) = argumentsResolver.GetMessageArgumentResolver(this);
 
-        /// <summary>
-        ///     Gets the type of the message (or envelope) being subscribe.
-        /// </summary>
-        public Type MessageType =>
-            _messageType ?? throw new InvalidOperationException("Not initialized.");
+        _additionalArgumentsResolvers = argumentsResolver.GetAdditionalArgumentsResolvers(this).ToArray();
 
-        /// <summary>
-        ///     Gets the <see cref="IMessageArgumentResolver" /> to be used to invoke the method.
-        /// </summary>
-        public IMessageArgumentResolver MessageArgumentResolver =>
-            _messageArgumentResolver ?? throw new InvalidOperationException("Not initialized.");
-
-        /// <summary>
-        ///     Gets the list of <see cref="IAdditionalArgumentResolver" /> to be used to invoke the method.
-        /// </summary>
-        public IReadOnlyList<IAdditionalArgumentResolver> AdditionalArgumentsResolvers =>
-            _additionalArgumentsResolvers ?? throw new InvalidOperationException("Not initialized.");
-
-        /// <summary>
-        ///     Resolves an instantiate of the type declaring the subscribed method.
-        /// </summary>
-        /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" /> to be used to resolve the type or the necessary services.
-        /// </param>
-        /// <returns>
-        ///     The target type .
-        /// </returns>
-        public object ResolveTargetType(IServiceProvider serviceProvider) =>
-            _targetTypeFactory(serviceProvider);
-
-        internal SubscribedMethod EnsureInitialized(IServiceProvider serviceProvider)
-        {
-            var argumentsResolver = serviceProvider.GetRequiredService<ArgumentsResolversRepository>();
-
-            (_messageArgumentResolver, _messageArgumentType, _messageType) =
-                argumentsResolver.GetMessageArgumentResolver(this);
-
-            _additionalArgumentsResolvers = argumentsResolver.GetAdditionalArgumentsResolvers(this).ToArray();
-
-            return this;
-        }
+        return this;
     }
 }

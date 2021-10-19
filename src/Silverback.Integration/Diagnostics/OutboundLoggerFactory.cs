@@ -2,27 +2,39 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Silverback.Messaging;
+using Silverback.Util;
 
-namespace Silverback.Diagnostics
+namespace Silverback.Diagnostics;
+
+internal sealed class OutboundLoggerFactory
 {
-    internal sealed class OutboundLoggerFactory
+    private readonly BrokerLogEnricherFactory _enricherFactory;
+
+    private readonly Dictionary<Type, OutboundLogger> _outboundLoggers = new();
+
+    public OutboundLoggerFactory(BrokerLogEnricherFactory enricherFactory)
     {
-        private readonly BrokerLogEnricherFactory _enricherFactory;
+        _enricherFactory = enricherFactory;
+    }
 
-        private readonly ConcurrentDictionary<Type, OutboundLogger> _outboundLoggers = new();
+    public OutboundLogger GetOutboundLogger(ProducerConfiguration producerConfiguration)
+    {
+        Type type = producerConfiguration.GetType();
 
-        public OutboundLoggerFactory(BrokerLogEnricherFactory enricherFactory)
-        {
-            _enricherFactory = enricherFactory;
-        }
 
-        public OutboundLogger GetOutboundLogger(IEndpoint endpoint)
+        // TODO: Validate this pattern
+
+
+        if (_outboundLoggers.TryGetValue(type, out OutboundLogger? logger))
+            return logger;
+
+        lock (_outboundLoggers)
         {
             return _outboundLoggers.GetOrAdd(
-                endpoint.GetType(),
-                _ => new OutboundLogger(_enricherFactory.GetLogEnricher(endpoint)));
+                type,
+                _ => new OutboundLogger(_enricherFactory.GetLogEnricher(producerConfiguration)));
         }
     }
 }

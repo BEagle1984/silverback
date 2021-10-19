@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Silverback.Messaging
 {
     /// <summary>
-    ///     Represents a queue to consume from.
+    ///     The Rabbit consumer configuration to consume from a queue.
     /// </summary>
     public sealed class RabbitQueueConsumerEndpoint : RabbitConsumerEndpoint, IEquatable<RabbitQueueConsumerEndpoint>
     {
@@ -50,7 +50,6 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
-        public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
+        public override int GetHashCode() => HashCode.Combine(Name);
     }
 }

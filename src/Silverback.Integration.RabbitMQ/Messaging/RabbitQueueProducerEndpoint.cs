@@ -8,7 +8,7 @@ using Silverback.Messaging.Configuration.Rabbit;
 namespace Silverback.Messaging
 {
     /// <summary>
-    ///     Represents a queue to produce to.
+    ///     The Rabbit producer configuration to produce to a queue.
     /// </summary>
     public sealed class RabbitQueueProducerEndpoint : RabbitProducerEndpoint, IEquatable<RabbitQueueProducerEndpoint>
     {
@@ -24,9 +24,9 @@ namespace Silverback.Messaging
         }
 
         /// <summary>
-        ///     Gets or sets the queue configuration.
+        ///     Gets the queue configuration.
         /// </summary>
-        public RabbitQueueConfig Queue { get; set; } = new();
+        public RabbitQueueConfig Queue { get; init; } = new();
 
         /// <inheritdoc cref="RabbitProducerEndpoint.Validate" />
         public override void Validate()
@@ -67,7 +67,6 @@ namespace Silverback.Messaging
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = "Protected set is not abused")]
-        public override int GetHashCode() => Name.GetHashCode(StringComparison.Ordinal);
+        public override int GetHashCode() => HashCode.Combine(Name);
     }
 }

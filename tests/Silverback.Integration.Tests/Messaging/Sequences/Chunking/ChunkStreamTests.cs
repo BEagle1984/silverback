@@ -28,14 +28,12 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                     Encoding.UTF8.GetBytes("Silver"),
                     null,
                     TestConsumerEndpoint.GetDefault(),
-                    "test",
                     new TestOffset()));
             await streamProvider.PushAsync(
                 new RawInboundEnvelope(
                     Encoding.UTF8.GetBytes("back"),
                     null,
                     TestConsumerEndpoint.GetDefault(),
-                    "test",
                     new TestOffset()));
             await streamProvider.CompleteAsync();
 
@@ -59,14 +57,12 @@ namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
                     Encoding.UTF8.GetBytes("Silver"),
                     null,
                     TestConsumerEndpoint.GetDefault(),
-                    "test",
                     new TestOffset()));
             await streamProvider.PushAsync(
                 new RawInboundEnvelope(
                     Encoding.UTF8.GetBytes("back"),
                     null,
                     TestConsumerEndpoint.GetDefault(),
-                    "test",
                     new TestOffset()));
             await streamProvider.CompleteAsync();
 

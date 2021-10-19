@@ -4,8 +4,9 @@
 // ReSharper disable once CheckNamespace
 namespace System.Runtime.CompilerServices
 {
-    // Needed when targeting a framework prior to .NET 5
+#if !NET5_0_OR_GREATER
     internal static class IsExternalInit
     {
     }
+#endif
 }

@@ -10,126 +10,128 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Util;
 
-namespace Silverback.Tests.Integration.TestTypes
+namespace Silverback.Tests.Integration.TestTypes;
+
+public class TestOtherProducer : Producer<TestOtherBroker, TestOtherProducerConfiguration, TestOtherProducerEndpoint>
 {
-    public class TestOtherProducer : Producer<TestOtherBroker, TestOtherProducerEndpoint>
+    public TestOtherProducer(
+        TestOtherBroker broker,
+        TestOtherProducerConfiguration settings,
+        IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
+        IOutboundEnvelopeFactory envelopeFactory,
+        IServiceProvider serviceProvider)
+        : base(
+            broker,
+            settings,
+            behaviorsProvider,
+            envelopeFactory,
+            serviceProvider,
+            Substitute.For<IOutboundLogger<TestOtherProducer>>())
     {
-        public TestOtherProducer(
-            TestOtherBroker broker,
-            TestOtherProducerEndpoint endpoint,
-            IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
-            IServiceProvider serviceProvider)
-            : base(
-                broker,
-                endpoint,
-                behaviorsProvider,
-                serviceProvider,
-                Substitute.For<IOutboundLogger<TestOtherProducer>>())
-        {
-            ProducedMessages = broker.ProducedMessages;
-        }
+        ProducedMessages = broker.ProducedMessages;
+    }
 
-        public IList<ProducedMessage> ProducedMessages { get; }
+    public IList<ProducedMessage> ProducedMessages { get; }
 
-        protected override IBrokerMessageIdentifier? ProduceCore(
-            object? message,
-            Stream? messageStream,
-            IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName) =>
-            ProduceCore(
-                message,
-                messageStream.ReadAll(),
-                headers,
-                actualEndpointName);
+    protected override IBrokerMessageIdentifier? ProduceCore(
+        object? message,
+        Stream? messageStream,
+        IReadOnlyCollection<MessageHeader>? headers,
+        TestOtherProducerEndpoint endpoint) =>
+        ProduceCore(
+            message,
+            messageStream.ReadAll(),
+            headers,
+            endpoint);
 
-        protected override IBrokerMessageIdentifier? ProduceCore(
-            object? message,
-            byte[]? messageBytes,
-            IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName)
-        {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
-            return null;
-        }
+    protected override IBrokerMessageIdentifier? ProduceCore(
+        object? message,
+        byte[]? messageBytes,
+        IReadOnlyCollection<MessageHeader>? headers,
+        TestOtherProducerEndpoint endpoint)
+    {
+        ProducedMessages.Add(new ProducedMessage(messageBytes, headers, endpoint));
+        return null;
+    }
 
-        protected override void ProduceCore(
-            object? message,
-            Stream? messageStream,
-            IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName,
-            Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError)
-        {
-            ProduceCore(
-                message,
-                messageStream.ReadAll(),
-                headers,
-                actualEndpointName,
-                onSuccess,
-                onError);
-        }
+    protected override void ProduceCore(
+        object? message,
+        Stream? messageStream,
+        IReadOnlyCollection<MessageHeader>? headers,
+        TestOtherProducerEndpoint endpoint,
+        Action<IBrokerMessageIdentifier?> onSuccess,
+        Action<Exception> onError)
+    {
+        ProduceCore(
+            message,
+            messageStream.ReadAll(),
+            headers,
+            endpoint,
+            onSuccess,
+            onError);
+    }
 
-        protected override void ProduceCore(
-            object? message,
-            byte[]? messageBytes,
-            IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName,
-            Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError)
-        {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
-            onSuccess.Invoke(null);
-        }
+    protected override void ProduceCore(
+        object? message,
+        byte[]? messageBytes,
+        IReadOnlyCollection<MessageHeader>? headers,
+        TestOtherProducerEndpoint endpoint,
+        Action<IBrokerMessageIdentifier?> onSuccess,
+        Action<Exception> onError)
+    {
+        ProducedMessages.Add(new ProducedMessage(messageBytes, headers, endpoint));
+        onSuccess.Invoke(null);
+    }
 
-        protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
-            object? message,
-            Stream? messageStream,
-            IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName) =>
-            await ProduceCoreAsync(
-                message,
-                await messageStream.ReadAllAsync().ConfigureAwait(false),
-                headers,
-                actualEndpointName);
+    protected override async Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
+        object? message,
+        Stream? messageStream,
+        IReadOnlyCollection<MessageHeader>? headers,
+        TestOtherProducerEndpoint endpoint) =>
+        await ProduceCoreAsync(
+            message,
+            await messageStream.ReadAllAsync().ConfigureAwait(false),
+            headers,
+            endpoint);
 
-        protected override Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
-            object? message,
-            byte[]? messageBytes,
-            IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName)
-        {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
-            return Task.FromResult<IBrokerMessageIdentifier?>(null);
-        }
+    protected override Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
+        object? message,
+        byte[]? messageBytes,
+        IReadOnlyCollection<MessageHeader>? headers,
+        TestOtherProducerEndpoint endpoint)
+    {
+        ProducedMessages.Add(new ProducedMessage(messageBytes, headers, endpoint));
+        return Task.FromResult<IBrokerMessageIdentifier?>(null);
+    }
 
-        protected override async Task ProduceCoreAsync(
-            object? message,
-            Stream? messageStream,
-            IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName,
-            Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError) =>
-            await ProduceCoreAsync(
-                message,
-                await messageStream.ReadAllAsync().ConfigureAwait(false),
-                headers,
-                actualEndpointName,
-                onSuccess,
-                onError);
+    protected override async Task ProduceCoreAsync(
+        object? message,
+        Stream? messageStream,
+        IReadOnlyCollection<MessageHeader>? headers,
+        TestOtherProducerEndpoint endpoint,
+        Action<IBrokerMessageIdentifier?> onSuccess,
+        Action<Exception> onError) =>
+        await ProduceCoreAsync(
+            message,
+            await messageStream.ReadAllAsync().ConfigureAwait(false),
+            headers,
+            endpoint,
+            onSuccess,
+            onError);
 
-        protected override Task ProduceCoreAsync(
-            object? message,
-            byte[]? messageBytes,
-            IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName,
-            Action<IBrokerMessageIdentifier?> onSuccess,
-            Action<Exception> onError)
-        {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
-            onSuccess.Invoke(null);
-            return Task.CompletedTask;
-        }
+    protected override Task ProduceCoreAsync(
+        object? message,
+        byte[]? messageBytes,
+        IReadOnlyCollection<MessageHeader>? headers,
+        TestOtherProducerEndpoint endpoint,
+        Action<IBrokerMessageIdentifier?> onSuccess,
+        Action<Exception> onError)
+    {
+        ProducedMessages.Add(new ProducedMessage(messageBytes, headers, endpoint));
+        onSuccess.Invoke(null);
+        return Task.CompletedTask;
     }
 }

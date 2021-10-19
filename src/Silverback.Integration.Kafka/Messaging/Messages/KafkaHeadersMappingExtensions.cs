@@ -16,8 +16,7 @@ namespace Silverback.Messaging.Messages
             var kafkaHeaders = new Confluent.Kafka.Headers();
             headers.ForEach(header =>
             {
-                if (header.Name == KafkaMessageHeaders.KafkaMessageKey ||
-                    header.Name == KafkaMessageHeaders.KafkaPartitionIndex)
+                if (header.Name is KafkaMessageHeaders.KafkaMessageKey)
                     return;
 
                 kafkaHeaders.Add(header.Name, Encode(header.Value));

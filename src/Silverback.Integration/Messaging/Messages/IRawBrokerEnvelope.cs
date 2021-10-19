@@ -16,9 +16,9 @@ namespace Silverback.Messaging.Messages
         MessageHeaderCollection Headers { get; }
 
         /// <summary>
-        ///     Gets the source or destination endpoint.
+        ///     Gets the the source or destination endpoint.
         /// </summary>
-        IEndpoint Endpoint { get; }
+        Endpoint Endpoint { get; }
 
         /// <summary>
         ///     Gets or sets the serialized message body.

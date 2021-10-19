@@ -9,7 +9,7 @@ namespace Silverback.Messaging.Broker.Mqtt
 {
     /// <summary>
     ///     Creates and stores the MQTT clients in order to create a single connection per each
-    ///     <see cref="MqttClientConfig" />.
+    ///     <see cref="MqttClientConfiguration" />.
     /// </summary>
     internal interface IMqttClientsCache : IDisposable
     {

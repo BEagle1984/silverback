@@ -33,17 +33,19 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
-            string endpointName,
-            string actualEndpointName)
+            string endpointRawName,
+            string? endpointFriendlyName,
+            byte[]? endpoint)
         {
             DbSet.Add(
                 new OutboxMessage
                 {
                     MessageType = message?.GetType().AssemblyQualifiedName,
                     Content = messageBytes,
-                    SerializedHeaders = SerializeHeaders(headers),
-                    EndpointName = endpointName,
-                    ActualEndpointName = actualEndpointName,
+                    Headers = SerializeHeaders(headers),
+                    EndpointRawName = endpointRawName,
+                    EndpointFriendlyName = endpointFriendlyName,
+                    Endpoint = endpoint,
                     Created = DateTime.UtcNow
                 });
 
@@ -64,12 +66,7 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
             return Task.CompletedTask;
         }
 
-        private static byte[]? SerializeHeaders(IReadOnlyCollection<MessageHeader>? headers)
-        {
-            if (headers == null)
-                return null;
-
-            return JsonSerializer.SerializeToUtf8Bytes(headers);
-        }
+        private static byte[]? SerializeHeaders(IReadOnlyCollection<MessageHeader>? headers) =>
+            headers == null ? null : JsonSerializer.SerializeToUtf8Bytes(headers);
     }
 }

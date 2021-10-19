@@ -35,6 +35,6 @@ namespace Silverback.Messaging.Subscribers
 
         private bool MessageIsFromAllowedGroups(object message) =>
             message is IInboundEnvelope { Endpoint: KafkaConsumerEndpoint endpoint }
-            && GroupId.Any(groupId => groupId == endpoint.Configuration.GroupId);
+            && GroupId.Any(groupId => groupId == endpoint.Configuration.Client.GroupId);
     }
 }

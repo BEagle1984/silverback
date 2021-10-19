@@ -9,47 +9,64 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Outbound.TransactionalOutbox
+namespace Silverback.Messaging.Outbound.TransactionalOutbox;
+
+/// <summary>
+///     The messages are stored in a the transactional outbox table. The operation is therefore included in the database transaction
+///     applying the message side effects to the local database. The <see cref="IOutboxWorker" /> takes care of asynchronously sending
+///     the messages to the message broker.
+/// </summary>
+public class OutboxProduceStrategy : IProduceStrategy, IEquatable<OutboxProduceStrategy>
 {
-    /// <summary>
-    ///     The messages are stored in a the transactional outbox table. The operation is therefore included in
-    ///     the database transaction applying the message side effects to the local database. The
-    ///     <see cref="IOutboxWorker" /> takes care of asynchronously sending the messages to the message broker.
-    /// </summary>
-    public class OutboxProduceStrategy : IProduceStrategy
+    /// <inheritdoc cref="op_Equality" />
+    public static bool operator ==(OutboxProduceStrategy? left, OutboxProduceStrategy? right) => Equals(left, right);
+
+    /// <inheritdoc cref="op_Inequality" />
+    public static bool operator !=(OutboxProduceStrategy? left, OutboxProduceStrategy? right) => !Equals(left, right);
+
+    /// <inheritdoc cref="IProduceStrategy.Build" />
+    public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>
+        new OutboxProduceStrategyImplementation(
+            serviceProvider.GetRequiredService<TransactionalOutboxBroker>(),
+            serviceProvider.GetRequiredService<IOutboundLogger<OutboxProduceStrategy>>());
+
+    /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
+    public bool Equals(OutboxProduceStrategy? other) => other != null;
+
+    /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
+    public bool Equals(IProduceStrategy? other) => other is OutboxProduceStrategy;
+
+    /// <inheritdoc cref="object.Equals(object)" />
+    public override bool Equals(object? obj) => obj is OutboxProduceStrategy;
+
+    /// <inheritdoc cref="object.GetHashCode" />
+    public override int GetHashCode() => GetType().GetHashCode();
+
+    private sealed class OutboxProduceStrategyImplementation : IProduceStrategyImplementation
     {
-        /// <inheritdoc cref="IProduceStrategy.Build" />
-        public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>
-            new OutboxProduceStrategyImplementation(
-                serviceProvider.GetRequiredService<TransactionalOutboxBroker>(),
-                serviceProvider.GetRequiredService<IOutboundLogger<OutboxProduceStrategy>>());
+        private readonly TransactionalOutboxBroker _outboundQueueBroker;
 
-        private sealed class OutboxProduceStrategyImplementation : IProduceStrategyImplementation
+        private readonly IOutboundLogger<OutboxProduceStrategy> _logger;
+
+        private IProducer? _producer;
+
+        public OutboxProduceStrategyImplementation(
+            TransactionalOutboxBroker outboundQueueBroker,
+            IOutboundLogger<OutboxProduceStrategy> logger)
         {
-            private readonly TransactionalOutboxBroker _outboundQueueBroker;
+            _outboundQueueBroker = outboundQueueBroker;
+            _logger = logger;
+        }
 
-            private readonly IOutboundLogger<OutboxProduceStrategy> _logger;
+        public Task ProduceAsync(IOutboundEnvelope envelope)
+        {
+            Check.NotNull(envelope, nameof(envelope));
 
-            private IProducer? _producer;
+            _logger.LogWrittenToOutbox(envelope);
 
-            public OutboxProduceStrategyImplementation(
-                TransactionalOutboxBroker outboundQueueBroker,
-                IOutboundLogger<OutboxProduceStrategy> logger)
-            {
-                _outboundQueueBroker = outboundQueueBroker;
-                _logger = logger;
-            }
+            _producer ??= _outboundQueueBroker.GetProducer(envelope.Endpoint.Configuration);
 
-            public Task ProduceAsync(IOutboundEnvelope envelope)
-            {
-                Check.NotNull(envelope, nameof(envelope));
-
-                _logger.LogWrittenToOutbox(envelope);
-
-                _producer ??= _outboundQueueBroker.GetProducer(envelope.Endpoint);
-
-                return _producer.ProduceAsync(envelope);
-            }
+            return _producer.ProduceAsync(envelope);
         }
     }
 }

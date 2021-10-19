@@ -49,25 +49,5 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Messages
                     new Header("two", Encoding.UTF8.GetBytes("2"))
                 });
         }
-
-        [Fact]
-        public void ToConfluentHeaders_PartitionIndexHeaderIgnored()
-        {
-            var headers = new MessageHeaderCollection
-            {
-                { "one", "1" },
-                { KafkaMessageHeaders.KafkaPartitionIndex, "42" },
-                { "two", "2" }
-            };
-
-            var confluentHeaders = headers.ToConfluentHeaders();
-
-            confluentHeaders.Should().BeEquivalentTo(
-                new[]
-                {
-                    new Header("one", Encoding.UTF8.GetBytes("1")),
-                    new Header("two", Encoding.UTF8.GetBytes("2"))
-                });
-        }
     }
 }

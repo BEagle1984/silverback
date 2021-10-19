@@ -10,22 +10,25 @@ using Silverback.Diagnostics;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Tests.Types;
 using Silverback.Util;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestProducer : Producer<TestBroker, TestProducerEndpoint>
+    public class TestProducer : Producer<TestBroker, TestProducerConfiguration, TestProducerEndpoint>
     {
         public TestProducer(
             TestBroker broker,
-            TestProducerEndpoint endpoint,
+            TestProducerConfiguration settings,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
+            IOutboundEnvelopeFactory envelopeFactory,
             IServiceProvider serviceProvider)
             : base(
                 broker,
-                endpoint,
+                settings,
                 behaviorsProvider,
+                envelopeFactory,
                 serviceProvider,
                 Substitute.For<IOutboundLogger<TestProducer>>())
         {
@@ -38,20 +41,20 @@ namespace Silverback.Tests.Integration.TestTypes
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName) =>
+            TestProducerEndpoint endpoint) =>
             ProduceCore(
                 message,
                 messageStream.ReadAll(),
                 headers,
-                actualEndpointName);
+                endpoint);
 
         protected override IBrokerMessageIdentifier? ProduceCore(
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName)
+            TestProducerEndpoint endpoint)
         {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
+            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, endpoint));
             return null;
         }
 
@@ -59,7 +62,7 @@ namespace Silverback.Tests.Integration.TestTypes
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName,
+            TestProducerEndpoint endpoint,
             Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError)
         {
@@ -67,7 +70,7 @@ namespace Silverback.Tests.Integration.TestTypes
                 message,
                 messageStream.ReadAll(),
                 headers,
-                actualEndpointName,
+                endpoint,
                 onSuccess,
                 onError);
         }
@@ -76,11 +79,11 @@ namespace Silverback.Tests.Integration.TestTypes
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName,
+            TestProducerEndpoint endpoint,
             Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError)
         {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
+            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, endpoint));
             onSuccess.Invoke(null);
         }
 
@@ -88,20 +91,20 @@ namespace Silverback.Tests.Integration.TestTypes
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName) =>
+            TestProducerEndpoint endpoint) =>
             await ProduceCoreAsync(
                 message,
                 await messageStream.ReadAllAsync().ConfigureAwait(false),
                 headers,
-                actualEndpointName);
+                endpoint);
 
         protected override Task<IBrokerMessageIdentifier?> ProduceCoreAsync(
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName)
+            TestProducerEndpoint endpoint)
         {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
+            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, endpoint));
             return Task.FromResult<IBrokerMessageIdentifier?>(null);
         }
 
@@ -109,14 +112,14 @@ namespace Silverback.Tests.Integration.TestTypes
             object? message,
             Stream? messageStream,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName,
+            TestProducerEndpoint endpoint,
             Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError) =>
             await ProduceCoreAsync(
                 message,
                 await messageStream.ReadAllAsync().ConfigureAwait(false),
                 headers,
-                actualEndpointName,
+                endpoint,
                 onSuccess,
                 onError);
 
@@ -124,11 +127,11 @@ namespace Silverback.Tests.Integration.TestTypes
             object? message,
             byte[]? messageBytes,
             IReadOnlyCollection<MessageHeader>? headers,
-            string actualEndpointName,
+            TestProducerEndpoint endpoint,
             Action<IBrokerMessageIdentifier?> onSuccess,
             Action<Exception> onError)
         {
-            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, Endpoint));
+            ProducedMessages.Add(new ProducedMessage(messageBytes, headers, endpoint));
             onSuccess.Invoke(null);
             return Task.CompletedTask;
         }

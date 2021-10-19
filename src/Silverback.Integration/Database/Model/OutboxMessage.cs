@@ -23,6 +23,7 @@ namespace Silverback.Database.Model
         /// <summary>
         ///     Gets or sets the assembly qualified name of the message class.
         /// </summary>
+        [MaxLength(500)]
         public string? MessageType { get; set; }
 
         /// <summary>
@@ -34,30 +35,26 @@ namespace Silverback.Database.Model
         /// <summary>
         ///     Gets or sets the serialized message headers.
         /// </summary>
-        /// <remarks>
-        ///     This field is no longer used (replaced by SerializedHeaders) and will be removed
-        ///     with the next major release.
-        /// </remarks>
-        [Obsolete("Replaced by SerializedHeaders.")]
-        public string? Headers { get; set; }
+        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+        public byte[]? Headers { get; set; }
 
         /// <summary>
-        ///     Gets or sets the serialized message headers.
+        ///     Gets or sets the raw name of the producer endpoint.
+        /// </summary>
+        [MaxLength(300)]
+        public string EndpointRawName { get; set; } = string.Empty;
+
+        /// <summary>
+        ///     Gets or sets the friendly name of the producer endpoint.
+        /// </summary>
+        [MaxLength(300)]
+        public string? EndpointFriendlyName { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the serialized endpoint.
         /// </summary>
         [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        public byte[]? SerializedHeaders { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the name of the producer endpoint.
-        /// </summary>
-        [MaxLength(300)]
-        public string EndpointName { get; set; } = null!;
-
-        /// <summary>
-        ///     Gets or sets the name of the actual target endpoint that was resolved for the message.
-        /// </summary>
-        [MaxLength(300)]
-        public string? ActualEndpointName { get; set; }
+        public byte[]? Endpoint { get; set; }
 
         /// <summary>
         ///     Gets or sets the datetime when the message was stored in the queue.

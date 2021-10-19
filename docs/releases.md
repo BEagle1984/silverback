@@ -9,11 +9,44 @@ uid: releases
 ### What's new
 
 * Support Kafka cooperative sticky partition assignment strategy
-* Increase default [KafkaConsumerEndpoint.MaxDegreeOfParallelism](xref:Silverback.Messaging.KafkaConsumerEndpoint#Silverback_Messaging_KafkaConsumerEndpoint_MaxDegreeOfParallelism) to 100.
+* Increase default [KafkaConsumerEndpoint.MaxDegreeOfParallelism](xref:Silverback.Messaging.KafkaConsumerEndpoint#Silverback_Messaging_KafkaConsumerEndpoint_MaxDegreeOfParallelism) to 100
+* TO-BE-REVIEWED
+  * New AddHeader overloads with only message
+  * New WithMessageId overloads with only message
+  * WithKafkaKey overloads with only message
+  * AddInbound/AddOoutbound with message type (influencing AddHeader etc.)
+  * Default serializer is typed and now works with sub-typed (document in serializer page)
+
 
 ### Breaking Changes
 
-* Several small changes to the <xref:Silverback.Messaging.Broker.IBroker>/<xref:Silverback.Messaging.Broker.IConsumer> and their implementations
+* Changed some details in <xref:Silverback.Messaging.Broker.IBroker>/<xref:Silverback.Messaging.Broker.IConsumer> and their implementations
+* Reorganized the configuration namespaces, some extension methods might have been moved to a different namespace, thus requiring a different `using`.
+* Refactored the endpoint models
+  * Changed the endpoint models to [records](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/record) with init-only properties
+  * Removed constructors with parameters
+  * Refactored, redesigned and deprecated some properties
+  * Building the endpoints directly is still supported but the strongly recommended preferred way is to use the builders, therefore from now on the documentation will only show that approach
+  * TO-DO: Endpoint to Configuration and related renames (builders, etc.)
+* Removed the `IOutboundRouter` interface and all `AddOutbound` overloads accepting a custom `IOutboundRouter`
+* Removed all builders interfaces and exposed the actual classes directly (e.g. `ISilverbackBuilder` to `SilverbackBuilder`)
+* Replaced `Endpoint`, `ProducerEndpoint` and `ConsumerEndpoint` with <xref:EndpointConfiguration>, <xref:ProducerConfiguration>, <xref:ConsumerConfiguration>
+* Removed `IEndpoint`, `ProducerEndpoint` and `IConsumerEndpoint` interfaces
+* TO-BE-COMPARED / TO-BE-REVIEWED
+  * IMessageSerializer
+  * IKafkaProducerEndpointNameResolver
+  * ConsumerBuilder / ProducerBuilder
+  * UseEndpointNameResolver to UseEndpointResolver (and interface name)
+  * ProduceTo with delegates only receive message instead of envelope (same for resolver)
+  * Endpoint builders functions now work with `TMessage` instead of `Envelope<TMessage>` (e.g. `ProducerTo`)
+  * AddOutboundEndpointsCheck renamed to AddProducersCheck
+  * IOutboundQueueHealthCheckService to IOutboxHealthCheckService
+  * Configuration namespace changed from Messaging.Configuration to Configuration for some types (ISilverbackConfigurator)
+  * KafkaEndpoint.Configure -> KafkaConfiguration.ConfigureClient
+
+### Deprecation Notice
+
+The support for RabbitMQ has been deprecated? (...in case explain motivation etc....)
 
 ## [3.6.0](https://github.com/BEagle1984/silverback/releases/tag/v3.6.0)
 

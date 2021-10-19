@@ -9,14 +9,14 @@ using Silverback.Messaging.Sequences;
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
-    ///     Consumes an endpoint and invokes a callback delegate when a message is received.
+    ///     Consumes from one or more endpoints and pushes the received messages to the internal bus.
     /// </summary>
     public interface IConsumer : IBrokerConnectedObject
     {
         /// <summary>
-        ///     Gets the <see cref="IConsumerEndpoint" /> representing the endpoint that is being consumed.
+        ///     Gets the configuration.
         /// </summary>
-        IConsumerEndpoint Endpoint { get; }
+        ConsumerConfiguration Configuration { get; }
 
         /// <summary>
         ///     Gets a value indicating whether this consumer is connected and consuming (started).

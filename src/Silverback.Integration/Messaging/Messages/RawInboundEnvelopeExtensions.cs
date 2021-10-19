@@ -3,16 +3,10 @@
 
 using System.IO;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+internal static class RawInboundEnvelopeExtensions
 {
-    internal static class RawInboundEnvelopeExtensions
-    {
-        public static RawInboundEnvelope CloneReplacingStream(this IRawInboundEnvelope envelope, Stream? rawMessage) =>
-            new(
-                rawMessage,
-                envelope.Headers,
-                envelope.Endpoint,
-                envelope.ActualEndpointName,
-                envelope.BrokerMessageIdentifier);
-    }
+    public static RawInboundEnvelope CloneReplacingStream(this IRawInboundEnvelope envelope, Stream? rawMessage) =>
+        new(rawMessage, envelope.Headers, envelope.Endpoint, envelope.BrokerMessageIdentifier);
 }

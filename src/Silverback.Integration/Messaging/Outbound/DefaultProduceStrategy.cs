@@ -8,31 +8,52 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Outbound
+namespace Silverback.Messaging.Outbound;
+
+/// <summary>
+///     This is the default produce strategy, which immediately pushes to the message broker via the underlying library and
+///     according to the endpoint settings.
+/// </summary>
+public sealed class DefaultProduceStrategy : IProduceStrategy, IEquatable<DefaultProduceStrategy>
 {
-    internal sealed class DefaultProduceStrategy : IProduceStrategy
+    private DefaultProduceStrategyImplementation? _implementation;
+
+    /// <inheritdoc cref="op_Equality" />
+    public static bool operator ==(DefaultProduceStrategy? left, DefaultProduceStrategy? right) => Equals(left, right);
+
+    /// <inheritdoc cref="op_Inequality" />
+    public static bool operator !=(DefaultProduceStrategy? left, DefaultProduceStrategy? right) => !Equals(left, right);
+
+    /// <inheritdoc cref="IProduceStrategy.Build" />
+    public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>
+        _implementation ??= new DefaultProduceStrategyImplementation(serviceProvider.GetRequiredService<IBrokerCollection>());
+
+    /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
+    public bool Equals(DefaultProduceStrategy? other) => other != null;
+
+    /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
+    public bool Equals(IProduceStrategy? other) => other is DefaultProduceStrategy;
+
+    /// <inheritdoc cref="object.Equals(object)" />
+    public override bool Equals(object? obj) => obj is DefaultProduceStrategy;
+
+    /// <inheritdoc cref="object.GetHashCode" />
+    public override int GetHashCode() => GetType().GetHashCode();
+
+    private sealed class DefaultProduceStrategyImplementation : IProduceStrategyImplementation
     {
-        private DefaultProduceStrategyImplementation? _implementation;
+        private readonly IBrokerCollection _brokerCollection;
 
-        public IProduceStrategyImplementation Build(IServiceProvider serviceProvider) =>
-            _implementation ??= new DefaultProduceStrategyImplementation(
-                serviceProvider.GetRequiredService<IBrokerCollection>());
-
-        private sealed class DefaultProduceStrategyImplementation : IProduceStrategyImplementation
+        public DefaultProduceStrategyImplementation(IBrokerCollection brokerCollection)
         {
-            private readonly IBrokerCollection _brokerCollection;
+            _brokerCollection = brokerCollection;
+        }
 
-            public DefaultProduceStrategyImplementation(IBrokerCollection brokerCollection)
-            {
-                _brokerCollection = brokerCollection;
-            }
+        public Task ProduceAsync(IOutboundEnvelope envelope)
+        {
+            Check.NotNull(envelope, nameof(envelope));
 
-            public Task ProduceAsync(IOutboundEnvelope envelope)
-            {
-                Check.NotNull(envelope, nameof(envelope));
-
-                return _brokerCollection.GetProducer(envelope.Endpoint).ProduceAsync(envelope);
-            }
+            return _brokerCollection.GetProducer(envelope.Endpoint.Configuration).ProduceAsync(envelope);
         }
     }
 }

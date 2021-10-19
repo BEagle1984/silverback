@@ -84,11 +84,10 @@ namespace Silverback.Testing
                 case 0 when bootstrapServers == null:
                     string[] distinctBootstrapServers =
                         _kafkaBroker.Producers.Select(
-                                producer => ((KafkaProducerEndpoint)producer.Endpoint).Configuration.BootstrapServers)
+                                producer => ((KafkaProducerConfiguration)producer.Configuration).Client.BootstrapServers)
                             .Union(
                                 _kafkaBroker.Consumers.Select(
-                                    consumer => ((KafkaConsumerEndpoint)consumer.Endpoint).Configuration
-                                        .BootstrapServers))
+                                    consumer => ((KafkaConsumerConfiguration)consumer.Configuration).Client.BootstrapServers))
                             .Distinct(StringComparer.OrdinalIgnoreCase)
                             .ToArray();
                     if (distinctBootstrapServers.Length == 1)

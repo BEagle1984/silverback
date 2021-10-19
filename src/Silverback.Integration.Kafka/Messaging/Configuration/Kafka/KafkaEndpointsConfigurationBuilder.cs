@@ -2,141 +2,151 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Generic;
-using Silverback.Messaging.Outbound.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Silverback.Diagnostics;
+using Silverback.Messaging.Broker;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Configuration.Kafka
+namespace Silverback.Messaging.Configuration.Kafka;
+
+/// <summary>
+///     Configures the Kafka producers and consumers.
+/// </summary>
+public sealed class KafkaEndpointsConfigurationBuilder : EndpointsConfigurationBuilder
 {
-    internal sealed class KafkaEndpointsConfigurationBuilder : IKafkaEndpointsConfigurationBuilder
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="KafkaEndpointsConfigurationBuilder" /> class.
+    /// </summary>
+    /// <param name="serviceProvider">
+    ///     The <see cref="IServiceProvider" />.
+    /// </param>
+    public KafkaEndpointsConfigurationBuilder(IServiceProvider serviceProvider)
+        : base(serviceProvider)
     {
-        private readonly IEndpointsConfigurationBuilder _endpointsConfigurationBuilder;
+    }
 
-        public KafkaEndpointsConfigurationBuilder(
-            IEndpointsConfigurationBuilder endpointsConfigurationBuilder)
-        {
-            _endpointsConfigurationBuilder = endpointsConfigurationBuilder;
-        }
+    internal KafkaClientConfiguration ClientConfiguration { get; } = new();
 
-        public IServiceProvider ServiceProvider => _endpointsConfigurationBuilder.ServiceProvider;
+    /// <summary>
+    ///     Configures the Kafka client properties that are shared between the producers and consumers.
+    /// </summary>
+    /// <param name="configAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaClientConfiguration" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaEndpointsConfigurationBuilder ConfigureClient(Action<KafkaClientConfiguration> configAction)
+    {
+        Check.NotNull(configAction, nameof(configAction));
 
-        internal KafkaClientConfig ClientConfig { get; } = new();
+        configAction.Invoke(ClientConfiguration);
 
-        public IKafkaEndpointsConfigurationBuilder Configure(Action<KafkaClientConfig> configAction)
-        {
-            Check.NotNull(configAction, nameof(configAction));
+        return this;
+    }
 
-            configAction.Invoke(ClientConfig);
+    /// <summary>
+    ///     Configures an outbound endpoint with the specified producer configuration.
+    /// </summary>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages to be produced to this endpoint.
+    /// </typeparam>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaProducerConfigurationBuilder{TMessage}" /> and configures it.
+    /// </param>
+    /// <param name="preloadProducers">
+    ///     Specifies whether the producers must be immediately instantiated and connected. When <c>false</c> the
+    ///     <see cref="KafkaProducer" /> will be created only when the first message is about to be produced.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
+        Action<KafkaProducerConfigurationBuilder<TMessage>> configurationBuilderAction,
+        bool preloadProducers = true)
+    {
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-            return this;
-        }
+        KafkaProducerConfiguration? endpointConfiguration = BuildAndValidateConfiguration(configurationBuilderAction);
 
-        public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            Action<IKafkaProducerEndpointBuilder> endpointBuilderAction,
-            bool preloadProducers = true) =>
-            AddOutbound(typeof(TMessage), endpointBuilderAction, preloadProducers);
+        if (endpointConfiguration != null)
+            AddOutbound<TMessage>(endpointConfiguration, preloadProducers);
 
-        public IKafkaEndpointsConfigurationBuilder AddOutbound(
-            Type messageType,
-            DictionaryOutboundRouter<object, KafkaProducerEndpoint>.RouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
-            bool preloadProducers = true)
-        {
-            var router = new KafkaOutboundEndpointRouter<object>(
-                routerFunction,
-                endpointBuilderActions,
-                ClientConfig);
-            this.AddOutbound(messageType, router, preloadProducers);
+        return this;
+    }
 
-            return this;
-        }
+    /// <summary>
+    ///     Configures an inbound endpoint with the specified consumer configuration.
+    /// </summary>
+    /// <remarks>
+    ///     Multiple calls to this methods will cause multiple consumers to be instantiated, which means multiple connections being issues
+    ///     and more resources being used. The <see cref="KafkaConsumerEndpoint" /> allows to define multiple topics to be consumed, to
+    ///     efficiently instantiate a single consumer for all of them.
+    /// </remarks>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaConsumerConfigurationBuilder{TMessage}" /> and configures it.
+    /// </param>
+    /// <param name="consumersCount">
+    ///     The number of consumers to be instantiated. The default is 1.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaEndpointsConfigurationBuilder AddInbound(
+        Action<KafkaConsumerConfigurationBuilder<object>> configurationBuilderAction,
+        int consumersCount = 1) =>
+        AddInbound<object>(configurationBuilderAction, consumersCount);
 
-        public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            DictionaryOutboundRouter<TMessage, KafkaProducerEndpoint>.RouterFunction routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
-            bool preloadProducers = true)
-        {
-            var router = new KafkaOutboundEndpointRouter<TMessage>(
-                routerFunction,
-                endpointBuilderActions,
-                ClientConfig);
-            this.AddOutbound(router, preloadProducers);
+    /// <summary>
+    ///     Configures an inbound endpoint with the specified consumer configuration.
+    /// </summary>
+    /// <remarks>
+    ///     Multiple calls to this methods will cause multiple consumers to be instantiated, which means multiple connections being issues
+    ///     and more resources being used. The <see cref="KafkaConsumerEndpoint" /> allows to define multiple topics to be consumed, to
+    ///     efficiently instantiate a single consumer for all of them.
+    /// </remarks>
+    /// <typeparam name="TMessage">
+    ///     The type of the messages that will be consumed from this endpoint. Specifying the message type will usually automatically switch to the typed message serializer and deserialize this specific type,
+    ///     regardless of the message headers.
+    /// </typeparam>
+    /// <param name="configurationBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaConsumerConfigurationBuilder{TMessage}" /> and configures it.
+    /// </param>
+    /// <param name="consumersCount">
+    ///     The number of consumers to be instantiated. The default is 1.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="KafkaEndpointsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public KafkaEndpointsConfigurationBuilder AddInbound<TMessage>(
+        Action<KafkaConsumerConfigurationBuilder<TMessage>> configurationBuilderAction,
+        int consumersCount = 1)
+    {
+        Check.NotNull(configurationBuilderAction, nameof(configurationBuilderAction));
 
-            return this;
-        }
+        KafkaConsumerConfiguration? endpointConfiguration = BuildAndValidateConfiguration(configurationBuilderAction);
 
-        public IKafkaEndpointsConfigurationBuilder AddOutbound(
-            Type messageType,
-            DictionaryOutboundRouter<object, KafkaProducerEndpoint>.SingleEndpointRouterFunction
-                routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
-            bool preloadProducers = true)
-        {
-            var router = new KafkaOutboundEndpointRouter<object>(
-                routerFunction,
-                endpointBuilderActions,
-                ClientConfig);
-            this.AddOutbound(messageType, router, preloadProducers);
+        if (endpointConfiguration != null)
+            AddInbound(endpointConfiguration, consumersCount);
 
-            return this;
-        }
+        return this;
+    }
 
-        public IKafkaEndpointsConfigurationBuilder AddOutbound<TMessage>(
-            DictionaryOutboundRouter<TMessage, KafkaProducerEndpoint>.SingleEndpointRouterFunction
-                routerFunction,
-            IReadOnlyDictionary<string, Action<IKafkaProducerEndpointBuilder>> endpointBuilderActions,
-            bool preloadProducers = true)
-        {
-            var router = new KafkaOutboundEndpointRouter<TMessage>(
-                routerFunction,
-                endpointBuilderActions,
-                ClientConfig);
-            this.AddOutbound(router, preloadProducers);
+    private KafkaProducerConfiguration? BuildAndValidateConfiguration<TMessage>(Action<KafkaProducerConfigurationBuilder<TMessage>> configurationBuilderAction)
+    {
+        KafkaProducerConfigurationBuilder<TMessage> builder = new(ClientConfiguration, this);
+        KafkaProducerConfiguration? endpointConfiguration = builder.BuildAndValidate(
+            configurationBuilderAction,
+            ServiceProvider.GetService<ISilverbackLogger<KafkaEndpointsConfigurationBuilder>>());
+        return endpointConfiguration;
+    }
 
-            return this;
-        }
-
-        public IKafkaEndpointsConfigurationBuilder AddOutbound(
-            Type messageType,
-            Action<IKafkaProducerEndpointBuilder> endpointBuilderAction,
-            bool preloadProducers = true)
-        {
-            Check.NotNull(messageType, nameof(messageType));
-            Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
-
-            var builder = new KafkaProducerEndpointBuilder(ClientConfig, this);
-            endpointBuilderAction.Invoke(builder);
-
-            this.AddOutbound(messageType, builder.Build(), preloadProducers);
-
-            return this;
-        }
-
-        public IKafkaEndpointsConfigurationBuilder AddInbound(
-            Action<IKafkaConsumerEndpointBuilder> endpointBuilderAction,
-            int consumersCount = 1) =>
-            AddInbound(null, endpointBuilderAction, consumersCount);
-
-        public IKafkaEndpointsConfigurationBuilder AddInbound<TMessage>(
-            Action<IKafkaConsumerEndpointBuilder> endpointBuilderAction,
-            int consumersCount = 1) =>
-            AddInbound(typeof(TMessage), endpointBuilderAction, consumersCount);
-
-        public IKafkaEndpointsConfigurationBuilder AddInbound(
-            Type? messageType,
-            Action<IKafkaConsumerEndpointBuilder> endpointBuilderAction,
-            int consumersCount = 1)
-        {
-            Check.NotNull(endpointBuilderAction, nameof(endpointBuilderAction));
-
-            var builder = new KafkaConsumerEndpointBuilder(ClientConfig, messageType, this);
-            builder.DeserializeJson();
-
-            endpointBuilderAction.Invoke(builder);
-
-            _endpointsConfigurationBuilder.AddInbound(builder.Build(), consumersCount);
-
-            return this;
-        }
+    private KafkaConsumerConfiguration? BuildAndValidateConfiguration<TMessage>(Action<KafkaConsumerConfigurationBuilder<TMessage>> configurationBuilderAction)
+    {
+        KafkaConsumerConfigurationBuilder<TMessage> builder = new(ClientConfiguration, this);
+        KafkaConsumerConfiguration? endpointConfiguration = builder.BuildAndValidate(
+            configurationBuilderAction,
+            ServiceProvider.GetService<ISilverbackLogger<KafkaEndpointsConfigurationBuilder>>());
+        return endpointConfiguration;
     }
 }

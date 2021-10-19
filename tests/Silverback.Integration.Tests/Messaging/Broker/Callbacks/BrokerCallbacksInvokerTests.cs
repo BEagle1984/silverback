@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
+using Silverback.Configuration;
 using Silverback.Messaging.Broker.Callbacks;
 using Silverback.Tests.Integration.TestTypes;
 using Silverback.Tests.Logging;

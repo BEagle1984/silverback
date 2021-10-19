@@ -9,176 +9,161 @@ using Silverback.Messaging.Broker;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Diagnostics
+namespace Silverback.Diagnostics;
+
+internal sealed class OutboundLogger
 {
-    internal sealed class OutboundLogger
+    private readonly IBrokerLogEnricher _logEnricher;
+
+    private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?> _messageProduced;
+
+    private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?> _errorProducingMessage;
+
+    private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?> _messageWrittenToOutbox;
+
+    private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?> _errorProducingOutboxStoredMessage;
+
+    public OutboundLogger(IBrokerLogEnricher logEnricher)
     {
-        private readonly IBrokerLogEnricher _logEnricher;
+        _logEnricher = Check.NotNull(logEnricher, nameof(logEnricher));
 
-        private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
-            _messageProduced;
+        _messageProduced = SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(IntegrationLogEvents.MessageProduced.Enrich(_logEnricher));
 
-        private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
-            _errorProducingMessage;
+        _errorProducingMessage = SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(IntegrationLogEvents.ErrorProducingMessage.Enrich(_logEnricher));
 
-        private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
-            _messageWrittenToOutbox;
+        _messageWrittenToOutbox = SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(IntegrationLogEvents.MessageWrittenToOutbox.Enrich(_logEnricher));
 
-        private readonly Action<ILogger, string, string?, string?, string?, string?, Exception?>
-            _errorProducingOutboxStoredMessage;
+        _errorProducingOutboxStoredMessage = SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(IntegrationLogEvents.ErrorProducingOutboxStoredMessage.Enrich(_logEnricher));
+    }
 
-        public OutboundLogger(IBrokerLogEnricher logEnricher)
-        {
-            _logEnricher = Check.NotNull(logEnricher, nameof(logEnricher));
+    public void LogProduced(ISilverbackLogger logger, IOutboundEnvelope envelope)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
+            return;
 
-            _messageProduced =
-                SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
-                    IntegrationLogEvents.MessageProduced.Enrich(_logEnricher));
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+            envelope.Endpoint,
+            envelope.Headers,
+            envelope.BrokerMessageIdentifier);
 
-            _errorProducingMessage =
-                SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
-                    IntegrationLogEvents.ErrorProducingMessage.Enrich(_logEnricher));
+        _messageProduced.Invoke(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
+            envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
+            value1,
+            value2,
+            null);
+    }
 
-            _messageWrittenToOutbox =
-                SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
-                    IntegrationLogEvents.MessageWrittenToOutbox.Enrich(_logEnricher));
+    public void LogProduced(
+        ISilverbackLogger logger,
+        ProducerEndpoint actualEndpoint,
+        IReadOnlyCollection<MessageHeader>? headers,
+        IBrokerMessageIdentifier? brokerMessageIdentifier)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
+            return;
 
-            _errorProducingOutboxStoredMessage =
-                SilverbackLoggerMessage.Define<string, string?, string?, string?, string?>(
-                    IntegrationLogEvents.ErrorProducingOutboxStoredMessage.Enrich(_logEnricher));
-        }
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+            actualEndpoint,
+            headers,
+            brokerMessageIdentifier);
 
-        public void LogProduced(ISilverbackLogger logger, IOutboundEnvelope envelope)
-        {
-            if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
-                return;
+        _messageProduced.Invoke(
+            logger.InnerLogger,
+            actualEndpoint.DisplayName,
+            headers?.GetValue(DefaultMessageHeaders.MessageType),
+            headers?.GetValue(DefaultMessageHeaders.MessageId),
+            value1,
+            value2,
+            null);
+    }
 
-            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-                envelope.Endpoint,
-                envelope.Headers,
-                envelope.BrokerMessageIdentifier);
+    public void LogProduceError(ISilverbackLogger logger, IOutboundEnvelope envelope, Exception exception)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
+            return;
 
-            _messageProduced.Invoke(
-                logger.InnerLogger,
-                envelope.ActualEndpointDisplayName,
-                envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
-                envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                value1,
-                value2,
-                null);
-        }
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+            envelope.Endpoint,
+            envelope.Headers,
+            null);
 
-        public void LogProduced(
-            ISilverbackLogger logger,
-            IProducerEndpoint endpoint,
-            string actualEndpoint,
-            IReadOnlyCollection<MessageHeader>? headers,
-            IBrokerMessageIdentifier? brokerMessageIdentifier)
-        {
-            if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
-                return;
+        _errorProducingMessage.Invoke(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
+            envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
+            value1,
+            value2,
+            exception);
+    }
 
-            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-                endpoint,
-                headers,
-                brokerMessageIdentifier);
+    public void LogProduceError(
+        ISilverbackLogger logger,
+        ProducerEndpoint actualEndpoint,
+        IReadOnlyCollection<MessageHeader>? headers,
+        Exception exception)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
+            return;
 
-            _messageProduced.Invoke(
-                logger.InnerLogger,
-                actualEndpoint,
-                headers?.GetValue(DefaultMessageHeaders.MessageType),
-                headers?.GetValue(DefaultMessageHeaders.MessageId),
-                value1,
-                value2,
-                null);
-        }
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+            actualEndpoint,
+            headers,
+            null);
 
-        public void LogProduceError(ISilverbackLogger logger, IOutboundEnvelope envelope, Exception exception)
-        {
-            if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
-                return;
+        _errorProducingMessage.Invoke(
+            logger.InnerLogger,
+            actualEndpoint.DisplayName,
+            headers?.GetValue(DefaultMessageHeaders.MessageType),
+            headers?.GetValue(DefaultMessageHeaders.MessageId),
+            value1,
+            value2,
+            exception);
+    }
 
-            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-                envelope.Endpoint,
-                envelope.Headers,
-                null);
+    public void LogWrittenToOutbox(ISilverbackLogger logger, IOutboundEnvelope envelope)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.MessageWrittenToOutbox))
+            return;
 
-            _errorProducingMessage.Invoke(
-                logger.InnerLogger,
-                envelope.ActualEndpointDisplayName,
-                envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
-                envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                value1,
-                value2,
-                exception);
-        }
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+            envelope.Endpoint,
+            envelope.Headers,
+            envelope.BrokerMessageIdentifier);
 
-        public void LogProduceError(
-            ISilverbackLogger logger,
-            IProducerEndpoint endpoint,
-            string actualEndpoint,
-            IReadOnlyCollection<MessageHeader>? headers,
-            Exception exception)
-        {
-            if (!logger.IsEnabled(IntegrationLogEvents.MessageProduced))
-                return;
+        _messageWrittenToOutbox.Invoke(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
+            envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
+            value1,
+            value2,
+            null);
+    }
 
-            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-                endpoint,
-                headers,
-                null);
+    public void LogErrorProducingOutboxStoredMessage(
+        ISilverbackLogger logger,
+        IOutboundEnvelope envelope,
+        Exception exception)
+    {
+        if (!logger.IsEnabled(IntegrationLogEvents.ErrorProducingOutboxStoredMessage))
+            return;
 
-            _errorProducingMessage.Invoke(
-                logger.InnerLogger,
-                actualEndpoint,
-                headers?.GetValue(DefaultMessageHeaders.MessageType),
-                headers?.GetValue(DefaultMessageHeaders.MessageId),
-                value1,
-                value2,
-                exception);
-        }
+        (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
+            envelope.Endpoint,
+            envelope.Headers,
+            envelope.BrokerMessageIdentifier);
 
-        public void LogWrittenToOutbox(ISilverbackLogger logger, IOutboundEnvelope envelope)
-        {
-            if (!logger.IsEnabled(IntegrationLogEvents.MessageWrittenToOutbox))
-                return;
-
-            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-                envelope.Endpoint,
-                envelope.Headers,
-                envelope.BrokerMessageIdentifier);
-
-            _messageWrittenToOutbox.Invoke(
-                logger.InnerLogger,
-                envelope.ActualEndpointDisplayName,
-                envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
-                envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                value1,
-                value2,
-                null);
-        }
-
-        public void LogErrorProducingOutboxStoredMessage(
-            ISilverbackLogger logger,
-            IOutboundEnvelope envelope,
-            Exception exception)
-        {
-            if (!logger.IsEnabled(IntegrationLogEvents.ErrorProducingOutboxStoredMessage))
-                return;
-
-            (string? value1, string? value2) = _logEnricher.GetAdditionalValues(
-                envelope.Endpoint,
-                envelope.Headers,
-                envelope.BrokerMessageIdentifier);
-
-            _errorProducingOutboxStoredMessage.Invoke(
-                logger.InnerLogger,
-                envelope.ActualEndpointDisplayName,
-                envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
-                envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
-                value1,
-                value2,
-                exception);
-        }
+        _errorProducingOutboxStoredMessage.Invoke(
+            logger.InnerLogger,
+            envelope.Endpoint.DisplayName,
+            envelope.Headers.GetValue(DefaultMessageHeaders.MessageType),
+            envelope.Headers.GetValue(DefaultMessageHeaders.MessageId),
+            value1,
+            value2,
+            exception);
     }
 }

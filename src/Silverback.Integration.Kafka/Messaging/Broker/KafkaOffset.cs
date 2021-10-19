@@ -216,7 +216,9 @@ namespace Silverback.Messaging.Broker
 
             return other is KafkaOffset otherKafkaOffset
                 ? CompareTo(otherKafkaOffset)
-                : throw new ArgumentException($"Object must be of type {nameof(KafkaOffset)}");
+                : throw new ArgumentException(
+                    $"The type {other.GetType().FullName} does not implement {nameof(KafkaOffset)}.",
+                    nameof(other));
         }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />

@@ -120,6 +120,6 @@ namespace Silverback.Messaging.Broker.Kafka
 
         // TODO: Can test setting for backpressure limit?
         private Channel<ConsumeResult<byte[]?, byte[]?>> CreateBoundedChannel() =>
-            Channel.CreateBounded<ConsumeResult<byte[]?, byte[]?>>(_consumer.Endpoint.BackpressureLimit);
+            Channel.CreateBounded<ConsumeResult<byte[]?, byte[]?>>(_consumer.Configuration.BackpressureLimit);
     }
 }

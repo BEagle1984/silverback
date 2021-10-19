@@ -6,51 +6,50 @@ using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Encryption
+namespace Silverback.Messaging.Encryption;
+
+/// <summary>
+///     Encrypts the message according to the <see cref="EncryptionSettings" />.
+/// </summary>
+public class EncryptorProducerBehavior : IProducerBehavior
 {
+    private readonly ISilverbackCryptoStreamFactory _streamFactory;
+
     /// <summary>
-    ///     Encrypts the message according to the <see cref="EncryptionSettings" />.
+    ///     Initializes a new instance of the <see cref="EncryptorProducerBehavior" /> class.
     /// </summary>
-    public class EncryptorProducerBehavior : IProducerBehavior
+    /// <param name="streamFactory">
+    ///     The <see cref="ISilverbackCryptoStreamFactory" />.
+    /// </param>
+    public EncryptorProducerBehavior(ISilverbackCryptoStreamFactory streamFactory)
     {
-        private readonly ISilverbackCryptoStreamFactory _streamFactory;
+        _streamFactory = streamFactory;
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="EncryptorProducerBehavior" /> class.
-        /// </summary>
-        /// <param name="streamFactory">
-        ///     The <see cref="ISilverbackCryptoStreamFactory" />.
-        /// </param>
-        public EncryptorProducerBehavior(ISilverbackCryptoStreamFactory streamFactory)
+    /// <inheritdoc cref="ISorted.SortIndex" />
+    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Encryptor;
+
+    /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
+    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    {
+        Check.NotNull(context, nameof(context));
+        Check.NotNull(next, nameof(next));
+
+        if (context.Envelope.Endpoint.Configuration.Encryption != null && context.Envelope.RawMessage != null)
         {
-            _streamFactory = streamFactory;
-        }
+            context.Envelope.RawMessage = _streamFactory.GetEncryptStream(
+                context.Envelope.RawMessage,
+                context.Envelope.Endpoint.Configuration.Encryption);
 
-        /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Encryptor;
-
-        /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
-        {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(next, nameof(next));
-
-            if (context.Envelope.Endpoint.Encryption != null && context.Envelope.RawMessage != null)
+            if (context.Envelope.Endpoint.Configuration.Encryption is SymmetricEncryptionSettings settings &&
+                settings.KeyIdentifier != null)
             {
-                context.Envelope.RawMessage = _streamFactory.GetEncryptStream(
-                    context.Envelope.RawMessage,
-                    context.Envelope.Endpoint.Encryption);
-
-                if (context.Envelope.Endpoint.Encryption is SymmetricEncryptionSettings settings &&
-                    settings.KeyIdentifier != null)
-                {
-                    context.Envelope.Headers.AddOrReplace(
-                        DefaultMessageHeaders.EncryptionKeyId,
-                        settings.KeyIdentifier);
-                }
+                context.Envelope.Headers.AddOrReplace(
+                    DefaultMessageHeaders.EncryptionKeyId,
+                    settings.KeyIdentifier);
             }
-
-            await next(context).ConfigureAwait(false);
         }
+
+        await next(context).ConfigureAwait(false);
     }
 }

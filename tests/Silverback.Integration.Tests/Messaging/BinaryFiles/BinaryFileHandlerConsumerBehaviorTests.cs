@@ -21,16 +21,15 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         [Fact]
         public async Task HandleAsync_BinaryFileMessage_BinaryFileMessageReturned()
         {
-            var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-            var headers = new[]
+            byte[] rawContent = BytesUtil.GetRandomBytes();
+            MessageHeader[] headers =
             {
                 new MessageHeader("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName)
             };
-            var envelope = new RawInboundEnvelope(
+            RawInboundEnvelope envelope = new(
                 rawContent,
                 headers,
                 TestConsumerEndpoint.GetDefault(),
-                "test",
                 new TestOffset());
 
             IRawInboundEnvelope? result = null;
@@ -47,19 +46,18 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
                 });
 
             result.Should().BeAssignableTo<IInboundEnvelope<BinaryFileMessage>>();
-            var binaryFileMessage = result.As<IInboundEnvelope<BinaryFileMessage>>().Message!;
+            BinaryFileMessage binaryFileMessage = result.As<IInboundEnvelope<BinaryFileMessage>>().Message!;
             binaryFileMessage.Content.ReadAll().Should().BeEquivalentTo(rawContent);
         }
 
         [Fact]
         public async Task HandleAsync_NoBinaryFileHeaders_EnvelopeUntouched()
         {
-            var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-            var envelope = new RawInboundEnvelope(
+            byte[] rawContent = BytesUtil.GetRandomBytes();
+            RawInboundEnvelope envelope = new(
                 rawContent,
                 null,
                 TestConsumerEndpoint.GetDefault(),
-                "test",
                 new TestOffset());
 
             IRawInboundEnvelope? result = null;
@@ -81,18 +79,20 @@ namespace Silverback.Tests.Integration.Messaging.BinaryFiles
         [Fact]
         public async Task HandleAsync_EndpointWithBinaryFileMessageSerializer_EnvelopeUntouched()
         {
-            var rawContent = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-            var headers = new[]
+            byte[] rawContent = BytesUtil.GetRandomBytes();
+            MessageHeader[] headers =
             {
                 new MessageHeader("x-message-type", typeof(BinaryFileMessage).AssemblyQualifiedName)
             };
-            var endpoint = TestConsumerEndpoint.GetDefault();
-            endpoint.Serializer = new BinaryFileMessageSerializer();
-            var envelope = new RawInboundEnvelope(
+            TestConsumerConfiguration endpointConfiguration = new("test")
+            {
+                Serializer = new BinaryFileMessageSerializer()
+            };
+
+            RawInboundEnvelope envelope = new(
                 rawContent,
                 headers,
-                endpoint,
-                "test",
+                endpointConfiguration.GetDefaultEndpoint(),
                 new TestOffset());
 
             IRawInboundEnvelope? result = null;

@@ -1,1671 +1,1293 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
-using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Confluent.Kafka;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging;
+using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
-using Silverback.Messaging.Serialization;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Silverback.Tests.Integration.E2E.TestTypes.Messages;
-using Silverback.Util;
+using Silverback.Tests.Integration.E2E.Util;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Silverback.Tests.Integration.E2E.Kafka
+namespace Silverback.Tests.Integration.E2E.Kafka;
+
+public class ProducerTests : KafkaTestFixture
 {
-    public class ProducerTests : KafkaTestFixture
+    public ProducerTests(ITestOutputHelper testOutputHelper)
+        : base(testOutputHelper)
     {
-        public ProducerTests(ITestOutputHelper testOutputHelper)
-            : base(testOutputHelper)
+    }
+
+    [Fact]
+    public async Task Produce_Message_Produced()
+    {
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
+
+        producer.Produce(message);
+        producer.Produce(message);
+        producer.Produce(message);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IInboundEnvelope envelope in Helper.Spy.InboundEnvelopes)
         {
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
         }
+    }
 
-        [Fact]
-        public async Task Produce_Message_Produced()
+    [Fact]
+    public async Task Produce_MessageWithHeaders_Produced()
+    {
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
+
+        producer.Produce(message, new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        producer.Produce(message, new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        producer.Produce(message, new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IInboundEnvelope envelope in Helper.Spy.InboundEnvelopes)
         {
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll();
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            producer.Produce(message);
-            producer.Produce(message);
-            producer.Produce(message);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.InboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task Produce_MessageWithHeaders_Produced()
+    [Fact]
+    public async Task Produce_Envelope_Produced()
+    {
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://tests";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IOutboundEnvelopeFactory envelopeFactory = Host.ServiceProvider.GetRequiredService<IOutboundEnvelopeFactory>();
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+
+        producer.Produce(
+            envelopeFactory.CreateEnvelope(
+                message,
+                new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+                new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration)));
+        producer.Produce(
+            envelopeFactory.CreateEnvelope(
+                message,
+                new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+                new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration)));
+        producer.Produce(
+            envelopeFactory.CreateEnvelope(
+                message,
+                new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+                new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration)));
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IInboundEnvelope envelope in Helper.Spy.InboundEnvelopes)
         {
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll();
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            producer.Produce(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            producer.Produce(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            producer.Produce(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.InboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task Produce_Envelope_Produced()
+    [Fact]
+    public async Task Produce_MessageUsingCallbacks_Produced()
+    {
+        int produced = 0;
+        int errors = 0;
+
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
+
+        producer.Produce(
+            message,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        producer.Produce(
+            message,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        producer.Produce(
+            message,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+
+        produced.Should().BeLessThan(3);
+
+        await AsyncTestingUtil.WaitAsync(() => produced == 3);
+
+        produced.Should().Be(3);
+        errors.Should().Be(0);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        foreach (IInboundEnvelope envelope in Helper.Spy.InboundEnvelopes)
         {
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll()!;
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            producer.Produce(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint));
-            producer.Produce(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint));
-            producer.Produce(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint));
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.InboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task Produce_MessageUsingCallbacks_Produced()
+    [Fact]
+    public async Task Produce_EnvelopeUsingCallbacks_Produced()
+    {
+        int produced = 0;
+        int errors = 0;
+
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://tests";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IOutboundEnvelopeFactory envelopeFactory = Host.ServiceProvider.GetRequiredService<IOutboundEnvelopeFactory>();
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+
+        producer.Produce(
+            envelopeFactory.CreateEnvelope(
+                message,
+                new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+                new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration)),
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        producer.Produce(
+            envelopeFactory.CreateEnvelope(
+                message,
+                new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+                new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration)),
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        producer.Produce(
+            envelopeFactory.CreateEnvelope(
+                message,
+                new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+                new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration)),
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+
+        produced.Should().BeLessThan(3);
+
+        await AsyncTestingUtil.WaitAsync(() => produced == 3);
+
+        produced.Should().Be(3);
+        errors.Should().Be(0);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        foreach (IInboundEnvelope envelope in Helper.Spy.InboundEnvelopes)
         {
-            int produced = 0;
-            int errors = 0;
-
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll();
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            producer.Produce(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            producer.Produce(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            producer.Produce(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-
-            produced.Should().BeLessThan(3);
-
-            await AsyncTestingUtil.WaitAsync(() => produced == 3);
-
-            produced.Should().Be(3);
-            errors.Should().Be(0);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            foreach (var envelope in Helper.Spy.InboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should()
+                .ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should()
+                .ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task Produce_EnvelopeUsingCallbacks_Produced()
+    [Fact]
+    public async Task RawProduce_ByteArray_Produced()
+    {
+        byte[] rawMessage = { 0x01, 0x02, 0x03, 0x04, 0x05 };
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+
+        producer.RawProduce(
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        producer.RawProduce(
+            new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration),
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        producer.RawProduce(
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IRawInboundEnvelope envelope in Helper.Spy.RawInboundEnvelopes)
         {
-            int produced = 0;
-            int errors = 0;
-
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll();
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            producer.Produce(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint),
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            producer.Produce(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint),
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            producer.Produce(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint),
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-
-            produced.Should().BeLessThan(3);
-
-            await AsyncTestingUtil.WaitAsync(() => produced == 3);
-
-            produced.Should().Be(3);
-            errors.Should().Be(0);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            foreach (var envelope in Helper.Spy.InboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task RawProduce_ByteArray_Produced()
+    [Fact]
+    public async Task RawProduce_Stream_Produced()
+    {
+        byte[] rawMessage = BytesUtil.GetRandomBytes();
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+
+        producer.RawProduce(
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        producer.RawProduce(
+            new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration),
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        producer.RawProduce(
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IRawInboundEnvelope envelope in Helper.Spy.RawInboundEnvelopes)
         {
-            var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            producer.RawProduce(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            producer.RawProduce(
-                DefaultTopicName,
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            producer.RawProduce(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task RawProduce_Stream_Produced()
+    [Fact]
+    public async Task RawProduce_ByteArrayUsingCallbacks_Produced()
+    {
+        int produced = 0;
+        int errors = 0;
+
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+
+        producer.RawProduce(
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        producer.RawProduce(
+            new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration),
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        producer.RawProduce(
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+
+        produced.Should().BeLessThan(3);
+
+        await AsyncTestingUtil.WaitAsync(() => produced == 3);
+
+        produced.Should().Be(3);
+        errors.Should().Be(0);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IRawInboundEnvelope envelope in Helper.Spy.RawInboundEnvelopes)
         {
-            var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            producer.RawProduce(
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            producer.RawProduce(
-                DefaultTopicName,
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            producer.RawProduce(
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task RawProduce_ByteArrayUsingCallbacks_Produced()
+    [Fact]
+    public async Task RawProduce_StreamUsingCallbacks_Produced()
+    {
+        int produced = 0;
+        int errors = 0;
+
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+
+        producer.RawProduce(
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        producer.RawProduce(
+            new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration),
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        producer.RawProduce(
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+
+        produced.Should().BeLessThan(3);
+
+        await AsyncTestingUtil.WaitAsync(() => produced == 3);
+
+        produced.Should().Be(3);
+        errors.Should().Be(0);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IRawInboundEnvelope envelope in Helper.Spy.RawInboundEnvelopes)
         {
-            int produced = 0;
-            int errors = 0;
-
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll();
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            producer.RawProduce(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            producer.RawProduce(
-                producer.Endpoint.Name,
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            producer.RawProduce(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-
-            produced.Should().BeLessThan(3);
-
-            await AsyncTestingUtil.WaitAsync(() => produced == 3);
-
-            produced.Should().Be(3);
-            errors.Should().Be(0);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task RawProduce_StreamUsingCallbacks_Produced()
+    [Fact]
+    public async Task ProduceAsync_Message_Produced()
+    {
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
+
+        await producer.ProduceAsync(message);
+        await producer.ProduceAsync(message);
+        await producer.ProduceAsync(message);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IInboundEnvelope envelope in Helper.Spy.InboundEnvelopes)
         {
-            int produced = 0;
-            int errors = 0;
-
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll()!;
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            producer.RawProduce(
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            producer.RawProduce(
-                producer.Endpoint.Name,
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            producer.RawProduce(
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-
-            produced.Should().BeLessThan(3);
-
-            await AsyncTestingUtil.WaitAsync(() => produced == 3);
-
-            produced.Should().Be(3);
-            errors.Should().Be(0);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
         }
+    }
 
-        [Fact]
-        public async Task ProduceAsync_Message_Produced()
+    [Fact]
+    public async Task ProduceAsync_MessageWithHeaders_ProducedAndConsumed()
+    {
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
+
+        await producer.ProduceAsync(
+            message,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        await producer.ProduceAsync(
+            message,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        await producer.ProduceAsync(
+            message,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IInboundEnvelope envelope in Helper.Spy.InboundEnvelopes)
         {
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll();
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            await producer.ProduceAsync(message);
-            await producer.ProduceAsync(message);
-            await producer.ProduceAsync(message);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.InboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task ProduceAsync_MessageWithHeaders_ProducedAndConsumed()
+    [Fact]
+    public async Task ProduceAsync_Envelope_ProducedAndConsumed()
+    {
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://tests";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IOutboundEnvelopeFactory envelopeFactory = Host.ServiceProvider.GetRequiredService<IOutboundEnvelopeFactory>();
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+
+        await producer.ProduceAsync(
+            envelopeFactory.CreateEnvelope(
+                message,
+                new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+                new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration)));
+        await producer.ProduceAsync(
+            envelopeFactory.CreateEnvelope(
+                message,
+                new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+                new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration)));
+        await producer.ProduceAsync(
+            envelopeFactory.CreateEnvelope(
+                message,
+                new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+                new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration)));
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IInboundEnvelope envelope in Helper.Spy.InboundEnvelopes)
         {
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll();
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            await producer.ProduceAsync(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            await producer.ProduceAsync(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            await producer.ProduceAsync(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.InboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task ProduceAsync_Envelope_ProducedAndConsumed()
+    [Fact]
+    public async Task ProduceAsync_MessageUsingCallbacks_ProducedAndConsumed()
+    {
+        int produced = 0;
+        int errors = 0;
+
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
+
+        await producer.ProduceAsync(
+            message,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        await producer.ProduceAsync(
+            message,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        await producer.ProduceAsync(
+            message,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+
+        produced.Should().BeLessThan(3);
+
+        await AsyncTestingUtil.WaitAsync(() => produced == 3);
+
+        produced.Should().Be(3);
+        errors.Should().Be(0);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        foreach (IInboundEnvelope envelope in Helper.Spy.InboundEnvelopes)
         {
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll()!;
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            await producer.ProduceAsync(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint));
-            await producer.ProduceAsync(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint));
-            await producer.ProduceAsync(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint));
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.InboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.InboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should()
+                .ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should()
+                .ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task ProduceAsync_MessageUsingCallbacks_ProducedAndConsumed()
+    [Fact]
+    public async Task RawProduceAsync_ByteArray_ProducedAndConsumed()
+    {
+        byte[] rawMessage = BytesUtil.GetRandomBytes();
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+
+        await producer.RawProduceAsync(
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        await producer.RawProduceAsync(
+            new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration),
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        await producer.RawProduceAsync(
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IRawInboundEnvelope envelope in Helper.Spy.RawInboundEnvelopes)
         {
-            int produced = 0;
-            int errors = 0;
-
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll();
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            await producer.ProduceAsync(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            await producer.ProduceAsync(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            await producer.ProduceAsync(
-                message,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-
-            produced.Should().BeLessThan(3);
-
-            await AsyncTestingUtil.WaitAsync(() => produced == 3);
-
-            produced.Should().Be(3);
-            errors.Should().Be(0);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            foreach (var envelope in Helper.Spy.InboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task ProduceAsync_EnvelopeUsingCallbacks_ProducedAndConsumed()
+    [Fact]
+    public async Task RawProduceAsync_Stream_ProducedAndConsumed()
+    {
+        byte[] rawMessage = BytesUtil.GetRandomBytes();
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+
+        await producer.RawProduceAsync(
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        await producer.RawProduceAsync(
+            new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration),
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+        await producer.RawProduceAsync(
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } });
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IRawInboundEnvelope envelope in Helper.Spy.RawInboundEnvelopes)
         {
-            int produced = 0;
-            int errors = 0;
-
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll();
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            await producer.ProduceAsync(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint),
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            await producer.ProduceAsync(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint),
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            await producer.ProduceAsync(
-                EnvelopeFactory.Create(
-                    message,
-                    new MessageHeaderCollection
-                    {
-                        { "one", "1" }, { "two", "2" }
-                    },
-                    producer.Endpoint),
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-
-            produced.Should().BeLessThan(3);
-
-            await AsyncTestingUtil.WaitAsync(() => produced == 3);
-
-            produced.Should().Be(3);
-            errors.Should().Be(0);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            foreach (var envelope in Helper.Spy.InboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
         }
+    }
 
-        [Fact]
-        public async Task RawProduceAsync_ByteArray_ProducedAndConsumed()
+    [Fact]
+    public async Task RawProduceAsync_ByteArrayUsingCallbacks_ProducedAndConsumed()
+    {
+        int produced = 0;
+        int errors = 0;
+
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+
+        await producer.RawProduceAsync(
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        await producer.RawProduceAsync(
+            new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration),
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        await producer.RawProduceAsync(
+            rawMessage,
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+
+        produced.Should().BeLessThan(3);
+
+        await AsyncTestingUtil.WaitAsync(() => produced == 3);
+
+        produced.Should().Be(3);
+        errors.Should().Be(0);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
+
+        foreach (IRawInboundEnvelope envelope in Helper.Spy.RawInboundEnvelopes)
         {
-            var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should()
+                .ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should()
+                .ContainEquivalentOf(new MessageHeader("two", "2"));
+        }
+    }
 
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
+    [Fact]
+    public async Task RawProduceAsync_StreamUsingCallbacks_ProducedAndConsumed()
+    {
+        int produced = 0;
+        int errors = 0;
 
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
 
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        KafkaProducer producer = (KafkaProducer)Helper.Broker.GetProducer(DefaultTopicName);
+
+        await producer.RawProduceAsync(
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        await producer.RawProduceAsync(
+            new KafkaProducerEndpoint(DefaultTopicName, Partition.Any, producer.Configuration),
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+        await producer.RawProduceAsync(
+            new MemoryStream(rawMessage),
+            new MessageHeaderCollection { { "one", "1" }, { "two", "2" } },
+            _ => Interlocked.Increment(ref produced),
+            _ => Interlocked.Increment(ref errors));
+
+        produced.Should().BeLessThan(3);
+
+        await AsyncTestingUtil.WaitAsync(() => produced == 3);
+
+        produced.Should().Be(3);
+        errors.Should().Be(0);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        foreach (IInboundEnvelope envelope in Helper.Spy.InboundEnvelopes)
+        {
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("one", "1"));
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader("two", "2"));
+        }
+    }
+
+    [Fact]
+    public async Task RawProduce_WithMessageIdHeader_KafkaKeySet()
+    {
+        int produced = 0;
+        int errors = 0;
+
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        MessageHeaderCollection headers = new() { { DefaultMessageHeaders.MessageId, "42-42-42" } };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message, headers);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
+
+        for (int i = 0; i < 5; i++)
+        {
             await producer.RawProduceAsync(
                 rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            await producer.RawProduceAsync(
-                DefaultTopicName,
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            await producer.RawProduceAsync(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+                headers,
+                _ => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref errors));
         }
 
-        [Fact]
-        public async Task RawProduceAsync_Stream_ProducedAndConsumed()
+        produced.Should().BeLessThan(3);
+
+        await AsyncTestingUtil.WaitAsync(() => produced == 5);
+
+        produced.Should().Be(5);
+        errors.Should().Be(0);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
+
+        foreach (IRawInboundEnvelope envelope in Helper.Spy.RawInboundEnvelopes)
         {
-            var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "42-42-42"));
+        }
+    }
 
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
+    [Fact]
+    public async Task RawProduce_WithKafkaKeyHeader_KafkaKeySet()
+    {
+        int produced = 0;
+        int errors = 0;
 
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
+        TestEventOne message = new() { Content = "Hello E2E!" };
+        MessageHeaderCollection headers = new() { { DefaultMessageHeaders.MessageId, "42-42-42" } };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message, headers);
 
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                configuration =>
+                                {
+                                    configuration.BootstrapServers = "PLAINTEXT://e2e";
+                                })
+                            .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                consumer => consumer
+                                    .ConfigureClient(
+                                        configuration =>
+                                        {
+                                            configuration.GroupId = DefaultConsumerGroupId;
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
+
+        for (int i = 0; i < 5; i++)
+        {
             await producer.RawProduceAsync(
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            await producer.RawProduceAsync(
-                DefaultTopicName,
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-            await producer.RawProduceAsync(
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                });
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
+                rawMessage,
+                headers,
+                _ => Interlocked.Increment(ref produced),
+                _ => Interlocked.Increment(ref errors));
         }
 
-        [Fact]
-        public async Task RawProduceAsync_ByteArrayUsingCallbacks_ProducedAndConsumed()
-        {
-            int produced = 0;
-            int errors = 0;
+        produced.Should().BeLessThan(3);
 
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
+        await AsyncTestingUtil.WaitAsync(() => produced == 5);
+
+        produced.Should().Be(5);
+        errors.Should().Be(0);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
+
+        foreach (IRawInboundEnvelope envelope in Helper.Spy.RawInboundEnvelopes)
+        {
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Should().ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "42-42-42"));
+        }
+    }
+
+    [Fact]
+    public async Task RawProduce_ByDefault_TimestampKeySet()
+    {
+        int produced = 0;
+        int errors = 0;
+
+        TestEventOne message = new()
+        {
+            Content = "Hello E2E!"
+        };
+        byte[] rawMessage = EndpointConfiguration.DefaultSerializer.SerializeToBytes(message);
+
+        Host.ConfigureServices(
+                services => services
+                    .AddLogging()
+                    .AddSilverback()
+                    .UseModel()
+                    .WithConnectionToMessageBroker(options => options.AddMockedKafka())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                config =>
+                                {
+                                    config.BootstrapServers = "PLAINTEXT://tests";
+                                })
+                            .AddOutbound<IIntegrationEvent>(endpoint => endpoint.ProduceTo(DefaultTopicName))
+                            .AddInbound(
+                                endpoint => endpoint
+                                    .ConfigureClient(
+                                        config =>
+                                        {
+                                            config.GroupId = "consumer1";
+                                        })
+                                    .ConsumeFrom(DefaultTopicName)
+                                    .OnError(policy => policy.Skip())))
+                    .AddIntegrationSpyAndSubscriber())
+            .Run();
+
+        IProducer producer = Helper.Broker.GetProducer(DefaultTopicName);
+
+        for (int i = 0; i < 5; i++)
+        {
+            await producer.RawProduceAsync(
+                rawMessage,
                 new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll();
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            await producer.RawProduceAsync(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
                 _ => Interlocked.Increment(ref produced),
                 _ => Interlocked.Increment(ref errors));
-            await producer.RawProduceAsync(
-                producer.Endpoint.Name,
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            await producer.RawProduceAsync(
-                rawMessage,
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-
-            produced.Should().BeLessThan(3);
-
-            await AsyncTestingUtil.WaitAsync(() => produced == 3);
-
-            produced.Should().Be(3);
-            errors.Should().Be(0);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(3);
-
-            foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
         }
 
-        [Fact]
-        public async Task RawProduceAsync_StreamUsingCallbacks_ProducedAndConsumed()
+        produced.Should().BeLessThan(3);
+
+        await AsyncTestingUtil.WaitAsync(() => produced == 5);
+
+        produced.Should().Be(5);
+        errors.Should().Be(0);
+
+        await Helper.WaitUntilAllMessagesAreConsumedAsync();
+
+        Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
+
+        foreach (IRawInboundEnvelope envelope in Helper.Spy.RawInboundEnvelopes)
         {
-            int produced = 0;
-            int errors = 0;
-
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                message,
-                new MessageHeaderCollection(),
-                MessageSerializationContext.Empty)).ReadAll()!;
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            await producer.RawProduceAsync(
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            await producer.RawProduceAsync(
-                producer.Endpoint.Name,
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-            await producer.RawProduceAsync(
-                new MemoryStream(rawMessage),
-                new MessageHeaderCollection
-                {
-                    { "one", "1" }, { "two", "2" }
-                },
-                _ => Interlocked.Increment(ref produced),
-                _ => Interlocked.Increment(ref errors));
-
-            produced.Should().BeLessThan(3);
-
-            await AsyncTestingUtil.WaitAsync(() => produced == 3);
-
-            produced.Should().Be(3);
-            errors.Should().Be(0);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            foreach (var envelope in Helper.Spy.InboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("one", "1"));
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader("two", "2"));
-            }
-        }
-
-        [Fact]
-        public async Task RawProduce_WithMessageIdHeader_KafkaKeySet()
-        {
-            int produced = 0;
-            int errors = 0;
-
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var headers = new MessageHeaderCollection()
-            {
-                { DefaultMessageHeaders.MessageId, "42-42-42" }
-            };
-            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                                    message,
-                                    headers,
-                                    MessageSerializationContext.Empty)).ReadAll() ??
-                                throw new InvalidOperationException("Serializer returned null");
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            for (var i = 0; i < 5; i++)
-            {
-                await producer.RawProduceAsync(
-                    rawMessage,
-                    headers,
-                    _ => Interlocked.Increment(ref produced),
-                    _ => Interlocked.Increment(ref errors));
-            }
-
-            produced.Should().BeLessThan(3);
-
-            await AsyncTestingUtil.WaitAsync(() => produced == 5);
-
-            produced.Should().Be(5);
-            errors.Should().Be(0);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
-
-            foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "42-42-42"));
-            }
-        }
-
-        [Fact]
-        public async Task RawProduce_WithKafkaKeyHeader_KafkaKeySet()
-        {
-            int produced = 0;
-            int errors = 0;
-
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            var headers = new MessageHeaderCollection()
-            {
-                { KafkaMessageHeaders.KafkaMessageKey, "42-42-42" }
-            };
-            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                                    message,
-                                    headers,
-                                    MessageSerializationContext.Empty)).ReadAll() ??
-                                throw new InvalidOperationException("Serializer returned null");
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = DefaultConsumerGroupId;
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            for (var i = 0; i < 5; i++)
-            {
-                await producer.RawProduceAsync(
-                    rawMessage,
-                    headers,
-                    _ => Interlocked.Increment(ref produced),
-                    _ => Interlocked.Increment(ref errors));
-            }
-
-            produced.Should().BeLessThan(3);
-
-            await AsyncTestingUtil.WaitAsync(() => produced == 5);
-
-            produced.Should().Be(5);
-            errors.Should().Be(0);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
-
-            foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Should()
-                    .ContainEquivalentOf(new MessageHeader(KafkaMessageHeaders.KafkaMessageKey, "42-42-42"));
-            }
-        }
-
-        [Fact]
-        public async Task RawProduce_ByDefault_TimestampKeySet()
-        {
-            var produced = 0;
-            var errors = 0;
-
-            var message = new TestEventOne
-            {
-                Content = "Hello E2E!"
-            };
-            byte[] rawMessage = (await Endpoint.DefaultSerializer.SerializeAsync(
-                                    message,
-                                    new MessageHeaderCollection(),
-                                    MessageSerializationContext.Empty)).ReadAll() ??
-                                throw new InvalidOperationException("Serializer returned null");
-
-            Host.ConfigureServices(
-                    services => services
-                        .AddLogging()
-                        .AddSilverback()
-                        .UseModel()
-                        .WithConnectionToMessageBroker(options => options.AddMockedKafka())
-                        .AddKafkaEndpoints(
-                            endpoints => endpoints
-                                .Configure(
-                                    config =>
-                                    {
-                                        config.BootstrapServers = "PLAINTEXT://tests";
-                                    })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
-                                .AddInbound(
-                                    endpoint => endpoint
-                                        .Configure(
-                                            config =>
-                                            {
-                                                config.GroupId = "consumer1";
-                                            })
-                                        .ConsumeFrom(DefaultTopicName)
-                                        .OnError(policy => policy.Skip())))
-                        .AddIntegrationSpyAndSubscriber())
-                .Run();
-
-            var producer = Helper.Broker.GetProducer(DefaultTopicName);
-
-            for (var i = 0; i < 5; i++)
-            {
-                await producer.RawProduceAsync(
-                    rawMessage,
-                    new MessageHeaderCollection(),
-                    _ => Interlocked.Increment(ref produced),
-                    _ => Interlocked.Increment(ref errors));
-            }
-
-            produced.Should().BeLessThan(3);
-
-            await AsyncTestingUtil.WaitAsync(() => produced == 5);
-
-            produced.Should().Be(5);
-            errors.Should().Be(0);
-
-            await Helper.WaitUntilAllMessagesAreConsumedAsync();
-
-            Helper.Spy.RawInboundEnvelopes.Should().HaveCount(5);
-
-            foreach (var envelope in Helper.Spy.RawInboundEnvelopes)
-            {
-                envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
-                envelope.Headers.Contains(KafkaMessageHeaders.TimestampKey).Should()
-                    .BeTrue();
-            }
+            envelope.RawMessage.ReReadAll().Should().BeEquivalentTo(rawMessage);
+            envelope.Headers.Contains(KafkaMessageHeaders.TimestampKey).Should()
+                .BeTrue();
         }
     }
 }

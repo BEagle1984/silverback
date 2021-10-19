@@ -9,8 +9,10 @@ using Silverback.Util;
 
 namespace Silverback.Messaging.Configuration
 {
-    /// <inheritdoc cref="IAvroMessageSerializerBuilder" />
-    public class AvroMessageSerializerBuilder : IAvroMessageSerializerBuilder
+    /// <summary>
+    ///     Builds the <see cref="AvroMessageSerializer{TMessage}" />.
+    /// </summary>
+    public class AvroMessageSerializerBuilder
     {
         private AvroMessageSerializerBase? _serializer;
 
@@ -18,16 +20,35 @@ namespace Silverback.Messaging.Configuration
 
         private Action<AvroSerializerConfig>? _configureSerializerAction;
 
-        /// <inheritdoc cref="IAvroMessageSerializerBuilder.UseType{TMessage}" />
-        public IAvroMessageSerializerBuilder UseType<TMessage>()
+        /// <summary>
+        ///     Specifies the message type.
+        /// </summary>
+        /// <typeparam name="TMessage">
+        ///     The type of the message to serialize or deserialize.
+        /// </typeparam>
+        /// <returns>
+        ///     The <see cref="AvroMessageSerializerBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public AvroMessageSerializerBuilder UseType<TMessage>()
             where TMessage : class
         {
             _serializer = new AvroMessageSerializer<TMessage>();
             return this;
         }
 
-        /// <inheritdoc cref="IAvroMessageSerializerBuilder.Configure" />
-        public IAvroMessageSerializerBuilder Configure(
+        /// <summary>
+        ///     Configures the <see cref="SchemaRegistryConfig" /> and the <see cref="AvroSerializerConfig" />.
+        /// </summary>
+        /// <param name="configureSchemaRegistryAction">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="SchemaRegistryConfig" /> and configures it.
+        /// </param>
+        /// <param name="configureSerializerAction">
+        ///     An <see cref="Action{T}" /> that takes the <see cref="AvroSerializerConfig" /> and configures it.
+        /// </param>
+        /// <returns>
+        ///     The <see cref="AvroMessageSerializerBuilder" /> so that additional calls can be chained.
+        /// </returns>
+        public AvroMessageSerializerBuilder Configure(
             Action<SchemaRegistryConfig> configureSchemaRegistryAction,
             Action<AvroSerializerConfig>? configureSerializerAction = null)
         {

@@ -63,7 +63,7 @@ namespace Silverback.Diagnostics
             Exception exception) =>
             ConnectError(
                 logger.InnerLogger,
-                client.ClientConfig.ClientId,
+                client.ClientConfiguration.ClientId,
                 client.ClientConfig.ChannelOptions?.ToString() ?? string.Empty,
                 exception);
 
@@ -73,7 +73,7 @@ namespace Silverback.Diagnostics
             Exception exception) =>
             ConnectRetryError(
                 logger.InnerLogger,
-                client.ClientConfig.ClientId,
+                client.ClientConfiguration.ClientId,
                 client.ClientConfig.ChannelOptions?.ToString() ?? string.Empty,
                 exception);
 
@@ -82,7 +82,7 @@ namespace Silverback.Diagnostics
             MqttClientWrapper client) =>
             ConnectionLost(
                 logger.InnerLogger,
-                client.ClientConfig.ClientId,
+                client.ClientConfiguration.ClientId,
                 client.ClientConfig.ChannelOptions?.ToString() ?? string.Empty,
                 null);
 
@@ -101,7 +101,7 @@ namespace Silverback.Diagnostics
             ProducerQueueProcessingCanceled(
                 logger.InnerLogger,
                 producer.Id,
-                producer.Endpoint.DisplayName,
+                producer.Configuration.DisplayName,
                 null);
 
         public static void LogMqttClientError(

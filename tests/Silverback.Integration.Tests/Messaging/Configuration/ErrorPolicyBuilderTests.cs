@@ -136,26 +136,26 @@ namespace Silverback.Tests.Integration.Messaging.Configuration
         public void Move_Endpoint_MovePolicyCreated()
         {
             var builder = new ErrorPolicyBuilder();
-            var endpoint = TestProducerEndpoint.GetDefault();
+            var endpoint = TestProducerConfiguration.GetDefault();
 
             builder.Move(endpoint);
             var policy = builder.Build();
 
             policy.Should().BeOfType<MoveMessageErrorPolicy>();
-            policy.As<MoveMessageErrorPolicy>().Endpoint.Should().BeSameAs(endpoint);
+            policy.As<MoveMessageErrorPolicy>().ProducerConfiguration.Should().BeSameAs(endpoint);
         }
 
         [Fact]
         public void Move_EndpointWithConfiguration_SkipPolicyCreatedAndConfigurationApplied()
         {
             var builder = new ErrorPolicyBuilder();
-            var endpoint = TestProducerEndpoint.GetDefault();
+            var endpoint = TestProducerConfiguration.GetDefault();
 
             builder.Move(endpoint, movePolicy => movePolicy.MaxFailedAttempts(42));
             var policy = builder.Build();
 
             policy.Should().BeOfType<MoveMessageErrorPolicy>();
-            policy.As<MoveMessageErrorPolicy>().Endpoint.Should().BeSameAs(endpoint);
+            policy.As<MoveMessageErrorPolicy>().ProducerConfiguration.Should().BeSameAs(endpoint);
             policy.As<MoveMessageErrorPolicy>().MaxFailedAttemptsCount.Should().Be(42);
         }
     }

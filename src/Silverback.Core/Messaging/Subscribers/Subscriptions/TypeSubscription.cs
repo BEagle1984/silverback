@@ -11,13 +11,13 @@ using Silverback.Util;
 namespace Silverback.Messaging.Subscribers.Subscriptions
 {
     /// <summary>
-    ///     Represents a subscription based on a type (can also be a base class or an interface).
+    ///     A subscription based on a type (can also be a base class or an interface).
     /// </summary>
     internal sealed class TypeSubscription : ISubscription
     {
         private readonly TypeSubscriptionOptions _options;
 
-        private IReadOnlyCollection<SubscribedMethod>? _subscribedMethods;
+        private IReadOnlyList<SubscribedMethod>? _subscribedMethods;
 
         public TypeSubscription(Type subscribedType, TypeSubscriptionOptions options)
         {
@@ -27,7 +27,7 @@ namespace Silverback.Messaging.Subscribers.Subscriptions
 
         public Type SubscribedType { get; }
 
-        public IReadOnlyCollection<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
+        public IReadOnlyList<SubscribedMethod> GetSubscribedMethods(IServiceProvider serviceProvider) =>
             _subscribedMethods ??= serviceProvider
                 .GetServices(SubscribedType)
                 .SelectMany(subscriber => GetSubscribedMethods(subscriber, serviceProvider))

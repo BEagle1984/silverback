@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Silverback.Configuration;
 using Silverback.Diagnostics;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.TestTypes;
@@ -48,7 +49,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestProducerEndpoint("test1"),
+                new TestProducerConfiguration("test1", "topic2").GetDefaultEndpoint(),
                 true,
                 new TestOffset("a", "42"));
 
@@ -68,8 +69,7 @@ namespace Silverback.Tests.Integration.Diagnostics
         [Fact]
         public void LogProduced_NoEnvelope_Logged()
         {
-            var endpoint = new TestProducerEndpoint("[dynamic]");
-            var actualEndpointName = "test1";
+            var endpoint = new TestProducerConfiguration("test1", "test2").GetDefaultEndpoint();
             var headers = new MessageHeaderCollection
             {
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
@@ -85,7 +85,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                 "unused1: (null), " +
                 "unused2: (null)";
 
-            _outboundLogger.LogProduced(endpoint, actualEndpointName, headers, brokerMessageIdentifier);
+            _outboundLogger.LogProduced(endpoint, headers, brokerMessageIdentifier);
 
             _loggerSubstitute.Received(LogLevel.Information, null, expectedMessage, 1031);
         }
@@ -100,7 +100,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestProducerEndpoint("test1"),
+                new TestProducerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 true,
                 new TestOffset("a", "42"));
 
@@ -120,8 +120,7 @@ namespace Silverback.Tests.Integration.Diagnostics
         [Fact]
         public void LogProduceError_NoEnvelope_Logged()
         {
-            var endpoint = new TestProducerEndpoint("[dynamic]");
-            var actualEndpointName = "test1";
+            var endpoint = new TestProducerConfiguration("test1", "test2").GetDefaultEndpoint();
             var headers = new MessageHeaderCollection
             {
                 { DefaultMessageHeaders.MessageType, "Message.Type" },
@@ -138,7 +137,6 @@ namespace Silverback.Tests.Integration.Diagnostics
 
             _outboundLogger.LogProduceError(
                 endpoint,
-                actualEndpointName,
                 headers,
                 new InvalidDataException());
 
@@ -155,7 +153,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestProducerEndpoint("test1"),
+                new TestProducerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 true,
                 new TestOffset("a", "42"));
 
@@ -182,7 +180,7 @@ namespace Silverback.Tests.Integration.Diagnostics
                     { DefaultMessageHeaders.MessageType, "Message.Type" },
                     { DefaultMessageHeaders.MessageId, "1234" }
                 },
-                new TestProducerEndpoint("test1"),
+                new TestProducerConfiguration("test1", "test2").GetDefaultEndpoint(),
                 true,
                 new TestOffset("a", "42"));
 

@@ -5,55 +5,49 @@ using System.Collections.Generic;
 using System.IO;
 using Silverback.Messaging.Broker;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+/// <inheritdoc cref="IRawInboundEnvelope" />
+internal class InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
 {
-    /// <inheritdoc cref="IRawInboundEnvelope" />
-    internal class InboundEnvelope : RawInboundEnvelope, IInboundEnvelope
+    public InboundEnvelope(IRawInboundEnvelope envelope)
+        : this(
+            envelope.RawMessage,
+            envelope.Headers,
+            envelope.BrokerMessageIdentifier,
+            envelope.Endpoint)
     {
-        public InboundEnvelope(IRawInboundEnvelope envelope)
-            : this(
-                envelope.RawMessage,
-                envelope.Headers,
-                envelope.BrokerMessageIdentifier,
-                envelope.Endpoint,
-                envelope.ActualEndpointName)
-        {
-        }
-
-        public InboundEnvelope(
-            Stream? rawMessage,
-            IReadOnlyCollection<MessageHeader>? headers,
-            IBrokerMessageIdentifier brokerMessageIdentifier,
-            IConsumerEndpoint endpoint,
-            string actualEndpointName)
-            : base(
-                rawMessage,
-                headers,
-                endpoint,
-                actualEndpointName,
-                brokerMessageIdentifier)
-        {
-        }
-
-        public InboundEnvelope(
-            object message,
-            Stream? rawMessage,
-            IReadOnlyCollection<MessageHeader>? headers,
-            IBrokerMessageIdentifier brokerMessageIdentifier,
-            IConsumerEndpoint endpoint,
-            string actualEndpointName)
-            : base(
-                rawMessage,
-                headers,
-                endpoint,
-                actualEndpointName,
-                brokerMessageIdentifier)
-        {
-            Message = message;
-        }
-
-        public bool AutoUnwrap => true;
-
-        public object? Message { get; set; }
     }
+
+    public InboundEnvelope(
+        Stream? rawMessage,
+        IReadOnlyCollection<MessageHeader>? headers,
+        IBrokerMessageIdentifier brokerMessageIdentifier,
+        ConsumerEndpoint endpoint)
+        : base(
+            rawMessage,
+            headers,
+            endpoint,
+            brokerMessageIdentifier)
+    {
+    }
+
+    public InboundEnvelope(
+        object message,
+        Stream? rawMessage,
+        IReadOnlyCollection<MessageHeader>? headers,
+        IBrokerMessageIdentifier brokerMessageIdentifier,
+        ConsumerEndpoint endpoint)
+        : base(
+            rawMessage,
+            headers,
+            endpoint,
+            brokerMessageIdentifier)
+    {
+        Message = message;
+    }
+
+    public bool AutoUnwrap => true;
+
+    public object? Message { get; set; }
 }

@@ -62,7 +62,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public void Find_ExistingKey_EntityIsReturned()
+        public void Find_ExistingKey_EntityReturned()
         {
             _dbContext.Persons.Add(new Person { Name = "Sergio" });
             _dbContext.Persons.Add(new Person { Name = "Mandy" });
@@ -75,7 +75,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public async Task FindAsync_ExistingKey_EntityIsReturned()
+        public async Task FindAsync_ExistingKey_EntityReturned()
         {
             _dbContext.Persons.Add(new Person { Name = "Sergio" });
             _dbContext.Persons.Add(new Person { Name = "Mandy" });
@@ -88,7 +88,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public void AsQueryable_EfCoreDbSetQueryableIsReturned()
+        public void AsQueryable_EfCoreDbSetQueryableReturned()
         {
             var queryable = _efCoreDbContext.GetDbSet<Person>().AsQueryable();
 

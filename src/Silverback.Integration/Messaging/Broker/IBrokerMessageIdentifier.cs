@@ -8,7 +8,7 @@ namespace Silverback.Messaging.Broker
 {
     /// <summary>
     ///     <para>
-    ///         Represents the primary identifier used by the message broker to recognize the exact message.
+    ///         The primary identifier used by the message broker to recognize the exact message.
     ///     </para>
     ///     <para>
     ///         It can represent a Kafka offset, a RabbitMQ delivery tag or other similar constructs.

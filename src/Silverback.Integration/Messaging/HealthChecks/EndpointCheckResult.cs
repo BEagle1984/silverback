@@ -4,7 +4,7 @@
 namespace Silverback.Messaging.HealthChecks
 {
     /// <summary>
-    ///     Encapsulates the result of a check performed against an <see cref="IEndpoint" />.
+    ///     Encapsulates the result of a check performed against a consumer or a producer.
     /// </summary>
     public class EndpointCheckResult
     {

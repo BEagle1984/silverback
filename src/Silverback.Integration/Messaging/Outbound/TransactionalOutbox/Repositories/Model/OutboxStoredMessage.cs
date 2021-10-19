@@ -26,25 +26,29 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model
         /// <param name="headers">
         ///     The message headers.
         /// </param>
-        /// <param name="endpointName">
-        ///     The name of the producer endpoint.
-        /// </param>
-        /// <param name="actualEndpointName">
-        ///     The name of the actual target endpoint that was resolved for the message.
+        /// <param name="endpoint">
+        ///     The producer endpoint.
         /// </param>
         public OutboxStoredMessage(
             Type? messageType,
             byte[]? content,
             IEnumerable<MessageHeader>? headers,
-            string endpointName,
-            string? actualEndpointName)
+            string endpointRawName,
+            string? endpointFriendlyName,
+            byte[]? endpoint)
         {
             MessageType = messageType;
             Content = content;
             Headers = headers?.ToList();
-            EndpointName = endpointName;
-            ActualEndpointName = actualEndpointName;
+            EndpointRawName = endpointRawName;
+            EndpointFriendlyName = endpointFriendlyName;
+            Endpoint = endpoint;
         }
+
+        /// <summary>
+        ///     Gets the type of the message.
+        /// </summary>
+        public Type? MessageType { get; }
 
         /// <summary>
         ///     Gets the message raw binary content (body).
@@ -58,18 +62,21 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories.Model
         public IReadOnlyCollection<MessageHeader>? Headers { get; }
 
         /// <summary>
-        ///     Gets the name of the producer endpoint.
+        ///     Gets the raw name of the producer endpoint.
         /// </summary>
-        public string EndpointName { get; }
+        public string EndpointRawName { get; }
 
         /// <summary>
-        ///     Gets the name of the actual target endpoint that was resolved for the message.
+        ///     Gets the friendly name of the producer endpoint.
         /// </summary>
-        public string? ActualEndpointName { get; }
+        public string? EndpointFriendlyName { get; }
 
         /// <summary>
-        ///     Gets the type of the message.
+        ///     Gets the producer endpoint.
         /// </summary>
-        public Type? MessageType { get; }
+        /// <remarks>
+        ///     This value will not be set for the static endpoints.
+        /// </remarks>
+        public byte[]? Endpoint { get; }
     }
 }

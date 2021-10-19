@@ -5,28 +5,27 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Outbound.Enrichers
+namespace Silverback.Messaging.Outbound.Enrichers;
+
+/// <summary>
+///     Invokes all the <see cref="IOutboundMessageEnricher" /> configured for to the endpoint.
+/// </summary>
+public class MessageEnricherProducerBehavior : IProducerBehavior
 {
-    /// <summary>
-    ///     Invokes all the <see cref="IOutboundMessageEnricher" /> configured for to the endpoint.
-    /// </summary>
-    public class MessageEnricherProducerBehavior : IProducerBehavior
+    /// <inheritdoc cref="ISorted.SortIndex" />
+    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageEnricher;
+
+    /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
+    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
     {
-        /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.MessageEnricher;
+        Check.NotNull(context, nameof(context));
+        Check.NotNull(next, nameof(next));
 
-        /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+        foreach (IOutboundMessageEnricher enricher in context.Envelope.Endpoint.Configuration.MessageEnrichers)
         {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(next, nameof(next));
-
-            foreach (var enricher in context.Envelope.Endpoint.MessageEnrichers)
-            {
-                enricher.Enrich(context.Envelope);
-            }
-
-            await next(context).ConfigureAwait(false);
+            enricher.Enrich(context.Envelope);
         }
+
+        await next(context).ConfigureAwait(false);
     }
 }

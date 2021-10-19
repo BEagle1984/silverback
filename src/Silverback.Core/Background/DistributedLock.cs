@@ -2,7 +2,6 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Silverback.Util;
@@ -10,7 +9,7 @@ using Silverback.Util;
 namespace Silverback.Background
 {
     /// <summary>
-    ///     Represents a lock that has been acquired through an <see cref="IDistributedLockManager" />.
+    ///     A lock that has been acquired through an <see cref="IDistributedLockManager" />.
     /// </summary>
     public class DistributedLock
     {

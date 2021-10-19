@@ -5,13 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
+using Silverback.Messaging.Outbound.Routing;
 using Silverback.Tests.Types;
 
 namespace Silverback.Tests.Integration.TestTypes
 {
-    public class TestBroker : Broker<TestProducerEndpoint, TestConsumerEndpoint>
+    public class TestBroker : Broker<TestProducerConfiguration, TestConsumerConfiguration>
     {
         public TestBroker(IServiceProvider serviceProvider)
             : base(serviceProvider)
@@ -34,15 +36,20 @@ namespace Silverback.Tests.Integration.TestTypes
         }
 
         protected override IProducer InstantiateProducer(
-            TestProducerEndpoint endpoint,
+            TestProducerConfiguration settings,
             IBrokerBehaviorsProvider<IProducerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider) =>
-            new TestProducer(this, endpoint, behaviorsProvider, serviceProvider);
+            new TestProducer(
+                this,
+                settings,
+                behaviorsProvider,
+                serviceProvider.GetRequiredService<IOutboundEnvelopeFactory>(),
+                serviceProvider);
 
         protected override IConsumer InstantiateConsumer(
-            TestConsumerEndpoint endpoint,
+            TestConsumerConfiguration configuration,
             IBrokerBehaviorsProvider<IConsumerBehavior> behaviorsProvider,
             IServiceProvider serviceProvider) =>
-            new TestConsumer(this, endpoint, behaviorsProvider, serviceProvider);
+            new TestConsumer(this, configuration, behaviorsProvider, serviceProvider);
     }
 }

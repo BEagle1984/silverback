@@ -4,18 +4,16 @@
 using System;
 using Silverback.Messaging.Configuration.Kafka;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration;
+
+internal sealed class KafkaEndpointsConfigurator : IEndpointsConfigurator
 {
-    internal sealed class KafkaEndpointsConfigurator : IEndpointsConfigurator
+    private readonly Action<KafkaEndpointsConfigurationBuilder> _configurationBuilderAction;
+
+    public KafkaEndpointsConfigurator(Action<KafkaEndpointsConfigurationBuilder> configurationBuilderAction)
     {
-        private readonly Action<IKafkaEndpointsConfigurationBuilder> _configAction;
-
-        public KafkaEndpointsConfigurator(Action<IKafkaEndpointsConfigurationBuilder> configAction)
-        {
-            _configAction = configAction;
-        }
-
-        public void Configure(IEndpointsConfigurationBuilder builder) =>
-            builder.AddKafkaEndpoints(_configAction);
+        _configurationBuilderAction = configurationBuilderAction;
     }
+
+    public void Configure(EndpointsConfigurationBuilder builder) => builder.AddKafkaEndpoints(_configurationBuilderAction);
 }

@@ -5,37 +5,36 @@ using System;
 using Silverback.Messaging.Configuration.Kafka;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration;
+
+/// <summary>
+///     Adds the <c>AddKafkaEndpoints</c> method to the <see cref="EndpointsConfigurationBuilder" />.
+/// </summary>
+public static class EndpointsConfigurationBuilderAddKafkaEndpointsExtensions
 {
     /// <summary>
-    ///     Adds the <c>AddKafkaEndpoints</c> method to the <see cref="IEndpointsConfigurationBuilder" />.
+    ///     Adds the Kafka endpoints.
     /// </summary>
-    public static class EndpointsConfigurationBuilderAddKafkaEndpointsExtensions
+    /// <param name="endpointsConfigurationBuilder">
+    ///     The <see cref="EndpointsConfigurationBuilder" />.
+    /// </param>
+    /// <param name="kafkaEndpointsBuilderAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="KafkaEndpointsConfigurationBuilder" />,
+    ///     configures the connection to the message broker and adds the inbound and outbound endpoints.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="EndpointsConfigurationBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public static EndpointsConfigurationBuilder AddKafkaEndpoints(
+        this EndpointsConfigurationBuilder endpointsConfigurationBuilder,
+        Action<KafkaEndpointsConfigurationBuilder> kafkaEndpointsBuilderAction)
     {
-        /// <summary>
-        ///     Adds the Kafka endpoints.
-        /// </summary>
-        /// <param name="endpointsConfigurationBuilder">
-        ///     The <see cref="IEndpointsConfigurationBuilder" />.
-        /// </param>
-        /// <param name="kafkaEndpointsBuilderAction">
-        ///     An <see cref="Action{T}" /> that takes the <see cref="IKafkaEndpointsConfigurationBuilder" />,
-        ///     configures the connection to the message broker and adds the inbound and outbound endpoints.
-        /// </param>
-        /// <returns>
-        ///     The <see cref="IEndpointsConfigurationBuilder" /> so that additional calls can be chained.
-        /// </returns>
-        public static IEndpointsConfigurationBuilder AddKafkaEndpoints(
-            this IEndpointsConfigurationBuilder endpointsConfigurationBuilder,
-            Action<IKafkaEndpointsConfigurationBuilder> kafkaEndpointsBuilderAction)
-        {
-            Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
-            Check.NotNull(kafkaEndpointsBuilderAction, nameof(kafkaEndpointsBuilderAction));
+        Check.NotNull(endpointsConfigurationBuilder, nameof(endpointsConfigurationBuilder));
+        Check.NotNull(kafkaEndpointsBuilderAction, nameof(kafkaEndpointsBuilderAction));
 
-            var kafkaEndpointsBuilder = new KafkaEndpointsConfigurationBuilder(endpointsConfigurationBuilder);
-            kafkaEndpointsBuilderAction.Invoke(kafkaEndpointsBuilder);
+        KafkaEndpointsConfigurationBuilder kafkaEndpointsBuilder = new(endpointsConfigurationBuilder.ServiceProvider);
+        kafkaEndpointsBuilderAction.Invoke(kafkaEndpointsBuilder);
 
-            return endpointsConfigurationBuilder;
-        }
+        return endpointsConfigurationBuilder;
     }
 }

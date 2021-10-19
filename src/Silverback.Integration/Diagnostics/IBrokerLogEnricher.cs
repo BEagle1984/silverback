@@ -39,7 +39,7 @@ namespace Silverback.Diagnostics
         ///     Returns a tuple containing the values for the two additional properties.
         /// </returns>
         (string? Value1, string? Value2) GetAdditionalValues(
-            IEndpoint endpoint,
+            Endpoint endpoint,
             IReadOnlyCollection<MessageHeader>? headers,
             IBrokerMessageIdentifier? brokerMessageIdentifier);
     }

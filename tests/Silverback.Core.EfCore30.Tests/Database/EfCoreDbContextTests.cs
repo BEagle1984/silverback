@@ -26,7 +26,7 @@ namespace Silverback.Tests.Core.EFCore30.Database
         }
 
         [Fact]
-        public void GetDbSet_SomeEntity_EfCoreDbSetIsReturned()
+        public void GetDbSet_SomeEntity_EfCoreDbSetReturned()
         {
             var dbSet = _efCoreDbContext.GetDbSet<Person>();
 

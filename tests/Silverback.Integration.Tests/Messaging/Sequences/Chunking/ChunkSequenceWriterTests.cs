@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -10,118 +11,108 @@ using Silverback.Tests.Types;
 using Silverback.Util;
 using Xunit;
 
-namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking
+namespace Silverback.Tests.Integration.Messaging.Sequences.Chunking;
+
+public class ChunkSequenceWriterTests
 {
-    public class ChunkSequenceWriterTests
+    [Fact]
+    public void MustCreateSequence_MessageExceedsChunkSize_TrueReturned()
     {
-        [Fact]
-        public void MustCreateSequence_MessageExceedsChunkSize_TrueReturned()
-        {
-            var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10 };
-            var envelope = new OutboundEnvelope(
-                rawMessage,
-                null,
-                new TestProducerEndpoint("test")
+        byte[] rawMessage = BytesUtil.GetRandomBytes(42);
+        OutboundEnvelope envelope = new(
+            rawMessage,
+            null,
+            new TestProducerConfiguration("test")
+            {
+                Chunk = new ChunkSettings
                 {
-                    Chunk = new ChunkSettings
-                    {
-                        Size = 3
-                    }
-                });
+                    Size = 3
+                }
+            }.GetDefaultEndpoint());
 
-            var writer = new ChunkSequenceWriter();
-            var result = writer.CanHandle(envelope);
+        ChunkSequenceWriter writer = new();
+        bool result = writer.CanHandle(envelope);
 
-            result.Should().BeTrue();
-        }
+        result.Should().BeTrue();
+    }
 
-        [Theory]
-        [InlineData(true)]
-        [InlineData(false)]
-        public void MustCreateSequence_MessageSmallerThanChunkSize_ReturnedAccordingToAlwaysAddHeadersFlag(
-            bool alwaysAddHeaders)
-        {
-            var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10 };
-            var envelope = new OutboundEnvelope(
-                rawMessage,
-                null,
-                new TestProducerEndpoint("test")
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void MustCreateSequence_MessageSmallerThanChunkSize_ReturnedAccordingToAlwaysAddHeadersFlag(bool alwaysAddHeaders)
+    {
+        byte[] rawMessage = BytesUtil.GetRandomBytes(8);
+        OutboundEnvelope envelope = new(
+            rawMessage,
+            null,
+            new TestProducerConfiguration("test")
+            {
+                Chunk = new ChunkSettings
                 {
-                    Chunk = new ChunkSettings
-                    {
-                        Size = 10,
-                        AlwaysAddHeaders = alwaysAddHeaders
-                    }
-                });
+                    Size = 10,
+                    AlwaysAddHeaders = alwaysAddHeaders
+                }
+            }.GetDefaultEndpoint());
 
-            var writer = new ChunkSequenceWriter();
-            var result = writer.CanHandle(envelope);
+        ChunkSequenceWriter writer = new();
+        bool result = writer.CanHandle(envelope);
 
-            result.Should().Be(alwaysAddHeaders);
-        }
+        result.Should().Be(alwaysAddHeaders);
+    }
 
-        [Fact]
-        public void MustCreateSequence_NoChunking_FalseReturned()
-        {
-            var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10 };
-            var envelope = new OutboundEnvelope(
-                rawMessage,
-                null,
-                new TestProducerEndpoint("test"));
+    [Fact]
+    public void MustCreateSequence_NoChunking_FalseReturned()
+    {
+        byte[] rawMessage = BytesUtil.GetRandomBytes(42);
+        OutboundEnvelope envelope = new(
+            rawMessage,
+            null,
+            new TestProducerConfiguration("test").GetDefaultEndpoint());
 
-            var writer = new ChunkSequenceWriter();
-            var result = writer.CanHandle(envelope);
+        ChunkSequenceWriter writer = new();
+        bool result = writer.CanHandle(envelope);
 
-            result.Should().BeFalse();
-        }
+        result.Should().BeFalse();
+    }
 
-        [Fact]
-        public async Task ProcessMessage_LargeMessage_ChunkEnvelopesReturned()
-        {
-            var rawMessage = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10 };
-            var sourceEnvelope = new OutboundEnvelope(
-                rawMessage,
-                new MessageHeaderCollection
+    [Fact]
+    public async Task ProcessMessage_LargeMessage_ChunkEnvelopesReturned()
+    {
+        byte[] rawMessage = BytesUtil.GetRandomBytes(10);
+        OutboundEnvelope sourceEnvelope = new(
+            rawMessage,
+            new MessageHeaderCollection
+            {
+                { DefaultMessageHeaders.MessageId, "123" },
+                { "some-custom-header", "abc" }
+            },
+            new TestProducerConfiguration("test")
+            {
+                Chunk = new ChunkSettings
                 {
-                    { DefaultMessageHeaders.MessageId, "123" },
-                    { "some-custom-header", "abc" }
-                },
-                new TestProducerEndpoint("test")
-                {
-                    Chunk = new ChunkSettings
-                    {
-                        Size = 3
-                    }
-                },
-                true);
+                    Size = 3
+                }
+            }.GetDefaultEndpoint(),
+            true);
 
-            var writer = new ChunkSequenceWriter();
-            var envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
+        ChunkSequenceWriter writer = new();
+        List<IOutboundEnvelope> envelopes = await writer.ProcessMessageAsync(sourceEnvelope).ToListAsync();
 
-            envelopes.Should().HaveCount(4);
-            envelopes.ForEach(envelope => envelope.Endpoint.Should().BeSameAs(sourceEnvelope.Endpoint));
-            envelopes.ForEach(envelope => envelope.Headers.Should().Contain(sourceEnvelope.Headers));
-            envelopes.ForEach(envelope => envelope.AutoUnwrap.Should().Be(sourceEnvelope.AutoUnwrap));
-            envelopes[0].RawMessage.ReadAll().Should().BeEquivalentTo(new byte[] { 0x01, 0x02, 0x03 });
-            envelopes[0].Headers.Should()
-                .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"));
-            envelopes[0].Headers.Should()
-                .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
-            envelopes[1].RawMessage.ReadAll().Should().BeEquivalentTo(new byte[] { 0x04, 0x05, 0x06 });
-            envelopes[1].Headers.Should()
-                .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"));
-            envelopes[1].Headers.Should()
-                .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
-            envelopes[2].RawMessage.ReadAll().Should().BeEquivalentTo(new byte[] { 0x07, 0x08, 0x09 });
-            envelopes[2].Headers.Should()
-                .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"));
-            envelopes[2].Headers.Should()
-                .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
-            envelopes[3].RawMessage.ReadAll().Should().BeEquivalentTo(new byte[] { 0x10 });
-            envelopes[3].Headers.Should()
-                .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"));
-            envelopes[3].Headers.Should()
-                .ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
-        }
+        envelopes.Should().HaveCount(4);
+        envelopes.ForEach(envelope => envelope.Endpoint.Should().BeSameAs(sourceEnvelope.Endpoint));
+        envelopes.ForEach(envelope => envelope.Headers.Should().Contain(sourceEnvelope.Headers));
+        envelopes.ForEach(envelope => envelope.AutoUnwrap.Should().Be(sourceEnvelope.AutoUnwrap));
+        envelopes[0].RawMessage.ReadAll().Should().BeEquivalentTo(rawMessage[..3]);
+        envelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "0"));
+        envelopes[0].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
+        envelopes[1].RawMessage.ReadAll().Should().BeEquivalentTo(rawMessage[3..6]);
+        envelopes[1].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "1"));
+        envelopes[1].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
+        envelopes[2].RawMessage.ReadAll().Should().BeEquivalentTo(rawMessage[6..9]);
+        envelopes[2].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "2"));
+        envelopes[2].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
+        envelopes[3].RawMessage.ReadAll().Should().BeEquivalentTo(rawMessage[9..10]);
+        envelopes[3].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunkIndex, "3"));
+        envelopes[3].Headers.Should().ContainEquivalentOf(new MessageHeader(DefaultMessageHeaders.ChunksCount, "4"));
     }
 }

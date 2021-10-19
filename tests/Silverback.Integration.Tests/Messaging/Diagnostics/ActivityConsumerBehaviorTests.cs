@@ -36,7 +36,6 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                     }
                 },
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name,
                 new TestOffset());
 
             var entered = false;
@@ -75,7 +74,6 @@ namespace Silverback.Tests.Integration.Messaging.Diagnostics
                     }
                 },
                 TestConsumerEndpoint.GetDefault(),
-                TestConsumerEndpoint.GetDefault().Name,
                 new TestOffset());
 
             var entered = false;

@@ -7,56 +7,56 @@ using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Broker;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Messaging.Inbound.ExactlyOnce.Repositories;
+using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Inbound.ExactlyOnce
+namespace Silverback.Messaging.Inbound.ExactlyOnce;
+
+/// <summary>
+///     Uses an <see cref="IOffsetStore" /> to keep track of the latest processed offsets and guarantee that
+///     each message is processed only once.
+/// </summary>
+public class OffsetStoreExactlyOnceStrategy : IExactlyOnceStrategy
 {
-    /// <summary>
-    ///     Uses an <see cref="IOffsetStore" /> to keep track of the latest processed offsets and guarantee that
-    ///     each message is processed only once.
-    /// </summary>
-    public class OffsetStoreExactlyOnceStrategy : IExactlyOnceStrategy
+    /// <inheritdoc cref="IExactlyOnceStrategy.Build" />
+    public IExactlyOnceStrategyImplementation Build(IServiceProvider serviceProvider) =>
+        new OffsetStoreExactlyOnceStrategyImplementation(serviceProvider.GetRequiredService<IOffsetStore>());
+
+    private sealed class OffsetStoreExactlyOnceStrategyImplementation : IExactlyOnceStrategyImplementation
     {
-        /// <inheritdoc cref="IExactlyOnceStrategy.Build" />
-        public IExactlyOnceStrategyImplementation Build(IServiceProvider serviceProvider) =>
-            new OffsetStoreExactlyOnceStrategyImplementation(serviceProvider.GetRequiredService<IOffsetStore>());
+        private readonly IOffsetStore _offsetStore;
 
-        private sealed class OffsetStoreExactlyOnceStrategyImplementation : IExactlyOnceStrategyImplementation
+        public OffsetStoreExactlyOnceStrategyImplementation(IOffsetStore offsetStore)
         {
-            private readonly IOffsetStore _offsetStore;
+            _offsetStore = offsetStore;
+        }
 
-            public OffsetStoreExactlyOnceStrategyImplementation(IOffsetStore offsetStore)
+        public async Task<bool> CheckIsAlreadyProcessedAsync(ConsumerPipelineContext context)
+        {
+            Check.NotNull(context, nameof(context));
+
+            IRawInboundEnvelope envelope = context.Envelope;
+
+            if (envelope.BrokerMessageIdentifier is not IBrokerMessageOffset offset)
             {
-                _offsetStore = offsetStore;
+                throw new InvalidOperationException(
+                    "The message broker implementation doesn't seem to support comparable offsets. " +
+                    "The OffsetStoreExactlyOnceStrategy cannot be used, please resort to LogExactlyOnceStrategy " +
+                    "to ensure exactly-once processing.");
             }
 
-            public async Task<bool> CheckIsAlreadyProcessedAsync(ConsumerPipelineContext context)
-            {
-                Check.NotNull(context, nameof(context));
+            IBrokerMessageOffset? latestOffset = await _offsetStore.GetLatestValueAsync(
+                    envelope.BrokerMessageIdentifier.Key,
+                    envelope.Endpoint.Configuration)
+                .ConfigureAwait(false);
 
-                var envelope = context.Envelope;
+            if (latestOffset != null && latestOffset.CompareTo(offset) >= 0)
+                return true;
 
-                if (envelope.BrokerMessageIdentifier is not IBrokerMessageOffset offset)
-                {
-                    throw new InvalidOperationException(
-                        "The message broker implementation doesn't seem to support comparable offsets. " +
-                        "The OffsetStoreExactlyOnceStrategy cannot be used, please resort to LogExactlyOnceStrategy " +
-                        "to ensure exactly-once processing.");
-                }
+            context.TransactionManager.Enlist(_offsetStore);
 
-                var latestOffset = await _offsetStore.GetLatestValueAsync(
-                        envelope.BrokerMessageIdentifier.Key,
-                        envelope.Endpoint)
-                    .ConfigureAwait(false);
-
-                if (latestOffset != null && latestOffset.CompareTo(offset) >= 0)
-                    return true;
-
-                context.TransactionManager.Enlist(_offsetStore);
-
-                await _offsetStore.StoreAsync(offset, envelope.Endpoint).ConfigureAwait(false);
-                return false;
-            }
+            await _offsetStore.StoreAsync(offset, envelope.Endpoint.Configuration).ConfigureAwait(false);
+            return false;
         }
     }
 }

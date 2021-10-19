@@ -39,13 +39,13 @@ namespace Silverback.Messaging.Validation
             Check.NotNull(context, nameof(context));
             Check.NotNull(next, nameof(next));
 
-            if (context.Envelope.Endpoint.MessageValidationMode != MessageValidationMode.None &&
+            if (context.Envelope.Endpoint.Configuration.MessageValidationMode != MessageValidationMode.None &&
                 context.Envelope is IInboundEnvelope deserializeEnvelope &&
                 deserializeEnvelope.Message != null)
             {
                 (bool isValid, string? validationErrors) = MessageValidator.CheckMessageIsValid(
                     deserializeEnvelope.Message,
-                    context.Envelope.Endpoint.MessageValidationMode);
+                    context.Envelope.Endpoint.Configuration.MessageValidationMode);
 
                 if (!isValid)
                 {

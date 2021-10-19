@@ -6,25 +6,24 @@ using System.Diagnostics.CodeAnalysis;
 using Silverback.Messaging;
 using Silverback.Messaging.Messages;
 
-namespace Silverback.Tests.Integration.TestTypes
+namespace Silverback.Tests.Integration.TestTypes;
+
+public class ProducedMessage
 {
-    public class ProducedMessage
+    public ProducedMessage(
+        byte[]? message,
+        IReadOnlyCollection<MessageHeader>? headers,
+        ProducerEndpoint endpoint)
     {
-        public ProducedMessage(
-            byte[]? message,
-            IReadOnlyCollection<MessageHeader>? headers,
-            IEndpoint endpoint)
-        {
-            Message = message;
-            Headers = headers != null ? new MessageHeaderCollection(headers) : new MessageHeaderCollection();
-            Endpoint = endpoint;
-        }
-
-        [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
-        public byte[]? Message { get; }
-
-        public MessageHeaderCollection Headers { get; }
-
-        public IEndpoint Endpoint { get; }
+        Message = message;
+        Headers = headers != null ? new MessageHeaderCollection(headers) : new MessageHeaderCollection();
+        Endpoint = endpoint;
     }
+
+    [SuppressMessage("", "CA1819", Justification = Justifications.CanExposeByteArray)]
+    public byte[]? Message { get; }
+
+    public MessageHeaderCollection Headers { get; }
+
+    public ProducerEndpoint Endpoint { get; }
 }

@@ -1,6 +1,7 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using Confluent.Kafka;
 
@@ -12,7 +13,7 @@ namespace Silverback.Messaging.Broker.Kafka.Mocks
     public class RebalanceResult
     {
         /// <summary>
-        ///     Represents an empty <see cref="RebalanceResult" />.
+        ///     An empty <see cref="RebalanceResult" />.
         /// </summary>
         public static readonly RebalanceResult Empty = new(
             new Dictionary<IMockedConfluentConsumer, IReadOnlyCollection<TopicPartition>>(),

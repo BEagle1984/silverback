@@ -17,14 +17,18 @@ namespace Silverback.Util
         {
             Check.NotNull(typeName, nameof(typeName));
 
-            var type = Cache.GetOrAdd(typeName, _ => ResolveType(typeName, throwOnError));
+            Type? type = Cache.GetOrAdd(
+                typeName,
+                static (factoryTypeName, factoryThrowOnError) => ResolveType(factoryTypeName, factoryThrowOnError),
+                throwOnError);
 
             if (throwOnError && type == null)
             {
                 type = Cache.AddOrUpdate(
                     typeName,
-                    _ => ResolveType(typeName, throwOnError),
-                    (_, _) => ResolveType(typeName, throwOnError));
+                    static (factoryTypeName, factoryThrowOnError) => ResolveType(factoryTypeName, factoryThrowOnError),
+                    static (factoryTypeName, _, factoryThrowOnError) => ResolveType(factoryTypeName, factoryThrowOnError),
+                    throwOnError);
             }
 
             return type;
@@ -54,7 +58,7 @@ namespace Silverback.Util
             if (string.IsNullOrEmpty(typeAssemblyQualifiedName))
                 return typeAssemblyQualifiedName;
 
-            var split = typeAssemblyQualifiedName.Split(',');
+            string[]? split = typeAssemblyQualifiedName.Split(',');
 
             return split.Length >= 2 ? $"{split[0]}, {split[1]}" : typeAssemblyQualifiedName;
         }

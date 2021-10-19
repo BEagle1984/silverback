@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>$(NetCoreTargetVersion)</TargetFramework>
+        <TargetFramework>$(TestsTargetFramework)</TargetFramework>
         <RootNamespace>Silverback.Tests.Integration.Kafka.SchemaRegistry</RootNamespace>
     </PropertyGroup>
 

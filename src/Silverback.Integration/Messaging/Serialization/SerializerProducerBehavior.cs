@@ -25,10 +25,10 @@ namespace Silverback.Messaging.Serialization
             if (context.Envelope.Message is not Tombstone)
             {
                 context.Envelope.RawMessage ??=
-                    await context.Envelope.Endpoint.Serializer.SerializeAsync(
+                    await context.Envelope.Endpoint.Configuration.Serializer.SerializeAsync(
                             context.Envelope.Message,
                             context.Envelope.Headers,
-                            new MessageSerializationContext(context.Envelope.Endpoint))
+                            context.Envelope.Endpoint)
                         .ConfigureAwait(false);
             }
             else if (context.Envelope.Message.GetType().GenericTypeArguments.Length == 1)

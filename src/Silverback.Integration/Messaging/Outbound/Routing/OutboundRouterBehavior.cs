@@ -2,11 +2,9 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Silverback.Messaging.Messages;
 using Silverback.Messaging.Publishing;
 using Silverback.Util;
@@ -14,8 +12,8 @@ using Silverback.Util;
 namespace Silverback.Messaging.Outbound.Routing
 {
     /// <summary>
-    ///     Routes the messages to the outbound endpoint by wrapping them in an
-    ///     <see cref="IOutboundEnvelope{TMessage}" /> that is republished to the bus.
+    ///     Routes the messages to the outbound endpoint by wrapping them in an <see cref="IOutboundEnvelope{TMessage}" /> that is
+    ///     republished to the bus.
     /// </summary>
     public class OutboundRouterBehavior : IBehavior, ISorted
     {
@@ -23,11 +21,9 @@ namespace Silverback.Messaging.Outbound.Routing
 
         private readonly IOutboundRoutingConfiguration _routingConfiguration;
 
-        private readonly OutboundEnvelopeFactory _envelopeFactory;
+        private readonly IOutboundEnvelopeFactory _envelopeFactory;
 
         private readonly IServiceProvider _serviceProvider;
-
-        private readonly ConcurrentDictionary<IOutboundRoute, IOutboundRouter> _routers = new();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="OutboundRouterBehavior" /> class.
@@ -38,19 +34,22 @@ namespace Silverback.Messaging.Outbound.Routing
         /// <param name="routingConfiguration">
         ///     The <see cref="IOutboundRoutingConfiguration" />.
         /// </param>
+        /// <param name="envelopeFactory">
+        ///     The <see cref="IOutboundEnvelopeFactory" />.
+        /// </param>
         /// <param name="serviceProvider">
         ///     The <see cref="IServiceProvider" />.
         /// </param>
         public OutboundRouterBehavior(
             IPublisher publisher,
             IOutboundRoutingConfiguration routingConfiguration,
+            IOutboundEnvelopeFactory envelopeFactory,
             IServiceProvider serviceProvider)
         {
             _publisher = Check.NotNull(publisher, nameof(publisher));
             _routingConfiguration = Check.NotNull(routingConfiguration, nameof(routingConfiguration));
+            _envelopeFactory = Check.NotNull(envelopeFactory, nameof(envelopeFactory));
             _serviceProvider = Check.NotNull(serviceProvider, nameof(serviceProvider));
-
-            _envelopeFactory = _serviceProvider.GetRequiredService<OutboundEnvelopeFactory>();
         }
 
         /// <inheritdoc cref="ISorted.SortIndex" />
@@ -61,7 +60,7 @@ namespace Silverback.Messaging.Outbound.Routing
         {
             Check.NotNull(next, nameof(next));
 
-            var wasRouted = await WrapAndRepublishRoutedMessageAsync(message).ConfigureAwait(false);
+            bool wasRouted = await WrapAndRepublishRoutedMessageAsync(message).ConfigureAwait(false);
 
             // The routed message is discarded because it has been republished
             // as OutboundEnvelope and will be normally subscribable
@@ -77,27 +76,23 @@ namespace Silverback.Messaging.Outbound.Routing
             if (message is IOutboundEnvelope)
                 return false;
 
-            var routesCollection = _routingConfiguration.GetRoutesForMessage(message);
+            IReadOnlyCollection<IOutboundRoute> routesCollection = _routingConfiguration.GetRoutesForMessage(message);
 
             if (routesCollection.Count == 0)
                 return false;
 
             await routesCollection
-                .SelectMany(route => CreateOutboundEnvelopes(message, route))
+                .Select(route => CreateOutboundEnvelope(message, route))
                 .ForEachAsync(envelope => _publisher.PublishAsync(envelope))
                 .ConfigureAwait(false);
 
             return true;
         }
 
-        private IEnumerable<IOutboundEnvelope> CreateOutboundEnvelopes(object message, IOutboundRoute route)
-        {
-            var headers = new MessageHeaderCollection();
-            var router = _routers.GetOrAdd(route, _ => route.GetOutboundRouter(_serviceProvider));
-            var endpoints = router.GetDestinationEndpoints(message, headers);
-
-            return endpoints.Select(
-                endpoint => _envelopeFactory.CreateOutboundEnvelope(message, headers, endpoint));
-        }
+        private IOutboundEnvelope CreateOutboundEnvelope(object message, IOutboundRoute route) =>
+            _envelopeFactory.CreateEnvelope(
+                message,
+                new MessageHeaderCollection(),
+                route.ProducerConfiguration.Endpoint.GetEndpoint(message, route.ProducerConfiguration, _serviceProvider));
     }
 }

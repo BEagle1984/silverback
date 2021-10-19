@@ -42,8 +42,8 @@ namespace Silverback.Messaging.Broker.Kafka
             _logger = Check.NotNull(logger, nameof(logger));
 
             _messagesLimiterSemaphoreSlim = new SemaphoreSlim(
-                consumer.Endpoint.MaxDegreeOfParallelism,
-                consumer.Endpoint.MaxDegreeOfParallelism);
+                consumer.Configuration.MaxDegreeOfParallelism,
+                consumer.Configuration.MaxDegreeOfParallelism);
         }
 
         public Task Stopping =>
@@ -242,7 +242,7 @@ namespace Silverback.Messaging.Broker.Kafka
                 return;
             }
 
-            if (_partitionChannels.Count > _consumer.Endpoint.MaxDegreeOfParallelism)
+            if (_partitionChannels.Count > _consumer.Configuration.MaxDegreeOfParallelism)
             {
                 await _messagesLimiterSemaphoreSlim.WaitAsync(partitionChannel.ReadCancellationToken)
                     .ConfigureAwait(false);
@@ -255,7 +255,7 @@ namespace Silverback.Messaging.Broker.Kafka
             }
             finally
             {
-                if (_messagesLimiterSemaphoreSlim.CurrentCount < _consumer.Endpoint.MaxDegreeOfParallelism)
+                if (_messagesLimiterSemaphoreSlim.CurrentCount < _consumer.Configuration.MaxDegreeOfParallelism)
                     _messagesLimiterSemaphoreSlim.Release();
             }
         }
@@ -265,7 +265,6 @@ namespace Silverback.Messaging.Broker.Kafka
 
         private PartitionChannel? GetPartitionChannel(TopicPartition topicPartition, bool create)
         {
-            // Try get value before calling GetOrAdd to avoid the closure allocation at every call
             if (_partitionChannels.TryGetValue(topicPartition, out var partitionChannel))
                 return partitionChannel;
 
@@ -274,7 +273,7 @@ namespace Silverback.Messaging.Broker.Kafka
 
             return _partitionChannels.GetOrAdd(
                 topicPartition,
-                _ => new PartitionChannel(_consumer, topicPartition, _logger));
+                new PartitionChannel(_consumer, topicPartition, _logger));
         }
     }
 }

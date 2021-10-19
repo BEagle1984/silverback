@@ -65,8 +65,9 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
                     GetMessageType(message),
                     message.Content,
                     DeserializeHeaders(message),
-                    message.EndpointName,
-                    message.ActualEndpointName))
+                    message.EndpointRawName,
+                    message.EndpointFriendlyName,
+                    message.Endpoint))
             .ToList();
 
         /// <inheritdoc cref="IOutboxReader.AcknowledgeAsync(OutboxStoredMessage)" />
@@ -109,33 +110,14 @@ namespace Silverback.Messaging.Outbound.TransactionalOutbox.Repositories
         /// <inheritdoc cref="IOutboxReader.GetLengthAsync" />
         public Task<int> GetLengthAsync() => DbSet.AsQueryable().CountAsync();
 
-        private static Type? GetMessageType(OutboxMessage outboxMessage)
-        {
-            if (outboxMessage.MessageType == null)
-                return null;
+        private static Type GetMessageType(OutboxMessage outboxMessage) =>
+            TypesCache.GetType(outboxMessage.MessageType);
 
-            return TypesCache.GetType(outboxMessage.MessageType);
-        }
-
-        private static IEnumerable<MessageHeader> DeserializeHeaders(OutboxMessage outboxMessage)
-        {
-            if (outboxMessage.SerializedHeaders != null)
-            {
-                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(
-                           outboxMessage.SerializedHeaders) ??
-                       throw new InvalidOperationException("Failed to deserialize message headers.");
-            }
-
-#pragma warning disable CS0618 // Obsolete
-            if (outboxMessage.Headers != null)
-            {
-                return JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(outboxMessage.Headers) ??
-                       throw new InvalidOperationException("Failed to deserialize message headers.");
-            }
-#pragma warning restore CS0618 // Obsolete
-
-            throw new InvalidOperationException("Both SerializedHeaders and Headers are null.");
-        }
+        private static IEnumerable<MessageHeader>? DeserializeHeaders(OutboxMessage outboxMessage) =>
+            outboxMessage.Headers == null
+                ? null
+                : JsonSerializer.Deserialize<IEnumerable<MessageHeader>>(outboxMessage.Headers) ??
+                  throw new InvalidOperationException("Failed to deserialize message headers.");
 
         private async Task<bool> RemoveMessageAsync(OutboxStoredMessage outboxMessage)
         {

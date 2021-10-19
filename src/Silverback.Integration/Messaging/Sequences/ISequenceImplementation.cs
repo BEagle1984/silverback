@@ -10,7 +10,7 @@ using Silverback.Messaging.Sequences.Chunking;
 namespace Silverback.Messaging.Sequences
 {
     /// <summary>
-    ///     Represents a set of logically related messages, like the chunks belonging to the same message or the
+    ///     A set of logically related messages, like the chunks belonging to the same message or the
     ///     messages in a dataset.
     /// </summary>
     internal interface ISequenceImplementation : ISequence

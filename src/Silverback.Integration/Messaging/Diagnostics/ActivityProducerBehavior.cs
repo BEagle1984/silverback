@@ -6,40 +6,39 @@ using System.Threading.Tasks;
 using Silverback.Messaging.Broker.Behaviors;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Diagnostics
+namespace Silverback.Messaging.Diagnostics;
+
+/// <summary>
+///     Starts an <see cref="Activity" /> and adds the tracing information to the message headers.
+/// </summary>
+public class ActivityProducerBehavior : IProducerBehavior
 {
+    private readonly IActivityEnricherFactory _activityEnricherFactory;
+
     /// <summary>
-    ///     Starts an <see cref="Activity" /> and adds the tracing information to the message headers.
+    ///     Initializes a new instance of the <see cref="ActivityProducerBehavior" /> class.
     /// </summary>
-    public class ActivityProducerBehavior : IProducerBehavior
+    /// <param name="activityEnricherFactory">
+    ///     The Factory to create the activity enrichers.
+    /// </param>
+    public ActivityProducerBehavior(IActivityEnricherFactory activityEnricherFactory)
     {
-        private readonly IActivityEnricherFactory _activityEnricherFactory;
+        _activityEnricherFactory = activityEnricherFactory;
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ActivityProducerBehavior" /> class.
-        /// </summary>
-        /// <param name="activityEnricherFactory">
-        ///     The Factory to create the activity enrichers.
-        /// </param>
-        public ActivityProducerBehavior(IActivityEnricherFactory activityEnricherFactory)
-        {
-            _activityEnricherFactory = activityEnricherFactory;
-        }
+    /// <inheritdoc cref="ISorted.SortIndex" />
+    public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Activity;
 
-        /// <inheritdoc cref="ISorted.SortIndex" />
-        public int SortIndex => BrokerBehaviorsSortIndexes.Producer.Activity;
+    /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
+    public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
+    {
+        Check.NotNull(context, nameof(context));
+        Check.NotNull(next, nameof(next));
 
-        /// <inheritdoc cref="IProducerBehavior.HandleAsync" />
-        public async Task HandleAsync(ProducerPipelineContext context, ProducerBehaviorHandler next)
-        {
-            Check.NotNull(context, nameof(context));
-            Check.NotNull(next, nameof(next));
-
-            using var activity = ActivitySources.StartProduceActivity(context.Envelope);
-            _activityEnricherFactory
-                .GetActivityEnricher(context.Envelope.Endpoint)
-                .EnrichOutboundActivity(activity, context);
-            await next(context).ConfigureAwait(false);
-        }
+        using Activity activity = ActivitySources.StartProduceActivity(context.Envelope);
+        _activityEnricherFactory
+            .GetActivityEnricher(context.Envelope.Endpoint.Configuration)
+            .EnrichOutboundActivity(activity, context);
+        await next(context).ConfigureAwait(false);
     }
 }

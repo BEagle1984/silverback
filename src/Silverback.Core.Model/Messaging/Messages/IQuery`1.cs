@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Represents a message that queries a result of type <typeparamref name="TResult" />.
+    ///     A message that queries a result of type <typeparamref name="TResult" />.
     /// </summary>
     /// <typeparam name="TResult">
     ///     The type of the result being returned.

@@ -5,41 +5,40 @@ using System.Collections.Generic;
 using System.IO;
 using Silverback.Messaging.Broker;
 
-namespace Silverback.Messaging.Messages
+namespace Silverback.Messaging.Messages;
+
+internal class OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
 {
-    internal class OutboundEnvelope : RawOutboundEnvelope, IOutboundEnvelope
+    private object? _message;
+
+    public OutboundEnvelope(
+        object? message,
+        IReadOnlyCollection<MessageHeader>? headers,
+        ProducerEndpoint actualEndpoint,
+        bool autoUnwrap = false,
+        IBrokerMessageIdentifier? brokerMessageIdentifier = null)
+        : base(headers, actualEndpoint, brokerMessageIdentifier)
     {
-        private object? _message;
+        _message = message;
 
-        public OutboundEnvelope(
-            object? message,
-            IReadOnlyCollection<MessageHeader>? headers,
-            IProducerEndpoint endpoint,
-            bool autoUnwrap = false,
-            IBrokerMessageIdentifier? brokerMessageIdentifier = null)
-            : base(headers, endpoint, brokerMessageIdentifier)
+        if (Message is byte[] rawMessage)
+            RawMessage = new MemoryStream(rawMessage);
+
+        if (Message is Stream stream)
+            RawMessage = stream;
+
+        AutoUnwrap = autoUnwrap;
+    }
+
+    public bool AutoUnwrap { get; }
+
+    public object? Message
+    {
+        get => _message;
+        set
         {
-            _message = message;
-
-            if (Message is byte[] rawMessage)
-                RawMessage = new MemoryStream(rawMessage);
-
-            if (Message is Stream stream)
-                RawMessage = stream;
-
-            AutoUnwrap = autoUnwrap;
-        }
-
-        public bool AutoUnwrap { get; }
-
-        public object? Message
-        {
-            get => _message;
-            set
-            {
-                _message = value;
-                RawMessage = null;
-            }
+            _message = value;
+            RawMessage = null;
         }
     }
 }

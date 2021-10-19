@@ -14,44 +14,44 @@ namespace Silverback.Messaging.Configuration.Rabbit
     public sealed class RabbitSslOption : IEquatable<RabbitSslOption>
     {
         /// <summary>
-        ///     Gets or sets the SSL policy errors that are deemed acceptable.
+        ///     Gets the SSL policy errors that are deemed acceptable.
         /// </summary>
-        public SslPolicyErrors? AcceptablePolicyErrors { get; set; }
+        public SslPolicyErrors? AcceptablePolicyErrors { get; init; }
 
         /// <summary>
-        ///     Gets or sets the path to client certificate.
+        ///     Gets the path to client certificate.
         /// </summary>
-        public string? CertPassphrase { get; set; }
+        public string? CertPassphrase { get; init; }
 
         /// <summary>
-        ///     Gets or sets the path to client certificate.
+        ///     Gets the path to client certificate.
         /// </summary>
-        public string? CertPath { get; set; }
+        public string? CertPath { get; init; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the peer certificate should be checked for revocation.
+        ///     Gets a value indicating whether the peer certificate should be checked for revocation.
         ///     The default is <c>false</c>.
         /// </summary>
         /// <remarks>
         ///     Uses the built-in .NET mechanics for checking a certificate against CRLs.
         /// </remarks>
-        public bool? CheckCertificateRevocation { get; set; }
+        public bool? CheckCertificateRevocation { get; init; }
 
         /// <summary>
-        ///     Gets or sets a value indicating whether SSL should indeed be used.
+        ///     Gets a value indicating whether SSL should indeed be used.
         /// </summary>
-        public bool Enabled { get; set; }
+        public bool Enabled { get; init; }
 
         /// <summary>
-        ///     Gets or sets the Canonical Name of the server. This MUST match the CN on the certificate otherwise
+        ///     Gets the Canonical Name of the server. This MUST match the CN on the certificate otherwise
         ///     the SSL connection will fail.
         /// </summary>
-        public string? ServerName { get; set; }
+        public string? ServerName { get; init; }
 
         /// <summary>
-        ///     Gets or sets the SSL protocol version.
+        ///     Gets the SSL protocol version.
         /// </summary>
-        public SslProtocols Version { get; set; }
+        public SslProtocols Version { get; init; }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(RabbitSslOption? other)
@@ -86,7 +86,6 @@ namespace Silverback.Messaging.Configuration.Rabbit
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode()
         {
             var hashCode = default(HashCode);

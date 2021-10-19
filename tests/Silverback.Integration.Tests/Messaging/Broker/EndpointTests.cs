@@ -2,6 +2,7 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using FluentAssertions;
+using Silverback.Collections;
 using Silverback.Tests.Types;
 using Xunit;
 
@@ -10,21 +11,52 @@ namespace Silverback.Tests.Integration.Messaging.Broker
     public class EndpointTests
     {
         [Fact]
-        public void GetDisplayName_NotSet_NameReturned()
+        public void DisplayName_WithoutFriendlyNameSet_TopicNameReturned()
         {
-            var endpoint = new TestConsumerEndpoint("name");
+            TestConsumerConfiguration configuration = new("name");
 
-            endpoint.DisplayName.Should().Be("name");
+            configuration.DisplayName.Should().Be("name");
         }
 
         [Fact]
-        public void GetDisplayName_WithFriendlyName_FriendlyAndActualNameReturned()
+        public void DisplayName_WithFriendlyNameSetBeforeRawName_FriendlyAndTopicNameReturned()
         {
-            var endpoint = new TestConsumerEndpoint("name");
+            TestConsumerConfiguration configuration = new()
+            {
+                FriendlyName = "display-name",
+                TopicNames = new ValueReadOnlyCollection<string>(new[] { "name" })
+            };
 
-            endpoint.FriendlyName = "display-name";
+            configuration.DisplayName.Should().Be("display-name (name)");
+        }
 
-            endpoint.DisplayName.Should().Be("display-name (name)");
+        [Fact]
+        public void DisplayName_WithFriendlyNameSetAfterRawName_FriendlyAndTopicNameReturned()
+        {
+            TestConsumerConfiguration configuration = new()
+            {
+                TopicNames = new ValueReadOnlyCollection<string>(new[] { "name" }),
+                FriendlyName = "display-name"
+            };
+
+            configuration.DisplayName.Should().Be("display-name (name)");
+        }
+
+        [Fact]
+        public void Equals_DifferentFriendlyName_FalseReturned()
+        {
+            TestProducerConfiguration endpoint1 = new()
+            {
+                FriendlyName = "friendly-1"
+            };
+            TestProducerConfiguration endpoint2 = new()
+            {
+                FriendlyName = "friendly-2"
+            };
+
+            bool result = endpoint1.Equals(endpoint2);
+
+            result.Should().BeFalse();
         }
     }
 }

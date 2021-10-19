@@ -12,7 +12,7 @@ namespace Silverback.Tests.Core.Util
     public class ConfigurationDictionaryEqualityComparerTests
     {
         [Fact]
-        public void Equals_SameDictionary_TrueIsReturned()
+        public void Equals_SameDictionary_TrueReturned()
         {
             var dictionary = new Dictionary<string, string>
             {
@@ -27,7 +27,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_SameItems_TrueIsReturned()
+        public void Equals_SameItems_TrueReturned()
         {
             var dictionaryX = new Dictionary<string, string>
             {
@@ -48,7 +48,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_SameItemsDifferentOrder_TrueIsReturned()
+        public void Equals_SameItemsDifferentOrder_TrueReturned()
         {
             var dictionaryX = new Dictionary<string, string>
             {
@@ -69,7 +69,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_DifferentValues_FalseIsReturned()
+        public void Equals_DifferentValues_FalseReturned()
         {
             var dictionaryX = new Dictionary<string, string>
             {
@@ -90,7 +90,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_DifferentKeys_FalseIsReturned()
+        public void Equals_DifferentKeys_FalseReturned()
         {
             var dictionaryX = new Dictionary<string, string>
             {
@@ -111,7 +111,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_NullVsNonNull_FalseIsReturned()
+        public void Equals_NullVsNonNull_FalseReturned()
         {
             var dictionaryX = new Dictionary<string, string?>
             {
@@ -133,7 +133,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_NullVsMissingKey_FalseIsReturned()
+        public void Equals_NullVsMissingKey_FalseReturned()
         {
             var dictionaryX = new Dictionary<string, string?>
             {
@@ -156,7 +156,7 @@ namespace Silverback.Tests.Core.Util
         [Fact]
         [SuppressMessage("ReSharper", "CollectionNeverUpdated.Local", Justification = "Test")]
         [SuppressMessage("ReSharper", "ExpressionIsAlwaysNull", Justification = "Test")]
-        public void Equals_NullDictionaryVsEmptyDictionary_TrueIsReturned()
+        public void Equals_NullDictionaryVsEmptyDictionary_TrueReturned()
         {
             Dictionary<string, string> dictionaryX = new();
             Dictionary<string, string>? dictionaryY = null;

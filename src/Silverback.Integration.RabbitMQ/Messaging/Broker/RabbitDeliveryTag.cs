@@ -7,7 +7,7 @@ using System.Globalization;
 namespace Silverback.Messaging.Broker
 {
     /// <summary>
-    ///     Represents the unique message identifier assigned by the message broker.
+    ///     The unique message identifier assigned by the message broker.
     /// </summary>
     public sealed class RabbitDeliveryTag : IBrokerMessageIdentifier
     {

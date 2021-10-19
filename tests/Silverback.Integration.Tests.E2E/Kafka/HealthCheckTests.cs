@@ -2,12 +2,16 @@
 // This code is licensed under MIT license (see LICENSE file for details)
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Messages;
 using Silverback.Tests.Integration.E2E.TestHost;
 using Xunit;
@@ -32,47 +36,45 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions =>
-                                    mockedKafkaOptions.DelayPartitionsAssignment(
-                                        TimeSpan.FromMilliseconds(100))))
+                                    mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(100))))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(
-                                    config =>
+                                .ConfigureClient(
+                                    configuration =>
                                     {
-                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom("topic1")
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = DefaultConsumerGroupId;
+                                                configuration.GroupId = DefaultConsumerGroupId;
                                             }))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom("topic2")
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = DefaultConsumerGroupId;
+                                                configuration.GroupId = DefaultConsumerGroupId;
                                             }))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom("topic3")
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = DefaultConsumerGroupId;
+                                                configuration.GroupId = DefaultConsumerGroupId;
                                             })))
                         .Services
                         .AddHealthChecks()
                         .AddConsumersCheck())
                 .Run(waitUntilBrokerConnected: false);
 
-            var response = await Host.HttpClient.GetAsync("/health");
+            HttpResponseMessage response = await Host.HttpClient.GetAsync("/health");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
@@ -85,48 +87,46 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .AddSilverback()
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
-                                mockedKafkaOptions =>
-                                    mockedKafkaOptions.DelayPartitionsAssignment(
-                                        TimeSpan.FromMilliseconds(10000)))) // Delay the assignment on purpose
+                                mockOptions => mockOptions
+                                    .DelayPartitionsAssignment(TimeSpan.FromMilliseconds(10000)))) // Delay the assignment on purpose
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(
-                                    config =>
+                                .ConfigureClient(
+                                    configuration =>
                                     {
-                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom("topic1")
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = DefaultConsumerGroupId;
+                                                configuration.GroupId = DefaultConsumerGroupId;
                                             }))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom("topic2")
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = DefaultConsumerGroupId;
+                                                configuration.GroupId = DefaultConsumerGroupId;
                                             }))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom("topic3")
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = DefaultConsumerGroupId;
+                                                configuration.GroupId = DefaultConsumerGroupId;
                                             })))
                         .Services
                         .AddHealthChecks()
                         .AddConsumersCheck(gracePeriod: TimeSpan.FromMilliseconds(100)))
                 .Run(waitUntilBrokerConnected: false);
 
-            var response = await Host.HttpClient.GetAsync("/health");
+            HttpResponseMessage response = await Host.HttpClient.GetAsync("/health");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             await Task.Delay(100);
@@ -145,62 +145,59 @@ namespace Silverback.Tests.Integration.E2E.Kafka
                         .WithConnectionToMessageBroker(
                             options => options.AddMockedKafka(
                                 mockedKafkaOptions =>
-                                    mockedKafkaOptions.DelayPartitionsAssignment(
-                                        TimeSpan.FromMilliseconds(200))))
+                                    mockedKafkaOptions.DelayPartitionsAssignment(TimeSpan.FromMilliseconds(200))))
                         .AddKafkaEndpoints(
                             endpoints => endpoints
-                                .Configure(
-                                    config =>
+                                .ConfigureClient(
+                                    configuration =>
                                     {
-                                        config.BootstrapServers = "PLAINTEXT://e2e";
+                                        configuration.BootstrapServers = "PLAINTEXT://e2e";
                                     })
-                                .AddOutbound<IIntegrationEvent>(
-                                    endpoint => endpoint.ProduceTo(DefaultTopicName))
+                                .AddOutbound<IIntegrationEvent>(producer => producer.ProduceTo(DefaultTopicName))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom("topic1")
                                         .WithName("one")
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = "group1";
+                                                configuration.GroupId = "group1";
                                             }))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom("topic2")
                                         .WithName("two")
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = "group2";
+                                                configuration.GroupId = "group2";
                                             }))
                                 .AddInbound(
-                                    endpoint => endpoint
+                                    consumer => consumer
                                         .ConsumeFrom("topic3")
-                                        .Configure(
-                                            config =>
+                                        .ConfigureClient(
+                                            configuration =>
                                             {
-                                                config.GroupId = "group3";
+                                                configuration.GroupId = "group3";
                                             })))
                         .Services
                         .AddHealthChecks()
                         .AddConsumersCheck(
-                            endpointsFilter: endpoint => endpoint.FriendlyName == "two",
+                            consumersFilter: endpoint => endpoint.FriendlyName == "two",
                             gracePeriod: TimeSpan.Zero,
                             name: "check-2",
                             tags: new[] { "1" })
                         .AddConsumersCheck(
-                            endpointsFilter: endpoint => endpoint.FriendlyName != "two",
+                            consumersFilter: endpoint => endpoint.FriendlyName != "two",
                             gracePeriod: TimeSpan.Zero,
                             name: "check-1-3",
                             tags: new[] { "2" }))
                 .Run(waitUntilBrokerConnected: false);
 
-            var consumers = Helper.Broker.Consumers;
-            await AsyncTestingUtil.WaitAsync(
-                () => consumers.All(consumer => consumer.StatusInfo.Status > ConsumerStatus.Connected));
+            IReadOnlyList<IConsumer> consumers = Helper.Broker.Consumers;
+            await AsyncTestingUtil.WaitAsync(() => consumers.All(consumer => consumer.StatusInfo.Status > ConsumerStatus.Connected));
 
-            var response = await Host.HttpClient.GetAsync("/health1");
+            HttpResponseMessage response = await Host.HttpClient.GetAsync("/health1");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             response = await Host.HttpClient.GetAsync("/health2");
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -213,8 +210,7 @@ namespace Silverback.Tests.Integration.E2E.Kafka
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             await consumers[1].ConnectAsync();
-            await AsyncTestingUtil.WaitAsync(
-                () => consumers[1].StatusInfo.Status > ConsumerStatus.Connected);
+            await AsyncTestingUtil.WaitAsync(() => consumers[1].StatusInfo.Status > ConsumerStatus.Connected);
             await consumers[2].DisconnectAsync();
 
             response = await Host.HttpClient.GetAsync("/health1");

@@ -3,17 +3,16 @@
 
 using System;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration;
+
+internal sealed class GenericEndpointsConfigurator : IEndpointsConfigurator
 {
-    internal sealed class GenericEndpointsConfigurator : IEndpointsConfigurator
+    private readonly Action<EndpointsConfigurationBuilder> _configAction;
+
+    public GenericEndpointsConfigurator(Action<EndpointsConfigurationBuilder> configAction)
     {
-        private readonly Action<IEndpointsConfigurationBuilder> _configAction;
-
-        public GenericEndpointsConfigurator(Action<IEndpointsConfigurationBuilder> configAction)
-        {
-            _configAction = configAction;
-        }
-
-        public void Configure(IEndpointsConfigurationBuilder builder) => _configAction(builder);
+        _configAction = configAction;
     }
+
+    public void Configure(EndpointsConfigurationBuilder builder) => _configAction(builder);
 }

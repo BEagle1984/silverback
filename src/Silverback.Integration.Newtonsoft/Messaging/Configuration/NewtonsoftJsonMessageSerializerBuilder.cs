@@ -6,69 +6,103 @@ using Newtonsoft.Json;
 using Silverback.Messaging.Serialization;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Configuration
+namespace Silverback.Messaging.Configuration;
+
+/// <summary>
+///     Builds the <see cref="NewtonsoftJsonMessageSerializer" /> or <see cref="NewtonsoftJsonMessageSerializer{TMessage}" />.
+/// </summary>
+public class NewtonsoftJsonMessageSerializerBuilder
 {
-    /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder" />
-    public class NewtonsoftJsonMessageSerializerBuilder : INewtonsoftJsonMessageSerializerBuilder
+    private INewtonsoftJsonMessageSerializer? _serializer;
+
+    private JsonSerializerSettings? _settings;
+
+    private MessageEncoding? _encoding;
+
+    /// <summary>
+    ///     Specifies a fixed message type. This will prevent the message type header to be written when
+    ///     serializing and the header will be ignored when deserializing.
+    /// </summary>
+    /// <typeparam name="TMessage">
+    ///     The type of the message to serialize or deserialize.
+    /// </typeparam>
+    /// <returns>
+    ///     The <see cref="NewtonsoftJsonMessageSerializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public NewtonsoftJsonMessageSerializerBuilder UseFixedType<TMessage>()
     {
-        private NewtonsoftJsonMessageSerializerBase? _serializer;
+        _serializer = new NewtonsoftJsonMessageSerializer<TMessage>();
+        return this;
+    }
 
-        private JsonSerializerSettings? _settings;
+    /// <summary>
+    ///     Specifies a fixed message type. This will prevent the message type header to be written when
+    ///     serializing and the header will be ignored when deserializing.
+    /// </summary>
+    /// <param name="messageType">
+    ///     The type of the message to serialize or deserialize.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="NewtonsoftJsonMessageSerializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public NewtonsoftJsonMessageSerializerBuilder UseFixedType(Type messageType)
+    {
+        Type serializerType = typeof(NewtonsoftJsonMessageSerializer<>).MakeGenericType(messageType);
+        _serializer = (INewtonsoftJsonMessageSerializer)Activator.CreateInstance(serializerType);
+        return this;
+    }
 
-        private MessageEncoding? _encoding;
+    /// <summary>
+    ///     Configures the <see cref="JsonSerializerSettings" />.
+    /// </summary>
+    /// <param name="configureAction">
+    ///     An <see cref="Action{T}" /> that takes the <see cref="JsonSerializerSettings" /> and configures it.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="NewtonsoftJsonMessageSerializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public NewtonsoftJsonMessageSerializerBuilder Configure(Action<JsonSerializerSettings> configureAction)
+    {
+        Check.NotNull(configureAction, nameof(configureAction));
 
-        /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.UseFixedType{TMessage}" />
-        public INewtonsoftJsonMessageSerializerBuilder UseFixedType<TMessage>()
-        {
-            _serializer = new NewtonsoftJsonMessageSerializer<TMessage>();
-            return this;
-        }
+        JsonSerializerSettings settings = new();
+        configureAction.Invoke(settings);
+        _settings = settings;
 
-        /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.UseFixedType(Type)"/>
-        public INewtonsoftJsonMessageSerializerBuilder UseFixedType(Type messageType)
-        {
-            var serializerType = typeof(NewtonsoftJsonMessageSerializer<>).MakeGenericType(messageType);
-            _serializer = (NewtonsoftJsonMessageSerializerBase)Activator.CreateInstance(serializerType);
-            return this;
-        }
+        return this;
+    }
 
-        /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.Configure" />
-        public INewtonsoftJsonMessageSerializerBuilder Configure(
-            Action<JsonSerializerSettings> configureAction)
-        {
-            Check.NotNull(configureAction, nameof(configureAction));
+    /// <summary>
+    ///     Specifies the encoding to be used.
+    /// </summary>
+    /// <param name="encoding">
+    ///     The <see cref="MessageEncoding" />.
+    /// </param>
+    /// <returns>
+    ///     The <see cref="NewtonsoftJsonMessageSerializerBuilder" /> so that additional calls can be chained.
+    /// </returns>
+    public NewtonsoftJsonMessageSerializerBuilder WithEncoding(MessageEncoding encoding)
+    {
+        _encoding = encoding;
+        return this;
+    }
 
-            var settings = new JsonSerializerSettings();
-            configureAction.Invoke(settings);
-            _settings = settings;
+    /// <summary>
+    ///     Builds the <see cref="IMessageSerializer" /> instance.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="IMessageSerializer" />.
+    /// </returns>
+    public IMessageSerializer Build()
+    {
+        _serializer ??= new NewtonsoftJsonMessageSerializer<object>();
 
-            return this;
-        }
+        if (_settings != null)
+            _serializer.Settings = _settings;
 
-        /// <inheritdoc cref="INewtonsoftJsonMessageSerializerBuilder.WithEncoding" />
-        public INewtonsoftJsonMessageSerializerBuilder WithEncoding(MessageEncoding encoding)
-        {
-            _encoding = encoding;
-            return this;
-        }
+        if (_encoding != null)
+            _serializer.Encoding = _encoding.Value;
 
-        /// <summary>
-        ///     Builds the <see cref="IMessageSerializer" /> instance.
-        /// </summary>
-        /// <returns>
-        ///     The <see cref="IMessageSerializer" />.
-        /// </returns>
-        public IMessageSerializer Build()
-        {
-            _serializer ??= new NewtonsoftJsonMessageSerializer();
-
-            if (_settings != null)
-                _serializer.Settings = _settings;
-
-            if (_encoding != null)
-                _serializer.Encoding = _encoding.Value;
-
-            return _serializer;
-        }
+        return _serializer;
     }
 }

@@ -16,22 +16,21 @@ namespace Silverback.Messaging.Configuration.Rabbit
             new();
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the queue or the exchange will survive a broker restart.
+        ///     Gets a value indicating whether the queue or the exchange will survive a broker restart.
         /// </summary>
-        public bool IsDurable { get; set; } = true;
+        public bool IsDurable { get; init; } = true;
 
         /// <summary>
-        ///     Gets or sets a value indicating whether the queue or the exchange will be automatically deleted when
+        ///     Gets a value indicating whether the queue or the exchange will be automatically deleted when
         ///     the last consumer unsubscribes.
         /// </summary>
-        public bool IsAutoDeleteEnabled { get; set; }
+        public bool IsAutoDeleteEnabled { get; init; }
 
         /// <summary>
-        ///     Gets or sets the optional arguments dictionary. The arguments are used by plugins and
+        ///     Gets the optional arguments dictionary. The arguments are used by plugins and
         ///     broker-specific features to configure values such as message TTL, queue length limit, etc.
         /// </summary>
-        [SuppressMessage("", "CA2227", Justification = "Easier initialization")]
-        public Dictionary<string, object>? Arguments { get; set; }
+        public Dictionary<string, object>? Arguments { get; init; }
 
         /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
         public virtual void Validate()
@@ -48,7 +47,7 @@ namespace Silverback.Messaging.Configuration.Rabbit
         /// <returns>
         ///     Returns a value indicating whether the other object is equal to the current object.
         /// </returns>
-        protected virtual bool BaseEquals(RabbitEndpointConfig? other)
+        protected bool BaseEquals(RabbitEndpointConfig? other)
         {
             if (other is null)
                 return false;

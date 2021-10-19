@@ -14,7 +14,7 @@ namespace Silverback.Diagnostics
     /// </typeparam>
     [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used for DI")]
     public interface IBrokerLogEnricher<TEndpoint> : IBrokerLogEnricher
-        where TEndpoint : Endpoint
+        where TEndpoint : EndpointConfiguration
     {
     }
 }

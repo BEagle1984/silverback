@@ -12,10 +12,10 @@ namespace Silverback.Messaging.Configuration.Rabbit
     public sealed class RabbitQueueConfig : RabbitEndpointConfig, IEquatable<RabbitQueueConfig>
     {
         /// <summary>
-        ///     Gets or sets a value indicating whether the queue is used by only one connection and will be deleted
+        ///     Gets a value indicating whether the queue is used by only one connection and will be deleted
         ///     when that connection closes.
         /// </summary>
-        public bool IsExclusive { get; set; }
+        public bool IsExclusive { get; init; }
 
         /// <inheritdoc cref="IEquatable{T}.Equals(T)" />
         public bool Equals(RabbitQueueConfig? other)
@@ -45,7 +45,6 @@ namespace Silverback.Messaging.Configuration.Rabbit
         }
 
         /// <inheritdoc cref="object.GetHashCode" />
-        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode", Justification = Justifications.Settings)]
         public override int GetHashCode() => HashCode.Combine(IsDurable, IsAutoDeleteEnabled, Arguments, IsExclusive);
     }
 }

@@ -4,7 +4,7 @@
 namespace Silverback.Messaging.Messages
 {
     /// <summary>
-    ///     Represents a tombstone message (a message with null body).
+    /// A tombstone message (a message with null body).
     /// </summary>
     public class Tombstone
     {

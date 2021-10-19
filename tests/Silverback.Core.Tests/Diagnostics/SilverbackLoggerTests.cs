@@ -19,7 +19,7 @@ namespace Silverback.Tests.Core.Diagnostics
             var logLevels = new LogLevelDictionary();
             var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
             var mappedLevelsLogger =
-                new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+                new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
             var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
             silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
@@ -36,7 +36,7 @@ namespace Silverback.Tests.Core.Diagnostics
             };
             var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
             var mappedLevelsLogger =
-                new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+                new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
             var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
             silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
@@ -52,7 +52,7 @@ namespace Silverback.Tests.Core.Diagnostics
                 { CoreLogEvents.BackgroundServiceStarting.EventId, (_, _, _) => LogLevel.Error }
             };
             var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
-            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
             var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
             silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
@@ -77,7 +77,7 @@ namespace Silverback.Tests.Core.Diagnostics
                 }
             };
             var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Error);
-            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
             var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
             silverbackLogger.LogFailedToAcquireLock(
@@ -107,7 +107,7 @@ namespace Silverback.Tests.Core.Diagnostics
                 }
             };
             var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Debug);
-            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
             var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
             silverbackLogger.LogFailedToAcquireLock(
@@ -137,7 +137,7 @@ namespace Silverback.Tests.Core.Diagnostics
                 }
             };
             var logger = new LoggerSubstitute<SilverbackLoggerTests>(LogLevel.Information);
-            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
             var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
             silverbackLogger.LogLockAcquired(new DistributedLockSettings("name", "id"));
@@ -156,7 +156,7 @@ namespace Silverback.Tests.Core.Diagnostics
             {
                 { logEvent.EventId, (_, _, _) => LogLevel.Trace }
             };
-            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logger, logLevels);
+            var mappedLevelsLogger = new MappedLevelsLogger<SilverbackLoggerTests>(logLevels, logger);
             var silverbackLogger = new SilverbackLogger<SilverbackLoggerTests>(mappedLevelsLogger);
 
             var result = silverbackLogger.IsEnabled(logEvent);

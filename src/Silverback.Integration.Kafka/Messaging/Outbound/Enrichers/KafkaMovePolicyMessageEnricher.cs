@@ -10,39 +10,34 @@ namespace Silverback.Messaging.Outbound.Enrichers
     internal sealed class KafkaMovePolicyMessageEnricher
         : IMovePolicyMessageEnricher<KafkaProducerEndpoint>, IMovePolicyMessageEnricher<KafkaConsumerEndpoint>
     {
-        public void Enrich(
-            IRawInboundEnvelope inboundEnvelope,
-            IOutboundEnvelope outboundEnvelope,
-            Exception exception)
+        public void Enrich(IRawInboundEnvelope inboundEnvelope, IOutboundEnvelope outboundEnvelope, Exception exception)
         {
+            KafkaConsumerEndpoint consumerEndpoint = (KafkaConsumerEndpoint)inboundEnvelope.Endpoint;
+            KafkaOffset offset = (KafkaOffset)inboundEnvelope.BrokerMessageIdentifier;
+
             outboundEnvelope.Headers.AddOrReplace(
                 KafkaMessageHeaders.SourceTopic,
-                inboundEnvelope.ActualEndpointName);
+                consumerEndpoint.TopicPartition.Topic);
             outboundEnvelope.Headers.AddOrReplace(
                 KafkaMessageHeaders.SourceConsumerGroupId,
-                ((KafkaConsumerEndpoint)inboundEnvelope.Endpoint).Configuration.GroupId);
+                consumerEndpoint.Configuration.Client.GroupId);
 
             while (exception.InnerException != null)
             {
                 exception = exception.InnerException;
             }
-
             outboundEnvelope.Headers.AddOrReplace(
                 DefaultMessageHeaders.FailureReason,
                 $"{exception.GetType().FullName} in {exception.Source}");
             outboundEnvelope.Headers.AddOrReplace(
                 KafkaMessageHeaders.SourcePartition,
-                ((KafkaOffset)inboundEnvelope.BrokerMessageIdentifier).Partition);
+                consumerEndpoint.TopicPartition.Partition.Value);
             outboundEnvelope.Headers.AddOrReplace(
                 KafkaMessageHeaders.SourceOffset,
-                ((KafkaOffset)inboundEnvelope.BrokerMessageIdentifier).Offset);
+                offset.Offset);
 
-            if (inboundEnvelope.Headers.Contains(KafkaMessageHeaders.TimestampKey))
-            {
-                outboundEnvelope.Headers.AddOrReplace(
-                    KafkaMessageHeaders.SourceTimestamp,
-                    inboundEnvelope.Headers[KafkaMessageHeaders.TimestampKey]);
-            }
+            if (inboundEnvelope.Headers.TryGetValue(KafkaMessageHeaders.TimestampKey, out string? timestamp))
+                outboundEnvelope.Headers.AddOrReplace(KafkaMessageHeaders.SourceTimestamp, timestamp);
         }
     }
 }

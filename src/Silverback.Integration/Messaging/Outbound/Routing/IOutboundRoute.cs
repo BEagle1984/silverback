@@ -6,26 +6,18 @@ using System;
 namespace Silverback.Messaging.Outbound.Routing
 {
     /// <summary>
-    ///     Defines the <see cref="IOutboundRouter" /> to be used to get the destination endpoints to produce
-    ///     the messages of the specified type to.
+    ///     A configured outbound route, defining the destination endpoint for a specific message type.
     /// </summary>
     public interface IOutboundRoute
     {
         /// <summary>
-        ///     Gets the type of the messages to be routed to the outbound endpoint(s).
+        ///     Gets the type of the messages to be routed.
         /// </summary>
         Type MessageType { get; }
 
         /// <summary>
-        ///     Returns the instance of <see cref="IOutboundRouter" /> to be used to determine the destination
-        ///     endpoint.
+        ///     Gets the producer configuration.
         /// </summary>
-        /// <param name="serviceProvider">
-        ///     The <see cref="IServiceProvider" /> to be used to resolve the router.
-        /// </param>
-        /// <returns>
-        ///     The instance of <see cref="IOutboundRouter{TMessage}" />.
-        /// </returns>
-        IOutboundRouter GetOutboundRouter(IServiceProvider serviceProvider);
+        ProducerConfiguration ProducerConfiguration { get; }
     }
 }

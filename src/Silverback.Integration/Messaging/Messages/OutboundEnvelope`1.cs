@@ -3,20 +3,20 @@
 
 using System.Collections.Generic;
 
-namespace Silverback.Messaging.Messages
-{
-    internal sealed class OutboundEnvelope<TMessage> : OutboundEnvelope, IOutboundEnvelope<TMessage>
-        where TMessage : class
-    {
-        public OutboundEnvelope(
-            TMessage message,
-            IReadOnlyCollection<MessageHeader>? headers,
-            IProducerEndpoint endpoint,
-            bool autoUnwrap = false)
-            : base(message, headers, endpoint, autoUnwrap)
-        {
-        }
+namespace Silverback.Messaging.Messages;
 
-        public new TMessage? Message => (TMessage?)base.Message;
+internal sealed class OutboundEnvelope<TMessage> : OutboundEnvelope, IOutboundEnvelope<TMessage>
+    where TMessage : class
+{
+    public OutboundEnvelope(
+        TMessage message,
+        IReadOnlyCollection<MessageHeader>? headers,
+        ProducerEndpoint endpoint,
+        bool autoUnwrap = false)
+        : base(message, headers, endpoint, autoUnwrap)
+    {
+        Message = message;
     }
+
+    public new TMessage? Message { get; }
 }

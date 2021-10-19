@@ -19,7 +19,7 @@ namespace Silverback.Messaging.Messages
         /// <summary>
         ///     Used to temporary store the target partition index for the produced message.
         /// </summary>
-        public const string KafkaPartitionIndex = "x-kafka-partition-index";
+        //public const string KafkaPartitionIndex = "x-kafka-partition-index";
 
         /// <summary>
         ///     The header that will be filled with the timestamp of the message consumed from Kafka.

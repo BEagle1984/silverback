@@ -6,43 +6,46 @@ using System.Linq;
 using Silverback.Messaging.Messages;
 using Silverback.Util;
 
-namespace Silverback.Messaging.Headers
+namespace Silverback.Messaging.Headers;
+
+internal sealed class CustomHeadersMappings : ICustomHeadersMappings
 {
-    internal sealed class CustomHeadersMappings : ICustomHeadersMappings
+    private Dictionary<string, string>? _mappings;
+
+    private Dictionary<string, string>? _inverseMappings;
+
+    public int Count { get; private set; }
+
+    public void Add(string defaultHeaderName, string customHeaderName)
     {
-        private Dictionary<string, string>? _mappings;
+        _mappings ??= new Dictionary<string, string>();
 
-        private Dictionary<string, string>? _inverseMappings;
+        _mappings[defaultHeaderName] = customHeaderName;
 
-        public int Count { get; private set; }
+        _inverseMappings = _mappings.ToDictionary(pair => pair.Value, pair => pair.Key);
 
-        public void Add(string defaultHeaderName, string customHeaderName)
+        Count = _mappings.Count;
+    }
+
+    public void Apply(MessageHeaderCollection headers) => Map(headers, _mappings);
+
+    public void Revert(MessageHeaderCollection headers) => Map(headers, _inverseMappings);
+
+    private static void Map(MessageHeaderCollection headers, Dictionary<string, string>? mappings)
+    {
+        Check.NotNull(headers, nameof(headers));
+
+        if (mappings == null)
+            return;
+
+        for (int i = 0; i < headers.Count; i++)
         {
-            _mappings ??= new Dictionary<string, string>();
+            MessageHeader header = headers[i];
 
-            _mappings[defaultHeaderName] = customHeaderName;
-
-            _inverseMappings = _mappings.ToDictionary(pair => pair.Value, pair => pair.Key);
-
-            Count = _mappings.Count;
-        }
-
-        public void Apply(IEnumerable<MessageHeader> headers) =>
-            headers.ForEach(
-                header =>
-                    header.Name = GetMappedHeaderName(header.Name, _mappings));
-
-        public void Revert(IEnumerable<MessageHeader> headers) =>
-            headers.ForEach(
-                header =>
-                    header.Name = GetMappedHeaderName(header.Name, _inverseMappings));
-
-        private static string GetMappedHeaderName(string headerName, Dictionary<string, string>? mappings)
-        {
-            if (mappings != null && mappings.TryGetValue(headerName, out string mappedHeaderName))
-                return mappedHeaderName;
-
-            return headerName;
+            if (mappings.TryGetValue(header.Name, out string? mappedName))
+            {
+                headers[i] = header with { Name = mappedName };
+            }
         }
     }
 }

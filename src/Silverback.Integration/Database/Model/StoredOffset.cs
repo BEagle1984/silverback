@@ -16,7 +16,7 @@ namespace Silverback.Database.Model
         /// </summary>
         [Key]
         [MaxLength(300)]
-        public string Key { get; set; } = null!;
+        public string Key { get; set; } = string.Empty;
 
         /// <summary>
         ///     Gets or sets the assembly qualified name of the stored offset class.

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Collections.Generic;
 using MQTTnet.Client.Options;
 
@@ -35,14 +36,12 @@ namespace Silverback.Messaging.Configuration.Mqtt.Comparers
             return false;
         }
 
-        public int GetHashCode(IMqttClientChannelOptions obj)
-        {
-            if (obj is MqttClientTcpOptions objTcp)
-                return TcpOptionsEqualityComparer.GetHashCode(objTcp);
-            if (obj is MqttClientWebSocketOptions objWebSocket)
-                return WebSocketOptionsEqualityComparer.GetHashCode(objWebSocket);
-
-            return obj.GetHashCode();
-        }
+        public int GetHashCode(IMqttClientChannelOptions obj) =>
+            obj switch
+            {
+                MqttClientTcpOptions objTcp => TcpOptionsEqualityComparer.GetHashCode(objTcp),
+                MqttClientWebSocketOptions objWebSocket => WebSocketOptionsEqualityComparer.GetHashCode(objWebSocket),
+                _ => HashCode.Combine(obj)
+            };
     }
 }

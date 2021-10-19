@@ -13,7 +13,7 @@ namespace Silverback.Tests.Core.Util
     public class CollectionEqualityComparerTests
     {
         [Fact]
-        public void Equals_SamePrimitivesCollection_TrueIsReturned()
+        public void Equals_SamePrimitivesCollection_TrueReturned()
         {
             var collection = new[] { 1, 2, 3, 4, 5 };
 
@@ -23,7 +23,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_SamePrimitives_TrueIsReturned()
+        public void Equals_SamePrimitives_TrueReturned()
         {
             var collection1 = new[] { 1, 2, 3, 4, 5 };
             var collection2 = new[] { 1, 2, 3, 4, 5 };
@@ -34,7 +34,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_SamePrimitivesDifferentOrder_TrueIsReturned()
+        public void Equals_SamePrimitivesDifferentOrder_TrueReturned()
         {
             var collection1 = new[] { 1, 2, 3, 4, 5 };
             var collection2 = new[] { 1, 5, 3, 4, 2 };
@@ -45,7 +45,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_DifferentPrimitives_FalseIsReturned()
+        public void Equals_DifferentPrimitives_FalseReturned()
         {
             var collection1 = new[] { 1, 2, 3, 4, 5 };
             var collection2 = new[] { 1, 2, 4, 5, 6 };
@@ -56,7 +56,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_SameObjectsCollection_TrueIsReturned()
+        public void Equals_SameObjectsCollection_TrueReturned()
         {
             var collection = new IEvent[]
             {
@@ -71,7 +71,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_SameObjects_TrueIsReturned()
+        public void Equals_SameObjects_TrueReturned()
         {
             var event1 = new TestEventOne { Message = "one" };
             var event2 = new TestEventOne { Message = "two" };
@@ -99,7 +99,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_SameItemsDifferentOrder_TrueIsReturned()
+        public void Equals_SameItemsDifferentOrder_TrueReturned()
         {
             var event1 = new TestEventOne { Message = "one" };
             var event2 = new TestEventOne { Message = "two" };
@@ -125,7 +125,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_DifferentObjects_FalseIsReturned()
+        public void Equals_DifferentObjects_FalseReturned()
         {
             var event1 = new TestEventOne { Message = "one" };
             var event2 = new TestEventOne { Message = "two" };
@@ -150,7 +150,7 @@ namespace Silverback.Tests.Core.Util
         }
 
         [Fact]
-        public void Equals_NullCollectionVsEmptyCollection_TrueIsReturned()
+        public void Equals_NullCollectionVsEmptyCollection_TrueReturned()
         {
             var collection1 = Array.Empty<int>();
             var collection2 = (int[]?)null;

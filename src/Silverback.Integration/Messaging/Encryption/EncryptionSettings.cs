@@ -3,14 +3,13 @@
 
 using Silverback.Messaging.Configuration;
 
-namespace Silverback.Messaging.Encryption
+namespace Silverback.Messaging.Encryption;
+
+/// <summary>
+///     The base class for <see cref="SymmetricEncryptionSettingsBase" /> and other future encryption types.
+/// </summary>
+public abstract record EncryptionSettings : IValidatableEndpointSettings
 {
-    /// <summary>
-    ///     The base class for <see cref="SymmetricEncryptionSettingsBase" /> and other future encryption types.
-    /// </summary>
-    public abstract class EncryptionSettings : IValidatableEndpointSettings
-    {
-        /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
-        public abstract void Validate();
-    }
+    /// <inheritdoc cref="IValidatableEndpointSettings.Validate" />
+    public abstract void Validate();
 }

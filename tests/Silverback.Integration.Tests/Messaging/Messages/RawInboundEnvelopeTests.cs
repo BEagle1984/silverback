@@ -18,7 +18,6 @@ namespace Silverback.Tests.Integration.Messaging.Messages
                 (Stream?)null,
                 null,
                 TestConsumerEndpoint.GetDefault(),
-                "test",
                 new TestOffset("a", "b"));
 
             envelope.Should().NotBeNull();

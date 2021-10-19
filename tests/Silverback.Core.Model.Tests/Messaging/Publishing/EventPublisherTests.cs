@@ -5,6 +5,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging.Publishing;
 using Silverback.Tests.Core.Model.TestTypes.Messages;
 using Silverback.Tests.Logging;

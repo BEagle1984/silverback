@@ -3,18 +3,17 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Silverback.Messaging.Diagnostics
+namespace Silverback.Messaging.Diagnostics;
+
+/// <summary>
+///     Provides enrichment for activities produced by the <see cref="ActivityProducerBehavior" /> and
+///     <see cref="ActivityConsumerBehavior" /> for the specified endpoint type.
+/// </summary>
+/// <typeparam name="TConfiguration">
+///     The type of the endpoint configuration that this enricher can be used with.
+/// </typeparam>
+[SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used for DI")]
+public interface IBrokerActivityEnricher<TConfiguration> : IBrokerActivityEnricher
+    where TConfiguration : EndpointConfiguration
 {
-    /// <summary>
-    ///     Provides enrichment for activities produced by the <see cref="ActivityProducerBehavior" /> and
-    ///     <see cref="ActivityConsumerBehavior" /> for the specified endpoint type.
-    /// </summary>
-    /// <typeparam name="TEndpoint">
-    ///     The type of the endpoint that this enricher can be used for.
-    /// </typeparam>
-    [SuppressMessage("ReSharper", "UnusedTypeParameter", Justification = "Used for DI")]
-    public interface IBrokerActivityEnricher<TEndpoint> : IBrokerActivityEnricher
-        where TEndpoint : Endpoint
-    {
-    }
 }

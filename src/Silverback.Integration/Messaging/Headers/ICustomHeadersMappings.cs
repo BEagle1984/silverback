@@ -33,15 +33,14 @@ namespace Silverback.Messaging.Headers
         /// <param name="headers">
         ///     The collection of <see cref="MessageHeader" /> to be mapped.
         /// </param>
-        public void Apply(IEnumerable<MessageHeader> headers);
+        public void Apply(MessageHeaderCollection headers);
 
         /// <summary>
-        ///     Reverts the headers in the specified collection of <see cref="MessageHeader" /> to the default header
-        ///     names.
+        ///     Reverts the headers in the specified collection of <see cref="MessageHeader" /> to the default header names.
         /// </summary>
         /// <param name="headers">
         ///     The collection of <see cref="MessageHeader" /> to be mapped.
         /// </param>
-        public void Revert(IEnumerable<MessageHeader> headers);
+        public void Revert(MessageHeaderCollection headers);
     }
 }

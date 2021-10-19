@@ -10,13 +10,9 @@ namespace Silverback.Messaging.Messages
     /// <inheritdoc cref="IRawOutboundEnvelope" />
     internal class RawOutboundEnvelope : RawBrokerEnvelope, IRawOutboundEnvelope
     {
-        private string _actualEndpointName;
-
-        private string? _actualEndpointDisplayName;
-
         public RawOutboundEnvelope(
             IReadOnlyCollection<MessageHeader>? headers,
-            IProducerEndpoint endpoint,
+            ProducerEndpoint endpoint,
             IBrokerMessageIdentifier? brokerMessageIdentifier = null)
             : this(null, headers, endpoint, brokerMessageIdentifier)
         {
@@ -25,36 +21,16 @@ namespace Silverback.Messaging.Messages
         public RawOutboundEnvelope(
             Stream? rawMessage,
             IReadOnlyCollection<MessageHeader>? headers,
-            IProducerEndpoint endpoint,
+            ProducerEndpoint endpoint,
             IBrokerMessageIdentifier? brokerMessageIdentifier = null)
             : base(rawMessage, headers, endpoint)
         {
+            Endpoint = endpoint;
             BrokerMessageIdentifier = brokerMessageIdentifier;
-            _actualEndpointName = endpoint.Name;
-            UpdateActualEndpointDisplayName();
         }
 
-        public new IProducerEndpoint Endpoint => (IProducerEndpoint)base.Endpoint;
+        public new ProducerEndpoint Endpoint { get; internal set; }
 
         public IBrokerMessageIdentifier? BrokerMessageIdentifier { get; internal set; }
-
-        public string ActualEndpointName
-        {
-            get => _actualEndpointName;
-            internal set
-            {
-                _actualEndpointName = value;
-                UpdateActualEndpointDisplayName();
-            }
-        }
-
-        public string ActualEndpointDisplayName => _actualEndpointDisplayName ?? ActualEndpointName;
-
-        private void UpdateActualEndpointDisplayName()
-        {
-            _actualEndpointDisplayName = Endpoint.FriendlyName != null
-                ? $"{Endpoint.FriendlyName} ({_actualEndpointName})"
-                : null;
-        }
     }
 }

@@ -569,6 +569,15 @@ namespace Silverback.Diagnostics
             "Error occurred invoking the callback handler(s).");
 
         /// <summary>
+        ///     Gets the <see cref="LogEvent" /> representing the log that is written when an exception is thrown by
+        ///     the endpoint builder action.
+        /// </summary>
+        public static LogEvent EndpointBuilderError { get; } = new(
+            LogLevel.Critical,
+            GetEventId(104, nameof(InvalidEndpointConfiguration)),
+            "Failed to configure endpoint '{endpointName}'.");
+
+        /// <summary>
         ///     Gets the <see cref="EventId" /> of the low level tracing logs.
         /// </summary>
         public static LogEvent LowLevelTracing { get; } = new(

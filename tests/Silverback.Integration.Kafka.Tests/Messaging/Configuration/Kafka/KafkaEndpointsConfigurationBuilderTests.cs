@@ -1,10 +1,13 @@
 // Copyright (c) 2020 Sergio Aquilini
 // This code is licensed under MIT license (see LICENSE file for details)
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using Silverback.Configuration;
 using Silverback.Messaging.Broker;
+using Silverback.Messaging.Configuration;
 using Silverback.Messaging.Serialization;
 using Silverback.Tests.Logging;
 using Silverback.Tests.Types.Domain;
@@ -17,95 +20,127 @@ namespace Silverback.Tests.Integration.Kafka.Messaging.Configuration.Kafka
         [Fact]
         public async Task AddInbound_WithoutMessageType_DefaultSerializerSet()
         {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(broker => broker.AddKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .Configure(
+                            .ConfigureClient(
                                 config =>
                                 {
                                     config.BootstrapServers = "PLAINTEXT://unittest";
                                 })
                             .AddInbound(
                                 endpoint => endpoint
-                                    .Configure(
+                                    .ConfigureClient(
                                         config =>
                                         {
                                             config.GroupId = "group";
                                         })
                                     .ConsumeFrom("test"))));
 
-            var broker = serviceProvider.GetRequiredService<KafkaBroker>();
+            KafkaBroker broker = serviceProvider.GetRequiredService<KafkaBroker>();
 
             await broker.ConnectAsync();
 
-            broker.Consumers[0].Endpoint.Serializer.Should().BeOfType<JsonMessageSerializer>();
+            broker.Consumers[0].Configuration.Serializer.Should().BeOfType<JsonMessageSerializer<object>>();
         }
 
         [Fact]
         public async Task AddInbound_WithMessageTypeGenericParameter_TypedDefaultSerializerSet()
         {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(broker => broker.AddKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .Configure(
+                            .ConfigureClient(
                                 config =>
                                 {
                                     config.BootstrapServers = "PLAINTEXT://unittest";
                                 })
                             .AddInbound<TestEventOne>(
                                 endpoint => endpoint
-                                    .Configure(
+                                    .ConfigureClient(
                                         config =>
                                         {
                                             config.GroupId = "group";
                                         })
                                     .ConsumeFrom("test"))));
 
-            var broker = serviceProvider.GetRequiredService<KafkaBroker>();
+            KafkaBroker broker = serviceProvider.GetRequiredService<KafkaBroker>();
 
             await broker.ConnectAsync();
 
-            broker.Consumers[0].Endpoint.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+            broker.Consumers[0].Configuration.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
         }
 
         [Fact]
-        public async Task AddInbound_WithMessageTypeParameter_TypedDefaultSerializerSet()
+        public async Task AddInboundAddOutbound_MultipleConfiguratorsWithInvalidEndpoints_ValidEndpointsAdded()
         {
-            var serviceProvider = ServiceProviderHelper.GetServiceProvider(
+            IServiceProvider serviceProvider = ServiceProviderHelper.GetServiceProvider(
                 services => services
                     .AddFakeLogger()
                     .AddSilverback()
                     .WithConnectionToMessageBroker(broker => broker.AddKafka())
                     .AddKafkaEndpoints(
                         endpoints => endpoints
-                            .Configure(
+                            .ConfigureClient(
                                 config =>
                                 {
                                     config.BootstrapServers = "PLAINTEXT://unittest";
                                 })
-                            .AddInbound(
-                                typeof(TestEventOne),
+                            .AddOutbound<TestEventOne>(
                                 endpoint => endpoint
-                                    .Configure(
+                                    .ProduceTo("test1"))
+                            .AddInbound(
+                                endpoint => endpoint
+                                    .ConfigureClient(
                                         config =>
                                         {
-                                            config.GroupId = "group";
+                                            config.GroupId = "group1";
                                         })
-                                    .ConsumeFrom("test"))));
+                                    .ConsumeFrom(string.Empty))
+                            .AddInbound(
+                                endpoint => endpoint
+                                    .ConfigureClient(
+                                        config =>
+                                        {
+                                            config.GroupId = "group1";
+                                        })
+                                    .ConsumeFrom("test1")))
+                    .AddKafkaEndpoints(_ => throw new InvalidOperationException())
+                    .AddKafkaEndpoints(
+                        endpoints => endpoints
+                            .ConfigureClient(
+                                config =>
+                                {
+                                    config.BootstrapServers = "PLAINTEXT://unittest";
+                                })
+                            .AddOutbound<TestEventOne>(endpoint => endpoint.ProduceTo(string.Empty))
+                            .AddOutbound<TestEventOne>(endpoint => endpoint.ProduceTo("test2"))
+                            .AddInbound(
+                                endpoint => endpoint
+                                    .ConfigureClient(
+                                        config =>
+                                        {
+                                            config.GroupId = "group1";
+                                        })
+                                    .ConsumeFrom("test2"))));
 
-            var broker = serviceProvider.GetRequiredService<KafkaBroker>();
-
+            KafkaBroker broker = serviceProvider.GetRequiredService<KafkaBroker>();
             await broker.ConnectAsync();
 
-            broker.Consumers[0].Endpoint.Serializer.Should().BeOfType<JsonMessageSerializer<TestEventOne>>();
+            broker.Producers.Should().HaveCount(2);
+            broker.Producers[0].Configuration.RawName.Should().Be("test1");
+            broker.Producers[1].Configuration.RawName.Should().Be("test2");
+            broker.Consumers.Should().HaveCount(2);
+            broker.Consumers[0].Configuration.RawName.Should().Be("test1");
+            broker.Consumers[1].Configuration.RawName.Should().Be("test2");
         }
     }
 }

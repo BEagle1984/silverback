@@ -15,44 +15,43 @@ namespace Silverback.Tests.Integration.Mqtt.Messaging.Configuration
 {
     public class ErrorPolicyBuilderMoveToMqttTopicExtensionsTests
     {
-        private readonly IMqttEndpointsConfigurationBuilder _endpointsConfigurationBuilder;
+        private readonly MqttEndpointsConfigurationBuilder _endpointsConfigurationBuilder;
 
         public ErrorPolicyBuilderMoveToMqttTopicExtensionsTests()
         {
-            _endpointsConfigurationBuilder = new MqttEndpointsConfigurationBuilder(
-                new EndpointsConfigurationBuilder(Substitute.For<IServiceProvider>()));
+            _endpointsConfigurationBuilder = new MqttEndpointsConfigurationBuilder(Substitute.For<IServiceProvider>());
 
-            _endpointsConfigurationBuilder.Configure(config => config.ConnectViaTcp("tests-server"));
+            _endpointsConfigurationBuilder.ConfigureClient(config => config.ConnectViaTcp("tests-server"));
         }
 
         [Fact]
         public void MoveToMqttTopic_EndpointBuilder_MovePolicyCreated()
         {
-            var builder = new ErrorPolicyBuilder(_endpointsConfigurationBuilder);
+            ErrorPolicyBuilder builder = new(_endpointsConfigurationBuilder);
             builder.MoveToMqttTopic(endpoint => endpoint.ProduceTo("test-move"));
-            var policy = builder.Build();
+            IErrorPolicy policy = builder.Build();
 
             policy.Should().BeOfType<MoveMessageErrorPolicy>();
-            policy.As<MoveMessageErrorPolicy>().Endpoint.Name.Should().Be("test-move");
-            policy.As<MoveMessageErrorPolicy>().Endpoint
-                .As<MqttProducerEndpoint>().Configuration.ChannelOptions
+            policy.As<MoveMessageErrorPolicy>().ProducerConfiguration.RawName.Should().Be("test-move");
+            policy.As<MoveMessageErrorPolicy>().ProducerConfiguration
+                .As<MqttProducerConfiguration>().Client.ChannelOptions
                 .As<MqttClientTcpOptions>().Server.Should().Be("tests-server");
         }
 
         [Fact]
         public void MoveToMqttTopic_EndpointBuilderWithConfiguration_SkipPolicyCreatedAndConfigurationApplied()
         {
-            var builder = new ErrorPolicyBuilder(_endpointsConfigurationBuilder);
+            ErrorPolicyBuilder builder = new(_endpointsConfigurationBuilder);
             builder.MoveToMqttTopic(
                 endpoint => endpoint.ProduceTo("test-move"),
                 movePolicy => movePolicy.MaxFailedAttempts(42));
-            var policy = builder.Build();
+            IErrorPolicy policy = builder.Build();
 
             policy.Should().BeOfType<MoveMessageErrorPolicy>();
-            policy.As<MoveMessageErrorPolicy>().Endpoint.Name.Should().Be("test-move");
+            policy.As<MoveMessageErrorPolicy>().ProducerConfiguration.RawName.Should().Be("test-move");
             policy.As<MoveMessageErrorPolicy>().MaxFailedAttemptsCount.Should().Be(42);
-            policy.As<MoveMessageErrorPolicy>().Endpoint
-                .As<MqttProducerEndpoint>().Configuration.ChannelOptions
+            policy.As<MoveMessageErrorPolicy>().ProducerConfiguration
+                .As<MqttProducerConfiguration>().Client.ChannelOptions
                 .As<MqttClientTcpOptions>().Server.Should().Be("tests-server");
         }
     }

@@ -20,12 +20,11 @@ namespace Silverback.Messaging.Outbound.Enrichers
             _serviceProvider = serviceProvider;
         }
 
-        public IMovePolicyMessageEnricher GetMovePolicyEnricher(IEndpoint endpoint)
+        public IMovePolicyMessageEnricher GetMovePolicyEnricher(Endpoint endpoint)
         {
             var enricherType = _enricherTypeCache.GetOrAdd(
                 endpoint.GetType(),
-                type => typeof(IMovePolicyMessageEnricher<>)
-                    .MakeGenericType(type));
+                type => typeof(IMovePolicyMessageEnricher<>).MakeGenericType(type));
 
             var headersEnricher = (IMovePolicyMessageEnricher?)_serviceProvider.GetService(enricherType);
 
